@@ -12,11 +12,6 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
-    [Obsolete("Use the overload method with the Columns<T>[] argument instead")]
-    public SqlQuery UpdateObsolete(T entity, params IEnumerable<string> columns) =>
-        UpdateById(entity, new SetColumns<T>(columns));
-
-
     public SqlQuery UpdateById(T entity, SetColumns<T>? columns = null)
     {
         IEnumerable<PropertyInfo> updateTheseProperties = (columns?.ColumnNames?.Any() ?? false)
