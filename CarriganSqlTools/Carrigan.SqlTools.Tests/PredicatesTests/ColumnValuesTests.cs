@@ -1,7 +1,7 @@
-﻿using SqlTools.Predicates;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.PredicatesTests;
+namespace Carrigan.SqlTools.Tests.PredicatesTests;
 
 public  class ColumnValuesTests
 {

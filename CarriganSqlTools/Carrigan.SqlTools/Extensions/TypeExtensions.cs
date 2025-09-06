@@ -1,8 +1,7 @@
-﻿
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace SqlTools.Extensions;
+namespace Carrigan.SqlTools.Extensions;
 
 public static class TypeExtensions
 {

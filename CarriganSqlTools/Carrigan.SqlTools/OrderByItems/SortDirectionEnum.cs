@@ -1,4 +1,4 @@
-﻿namespace SqlTools.OrderByItems;
+﻿namespace Carrigan.SqlTools.OrderByItems;
 
 public enum SortDirectionEnum
 {

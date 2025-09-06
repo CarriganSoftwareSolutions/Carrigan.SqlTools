@@ -1,10 +1,10 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
-using SqlTools.Predicates;
-using SqlTools.Tags;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 using System.Reflection;
 
-namespace SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {

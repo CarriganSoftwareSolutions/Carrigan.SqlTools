@@ -1,8 +1,10 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Sets;
+using Carrigan.SqlTools.Extensions;
+using Carrigan.SqlTools.Extensions;
+using Carrigan.SqlTools.Sets;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SqlTools.Extensions;
+namespace Carrigan.SqlTools.Extensions;
 
 public static class SetColumnsExtensions
 {

@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Predicates;
 
-namespace SqlTools.Predicates;
+namespace Carrigan.SqlTools.Predicates;
 
 public abstract class LogicalOperators : PredicatesBase
 {

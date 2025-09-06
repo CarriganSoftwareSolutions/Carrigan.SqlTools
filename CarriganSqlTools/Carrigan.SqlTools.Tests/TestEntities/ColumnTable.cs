@@ -1,4 +1,4 @@
-﻿namespace SqlToolsTests.TestEntities;
+﻿namespace Carrigan.SqlTools.Tests.TestEntities;
 
 //IGNORE SPELLING: descruct
 

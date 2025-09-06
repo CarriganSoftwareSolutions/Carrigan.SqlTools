@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Invocation;
-using SqlToolsTests.TestEntities;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace Carrigan.SqlTools.InvocationTests;
+namespace Carrigan.SqlTools.Tests.InvocationTests;
 
 public class InvokerTests
 {

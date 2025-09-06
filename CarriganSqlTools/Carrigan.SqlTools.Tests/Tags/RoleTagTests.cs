@@ -1,7 +1,7 @@
-﻿using SqlTools.Exceptions;
-using SqlTools.Tags;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlToolsTests.Tags;
+namespace Carrigan.SqlTools.Tests.Tags;
 
 public class RoleTagTests
 {

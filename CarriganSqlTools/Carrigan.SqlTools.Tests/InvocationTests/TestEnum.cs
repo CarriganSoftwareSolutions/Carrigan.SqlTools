@@ -1,5 +1,4 @@
-﻿
-namespace Carrigan.SqlTools.InvocationTests;
+﻿namespace Carrigan.SqlTools.Tests.InvocationTests;
 
 public enum TestEnum
 {

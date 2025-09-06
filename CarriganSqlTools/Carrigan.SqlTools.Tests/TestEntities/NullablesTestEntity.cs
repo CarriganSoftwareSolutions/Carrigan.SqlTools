@@ -1,7 +1,6 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace SqlToolsTests.TestEntities;
+namespace Carrigan.SqlTools.Tests.TestEntities;
 
 public class NullablesTestEntity
 {
@@ -33,17 +32,17 @@ public class NullablesTestEntity
     public static NullablesTestEntity GetStandardTestSet() => new()
     {
         Key = Guid.Empty,                                               // Key
-        IntValue = (int?)1,                                             // Nullable int
-        LongValue = (long?)123456789L,                                  // Nullable long
+        IntValue = 1,                                             // Nullable int
+        LongValue = 123456789L,                                  // Nullable long
         ShortValue = (short?)123,                                       // Nullable short
         ByteValue = (byte?)255,                                         // Nullable byte
-        BoolValue = (bool?)true,                                        // Nullable bool
-        DecimalValue = (decimal?)99.99m,                                // Nullable decimal
-        FloatValue = (float?)3.14f,                                     // Nullable FloatValue
-        DoubleValue = (double?)1.618,                                   // Nullable DoubleValue
+        BoolValue = true,                                        // Nullable bool
+        DecimalValue = 99.99m,                                // Nullable decimal
+        FloatValue = 3.14f,                                     // Nullable FloatValue
+        DoubleValue = 1.618,                                   // Nullable DoubleValue
         DateTimeValue = new DateTime(2024, 11, 6, 1, 14, 1, 2, 3),      // Nullable DateTimeValue
         GuidValue = new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"),   // Nullable GuidValue
-        CharValue = (char?)'A',                                         // Nullable CharValue
+        CharValue = 'A',                                         // Nullable CharValue
         TimeOnlyValue = new TimeOnly(1, 2, 0),                          // Nullable TimeOnlyValue
         DateOnlyValue = new DateOnly(1, 12, 25),                        // Nullable DateOnlyValue
         ByteArrayValue = [0x01, 0x02, 0x03],                            // Nullable ByteArrayValue

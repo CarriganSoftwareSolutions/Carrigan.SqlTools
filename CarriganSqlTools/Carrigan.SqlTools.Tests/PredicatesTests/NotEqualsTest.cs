@@ -1,9 +1,7 @@
-﻿
+﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-using SqlTools.Predicates;
-using SqlToolsTests.TestEntities;
-
-namespace SqlToolsTests.PredicatesTests;
+namespace Carrigan.SqlTools.Tests.PredicatesTests;
 
 public class NotEqualsTests
 {

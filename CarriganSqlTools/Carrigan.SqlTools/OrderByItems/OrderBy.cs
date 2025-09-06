@@ -1,7 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Tags;
+using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.OrderByItems;
+namespace Carrigan.SqlTools.OrderByItems;
 
 public class OrderBy
 {

@@ -1,7 +1,6 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace SqlToolsTests.TestEntities;
+namespace Carrigan.SqlTools.Tests.TestEntities;
 
 // Additional entity classes for testing
 public class EntityWithoutTableAttribute

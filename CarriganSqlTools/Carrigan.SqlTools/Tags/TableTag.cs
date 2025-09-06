@@ -1,8 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Exceptions;
+using Carrigan.SqlTools;
+using Carrigan.SqlTools.Exceptions;
 using System.Reflection;
 
-namespace SqlTools.Tags;
+namespace Carrigan.SqlTools.Tags;
 
 public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityComparer<TableTag>
 {

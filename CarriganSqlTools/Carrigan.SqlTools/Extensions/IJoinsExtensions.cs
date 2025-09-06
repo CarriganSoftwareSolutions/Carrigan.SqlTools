@@ -1,8 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Joins;
+using Carrigan.SqlTools.JoinTypes;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SqlTools.Extensions;
+namespace Carrigan.SqlTools.Extensions;
 
 public static class IJoinsExtensions
 {

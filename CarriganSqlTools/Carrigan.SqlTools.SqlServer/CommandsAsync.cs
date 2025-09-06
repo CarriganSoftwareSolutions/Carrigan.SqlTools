@@ -2,13 +2,14 @@
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Invocation;
 using Microsoft.Data.SqlClient;
-using SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;
 
 
-namespace SqlTools.MsSqlClient;
+namespace Carrigan.SqlTools.SqlServer;
 
 public static class CommandsAsync
 {
@@ -120,7 +121,7 @@ public static class CommandsAsync
 
                 invocationTasks.Add(Task.Run(() => invocator.Invoke(rowData)));
             }
-            results = [.. (await Task.WhenAll(invocationTasks))];
+            results = [.. await Task.WhenAll(invocationTasks)];
         }
         finally
         {

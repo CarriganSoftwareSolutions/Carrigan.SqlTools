@@ -1,8 +1,9 @@
-using SqlTools.SqlGenerators;
-using SqlToolsTests.TestEntities;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tests;
+using Carrigan.SqlTools.Tests.TestEntities;
 using System.Text;
 
-namespace SqlToolsTests.GeneratorsTests;
+namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 //IGNORE SPELLING: myschema shhh
 

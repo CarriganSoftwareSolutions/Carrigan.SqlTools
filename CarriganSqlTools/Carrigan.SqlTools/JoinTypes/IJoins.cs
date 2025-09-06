@@ -1,5 +1,6 @@
-﻿using SqlTools.Tags;
-namespace SqlTools.Joins;
+﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.Tags;
+namespace Carrigan.SqlTools.JoinTypes;
 
 public interface IJoins
 {

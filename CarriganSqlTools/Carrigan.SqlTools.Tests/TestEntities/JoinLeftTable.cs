@@ -1,8 +1,7 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SqlToolsTests.TestEntities;
+namespace Carrigan.SqlTools.Tests.TestEntities;
 
 [Table("Left")]
 public class JoinLeftTable

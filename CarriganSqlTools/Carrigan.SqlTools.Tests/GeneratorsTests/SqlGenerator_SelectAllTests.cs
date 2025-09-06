@@ -1,8 +1,9 @@
-using SqlTools.OrderByItems;
-using SqlTools.SqlGenerators;
-using SqlToolsTests.TestEntities;
+using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tests;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.GeneratorsTests;
+namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 //IGNORE SPELLING: myschema
 

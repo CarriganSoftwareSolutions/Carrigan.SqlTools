@@ -1,7 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Exceptions;
+using Carrigan.SqlTools;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Predicates;
 
-namespace SqlTools.Predicates;
+namespace Carrigan.SqlTools.Predicates;
 
 public class ByColumnValues<T> : PredicatesBase
 {

@@ -1,9 +1,11 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Exceptions;
-using SqlTools.Extensions;
-using SqlTools.Tags;
+using Carrigan.SqlTools;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Extensions;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.Predicates;
+namespace Carrigan.SqlTools.Predicates;
 
 public class Columns  <T> : PredicatesBase, IColumnValue
 {

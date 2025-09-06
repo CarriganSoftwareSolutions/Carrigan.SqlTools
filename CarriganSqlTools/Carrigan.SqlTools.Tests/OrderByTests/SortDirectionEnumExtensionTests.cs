@@ -1,6 +1,6 @@
-﻿using SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.OrderByItems;
 
-namespace SqlToolsTests.OrderByTests;
+namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 public class SortDirectionEnumExtensionTests
 {

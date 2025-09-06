@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.Tags;
+namespace Carrigan.SqlTools.Tags;
 
 public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
 {
@@ -18,7 +19,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
         if (columnName.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(columnName), $"{nameof(columnName)} requires a value.");
         if (tableName.IsNotNullOrEmpty())
-            _columnTag = _columnTag = new ColumnTag((new TableTag(schemaName, tableName)), columnName);
+            _columnTag = _columnTag = new ColumnTag(new TableTag(schemaName, tableName), columnName);
         else
             _columnTag = $"[{columnName}]";
     }

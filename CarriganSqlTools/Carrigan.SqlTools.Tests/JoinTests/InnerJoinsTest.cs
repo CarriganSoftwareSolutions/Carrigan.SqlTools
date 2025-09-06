@@ -1,9 +1,9 @@
-﻿using SqlTools.Exceptions;
-using SqlTools.Joins;
-using SqlTools.Predicates;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.JoinTests;
+namespace Carrigan.SqlTools.Tests.JoinTests;
 
 public class InnerJoinsTest
 {

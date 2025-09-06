@@ -1,9 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Exceptions;
-using SqlTools.Tags;
-using SqlToolsTests.TestEntities;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.Tags;
+namespace Carrigan.SqlTools.Tests.Tags;
 
 //IGNORE SPELLING: Za ema myschema dbo
 
@@ -143,7 +143,7 @@ public class TableTagClassTests
         // Since the comparison methods are on TableTag itself, we just need an instance.
         TableTag comparer = new("Schema", "Table");
 
-        bool result = comparer.Equals((TableTag?)null, (TableTag?)null);
+        bool result = comparer.Equals(null, null);
 
         Assert.True(result, "Both null references should be considered equal.");
     }

@@ -1,6 +1,7 @@
-﻿using SqlTools.Exceptions;
+﻿using Carrigan.SqlTools;
+using Carrigan.SqlTools.Exceptions;
 
-namespace SqlTools.Tags;
+namespace Carrigan.SqlTools.Tags;
 
 public class RoleTag : IComparable<RoleTag>, IEquatable<RoleTag>, IEqualityComparer<RoleTag>
 {

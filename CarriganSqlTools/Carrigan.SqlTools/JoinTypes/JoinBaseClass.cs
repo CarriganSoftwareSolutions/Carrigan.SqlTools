@@ -1,6 +1,7 @@
-﻿using SqlTools.Tags;
+﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.Joins;
+namespace Carrigan.SqlTools.JoinTypes;
 
 public abstract class JoinBaseClass : ISingleJoin
 {

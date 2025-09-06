@@ -1,8 +1,8 @@
-﻿using SqlTools.Extensions;
-using SqlTools.Sets;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.Extensions;
+using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.ExtensionTests;
+namespace Carrigan.SqlTools.Tests.ExtensionTests;
 
 public class SetColumnsExtensionsTests
 {

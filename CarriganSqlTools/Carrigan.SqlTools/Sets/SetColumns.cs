@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools;
 
-namespace SqlTools.Sets;
+namespace Carrigan.SqlTools.Sets;
 
 public class SetColumns<T>
 {

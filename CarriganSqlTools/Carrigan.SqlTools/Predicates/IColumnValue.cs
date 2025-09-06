@@ -1,6 +1,6 @@
-﻿using SqlTools.Tags;
+﻿using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.Predicates;
+namespace Carrigan.SqlTools.Predicates;
 
 public interface IColumnValue
 {

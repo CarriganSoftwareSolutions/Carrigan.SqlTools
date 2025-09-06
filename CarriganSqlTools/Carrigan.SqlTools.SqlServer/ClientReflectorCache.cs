@@ -3,7 +3,7 @@ using Carrigan.Core.ReflectionCaching;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace SqlTools.MsSqlClient;
+namespace Carrigan.SqlTools.SqlServer;
 
 internal static class ClientReflectorCache<T>
 {

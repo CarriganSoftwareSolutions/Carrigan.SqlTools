@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace SqlTools;
+namespace Carrigan.SqlTools;
 
 //Ignore Spelling: Za
 

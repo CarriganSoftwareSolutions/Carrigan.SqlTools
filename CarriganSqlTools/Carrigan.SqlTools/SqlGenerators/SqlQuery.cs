@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.SqlGenerators;
 
 public class SqlQuery
 {

@@ -1,8 +1,8 @@
-﻿using SqlTools.Exceptions;
-using SqlTools.OrderByItems;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.OrderByTests;
+namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 #pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable CA1859 // Use concrete types when possible for improved performance

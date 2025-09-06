@@ -1,7 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Tags;
+using Carrigan.SqlTools;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.Exceptions;
+namespace Carrigan.SqlTools.Exceptions;
 
 public class SqlIdentifierException : Exception
 {

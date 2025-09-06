@@ -1,4 +1,4 @@
-﻿namespace SqlTools.OffsetNexts;
+﻿namespace Carrigan.SqlTools.OffsetNexts;
 
 public class DefinePage
 {

@@ -1,6 +1,6 @@
-﻿using SqlTools.OffsetNexts;
+﻿using Carrigan.SqlTools.OffsetNexts;
 
-namespace SqlToolsTests.OffsetNextTests;
+namespace Carrigan.SqlTools.Tests.OffsetNextTests;
 
 public class OffsetNextTests
 {

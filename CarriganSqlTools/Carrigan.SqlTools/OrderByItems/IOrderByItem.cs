@@ -1,6 +1,7 @@
-﻿using SqlTools.Tags;
+﻿using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.OrderByItems;
+namespace Carrigan.SqlTools.OrderByItems;
 
 public interface IOrderByItem : IEquatable<IOrderByItem>
 {

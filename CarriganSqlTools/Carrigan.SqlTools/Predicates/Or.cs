@@ -1,6 +1,6 @@
-﻿
+﻿using Carrigan.SqlTools.Predicates;
 
-namespace SqlTools.Predicates;
+namespace Carrigan.SqlTools.Predicates;
 
 public class Or : LogicalOperators
 {

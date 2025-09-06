@@ -1,5 +1,6 @@
-﻿
-namespace SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Predicates;
+
+namespace Carrigan.SqlTools.Predicates;
 
 public class NotEqual : ComparisonOperators
 {

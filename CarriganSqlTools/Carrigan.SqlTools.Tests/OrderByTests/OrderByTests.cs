@@ -1,8 +1,8 @@
-﻿using SqlTools.OrderByItems;
-using SqlTools.Tags;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.OrderByTests;
+namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 public class OrderByTests
 {

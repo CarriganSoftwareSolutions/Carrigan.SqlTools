@@ -1,9 +1,9 @@
-﻿using SqlTools.Extensions;
-using SqlTools.Joins;
-using SqlTools.Predicates;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.Extensions;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.ExtensionTests;
+namespace Carrigan.SqlTools.Tests.ExtensionTests;
 
 public class IJoinsExtensionTest
 {

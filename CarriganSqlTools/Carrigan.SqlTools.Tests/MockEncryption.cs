@@ -1,13 +1,13 @@
 ﻿using Carrigan.Core.Interfaces;
 
-namespace SqlToolsTests;
+namespace Carrigan.SqlTools.Tests;
 
 internal class MockEncryption : IEncryption
 {
     private readonly string _key;
     public MockEncryption(string key)
     {
-        this._key = key;
+        _key = key;
     }
 
     public int? Version => throw new NotImplementedException();

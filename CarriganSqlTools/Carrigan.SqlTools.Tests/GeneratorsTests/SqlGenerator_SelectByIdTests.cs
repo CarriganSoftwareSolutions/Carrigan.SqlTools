@@ -1,7 +1,8 @@
-﻿using SqlTools.SqlGenerators;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tests;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.GeneratorsTests;
+namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 public class SqlGenerator_SelectByIdTests
 {

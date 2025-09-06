@@ -1,11 +1,11 @@
 ﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.ReflectionCaching;
-using SqlTools.Tags;
+using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace SqlTools;
+namespace Carrigan.SqlTools;
 
 internal static class SqlToolsReflectorCache<T>
 {
@@ -18,7 +18,7 @@ internal static class SqlToolsReflectorCache<T>
     public static HashSet<string> ColumnNamesHashSet => _LazyColumnNamesHashSet.Value;
     public static string TableName => _LazyTableName.Value;
     public static string TableSchema => _LazyTableSchema.Value;
-    public static TableTag TableTag => (new TableTag(TableSchema, TableName));
+    public static TableTag TableTag => new TableTag(TableSchema, TableName);
     public static HashSet<string> EncryptedProperties => _LazyEncryptedProperties.Value;
     internal static PropertyInfo? KeyVersionProperty => _LazyKeyVersionProperty.Value;
 

@@ -1,4 +1,4 @@
-﻿namespace SqlTools.SqlGenerators;
+﻿namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {

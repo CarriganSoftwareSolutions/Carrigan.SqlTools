@@ -1,7 +1,7 @@
-﻿using SqlTools.Sets;
-using SqlToolsTests.TestEntities;
+﻿using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace SqlToolsTests.SetsTests;
+namespace Carrigan.SqlTools.Tests.SetsTests;
 
 public class SetColumnsTests
 {

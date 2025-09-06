@@ -1,8 +1,10 @@
 ﻿using Carrigan.Core.Extensions;
-using SqlTools.Exceptions;
-using SqlTools.Tags;
+using Carrigan.SqlTools;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tags;
 
-namespace SqlTools.OrderByItems;
+namespace Carrigan.SqlTools.OrderByItems;
 
 public class OrderByItem<T> : IOrderByItem
 {
@@ -33,8 +35,8 @@ public class OrderByItem<T> : IOrderByItem
         if (ReferenceEquals(this, other)) return true;
         if (other is null) return false;
 
-        return this.TableTag.Equals(other.TableTag)
-            && this.ColumnTag.Equals(other.ColumnTag);
+        return TableTag.Equals(other.TableTag)
+            && ColumnTag.Equals(other.ColumnTag);
     }
 
     public override bool Equals(object? obj)

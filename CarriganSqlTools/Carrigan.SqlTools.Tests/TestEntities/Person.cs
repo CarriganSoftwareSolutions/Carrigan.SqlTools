@@ -1,6 +1,4 @@
-﻿
-
-namespace SqlToolsTests.TestEntities;
+﻿namespace Carrigan.SqlTools.Tests.TestEntities;
 
 public class Person
 {

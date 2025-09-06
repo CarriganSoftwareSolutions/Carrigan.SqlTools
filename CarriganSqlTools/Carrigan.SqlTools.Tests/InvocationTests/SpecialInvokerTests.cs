@@ -1,6 +1,8 @@
-﻿using Carrigan.SqlTools.Invocation;  // Assuming Invocator<T> is defined in this namespace
+﻿using Carrigan.SqlTools.Invocation;
+using Carrigan.SqlTools.Tests.InvocationTests;
+using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace Carrigan.SqlTools.InvocationTests;
+namespace Carrigan.SqlTools.Tests.InvocationTests;
 
 public class SpecialInvokerTests
 {

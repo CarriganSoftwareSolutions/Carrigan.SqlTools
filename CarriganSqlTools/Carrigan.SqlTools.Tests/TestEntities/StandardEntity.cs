@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.InvocationTests;
+﻿namespace Carrigan.SqlTools.Tests.TestEntities;
 
 public class StandardEntity
 {

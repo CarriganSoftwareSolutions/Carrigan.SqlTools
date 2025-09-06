@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text;
 
-namespace SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {

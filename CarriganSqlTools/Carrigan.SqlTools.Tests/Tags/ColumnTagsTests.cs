@@ -1,6 +1,6 @@
-﻿using SqlTools.Tags;
+﻿using Carrigan.SqlTools.Tags;
 
-namespace SqlToolsTests.Tags;
+namespace Carrigan.SqlTools.Tests.Tags;
 
 public class ColumnTagsTests
 {
