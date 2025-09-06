@@ -51,6 +51,23 @@ public class SqlGenerator_UpdateByIdTests
     }
 
     [Fact]
+    public void SqlUpdateString_GeneratesCorrectSql_WithTableAttribute_No_Optional_Columns_Param()
+    {
+        EntityWithTableAttribute testEntity = new()
+        {
+            Id = new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"),
+            Name = "Test Name",
+            When = "Now",
+            DateOf = new DateTime(2023, 10, 1)
+        };
+
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity);
+
+        string expectedSql = "UPDATE [Test] SET [Name] = @Name, [DateOf] = @DateOf, [When] = @When WHERE [Id] = @Id;";
+        Assert.Equal(expectedSql, query.QueryText);
+    }
+
+    [Fact]
     public void SqlUpdateString_GeneratesCorrectParameters()
     {
         EntityWithTableAttribute testEntity = new()

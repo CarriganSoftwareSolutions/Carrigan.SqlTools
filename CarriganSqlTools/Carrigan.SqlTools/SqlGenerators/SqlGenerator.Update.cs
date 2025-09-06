@@ -17,7 +17,7 @@ public partial class SqlGenerator<T>
         UpdateById(entity, new SetColumns<T>(columns));
 
 
-    public SqlQuery UpdateById(T entity, SetColumns<T>? columns)
+    public SqlQuery UpdateById(T entity, SetColumns<T>? columns = null)
     {
         IEnumerable<PropertyInfo> updateTheseProperties = (columns?.ColumnNames?.Any() ?? false)
             ? _PropertiesLessKeys.Where(property => columns.ColumnNames.Contains(property.Name))
