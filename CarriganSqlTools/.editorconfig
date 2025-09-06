@@ -1,0 +1,13 @@
+﻿[*.cs]
+
+# CS8600: Converting null literal or possible null value to non-nullable type.
+dotnet_diagnostic.CS8600.severity = silent
+
+# CS8073: The result of the expression is always the same since a value of this type is never equal to 'null'
+dotnet_diagnostic.CS8073.severity = silent
+
+# IDE0290: Use primary constructor
+csharp_style_prefer_primary_constructors = false
+
+# IDE0044: Add readonly modifier
+dotnet_style_readonly_field = false

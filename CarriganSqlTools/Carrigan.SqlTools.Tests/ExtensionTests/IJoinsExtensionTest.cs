@@ -1,0 +1,29 @@
+﻿using SqlTools.Extensions;
+using SqlTools.Joins;
+using SqlTools.Predicates;
+using SqlToolsTests.TestEntities;
+
+namespace SqlToolsTests.ExtensionTests;
+
+public class IJoinsExtensionTest
+{
+    [Fact]
+    public void IsNullOrEmpty_Null()
+    {
+        IJoins joins = null;
+        Assert.True(joins.IsNullOrEmpty());
+    }
+    [Fact]
+    public void IsNullOrEmpty_Empty()
+    {
+        IJoins joins = new Joins([]);
+        Assert.True(joins.IsNullOrEmpty());
+    }
+    [Fact]
+    public void IsNullOrEmpty_Single()
+    {
+        PredicatesBase id = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
+        ISingleJoin join = new LeftJoin<JoinLeftTable, JoinRightTable>(id);
+        _ = new Joins([join]);
+    }
+}

@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Carrigan.SqlTools</PackageId>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>
+      Carrigan.SqlTools is a lightweight library designed to simplify SQL generation for Microsoft SQL Server while maintaining flexibility and safety. Its primary purpose is to automatically generate SELECT, INSERT, UPDATE, and DELETE statements using reflection.
+
+      The library integrates with Carrigan.Core through a shared interface, which allows custom encryption logic and property-level attributes to be seamlessly applied during query generation.
+
+      In addition to its automated features, Carrigan.SqlTools also supports a more manual, object-oriented approach for building SQL. This gives developers full control over advanced scenarios such as ORDER BY, JOIN, WHERE clauses, and paginated queries, while still benefiting from strong typing and built-in protections against common mistakes.
+
+      The library also includes an invocation class that can map a Dictionary&gt;string, object?&lt; —representing a row in a SQL table—directly to an object instance. This makes it easy to work with dynamic data sources without sacrificing type safety.
+
+      Currently, Carrigan.SqlTools is focused on providing robust SQL generation specifically for SQL Server.
+
+      A companion library, Carrigan.SqlTools.SqlServer, provides a wrapper around ADO.NET to execute the generated queries, call the invoker, and handle decryption of encrypted data.
+    </Description>
+    <PackageTags>
+      sql;sqlserver;ado.net;reflection;orm;database;crud;select;insert;update;delete;
+      query-builder;object-mapper;encryption;attributes;pagination;joins;where;order-by
+    </PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Tests" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202509050042" />
+  </ItemGroup>
+
+</Project>

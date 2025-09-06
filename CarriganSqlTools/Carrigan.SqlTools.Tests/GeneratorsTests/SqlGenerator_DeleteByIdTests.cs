@@ -1,0 +1,65 @@
+using SqlTools.SqlGenerators;
+using SqlToolsTests.TestEntities;
+
+namespace SqlToolsTests.GeneratorsTests;
+
+//ignore spelling: fbaa
+public class SqlGenerator_DeleteByIdTests
+{
+    private readonly MockEncryption _mockEncryptor;
+    private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
+    private readonly SqlGenerator<CompositeKeyTable> _sqlGeneratorForCompositeKeyTable;
+
+    public SqlGenerator_DeleteByIdTests()
+    {
+        _mockEncryptor = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncryptor);
+        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncryptor);
+    }
+
+    [Fact]
+    public void SqlDeleteAllByIds_GeneratesCorrectSql_WithTableAttribute()
+    {
+        IEnumerable<EntityWithTableAttribute> entities =
+        [
+            new() {
+                Id = new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695")
+            },
+            new() {
+                Id = new Guid("41369484-fbaa-4c90-aae3-8b2199afa50f")
+            },
+            new() {
+                Id = new Guid("f98360bc-1f3d-466d-a1e7-f3a8184a7a15")
+            }
+        ];
+
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.DeleteById([.. entities]);
+
+        string expectedSql = "DELETE FROM [Test] WHERE (([Test].[Id] = @Parameter_0_R_Id) OR ([Test].[Id] = @Parameter_1_R_Id) OR ([Test].[Id] = @Parameter_2_R_Id))";
+        Assert.Equal(expectedSql, query.QueryText);
+    }
+
+
+    [Fact]
+    public void SqlDeleteById_Composite_Key()
+    {
+        CompositeKeyTable entity = new() { Id1 = 1, Id2 = 2, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
+        SqlQuery query = _sqlGeneratorForCompositeKeyTable.DeleteById(entity);
+
+        string expectedSql = $"DELETE FROM [Ck] WHERE (([Ck].[Id1] = @Parameter_Id1) AND ([Ck].[Id2] = @Parameter_Id2))";
+        Assert.Equal(expectedSql, query.QueryText);
+
+        int expectedCount = 2;
+        int actualCount = query.Parameters.Count    ;
+
+        Assert.Equal(expectedCount, actualCount);
+
+        int expectedValue = 1;
+        int actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Parameter_Id1").Single().Value;
+        Assert.Equal(expectedValue, actualValue);
+
+        expectedValue = 2;
+        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Parameter_Id2").Single().Value;
+        Assert.Equal(expectedValue, actualValue);
+    }
+}

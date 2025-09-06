@@ -1,0 +1,97 @@
+﻿using SqlTools.Joins;
+using SqlTools.Predicates;
+using SqlTools.Sets;
+using SqlTools.SqlGenerators;
+using SqlToolsTests.TestEntities;
+
+namespace SqlToolsTests.GeneratorsTests;
+
+public class SqlGenerator_UpdateJoinsAndPredicatesTests
+{
+    private readonly MockEncryption _mockEncryptor;
+    private readonly SqlGenerator<JoinLeftTable> _sqlGeneratorForJoinLeftTable;
+    private readonly SetColumns<JoinLeftTable> _leftLabelSetColumns = new("Col1", "Col2");
+    public SqlGenerator_UpdateJoinsAndPredicatesTests()
+    {
+        _mockEncryptor = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(_mockEncryptor);
+    }
+
+    [Fact]
+    public void SqlUpdate_WithInnerJoin_WithJoinsAndPredicates()
+    {
+        JoinLeftTable entity = new()
+        {
+            Col1 = "Hello",
+            Col2 = "World"
+        };
+
+        PredicatesBase joinId = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
+        PredicatesBase predicateId = new Equal(new Columns<JoinRightTable>("Id"), new Parameters("Id", 3));
+        ISingleJoin join = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new Joins([join]), predicateId);
+
+        string expectedSql = "UPDATE [Left] SET [Left].[Col1] = @ParameterSet_Col1, [Left].[Col2] = @ParameterSet_Col2 FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
+        Assert.Equal(expectedSql, query.QueryText);
+
+        int expectedCount = 3;
+        int actualCount = query.Parameters.Count;
+
+        Assert.Equal(expectedCount, actualCount);
+
+        int expectedValue = 3;
+        int actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Parameter_Id").Single().Value;
+
+        Assert.Equal(expectedValue, actualValue);
+
+        string expectedStringValue = "Hello";
+        string actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@ParameterSet_Col1").Single().Value;
+
+        Assert.Equal(expectedStringValue, actualStringValue);
+
+        expectedStringValue = "World";
+        actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@ParameterSet_Col2").Single().Value;
+
+        Assert.Equal(expectedStringValue, actualStringValue);
+    }
+
+    [Fact]
+    public void SqlUpdate_WithLeftAndInnerJoin_WithPredicates_WithTableAttribute()
+    {
+        JoinLeftTable entity = new()
+        {
+            Col1 = "Hello",
+            Col2 = "World"
+        };
+
+        PredicatesBase joinId1 = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
+        PredicatesBase joinId2 = new Equal(new Columns<JoinRightTable>("LastId"), new Columns<JoinLastTable>("Id"));
+        PredicatesBase predicateId = new Equal(new Columns<JoinLastTable>("Id"), new Parameters("Id", 3));
+        ISingleJoin join1 = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId1);
+        ISingleJoin join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new Joins(join1, join2), predicateId);
+
+        string expectedSql = "UPDATE [Left] SET [Left].[Col1] = @ParameterSet_Col1, [Left].[Col2] = @ParameterSet_Col2 FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id)";
+        Assert.Equal(expectedSql, query.QueryText);
+
+        int expectedCount = 3;
+        int actualCount = query.Parameters.Count;
+
+        Assert.Equal(expectedCount, actualCount);
+
+        int expectedValue = 3;
+        int actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Parameter_Id").Single().Value;
+
+        Assert.Equal(expectedValue, actualValue);
+
+        string expectedStringValue = "Hello";
+        string actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@ParameterSet_Col1").Single().Value;
+
+        Assert.Equal(expectedStringValue, actualStringValue);
+
+        expectedStringValue = "World";
+        actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@ParameterSet_Col2").Single().Value;
+
+        Assert.Equal(expectedStringValue, actualStringValue);
+    }
+}
