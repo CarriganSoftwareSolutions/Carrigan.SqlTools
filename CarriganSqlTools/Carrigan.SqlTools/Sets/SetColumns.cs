@@ -1,5 +1,4 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools;
 
 namespace Carrigan.SqlTools.Sets;
 

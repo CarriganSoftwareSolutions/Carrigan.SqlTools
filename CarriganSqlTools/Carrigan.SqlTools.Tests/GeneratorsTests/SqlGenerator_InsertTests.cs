@@ -1,5 +1,4 @@
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests;
 using Carrigan.SqlTools.Tests.TestEntities;
 using System.Text;
 

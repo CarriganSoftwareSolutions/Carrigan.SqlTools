@@ -1,6 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Extensions;
-using Carrigan.SqlTools.Extensions;
 using Carrigan.SqlTools.Sets;
 using System.Diagnostics.CodeAnalysis;
 

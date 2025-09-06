@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools.Predicates;
-
-namespace Carrigan.SqlTools.Predicates;
+﻿namespace Carrigan.SqlTools.Predicates;
 
 public class GreaterThanEquals : ComparisonOperators
 {

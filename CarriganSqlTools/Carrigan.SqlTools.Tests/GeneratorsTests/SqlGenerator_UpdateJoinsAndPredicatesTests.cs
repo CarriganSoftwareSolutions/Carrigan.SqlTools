@@ -2,7 +2,6 @@
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;

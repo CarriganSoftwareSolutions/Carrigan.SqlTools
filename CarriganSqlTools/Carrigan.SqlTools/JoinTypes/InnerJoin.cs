@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools;
-using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;

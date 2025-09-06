@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools.OffsetNexts;
-
-namespace Carrigan.SqlTools.OffsetNexts;
+﻿namespace Carrigan.SqlTools.OffsetNexts;
 
 public class OffsetNext
 {

@@ -1,5 +1,4 @@
 ﻿using Carrigan.Core.Attributes;
-using Carrigan.SqlTools.Tests.TestEntities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

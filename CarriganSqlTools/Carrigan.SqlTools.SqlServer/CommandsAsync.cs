@@ -1,9 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Invocation;
-using Microsoft.Data.SqlClient;
-using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;

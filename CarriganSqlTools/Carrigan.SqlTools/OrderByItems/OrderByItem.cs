@@ -1,7 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools;
 using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;

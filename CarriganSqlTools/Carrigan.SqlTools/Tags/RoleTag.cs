@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools;
-using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Exceptions;
 
 namespace Carrigan.SqlTools.Tags;
 

@@ -1,6 +1,5 @@
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;

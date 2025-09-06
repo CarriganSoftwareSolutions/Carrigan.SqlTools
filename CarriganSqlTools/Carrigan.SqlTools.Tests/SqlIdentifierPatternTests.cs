@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools;
-
-namespace Carrigan.SqlTools.Tests;
+﻿namespace Carrigan.SqlTools.Tests;
 
 public class SqlIdentifierPatternTests
 {

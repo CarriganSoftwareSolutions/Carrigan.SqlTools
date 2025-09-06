@@ -1,5 +1,4 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools;
 using Carrigan.SqlTools.Exceptions;
 using System.Reflection;
 
