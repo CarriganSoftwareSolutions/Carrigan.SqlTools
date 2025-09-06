@@ -36,6 +36,8 @@ public partial class SqlGenerator<T>
 
     public SqlGenerator(IEncryption encryption)
     {
+        //TODO: if no encrypted columns exist, we can skip the null test, and just ignore the encryption
+        //TODO: pull the encryption logic out to a separate class.
         _Encryption = encryption ?? throw new ArgumentNullException(nameof(encryption));
     }
 
