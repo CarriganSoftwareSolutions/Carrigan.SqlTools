@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.SqlServer;
 
-public static class MsSqlCommands
+public static class Commands
 {
 
     public static void TestConnectionString(string connectionString, string friendlyName)
