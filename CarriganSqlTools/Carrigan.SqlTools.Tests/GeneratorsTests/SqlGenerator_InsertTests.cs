@@ -19,11 +19,11 @@ public class SqlGenerator_InsertTests
     public SqlGenerator_InsertTests()
     {
         _mockEncryptor = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncryptor);
-        _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(_mockEncryptor);
-        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullablesTestEntity>(_mockEncryptor);
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>();
+        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>();
+        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>();
+        _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>();
+        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullablesTestEntity>();
         _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncryptor);
     }
 
@@ -367,14 +367,15 @@ public class SqlGenerator_InsertTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.InsertAutoId(entity);
 
-        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData]) VALUES (@NotSensitiveData, @SensitiveData);");
+        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData], [KeyVersion]) VALUES (@NotSensitiveData, @SensitiveData, @KeyVersion);");
 
         Assert.Equal(expectedSql, query.QueryText);
 
-        Assert.Equal(2, query.Parameters.Count);
+        Assert.Equal(3, query.Parameters.Count);
         Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
         Assert.NotEqual("Shhh...", query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
         Assert.Equal("Shhh...", _mockEncryptor.Decrypt(query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value.ToString()));
+        Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
     }
 
     [Fact]
@@ -389,12 +390,13 @@ public class SqlGenerator_InsertTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.InsertAutoId(entity);
 
-        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData]) VALUES (@NotSensitiveData, @SensitiveData);");
+        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData], [KeyVersion]) VALUES (@NotSensitiveData, @SensitiveData, @KeyVersion);");
 
         Assert.Equal(expectedSql, query.QueryText);
 
-        Assert.Equal(2, query.Parameters.Count);
+        Assert.Equal(3, query.Parameters.Count);
         Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
         Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
+        Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
     }
 }

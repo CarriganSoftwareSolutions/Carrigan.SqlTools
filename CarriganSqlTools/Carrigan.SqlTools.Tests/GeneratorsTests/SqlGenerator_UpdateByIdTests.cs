@@ -292,15 +292,16 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.UpdateById(entity, null);
 
-        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData, [SensitiveData] = @SensitiveData WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData, [SensitiveData] = @SensitiveData, [KeyVersion] = @KeyVersion WHERE [Id] = @Id;";
 
         Assert.Equal(expectedSql, query.QueryText);
 
-        Assert.Equal(3, query.Parameters.Count);
+        Assert.Equal(4, query.Parameters.Count);
         Assert.Equal(1337, query.Parameters.Where(param => param.Key == "Id").Single().Value); // Id
         Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
         Assert.NotEqual("Shhh...", query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
         Assert.Equal("Shhh...", _mockEncryptor.Decrypt(query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value.ToString()));
+        Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
     }
 
     [Fact]
@@ -315,14 +316,15 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.UpdateById(entity, null);
 
-        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData, [SensitiveData] = @SensitiveData WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData, [SensitiveData] = @SensitiveData, [KeyVersion] = @KeyVersion WHERE [Id] = @Id;";
 
         Assert.Equal(expectedSql, query.QueryText);
 
-        Assert.Equal(3, query.Parameters.Count);
+        Assert.Equal(4, query.Parameters.Count);
         Assert.Equal(1337, query.Parameters.Where(param => param.Key == "Id").Single().Value); // Id
         Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
         Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
+        Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
     }
 
     [Fact]

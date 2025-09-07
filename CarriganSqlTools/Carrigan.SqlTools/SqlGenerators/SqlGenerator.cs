@@ -20,10 +20,9 @@ public partial class SqlGenerator<T>
     private readonly IEncryption? _Encryption;
     public static TableTag TableTag => SqlToolsReflectorCache<T>.TableTag;
 
-    public SqlGenerator()
+    private void EncryptionChecks()
     {
-        _Encryption = null;
-        if(_EncryptedProperties.Count != 0)
+        if (_EncryptedProperties.Count != 0)
         {
             if (_Encryption is null)
                 throw new NullReferenceException($"No encryption key data model, {TableTag}, with encrypted properties.");
@@ -34,11 +33,18 @@ public partial class SqlGenerator<T>
         }
     }
 
+    public SqlGenerator()
+    {
+        _Encryption = null;
+        EncryptionChecks();
+    }
+
     public SqlGenerator(IEncryption encryption)
     {
-        //TODO: if no encrypted columns exist, we can skip the null test, and just ignore the encryption
         //TODO: pull the encryption logic out to a separate class.
+
         _Encryption = encryption ?? throw new ArgumentNullException(nameof(encryption));
+        EncryptionChecks();
     }
 
     private static And GetByKeyPredicates(T entity) =>

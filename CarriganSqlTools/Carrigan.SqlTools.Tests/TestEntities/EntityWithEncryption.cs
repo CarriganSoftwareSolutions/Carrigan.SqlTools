@@ -16,4 +16,6 @@ internal class EntityWithEncryption
     public string NotSensitiveData { get; set; }
     [Encrypted]
     public string? SensitiveData { get; set; }
+    [KeyVersion]
+    public int KeyVersion { get; set; }
 }

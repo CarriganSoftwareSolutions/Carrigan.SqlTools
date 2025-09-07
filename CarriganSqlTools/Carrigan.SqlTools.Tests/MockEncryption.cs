@@ -10,7 +10,7 @@ internal class MockEncryption : IEncryption
         _key = key;
     }
 
-    public int? Version => throw new NotImplementedException();
+    public int? Version => 1;
 
     public byte[] KeyBytes => throw new NotImplementedException();
 
