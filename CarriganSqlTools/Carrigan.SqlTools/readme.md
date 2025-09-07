@@ -57,10 +57,10 @@ dotnet add package Carrigan.SqlTools.SqlServer
   - [Update by Id (selected columns)](#update-by-id-selected-columns)
   - [Delete](#delete)
   - [Delete by Id (multiple keys)](#delete-by-id-multiple-keys)
-  - [Select with Joins](#select-with-joins)
+  - [Select with Joins and Order By](#select-with-joins-and-order-by)
   - [Delete with Join and Where](#delete-with-join-and-where)
-  - [Select Count (with predicates)](#select-count-with-predicates)
-  - [Update with Joins and Predicates](#update-with-joins-and-predicates)
+  - [Select Count With Where](#select-count-with-where)
+  - [Update with Joins and Where](#update-with-joins-and-where)
 - [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
@@ -79,14 +79,14 @@ You can use the `[Table]` attribute from `System.ComponentModel.DataAnnotations.
 All examples use `using` statements to keep code clean, and initialize generators **with an encryptor** (required).
 
 ```csharp
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OffsetNexts;
+using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.SqlGenerators;
 using System;
 using System.Collections.Generic;
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Predicates;
-using Carrigan.SqlTools.Joins;
-using Carrigan.SqlTools.Ordering;
-using Carrigan.SqlTools.Paging;
-using Carrigan.SqlTools.Sets;
 using System.ComponentModel.DataAnnotations;
 
 // Example data models
@@ -107,68 +107,68 @@ public class Order
     public decimal Total { get; set; }
 }
 
-// Minimal example encryptor (from the ExampleEncryptor section below or your own implementation)
-ExampleEncryptor exampleEncryptor = new ExampleEncryptor(new byte[32] {
-    1,2,3,4,5,6,7,8,9,10, 11,12,13,14,15,16,
-    17,18,19,20,21,22,23,24,25,26, 27,28,29,30,31,32
-});
 
-// Generators (encryptor is required)
-SqlGenerator<Customer> customerGenerator = new (exampleEncryptor);
-SqlGenerator<Order>    orderGenerator    = new (exampleEncryptor);
+// Generators
+SqlGenerator<Customer> customerGenerator = new ();
+SqlGenerator<Order>    orderGenerator    = new ();
 ```
 
 ### Select All Rows
 
 ```csharp
 SqlQuery query = customerGenerator.SelectAll();
-// query.QueryText → SELECT [Customer].* FROM [Customer];
+// query.QueryText → SELECT [Customer].* FROM [Customer]
 ```
 
 ### Select by Id
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
-Customer filter = new Customer { Id = 42 };
-SqlQuery query = customerGenerator.SelectById(filter);
-// ... WHERE [Customer].[Id] = @Id
+Customer entity = new() { Id = 42 };
+SqlQuery query = customerGenerator.SelectById(entity);
+// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)
 ```
 
 ### Insert
 
 ```csharp
-Customer entity = new Customer { Id = 42,  Name = "Alice", Email = "alice@example.com" };
+Customer entity = new() { Id = 42,  Name = "Hank", Email = "Hank@example.com" };
 SqlQuery query = customerGenerator.Insert(entity);
-// INSERT INTO [Customer] ([Name], [Email]) VALUES (@Name, @Email);
+// INSERT INTO [Customer] ([Id], [Name], [Email]) VALUES (@Id, @Name, @Email);
 ```
 
 ### Insert with Auto Id
 Key attribute required, and Id columns must have a default value.
 ```csharp
-Customer entity = new Customer { Name = "Alice", Email = "alice@example.com" };
+Customer entity = new() { Name = "Hank", Email = "Hank@example.com" };
 SqlQuery query = customerGenerator.InsertAutoId(entity);
-// INSERT INTO [Customer] ([Name], [Email]) VALUES (@Name, @Email);
+// DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);"
+// INSERT INTO [Customer] ([Name], [Email]) OUTPUT INSERTED.Id INTO @OutputTable VALUES (@Name, @Email);
+// SELECT InsertedId FROM @OutputTable;
 ```
 
 ### Update by Id
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
-Customer entity = new Customer { Id = 42, Name = "Alice Smith", Email = "alice.smith@example.com" };
+Customer entity = new() { Id = 42, Name = "Hank Hill", Email = "Hank.Hill@example.com" };
 SqlQuery query = customerGenerator.UpdateById(entity);
 // UPDATE [Customer] SET [Name] = @Name, [Email] = @Email WHERE [Id] = @Id;
 ```
 
 ### Update by Id (selected columns)
-Key attribute required, and composite keys are supported by specifying multiple Keys.
+Key attribute required, and composite keys are supported by specifying multiple Keys. 
+
+SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-SetColumns<Customer> columns = new SetColumns<Customer>("Name", "Email");
-Customer entity = new Customer { Id = 42, Name = "Alice Updated", Email = "alice.updated@example.com" };
-SqlQuery query = customerGenerator.UpdateByIdColumns(entity, columns);
+SetColumns<Customer> columns = new(nameof(Customer.Email));
+Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
+SqlQuery query = customerGenerator.UpdateById(entity, columns);
+// UPDATE [Customer] SET [Email] = @Email WHERE [Id] = @Id;
 ```
 
 ### Delete
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
-Customer entity = new Customer { Id = 42 };
+Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.Delete(entity);
 // DELETE FROM [Customer] WHERE [Id] = @Id;
 ```
@@ -181,49 +181,87 @@ SqlQuery query = customerGenerator.DeleteById(entities);
 // ... WHERE [Id] = @Id OR [Id] = @Id_1
 ```
 
-### Select with Joins
+### Select with Joins and Order By
+Columns<T> validates the names of the properties, and throws an error if the property isn't valid
 
+OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-// Build components explicitly (no lambdas)
-InnerJoin<Customer, Order> join = new InnerJoin<Customer, Order>("Id", "CustomerId");
-OrderBy orderBy = new OrderBy(new OrderByItem<Order>("OrderDate"));
+Columns<Customer> id = new(nameof(Customer.Id));
+Columns<Order> customerId = new(nameof(Order.CustomerId));
+Equal equals = new(id, customerId);
+InnerJoin<Customer, Order> join = new(equals);
 
-SqlQuery query = orderGenerator.Select(join, null, orderBy, null);
+OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+OrderBy orderBy = new(orderByOrderDate);
+
+SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
+
+// SELECT [Order].* FROM [Order] 
+// INNER JOIN [Order] ON 
+// ([Customer].[Id] = [Order].[CustomerId]) 
+// ORDER BY [Order].[OrderDate] ASC
 ```
 
 ### Delete with Join and Where
+Columns<T> validates the names of the properties, and throws an error if the property isn't valid
 
+ByColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-InnerJoin<Customer, Order> join = new InnerJoin<Customer, Order>("Id", "CustomerId");
-Columns<Customer> emailCol = new Columns<Customer>("Email");
-Parameters emailParam = new Parameters("Email", "spam@example.com");
-Equal emailEquals = new Equal(emailCol, emailParam);
+Columns<Customer> id = new(nameof(Customer.Id));
+Columns<Order> customerId = new(nameof(Order.CustomerId));
+Equal equals = new(id, customerId);
+InnerJoin<Order, Customer> join = new(equals);
 
-SqlQuery query = orderGenerator.Delete(join, emailEquals);
+ByColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
+
+SqlQuery query = orderGenerator.Delete(join, customerEmail);
+
+// DELETE FROM [Order] 
+// INNER JOIN [Customer] ON 
+// ([Customer].[Id] = [Order].[CustomerId]) 
+// WHERE ([Customer].[Email] = @Parameter_Email)
 ```
 
-### Select Count (with predicates)
+### Select Count With Where
+
+Columns<T> validates the names of the properties, and throws an error if the property isn't valid
 
 ```csharp
-Columns<Order> totalCol = new Columns<Order>("Total");
-Parameters minTotal = new Parameters("Total", 500m);
-GreaterThan greaterThan = new GreaterThan(totalCol, minTotal);
+Columns<Order> totalCol = new (nameof(Order.Total));
+Parameters minTotal = new ("Total", 500m);
+GreaterThan greaterThan = new (totalCol, minTotal);
 
-SqlQuery query = orderGenerator.SelectCount(predicates: greaterThan);
+SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
+
+// SELECT COUNT(*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)
 ```
 
-### Update with Joins and Predicates
+### Update with Joins and Where
+SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
+
+Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+
+ByColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
 ```csharp
-SetColumns<Order> setColumns = new SetColumns<Order>("Total");
-Order entity = new Order { Id = 10, Total = 123.45m };
+Order entity = new () { Id = 10, Total = 123.45m };
 
-InnerJoin<Customer, Order> join = new InnerJoin<Customer, Order>("Id", "CustomerId");
-Columns<Customer> nameCol = new Columns<Customer>("Name");
-Parameters emailParam = new Parameters("Email", "spam@example.com");
-Equal nameEquals = new Equal(nameCol, emailParam);
+SetColumns<Order> setColumns = new(nameof(Order.Total));
 
-SqlQuery query = orderGenerator.UpdateWithJoinsAndPredicates(entity, setColumns, join, nameEquals);
+Columns<Customer> customerId = new(nameof(Customer.Id));
+Columns<Order> orderCustomerId = new(nameof(Order.CustomerId));
+Equal customerIdsEquals = new(orderCustomerId, customerId);
+InnerJoin<Order, Customer> joinOnCustomerId = new (customerIdsEquals);
+
+ByColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+
+SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
+
+// UPDATE [Order] SET [Order].[Total] = @ParameterSet_Total 
+// FROM [Order] 
+// INNER JOIN [Customer] ON 
+// ([Order].[CustomerId] = [Customer].[Id]) 
+// WHERE ([Customer].[Email] = @Parameter_Email)
 ```
 
 ---
