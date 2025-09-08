@@ -8,6 +8,31 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
 
 ---
 
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+- [Getting Started Examples](#getting-started-examples)
+  - [Select All Rows](#select-all-rows)
+  - [Select by Id](#select-by-id)
+  - [Insert](#insert)
+  - [Insert with Auto Id](#insert-with-auto-id)
+  - [Update by Id](#update-by-id)
+  - [Update by Id (selected columns)](#update-by-id-selected-columns)
+  - [Delete](#delete)
+  - [Delete by Id (multiple keys)](#delete-by-id-multiple-keys)
+  - [Select with Joins and Order By](#select-with-joins-and-order-by)
+  - [Delete with Join and Where](#delete-with-join-and-where)
+  - [Select Count With Where](#select-count-with-where)
+  - [Update with Joins and Where](#update-with-joins-and-where)
+- [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
+  - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
+  - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
+- [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
+- [ExampleEncryptor (AesGcm-based) and IDecryptors](#exampleencryptor-aesgcm-based-and-idecryptors)
+- [License](#license)
+
+---
+
 ## Features  
 
 - **Automatic CRUD generation**  
@@ -28,6 +53,8 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
 - **Execution helpers**  
   Async commands (`CommandsAsync`) and non-async commands (`Commands`) for running queries and reading results.
 
+[Table of Contents](#table-of-contents)
+
 ---
 
 ## Installation  
@@ -44,29 +71,7 @@ For SQL Server execution helpers:
 dotnet add package Carrigan.SqlTools.SqlServer
 ```
 
----
-
-## Table of Contents for Examples
-
-- [Getting Started Examples](#getting-started-examples)
-  - [Select All Rows](#select-all-rows)
-  - [Select by Id](#select-by-id)
-  - [Insert](#insert)
-  - [Insert with Auto Id](#insert-with-auto-id)
-  - [Update by Id](#update-by-id)
-  - [Update by Id (selected columns)](#update-by-id-selected-columns)
-  - [Delete](#delete)
-  - [Delete by Id (multiple keys)](#delete-by-id-multiple-keys)
-  - [Select with Joins and Order By](#select-with-joins-and-order-by)
-  - [Delete with Join and Where](#delete-with-join-and-where)
-  - [Select Count With Where](#select-count-with-where)
-  - [Update with Joins and Where](#update-with-joins-and-where)
-- [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
-  - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
-  - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
-- [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
-- [ExampleEncryptor (AesGcm-based) and IDecryptors](#exampleencryptor-aesgcm-based-and-idecryptors)
-- [License](#license)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -113,12 +118,18 @@ SqlGenerator<Customer> customerGenerator = new ();
 SqlGenerator<Order>    orderGenerator    = new ();
 ```
 
+[Table of Contents](#table-of-contents)
+
+
 ### Select All Rows
 
 ```csharp
 SqlQuery query = customerGenerator.SelectAll();
 // query.QueryText → SELECT [Customer].* FROM [Customer]
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ### Select by Id
 Key attribute required, and composite keys are supported by specifying multiple Keys.
@@ -128,6 +139,9 @@ SqlQuery query = customerGenerator.SelectById(entity);
 // SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)
 ```
 
+[Table of Contents](#table-of-contents)
+
+
 ### Insert
 
 ```csharp
@@ -135,6 +149,9 @@ Customer entity = new() { Id = 42,  Name = "Hank", Email = "Hank@example.com" };
 SqlQuery query = customerGenerator.Insert(entity);
 // INSERT INTO [Customer] ([Id], [Name], [Email]) VALUES (@Id, @Name, @Email);
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ### Insert with Auto Id
 Key attribute required, and Id columns must have a default value.
@@ -146,6 +163,9 @@ SqlQuery query = customerGenerator.InsertAutoId(entity);
 // SELECT InsertedId FROM @OutputTable;
 ```
 
+[Table of Contents](#table-of-contents)
+
+
 ### Update by Id
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
@@ -153,6 +173,9 @@ Customer entity = new() { Id = 42, Name = "Hank Hill", Email = "Hank.Hill@exampl
 SqlQuery query = customerGenerator.UpdateById(entity);
 // UPDATE [Customer] SET [Name] = @Name, [Email] = @Email WHERE [Id] = @Id;
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ### Update by Id (selected columns)
 Key attribute required, and composite keys are supported by specifying multiple Keys. 
@@ -165,6 +188,9 @@ SqlQuery query = customerGenerator.UpdateById(entity, columns);
 // UPDATE [Customer] SET [Email] = @Email WHERE [Id] = @Id;
 ```
 
+[Table of Contents](#table-of-contents)
+
+
 ### Delete
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
@@ -173,6 +199,9 @@ SqlQuery query = customerGenerator.Delete(entity);
 // DELETE FROM [Customer] WHERE [Id] = @Id;
 ```
 
+[Table of Contents](#table-of-contents)
+
+
 ### Delete by Id (multiple keys)
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
@@ -180,6 +209,9 @@ Customer[] entities = new Customer[] { new Customer { Id = 1 }, new Customer { I
 SqlQuery query = customerGenerator.DeleteById(entities);
 // ... WHERE [Id] = @Id OR [Id] = @Id_1
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ### Select with Joins and Order By
 Columns<T> validates the names of the properties, and throws an error if the property isn't valid
@@ -202,6 +234,9 @@ SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
 // ORDER BY [Order].[OrderDate] ASC
 ```
 
+[Table of Contents](#table-of-contents)
+
+
 ### Delete with Join and Where
 Columns<T> validates the names of the properties, and throws an error if the property isn't valid
 
@@ -222,6 +257,9 @@ SqlQuery query = orderGenerator.Delete(join, customerEmail);
 // WHERE ([Customer].[Email] = @Parameter_Email)
 ```
 
+[Table of Contents](#table-of-contents)
+
+
 ### Select Count With Where
 
 Columns<T> validates the names of the properties, and throws an error if the property isn't valid
@@ -235,6 +273,9 @@ SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
 
 // SELECT COUNT(*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ### Update with Joins and Where
 SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
@@ -263,6 +304,9 @@ SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, cus
 // ([Order].[CustomerId] = [Customer].[Id]) 
 // WHERE ([Customer].[Email] = @Parameter_Email)
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ---
 
@@ -307,6 +351,9 @@ object result =
 ```
 [Example Encryptor (AesGcm-based) and IDecryptors](#exampleencryptor-aesgcm-based-and-idecryptors)
 
+[Table of Contents](#table-of-contents)
+
+
 ### Non-Async: `ExecuteNonQuery` / `ExecuteScalar` / `ExecuteReader<T>`
 
 ```csharp
@@ -325,6 +372,9 @@ object scalar = Commands.ExecuteScalar(query, transaction, connection);
 IEnumerable<Customer> customers =
     Commands.ExecuteReader<Customer>(query, transaction, connection, decryptors);
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ---
 
@@ -363,6 +413,9 @@ DbDataReader reader = command.ExecuteReader();
 reader.Close();
 connection.Close();
 ```
+
+[Table of Contents](#table-of-contents)
+
 
 ---
 
@@ -483,6 +536,9 @@ public sealed class MyDecryptors : IDecryptors
 
 > Plug `MyDecryptors` into `ExecuteReaderAsync<T>` / `ExecuteReader<T>` to transparently decrypt fields annotated in your models.
 
+[Table of Contents](#table-of-contents)
+
+
 ---
 
 ## License
@@ -491,3 +547,6 @@ Carrigan.SqlTools
 Copyright © 2025 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+
+[Table of Contents](#table-of-contents)
+
