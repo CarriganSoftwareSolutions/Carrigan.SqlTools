@@ -4,8 +4,8 @@ namespace Carrigan.SqlTools.JoinTypes;
 
 public class Joins : IJoins
 {
-    public IEnumerable<ISingleJoin> Joints { get; private set; }
-    public Joins(params IEnumerable<ISingleJoin> joins) =>
+    public IEnumerable<IJoins> Joints { get; private set; }
+    public Joins(params IEnumerable<IJoins> joins) =>
         Joints = joins;
 
     public IEnumerable<TableTag> TableTags =>

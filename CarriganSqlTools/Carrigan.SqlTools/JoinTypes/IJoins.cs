@@ -9,7 +9,7 @@ public interface IJoins
     /// <summary>
     /// An enumeration of classes that represent each single join.
     /// </summary>
-    IEnumerable<ISingleJoin> Joints { get; }
+    IEnumerable<IJoins> Joints { get; }
     public string ToSql();
 
     /// <summary>

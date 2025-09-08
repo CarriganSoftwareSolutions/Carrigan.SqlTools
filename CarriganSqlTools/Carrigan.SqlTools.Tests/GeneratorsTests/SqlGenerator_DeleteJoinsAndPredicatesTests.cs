@@ -36,7 +36,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     public void SqlDelete_InnerLeftJoin_NoPredicates_WithTableAttribute()
     {
         PredicatesBase id = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
-        ISingleJoin join = new LeftJoin<JoinLeftTable, JoinRightTable>(id);
+        IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(id);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins(join), null);
 
         string expectedSql = "DELETE FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
@@ -74,7 +74,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     {
         PredicatesBase joinId = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
         PredicatesBase predicateId = new Equal(new Columns<JoinRightTable>("Id"), new Parameters("Id", 3));
-        ISingleJoin join = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId);
+        IJoins join = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins ( [join] ), predicateId);
 
         string expectedSql = "DELETE FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
@@ -101,8 +101,8 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     {
         PredicatesBase joinId = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
         PredicatesBase predicateId = new Equal(new Columns<JoinRightTable>("Id"), new Parameters("Id", 3));
-        ISingleJoin join = new LeftJoin<JoinLeftTable, JoinRightTable>(joinId);
-        IEnumerable<ISingleJoin> joins = new List<ISingleJoin>([join]);
+        IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(joinId);
+        IEnumerable<IJoins> joins = new List<IJoins>([join]);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins(joins), predicateId);
 
         string expectedSql = "DELETE FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
@@ -130,8 +130,8 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         PredicatesBase joinId1 = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
         PredicatesBase joinId2 = new Equal(new Columns<JoinRightTable>("LastId"), new Columns<JoinLastTable>("Id"));
         PredicatesBase predicateId = new Equal(new Columns<JoinLastTable>("Id"), new Parameters("Id", 3));
-        ISingleJoin join1 = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId1);
-        ISingleJoin join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
+        IJoins join1 = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId1);
+        IJoins join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins( join1, join2 ), predicateId);
 
         string expectedSql = "DELETE FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id)";
