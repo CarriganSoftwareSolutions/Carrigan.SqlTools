@@ -1,7 +1,6 @@
-﻿using Carrigan.SqlTools.OrderByItems;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Carrigan.SqlTools.Extensions;
+namespace Carrigan.SqlTools.OrderByItems;
 
 public static class OrderByExtensions
 {

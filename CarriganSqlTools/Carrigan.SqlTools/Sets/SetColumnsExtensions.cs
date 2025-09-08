@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Extensions;
 using Carrigan.SqlTools.Sets;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Carrigan.SqlTools.Extensions;
+namespace Carrigan.SqlTools.Sets;
 
 public static class SetColumnsExtensions
 {
