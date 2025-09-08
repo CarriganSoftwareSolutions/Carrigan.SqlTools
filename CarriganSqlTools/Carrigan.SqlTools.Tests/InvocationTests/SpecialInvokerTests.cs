@@ -29,13 +29,11 @@ public class SpecialInvokerTests
             { "NullableEnumValue", DBNull.Value }
         };
     // Act: Invoke the conversion/invocation process.
-    Invoker<SpecialEntity> invocator;
     SpecialEntity entity;
     public SpecialInvokerTests()
     {
-        // Act: Invoke the conversion/invocation process.
-        invocator = new Invoker<SpecialEntity>();
-        entity = invocator.Invoke(specialInvocation);
+        // Act: Invoke the conversion/invocation process
+        entity = Invoker<SpecialEntity>.Invoke(specialInvocation);
     }
 
     [Fact]

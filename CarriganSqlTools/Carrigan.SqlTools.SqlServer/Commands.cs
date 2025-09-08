@@ -87,7 +87,6 @@ public static class Commands
     public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecryptors decryptors) where T : class?, new()
     {
         List<T> results = [];
-        Invoker<T> invocator = new();
         PropertyInfo? keyVersionProperty = ClientReflectorCache<T>.KeyVersionProperty;
         IEnumerable<PropertyInfo> encrytptedProperties = ClientReflectorCache<T>.EncryptedProperties;
         int? decryptionVersion = 1; //in later versions this will be read from a field marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
@@ -120,7 +119,7 @@ public static class Commands
                     rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
                     string columnName = dataReader.GetName(i);
                 }
-                results.Add(invocator.Invoke(rowData));
+                results.Add(Invoker<T>.Invoke(rowData));
             }
         }
         finally

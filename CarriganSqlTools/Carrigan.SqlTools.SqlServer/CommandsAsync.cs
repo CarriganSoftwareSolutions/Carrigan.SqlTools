@@ -87,7 +87,6 @@ public static class CommandsAsync
     {
         Type type = typeof(T);
         List<T> results = [];
-        Invoker<T> invocator = new();
         List<Task<T>> invocationTasks = [];
         int? decryptionVersion = 1; //in later versions this will be read from a field marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
@@ -118,7 +117,7 @@ public static class CommandsAsync
                     rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
                 }
 
-                invocationTasks.Add(Task.Run(() => invocator.Invoke(rowData)));
+                invocationTasks.Add(Task.Run(() => Invoker<T>.Invoke(rowData)));
             }
             results = [.. await Task.WhenAll(invocationTasks)];
         }

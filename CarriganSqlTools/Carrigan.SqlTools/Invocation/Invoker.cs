@@ -4,11 +4,13 @@ namespace Carrigan.SqlTools.Invocation;
 
 //IGNORE SPELLING: datetime
 
-public class Invoker<T> where T : class?, new()
+/// <summary>
+/// 
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public static class Invoker<T> where T : class?, new()
 {
-
-    public Invoker() { }
-    public T Invoke(Dictionary<string, object?> invocation)
+    public static T Invoke(Dictionary<string, object?> invocation)
     {
         if (Activator.CreateInstance(InvocationReflectorCache<T>.Type) is not T invoked)
         {
