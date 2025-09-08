@@ -5,11 +5,19 @@ namespace Carrigan.SqlTools.Invocation;
 //IGNORE SPELLING: datetime
 
 /// <summary>
-/// 
+/// Invoke a class of type <see cref="T"/> using values defined <see cref="Dictionary{string, object?}"/> 
+/// where the key represents a property in <see cref="T"/> and the value the value of that property.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public static class Invoker<T> where T : class?, new()
 {
+    /// <summary>
+    /// Invoke a class of type <see cref="T"/> using values defined <see cref="Dictionary{string, object?}"/> 
+    /// where the key represents a property in <see cref="T"/> and the value the value of that property.
+    /// </summary>
+    /// <param name="invocation">a <see cref="Dictionary{string, object?}"/>  where the key represents a property in <see cref="T"/> and the value the value of that property</param>
+    /// <returns>A instance of the type <see cref="T"/></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public static T Invoke(Dictionary<string, object?> invocation)
     {
         if (Activator.CreateInstance(InvocationReflectorCache<T>.Type) is not T invoked)
