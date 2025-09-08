@@ -218,6 +218,5 @@ public class ExamplesFromReadMeAsUnitTests
 
         Assert.Equal(123.45m, (decimal)query.Parameters.Where(param => param.Key == "@ParameterSet_Total").Single().Value);
         Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Parameter_Email").Single().Value);
-
     }
 }

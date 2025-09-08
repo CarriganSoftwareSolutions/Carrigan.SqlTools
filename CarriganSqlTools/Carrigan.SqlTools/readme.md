@@ -282,11 +282,12 @@ using Microsoft.Data.SqlClient;
 
 ### Async: `ExecuteNonQueryAsync` / `ExecuteScalarAsync` / `ExecuteReaderAsync<T>`
 
+
 ```csharp
 // Build a query (example: SelectAll)
 SqlQuery query = customerGenerator.SelectAll();
 
-SqlConnection connection = new SqlConnection("Server=.;Database=AppDb;Integrated Security=true;");
+SqlConnection connection = new SqlConnection(<your connection string>);
 DbTransaction transaction = null;
 
 // Implement IDecryptors (see ExampleEncryptor section)
@@ -304,6 +305,7 @@ int affected =
 object result =
     await CommandsAsync.ExecuteScalarAsync(query, transaction, connection);
 ```
+[Example Encryptor (AesGcm-based) and IDecryptors](#exampleencryptor-aesgcm-based-and-idecryptors)
 
 ### Non-Async: `ExecuteNonQuery` / `ExecuteScalar` / `ExecuteReader<T>`
 
@@ -369,6 +371,9 @@ connection.Close();
 Below is an example encryptor that uses an AesGcm-style API. Replace key handling with your own secure storage.
 
 ```csharp
+//THIS IS JUST A SIMPLE EXAMPLE OF A ENCRYPTION CLASS
+//I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.
+
 using System;
 using System.Text;
 using System.Security.Cryptography;
@@ -388,6 +393,11 @@ public sealed class ExampleEncryptor : IEncryption
 {
     private readonly byte[] _key;
     private const int TagSize = 16;
+
+    
+    public int? Version => 1;
+
+    public byte[] KeyBytes => _key;
 
     public ExampleEncryptor(byte[] key)
     {
@@ -445,12 +455,17 @@ public sealed class ExampleEncryptor : IEncryption
 }
 
 // Minimal IDecryptors impl mapping versions → encryptors
+
+//THIS IS JUST A SIMPLE EXAMPLE OF A ENCRYPTION CLASS
+//I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.
+
+
 public sealed class MyDecryptors : IDecryptors
 {
     private readonly System.Collections.Generic.Dictionary<int, IEncryption> _map =
         new System.Collections.Generic.Dictionary<int, IEncryption>()
         {
-            { 1, new ExampleEncryptor(new byte[32] { 1,2,3,4,5,6,7,8,9,10, 11,12,13,14,15,16, 17,18,19,20,21,22,23,24,25,26, 27,28,29,30,31,32 }) }
+            { 1, new ExampleEncryptor(RandomNumberGenerator.GetBytes(32)) }
         };
 
     public System.Collections.Generic.IEnumerable<int> Keys => _map.Keys;
@@ -460,6 +475,10 @@ public sealed class MyDecryptors : IDecryptors
         return _map.TryGetValue(version, out IEncryption enc) ? enc : null;
     }
 }
+
+
+//THIS IS JUST A SIMPLE EXAMPLE OF A ENCRYPTION CLASS
+//I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.
 ```
 
 > Plug `MyDecryptors` into `ExecuteReaderAsync<T>` / `ExecuteReader<T>` to transparently decrypt fields annotated in your models.
