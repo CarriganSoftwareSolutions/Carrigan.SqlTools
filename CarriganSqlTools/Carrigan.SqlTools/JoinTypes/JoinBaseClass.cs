@@ -13,9 +13,9 @@ public abstract class JoinBaseClass : IJoins
     /// </summary>
     public JoinBaseClass() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    
+
     /// <summary>
-    /// Derived classes should set this in the constructor.
+    /// Derived classes should set this in the constructor, or <see cref="TableTags"/> should be overwritten. 
     /// </summary>
     protected IEnumerable<TableTag> _tableTags;
 
@@ -34,7 +34,6 @@ public abstract class JoinBaseClass : IJoins
 
     /// <summary>
     /// This enumeration provides a quick way to determine what all tables are involved in the Join.
-    /// It is up to the constructor in derived class to assign the protected member _tableTags.
     /// </summary>
     public IEnumerable<TableTag> TableTags => 
         _tableTags;

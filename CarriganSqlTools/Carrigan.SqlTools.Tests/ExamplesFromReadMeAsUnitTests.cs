@@ -5,9 +5,6 @@ using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Carrigan.SqlTools.Tests;
