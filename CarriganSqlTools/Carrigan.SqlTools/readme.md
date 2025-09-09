@@ -218,20 +218,44 @@ Columns<T> validates the names of the properties, and throws an error if the pro
 
 OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
+Columns<Customer> id = new (nameof(Customer.Id));
+Columns<Order> customerId = new(nameof(Order.CustomerId));
+Equal equals = new (id, customerId);
+InnerJoin<Customer, Order> join = new(equals);
+
+OrderByItem<Order> orderByOrderDate = new (nameof(Order.OrderDate));
+
+SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
+
+// SELECT [Order].* FROM [Order] 
+// INNER JOIN [Order] ON 
+// ([Customer].[Id] = [Order].[CustomerId]) 
+// ORDER BY [Order].[OrderDate] ASC
+```
+
+[Table of Contents](#table-of-contents)
+
+
+### Select with Two Part Order By
+Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+
+OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
+```csharp
 Columns<Customer> id = new(nameof(Customer.Id));
 Columns<Order> customerId = new(nameof(Order.CustomerId));
 Equal equals = new(id, customerId);
 InnerJoin<Customer, Order> join = new(equals);
 
 OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-OrderBy orderBy = new(orderByOrderDate);
+OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id));
+OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
 
 SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
 
 // SELECT [Order].* FROM [Order] 
 // INNER JOIN [Order] ON 
 // ([Customer].[Id] = [Order].[CustomerId]) 
-// ORDER BY [Order].[OrderDate] ASC
+// ORDER BY [Customer].[Id] ASC, [Order].[OrderDate] ASC
 ```
 
 [Table of Contents](#table-of-contents)

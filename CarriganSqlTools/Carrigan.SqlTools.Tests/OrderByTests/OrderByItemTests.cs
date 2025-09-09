@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.OrderByTests;
@@ -101,6 +102,124 @@ public class OrderByItemTests
         OrderByItem<Address> key2 = new ("Street");
         Assert.True(dictionary.ContainsKey(key2));
         Assert.Equal("hello", dictionary[key2]);
+    }
+    [Fact]
+    public void WithAppend()
+    {
+        OrderByItem<Address> streetSort = new("Street");
+        OrderByItem<Address> citySort = new("City");
+
+        OrderBy returned = streetSort.WithAppend(citySort);
+
+        List<IOrderByItem> twoItems =
+            [.. returned.OrderByItemsAsEnumerable()];
+
+        //immutable
+        Assert.Equal(streetSort, new("Street"));
+        Assert.Equal(citySort, new("City"));
+
+        // not empty?
+        Assert.False(returned.IsEmpty());
+        Assert.Equal(2, twoItems.Count);
+
+        // TableTags sequence
+        List<TableTag> newTags =
+            [.. returned.TableTags];
+        Assert.Equal(2, newTags.Count());
+        Assert.Equal("[Address]", newTags[0]);
+        Assert.Equal("[Address]", newTags[1]);
+
+        // ToSql should produce ORDER BY clause
+        Assert.Equal("ORDER BY [Address].[Street] ASC, [Address].[City] ASC", returned.ToSql());
+    }
+
+    [Fact]
+    public void With_Concat()
+    {
+        OrderByItem<Address> initial = new("City", SortDirectionEnum.Ascending);
+        OrderByItem<Address> more1 = new("Street", SortDirectionEnum.Descending);
+        OrderByItem<Address> more2 = new("City", SortDirectionEnum.Descending); // same column, different direction
+
+        OrderBy order = new OrderBy(initial);
+
+        OrderBy orderWithThreeItems = initial.WithConcat(more1, more2);
+        List<IOrderByItem> oldItems =
+            [.. order.OrderByItemsAsEnumerable()];
+
+        List<IOrderByItem> threeItems =
+            [.. orderWithThreeItems.OrderByItemsAsEnumerable()];
+
+        // immutable
+        Assert.Equal(initial, new("City", SortDirectionEnum.Ascending));
+        Assert.Equal(more1, new("Street", SortDirectionEnum.Descending));
+        Assert.Equal(more2, new("City", SortDirectionEnum.Descending));
+
+
+        // Should have three items now
+        Assert.Equal(3, threeItems.Count);
+
+        // Insertion order must be preserved
+        Assert.Equal(initial.ToSql(), threeItems[0].ToSql());
+        Assert.Equal(more1.ToSql(), threeItems[1].ToSql());
+        Assert.Equal(more2.ToSql(), threeItems[2].ToSql());
+
+        // TableTags sequence
+        List<TableTag> newTags =
+            [.. orderWithThreeItems.TableTags];
+        Assert.Equal("[Address]", newTags[0]);
+        Assert.Equal("[Address]", newTags[1]);
+        Assert.Equal("[Address]", newTags[2]);
+
+        // ToSql must join all three
+        string expectedSql = string.Join(", ", oldItems.Select(i => i.ToSql()));
+        Assert.Equal($"ORDER BY {expectedSql}", order.ToSql());
+
+        // ToSql must join all three
+        expectedSql = string.Join(", ", threeItems.Select(i => i.ToSql()));
+        Assert.Equal($"ORDER BY {expectedSql}", orderWithThreeItems.ToSql());
+    }
+
+    [Fact]
+    public void Contains_ReturnsTrue_ForExistingItemReference()
+    {
+        OrderByItem<Address> item = new("City");
+        Assert.True(item.Contains(item));
+    }
+
+    [Fact]
+    public void Contains_ReturnsTrue_ForDifferentInstanceWithSameTableAndColumn()
+    {
+        OrderByItem<Address> cityDesc = new("City", SortDirectionEnum.Descending);
+
+        // Different instance but same TableTag + ColumnTag
+        OrderByItem<Address> cityAsc = new("City", SortDirectionEnum.Ascending);
+
+        Assert.True(cityDesc.Contains(cityAsc));
+    }
+
+    [Fact]
+    public void Contains_ReturnsFalse_ForDifferentColumnOrTable()
+    {
+        OrderByItem<Address> streetItem = new("Street");
+        // Different column
+        OrderByItem<Address> cityItem = new("City"
+            
+            );
+        Assert.False(streetItem.Contains(cityItem));
+    }
+
+    [Fact]
+    public void IsEmptyFalse()
+    {
+        OrderByItem<Address> streetItem = new("Street");
+        Assert.False(streetItem.IsEmpty());
+    }
+
+    [Fact]
+    public void Empty()
+    {
+        //There is currently no way to test IsEmpty is true, as that should always generate an exception.
+        Assert.Throws<SqlIdentifierException>(() => { OrderByItem<Address> streetItem = new(string.Empty); });
     }
 }
 

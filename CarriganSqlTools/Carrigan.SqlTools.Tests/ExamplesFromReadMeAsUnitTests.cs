@@ -149,11 +149,32 @@ public class ExamplesFromReadMeAsUnitTests
         InnerJoin<Customer, Order> join = new(equals);
 
         OrderByItem<Order> orderByOrderDate = new (nameof(Order.OrderDate));
-        OrderBy orderBy = new (orderByOrderDate);
+
+        SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Empty(query.Parameters);
+    }
+
+    [Fact]
+    public void SelectWithTwoPartOrderBy()
+    {
+        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
+        Columns<Customer> id = new(nameof(Customer.Id));
+        Columns<Order> customerId = new(nameof(Order.CustomerId));
+        Equal equals = new(id, customerId);
+        InnerJoin<Customer, Order> join = new(equals);
+
+        OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+        OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id));
+        OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
 
         SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
+        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Customer].[Id] ASC, [Order].[OrderDate] ASC", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }
 
@@ -172,6 +193,7 @@ public class ExamplesFromReadMeAsUnitTests
         SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
         Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
         Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Parameter_Email").Single().Value);
     }
@@ -187,6 +209,7 @@ public class ExamplesFromReadMeAsUnitTests
         SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
 
         Assert.Equal("SELECT COUNT(*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
         Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
     }

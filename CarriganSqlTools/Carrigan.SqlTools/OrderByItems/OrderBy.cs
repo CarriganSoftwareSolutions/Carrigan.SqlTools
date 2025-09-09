@@ -1,9 +1,10 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Tags;
+using System.Linq;
 
 namespace Carrigan.SqlTools.OrderByItems;
 
-public class OrderBy
+public class OrderBy: IOrderByClause
 {
     public static OrderBy Empty => 
         new();
@@ -11,12 +12,6 @@ public class OrderBy
     public OrderBy(params IEnumerable<IOrderByItem> orderByItems)
     {
         _orderByItems = orderByItems;
-    }
-
-    public OrderBy Add(params IEnumerable<IOrderByItem> orderByItems)
-    {
-        _orderByItems = _orderByItems.Concat(orderByItems);
-        return this;
     }
 
     public bool Contains(IOrderByItem orderByItem) =>
@@ -36,4 +31,12 @@ public class OrderBy
 
     public virtual bool IsEmpty() =>
         OrderByItemsAsEnumerable().IsNullOrEmpty();
+
+    public OrderBy WithAppend(IOrderByItem orderByItem) =>
+        new (_orderByItems.Append(orderByItem));
+
+    public OrderBy WithConcat(params IEnumerable<IOrderByItem> orderByItems) =>
+        new (_orderByItems.Concat(orderByItems));
+
+    public OrderBy AsOrderBy() => this;
 }

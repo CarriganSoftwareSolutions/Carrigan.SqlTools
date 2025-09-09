@@ -15,7 +15,7 @@ public partial class SqlGenerator<T>
 {
     public SqlQuery SelectAll() =>
         Select(null, null, null, null);
-    public SqlQuery SelectAll(OrderBy orderBy) =>
+    public SqlQuery SelectAll(IOrderByClause orderBy) =>
         Select(null, null, orderBy, null);
 
     /// <summary>
@@ -27,7 +27,7 @@ public partial class SqlGenerator<T>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     /// <param name="orderBy"></param>
-    public SqlQuery Select(IJoins? joins, PredicatesBase? predicates, OrderBy? orderBy, OffsetNext? offsetNext)
+    public SqlQuery Select(IJoins? joins, PredicatesBase? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(TableTag).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. (predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? [])];
@@ -35,7 +35,6 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
         StringBuilder queryBuilder = new($"SELECT {TableTag}.* FROM {TableTag}");
-        string oderBySql = orderBy?.ToSql() ?? string.Empty;
 
         if (invalidPredicateTags.Any())
         {
@@ -49,9 +48,9 @@ public partial class SqlGenerator<T>
         if (offsetNext is not null)
         {
             //add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server that has unexpected behavior if the order by values are not unique
-            orderBy ??= new();
-            IEnumerable<OrderByItem<T>> oderItems = [.. _Key.Select(key => new OrderByItem<T>(key.Name, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
-            orderBy.Add(oderItems);
+            orderBy ??= new OrderBy();
+            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. _Key.Select(key => new OrderByItem<T>(key.Name, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
+            orderBy = orderBy.WithConcat(oderByKeyItems);
         }
 
         if (orderBy.IsNullOrEmpty() && offsetNext is not null)
@@ -69,7 +68,7 @@ public partial class SqlGenerator<T>
         }
         if(orderBy.IsNotNullOrEmpty())
         {
-            queryBuilder.Append($" {orderBy.ToSql()}");
+            queryBuilder.Append($" {orderBy.AsOrderBy().ToSql()}");
         }
         if(offsetNext is not null)
         {

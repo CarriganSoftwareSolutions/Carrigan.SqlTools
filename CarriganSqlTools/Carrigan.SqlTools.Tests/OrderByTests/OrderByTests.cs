@@ -10,13 +10,14 @@ public class OrderByTests
     public void OrderByTests_Constructor()
     {
         OrderByItem<Address> orderByItem = new("City", SortDirectionEnum.Ascending);
-        OrderBy orderBy = new(orderByItem);
+        OrderBy orderBy = new OrderBy(orderByItem);
 
 
         Assert.Single(orderBy.TableTags);
         Assert.Equal("[Address]", orderBy.TableTags.Single());
         Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql());
     }
+
     [Fact]
     public void OrderByTests_Constructor_With_Default_Ascending()
     {
@@ -34,7 +35,7 @@ public class OrderByTests
     {
         OrderByItem<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
         OrderByItem<Address> orderByItem2 = new("Street", SortDirectionEnum.Descending);
-        OrderBy orderBy = new(orderByItem1, orderByItem2);
+        IOrderByClause orderBy = new OrderBy(orderByItem1, orderByItem2);
 
 
         Assert.Equal(2, orderBy.TableTags.Count());
@@ -65,7 +66,7 @@ public class OrderByTests
         OrderByItem<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
         OrderByItem<ColumnTable> orderByItem2 = new("D000descruct0", SortDirectionEnum.Descending);
         OrderByItem<BooleanColumnTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
-        OrderBy orderBy = new(orderByItem1, orderByItem2, orderByItem3);
+        IOrderByClause orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
 
 
         Assert.Equal(3, orderBy.TableTags.Count());
@@ -75,29 +76,31 @@ public class OrderByTests
         Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000descruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql());
     }
     [Fact]
-    public void Add_SingleItem_ToEmptyOrderBy_BehavesCorrectly()
+    public void WithAppend()
     {
-        OrderBy order = new();                            // initially empty
+        IOrderByClause order = new OrderBy();                            // initially empty
         OrderByItem<Address> item = new("Street");
 
-        OrderBy returned = order.Add(item);
+        IOrderByClause returned = order.WithAppend(item);
 
         // Add should be chain-able (same instance)
-        Assert.Same(order, returned);
+        Assert.NotSame(order, returned);
 
-        // Now it should no longer be empty
-        Assert.False(order.IsEmpty());
+        // empty?
+        Assert.True(order.IsEmpty());
+        Assert.False(returned.IsEmpty());
 
         // TableTags should reflect the added item
-        Assert.Single(order.TableTags);
-        Assert.Equal("[Address]", order.TableTags.Single());
+        Assert.Empty(order.TableTags);
+        Assert.Single(returned.TableTags);
+        Assert.Equal("[Address]", returned.TableTags.Single());
 
         // ToSql should produce ORDER BY clause
-        Assert.Equal("ORDER BY [Address].[Street] ASC", order.ToSql());
+        Assert.Equal("ORDER BY [Address].[Street] ASC", returned.ToSql());
     }
 
     [Fact]
-    public void Add_MultipleItems_ToExistingOrderBy_AppendsThemInOrder()
+    public void WithConcat()
     {
         OrderByItem<Address> initial = new("City", SortDirectionEnum.Ascending);
         OrderByItem<Address> more1 = new("Street", SortDirectionEnum.Descending);
@@ -105,28 +108,43 @@ public class OrderByTests
 
         OrderBy order = new(initial);
 
-        order.Add(more1, more2);
+        OrderBy newOrder = order.WithConcat(more1, more2);
+
+        // Should have one items now
+        List<IOrderByItem> oldItems =
+            [.. order.OrderByItemsAsEnumerable()];
+        Assert.Single(oldItems);
 
         // Should have three items now
-        List<IOrderByItem> items =
-            [.. order.OrderByItemsAsEnumerable()];
-        Assert.Equal(3, items.Count);
+        List<IOrderByItem> newItems =
+            [.. newOrder.OrderByItemsAsEnumerable()];
+        Assert.Equal(3, newItems.Count);
 
         // Insertion order must be preserved
-        Assert.Equal(initial.ToSql(), items[0].ToSql());
-        Assert.Equal(more1.ToSql(), items[1].ToSql());
-        Assert.Equal(more2.ToSql(), items[2].ToSql());
+        Assert.Equal(initial.ToSql(), oldItems[0].ToSql());
+        Assert.Equal(initial.ToSql(), newItems[0].ToSql());
+        Assert.Equal(more1.ToSql(), newItems[1].ToSql());
+        Assert.Equal(more2.ToSql(), newItems[2].ToSql());
 
         // TableTags sequence likewise
-        List<TableTag> tags =
+        List<TableTag> oldTags =
             [.. order.TableTags];
-        Assert.Equal("[Address]", tags[0]);
-        Assert.Equal("[Address]", tags[1]);
-        Assert.Equal("[Address]", tags[2]);
+        Assert.Equal("[Address]", oldTags[0]);
+
+        // TableTags sequence likewise
+        List<TableTag> newTags =
+            [.. newOrder.TableTags];
+        Assert.Equal("[Address]", newTags[0]);
+        Assert.Equal("[Address]", newTags[1]);
+        Assert.Equal("[Address]", newTags[2]);
 
         // ToSql must join all three
-        string expectedSql = string.Join(", ", items.Select(i => i.ToSql()));
+        string expectedSql = string.Join(", ", oldItems.Select(i => i.ToSql()));
         Assert.Equal($"ORDER BY {expectedSql}", order.ToSql());
+
+        // ToSql must join all three
+        expectedSql = string.Join(", ", newItems.Select(i => i.ToSql()));
+        Assert.Equal($"ORDER BY {expectedSql}", newOrder.ToSql());
     }
 
     [Fact]
@@ -142,7 +160,7 @@ public class OrderByTests
     public void Contains_ReturnsTrue_ForDifferentInstanceWithSameTableAndColumn()
     {
         OrderByItem<Address> original = new("City", SortDirectionEnum.Descending);
-        OrderBy order = new(original);
+        IOrderByClause order = new OrderBy(original);
 
         // Different instance but same TableTag + ColumnTag
         OrderByItem<Address> lookup = new("City", SortDirectionEnum.Ascending);
@@ -154,7 +172,7 @@ public class OrderByTests
     public void Contains_ReturnsFalse_ForDifferentColumnOrTable()
     {
         OrderByItem<Address> streetItem = new("Street");
-        OrderBy order = new(streetItem);
+        IOrderByClause order = new OrderBy(streetItem);
 
         // Different column
         OrderByItem<Address> notPresent = new("City");
