@@ -5,18 +5,14 @@ public class OffsetNext
     public uint Offset { get; protected set; }
     public uint Next { get; protected set; }
 
+    protected OffsetNext()
+    {
+    }
+
     public OffsetNext(uint offset, uint next)
     {
         Offset = offset;
         Next = next;
-    }
-
-
-
-    public OffsetNext(DefinePage pageDefinition)
-    {
-        Next = pageDefinition.Next;
-        Offset = pageDefinition.Offset;
     }
 
     public string ToSql()

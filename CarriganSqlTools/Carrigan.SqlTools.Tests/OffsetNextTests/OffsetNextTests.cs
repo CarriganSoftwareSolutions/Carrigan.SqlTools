@@ -35,18 +35,11 @@ public class OffsetNextTests
         //   Offset = (4 - 1) * 25 = 75, and Next = 25.
         uint pageNumber = 4;
         uint pageSize = 25;
-        DefinePage definePage = new(pageNumber, pageSize);
+        OffsetNext offsetNext = new DefinePage(pageNumber, pageSize);
 
-
-        // Using the internal conversion constructor from DefinePage.
-        OffsetNext offsetNext = new(definePage);
         // Also verify the SQL string generated.
         string expectedSql = $"OFFSET {75} ROWS FETCH NEXT {25} ROWS ONLY";
 
-
-        // Assert the properties match those of the DefinePage instance.
-        Assert.Equal(definePage.Offset, offsetNext.Offset);
-        Assert.Equal(definePage.Next, offsetNext.Next);
         Assert.Equal(expectedSql, offsetNext.ToSql());
     }
 }

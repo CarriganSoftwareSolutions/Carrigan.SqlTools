@@ -1,9 +1,7 @@
 ﻿namespace Carrigan.SqlTools.OffsetNexts;
 
-public class DefinePage
+public class DefinePage : OffsetNext
 {
-    public uint Offset { get; private set; }
-    public uint Next { get; private set; }
     public  DefinePage(uint pageNumber, uint pageSize)
     {
         if (pageNumber <= 0 || pageSize <= 0)
