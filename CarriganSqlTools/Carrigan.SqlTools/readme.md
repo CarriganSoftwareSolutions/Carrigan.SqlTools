@@ -21,6 +21,7 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
   - [Delete](#delete)
   - [Delete by Id (multiple keys)](#delete-by-id-multiple-keys)
   - [Select with Joins and Order By](#select-with-joins-and-order-by)
+  - [Select with Two Part Order By](#select-with-two-part-order-by)
   - [Delete with Join and Where](#delete-with-join-and-where)
   - [Select Count With Where](#select-count-with-where)
   - [Update with Joins and Where](#update-with-joins-and-where)
