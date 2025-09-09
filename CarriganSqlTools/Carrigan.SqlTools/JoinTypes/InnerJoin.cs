@@ -3,11 +3,19 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
+/// <summary>
+/// This class represents an SQL Inner Join
+/// </summary>
 /// <typeparam name="T">A data model representing the main table, left table or base table. This is the table you are selecting from, updating or deleting.</typeparam>
 /// <typeparam name="J">A data model representing the right table or joined table. This is the table being joined to the main table.</typeparam>
 public class InnerJoin<T, J> : JoinBaseClass
 {
     private readonly string _sql;
+    /// <summary>
+    /// Constructor for the inner join class.
+    /// </summary>
+    /// <param name="predicate">Represents the "on" part of the join clause.</param>
+    /// <exception cref="SqlIdentifierException"></exception>
     public InnerJoin(Predicates.PredicatesBase predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.TableTag;
@@ -25,6 +33,10 @@ public class InnerJoin<T, J> : JoinBaseClass
         _tableTags = [leftTableTag, rightTableTag];
     }
 
+    /// <summary>
+    /// Convert the object to a SQL string.
+    /// </summary>
+    /// <returns>An SQL string for the inner join.</returns>
     public override string ToSql() =>
         _sql;
 }

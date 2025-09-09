@@ -7,7 +7,13 @@ namespace Carrigan.SqlTools.JoinTypes;
 public interface IJoins
 {
     /// <summary>
-    /// An enumeration of classes that represent each single join.
+    /// An enumeration of classes that each represent single join.
+    /// 
+    /// Admittedly this is a terrible name, but the name I wanted, Joins, couldn't be used, 
+    /// because then there has to be a Joins.Joins, which causes a compiler error.
+    /// In the highly unlikely chance anyone ever takes any interest in this project, I want to state for the record,
+    /// this was never intended to be reference to recreational substances. I was thinking more like joins of a frame.
+    /// Get your minds of out of the gutter.
     /// </summary>
     IEnumerable<IJoins> Joints { get; }
     public string ToSql();
