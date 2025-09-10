@@ -2,6 +2,16 @@
 
 namespace Carrigan.SqlTools.Tags;
 
+/// <summary>
+/// This class represents the Role "Tag", or identifier. 
+/// Aside from various comparison and equality interfaces, this class is locked down to internal.
+/// It was included to provide some role abilities, generating Roles in a database I needed for another project. 
+/// However, due to various issues with the hosting environment, this feature was rolled back, and this is mostly vestigial code.
+/// I don't think it currently does anything useful. 
+/// Don't look in the commit history for the rest of the code, as it predates this project being broken off into a new repository.
+/// I may at some point in the future revisit that functionality... or not.
+/// </summary>
+[Obsolete("This codes original purpose is no longer functional.")]
 public class RoleTag : IComparable<RoleTag>, IEquatable<RoleTag>, IEqualityComparer<RoleTag>
 {
 

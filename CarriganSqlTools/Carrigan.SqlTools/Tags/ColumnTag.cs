@@ -2,6 +2,11 @@
 
 namespace Carrigan.SqlTools.Tags;
 
+/// <summary>
+/// This class represents the Column "Tag", or identifier. IE [Schema].[Table].[Column]
+/// [Schema] is only included if you define the schema of the table.
+/// Aside from various comparison and equality interfaces, this class is locked down to internal.
+/// </summary>
 public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
 {
     private string _columnTag;

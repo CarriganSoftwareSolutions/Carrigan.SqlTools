@@ -4,6 +4,11 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
+/// <summary>
+/// This class represents the Table "Tag", or identifier. IE [Schema].[Table]
+/// [Schema] is only included if you define the schema of the table.
+/// Aside from various comparison and equality interfaces, this class is locked down to internal.
+/// </summary>
 public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityComparer<TableTag>
 {
     private string _tableTag;
