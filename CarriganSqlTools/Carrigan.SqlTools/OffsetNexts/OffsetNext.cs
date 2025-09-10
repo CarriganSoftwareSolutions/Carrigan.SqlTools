@@ -2,7 +2,26 @@
 
 /// <summary>
 /// This class represents the offset and page feature in SQL Server.  Used together this can define a page of data records.
+/// Note: Using this option adds an additional order by criteria for the key fields of the table being queried.
+/// This is added to the end of the Order By clause, so as not to affect the order.
+/// This is done to ensure a consistent result, due to eccentricities of off set and next in SQL Server/
 /// </summary>
+/// <example>
+/// OffsetNext offsetNext = new(50, 25);
+/// SqlQuery query = customerGenerator.Select(null, null, null, offsetNext);
+/// 
+/// // SELECT [Customer].* FROM [Customer] 
+/// // ORDER BY [Customer].[Id] ASC 
+/// // OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
+/// 
+/// OffsetNext offsetNext = new(50, 25);
+/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+/// SqlQuery query = customerGenerator.Select(null, null, orderBy, offsetNext);
+/// 
+/// // SELECT [Customer].* FROM [Customer] 
+/// // ORDER BY [Customer].[Name] ASC, [Customer].[Id] 
+/// // ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
+/// </example>
 public class OffsetNext
 {
     /// <summary>
