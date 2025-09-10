@@ -11,10 +11,15 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// It also implements the <see cref="IOrderByClause"/> to reduce the amount of code needed to create a single column order by.
 /// </summary>
 /// <example>
-/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+/// <code language="csharp"><![CDATA[
+/// OrderByItem&lt;Customer&gt; orderBy = new(nameof(Customer.Name));
 /// SqlQuery query = customerGenerator.Select(null, null, orderBy, null);
-/// // SELECT [Customer].* FROM [Customer] 
-/// // ORDER BY [Customer].[Name] ASC
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] 
+/// ORDER BY [Customer].[Name] ASC
+/// ]]></code>
 /// </example>
 public class OrderByItem<T> : IOrderByItem, IOrderByClause
 {

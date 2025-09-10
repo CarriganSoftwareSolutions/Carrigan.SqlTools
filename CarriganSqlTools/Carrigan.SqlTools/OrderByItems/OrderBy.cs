@@ -9,13 +9,17 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// Concrete implementation of the <see cref="IOrderByClause"/> for a multiple column Oder By Clause.
 /// </summary>
 /// <example>
-/// OrderByItem<Customer> orderBy1 = new(nameof(Customer.Name));
-/// OrderByItem<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
+/// <code language="csharp"><![CDATA[
+/// OrderByItem&lt;Customer&gt; orderBy1 = new(nameof(Customer.Name));
+/// OrderByItem&lt;Customer&gt; orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
 /// OrderBy orderBy = new(orderBy1, orderBy2);
 /// SqlQuery query = customerGenerator.Select(null, null, orderBy, null);
-/// 
-/// // SELECT [Customer].* FROM [Customer] 
-/// // ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] 
+/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
+/// ]]></code>
 /// </example>
 public class OrderBy: IOrderByClause
 {

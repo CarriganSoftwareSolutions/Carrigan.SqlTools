@@ -7,20 +7,16 @@
 /// This is done to ensure a consistent result, due to eccentricities of off set and next in SQL Server/
 /// </summary>
 /// <example>
+/// <code language="csharp"><![CDATA[
 /// OffsetNext offsetNext = new(50, 25);
 /// SqlQuery query = customerGenerator.Select(null, null, null, offsetNext);
-/// 
-/// // SELECT [Customer].* FROM [Customer] 
-/// // ORDER BY [Customer].[Id] ASC 
-/// // OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
-/// 
-/// OffsetNext offsetNext = new(50, 25);
-/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, orderBy, offsetNext);
-/// 
-/// // SELECT [Customer].* FROM [Customer] 
-/// // ORDER BY [Customer].[Name] ASC, [Customer].[Id] 
-/// // ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] 
+/// ORDER BY [Customer].[Id] ASC 
+/// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
+/// ]]></code>
 /// </example>
 public class OffsetNext
 {

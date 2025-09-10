@@ -9,6 +9,7 @@ namespace Carrigan.SqlTools.OffsetNexts;
 /// The page number and page size are used to calculate the offset and next values in a query needed to result in a given page.
 /// </summary>
 /// <example>
+/// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
 /// SqlQuery query = customerGenerator.Select(null, null, null, definePage);
 /// 
@@ -17,12 +18,15 @@ namespace Carrigan.SqlTools.OffsetNexts;
 /// // OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY
 /// 
 /// DefinePage definePage = new(2, 25);
-/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+/// OrderByItem&lt;Customer&gt; orderBy = new(nameof(Customer.Name));
 /// SqlQuery query = customerGenerator.Select(null, null, orderBy, definePage);
-/// 
-/// // SELECT [Customer].* FROM [Customer] 
-/// // ORDER BY [Customer].[Name] ASC, [Customer].[Id] 
-/// // ASC OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] 
+/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] 
+/// ASC OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY
+/// ]]></code>
 /// </example>
 public class DefinePage : OffsetNext
 {
