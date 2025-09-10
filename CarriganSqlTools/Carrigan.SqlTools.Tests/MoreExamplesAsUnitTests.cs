@@ -88,6 +88,9 @@ public class MoreExamplesAsUnitTests
         Assert.Empty(query.Parameters);
     }
 
+    #endregion
+
+
     [Fact]
     public void SelectWithDefinePage()
     {
@@ -157,5 +160,4 @@ public class MoreExamplesAsUnitTests
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }
-    #endregion
 }

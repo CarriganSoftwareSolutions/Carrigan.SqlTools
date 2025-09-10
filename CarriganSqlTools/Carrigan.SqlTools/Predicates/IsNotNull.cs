@@ -1,16 +1,31 @@
 ﻿namespace Carrigan.SqlTools.Predicates;
 
+/// <summary>
+/// Predicates control the boolean logic for join and where clauses.
+/// This class represents SQL's logical IS NOT NULL operator.
+/// </summary>
 public class IsNotNull : PredicatesBase
 {
     private PredicatesBase _someValue;
+
+    /// <summary>
+    /// This is the constructor for the classes that represents SQL's IS NOT NULL operator
+    /// </summary>
+    /// <param name="someValue">should represent something that may or may not be a null value in SQL</param>
     public IsNotNull(PredicatesBase someValue)
     {
         _someValue = someValue;
     }
 
+    /// <summary>
+    /// Recursively get all the parameters associated with the logic.
+    /// </summary>
     internal override IEnumerable<Parameters> Parameter =>
        _someValue.Parameter;
 
+    /// <summary>
+    ///  Recursively get all the columns associated with the logic.
+    /// </summary>
     internal override IEnumerable<IColumnValue> Column =>
        _someValue.Column;
 
