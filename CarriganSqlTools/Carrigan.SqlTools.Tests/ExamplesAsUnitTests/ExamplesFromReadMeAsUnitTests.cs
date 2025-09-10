@@ -7,7 +7,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 using System.Text;
 
-namespace Carrigan.SqlTools.Tests;
+namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
 public class ExamplesFromReadMeAsUnitTests
 {
