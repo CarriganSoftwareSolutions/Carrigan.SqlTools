@@ -146,9 +146,16 @@ SqlQuery query = customerGenerator.SelectById(entity);
 ### Insert
 
 ```csharp
-Customer entity = new() { Id = 42,  Name = "Hank", Email = "Hank@example.com" };
+Customer entity = new() 
+{   
+    Id = 42, Name = "Hank", 
+    Email = "Hank@example.com", 
+    Phone = "+1(555)555-5555" 
+};
 SqlQuery query = customerGenerator.Insert(entity);
-// INSERT INTO [Customer] ([Id], [Name], [Email]) VALUES (@Id, @Name, @Email);
+
+// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) 
+// VALUES (@Id, @Name, @Email, @Phone);
 ```
 
 [Table of Contents](#table-of-contents)
@@ -157,10 +164,18 @@ SqlQuery query = customerGenerator.Insert(entity);
 ### Insert with Auto Id
 Key attribute required, and Id columns must have a default value.
 ```csharp
-Customer entity = new() { Name = "Hank", Email = "Hank@example.com" };
+Customer entity = new() 
+{ 
+    Name = "Hank", 
+    Email = "Hank@example.com",
+    Phone= "+1(555)555-5555" 
+};
 SqlQuery query = customerGenerator.InsertAutoId(entity);
-// DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);"
-// INSERT INTO [Customer] ([Name], [Email]) OUTPUT INSERTED.Id INTO @OutputTable VALUES (@Name, @Email);
+
+// DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);
+// INSERT INTO [Customer] ([Name], [Email], [Phone]) 
+// OUTPUT INSERTED.Id INTO @OutputTable 
+// VALUES (@Name, @Email, @Phone);
 // SELECT InsertedId FROM @OutputTable;
 ```
 
@@ -170,9 +185,18 @@ SqlQuery query = customerGenerator.InsertAutoId(entity);
 ### Update by Id
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
-Customer entity = new() { Id = 42, Name = "Hank Hill", Email = "Hank.Hill@example.com" };
+Customer entity = new() 
+{ 
+    Id = 42, 
+    Name = "Hank Hill", 
+    Email = "Hank.Hill@example.com",
+    Phone = "+1(555)555-5555"
+};
 SqlQuery query = customerGenerator.UpdateById(entity);
-// UPDATE [Customer] SET [Name] = @Name, [Email] = @Email WHERE [Id] = @Id;
+
+// UPDATE [Customer] 
+// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone
+// WHERE [Id] = @Id;
 ```
 
 [Table of Contents](#table-of-contents)
