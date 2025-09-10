@@ -114,8 +114,8 @@ public class MoreExamplesAsUnitTests
     [Fact]
     public void SelectWithOffsetNext()
     {
-        OffsetNext definePage = new(50, 25);
-        SqlQuery query = customerGenerator.Select(null, null, null, definePage);
+        OffsetNext offsetNext = new(50, 25);
+        SqlQuery query = customerGenerator.Select(null, null, null, offsetNext);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -125,11 +125,35 @@ public class MoreExamplesAsUnitTests
     [Fact]
     public void SelectWithOffsetNextPageWithOrderBy()
     {
-        OffsetNext definePage = new(50, 25);
+        OffsetNext offsetNext = new(50, 25);
         OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
-        SqlQuery query = customerGenerator.Select(null, null, orderBy, definePage);
+        SqlQuery query = customerGenerator.Select(null, null, orderBy, offsetNext);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Empty(query.Parameters);
+    }
+
+    [Fact]
+    public void SelectWithWithOrderByItem()
+    { 
+        OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+        SqlQuery query = customerGenerator.Select(null, null, orderBy, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Empty(query.Parameters);
+    }
+
+    [Fact]
+    public void SelectWithWithTwoOrderByItems()
+    {
+        OrderByItem<Customer> orderBy1 = new(nameof(Customer.Name));
+        OrderByItem<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
+        OrderBy orderBy = new(orderBy1, orderBy2);
+        SqlQuery query = customerGenerator.Select(null, null, orderBy, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }
