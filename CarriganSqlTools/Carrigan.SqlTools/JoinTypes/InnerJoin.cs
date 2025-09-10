@@ -8,19 +8,22 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </summary>
 /// <typeparam name="T">A data model representing the main table, left table or base table. This is the table you are selecting from, updating or deleting.</typeparam>
 /// <typeparam name="J">A data model representing the right table or joined table. This is the table being joined to the main table.</typeparam>
-/// <example>
-/// //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-///         
-/// Columns<Customer> id = new(nameof(Customer.Id));
-/// Columns<Order> customerId = new(nameof(Order.CustomerId));
+/// /// <example>
+/// <para>Note: Columns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <code language="csharp"><![CDATA[
+/// Columns&lt;Customer&gt; id = new(nameof(Customer.Id));
+/// Columns&lt;Order&gt; customerId = new(nameof(Order.CustomerId));
 /// Equal equals = new(id, customerId);
-/// InnerJoin<Customer, Order> join = new(equals);
+/// InnerJoin&lt;Customer, Order&gt; join = new(equals);
 ///
 /// SqlQuery query = customerGenerator.Select(join, null, null, null);
-/// 
-/// // SELECT [Customer].* FROM [Customer] 
-/// // INNER JOIN [Order]  ON 
-/// // ([Customer].[Id] = [Order].[CustomerId])
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] 
+/// INNER JOIN [Order]  ON 
+/// ([Customer].[Id] = [Order].[CustomerId])
+/// ]]></code>
 /// </example>
 public class InnerJoin<T, J> : JoinBaseClass
 {
