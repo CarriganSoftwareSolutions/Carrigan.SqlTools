@@ -248,7 +248,7 @@ Equal equals = new(id, customerId);
 InnerJoin<Customer, Order> join = new(equals);
 
 OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id));
+OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
 OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
 
 SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
@@ -256,7 +256,7 @@ SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
 // SELECT [Order].* FROM [Order] 
 // INNER JOIN [Order] ON 
 // ([Customer].[Id] = [Order].[CustomerId]) 
-// ORDER BY [Customer].[Id] ASC, [Order].[OrderDate] ASC
+// ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC
 ```
 
 [Table of Contents](#table-of-contents)

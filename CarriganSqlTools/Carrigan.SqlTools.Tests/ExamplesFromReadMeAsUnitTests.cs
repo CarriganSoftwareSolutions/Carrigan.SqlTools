@@ -165,12 +165,12 @@ public class ExamplesFromReadMeAsUnitTests
         InnerJoin<Customer, Order> join = new(equals);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-        OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id));
+        OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
         OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
 
         SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Customer].[Id] ASC, [Order].[OrderDate] ASC", query.QueryText);
+        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }
