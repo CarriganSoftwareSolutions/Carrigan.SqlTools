@@ -8,8 +8,8 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 using System.Text;
 
 
-namespace Carrigan.SqlTools.Tests;
-public class MoreExamplesAsUnitTests
+namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
+public class JoinExamples
 {
     private SqlGenerator<Customer> customerGenerator = new();
     private SqlGenerator<Order> orderGenerator = new();

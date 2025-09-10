@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
-public class ExamplesFromReadMeAsUnitTests
+public class FromReadMeExamples
 {
     private SqlGenerator<Customer> customerGenerator = new();
     private SqlGenerator<Order> orderGenerator = new();
