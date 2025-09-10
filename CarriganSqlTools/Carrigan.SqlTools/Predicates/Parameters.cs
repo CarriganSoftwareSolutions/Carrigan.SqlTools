@@ -4,6 +4,14 @@
 /// Predicates control the boolean logic for join and where clauses.
 /// This class represents SQL's parameter and the corresponding value of that parameter.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Parameters parameterName = new("Name", "Hank");
+/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+/// Equal equalName = new(columnName, parameterName);
+/// SqlQuery query = customerGenerator.Select(null, equalName, null, null);
+/// ]]></code>
+/// </example>
 public class Parameters : PredicatesBase
 {
     /// <summary>

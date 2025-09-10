@@ -7,27 +7,51 @@ namespace Carrigan.SqlTools.Predicates;
 /// This class represents SQL's logical AND operator for logical operations on one more predicate values.
 /// </summary>
 /// <example>
+/// <para>AND example, note it intelligently handles more than two predicates.</para>
+/// 
+/// <code language="csharp"><![CDATA[
 /// Parameters parameterName = new("Name", "Hank");
-/// Columns<Customer> columnName = new(nameof(Customer.Name));
+/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
 /// Equal equalName = new(columnName, parameterName);
 /// 
 /// Parameters parameterEmail = new("Email", "Hank@example.com");
-/// Columns<Customer> columnEmail = new(nameof(Customer.Email));
+/// Columns&lt;Customer&gt; columnEmail = new(nameof(Customer.Email));
 /// Equal equalEmail = new(columnEmail, parameterEmail);
 /// 
 /// Parameters parameterPhone = new("Phone", ("+1(555)555-5555"));
-/// Columns<Customer> columnPhone = new(nameof(Customer.Phone));
+/// Columns&lt;Customer&gt; columnPhone = new(nameof(Customer.Phone));
 /// Equal equalPhone = new(columnPhone, parameterPhone);
 /// 
 /// And and = new(equalName, equalEmail, equalPhone);
 /// 
 /// SqlQuery query = customerGenerator.Select(null, and, null, null);
+/// ]]></code>
 /// 
-/// // SELECT [Customer].* FROM [Customer] 
-/// // WHERE (([Customer].[Name] = @Parameter_Name) 
-/// //  AND ([Customer].[Email] = @Parameter_Email) 
-/// //  AND ([Customer].[Phone] = @Parameter_Phone))
+/// <para>Resulting SQL:</para>
+/// 
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] 
+/// WHERE (([Customer].[Name] = @Parameter_Name) 
+/// AND ([Customer].[Email] = @Parameter_Email) 
+/// AND ([Customer].[Phone] = @Parameter_Phone))
+/// ]]></code>
 /// </example>
+/// 
+/// <example>
+/// <para>Edge case, single predicates are handled intelligently by AND.</para>
+/// <code language="csharp"><![CDATA[
+///  Parameters parameterName = new("Name", "Hank");
+///  Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+///  Equal equalName = new(columnName, parameterName);
+///  And and = new(equalName);
+///  SqlQuery query = customerGenerator.Select(null, and, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
+/// ]]></code>
+/// </example>
+/// 
 public class And : LogicalOperators
 {
     /// <summary>

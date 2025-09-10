@@ -1,9 +1,26 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.SqlGenerators;
+
+//IGNORE SPELLING: equal
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
 /// This class represents SQL's logical NOT operator for logical operations on one boolean predicate values.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Parameters parameterName = new("Name", "Hank");
+/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+/// Equal equal = new(columnName, parameterName);
+/// Not not = new(equal);
+/// SqlQuery query = customerGenerator.Select(null, not, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] WHERE (NOT ([Customer].[Name] = @Parameter_Name))
+/// ]]></code>
+/// </example>
 public class Not : PredicatesBase
 {
     PredicatesBase _someValue;

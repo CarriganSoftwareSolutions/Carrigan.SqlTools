@@ -4,6 +4,17 @@
 /// Predicates control the boolean logic for join and where clauses.
 /// This class represents SQL's logical IS NULL operator.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+/// IsNull isNull = new(columnName);
+/// SqlQuery query = customerGenerator.Select(null, isNull, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NULL)
+/// ]]></code>
+/// </example>
 public class IsNull : PredicatesBase
 {
     private PredicatesBase _someValue;

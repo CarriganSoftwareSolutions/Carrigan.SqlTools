@@ -1,9 +1,24 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.SqlGenerators;
+using System;
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
 /// This is the class that represents SQL's Not Equal, <>, comparison operator.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Parameters parameterName = new("Name", "Hank");
+/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+///NotEqual predicate = new(columnName, parameterName);
+/// SqlQuery query = customerGenerator.Select(null, predicate, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] <> @Parameter_Name)
+/// ]]></code>
+/// </example>
 public class NotEqual : ComparisonOperators
 {
     /// <summary>

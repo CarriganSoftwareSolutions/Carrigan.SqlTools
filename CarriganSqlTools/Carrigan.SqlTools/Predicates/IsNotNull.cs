@@ -1,9 +1,22 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.SqlGenerators;
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
 /// This class represents SQL's logical IS NOT NULL operator.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+/// IsNotNull notNull = new(columnName);
+/// SqlQuery query = customerGenerator.Select(null, notNull, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NOT NULL)
+/// ]]></code>
+/// </example>
 public class IsNotNull : PredicatesBase
 {
     private PredicatesBase _someValue;

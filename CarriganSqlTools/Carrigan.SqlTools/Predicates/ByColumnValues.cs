@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Predicates;
 
@@ -8,6 +9,16 @@ namespace Carrigan.SqlTools.Predicates;
 /// This class is essentially an alias for Column = Value
 /// The intent is to reduce the amount of code needed to perform a routine task.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// ByColumnValues&lt;Customer&gt; coumnValue = new(nameof(Customer.Name), "Hank");
+/// SqlQuery query = customerGenerator.Select(null, coumnValue, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
+/// ]]></code>
+/// </example>
 public class ByColumnValues<T> : PredicatesBase
 {
     protected PredicatesBase value;
