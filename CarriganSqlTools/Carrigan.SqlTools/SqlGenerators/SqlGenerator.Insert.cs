@@ -6,6 +6,11 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
+    /// <summary>
+    /// This is a helper method that modifies insert queries to return a key field from the insert
+    /// </summary>
+    /// <param name="queryText">Insert Sql Query</param>
+    /// <returns>modified Insert Sql Query</returns>
     private static string ModifyInsertQueryToReturnScalar(string queryText)
     {
         // Build the final query using a temporary table to store the GUID
@@ -16,14 +21,43 @@ public partial class SqlGenerator<T>
         return sqlQuery.ToString();
     }
 
+    /// <summary>
+    /// This is a helper method that generates the Values portion of the query
+    /// </summary>
     private static string EnumeratedInsertValues(IEnumerable<PropertyInfo> properties, int? i = null) =>
         i == null  
             ? $"({string.Join(", ", properties.Select(property => $"@{property.Name}"))})" 
             : $"({string.Join(", ", properties.Select(property => $"@{property.Name}_{i}"))})";
 
+    /// <summary>
+    /// This is a helper method that generates the Values portion of the query
+    /// </summary>
     private static string EnumeratedInsertValues(IEnumerable<PropertyInfo> properties, params IEnumerable<T> entities) =>
         $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(properties, index)))}";
 
+    /// <summary>
+    /// This method generates an Insert SQL query, utilizing default values for key fields.
+    /// Note: in order for this to work correctly, the key fields must have a default value.
+    /// </summary>
+    /// <param name="entity">a data model representing a new SQL record</param>
+    /// <returns>an SQL query object</returns>
+    /// <example>
+    /// <code language="csharp"><![CDATA[
+    /// Customer entity = new()
+    /// {
+    ///     Name = "Hank",
+    ///     Email = "Hank@example.com",
+    ///     Phone = "+1(555)555-5555"
+    /// };
+    /// SqlQuery query = customerGenerator.InsertAutoId(entity);
+    ///
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// INSERT INTO [Customer] ([Name], [Email], [Phone]) 
+    /// VALUES (@Name, @Email, @Phone);
+    /// ]]></code>
+    /// </example>
     public SqlQuery InsertAutoId(T entity)
     {
         IEnumerable<KeyValuePair<string, object>> parameters;
@@ -53,7 +87,42 @@ public partial class SqlGenerator<T>
             };
         }
     }
-
+    /// <summary>
+    /// This method generates an Insert SQL query for one or more record, utilizing default values for key fields.
+    /// Note: in order for this to work correctly, the key fields must have a default value.
+    /// </summary>
+    /// <param name="entity">a data model representing a new SQL record</param>
+    /// <returns>an SQL query object</returns>
+    /// <example>
+    /// <code language="csharp"><![CDATA[
+    /// IEnumerable<Customer> customers =
+    ///     [
+    ///         new()
+    ///             {
+    ///                 Id = 42,
+    ///                 Name = "Hank",
+    ///                 Email = "Hank@example.com",
+    ///                 Phone = "+1(555)555-5555"
+    ///             },
+    ///             new()
+    ///             {
+    ///                 Id = 732,
+    ///                 Name = "Homer",
+    ///                 Email = "Homer@example.com",
+    ///                 Phone = "+1(555)555-1234"
+    ///             },
+    ///     ];
+    /// SqlQuery query = customerGenerator.Insert(customers);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// INSERT INTO 
+    /// [Customer] ([Id], [Name], [Email], [Phone])
+    /// VALUES 
+    /// (@Id_0, @Name_0, @Email_0, @Phone_0), 
+    /// (@Id_1, @Name_1, @Email_1, @Phone_1);
+    /// ]]></code>
+    /// </example>
     public SqlQuery Insert(params IEnumerable<T> entities)
     {
         IEnumerable<PropertyInfo> properties = properties = _Properties;
