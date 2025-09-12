@@ -9,10 +9,10 @@ namespace Carrigan.SqlTools.Predicates;
 /// It allows you to generate SQL Column1 = Column2 with fewer lines of C#.
 /// </summary>
 /// <example>
-/// <para>ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <para>ColumnEqualsColumn&lt;leftT, rightT&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
 /// <code language="csharp"><![CDATA[
-/// ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// LeftJoin<Customer, Order> join = new(columnValue);
+/// ColumnEqualsColumn&lt;Customer, Order&gt; columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// LeftJoin&lt;Customer, Order&gt; join = new(columnValue);
 /// SqlQuery query = customerGenerator.Select(join, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
