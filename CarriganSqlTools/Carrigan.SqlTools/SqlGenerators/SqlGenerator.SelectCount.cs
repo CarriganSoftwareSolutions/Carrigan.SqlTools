@@ -24,22 +24,28 @@ public partial class SqlGenerator<T>
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = orderGenerator.SelectCount(null, null);
     /// ]]></code>
-    /// <para>Resulting SQL:</para>
+    /// <para>Columns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code><![CDATA[
     /// SELECT COUNT(*) FROM [Order]
     /// ]]></code>
     /// </example>
     /// <example>
     /// <code language="csharp"><![CDATA[
-    /// Columns<Order> totalCol = new(nameof(Order.Total));
+    /// Columns&lt;Order&gt; totalCol = new(nameof(Order.Total));
     /// Parameters minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
     /// 
-    /// SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
+    /// ColumnEqualsColumn&lt;Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
+    /// Join&lt;Order, Customer&gt; join = new(columnCompare);
+    /// 
+    /// SqlQuery query = orderGenerator.SelectCount(join, greaterThan);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT COUNT(*) FROM [Order] 
+    /// SELECT COUNT(*) 
+    /// FROM [Order] 
+    /// LEFT JOIN [Customer] 
+    /// ON ([Order].[CustomerId] = [Customer].[Id]) 
     /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ]]></code>
     /// </example>

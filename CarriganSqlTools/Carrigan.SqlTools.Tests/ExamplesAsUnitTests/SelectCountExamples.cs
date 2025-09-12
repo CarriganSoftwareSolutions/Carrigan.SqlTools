@@ -42,22 +42,22 @@ public class SelectCountExamples
         Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
     }
 
-    //[Fact]
-    //public void SelectCountWithWhereAndJoin()
-    //{
-    //    //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-    //    Columns<Order> totalCol = new(nameof(Order.Total));
-    //    Parameters minTotal = new("Total", 500m);
-    //    GreaterThan greaterThan = new(totalCol, minTotal);
+    [Fact]
+    public void SelectCountWithWhereAndJoin()
+    {
+        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        Columns<Order> totalCol = new(nameof(Order.Total));
+        Parameters minTotal = new("Total", 500m);
+        GreaterThan greaterThan = new(totalCol, minTotal);
 
-    //    Columns<Order> totalCol customerId
-    //    Join join = new()
+        ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
+        Join<Order, Customer> join = new(columnCompare);
 
-    //    SqlQuery query = customerGenerator.SelectCount(null, greaterThan);
+        SqlQuery query = orderGenerator.SelectCount(join, greaterThan);
 
-    //    Assert.Equal("SELECT COUNT(*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
-    //    Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-    //    Assert.Single(query.Parameters);
-    //    Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
-    //}
+        Assert.Equal("SELECT COUNT(*) FROM [Order] LEFT JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Single(query.Parameters);
+        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
+    }
 }
