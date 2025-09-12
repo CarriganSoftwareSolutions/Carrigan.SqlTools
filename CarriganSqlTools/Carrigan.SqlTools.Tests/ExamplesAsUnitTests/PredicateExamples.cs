@@ -1,4 +1,5 @@
 ﻿
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
@@ -68,6 +69,18 @@ public class PredicateExamples
         Assert.Single(query.Parameters);
 
         Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Parameter_Name").Value);
+    }
+
+    [Fact]
+    public void PredicateColumnEqualsColumn()
+    {
+        ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        LeftJoin<Customer, Order> join = new(columnValue);
+        SqlQuery query = customerGenerator.Select(join, null, null, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] LEFT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Empty(query.Parameters);
     }
 
     [Fact]
