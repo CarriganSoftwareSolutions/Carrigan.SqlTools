@@ -158,14 +158,12 @@ public class FromReadMeExamples
     [Fact]
     public void SelectWithJoinsAndOrderBy()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Customer> id = new (nameof(Customer.Id));
-        Columns<Order> customerId = new(nameof(Order.CustomerId));
-        Equal equals = new (id, customerId);
-        InnerJoin<Customer, Order> join = new(equals);
+        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        InnerJoin<Customer, Order> join = new(columnEqualsColumn);
 
-        OrderByItem<Order> orderByOrderDate = new (nameof(Order.OrderDate));
+        OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
         SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
 
