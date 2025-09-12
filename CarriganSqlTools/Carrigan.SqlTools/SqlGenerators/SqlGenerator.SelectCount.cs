@@ -20,6 +20,29 @@ public partial class SqlGenerator<T>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
     /// <param name="orderBy"></param>
+    /// <example>
+    /// <code language="csharp"><![CDATA[
+    /// SqlQuery query = orderGenerator.SelectCount(null, null);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// SELECT COUNT(*) FROM [Order]
+    /// ]]></code>
+    /// </example>
+    /// <example>
+    /// <code language="csharp"><![CDATA[
+    /// Columns<Order> totalCol = new(nameof(Order.Total));
+    /// Parameters minTotal = new("Total", 500m);
+    /// GreaterThan greaterThan = new(totalCol, minTotal);
+    /// 
+    /// SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// SELECT COUNT(*) FROM [Order] 
+    /// WHERE ([Order].[Total] > @Parameter_Total)
+    /// ]]></code>
+    /// </example>
     public SqlQuery SelectCount(IJoins? joins, PredicatesBase? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(TableTag).Distinct();

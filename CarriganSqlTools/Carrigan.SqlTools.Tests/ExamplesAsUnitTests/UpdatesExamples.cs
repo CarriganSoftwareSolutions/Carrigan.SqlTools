@@ -83,7 +83,7 @@ public class UpdatesExamples
     {
         //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ByColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Order entity = new() { Id = 10, Total = 123.45m };
 
@@ -94,7 +94,7 @@ public class UpdatesExamples
         Equal customerIdsEquals = new(orderCustomerId, customerId);
         InnerJoin<Order, Customer> joinOnCustomerId = new(customerIdsEquals);
 
-        ByColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+        ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
         SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
 
@@ -111,11 +111,11 @@ public class UpdatesExamples
     public void UpdateWithSetColumnWhere()
     {
         //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ByColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Customer entity = new() { Email = "spam@example.com" };
         SetColumns<Customer> setColumns = new(nameof(Customer.Email));
-        ByColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
+        ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
 
         SqlQuery query = customerGenerator.Update(entity, setColumns, null, customerEmailEquals);
 

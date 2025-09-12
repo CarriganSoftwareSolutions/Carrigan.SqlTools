@@ -61,7 +61,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateColumnValues()
     {
-        ByColumnValues<Customer> coumnValue = new(nameof(Customer.Name), "Hank");
+        ColumnValues<Customer> coumnValue = new(nameof(Customer.Name), "Hank");
         SqlQuery query = customerGenerator.Select(null, coumnValue, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)", query.QueryText);
@@ -74,6 +74,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateColumnEqualsColumn()
     {
+        //Note: ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
         LeftJoin<Customer, Order> join = new(columnValue);
         SqlQuery query = customerGenerator.Select(join, null, null, null);

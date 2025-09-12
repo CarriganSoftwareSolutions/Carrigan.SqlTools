@@ -13,17 +13,17 @@ public class ByColumnValueTests
     public void ByColumnValue_ConstructorComposite_InValid_Empty()
     {
         Dictionary<string, object> dictionary = new([]);
-        _ = Assert.Throws<ArgumentException>(() => new ByColumnValues<ColumnTable>(dictionary));
+        _ = Assert.Throws<ArgumentException>(() => new ColumnValues<ColumnTable>(dictionary));
     }
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_InValid_Empty()
     {
-        _ = Assert.Throws<ArgumentException>(() => new ByColumnValues<ColumnTable>(Array.Empty<KeyValuePair<string, object>>()));
+        _ = Assert.Throws<ArgumentException>(() => new ColumnValues<ColumnTable>(Array.Empty<KeyValuePair<string, object>>()));
     }
     [Fact]
     public void ByColumnValue_ByMultipleValues_InValid_Empty()
     {
-        _ = Assert.Throws<ArgumentException>(() => ByColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas"));
+        _ = Assert.Throws<ArgumentException>(() => ColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas"));
     }
     #endregion
 
@@ -31,23 +31,23 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_InValid_BadCol()
     {
-        _ = Assert.Throws<SqlIdentifierException>(() => new ByColumnValues<ColumnTable>("ilsabasbdyas", "1"));
+        _ = Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>("ilsabasbdyas", "1"));
     }
     [Fact]
     public void ByColumnValue_ConstructorComposite_InValid_BadCol()
     {
         Dictionary<string, object> dictionary = new([new("ilsabasbdyas", "1"), new(nameof(ColumnTable.Col2), "2")]);
-        _ = Assert.Throws<SqlIdentifierException>(() => new ByColumnValues<ColumnTable>(dictionary));
+        _ = Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>(dictionary));
     }
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_InValid_BadCol()
     {
-        _ = Assert.Throws<SqlIdentifierException>(() => new ByColumnValues<ColumnTable>([new("ilsabasbdyas", "1"), new(nameof(ColumnTable.Col2), "2")]));
+        _ = Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>([new("ilsabasbdyas", "1"), new(nameof(ColumnTable.Col2), "2")]));
     }
     [Fact]
     public void ByColumnValue_ByMultipleValues_InValid_BadCol()
     {
-        _ = Assert.Throws<SqlIdentifierException>(() => ByColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas", "1", "2"));
+        _ = Assert.Throws<SqlIdentifierException>(() => ColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas", "1", "2"));
     }
     #endregion
 
@@ -55,23 +55,23 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_Valid()
     {
-        _ = new ByColumnValues<ColumnTable>(nameof(ColumnTable.Col1), "1");
+        _ = new ColumnValues<ColumnTable>(nameof(ColumnTable.Col1), "1");
     }
     [Fact]
     public void ByColumnValue_ConstructorComposite_Valid()
     {
         Dictionary<string, object> dictionary = new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
-        _ = new ByColumnValues<ColumnTable>(dictionary);
+        _ = new ColumnValues<ColumnTable>(dictionary);
     }
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_Valid()
     {
-        _ = new ByColumnValues<ColumnTable>([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
+        _ = new ColumnValues<ColumnTable>([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
     }
     [Fact]
     public void ByColumnValue_ByMultipleValues_Valid()
     {
-        _ = ByColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
+        _ = ColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
     }
     #endregion
 
@@ -80,7 +80,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ParameterCount()
     {
-        ByColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
         int actual = byColoumnValues.Parameter.Count();
 
@@ -90,7 +90,7 @@ public class ByColumnValueTests
     public void ByColumnValue_ConstructorComposite_ParameterCount()
     {
         Dictionary<string, object> dictionary = new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
-        ByColumnValues<ColumnTable> byColoumnValues = new(dictionary);
+        ColumnValues<ColumnTable> byColoumnValues = new(dictionary);
 
         int expected = 2;
         int actual = byColoumnValues.Parameter.Count();
@@ -100,7 +100,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_ParameterCount()
     {
-        ByColumnValues<ColumnTable> byColoumnValues =
+        ColumnValues<ColumnTable> byColoumnValues =
             new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
         int expected = 2;
         int actual = byColoumnValues.Parameter.Count();
@@ -111,7 +111,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ByMultiValue_ParameterCount()
     {
-        PredicatesBase predicate = ByColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
+        PredicatesBase predicate = ColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
         int expected = 2;
         int actual = predicate.Parameter.Count();
 
@@ -124,7 +124,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ParameterValidate()
     {
-        ByColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
 
         string expectedValue;
         object actualValue;
@@ -145,7 +145,7 @@ public class ByColumnValueTests
     public void ByColumnValue_ConstructorComposite_ParameterValidate()
     {
         Dictionary<string, object> dictionary = new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
-        ByColumnValues<ColumnTable> byColoumnValues = new(dictionary);
+        ColumnValues<ColumnTable> byColoumnValues = new(dictionary);
 
         string expectedValue;
         object actualValue;
@@ -173,7 +173,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_ParameterValidate()
     {
-        ByColumnValues<ColumnTable> byColoumnValues =
+        ColumnValues<ColumnTable> byColoumnValues =
             new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
 
         string expectedValue;
@@ -204,7 +204,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ByMultipleValue_ParameterValidate()
     {
-        PredicatesBase predicate = ByColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
+        PredicatesBase predicate = ColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
 
         string expectedValue;
         object actualValue;
@@ -237,7 +237,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ColumnCount()
     {
-        ByColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
         int actual = byColoumnValues.Column.Count();
 
@@ -247,7 +247,7 @@ public class ByColumnValueTests
     public void ByColumnValue_ConstructorComposite_ColumnCount()
     {
         Dictionary<string, object> dictionary = new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
-        ByColumnValues<ColumnTable> byColoumnValues = new(dictionary);
+        ColumnValues<ColumnTable> byColoumnValues = new(dictionary);
 
         int expected = 2;
         int actual = byColoumnValues.Column.Count();
@@ -257,7 +257,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_ColumnCount()
     {
-        ByColumnValues<ColumnTable> byColoumnValues =
+        ColumnValues<ColumnTable> byColoumnValues =
             new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
         int expected = 2;
         int actual = byColoumnValues.Column.Count();
@@ -268,7 +268,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ByMultipleValue_ColumnCount()
     {
-        PredicatesBase predicate = ByColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
+        PredicatesBase predicate = ColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
         int expected = 2;
         int actual = predicate.Column.Count();
 
@@ -281,7 +281,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_Validate()
     {
-        ByColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
         string expectedString;
         string actualString;
 
@@ -296,7 +296,7 @@ public class ByColumnValueTests
     public void ByColumnValue_ConstructorComposite_Validate()
     {
         Dictionary<string, object> dictionary = new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
-        ByColumnValues<ColumnTable> byColoumnValues = new(dictionary);
+        ColumnValues<ColumnTable> byColoumnValues = new(dictionary);
         string expectedString;
         string actualString;
 
@@ -315,7 +315,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_ColumnValidate()
     {
-        ByColumnValues<ColumnTable> byColoumnValues =
+        ColumnValues<ColumnTable> byColoumnValues =
             new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
         string expectedString;
         string actualString;
@@ -336,7 +336,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ByMultipleValue_ColumnValidate()
     {
-        PredicatesBase predicate = ByColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
+        PredicatesBase predicate = ColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
         string expectedString;
         string actualString;
 
@@ -359,7 +359,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ToSql()
     {
-        ByColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
         string expectedString = "([ColumnTable].[Col1] = @Parameter_Col1)";
         string actualString = byColoumnValues.ToSql();
         Assert.Equal(expectedString, actualString);
@@ -368,7 +368,7 @@ public class ByColumnValueTests
     public void ByColumnValue_ConstructorComposite_ToSql()
     {
         Dictionary<string, object> dictionary = new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
-        ByColumnValues<ColumnTable> byColoumnValues = new(dictionary);
+        ColumnValues<ColumnTable> byColoumnValues = new(dictionary);
         string expectedString = "(([ColumnTable].[Col1] = @Parameter_Col1) AND ([ColumnTable].[Col2] = @Parameter_Col2))";
         string actualString = byColoumnValues.ToSql();
         Assert.Equal(expectedString, actualString);
@@ -376,7 +376,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorKeyValuePair_ToSql()
     {
-        ByColumnValues<ColumnTable> byColoumnValues =
+        ColumnValues<ColumnTable> byColoumnValues =
             new([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
         string expectedString = "(([ColumnTable].[Col1] = @Parameter_Col1) AND ([ColumnTable].[Col2] = @Parameter_Col2))";
         string actualString = byColoumnValues.ToSql();
@@ -385,7 +385,7 @@ public class ByColumnValueTests
     [Fact]
     public void ByColumnValue_ByMultipleValue_ToSql()
     {
-        PredicatesBase predicate = ByColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
+        PredicatesBase predicate = ColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
         string expectedString = "(([ColumnTable].[Col1] = @Parameter_0_R_Col1) OR ([ColumnTable].[Col1] = @Parameter_1_R_Col1))";
         string actualString = predicate.ToSql();
         Assert.Equal(expectedString, actualString);

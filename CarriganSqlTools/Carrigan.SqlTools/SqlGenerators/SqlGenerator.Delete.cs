@@ -100,7 +100,7 @@ public partial class SqlGenerator<T>
     /// </example>
     /// <example>
     /// <code language="csharp"><![CDATA[
-    /// ByColumnValues&lt;Customer&gt; coumnValue = new(nameof(Customer.Name), "Hank");
+    /// ColumnValues&lt;Customer&gt; coumnValue = new(nameof(Customer.Name), "Hank");
     /// SqlQuery query = customerGenerator.Delete(null, coumnValue);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
@@ -125,14 +125,14 @@ public partial class SqlGenerator<T>
     /// </example>
     /// <example>
     /// <para>Note: Columns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
-    /// <para>Note: ByColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// Columns&lt;Customer&gt; id = new(nameof(Customer.Id));
     /// Columns&lt;Order&gt; customerId = new(nameof(Order.CustomerId));
     /// Equal equals = new(id, customerId);
     /// InnerJoin&lt;Order, Customer&gt; join = new(equals);
     /// 
-    /// ByColumnValues&lt;Customer&gt; customerEmail = new(nameof(Customer.Email), "spam@example.com");
+    /// ColumnValues&lt;Customer&gt; customerEmail = new(nameof(Customer.Email), "spam@example.com");
     /// 
     /// SqlQuery query = orderGenerator.Delete(join, customerEmail);
     /// ]]></code>

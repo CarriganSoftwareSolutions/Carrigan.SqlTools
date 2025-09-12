@@ -138,12 +138,12 @@ public partial class SqlGenerator<T>
     /// Create Update SQL query with a Where clause.
     /// Note: SetColumns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
     /// Note: Columns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: ByColumnValues&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: ColumnValues&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Email = "spam@example.com" };
     /// SetColumns&lte;Customer&gt; setColumns = new(nameof(Customer.Email));
-    /// ByColumnValues&lte;Customer&gt; customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
+    /// ColumnValues&lte;Customer&gt; customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
     /// 
     /// SqlQuery query = customerGenerator.Update(entity, setColumns, null, customerEmailEquals);
     /// ]]></code>
@@ -160,7 +160,7 @@ public partial class SqlGenerator<T>
     /// Create Update SQL query with Joins and a Where clause.
     /// Note: SetColumns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
     /// Note: Columns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: ByColumnValues&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: ColumnValues&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Order entity = new() { Id = 10, Total = 123.45m };
@@ -171,7 +171,7 @@ public partial class SqlGenerator<T>
     /// Equal customerIdsEquals = new(orderCustomerId, customerId);
     /// InnerJoin&lte;Order, Customer&gt; joinOnCustomerId = new(customerIdsEquals);
     /// 
-    /// ByColumnValues&lte;Customer&gt; customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+    /// ColumnValues&lte;Customer&gt; customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
     /// 
     /// SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
     /// ]]></code>

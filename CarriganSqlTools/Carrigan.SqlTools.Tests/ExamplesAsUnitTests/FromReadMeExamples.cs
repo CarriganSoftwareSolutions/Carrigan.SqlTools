@@ -199,13 +199,13 @@ public class FromReadMeExamples
     public void DeleteWithJoinAndWhere()
     {
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ByColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
         Columns<Customer> id = new (nameof(Customer.Id));
         Columns<Order> customerId = new (nameof(Order.CustomerId));
         Equal equals = new (id, customerId);
         InnerJoin<Order, Customer> join = new(equals);
 
-        ByColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
+        ColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
         SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
@@ -236,7 +236,7 @@ public class FromReadMeExamples
     {
         //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ByColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Order entity = new () { Id = 10, Total = 123.45m };
 
@@ -247,7 +247,7 @@ public class FromReadMeExamples
         Equal customerIdsEquals = new(orderCustomerId, customerId);
         InnerJoin<Order, Customer> joinOnCustomerId = new (customerIdsEquals);
 
-        ByColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+        ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
         SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
 

@@ -57,7 +57,7 @@ public class DeleteExamples
     [Fact]
     public void DeleteWithNullJoin()
     {
-        ByColumnValues<Customer> coumnValue = new(nameof(Customer.Name), "Hank");
+        ColumnValues<Customer> coumnValue = new(nameof(Customer.Name), "Hank");
         SqlQuery query = customerGenerator.Delete(null, coumnValue);
 
         Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)", query.QueryText);
@@ -86,13 +86,13 @@ public class DeleteExamples
     public void DeleteWithJoinAndWhere()
     {
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ByColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
         Columns<Customer> id = new(nameof(Customer.Id));
         Columns<Order> customerId = new(nameof(Order.CustomerId));
         Equal equals = new(id, customerId);
         InnerJoin<Order, Customer> join = new(equals);
 
-        ByColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
+        ColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
         SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
