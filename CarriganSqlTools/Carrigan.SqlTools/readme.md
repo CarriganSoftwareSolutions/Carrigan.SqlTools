@@ -205,7 +205,7 @@ SqlQuery query = customerGenerator.UpdateById(entity);
 ### Update by Id (selected columns)
 Key attribute required, and composite keys are supported by specifying multiple Keys. 
 
-SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
+`SetColumns<T>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
 SetColumns<Customer> columns = new(nameof(Customer.Email));
 Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
@@ -239,16 +239,14 @@ SqlQuery query = customerGenerator.DeleteById(entities);
 
 
 ### Select with Joins and Order By
-Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+`ColumnEqualsColumn<Customer>`, Order validates the names of the properties, and throws an error if the property isn't valid
 
-OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
+`OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-Columns<Customer> id = new (nameof(Customer.Id));
-Columns<Order> customerId = new(nameof(Order.CustomerId));
-Equal equals = new (id, customerId);
-InnerJoin<Customer, Order> join = new(equals);
+ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+InnerJoin<Customer, Order> join = new(columnEqualsColumn);
 
-OrderByItem<Order> orderByOrderDate = new (nameof(Order.OrderDate));
+OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
 SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
 
@@ -262,9 +260,9 @@ SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
 
 
 ### Select with Two Part Order By
-Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+`Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
 
-OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
+`OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
 Columns<Customer> id = new(nameof(Customer.Id));
 Columns<Order> customerId = new(nameof(Order.CustomerId));
@@ -287,9 +285,9 @@ SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
 
 
 ### Delete with Join and Where
-Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+`Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
 
-ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+`ColumnValues<T>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
 Columns<Customer> id = new(nameof(Customer.Id));
 Columns<Order> customerId = new(nameof(Order.CustomerId));
@@ -311,7 +309,7 @@ SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
 ### Select Count With Where
 
-Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+`Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
 
 ```csharp
 Columns<Order> totalCol = new (nameof(Order.Total));
@@ -327,11 +325,11 @@ SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
 
 
 ### Update with Joins and Where
-SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
+`SetColumns<T>` validates the names of the properties, and throws an error if the property isn't valid
 
-Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+`Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
 
-ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+`ColumnValues<T>` validates the names of the properties, and throws an error if the property isn't valid
 
 ```csharp
 Order entity = new () { Id = 10, Total = 123.45m };
