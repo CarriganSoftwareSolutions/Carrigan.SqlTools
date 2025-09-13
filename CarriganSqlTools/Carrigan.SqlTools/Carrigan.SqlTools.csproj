@@ -33,7 +33,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202509050042" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202509130202" />
   </ItemGroup>
 
 </Project>

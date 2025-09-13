@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.ReflectionCaching;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
