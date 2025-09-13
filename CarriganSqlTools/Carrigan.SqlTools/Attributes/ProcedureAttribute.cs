@@ -6,7 +6,6 @@
 /// This should have been part of Carrigan.SqlTools
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
-[Obsolete("Do not use until I fix procedures")]
 public class ProcedureAttribute : Attribute
 {
     /// <summary>
