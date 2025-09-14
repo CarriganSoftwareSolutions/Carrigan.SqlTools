@@ -9,7 +9,7 @@ public partial class SqlGenerator<T>
         return new SqlQuery()
         {
             Parameters = new Dictionary<string, object>([.. parameters]),
-            QueryText = $"{_ProcedureName}",
+            QueryText = _ProcedureName,
             CommandType = System.Data.CommandType.StoredProcedure
         };
     }

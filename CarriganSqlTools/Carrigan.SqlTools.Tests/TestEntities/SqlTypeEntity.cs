@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
 [Table("TestSqlTypes")]
-[Procedure("TestProcedureSqlTypes")]
 public class SqlTypeEntity
 {
 

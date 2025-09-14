@@ -13,7 +13,10 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public partial class SqlGenerator<T>
 {
 #pragma warning disable IDE1006 // Naming Styles
-    private static string _ProcedureName => SqlToolsReflectorCache<T>.ProcedureName;
+    private static string _ProcedureName => 
+        SqlToolsReflectorCache<T>.TableSchema.IsNotNullOrWhiteSpace() 
+        ? $"[{SqlToolsReflectorCache<T>.TableSchema}].[{SqlToolsReflectorCache<T>.ProcedureName}]" 
+        : $"[{SqlToolsReflectorCache<T>.ProcedureName}]" ;
     /// <summary>
     /// Uses reflection to determine which columns are part of the key field. Cached with LazyLoad
     /// </summary>

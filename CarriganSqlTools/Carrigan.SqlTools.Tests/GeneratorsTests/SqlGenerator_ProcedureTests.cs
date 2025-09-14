@@ -41,7 +41,7 @@ public class SqlGenerator_ProcedureTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Procedure(testEntity);
 
-        string expectedSql = "[TestProcedure]";
+        string expectedSql = "[EntityWithTableAttribute]";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -154,7 +154,7 @@ public class SqlGenerator_ProcedureTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Procedure(testEntity);
 
-        string expectedSql = "[TestProcedure]";
+        string expectedSql = "[EntityWithTableAttribute]";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.Equal(4, query.Parameters.Count);
@@ -172,7 +172,7 @@ public class SqlGenerator_ProcedureTests
         SqlQuery query
             = _sqlGeneratorForSqlTypeEntity.Procedure(entity);
 
-        string expectedSql = "[TestProcedureSqlTypes]";
+        string expectedSql = "[SqlTypeEntity]";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.Equal(16, query.Parameters.Count);
@@ -272,7 +272,7 @@ public class SqlGenerator_ProcedureTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.Procedure(entity);
 
-        string expectedSql = "[TestProcedure]";
+        string expectedSql = "[EntityWithEncryption]";
 
         Assert.Equal(expectedSql, query.QueryText);
 
@@ -296,7 +296,7 @@ public class SqlGenerator_ProcedureTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.Procedure(entity);
 
-        string expectedSql = "[TestProcedure]";
+        string expectedSql = "[EntityWithEncryption]";
 
         Assert.Equal(expectedSql, query.QueryText);
 

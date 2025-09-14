@@ -1,10 +1,13 @@
 ﻿using Carrigan.Core.Attributes;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools;
 
@@ -19,7 +22,7 @@ internal static class SqlToolsReflectorCache<T>
     public static HashSet<string> ColumnNamesHashSet => _LazyColumnNamesHashSet.Value;
     public static string TableName => _LazyTableName.Value;
     public static string TableSchema => _LazyTableSchema.Value;
-    public static TableTag TableTag => new TableTag(TableSchema, TableName);
+    public static TableTag TableTag => new (TableSchema, TableName);
     public static HashSet<string> EncryptedProperties => _LazyEncryptedProperties.Value;
     internal static PropertyInfo? KeyVersionProperty => _LazyKeyVersionProperty.Value;
 
@@ -40,25 +43,16 @@ internal static class SqlToolsReflectorCache<T>
     {
         Type = typeof(T);
 
-        _LazyTableAttribute = new Lazy<TableAttribute?> (() => Type.GetCustomAttribute<TableAttribute>());
+        _LazyTableAttribute = new Lazy<TableAttribute?>(() => Type.GetCustomAttribute<TableAttribute>());
 
-        _LazyTableName = new Lazy<string> (() => _LazyTableAttribute.Value is null ? Type.Name : _LazyTableAttribute.Value.Name);
+        _LazyTableName = new Lazy<string>
+            (GetTableName());
 
-        _LazyTableSchema = new Lazy<string> 
-            (() => _LazyTableAttribute.Value is null || string.IsNullOrEmpty(_LazyTableAttribute.Value.Schema) ? string.Empty : _LazyTableAttribute.Value.Schema);
+        _LazyTableSchema = new Lazy<string>
+            (GetSchemaName());
 
         _LazyProcedureName = new Lazy<string>
-            (() =>
-            {
-                // Check if the Procedure attribute is present, use it if available
-                ProcedureAttribute procedureAttribute = Type.GetCustomAttribute<ProcedureAttribute>();
-                return procedureAttribute != null
-                    ? string.IsNullOrEmpty(procedureAttribute.Schema)
-                        ? $"[{procedureAttribute.Name}]"
-                        : $"[{procedureAttribute.Schema}].[{procedureAttribute.Name}]"
-                    : $"[{Type.Name}]";
-            }
-            );
+            (GetProcedureName());
 
         _LazyKey = new Lazy<IEnumerable<PropertyInfo>>
             (() =>
@@ -139,4 +133,87 @@ internal static class SqlToolsReflectorCache<T>
             );
     }
 
+    //TODO: write unit test
+    private static string GetColumnName(PropertyInfo property)
+    {
+        IdentifierAttribute? identifier = property.GetCustomAttribute<IdentifierAttribute>();
+        if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
+            if (SqlIdentifierPattern.Fails(identifier.Name))
+                throw new SqlNamePatternException(identifier.Name);
+            else
+                return identifier.Name;
+        else
+        {
+            ColumnAttribute columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+            if(columnAttribute != null && columnAttribute.Name.IsNotNullOrWhiteSpace())
+                if (SqlIdentifierPattern.Fails(columnAttribute.Name))
+                    throw new SqlNamePatternException(columnAttribute.Name);
+                else
+                    return columnAttribute.Name;
+            else  if (SqlIdentifierPattern.Fails(property.Name))
+                throw new SqlNamePatternException(property.Name);
+            else
+                return property.Name;
+        }
+    }
+
+    //TODO: write unit test
+    private static string GetTableName()
+    {
+        IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
+        if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
+            if (SqlIdentifierPattern.Fails(identifier.Name))
+                throw new SqlNamePatternException(identifier.Name);
+            else
+                return identifier.Name;
+        else
+        {
+            if (_LazyTableAttribute.Value != null && _LazyTableAttribute.Value.Name.IsNotNullOrWhiteSpace())
+                if (SqlIdentifierPattern.Fails(_LazyTableAttribute.Value.Name))
+                    throw new SqlNamePatternException(_LazyTableAttribute.Value.Name);
+                else
+                    return _LazyTableAttribute.Value.Name;
+            else if (SqlIdentifierPattern.Fails(Type.Name))
+                throw new SqlNamePatternException(Type.Name);
+            else
+                return Type.Name;
+        }
+    }
+
+    //TODO: write unit test
+    private static string GetProcedureName()
+    {
+        IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
+        if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
+            if (SqlIdentifierPattern.Fails(identifier.Name))
+                throw new SqlNamePatternException(identifier.Name);
+            else
+                return identifier.Name;
+        else if (SqlIdentifierPattern.Fails(Type.Name))
+                throw new SqlNamePatternException(Type.Name);
+        else
+            return Type.Name;
+    }
+
+
+    //TODO: write unit test
+    private static string GetSchemaName()
+    {
+        IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
+        if (identifier != null && identifier.Schema.IsNotNullOrWhiteSpace())
+            if (SqlIdentifierPattern.Fails(identifier.Schema))
+                throw new SqlNamePatternException(identifier.Schema);
+            else
+                return identifier.Schema;
+        else
+        {
+            if (_LazyTableAttribute.Value != null && _LazyTableAttribute.Value.Schema.IsNotNullOrWhiteSpace())
+                if (SqlIdentifierPattern.Fails(_LazyTableAttribute.Value.Schema))
+                    throw new SqlNamePatternException(_LazyTableAttribute.Value.Schema);
+                else
+                    return _LazyTableAttribute.Value.Schema;
+            else
+                return string.Empty;
+        }
+    }
 }

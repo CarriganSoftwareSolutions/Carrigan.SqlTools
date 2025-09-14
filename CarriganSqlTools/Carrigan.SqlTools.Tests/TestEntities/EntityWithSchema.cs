@@ -8,8 +8,8 @@ namespace Carrigan.SqlTools.Tests.TestEntities;
 
 //ignore spelling: myschema
 
-[Table("EntityWithSchema", Schema = "myschema")]
-[Procedure("EntityWithSchema", Schema: "myschema")]
+[Table("EntityWithSchemaTable", Schema = "myCustomSchema")]
+[Identifier("EntityWithSchema", Schema: "myschema")]
 public class EntityWithSchema
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.

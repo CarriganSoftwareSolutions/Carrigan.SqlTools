@@ -27,18 +27,27 @@ public class SqlNamePatternException : Exception
     /// <summary>
     /// Constructs an exception for one or more invalid table.
     /// </summary>
-    /// <param name="invalidTables">A collection of invalid column names.</param>
+    /// <param name="invalidTables">A collection of invalid table names.</param>
     public SqlNamePatternException(params IEnumerable<TableTag> invalidTables)
         : base(CreateMessage(invalidTables))
     {
     }
 
     /// <summary>
-    /// Constructs an exception for one or more invalid table.
+    /// Constructs an exception for one or more invalid role names.
     /// </summary>
-    /// <param name="invalidTables">A collection of invalid column names.</param>
+    /// <param name="invalidRoles">A collection of invalid role names.</param>
     public SqlNamePatternException(params IEnumerable<RoleTag> invalidRoles)
         : base(CreateMessage(invalidRoles))
+    {
+    }
+
+    /// <summary>
+    /// Constructs an exception for one or more invalid table.
+    /// </summary>
+    /// <param name="invalidIdentifiers">A collection of invalid column names.</param>
+    public SqlNamePatternException(params IEnumerable<string> invalidIdentifiers)
+        : base(CreateMessage(invalidIdentifiers))
     {
     }
 
@@ -84,5 +93,13 @@ public class SqlNamePatternException : Exception
         IEnumerable<string> rolesStrings = inavlidRoles.Select(role => role.ToString());
         string roles = rolesStrings.JoinAnd();
         return $"The following role names do not follow the SQL naming convention: {roles}";
+    }
+
+    // Builds the exception message from a collection of unspecified sql Identifier values.
+    private static string CreateMessage(IEnumerable<string> inavlidRoles)
+    {
+        IEnumerable<string> rolesStrings = inavlidRoles.Select(role => role.ToString());
+        string roles = rolesStrings.JoinAnd();
+        return $"The following sql identifiers do not follow the SQL naming convention: {roles}";
     }
 }
