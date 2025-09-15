@@ -88,7 +88,7 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
         Type cacheType = typeof(SqlToolsReflectorCache<>).MakeGenericType(value);
 
         // Get the static property 'TableTag' on the constructed type.
-        PropertyInfo tableTagProperty = cacheType.GetProperty("TableTag", BindingFlags.Public | BindingFlags.Static) ?? throw new InvalidOperationException($"The property 'TableTag' was not found on type '{cacheType.FullName}'.");
+        PropertyInfo tableTagProperty = cacheType.GetProperty("TableTag", BindingFlags.NonPublic | BindingFlags.Static) ?? throw new InvalidOperationException($"The property 'TableTag' was not found on type '{cacheType.FullName}'.");
 
         // Retrieve the value of the TableTag property.
         return (TableTag)tableTagProperty.GetValue(null) ?? throw new InvalidOperationException($"The property 'TableTag' on type '{cacheType.FullName}' returned null.");

@@ -18,12 +18,12 @@ internal static class SqlToolsReflectorCache<T>
     internal static IEnumerable<PropertyInfo> Key => _LazyKey.Value;
     internal static IEnumerable<PropertyInfo> Properties => _LazyProperties.Value;
     internal static IEnumerable<PropertyInfo> PropertiesLessKeys => _LazyPropertiesLessKeys.Value;
-    public static IEnumerable<string> ColumnNames => _LazyColumnNames.Value;
-    public static HashSet<string> ColumnNamesHashSet => _LazyColumnNamesHashSet.Value;
-    public static string TableName => _LazyTableName.Value;
-    public static string TableSchema => _LazyTableSchema.Value;
-    public static TableTag TableTag => new (TableSchema, TableName);
-    public static HashSet<string> EncryptedProperties => _LazyEncryptedProperties.Value;
+    internal static IEnumerable<string> ColumnNames => _LazyColumnNames.Value;
+    internal static HashSet<string> ColumnNamesHashSet => _LazyColumnNamesHashSet.Value;
+    internal static string TableName => _LazyTableName.Value;
+    internal static string TableSchema => _LazyTableSchema.Value;
+    internal static TableTag TableTag => new (TableSchema, TableName);
+    internal static HashSet<string> EncryptedProperties => _LazyEncryptedProperties.Value;
     internal static PropertyInfo? KeyVersionProperty => _LazyKeyVersionProperty.Value;
 
     private static readonly Lazy<string> _LazyProcedureName;
