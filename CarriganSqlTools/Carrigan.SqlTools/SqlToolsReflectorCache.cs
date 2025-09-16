@@ -23,6 +23,7 @@ internal static class SqlToolsReflectorCache<T>
     internal static string TableName => _LazyTableName.Value;
     internal static string TableSchema => _LazyTableSchema.Value;
     internal static TableTag TableTag => new (TableSchema, TableName);
+    internal static ProcedureTag ProcedureTag => new (TableSchema, TableName);
     internal static HashSet<string> EncryptedProperties => _LazyEncryptedProperties.Value;
     internal static PropertyInfo? KeyVersionProperty => _LazyKeyVersionProperty.Value;
 

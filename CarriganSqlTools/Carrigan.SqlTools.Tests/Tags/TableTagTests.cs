@@ -7,7 +7,7 @@ namespace Carrigan.SqlTools.Tests.Tags;
 
 //IGNORE SPELLING: Za ema myschema dbo
 
-public class TableTagClassTests
+public class TableTagTests
 {
     [Theory]
     [InlineData("Poppies", "Pizza", "[Poppies].[Pizza]")]

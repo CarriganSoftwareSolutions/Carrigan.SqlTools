@@ -34,6 +34,15 @@ public class SqlNamePatternException : Exception
     }
 
     /// <summary>
+    /// Constructs an exception for one or more invalid procedure identifiers.
+    /// </summary>
+    /// <param name="invalidProcedures">A collection of invalid procedure names.</param>
+    public SqlNamePatternException(params IEnumerable<ProcedureTag> invalidProcedures)
+        : base(CreateMessage(invalidProcedures))
+    {
+    }
+
+    /// <summary>
     /// Constructs an exception for one or more invalid role names.
     /// </summary>
     /// <param name="invalidRoles">A collection of invalid role names.</param>
@@ -79,12 +88,20 @@ public class SqlNamePatternException : Exception
         return $"The following column names for the table, {tableTag}, do not follow the SQL naming convention: {columns}";
     }
 
-    // Builds the exception message from a collection of ColumnTag values.
+    // Builds the exception message from a collection of TableTag values.
     private static string CreateMessage(IEnumerable<TableTag> invalidColumns)
     {
         IEnumerable<string> tableStrings = invalidColumns.Select(table => table.ToString());
         string tables = tableStrings.JoinAnd();
         return $"The following table names do not follow the SQL naming convention: {tables}";
+    }
+
+    // Builds the exception message from a collection of ProcedureTag values.
+    private static string CreateMessage(IEnumerable<ProcedureTag> invalidColumns)
+    {
+        IEnumerable<string> tableStrings = invalidColumns.Select(table => table.ToString());
+        string tables = tableStrings.JoinAnd();
+        return $"The following procedure names do not follow the SQL naming convention: {tables}";
     }
 
     // Builds the exception message from a collection of ColumnTag values.
