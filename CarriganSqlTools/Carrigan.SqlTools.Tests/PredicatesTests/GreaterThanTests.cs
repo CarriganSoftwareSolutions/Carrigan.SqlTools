@@ -134,7 +134,7 @@ public class GreaterThanTests
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value;
+        string actualValuestring = ((string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value) ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValuestring);
@@ -186,7 +186,7 @@ public class GreaterThanTests
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value;
+        string actualValuestring = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValuestring);

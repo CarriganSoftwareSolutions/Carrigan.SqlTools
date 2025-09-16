@@ -42,15 +42,11 @@ public class RoleTag : IComparable<RoleTag>, IEquatable<RoleTag>, IEqualityCompa
         return string.Equals(_role, other._role, StringComparison.Ordinal);
     }
 
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as RoleTag);
-    }
+    public override bool Equals(object? obj) =>
+        Equals(obj as RoleTag);
 
-    public override int GetHashCode()
-    {
-        return _role.GetHashCode(StringComparison.Ordinal);
-    }
+    public override int GetHashCode() =>
+        _role.GetHashCode(StringComparison.Ordinal);
 
     public bool Equals(RoleTag? x, RoleTag? y)
     {
@@ -59,10 +55,9 @@ public class RoleTag : IComparable<RoleTag>, IEquatable<RoleTag>, IEqualityCompa
         return string.Equals(x._role, y._role, StringComparison.Ordinal);
     }
 
-    public int GetHashCode(RoleTag obj)
-    {
-        return obj._role.GetHashCode(StringComparison.Ordinal);
-    }
+    public int GetHashCode(RoleTag obj) =>
+        obj._role.GetHashCode(StringComparison.Ordinal);
+
     public static bool operator ==(RoleTag? left, RoleTag? right)
     {
         if (ReferenceEquals(left, right))

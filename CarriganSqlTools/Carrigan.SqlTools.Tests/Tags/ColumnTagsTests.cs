@@ -38,10 +38,8 @@ public class ColumnTagsTests
     [InlineData("", null, null)]
     [InlineData(null, "", null)]
     [InlineData(null, null, null)]
-    public void Col_Tag_Tests_3_Params_null_column(string? schemaName, string? tableName, string? columnName)
-    {
-        Assert.Throws<ArgumentNullException>(() => new ColumnTag(schemaName, tableName, columnName!));
-    }
+    public void Col_Tag_Tests_3_Params_null_column(string? schemaName, string? tableName, string? columnName) 
+        => Assert.Throws<ArgumentNullException>(() => new ColumnTag(schemaName, tableName, columnName!));
 
     [Theory]
     [InlineData("Poppies", "Sloppy", "Pizza", "[Poppies].[Sloppy].[Pizza]")]
@@ -192,7 +190,7 @@ public class ColumnTagsTests
         dict[key1] = "value";
 
 
-        var key2 = new ColumnTag("S", "T", "C");
+        ColumnTag key2 = new ("S", "T", "C");
         Assert.True(dict.ContainsKey(key2));
         Assert.Equal("value", dict[key2]);
     }

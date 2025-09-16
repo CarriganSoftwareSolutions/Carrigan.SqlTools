@@ -13,50 +13,40 @@ public class ByColumnValueTests
     public void ByColumnValue_ConstructorComposite_InValid_Empty()
     {
         Dictionary<string, object> dictionary = new([]);
-        _ = Assert.Throws<ArgumentException>(() => new ColumnValues<ColumnTable>(dictionary));
+        Assert.Throws<ArgumentException>(() => new ColumnValues<ColumnTable>(dictionary));
     }
     [Fact]
-    public void ByColumnValue_ConstructorKeyValuePair_InValid_Empty()
-    {
-        _ = Assert.Throws<ArgumentException>(() => new ColumnValues<ColumnTable>(Array.Empty<KeyValuePair<string, object>>()));
-    }
+    public void ByColumnValue_ConstructorKeyValuePair_InValid_Empty() => 
+        Assert.Throws<ArgumentException>(() => new ColumnValues<ColumnTable>(Array.Empty<KeyValuePair<string, object>>()));
+
     [Fact]
-    public void ByColumnValue_ByMultipleValues_InValid_Empty()
-    {
-        _ = Assert.Throws<ArgumentException>(() => ColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas"));
-    }
+    public void ByColumnValue_ByMultipleValues_InValid_Empty() => 
+        Assert.Throws<ArgumentException>(() => ColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas"));
     #endregion
 
     #region constructor invalid bad column
     [Fact]
-    public void ByColumnValue_ConstructorSimple_InValid_BadCol()
-    {
-        _ = Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>("ilsabasbdyas", "1"));
-    }
+    public void ByColumnValue_ConstructorSimple_InValid_BadCol() => 
+        Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>("ilsabasbdyas", "1"));
     [Fact]
     public void ByColumnValue_ConstructorComposite_InValid_BadCol()
     {
         Dictionary<string, object> dictionary = new([new("ilsabasbdyas", "1"), new(nameof(ColumnTable.Col2), "2")]);
-        _ = Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>(dictionary));
+        Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>(dictionary));
     }
     [Fact]
-    public void ByColumnValue_ConstructorKeyValuePair_InValid_BadCol()
-    {
-        _ = Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>([new("ilsabasbdyas", "1"), new(nameof(ColumnTable.Col2), "2")]));
-    }
+    public void ByColumnValue_ConstructorKeyValuePair_InValid_BadCol() => 
+        Assert.Throws<SqlIdentifierException>(() => new ColumnValues<ColumnTable>([new("ilsabasbdyas", "1"), new(nameof(ColumnTable.Col2), "2")]));
+
     [Fact]
-    public void ByColumnValue_ByMultipleValues_InValid_BadCol()
-    {
-        _ = Assert.Throws<SqlIdentifierException>(() => ColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas", "1", "2"));
-    }
+    public void ByColumnValue_ByMultipleValues_InValid_BadCol() => 
+        Assert.Throws<SqlIdentifierException>(() => ColumnValues<ColumnTable>.ByMultipleValues("ilsabasbdyas", "1", "2"));
     #endregion
 
     #region constructor valid
     [Fact]
-    public void ByColumnValue_ConstructorSimple_Valid()
-    {
+    public void ByColumnValue_ConstructorSimple_Valid() => 
         _ = new ColumnValues<ColumnTable>(nameof(ColumnTable.Col1), "1");
-    }
     [Fact]
     public void ByColumnValue_ConstructorComposite_Valid()
     {
@@ -64,15 +54,11 @@ public class ByColumnValueTests
         _ = new ColumnValues<ColumnTable>(dictionary);
     }
     [Fact]
-    public void ByColumnValue_ConstructorKeyValuePair_Valid()
-    {
+    public void ByColumnValue_ConstructorKeyValuePair_Valid() => 
         _ = new ColumnValues<ColumnTable>([new(nameof(ColumnTable.Col1), "1"), new(nameof(ColumnTable.Col2), "2")]);
-    }
     [Fact]
-    public void ByColumnValue_ByMultipleValues_Valid()
-    {
+    public void ByColumnValue_ByMultipleValues_Valid() => 
         _ = ColumnValues<ColumnTable>.ByMultipleValues(nameof(ColumnTable.Col1), "1", "2");
-    }
     #endregion
 
     #region parameter count
@@ -136,7 +122,7 @@ public class ByColumnValueTests
         parameter = byColoumnValues.Parameter.Where(param => param.Name == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
-        actualValue = parameter.Value;
+        actualValue = parameter.Value ?? string.Empty;
         actualString = parameter.Name;
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);
@@ -157,7 +143,7 @@ public class ByColumnValueTests
         parameter = byColoumnValues.Parameter.Where(param => param.Name == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
-        actualValue = parameter.Value;
+        actualValue = parameter.Value ?? string.Empty;
         actualString = parameter.Name;
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);
@@ -165,7 +151,7 @@ public class ByColumnValueTests
         parameter = byColoumnValues.Parameter.Where(param => param.Name == "Col2").First();
         expectedValue = "2";
         expectedString = "Col2";
-        actualValue = parameter.Value;
+        actualValue = parameter.Value ?? string.Empty;
         actualString = parameter.Name;
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);
@@ -186,7 +172,7 @@ public class ByColumnValueTests
         parameter = byColoumnValues.Parameter.Where(param => param.Name == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
-        actualValue = parameter.Value;
+        actualValue = parameter.Value ?? string.Empty;
         actualString = parameter.Name;
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);
@@ -194,7 +180,7 @@ public class ByColumnValueTests
         parameter = byColoumnValues.Parameter.Where(param => param.Name == "Col2").First();
         expectedValue = "2";
         expectedString = "Col2";
-        actualValue = parameter.Value;
+        actualValue = parameter.Value ?? string.Empty;
         actualString = parameter.Name;
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);
@@ -216,7 +202,7 @@ public class ByColumnValueTests
         parameter = predicate.Parameter.Where(param => param.Name == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
-        actualValue = parameter.Value;
+        actualValue = parameter.Value ?? string.Empty;
         actualString = parameter.Name;
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);
@@ -224,7 +210,7 @@ public class ByColumnValueTests
         parameter = predicate.Parameter.Where(param => param.Name == "Col1").Last();
         expectedValue = "2";
         expectedString = "Col1";
-        actualValue = parameter.Value;
+        actualValue = parameter.Value ?? string.Empty;
         actualString = parameter.Name;
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);

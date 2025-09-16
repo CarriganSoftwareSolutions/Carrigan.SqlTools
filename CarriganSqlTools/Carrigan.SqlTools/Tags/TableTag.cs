@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.Tags;
 /// </summary>
 public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityComparer<TableTag>
 {
-    private string _tableTag;
+    private readonly string _tableTag;
 
     internal TableTag(string? schemaName, string tableName)
     {
@@ -46,15 +46,11 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
         return string.Equals(_tableTag, other._tableTag, StringComparison.Ordinal);
     }
 
-    public override bool Equals(object? obj)
-    {
-        return Equals(obj as TableTag);
-    }
+    public override bool Equals(object? obj) =>
+        Equals(obj as TableTag);
 
-    public override int GetHashCode()
-    {
-        return _tableTag.GetHashCode(StringComparison.Ordinal);
-    }
+    public override int GetHashCode() =>
+        _tableTag.GetHashCode(StringComparison.Ordinal);
 
     public bool Equals(TableTag? x, TableTag? y)
     {
@@ -63,10 +59,9 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
         return string.Equals(x._tableTag, y._tableTag, StringComparison.Ordinal);
     }
 
-    public int GetHashCode(TableTag obj)
-    {
-        return obj._tableTag.GetHashCode(StringComparison.Ordinal);
-    }
+    public int GetHashCode(TableTag obj) =>
+        obj._tableTag.GetHashCode(StringComparison.Ordinal);
+
     public static bool operator ==(TableTag? left, TableTag? right)
     {
         if (ReferenceEquals(left, right))
@@ -91,7 +86,7 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
         PropertyInfo tableTagProperty = cacheType.GetProperty("TableTag", BindingFlags.NonPublic | BindingFlags.Static) ?? throw new InvalidOperationException($"The property 'TableTag' was not found on type '{cacheType.FullName}'.");
 
         // Retrieve the value of the TableTag property.
-        return (TableTag)tableTagProperty.GetValue(null) ?? throw new InvalidOperationException($"The property 'TableTag' on type '{cacheType.FullName}' returned null.");
+        return (TableTag?)tableTagProperty.GetValue(null) ?? throw new InvalidOperationException($"The property 'TableTag' on type '{cacheType.FullName}' returned null.");
     }
 }
 

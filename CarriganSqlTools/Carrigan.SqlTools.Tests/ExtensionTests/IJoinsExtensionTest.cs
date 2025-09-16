@@ -10,7 +10,7 @@ public class IJoinsExtensionTest
     [Fact]
     public void IsNullOrEmpty_Null()
     {
-        IJoins joins = null;
+        IJoins? joins = null;
         Assert.True(joins.IsNullOrEmpty());
     }
     [Fact]

@@ -6,9 +6,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class SetColumnsExamples
 {
-    private SqlGenerator<Customer> customerGenerator = new();
-    private SqlGenerator<Order> orderGenerator = new();
-
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
     public void NoSetsColumn()

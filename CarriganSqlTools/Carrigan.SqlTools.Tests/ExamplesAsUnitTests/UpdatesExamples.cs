@@ -7,9 +7,8 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class UpdatesExamples
 {
-    private SqlGenerator<Customer> customerGenerator = new();
-    private SqlGenerator<Order> orderGenerator = new();
-
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Order> orderGenerator = new();
 
     [Fact]
     public void UpdateById()

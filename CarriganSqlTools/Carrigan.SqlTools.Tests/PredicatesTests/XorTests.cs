@@ -5,23 +5,23 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 
 public class XorThanTests
 {
-    private PredicatesBase ColumnPoppisTastyPizza = new Columns<ColumnTable>("Pizza");
-    private string ColumnPoppisTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
+    private static readonly PredicatesBase ColumnPoppisTastyPizza = new Columns<ColumnTable>("Pizza");
+    private static readonly string ColumnPoppisTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private PredicatesBase ColumnDestructCode = new Columns<ColumnTable>("D000descruct0");
-    private string ColumnDestructCodeSql = "[ColumnTable].[D000descruct0]";
+    private static readonly PredicatesBase ColumnDestructCode = new Columns<ColumnTable>("D000descruct0");
+    private static readonly string ColumnDestructCodeSql = "[ColumnTable].[D000descruct0]";
 
-    private PredicatesBase ColumnFuturama = new Columns<ColumnTable>("Express");
-    private string ColumnFuturamaSql = "[ColumnTable].[Express]";
+    private static readonly PredicatesBase ColumnFuturama = new Columns<ColumnTable>("Express");
+    private static readonly string ColumnFuturamaSql = "[ColumnTable].[Express]";
 
-    private PredicatesBase ParameterPi = new Parameters("Pi", 3.14f);
-    private string ParameterPiSql = "@Parameter_Pi";
+    private static readonly PredicatesBase ParameterPi = new Parameters("Pi", 3.14f);
+    private static readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private PredicatesBase ParamerterElite = new Parameters("Elite", 1337);
-    private string ParamerterEliteSql = "@Parameter_Elite";
+    private static readonly PredicatesBase ParamerterElite = new Parameters("Elite", 1337);
+    private static readonly string ParamerterEliteSql = "@Parameter_Elite";
 
-    private PredicatesBase ParamerterHelloWorld = new Parameters("HelloWorld", "Hello World!");
-    private string ParamerterHelloWorldSql = "@Parameter_HelloWorld";
+    private static readonly PredicatesBase ParamerterHelloWorld = new Parameters("HelloWorld", "Hello World!");
+    private static readonly string ParamerterHelloWorldSql = "@Parameter_HelloWorld";
 
 
     [Fact]
@@ -135,7 +135,7 @@ public class XorThanTests
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value;
+        string actualValuestring = (string?)predicate.Parameter.First(p => p.Name == "HelloWorld").Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValuestring);
@@ -187,7 +187,7 @@ public class XorThanTests
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value;
+        string actualValuestring = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValuestring);

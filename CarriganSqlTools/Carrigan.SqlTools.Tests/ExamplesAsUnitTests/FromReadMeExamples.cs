@@ -11,8 +11,8 @@ namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
 public class FromReadMeExamples
 {
-    private SqlGenerator<Customer> customerGenerator = new();
-    private SqlGenerator<Order> orderGenerator = new();
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Order> orderGenerator = new();
 
     private static string ModifyInsertQueryToReturnScalar(string queryText)
     {

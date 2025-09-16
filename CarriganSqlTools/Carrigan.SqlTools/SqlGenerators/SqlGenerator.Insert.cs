@@ -11,15 +11,12 @@ public partial class SqlGenerator<T>
     /// </summary>
     /// <param name="queryText">Insert Sql Query</param>
     /// <returns>modified Insert Sql Query</returns>
-    private static string ModifyInsertQueryToReturnScalar(string queryText)
-    {
+    private static string ModifyInsertQueryToReturnScalar(string queryText) =>
         // Build the final query using a temporary table to store the GUID
-        StringBuilder sqlQuery = new();
-        sqlQuery.AppendLine("DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);");
-        sqlQuery.AppendLine(queryText.Replace("VALUES", "OUTPUT INSERTED.Id INTO @OutputTable VALUES"));
-        sqlQuery.AppendLine("SELECT InsertedId FROM @OutputTable;");
-        return sqlQuery.ToString();
-    }
+        new StringBuilder().AppendLine("DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);")
+            .AppendLine(queryText.Replace("VALUES", "OUTPUT INSERTED.Id INTO @OutputTable VALUES"))
+            .AppendLine("SELECT InsertedId FROM @OutputTable;")
+            .ToString();
 
     /// <summary>
     /// This is a helper method that generates the Values portion of the query

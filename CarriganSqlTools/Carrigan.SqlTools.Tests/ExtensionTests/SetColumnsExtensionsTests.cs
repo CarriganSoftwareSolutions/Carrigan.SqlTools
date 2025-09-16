@@ -10,7 +10,7 @@ public class SetColumnsExtensionsTests
     public void IsNullOrEmpty_NullSetColumns_ReturnsTrue()
     {
         // Arrange
-        SetColumns<ColumnTable> setColumns = null;
+        SetColumns<ColumnTable>? setColumns = null;
 
         // Act
         bool result = setColumns.IsNullOrEmpty();
@@ -53,7 +53,7 @@ public class SetColumnsExtensionsTests
     public void IsNotNullOrEmpty_NullSetColumns_ReturnsFalse()
     {
         // Arrange
-        SetColumns<ColumnTable> setColumns = null;
+        SetColumns<ColumnTable>? setColumns = null;
 
         // Act
         bool result = setColumns.IsNotNullOrEmpty();

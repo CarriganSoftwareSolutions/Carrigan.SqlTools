@@ -108,10 +108,10 @@ public partial class SqlGenerator<T>
         else
             key = entityIndex == null ? $"{parameterPrepend}{property.Name}" : $"{parameterPrepend}{property.Name}_{entityIndex}";
         if(_Encryption is not null && useEncryption && _KeyVersionProperty is not null && _KeyVersionProperty.Name.Equals(property.Name))
-            return new KeyValuePair<string, object>(key, _Encryption.Version);
+            return new KeyValuePair<string, object>(key, ((object?)_Encryption?.Version) ?? DBNull.Value);
         if (_Encryption is not null && useEncryption && _EncryptedProperties.Contains(property.Name))
             //the explicit conversion of _Encryption?.Encrypt(property.GetValue(entity)?.ToString()) to an object is required to avoid a compiler error.
-            return new KeyValuePair<string, object>(key, ((object)_Encryption?.Encrypt(property.GetValue(entity)?.ToString())) ?? DBNull.Value);
+            return new KeyValuePair<string, object>(key, ((object?)_Encryption?.Encrypt(property.GetValue(entity)?.ToString())) ?? DBNull.Value);
         else
             return new KeyValuePair<string, object>(key, property.GetValue(entity) ?? DBNull.Value);
     }

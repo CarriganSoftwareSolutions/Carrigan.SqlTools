@@ -228,7 +228,7 @@ public class IsNullTests
         PredicatesBase predicate = new IsNull(inner);
 
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value;
+        string actualValuestring = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueString, actualValuestring);
     }
@@ -266,7 +266,7 @@ public class IsNullTests
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string)and.Parameter.Where(p => p.Name == "HelloWorld").First().Value;
+        string actualValuestring = (string?)and.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValuestring);

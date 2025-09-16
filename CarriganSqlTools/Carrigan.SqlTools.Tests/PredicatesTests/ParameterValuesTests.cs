@@ -39,16 +39,12 @@ public class ParameterValuesTests
     [InlineData(".")]
     [InlineData("")]
     [InlineData("hello world")]
-    public void ParameterValues_Theory_InvalidParameterChars(string param)
-    {
+    public void ParameterValues_Theory_InvalidParameterChars(string param) => 
         Assert.Throws<ArgumentException>(() => new Parameters(param, 1));
-    }
 
     [Fact]
-    public void ParameterValues_Fact_NullParameter()
-    {
+    public void ParameterValues_Fact_NullParameter() => 
         Assert.Throws<ArgumentNullException>(() => new Parameters(null!, 1));
-    }
 
 
     [Theory]
@@ -89,8 +85,8 @@ public class ParameterValuesTests
     public void ParameterValues_Parameter_Value(string parameter, object value)
     {
         Parameters parameterValue = new(parameter, value);
-        object expected = value;
-        object actual = parameterValue.Value;
+        object? expected = value;
+        object? actual = parameterValue.Value;
 
         Assert.Equal(expected, actual);
     }

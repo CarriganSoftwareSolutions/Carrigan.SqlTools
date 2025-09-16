@@ -22,7 +22,7 @@ public static class TypeExtensions
         {
             if (TableNames.ContainsKey(type) is false)
             {
-                TableAttribute tableAttribute = type.GetCustomAttribute<TableAttribute>();
+                TableAttribute? tableAttribute = type.GetCustomAttribute<TableAttribute>();
                 TableNames[type] = tableAttribute is null ? type.Name : tableAttribute.Name;
             }
             return TableNames[type];
@@ -43,7 +43,7 @@ public static class TypeExtensions
         {
             if (TableSchemas.ContainsKey(type) is false)
             {
-                TableAttribute tableAttribute = type.GetCustomAttribute<TableAttribute>();
+                TableAttribute? tableAttribute = type.GetCustomAttribute<TableAttribute>();
                 TableSchemas[type] = tableAttribute is null || string.IsNullOrEmpty(tableAttribute.Schema) ? string.Empty : tableAttribute.Schema;
             }
             return TableSchemas[type];

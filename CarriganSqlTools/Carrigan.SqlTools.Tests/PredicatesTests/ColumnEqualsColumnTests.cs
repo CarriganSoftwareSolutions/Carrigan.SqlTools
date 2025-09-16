@@ -3,17 +3,12 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tests.PredicatesTests;
 public class ColumnEqualsColumnTests
 {
-    private SqlGenerator<JoinLeftTable> leftGenerator = new();
-    private SqlGenerator<JoinRightTable> rightGenerator = new();
+    private static readonly SqlGenerator<JoinLeftTable> leftGenerator = new();
+    private static readonly SqlGenerator<JoinRightTable> rightGenerator = new();
     [Fact]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
     public void NewLeftRight()
@@ -29,18 +24,12 @@ public class ColumnEqualsColumnTests
     }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
-    public void LeftInvalid()
-    {
+    public void LeftInvalid() => 
         Assert.Throws<ArgumentException>(() => { ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new("QWERTY", nameof(JoinRightTable.Id)); });
-    }
 
     [Fact]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
-    public void RightInvalid()
-    {
+    public void RightInvalid() => 
         Assert.Throws<ArgumentException>(() => { ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), "ASWD"); });
-    }
 
     [Fact]
     public void PredicateColumnEqualsColumn()

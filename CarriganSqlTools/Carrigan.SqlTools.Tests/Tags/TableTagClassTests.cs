@@ -27,10 +27,8 @@ public class TableTagClassTests
     [InlineData("Poppies", null)]
     [InlineData(null, null)]
     [InlineData("", null)]
-    public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName)
-    {
+    public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName) => 
         Assert.Throws<ArgumentNullException>(() => new TableTag(schemaName, tableName!));
-    }
 
     [Theory]
     [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
@@ -83,15 +81,15 @@ public class TableTagClassTests
     [InlineData("Poppies", "Pizza", null, null)]
     public void TableTag_EqualsObject(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
 
 
         bool expectedValue = tagString1!.Equals(tagString2);
-        bool actualValue = tag1!.Equals((object)tag2);
+        bool actualValue = tag1!.Equals((object?)tag2);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -105,8 +103,8 @@ public class TableTagClassTests
     [InlineData("Poppies", "Pizza", null, null)]
     public void TableTag_EqualsEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -126,8 +124,8 @@ public class TableTagClassTests
     [InlineData("Poppies", "Pizza", null, null)]
     public void TableTag_NotEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;

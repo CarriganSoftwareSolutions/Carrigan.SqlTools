@@ -144,7 +144,7 @@ internal static class SqlToolsReflectorCache<T>
                 return identifier.Name;
         else
         {
-            ColumnAttribute columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+            ColumnAttribute? columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
             if(columnAttribute != null && columnAttribute.Name.IsNotNullOrWhiteSpace())
                 if (SqlIdentifierPattern.Fails(columnAttribute.Name))
                     throw new SqlNamePatternException(columnAttribute.Name);
