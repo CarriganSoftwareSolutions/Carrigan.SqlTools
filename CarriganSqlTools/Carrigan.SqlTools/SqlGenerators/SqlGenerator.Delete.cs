@@ -52,15 +52,12 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Customer];
     /// ]]></code>
     /// </example>
-    public SqlQuery DeleteAll()
+    public SqlQuery DeleteAll() => new ()
     {
-        return new SqlQuery()
-        {
-            Parameters = [],
-            QueryText = $"DELETE FROM {TableTag};",
-            CommandType = CommandType.Text
-        };
-    }
+        Parameters = [],
+        QueryText = $"DELETE FROM {TableTag};",
+        CommandType = CommandType.Text
+    };
 
 
     /// <summary>

@@ -187,7 +187,7 @@ public partial class SqlGenerator<T>
         IEnumerable<PropertyInfo> updateTheseProperties = (columns?.ColumnNames?.Any() ?? false)
             ? _PropertiesLessKeys.Where(property => columns.ColumnNames.Contains(property.Name))
             : _PropertiesLessKeys;
-        IEnumerable<PropertyInfo> keyProperties = _Key;
+
         IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(TableTag).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
