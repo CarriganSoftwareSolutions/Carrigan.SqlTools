@@ -102,7 +102,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// </summary>
     internal static IEnumerable<Columns<T>> Get(params IEnumerable<string> propertyNames)
     {
-        IEnumerable<string> invalid = propertyNames.Where(propertyName => (SqlToolsReflectorCache<T>.ContainsProperty(propertyName) is false));
+        IEnumerable<string> invalid = propertyNames.Where(propertyName => SqlToolsReflectorCache<T>.ContainsProperty(propertyName) is false);
         if (invalid.Any())
             throw SqlIdentifierException.FromInvalidColumnNames<T>(invalid);
         return propertyNames.Select(propertyName => new Columns<T>(propertyName));

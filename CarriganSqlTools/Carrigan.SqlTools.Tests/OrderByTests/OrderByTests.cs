@@ -10,7 +10,7 @@ public class OrderByTests
     public void OrderByTests_Constructor()
     {
         OrderByItem<Address> orderByItem = new("City", SortDirectionEnum.Ascending);
-        OrderBy orderBy = new OrderBy(orderByItem);
+        OrderBy orderBy = new(orderByItem);
 
 
         Assert.Single(orderBy.TableTags);

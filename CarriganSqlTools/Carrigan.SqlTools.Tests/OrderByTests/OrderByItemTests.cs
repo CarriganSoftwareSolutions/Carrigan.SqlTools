@@ -138,7 +138,7 @@ public class OrderByItemTests
         OrderByItem<Address> more1 = new("Street", SortDirectionEnum.Descending);
         OrderByItem<Address> more2 = new("City", SortDirectionEnum.Descending); // same column, different direction
 
-        OrderBy order = new OrderBy(initial);
+        OrderBy order = new(initial);
 
         OrderBy orderWithThreeItems = initial.WithConcat(more1, more2);
         List<IOrderByItem> oldItems =

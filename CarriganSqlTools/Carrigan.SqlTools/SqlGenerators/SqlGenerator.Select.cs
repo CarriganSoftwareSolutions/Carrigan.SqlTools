@@ -142,8 +142,8 @@ public partial class SqlGenerator<T>
     public SqlQuery Select(IJoins? joins, PredicatesBase? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-        IEnumerable<TableTag> predicateTableTags = [.. (predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? [])];
-        IEnumerable<TableTag> orderByTableTags = [.. (orderBy?.TableTags?.Distinct() ?? [])];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
         StringBuilder queryBuilder = new($"SELECT {Table}.* FROM {Table}");

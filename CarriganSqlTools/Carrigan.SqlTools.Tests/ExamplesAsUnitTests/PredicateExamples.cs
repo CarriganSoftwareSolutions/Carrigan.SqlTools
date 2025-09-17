@@ -24,7 +24,7 @@ public class PredicateExamples
         Equal equalEmail = new(columnEmail, parameterEmail);
 
 
-        Parameters parameterPhone = new("Phone", ("+1(555)555-5555"));
+        Parameters parameterPhone = new("Phone", "+1(555)555-5555");
         Columns<Customer> columnPhone = new(nameof(Customer.Phone));
         Equal equalPhone = new(columnPhone, parameterPhone);
 
@@ -271,7 +271,7 @@ public class PredicateExamples
         Equal equalEmail = new(columnEmail, parameterEmail);
 
 
-        Parameters parameterPhone = new("Phone", ("+1(555)555-5555"));
+        Parameters parameterPhone = new("Phone", "+1(555)555-5555");
         Columns<Customer> columnPhone = new(nameof(Customer.Phone));
         Equal equalPhone = new(columnPhone, parameterPhone);
 
