@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.Tags;
 public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
 {
     private readonly string _columnTag;
-    internal readonly string _columnName;
+    internal readonly string _columnName; //TODO: Unit tests
     internal ColumnTag(TableTag tableTag,  string columnName)
     {
         if (columnName.IsNullOrEmpty())
@@ -22,6 +22,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
         }
     }
 
+    //TODO: Make sure there is a unit test for this constructor
     internal ColumnTag(string? schemaName, string? tableName,  string columnName)
     {
         if (columnName.IsNullOrEmpty())
@@ -30,6 +31,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
             _columnTag = _columnTag = new ColumnTag(new TableTag(schemaName, tableName), columnName);
         else
             _columnTag = $"[{columnName}]";
+        _columnName = columnName;
     }
 
     public static implicit operator string(ColumnTag value) => value._columnTag;
@@ -56,15 +58,11 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
         return string.Equals(_columnTag, other._columnTag, StringComparison.OrdinalIgnoreCase);
     }
 
-    public override bool Equals(object? obj)
-    {
-        return obj is ColumnTag ct && Equals(ct);
-    }
+    public override bool Equals(object? obj) =>
+        obj is ColumnTag ct && Equals(ct);
 
-    public override int GetHashCode()
-    {
-        return _columnTag.GetHashCode();
-    }
+    public override int GetHashCode() =>
+        _columnTag.GetHashCode();
 
     public bool Equals(ColumnTag? x, ColumnTag? y)
     {
@@ -73,10 +71,9 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
         return x.Equals(y);
     }
 
-    public int GetHashCode(ColumnTag obj)
-    {
-        return obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
-    }
+    public int GetHashCode(ColumnTag obj) =>
+        obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
+
     public static bool operator ==(ColumnTag? left, ColumnTag? right)
     {
         if (ReferenceEquals(left, right)) return true;

@@ -1,5 +1,4 @@
 ﻿using Carrigan.SqlTools.Predicates;
-using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.PredicatesTests;
@@ -7,22 +6,16 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 public  class ColumnsTests
 {
     [Fact]
-    public void ColumnValues_One_Constructor_NullColumnException_Null()
-    {
+    public void ColumnValues_One_Constructor_NullColumnException_Null() =>
         Assert.Throws<ArgumentNullException>(() => new Columns<ColumnTable>(null!));
-    }
 
     [Fact]
-    public void ColumnValues_One_Constructor_NullColumnException_EmptyString()
-    {
+    public void ColumnValues_One_Constructor_NullColumnException_EmptyString() =>
         Assert.Throws<ArgumentException>(() => new Columns<ColumnTable>(string.Empty));
-    }
 
     [Fact]
-    public void ColumnValues_One_Constructor_Column_DoesNot_Exist()
-    {
+    public void ColumnValues_One_Constructor_Column_DoesNot_Exist() =>
         Assert.Throws<ArgumentException>(() => new Columns<ColumnTable>("C#"));
-    }
 
     [Theory]
     [InlineData("Col1")]
@@ -73,7 +66,7 @@ public  class ColumnsTests
 
         foreach (string columnName in propertyNames)
         {
-            _ = columnValues.Where(col => col.ColumnTag == $"[ColumnTable].[{columnName}]").Single();
+            _ = columnValues.Single(col => col.ColumnTag == $"[ColumnTable].[{columnName}]");
         }
     }
     [Theory]
