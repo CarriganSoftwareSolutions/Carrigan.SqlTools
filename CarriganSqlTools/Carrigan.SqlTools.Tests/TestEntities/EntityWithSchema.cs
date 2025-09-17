@@ -6,6 +6,9 @@ namespace Carrigan.SqlTools.Tests.TestEntities;
 
 //ignore spelling: myschema
 
+//Note: Identifier "EntityWithSchema" should override the Table's name attribute of "EntityWithSchemaTable"
+//Note: Identifier Schema "myschema" should override the Table's name attribute of "EntityWithSchema"
+
 [Table("EntityWithSchemaTable", Schema = "myCustomSchema")]
 [Identifier("EntityWithSchema", Schema: "myschema")]
 public class EntityWithSchema

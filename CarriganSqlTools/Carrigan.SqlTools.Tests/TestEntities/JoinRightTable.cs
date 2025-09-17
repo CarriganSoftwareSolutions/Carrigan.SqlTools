@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Carrigan.SqlTools.Attributes;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
-[Table("Right")]
+[Identifier("Right")]
 internal class JoinRightTable
 {
     [Key]

@@ -1,9 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Carrigan.SqlTools.Attributes;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
-[Table("Left")]
+//Note: Identifier "Left" should override the Table's name attribute
+[Identifier("Left")]
+[Table("LeftTable")]
 public class JoinLeftTable
 {
     [Key]

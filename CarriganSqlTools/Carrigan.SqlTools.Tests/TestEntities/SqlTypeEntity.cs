@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Carrigan.SqlTools.Attributes;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
+//Note: Table's name attribute of "TestSqlTypes" does not affect the Procedure name when the table is used a procedure model.
 [Table("TestSqlTypes")]
 public class SqlTypeEntity
 {
