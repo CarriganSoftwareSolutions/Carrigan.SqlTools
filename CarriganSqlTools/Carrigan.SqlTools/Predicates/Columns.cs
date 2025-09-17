@@ -25,9 +25,9 @@ namespace Carrigan.SqlTools.Predicates;
 public class Columns  <T> : PredicatesBase, IColumnValue
 {
     /// <summary>
-    /// The name of the column
+    /// The name of the property representing the column
     /// </summary>
-    public string Name { get; }
+    public string PropertyName { get; }
     /// <summary>
     /// The Tag for the Column
     /// </summary>
@@ -37,22 +37,21 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// </summary>
     public TableTag TableTag { get; }
 
+    internal static ArgumentException NoSuchProperty(string properyName) =>
+        new ($"{properyName} is not the valid name of a property in the class, {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(properyName));
+
     /// <summary>
     /// A constructor for a column in the predicate logic.
     /// </summary>
-    /// <param name="column">The name of the column.</param>
-    /// <exception cref="ArgumentException">Gets thrown if the column is not a valid column in the context of the table represented by the class <see cref="T"/></exception>
-    public Columns(string column)
+    /// <param name="propertyName">The name of property representing the column.</param>
+    /// <exception cref="ArgumentException">Gets thrown if the propertyName is not is not a valid property for the class <see cref="T"/> representing the table.</exception>
+    public Columns(string propertyName)
     {
-        if (column.IsNullOrEmpty())
-            throw new ArgumentException($"{nameof(column)} requires a value.", column);
-        else if (SqlToolsReflectorCache<T>.ColumnNamesHashSet.Contains(column) is false)
-            throw new ArgumentException($"{column} is not the valid name of a column in table, {SqlToolsReflectorCache<T>.TableName}.", nameof(column));
+        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName);
 
-
-        TableTag = new TableTag(SqlToolsReflectorCache<T>.TableSchema ?? string.Empty, SqlToolsReflectorCache<T>.TableName ?? string.Empty);
-        ColumnTag = new ColumnTag(TableTag, column);
-        Name = column;
+        TableTag = SqlToolsReflectorCache<T>.Table;
+        ColumnTag = SqlToolsReflectorCache<T>.GetColumnTagByProperty(propertyName) ?? throw NoSuchProperty(propertyName);
+        PropertyName = propertyName;
     }
 
     /// <summary>
@@ -104,17 +103,16 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// <summary>
     /// used for unit testing only
     /// </summary>
-    internal static IEnumerable<Columns<T>> Get(params IEnumerable<string> columnNames)
+    internal static IEnumerable<Columns<T>> Get(params IEnumerable<string> propertyNames)
     {
-        IEnumerable<string> invalid = columnNames.Where(columnName => SqlToolsReflectorCache<T>.ColumnNamesHashSet.Contains(columnName) is false);
+        IEnumerable<string> invalid = propertyNames.Where(propertyName => (SqlToolsReflectorCache<T>.ContainsProperty(propertyName) is false));
         if (invalid.Any())
             throw SqlIdentifierException.FromInvalidColumnNames<T>(invalid);
-        return columnNames.Select(column => new Columns<T>(column));
+        return propertyNames.Select(propertyName => new Columns<T>(propertyName));
     }
-
     /// <summary>
     /// used for unit testing only
     /// </summary>
-    internal static IEnumerable<Columns<T>> Get() =>
-        SqlToolsReflectorCache<T>.ColumnNames.Select(column => new Columns<T>(column));
+    public static IEnumerable<Columns<T>> Get() =>
+        SqlToolsReflectorCache<T>.Columns.Select(column => new Columns<T>(column._columnName));
 }

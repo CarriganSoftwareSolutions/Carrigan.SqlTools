@@ -35,8 +35,8 @@ public class InnerJoin<T, J> : JoinBaseClass
     /// <exception cref="SqlIdentifierException"></exception>
     public InnerJoin(Predicates.PredicatesBase predicate)
     {
-        TableTag leftTableTag = SqlToolsReflectorCache<T>.TableTag;
-        TableTag rightTableTag = SqlToolsReflectorCache<J>.TableTag;
+        TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
+        TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;
         IEnumerable<ColumnTag> invalidTags = 
             predicate
                 .Column

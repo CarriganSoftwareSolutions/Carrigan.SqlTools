@@ -143,12 +143,12 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Select(IJoins? joins, PredicatesBase? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
     {
-        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(TableTag).Distinct();
+        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. (predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? [])];
         IEnumerable<TableTag> orderByTableTags = [.. (orderBy?.TableTags?.Distinct() ?? [])];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
-        StringBuilder queryBuilder = new($"SELECT {TableTag}.* FROM {TableTag}");
+        StringBuilder queryBuilder = new($"SELECT {Table}.* FROM {Table}");
 
         if (invalidPredicateTags.Any())
         {
@@ -163,7 +163,7 @@ public partial class SqlGenerator<T>
         {
             //add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server that has unexpected behavior if the order by values are not unique
             orderBy ??= new OrderBy();
-            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. _Key.Select(key => new OrderByItem<T>(key.Name, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
+            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. Key.Select(key => new OrderByItem<T>(key.Name, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
             orderBy = orderBy.WithConcat(oderByKeyItems);
         }
 

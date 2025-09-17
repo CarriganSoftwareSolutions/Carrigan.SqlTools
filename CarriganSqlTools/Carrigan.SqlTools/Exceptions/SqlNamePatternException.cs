@@ -68,7 +68,7 @@ public class SqlNamePatternException : Exception
     /// <returns>An InvalidSqlIdentifier exception instance.</returns>
     public static SqlNamePatternException FromInvalidColumnNames<T>(params IEnumerable<string> invalidColumnNames)
     {
-        TableTag tableTag = SqlToolsReflectorCache<T>.TableTag;
+        TableTag tableTag = SqlToolsReflectorCache<T>.Table;
         return new SqlNamePatternException(tableTag, invalidColumnNames);
     }
 

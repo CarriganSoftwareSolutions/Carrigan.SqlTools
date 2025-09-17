@@ -51,10 +51,10 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery SelectCount(IJoins? joins, PredicatesBase? predicates)
     {
-        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(TableTag).Distinct();
+        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. (predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? [])];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
-        StringBuilder queryBuilder = new($"SELECT COUNT(*) FROM {TableTag}");
+        StringBuilder queryBuilder = new($"SELECT COUNT(*) FROM {Table}");
 
         if (invalidPredicateTags.Any())
         {

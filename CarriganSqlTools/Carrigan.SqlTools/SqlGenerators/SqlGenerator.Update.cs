@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Data;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -57,21 +58,31 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery UpdateById(T entity, SetColumns<T>? columns = null)
     {
-        IEnumerable<PropertyInfo> updateTheseProperties = (columns?.ColumnNames?.Any() ?? false)
-            ? _PropertiesLessKeys.Where(property => columns.ColumnNames.Contains(property.Name))
-            : _PropertiesLessKeys;
-        IEnumerable<PropertyInfo> keyProperties = _Key;
+        IEnumerable<ColumnTag> updateTheseColumns = 
+            (columns?.ColumnTags?.Any() ?? false) ? columns.ColumnTags : ColumnsLessKeys;
 
-        string setColumnValues = string.Join(", ", updateTheseProperties.Select(property => $"[{property.Name}] = @{property.Name}"));
-        string whereclause = string.Join(" and ", keyProperties.Select(property => $"[{property.Name}] = @{property.Name}"));
+        IEnumerable<KeyValuePair<string, object>> parameters = updateTheseColumns.Concat(KeyColumns).Select(column => GetSqlParameterKeyValue(column, true, entity));
 
-        IEnumerable<KeyValuePair<string, object>> parameters = updateTheseProperties.Concat(keyProperties).Select(property => GetSqlParameterKeyValue(property, true, entity));
+        List<Tuple<ColumnTag, string>> setColumnAndParameterName = [];
+        foreach (ColumnTag column in updateTheseColumns)
+        {
+            KeyValuePair<string, object> parameter = GetSqlParameterKeyValue(column, true, entity);
+            setColumnAndParameterName.Add(new(column, parameter.Key));
+        }
+        string sets = string.Join(", ", setColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
 
+        List<Tuple<ColumnTag, string>> whereColumnAndParameterName = [];
+        foreach (ColumnTag column in KeyColumns)
+        {
+            KeyValuePair<string, object> parameter = GetSqlParameterKeyValue(column, true, entity);
+            whereColumnAndParameterName.Add(new(column, parameter.Key));
+        }
+        string where = string.Join(", ", whereColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
 
         return new SqlQuery()
         {
             Parameters = [.. parameters],
-            QueryText = $"UPDATE {TableTag} SET {setColumnValues} WHERE {whereclause};",
+            QueryText = $"UPDATE {Table} SET {sets} WHERE {where};",
             CommandType = CommandType.Text
         };
     }
@@ -114,7 +125,7 @@ public partial class SqlGenerator<T>
         Or or = new            (
                 idEntities.Select(entity => new And
                 (
-                    _Key.Select(property => new Equal
+                    Key.Select(property => new Equal
                         (
                             new Columns<T>(property.Name), 
                             new Parameters(property.Name, property.GetValue(entity)))
@@ -184,21 +195,20 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Update(T entity, SetColumns<T>? columns, IJoins? joins, PredicatesBase? predicates)
     {
-        IEnumerable<PropertyInfo> updateTheseProperties = (columns?.ColumnNames?.Any() ?? false)
-            ? _PropertiesLessKeys.Where(property => columns.ColumnNames.Contains(property.Name))
-            : _PropertiesLessKeys;
+        IEnumerable<ColumnTag> updateTheseColumns =
+            (columns?.ColumnTags?.Any() ?? false) ? columns.ColumnTags : ColumnsLessKeys;
 
-        IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(TableTag).Distinct();
+        IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
-        string setColumnValues = string.Join(", ", updateTheseProperties.Select(property => $"{TableTag}.[{property.Name}] = @ParameterSet_{property.Name}"));
+        string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = @ParameterSet_{column._columnName}"));
 
-        IEnumerable<KeyValuePair<string, object>> parameters = updateTheseProperties.Select(property => GetSqlParameterKeyValue(property, true, entity, null, "@ParameterSet_"));
+        IEnumerable<KeyValuePair<string, object>> parameters = updateTheseColumns.Select(property => GetSqlParameterKeyValue(property, true, entity, null, "@ParameterSet_"));
         Dictionary<string, object> parametersDictionary = [.. parameters];
 
 
-        StringBuilder queryBuilder = new($"UPDATE {TableTag} SET {setColumnValues} FROM {TableTag}");
+        StringBuilder queryBuilder = new($"UPDATE {Table} SET {setColumnValues} FROM {Table}");
 
         if (invalidTags.Any())
         {

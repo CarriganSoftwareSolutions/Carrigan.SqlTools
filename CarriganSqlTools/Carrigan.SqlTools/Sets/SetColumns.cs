@@ -1,6 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
+using System.Linq;
 
 namespace Carrigan.SqlTools.Sets;
 /// <summary>
@@ -48,33 +50,32 @@ namespace Carrigan.SqlTools.Sets;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class SetColumns<T>
+public class SetColumns<T> : SqlToolsReflectorCache<T>
 {
     /// <summary>
     /// Name of the columns used in the instance
     /// </summary>
-    public IEnumerable<string> ColumnNames { get; private set; }
+    public IEnumerable<ColumnTag> ColumnTags { get; private set; }
+
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="columnNames">Names of the columns to be used in the instance</param>
-    /// <exception cref="ArgumentException"></exception>
-    public SetColumns(params IEnumerable<string> columnNames)
+    /// <param name="propertyNames">Names of the properties that represent the names of columns to be used</param>
+    public SetColumns(params IEnumerable<string> propertyNames)
     {
-        IEnumerable<string> invalid = columnNames.Where(columnName => SqlToolsReflectorCache<T>.ColumnNamesHashSet.Contains(columnName) is false);
-        if (invalid.Any())
-            throw new ArgumentException($"{invalid.JoinAnd()} are not valid columns in table, {SqlToolsReflectorCache<T>.TableName}.", nameof(columnNames));
-        ColumnNames = columnNames;
+        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyNames);
+        ColumnTags = propertyNames.Select(property => GetColumnTagByProperty(property)).OfType<ColumnTag>();
     }
+
     /// <summary>
     /// Add an additional column
     /// </summary>
-    /// <param name="columnName">additional column to be add to SetColumns</param>
+    /// <param name="propertyName">additional property that represent the names of a column to be used</param>
     /// <exception cref="ArgumentException">Column name not found.</exception>
-    public void AddColumn(string columnName)
+    public void AddColumn(string propertyName)
     {
-        if(SqlToolsReflectorCache<T>.ColumnNamesHashSet.Contains(columnName) is false)
-            throw new ArgumentException($"{columnName} is not valid column in table, {SqlToolsReflectorCache<T>.TableName}.", nameof(columnName));
-        ColumnNames = ColumnNames.Append(columnName);
+        ColumnTag? newTag = GetColumnTagByProperty(propertyName);
+        if(newTag is not null)
+            ColumnTags = ColumnTags.Append(newTag);
     }
 }

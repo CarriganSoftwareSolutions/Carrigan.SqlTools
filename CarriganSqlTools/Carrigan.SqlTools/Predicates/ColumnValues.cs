@@ -21,102 +21,24 @@ namespace Carrigan.SqlTools.Predicates;
 /// </example>
 public class ColumnValues<T> : PredicatesBase
 {
-    protected PredicatesBase value;
-
-    private void Initi(Dictionary<string, object> compositeColumnValues)
-    {
-        IEnumerable<string> invalidColumns;
-        if (compositeColumnValues.Keys.None())
-            throw new ArgumentException("Must have at least one column name / value pair", nameof(compositeColumnValues));
-        else if (compositeColumnValues.Keys.Count < 0)
-        {
-            throw new ArgumentException("That's quite the nasty feat you just pulled off. How did you get a collection with a negative count? I am impressed.", nameof(compositeColumnValues));
-        }
-
-        invalidColumns = compositeColumnValues.Keys.Where(key => SqlToolsReflectorCache<T>.ColumnNames.DoesNotContain(key));
-        if(invalidColumns.Any())
-            throw SqlIdentifierException.FromInvalidColumnNames<T>(invalidColumns);
-
-        value = new And
-        (
-            compositeColumnValues.Keys.Select
-            (
-                key =>
-                new Equal
-                (
-                    new Columns<T>(key),
-                    new Parameters(key, compositeColumnValues[key])
-                )
-            )
-        );
-
-    }
+    protected readonly PredicatesBase value;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     /// <summary>
-    /// A public constructor for a class that represents Column = Value in SQL
+    /// A public constructor. 
     /// </summary>
-    /// <param name="column">Column</param>
-    /// <param name="value">Value</param>
-    public ColumnValues(string column, object value)
+    /// <param name="propertyName">Column</param>
+    /// <param name="parameterValue">Value</param>
+    public ColumnValues(string propertyName, object parameterValue)
     {
-        Initi([.. new[] { new KeyValuePair<string, object>(column, value) }]);
-    }
-
-    /// <summary>
-    /// A public constructor. Takes the key value pairs and creates an object that represents
-    /// an SQL query with a column name for each key and a value for the corresponding value 
-    /// and the SQL is equivalent to an AND
-    /// Example: Col1 = 1 AND Col2 = 2 AND Col3 = 3
-    /// </summary>
-    /// <param name="compositeColumnValues">An enumeration of key value pairs.</param>
-    public ColumnValues(params IEnumerable<KeyValuePair<string, object>> compositeColumnValues)
-    {
-        Initi([.. compositeColumnValues]);
-    }
-
-
-    /// <summary>
-    /// A public constructor. Takes the Dictionary and creates an object that represents
-    /// an SQL query with a column name for each key and a value for the corresponding value 
-    /// and the SQL is equivalent to an AND
-    /// Example: Col1 = 1 AND Col2 = 2 AND Col3 = 3
-    /// </summary>
-    /// <param name="compositeColumnValues">a dictionary </param>
-    public ColumnValues(Dictionary<string, object> compositeColumnValues)
-    {
-        Initi(compositeColumnValues);
-    }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
-    /// <summary>
-    /// This scenario forms a predicate where a single column is selected according to multiple values.
-    /// Example: Id = 1 OR Id = 2 Or Id = 3
-    /// </summary>
-    /// <param name="column">The column name to select by.</param>
-    /// <param name="values">Multiple values to select.</param>
-    /// <returns></returns>
-    public static PredicatesBase ByMultipleValues(string column, params IEnumerable<object> values)
-    {
-        if (values.Any() == false)
-            throw new ArgumentException("Must have at least one column name / value pair", nameof(column));
-
-        if (SqlToolsReflectorCache<T>.ColumnNames.DoesNotContain(column))
-            throw SqlIdentifierException.FromInvalidColumnNames<T>(column);
-
-        return new Or
+        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName);
+        value = new Equal
         (
-            values.Select
-            (
-                value =>
-                new Equal
-                (
-                    new Columns<T>(column),
-                    new Parameters(column, value)
-                )
-            )
+            new Columns<T>(propertyName),
+            new Parameters(propertyName, parameterValue)
         );
     }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     /// <summary>
     /// Leaf node in recursive logic to get all the parameters associated with the logic.

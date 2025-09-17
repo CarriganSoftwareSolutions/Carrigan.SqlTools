@@ -9,7 +9,7 @@ public class TableTagTests
     [Fact]
     public void TableTag_FromClassName_NoAttributes_Test()
     {
-        string actualValue = SqlGenerator<EntityWithoutTableAttribute>.TableTag;
+        string actualValue = SqlGenerator<EntityWithoutTableAttribute>.Table;
         string expectedValue = "[EntityWithoutTableAttribute]";
 
         Assert.Equal(expectedValue, actualValue);
@@ -17,7 +17,7 @@ public class TableTagTests
     [Fact]
     public void TableTag_FromAttributeName_NoSchemaAttributes_Test()
     {
-        string actualValue = SqlGenerator<EntityWithTableAttribute>.TableTag;
+        string actualValue = SqlGenerator<EntityWithTableAttribute>.Table;
         string expectedValue = "[Test]";
 
         Assert.Equal(expectedValue, actualValue);
@@ -25,7 +25,7 @@ public class TableTagTests
     [Fact]
     public void TableTag_FromAttributeName_AndSchemaAttributes_Test()
     {
-        string actualValue = SqlGenerator<EntityWithSchema>.TableTag;
+        string actualValue = SqlGenerator<EntityWithSchema>.Table;
         string expectedValue = "[myschema].[EntityWithSchema]";
 
         Assert.Equal(expectedValue, actualValue);

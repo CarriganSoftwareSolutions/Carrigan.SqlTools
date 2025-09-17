@@ -6,56 +6,110 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
 namespace Carrigan.SqlTools;
 
-internal static class SqlToolsReflectorCache<T>
+public class SqlToolsReflectorCache<T>
 {
     internal static readonly Type Type;
-    internal static string ProcedureName => _LazyProcedureName.Value;
-    internal static IEnumerable<PropertyInfo> Key => _LazyKey.Value;
-    internal static IEnumerable<PropertyInfo> Properties => _LazyProperties.Value;
-    internal static IEnumerable<PropertyInfo> PropertiesLessKeys => _LazyPropertiesLessKeys.Value;
-    internal static IEnumerable<string> ColumnNames => _LazyColumnNames.Value;
-    internal static HashSet<string> ColumnNamesHashSet => _LazyColumnNamesHashSet.Value;
-    internal static string TableName => _LazyTableName.Value;
-    internal static string TableSchema => _LazyTableSchema.Value;
-    internal static TableTag TableTag => new (TableSchema, TableName);
-    internal static ProcedureTag ProcedureTag => new (TableSchema, TableName);
-    internal static HashSet<string> EncryptedProperties => _LazyEncryptedProperties.Value;
-    internal static PropertyInfo? KeyVersionProperty => _LazyKeyVersionProperty.Value;
+    internal static IEnumerable<ColumnTag> KeyColumns =>
+        _LazyKeyColumns.Value;
 
-    private static readonly Lazy<string> _LazyProcedureName;
+    internal static IEnumerable<PropertyInfo> Key => 
+        _LazyKey.Value;
+
+    internal static IEnumerable<ColumnTag> Columns =>
+        _LazyColumnsDictionary.Value.Values;
+
+    internal static IEnumerable<PropertyInfo> Properties => 
+        _LazyProperties.Value;
+
+    internal static IEnumerable<ColumnTag> ColumnsLessKeys =>
+        _LazyColumnsLessKeys.Value;
+
+    internal static IEnumerable<PropertyInfo> PropertiesLessKeys => 
+        _LazyPropertiesLessKeys.Value;
+
+    internal static TableTag Table => 
+        _LazyTableTag.Value;
+
+    internal static ProcedureTag ProcedureTag => 
+        _LazyProcedureTag.Value;
+
+    internal static PropertyInfo? KeyVersionProperty => 
+        _LazyKeyVersionProperty.Value;
+
+    internal static bool ContainsProperty(string propertyName) =>
+        _LazyColumnsDictionary.Value.ContainsKey(propertyName);
+
+    internal static ColumnTag? GetColumnTagByProperty(string propertyName) =>
+        ContainsProperty(propertyName) ? _LazyColumnsDictionary.Value[propertyName] : null;
+
+    internal static bool ContainsEncryptedProperty(string propertyName) =>
+        _LazyEncryptedColumnsHashSet.Value.Contains(propertyName);
+
+    internal static Dictionary<ColumnTag, PropertyInfo> PropertyInfoDicitionary =>
+        _LazyPropertyInfoDicitionary.Value;
+    internal static bool HasEncryptedColumns() =>
+        _LazyEncryptedColumnsHashSet.Value.Count != 0;
+
+    internal static void ValidateEntityPropertyNames(params IEnumerable<string> propertyNames)
+    {
+        List<Exception> exceptions = [];
+        IEnumerable<string> invalidPropertyNames = 
+            propertyNames
+                .Where(propertyName => ContainsProperty(propertyName) is false);
+
+        IEnumerable<ColumnTag?> invalidColumns =
+            propertyNames
+                .Where(propertyName => ContainsProperty(propertyName)) //we are testing column names here, so filter out property names with no corresponding column
+                .Where(propertyName => SqlIdentifierPattern.Fails(GetColumnTagByProperty(propertyName)?._columnName ?? string.Empty))
+                .Select(propertyName => GetColumnTagByProperty(propertyName));
+
+        if (invalidPropertyNames.Any())
+            exceptions.Add(new ArgumentException($"The property names {invalidPropertyNames.JoinAnd()} do not have an associated column in {Table}.", nameof(propertyNames)));
+        if (invalidColumns.Any())
+            exceptions.Add(new SqlNamePatternException(invalidPropertyNames));
+
+        if (exceptions.None())
+            return;
+        else if (exceptions.Count == 1)
+            throw exceptions.Single();
+        else
+            throw new AggregateException(exceptions);
+    }
+
+    private static readonly Lazy<ProcedureTag> _LazyProcedureTag;
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyKey;
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyProperties;
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyPropertiesLessKeys;
-    private static readonly Lazy<IEnumerable<string>> _LazyColumnNames;
-    private static readonly Lazy<HashSet<string>> _LazyColumnNamesHashSet;
-    private static readonly Lazy<HashSet<string>> _LazyEncryptedProperties;
+    private static readonly Lazy<IEnumerable<ColumnTag>> _LazyKeyColumns;
+    private static readonly Lazy<IEnumerable<ColumnTag>> _LazyColumnsLessKeys;
     private static readonly Lazy<TableAttribute?> _LazyTableAttribute;
-    private static readonly Lazy<string> _LazyTableName;
-    private static readonly Lazy<string> _LazyTableSchema;
+    private static readonly Lazy<TableTag> _LazyTableTag;
     private static readonly Lazy<PropertyInfo?> _LazyKeyVersionProperty;
+
+    private static readonly Lazy<Dictionary<string, ColumnTag>> _LazyColumnsDictionary;
+    private static readonly Lazy<HashSet<string>> _LazyEncryptedColumnsHashSet;
+    private static readonly Lazy<Dictionary<ColumnTag, PropertyInfo>> _LazyPropertyInfoDicitionary;
 
 
     static SqlToolsReflectorCache()
     {
         Type = typeof(T);
 
-        _LazyTableAttribute = new Lazy<TableAttribute?>(() => Type.GetCustomAttribute<TableAttribute>());
+        _LazyTableAttribute = new (() => Type.GetCustomAttribute<TableAttribute>());
 
-        _LazyTableName = new Lazy<string>
-            (GetTableName());
+        //Procedure Tags self validate the SQL Identifier.
+        _LazyProcedureTag = new (new ProcedureTag(GetSchemaName(), GetProcedureName()));
 
-        _LazyTableSchema = new Lazy<string>
-            (GetSchemaName());
+        //Table Tags self validate the SQL Identifier.
+        _LazyTableTag = new(new TableTag(GetSchemaName(), GetTableName()));
 
-        _LazyProcedureName = new Lazy<string>
-            (GetProcedureName());
-
-        _LazyKey = new Lazy<IEnumerable<PropertyInfo>>
+        _LazyKey = new 
             (() =>
                 ReflectorCache<T>
                     .ReadablePublicInstanceProperties
@@ -63,7 +117,7 @@ internal static class SqlToolsReflectorCache<T>
             );
 
         // Get properties that are public, not marked with [NotMapped], and are either value types or strings
-        _LazyProperties = new Lazy<IEnumerable<PropertyInfo>>
+        _LazyProperties = new
             (() =>
                 ReflectorCache<T>
                     .ReadablePublicInstanceProperties
@@ -101,30 +155,49 @@ internal static class SqlToolsReflectorCache<T>
                         )
             );
 
-        _LazyPropertiesLessKeys = new Lazy<IEnumerable<PropertyInfo>>
+        _LazyPropertiesLessKeys = new 
             (() =>
                 _LazyProperties
                     .Value
                     .Where(property => property.GetCustomAttribute<KeyAttribute>() == null)
             );
 
-        _LazyEncryptedProperties = new Lazy<HashSet<string>>
+        _LazyEncryptedColumnsHashSet = new
             (() =>
                 [.. _LazyPropertiesLessKeys
                         .Value
                         .Where(property => property.GetCustomAttribute<EncryptedAttribute>() != null)
                         .Select(property => property.Name)]
             );
-        _LazyColumnNames = new Lazy<IEnumerable<string>>
+
+        _LazyColumnsDictionary = new Lazy<Dictionary<string, ColumnTag>>
+            (() =>
+                [.. _LazyProperties
+                    .Value
+                    .Select(property => new KeyValuePair<string, ColumnTag>(property.Name, new ColumnTag(_LazyTableTag.Value, GetColumnName(property))))]
+            );
+
+        _LazyPropertyInfoDicitionary = new
+            (() =>
+                [.. _LazyProperties
+                    .Value
+                    .Select(property => new KeyValuePair<ColumnTag, PropertyInfo>(new ColumnTag(_LazyTableTag.Value, GetColumnName(property)), property))]
+            );
+
+        _LazyColumnsLessKeys = new
             (() =>
                 _LazyProperties
                     .Value
-                    .Select(property => property.Name)
+                    .Where(property => property.GetCustomAttribute<KeyAttribute>() == null)
+                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property)))
             );
-        _LazyColumnNamesHashSet = new Lazy<HashSet<string>>
+
+        _LazyKeyColumns = new
             (() =>
-                [.. _LazyColumnNames
-                    .Value]
+                ReflectorCache<T>
+                    .ReadablePublicInstanceProperties
+                    .Where(property => property.GetCustomAttribute<KeyAttribute>() != null)
+                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property)))
             );
 
         _LazyKeyVersionProperty = new Lazy<PropertyInfo?>

@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Tags;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
 
@@ -50,7 +51,7 @@ public class SqlIdentifierException : Exception
     /// <returns>An InvalidSqlIdentifier exception instance.</returns>
     public static SqlIdentifierException FromInvalidColumnNames<T>(params IEnumerable<string> invalidColumnNames)
     {
-        TableTag tableTag = SqlToolsReflectorCache<T>.TableTag;
+        TableTag tableTag = SqlToolsReflectorCache<T>.Table;
         return new SqlIdentifierException(tableTag, invalidColumnNames);
     }
 

@@ -35,8 +35,8 @@ public class LeftJoin<T, J> : JoinBaseClass
     /// <param name="predicate">Represents the "on" part of the left join clause.</param>
     public LeftJoin(Predicates.PredicatesBase predicate)
     {
-        TableTag leftTableTag = SqlToolsReflectorCache<T>.TableTag;
-        TableTag rightTableTag = SqlToolsReflectorCache<J>.TableTag;
+        TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
+        TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;
         IEnumerable<ColumnTag> invalidTags =
             predicate
                 .Column

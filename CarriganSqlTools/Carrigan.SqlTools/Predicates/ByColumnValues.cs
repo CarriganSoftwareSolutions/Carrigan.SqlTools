@@ -22,4 +22,7 @@ namespace Carrigan.SqlTools.Predicates;
 [Obsolete("Use ColumnValues<T> instead.")]
 public class ByColumnValues<T> : ColumnValues<T>
 {
+    public ByColumnValues(string propertyName, object value) : base(propertyName, value)
+    {
+    }
 }

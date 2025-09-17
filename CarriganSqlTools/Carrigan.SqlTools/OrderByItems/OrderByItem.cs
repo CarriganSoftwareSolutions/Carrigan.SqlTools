@@ -24,34 +24,24 @@ namespace Carrigan.SqlTools.OrderByItems;
 public class OrderByItem<T> : IOrderByItem, IOrderByClause
 {
     /// <summary>
-    /// Constructor, provide the table with the Type <see cref="T"/> and the column and sort direction as parameters.
+    /// Constructor, provide the table with the Type <see cref="T"/> and the property name that represents the column name and sort direction as parameters.
     /// </summary>
-    /// <param name="columnName">The name of the column to order by.</param>
+    /// <param name="propertyName">The name of the parameter that represents the column to use.</param>
     /// <param name="sortDirection">The sort direction to use.</param>
-    public OrderByItem(string columnName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
+    public OrderByItem(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
     {
-        if (SqlToolsReflectorCache<T>.ColumnNamesHashSet.DoesNotContain(columnName))
-            throw SqlIdentifierException.FromInvalidColumnNames<T>(columnName);
-        ColumnName = columnName;
+        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName);
+        ColumnTag = new(TableTag, propertyName);
         SortDirection = sortDirection;
     }
 
-    /// <summary>
-    /// Returns a ColumnTab representing the column being sorted on.
-    /// </summary>
-    public ColumnTag ColumnTag =>
-        new(TableTag, ColumnName);
+    public ColumnTag ColumnTag { get; private set; }
 
     /// <summary>
     /// Returns a TableTag representing the table being sorted on.
     /// </summary>
     public TableTag TableTag 
-        => SqlToolsReflectorCache<T>.TableTag;
-
-    /// <summary>
-    /// The name of the Column being sorted, represented as [ColumnName].
-    /// </summary>
-    public string ColumnName { get; private set; }
+        => SqlToolsReflectorCache<T>.Table;
 
     /// <summary>
     /// Get the sort direction being used.
@@ -119,7 +109,7 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     public bool IsEmpty() =>
-        ColumnName.IsNullOrWhiteSpace();
+        ColumnTag.IsEmpty();
 
     /// <summary>
     /// Creates a new order by clause with a <see cref="IOrderByItem"> appended. This operation is immutable to the original object.

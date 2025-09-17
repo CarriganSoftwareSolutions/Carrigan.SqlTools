@@ -9,13 +9,17 @@ namespace Carrigan.SqlTools.Tags;
 /// </summary>
 public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
 {
-    private string _columnTag;
+    private readonly string _columnTag;
+    internal readonly string _columnName;
     internal ColumnTag(TableTag tableTag,  string columnName)
     {
         if (columnName.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(columnName), $"{nameof(columnName)} requires a value.");
         else
+        {
             _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
+            _columnName = columnName;
+        }
     }
 
     internal ColumnTag(string? schemaName, string? tableName,  string columnName)
@@ -31,6 +35,14 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     public static implicit operator string(ColumnTag value) => value._columnTag;
 
     public override string ToString() => _columnTag;
+
+    public string ToString(bool useTableTag)
+    {
+        if (useTableTag)
+            return ToString();
+        else
+            return $"[{_columnName}]";
+    }
 
     public int CompareTo(ColumnTag? other)
     {
@@ -76,4 +88,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     {
         return !(left == right);
     }
+
+    public bool IsEmpty() =>
+        _columnName.IsNullOrWhiteSpace();
 }

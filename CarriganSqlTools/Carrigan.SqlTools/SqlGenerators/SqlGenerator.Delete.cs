@@ -29,12 +29,12 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Delete(T entity)
     {
-        IEnumerable<KeyValuePair<string, object>> parameters = _Key.Select(property => GetSqlParameterKeyValue(property, true, entity));
-        string whereclause = string.Join(" and ", _Key.Select(property => $"[{property.Name}] = @{property.Name}"));
+        IEnumerable<KeyValuePair<string, object>> parameters = Key.Select(property => GetSqlParameterKeyValue(property, true, entity));
+        string whereclause = string.Join(" and ", Key.Select(property => $"[{property.Name}] = @{property.Name}"));
         return new SqlQuery()
         {
             Parameters = [.. parameters],
-            QueryText = $"DELETE FROM {TableTag} WHERE {whereclause};",
+            QueryText = $"DELETE FROM {Table} WHERE {whereclause};",
             CommandType = CommandType.Text
         };
     }
@@ -55,7 +55,7 @@ public partial class SqlGenerator<T>
     public SqlQuery DeleteAll() => new ()
     {
         Parameters = [],
-        QueryText = $"DELETE FROM {TableTag};",
+        QueryText = $"DELETE FROM {Table};",
         CommandType = CommandType.Text
     };
 
@@ -146,10 +146,10 @@ public partial class SqlGenerator<T>
         }
         else
         {
-            IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(TableTag).Distinct();
+            IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
             IEnumerable<TableTag> predicateTableTags = [.. (predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? [])];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
-            StringBuilder queryBuilder = new($"DELETE FROM {TableTag}");
+            StringBuilder queryBuilder = new($"DELETE FROM {Table}");
 
             if (invalidTags.Any())
             {

@@ -59,27 +59,27 @@ public partial class SqlGenerator<T>
     {
         IEnumerable<KeyValuePair<string, object>> parameters;
 
-        if (_PropertiesLessKeys.None())
+        if (PropertiesLessKeys.None())
         {
             return new SqlQuery()
             {
                 Parameters = [],
-                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {TableTag} DEFAULT VALUES;"),
+                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} DEFAULT VALUES;"),
                 CommandType = System.Data.CommandType.Text
             };
         }
         else
         {
-            parameters = _PropertiesLessKeys.Select(key => GetSqlParameterKeyValue(key, true, entity));
+            parameters = PropertiesLessKeys.Select(key => GetSqlParameterKeyValue(key, true, entity));
 
 
-            string columns = string.Join(", ", _PropertiesLessKeys.Select(property => $"[{property.Name}]"));
-            string values = SqlGenerator<T>.EnumeratedInsertValues(_PropertiesLessKeys);
+            string columns = string.Join(", ", PropertiesLessKeys.Select(property => $"[{property.Name}]"));
+            string values = SqlGenerator<T>.EnumeratedInsertValues(PropertiesLessKeys);
 
             return new SqlQuery()
             {
                 Parameters = [.. parameters],
-                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {TableTag} ({columns}) VALUES {values};"),
+                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} ({columns}) VALUES {values};"),
                 CommandType = System.Data.CommandType.Text
             };
         }
@@ -122,7 +122,7 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Insert(params IEnumerable<T> entities)
     {
-        IEnumerable<PropertyInfo> properties = properties = _Properties;
+        IEnumerable<PropertyInfo> properties = properties = Properties;
         IEnumerable<KeyValuePair<string, object>> parameters;
         string values;
 
@@ -133,15 +133,15 @@ public partial class SqlGenerator<T>
 
         string columns = string.Join(", ", properties.Select(property => $"[{property.Name}]"));
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            values = SqlGenerator<T>.EnumeratedInsertValues(_Properties);
+            values = SqlGenerator<T>.EnumeratedInsertValues(Properties);
         else
-            values = SqlGenerator<T>.EnumeratedInsertValues(_Properties, entities);
+            values = SqlGenerator<T>.EnumeratedInsertValues(Properties, entities);
 
 
         return new SqlQuery()
         {
             Parameters = [.. parameters],
-            QueryText = $"INSERT INTO {TableTag} ({columns}) VALUES {values};",
+            QueryText = $"INSERT INTO {Table} ({columns}) VALUES {values};",
             CommandType = System.Data.CommandType.Text
         };
     }

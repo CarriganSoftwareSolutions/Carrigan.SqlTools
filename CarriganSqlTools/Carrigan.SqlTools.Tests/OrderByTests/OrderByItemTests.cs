@@ -16,7 +16,6 @@ public class OrderByItemTests
     {
         OrderByItem<Address> orderByItem = new(columnName, direction);
 
-        Assert.Equal(columnName, orderByItem.ColumnName);
         Assert.Equal(tableTag, orderByItem.TableTag);
         Assert.Equal(columnTag, orderByItem.ColumnTag);
         Assert.Equal(directionString, orderByItem.SortDirection.ToSql());
@@ -26,7 +25,7 @@ public class OrderByItemTests
     [Fact]
     public void OrderByItem_Constructor_ArgumentException()
     {
-        Assert.Throws<SqlIdentifierException>(() => new OrderByItem<Address>("LiveLongAndProsper", SortDirectionEnum.Descending));
+        Assert.Throws<ArgumentException>(() => new OrderByItem<Address>("LiveLongAndProsper", SortDirectionEnum.Descending));
     }
 
 
@@ -219,7 +218,7 @@ public class OrderByItemTests
     public void Empty()
     {
         //There is currently no way to test IsEmpty is true, as that should always generate an exception.
-        Assert.Throws<SqlIdentifierException>(() => { OrderByItem<Address> streetItem = new(string.Empty); });
+        Assert.Throws<ArgumentException>(() => { OrderByItem<Address> streetItem = new(string.Empty); });
     }
 }
 

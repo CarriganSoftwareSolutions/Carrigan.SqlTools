@@ -15,10 +15,6 @@ public interface IOrderByItem : IEquatable<IOrderByItem>
     /// Represents the Table identified associated with this instance
     public TableTag TableTag { get; }
     /// <summary>
-    /// The Column identified associated with this instance, expressed as a string ex: [ColumnName]
-    /// </summary>
-    public string ColumnName { get; }
-    /// <summary>
     /// An Enum to represent the sort direction.
     /// </summary>
     public SortDirectionEnum SortDirection { get; }
