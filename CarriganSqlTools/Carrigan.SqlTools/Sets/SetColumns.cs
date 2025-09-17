@@ -1,8 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Predicates;
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
-using System.Linq;
+﻿using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Sets;
 /// <summary>

@@ -1,7 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using System.Linq;
 
 namespace Carrigan.SqlTools.OrderByItems;
 

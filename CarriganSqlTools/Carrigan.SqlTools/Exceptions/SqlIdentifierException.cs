@@ -1,6 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Tags;
-using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
 

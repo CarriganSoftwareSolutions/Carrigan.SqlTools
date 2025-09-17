@@ -6,9 +6,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace Carrigan.SqlTools;
 

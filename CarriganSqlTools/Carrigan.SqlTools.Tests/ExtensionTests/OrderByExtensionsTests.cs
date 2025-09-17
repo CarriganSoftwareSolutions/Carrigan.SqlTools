@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.Extensions;
-using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.ExtensionTests;

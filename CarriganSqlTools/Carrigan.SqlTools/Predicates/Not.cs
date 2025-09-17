@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
-
-//IGNORE SPELLING: equal
+﻿//IGNORE SPELLING: equal
 
 namespace Carrigan.SqlTools.Predicates;
 

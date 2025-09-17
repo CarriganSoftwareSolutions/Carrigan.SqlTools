@@ -1,12 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Extensions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;

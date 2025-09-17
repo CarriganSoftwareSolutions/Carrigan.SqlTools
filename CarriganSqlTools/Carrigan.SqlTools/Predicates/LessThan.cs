@@ -1,7 +1,4 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
-using System;
-
-namespace Carrigan.SqlTools.Predicates;
+﻿namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.

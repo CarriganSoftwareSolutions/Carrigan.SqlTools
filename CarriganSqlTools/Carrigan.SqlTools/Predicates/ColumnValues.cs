@@ -1,8 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.SqlGenerators;
-
-namespace Carrigan.SqlTools.Predicates;
+﻿namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
@@ -23,7 +19,6 @@ public class ColumnValues<T> : PredicatesBase
 {
     protected readonly PredicatesBase value;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     /// <summary>
     /// A public constructor. 
     /// </summary>
@@ -38,7 +33,6 @@ public class ColumnValues<T> : PredicatesBase
             new Parameters(propertyName, parameterValue)
         );
     }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     /// <summary>
     /// Leaf node in recursive logic to get all the parameters associated with the logic.

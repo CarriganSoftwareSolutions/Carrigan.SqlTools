@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.Extensions;
-using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Tests.TestEntities;
 

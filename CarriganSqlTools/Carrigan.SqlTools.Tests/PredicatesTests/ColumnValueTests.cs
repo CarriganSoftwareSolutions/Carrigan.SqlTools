@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.PredicatesTests;

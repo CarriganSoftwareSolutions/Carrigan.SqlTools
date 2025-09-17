@@ -1,7 +1,4 @@
-﻿using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.SqlGenerators;
-
-namespace Carrigan.SqlTools.OffsetNexts;
+﻿namespace Carrigan.SqlTools.OffsetNexts;
 
 /// <summary>
 /// This class also represents the Offset Next feature in SQL Server, 

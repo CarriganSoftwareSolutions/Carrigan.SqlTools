@@ -1,5 +1,4 @@
 ﻿using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.OrderByItems;
 
