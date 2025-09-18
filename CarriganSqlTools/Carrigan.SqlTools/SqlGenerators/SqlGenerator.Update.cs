@@ -123,10 +123,10 @@ public partial class SqlGenerator<T>
         Or or = new            (
                 idEntities.Select(entity => new And
                 (
-                    Key.Select(property => new Equal
+                    KeyColumns.Select(column => new Equal
                         (
-                            new Columns<T>(property.Name), 
-                            new Parameters(property.Name, property.GetValue(entity)))
+                            new Columns<T>(column._columnName), 
+                            new Parameters(column._columnName, GetValue(column, entity)))
                         )
                 ))
         );
