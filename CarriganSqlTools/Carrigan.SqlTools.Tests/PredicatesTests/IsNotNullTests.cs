@@ -17,11 +17,11 @@ public class IsNotNullTests
     private readonly PredicatesBase ParameterPi = new Parameters("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private readonly PredicatesBase ParamerterElite = new Parameters("Elite", 1337);
-    private readonly string ParamerterEliteSql = "@Parameter_Elite";
+    private readonly PredicatesBase ParameterElite = new Parameters("Elite", 1337);
+    private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicatesBase ParamerterHelloWorld = new Parameters("HelloWorld", "Hello World!");
-    private readonly string ParamerterHelloWorldSql = "@Parameter_HelloWorld";
+    private readonly PredicatesBase ParameterHelloWorld = new Parameters("HelloWorld", "Hello World!");
+    private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 
     [Fact]
@@ -149,8 +149,8 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ToSql()
     {
-        PredicatesBase inner = ParamerterElite;
-        string innerSql = ParamerterEliteSql;
+        PredicatesBase inner = ParameterElite;
+        string innerSql = ParameterEliteSql;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
@@ -163,7 +163,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ParameterCount()
     {
-        PredicatesBase inner = ParamerterElite;
+        PredicatesBase inner = ParameterElite;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
@@ -176,7 +176,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ParameterValue()
     {
-        PredicatesBase inner = ParamerterElite;
+        PredicatesBase inner = ParameterElite;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
@@ -191,8 +191,8 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ToSql()
     {
-        PredicatesBase inner = ParamerterHelloWorld;
-        string innerSql = ParamerterHelloWorldSql;
+        PredicatesBase inner = ParameterHelloWorld;
+        string innerSql = ParameterHelloWorldSql;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
@@ -205,7 +205,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ParameterCount()
     {
-        PredicatesBase inner = ParamerterHelloWorld;
+        PredicatesBase inner = ParameterHelloWorld;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
@@ -219,21 +219,21 @@ public class IsNotNullTests
     public void IsNotNull_6_ParameterValue()
     {
 
-        PredicatesBase inner = ParamerterHelloWorld;
+        PredicatesBase inner = ParameterHelloWorld;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
-        Assert.Equal(expectedValueString, actualValuestring);
+        Assert.Equal(expectedValueString, actualValueString);
     }
 
     [Fact]
     public void IsNotNull_Nested_ToSql()
     {
-        PredicatesBase and = new And(new IsNotNull(ParamerterElite), new IsNotNull(ParamerterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
-        string andSql = $"(({ParamerterEliteSql} IS NOT NULL) AND ({ParamerterHelloWorldSql} IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
+        PredicatesBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        string andSql = $"(({ParameterEliteSql} IS NOT NULL) AND ({ParameterHelloWorldSql} IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
 
         string expectedValue = andSql;
         string actualValue = and.ToSql();
@@ -244,7 +244,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ParameterCount()
     {
-        PredicatesBase and = new And(new IsNotNull(ParamerterElite), new IsNotNull(ParamerterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        PredicatesBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         int expectedValue = 2;
         int actualValue = and.Parameter.Count();
@@ -255,17 +255,17 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ParameterValue()
     {
-        PredicatesBase and = new And(new IsNotNull(ParamerterElite), new IsNotNull(ParamerterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        PredicatesBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         int expectedValueInt = 1337;
         object? nullableActualValueInt = and.Parameter.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string?)and.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)and.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
-        Assert.Equal(expectedValueString, actualValuestring);
+        Assert.Equal(expectedValueString, actualValueString);
     }
 
 
@@ -355,7 +355,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ColumnCount()
     {
-        PredicatesBase inner = ParamerterElite;
+        PredicatesBase inner = ParameterElite;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
@@ -368,7 +368,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ColumnCount()
     {
-        PredicatesBase inner = ParamerterHelloWorld;
+        PredicatesBase inner = ParameterHelloWorld;
 
         PredicatesBase predicate = new IsNotNull(inner);
 
@@ -381,7 +381,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ColumnCount()
     {
-        PredicatesBase and = new And(new IsNotNull(ParamerterElite), new IsNotNull(ParamerterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        PredicatesBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         int expectedValue = 2;
         int actualValue = and.Parameter.Count();
@@ -392,7 +392,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ColumnName()
     {
-        PredicatesBase and = new And(new IsNotNull(ParamerterElite), new IsNotNull(ParamerterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        PredicatesBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         _ = and.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000destruct0]").Single();
         _ = and.Column.Where(col => col.ColumnTag == "[ColumnTable].[Express]").Single();

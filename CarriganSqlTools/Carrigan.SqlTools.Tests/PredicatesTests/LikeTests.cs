@@ -17,11 +17,11 @@ public class LikeTests
     private readonly PredicatesBase ParameterPi = new Parameters("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private readonly PredicatesBase ParamerterElite = new Parameters("Elite", 1337);
-    private readonly string ParamerterEliteSql = "@Parameter_Elite";
+    private readonly PredicatesBase ParameterElite = new Parameters("Elite", 1337);
+    private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicatesBase ParamerterHelloWorld = new Parameters("HelloWorld", "Hello World!");
-    private readonly string ParamerterHelloWorldSql = "@Parameter_HelloWorld";
+    private readonly PredicatesBase ParameterHelloWorld = new Parameters("HelloWorld", "Hello World!");
+    private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 
     [Fact]
@@ -107,11 +107,11 @@ public class LikeTests
     [Fact]
     public void Like_3_ToSql()
     {
-        PredicatesBase left = ParamerterElite;
-        string leftSql = ParamerterEliteSql;
+        PredicatesBase left = ParameterElite;
+        string leftSql = ParameterEliteSql;
 
-        PredicatesBase right = ParamerterHelloWorld;
-        string rightSql = ParamerterHelloWorldSql;
+        PredicatesBase right = ParameterHelloWorld;
+        string rightSql = ParameterHelloWorldSql;
 
         PredicatesBase predicate = new Like(left, right);
 
@@ -124,9 +124,9 @@ public class LikeTests
     [Fact]
     public void Like_3_ParameterCount()
     {
-        PredicatesBase left = ParamerterElite;
+        PredicatesBase left = ParameterElite;
 
-        PredicatesBase right = ParamerterHelloWorld;
+        PredicatesBase right = ParameterHelloWorld;
 
         PredicatesBase predicate = new Like(left, right);
 
@@ -136,20 +136,20 @@ public class LikeTests
         int actualValueInt = (int)nullableActualValueInt;
 
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
-        Assert.Equal(expectedValueString, actualValuestring);
+        Assert.Equal(expectedValueString, actualValueString);
     }
 
     [Fact]
     public void Like_Nested_ToSql()
     {
-        PredicatesBase left = ParamerterElite;
-        string leftSql = ParamerterEliteSql;
+        PredicatesBase left = ParameterElite;
+        string leftSql = ParameterEliteSql;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
-        string rightSql = $"({ParamerterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
+        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        string rightSql = $"({ParameterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
 
         PredicatesBase predicate = new Like(left, right);
 
@@ -162,9 +162,9 @@ public class LikeTests
     [Fact]
     public void Like_Nested_ParameterCount()
     {
-        PredicatesBase left = ParamerterElite;
+        PredicatesBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new Like(left, right);
 
@@ -177,9 +177,9 @@ public class LikeTests
     [Fact]
     public void Like_Nested_ParameterValue()
     {
-        PredicatesBase left = ParamerterElite;
+        PredicatesBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new Like(left, right);
 
@@ -188,10 +188,10 @@ public class LikeTests
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValuestring = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
-        Assert.Equal(expectedValueString, actualValuestring);
+        Assert.Equal(expectedValueString, actualValueString);
     }
 
     [Fact]
@@ -253,7 +253,7 @@ public class LikeTests
     [Fact]
     public void Like_3_ColumnCount()
     {
-        PredicatesBase left = ParamerterElite;
+        PredicatesBase left = ParameterElite;
 
         PredicatesBase right = ParameterPi;
 
@@ -268,9 +268,9 @@ public class LikeTests
     [Fact]
     public void Like_Nested_ColumnCount()
     {
-        PredicatesBase left = ParamerterElite;
+        PredicatesBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new Like(left, right);
 
@@ -283,9 +283,9 @@ public class LikeTests
     [Fact]
     public void Like_Nested_ColumnName()
     {
-        PredicatesBase left = ParamerterElite;
+        PredicatesBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new Like(left, right);
 
