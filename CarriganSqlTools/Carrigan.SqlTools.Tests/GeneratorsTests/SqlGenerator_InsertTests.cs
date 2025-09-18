@@ -13,7 +13,7 @@ public class SqlGenerator_InsertTests
     private readonly SqlGenerator<EntityWithoutTableAttribute> _sqlGeneratorForEntityWithoutTableAttribute;
     private readonly SqlGenerator<EntityWithSchema> _sqlGeneratorForEntityWithSchema;
     private readonly SqlGenerator<SqlTypeEntity> _sqlGeneratorForSqlTypeEntity;
-    private readonly SqlGenerator<NullablesTestEntity> _sqlGeneratorForNullableTestEntity;
+    private readonly SqlGenerator<NullableTestEntity> _sqlGeneratorForNullableTestEntity;
     private readonly SqlGenerator<EntityWithEncryption> _sqlGeneratorForEntityWithEncryption;
 
     public SqlGenerator_InsertTests()
@@ -23,7 +23,7 @@ public class SqlGenerator_InsertTests
         _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>();
         _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>();
         _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>();
-        _sqlGeneratorForNullableTestEntity = new SqlGenerator<NullablesTestEntity>();
+        _sqlGeneratorForNullableTestEntity = new SqlGenerator<NullableTestEntity>();
         _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
     }
 
@@ -296,12 +296,12 @@ public class SqlGenerator_InsertTests
     [Fact]
     public void TestSqlInsertStringForNullableTypes()
     {
-        DateTimeOffset dateTimeOffsetTestValue = NullablesTestEntity.DateTimeOffsetTestValue;
-        NullablesTestEntity entity = NullablesTestEntity.GetStandardTestSet();
+        DateTimeOffset dateTimeOffsetTestValue = NullableTestEntity.DateTimeOffsetTestValue;
+        NullableTestEntity entity = NullableTestEntity.GetStandardTestSet();
 
         SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(entity);
 
-        string expectedSql = "INSERT INTO [NullablesTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
+        string expectedSql = "INSERT INTO [NullableTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
 
         // Assert that parameters have the correct values and are correctly mapped
@@ -328,11 +328,11 @@ public class SqlGenerator_InsertTests
     [Fact]
     public void TestSqlInsertStringForNullableTypes_WithNullValues()
     {
-        NullablesTestEntity entity = NullablesTestEntity.GetNullTestSet();
+        NullableTestEntity entity = NullableTestEntity.GetNullTestSet();
 
         SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(entity);
 
-        string expectedSql = "INSERT INTO [NullablesTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
+        string expectedSql = "INSERT INTO [NullableTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
 
         // Assert that parameters have the correct values and are correctly mapped

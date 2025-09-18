@@ -2,14 +2,12 @@
 
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
-public class NullablesTestEntity
+public class NullableTestEntity
 {
     public static readonly DateTimeOffset DateTimeOffsetTestValue;
 
-    static NullablesTestEntity()
-    {
+    static NullableTestEntity() => 
         DateTimeOffsetTestValue = DateTimeOffset.Now;
-    }
 
     [Key]
     public Guid Key { get; set; }                   //key
@@ -29,7 +27,7 @@ public class NullablesTestEntity
     public byte[]? ByteArrayValue { get; set; }    // Nullable Byte Array
     public DateTimeOffset? DateTimeOffsetValue { get; set; }    // Nullable DateTimeOffset
 
-    public static NullablesTestEntity GetStandardTestSet() => new()
+    public static NullableTestEntity GetStandardTestSet() => new()
     {
         Key = Guid.Empty,                                               // Key
         IntValue = 1,                                             // Nullable int
@@ -49,7 +47,7 @@ public class NullablesTestEntity
         DateTimeOffsetValue = DateTimeOffsetTestValue                   // Nullable DateTimeOffsetValue
     };
 
-    public static NullablesTestEntity GetNullTestSet() => new()
+    public static NullableTestEntity GetNullTestSet() => new()
     {
             Key = Guid.Empty,               // Key
             IntValue = null,                // Nullable int

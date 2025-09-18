@@ -37,7 +37,7 @@ public class OrderBy: IOrderByClause
     /// Constructor of an object representing the Order By clause
     /// </summary>
     /// <param name="orderByItems">partial order by representing an individual column.</param>
-    public OrderBy(params IEnumerable<IOrderByItem> orderByItems) =>
+    public OrderBy(params IEnumerable<IOrderByItem> orderByItems) => 
         _orderByItems = orderByItems;
 
     /// <summary>

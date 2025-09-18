@@ -30,11 +30,9 @@ public class SpecialInvokerTests
         };
     // Act: Invoke the conversion/invocation process.
     SpecialEntity entity;
-    public SpecialInvokerTests()
-    {
+    public SpecialInvokerTests() =>
         // Act: Invoke the conversion/invocation process
         entity = Invoker<SpecialEntity>.Invoke(specialInvocation);
-    }
 
     [Fact]
     public void Special_Invocation_Test1()

@@ -26,10 +26,8 @@ public class Not : PredicatesBase
     /// This is the constructor for the classes that represents SQL's NOT operators
     /// </summary>
     /// <param name="someValue">should represent something that would be a boolean value in SQL</param>
-    public Not(PredicatesBase someValue)
-    {
+    public Not(PredicatesBase someValue) => 
         _someValue = someValue;
-    }
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic.

@@ -109,7 +109,7 @@ public class InvokerTests
     public void Null_Test()
     {
         Dictionary<string, object?> expectedValues = NullInvocation;
-        NullablesTestEntity entity = Invoker<NullablesTestEntity>.Invoke(expectedValues);
+        NullableTestEntity entity = Invoker<NullableTestEntity>.Invoke(expectedValues);
 
 
         Assert.Equal(expectedValues["Key"], entity.Key);
@@ -132,7 +132,7 @@ public class InvokerTests
     public void Standard_Nullable_Test()
     {
         Dictionary<string, object?> expectedValues = StandardNullableInvocation;
-        NullablesTestEntity entity = Invoker<NullablesTestEntity>.Invoke(expectedValues);
+        NullableTestEntity entity = Invoker<NullableTestEntity>.Invoke(expectedValues);
 
 
         Assert.Equal(expectedValues["Key"], entity.Key);
@@ -155,7 +155,7 @@ public class InvokerTests
     public void DB_Null_Test()
     {
         Dictionary<string, object?> expectedValues = DbNullInvocation;
-        NullablesTestEntity entity = Invoker<NullablesTestEntity>.Invoke(expectedValues);
+        NullableTestEntity entity = Invoker<NullableTestEntity>.Invoke(expectedValues);
 
 
         Assert.Equal(expectedValues["Key"], entity.Key);

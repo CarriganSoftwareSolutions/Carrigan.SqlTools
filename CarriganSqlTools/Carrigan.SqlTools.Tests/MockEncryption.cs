@@ -5,10 +5,8 @@ namespace Carrigan.SqlTools.Tests;
 internal class MockEncryption : IEncryption
 {
     private readonly string _key;
-    public MockEncryption(string key)
-    {
+    public MockEncryption(string key) => 
         _key = key;
-    }
 
     public int? Version => 1;
 

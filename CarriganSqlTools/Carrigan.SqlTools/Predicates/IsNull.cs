@@ -23,10 +23,8 @@ public class IsNull : PredicatesBase
     /// This is the constructor for the classes that represents SQL's IS NOT NULL operator
     /// </summary>
     /// <param name="someValue">should represent something that may or may not be a null value in SQL</param>
-    public IsNull(PredicatesBase someValue)
-    {
+    public IsNull(PredicatesBase someValue) => 
         _someValue = someValue;
-    }
 
     /// <summary>
     ///  Recursively get all the columns associated with the logic.

@@ -11,11 +11,8 @@ public class SqlTypeEntity
 {
 
     public static readonly DateTimeOffset DateTimeOffsetTestValue;
-    static SqlTypeEntity()
-    {
-
+    static SqlTypeEntity() => 
         DateTimeOffsetTestValue = DateTimeOffset.Now;
-    }
 
     [Key]
     public int IntValue { get; set; }                   // SQL INT

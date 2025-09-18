@@ -14,7 +14,7 @@ public class SqlGenerator_ProcedureTests
     private readonly SqlGenerator<EntityWithoutTableAttribute> _sqlGeneratorForEntityWithoutTableAttribute;
     private readonly SqlGenerator<EntityWithSchema> _sqlGeneratorForEntityWithSchema;
     private readonly SqlGenerator<SqlTypeEntity> _sqlGeneratorForSqlTypeEntity;
-    private readonly SqlGenerator<NullablesTestEntity> _sqlGeneratorForNullablesTestEntity;
+    private readonly SqlGenerator<NullableTestEntity> _sqlGeneratorForNullablesTestEntity;
     private readonly SqlGenerator<EntityWithEncryption> _sqlGeneratorForEntityWithEncryption;
 
     public SqlGenerator_ProcedureTests()
@@ -24,7 +24,7 @@ public class SqlGenerator_ProcedureTests
         _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncrypter);
         _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncrypter);
         _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(_mockEncrypter);
-        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullablesTestEntity>(_mockEncrypter);
+        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullableTestEntity>(_mockEncrypter);
         _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
     }
 
@@ -198,13 +198,13 @@ public class SqlGenerator_ProcedureTests
     [Fact]
     public void Sql_Procedure_TestSqlUpdateStringForNullableTypes()
     {
-        DateTimeOffset dateTimeOffsetTestValue = NullablesTestEntity.DateTimeOffsetTestValue;
-        NullablesTestEntity entity = NullablesTestEntity.GetStandardTestSet();
+        DateTimeOffset dateTimeOffsetTestValue = NullableTestEntity.DateTimeOffsetTestValue;
+        NullableTestEntity entity = NullableTestEntity.GetStandardTestSet();
 
         SqlQuery query
             = _sqlGeneratorForNullablesTestEntity.Procedure(entity);
 
-        string expectedSql = "[NullablesTestEntity]";
+        string expectedSql = "[NullableTestEntity]";
         Assert.Equal(expectedSql, query.QueryText);
 
 
@@ -231,12 +231,12 @@ public class SqlGenerator_ProcedureTests
     [Fact]
     public void Sql_Procedure_TestSqlUpdateStringForNullableTypes_WithNullValues()
     {
-        NullablesTestEntity entity = NullablesTestEntity.GetNullTestSet();
+        NullableTestEntity entity = NullableTestEntity.GetNullTestSet();
 
 
         SqlQuery query = _sqlGeneratorForNullablesTestEntity.Procedure(entity);
 
-        string expectedSql = "[NullablesTestEntity]";
+        string expectedSql = "[NullableTestEntity]";
         Assert.Equal(expectedSql, query.QueryText);
 
 

@@ -13,7 +13,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
     private readonly SqlGenerator<EntityWithoutTableAttribute> _sqlGeneratorForEntityWithoutTableAttribute;
     private readonly SqlGenerator<EntityWithSchema> _sqlGeneratorForEntityWithSchema;
     private readonly SqlGenerator<SqlTypeEntity> _sqlGeneratorForSqlTypeEntity;
-    private readonly SqlGenerator<NullablesTestEntity> _sqlGeneratorForNullablesTestEntity;
+    private readonly SqlGenerator<NullableTestEntity> _sqlGeneratorForNullablesTestEntity;
     private readonly SqlGenerator<EntityWithEncryption> _sqlGeneratorForEntityWithEncryption;
 
     public SqlGenerator_UpdateByIdColumnsTests()
@@ -23,7 +23,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
         _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncrypter);
         _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncrypter);
         _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(_mockEncrypter);
-        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullablesTestEntity>(_mockEncrypter);
+        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullableTestEntity>(_mockEncrypter);
         _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
     }
 
@@ -218,14 +218,14 @@ public class SqlGenerator_UpdateByIdColumnsTests
     [Fact]
     public void TestSqlUpdateStringForNullableTypes()
     {
-        DateTimeOffset dateTimeOffsetTestValue = NullablesTestEntity.DateTimeOffsetTestValue;
-        NullablesTestEntity entity = NullablesTestEntity.GetStandardTestSet();
+        DateTimeOffset dateTimeOffsetTestValue = NullableTestEntity.DateTimeOffsetTestValue;
+        NullableTestEntity entity = NullableTestEntity.GetStandardTestSet();
 
-        SetColumns<NullablesTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
+        SetColumns<NullableTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
 
         SqlQuery query = _sqlGeneratorForNullablesTestEntity.UpdateById(entity, columns);
 
-        string expectedSql = "UPDATE [NullablesTestEntity] SET [LongValue] = @LongValue, [ShortValue] = @ShortValue, [ByteValue] = @ByteValue, [BoolValue] = @BoolValue, [DecimalValue] = @DecimalValue, [FloatValue] = @FloatValue, [DoubleValue] = @DoubleValue, [DateTimeValue] = @DateTimeValue, [GuidValue] = @GuidValue, [CharValue] = @CharValue, [TimeOnlyValue] = @TimeOnlyValue, [DateOnlyValue] = @DateOnlyValue, [ByteArrayValue] = @ByteArrayValue, [DateTimeOffsetValue] = @DateTimeOffsetValue WHERE [Key] = @Key;";
+        string expectedSql = "UPDATE [NullableTestEntity] SET [LongValue] = @LongValue, [ShortValue] = @ShortValue, [ByteValue] = @ByteValue, [BoolValue] = @BoolValue, [DecimalValue] = @DecimalValue, [FloatValue] = @FloatValue, [DoubleValue] = @DoubleValue, [DateTimeValue] = @DateTimeValue, [GuidValue] = @GuidValue, [CharValue] = @CharValue, [TimeOnlyValue] = @TimeOnlyValue, [DateOnlyValue] = @DateOnlyValue, [ByteArrayValue] = @ByteArrayValue, [DateTimeOffsetValue] = @DateTimeOffsetValue WHERE [Key] = @Key;";
         Assert.Equal(expectedSql, query.QueryText);
 
         // Assert that parameters have the correct values and are correctly mapped
@@ -250,12 +250,12 @@ public class SqlGenerator_UpdateByIdColumnsTests
     [Fact]
     public void TestSqlUpdateStringForNullableTypes_WithNullValues()
     {
-        NullablesTestEntity entity = NullablesTestEntity.GetNullTestSet();
-        SetColumns<NullablesTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
+        NullableTestEntity entity = NullableTestEntity.GetNullTestSet();
+        SetColumns<NullableTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
 
         SqlQuery query = _sqlGeneratorForNullablesTestEntity.UpdateById(entity, columns);
 
-        string expectedSql = "UPDATE [NullablesTestEntity] SET [LongValue] = @LongValue, [ShortValue] = @ShortValue, [ByteValue] = @ByteValue, [BoolValue] = @BoolValue, [DecimalValue] = @DecimalValue, [FloatValue] = @FloatValue, [DoubleValue] = @DoubleValue, [DateTimeValue] = @DateTimeValue, [GuidValue] = @GuidValue, [CharValue] = @CharValue, [TimeOnlyValue] = @TimeOnlyValue, [DateOnlyValue] = @DateOnlyValue, [ByteArrayValue] = @ByteArrayValue, [DateTimeOffsetValue] = @DateTimeOffsetValue WHERE [Key] = @Key;";
+        string expectedSql = "UPDATE [NullableTestEntity] SET [LongValue] = @LongValue, [ShortValue] = @ShortValue, [ByteValue] = @ByteValue, [BoolValue] = @BoolValue, [DecimalValue] = @DecimalValue, [FloatValue] = @FloatValue, [DoubleValue] = @DoubleValue, [DateTimeValue] = @DateTimeValue, [GuidValue] = @GuidValue, [CharValue] = @CharValue, [TimeOnlyValue] = @TimeOnlyValue, [DateOnlyValue] = @DateOnlyValue, [ByteArrayValue] = @ByteArrayValue, [DateTimeOffsetValue] = @DateTimeOffsetValue WHERE [Key] = @Key;";
         Assert.Equal(expectedSql, query.QueryText);
 
 

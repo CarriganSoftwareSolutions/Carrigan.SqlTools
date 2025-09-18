@@ -7,10 +7,8 @@ public class SqlGenerator_DeleteAllTests
 {
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
 
-    public SqlGenerator_DeleteAllTests()
-    {
+    public SqlGenerator_DeleteAllTests() => 
         _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>();
-    }
 
     [Fact]
     public void SqlDeleteAll_GeneratesCorrectSql_WithTableAttribute()

@@ -47,11 +47,8 @@ public abstract class ComparisonOperators : PredicatesBase
     /// <param name="right">right value</param>
     /// <param name="op">SQL string representation of the operator</param>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public ComparisonOperators(PredicatesBase left, PredicatesBase right, string op)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    {
+    public ComparisonOperators(PredicatesBase left, PredicatesBase right, string op) => 
         Initialize(left, right, op);
-    }
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic.
