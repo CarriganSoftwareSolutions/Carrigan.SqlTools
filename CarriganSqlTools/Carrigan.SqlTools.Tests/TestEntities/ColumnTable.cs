@@ -12,6 +12,6 @@ internal class ColumnTable
     public string ColA { get; set; }
     public string ColB { get; set; }
     public string Pizza { get; set; }
-    public string D000descruct0 { get; set; }
+    public string D000destruct0 { get; set; }
     public string Express { get; set; }
 }

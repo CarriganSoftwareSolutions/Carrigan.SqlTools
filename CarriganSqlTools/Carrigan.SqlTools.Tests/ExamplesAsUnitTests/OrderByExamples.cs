@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class OrderByExamples
 {
-    private SqlGenerator<Customer> customerGenerator = new();
+    private readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
     public void SelectWithWithOrderByItem()

@@ -8,8 +8,8 @@ namespace Carrigan.SqlTools.Predicates;
 /// </summary>
 public abstract class LogicalOperators : PredicatesBase
 {
-    private string _operator;
-    private IEnumerable<PredicatesBase> _predicates;
+    private readonly string _operator;
+    private readonly IEnumerable<PredicatesBase> _predicates;
 
     /// <summary>
     /// Base constructor for the logical boolean operator "AND" and "OR".

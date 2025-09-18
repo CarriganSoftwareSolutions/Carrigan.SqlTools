@@ -15,8 +15,8 @@ public class SqlGenerator_SelectByIdTests
         _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncrypter);
     }
 
-    private Guid _guid = new("711c4dff-6e8a-4e43-9eab-b83115244a57");
-    private Guid _guid2 = new("349cc712-281d-4abe-8470-6ed391391bd1");
+    private readonly Guid _guid = new("711c4dff-6e8a-4e43-9eab-b83115244a57");
+    private readonly Guid _guid2 = new("349cc712-281d-4abe-8470-6ed391391bd1");
 
     [Fact]
     public void SqlSelectById_WithTableAttribute()

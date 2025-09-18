@@ -35,7 +35,7 @@ public class OrderByTests
     {
         OrderByItem<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
         OrderByItem<Address> orderByItem2 = new("Street", SortDirectionEnum.Descending);
-        IOrderByClause orderBy = new OrderBy(orderByItem1, orderByItem2);
+        OrderBy orderBy = new (orderByItem1, orderByItem2);
 
 
         Assert.Equal(2, orderBy.TableTags.Count());
@@ -64,24 +64,24 @@ public class OrderByTests
     public void OrderByTests_Constructor_MultipleTables()
     {
         OrderByItem<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
-        OrderByItem<ColumnTable> orderByItem2 = new("D000descruct0", SortDirectionEnum.Descending);
+        OrderByItem<ColumnTable> orderByItem2 = new("D000destruct0", SortDirectionEnum.Descending);
         OrderByItem<BooleanColumnTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
-        IOrderByClause orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
+        OrderBy orderBy = new (orderByItem1, orderByItem2, orderByItem3);
 
 
         Assert.Equal(3, orderBy.TableTags.Count());
         Assert.Equal("[Address]", orderBy.TableTags.First());
         Assert.Equal("[ColumnTable]", orderBy.TableTags.Skip(1).First());
         Assert.Equal("[BooleanColumnTable]", orderBy.TableTags.Skip(2).First());
-        Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000descruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql());
+        Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000destruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql());
     }
     [Fact]
     public void WithAppend()
     {
-        IOrderByClause order = new OrderBy();                            // initially empty
+        OrderBy order = new ();                            // initially empty
         OrderByItem<Address> item = new("Street");
 
-        IOrderByClause returned = order.WithAppend(item);
+        OrderBy returned = order.WithAppend(item);
 
         // Add should be chain-able (same instance)
         Assert.NotSame(order, returned);
@@ -160,7 +160,7 @@ public class OrderByTests
     public void Contains_ReturnsTrue_ForDifferentInstanceWithSameTableAndColumn()
     {
         OrderByItem<Address> original = new("City", SortDirectionEnum.Descending);
-        IOrderByClause order = new OrderBy(original);
+        OrderBy order = new (original);
 
         // Different instance but same TableTag + ColumnTag
         OrderByItem<Address> lookup = new("City", SortDirectionEnum.Ascending);
@@ -172,14 +172,14 @@ public class OrderByTests
     public void Contains_ReturnsFalse_ForDifferentColumnOrTable()
     {
         OrderByItem<Address> streetItem = new("Street");
-        IOrderByClause order = new OrderBy(streetItem);
+        OrderBy order = new (streetItem);
 
         // Different column
         OrderByItem<Address> notPresent = new("City");
         Assert.False(order.Contains(notPresent));
 
         // Different table (using a different entity type)
-        OrderByItem<ColumnTable> otherTableItem = new("D000descruct0");
+        OrderByItem<ColumnTable> otherTableItem = new("D000destruct0");
         Assert.False(order.Contains(otherTableItem));
     }
 }

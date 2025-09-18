@@ -88,7 +88,7 @@ public static class Commands
     {
         List<T> results = [];
         PropertyInfo? keyVersionProperty = ClientReflectorCache<T>.KeyVersionProperty;
-        IEnumerable<PropertyInfo> encrytptedProperties = ClientReflectorCache<T>.EncryptedProperties;
+        IEnumerable<PropertyInfo> encryptedProperties = ClientReflectorCache<T>.EncryptedProperties;
         int? decryptionVersion = 1; //in later versions this will be read from a field marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
         IEncryption? decrypter;
@@ -127,7 +127,7 @@ public static class Commands
             if (wasClosed && connection.State == ConnectionState.Open)
                 connection.Close();
         }
-        if (encrytptedProperties.Any())
+        if (encryptedProperties.Any())
         {
             if (keyVersionProperty is null)
                 throw new NullReferenceException($"KeyVersion attribute not set on data model, {ClientReflectorCache<T>.Type.Name}, with encrypted properties.");
@@ -144,7 +144,7 @@ public static class Commands
 
                     if (decrypter is not null)
                     {
-                        foreach (PropertyInfo property in encrytptedProperties)
+                        foreach (PropertyInfo property in encryptedProperties)
                         {
                             string? value = property.GetValue(record)?.ToString();
                             if (value.IsNotNullOrWhiteSpace())
@@ -157,7 +157,7 @@ public static class Commands
                 }
                 if(decrypter is null)
                 {
-                    foreach (PropertyInfo property in encrytptedProperties)
+                    foreach (PropertyInfo property in encryptedProperties)
                     {
                         string? value = property.GetValue(record)?.ToString();
                         if (value.IsNullOrWhiteSpace())

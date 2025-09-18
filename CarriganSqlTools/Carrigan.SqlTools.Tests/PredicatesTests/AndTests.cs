@@ -6,16 +6,12 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 public class AndTests
 {
     [Fact]
-    public void And_Empty_ToSql()
-    {
+    public void And_Empty_ToSql() => 
         Assert.Throws<ArgumentNullException>(() => new And([]));
-    }
 
     [Fact]
-    public void And_null_ToSql()
-    {
+    public void And_null_ToSql() => 
         Assert.Throws<ArgumentNullException>(() => new And(null!));
-    }
 
     [Fact]
     public void And_Single_ToSql()

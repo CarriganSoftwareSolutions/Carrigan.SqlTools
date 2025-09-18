@@ -8,7 +8,7 @@ public class SpecialInvokerTests
     // Arrange: Build a dictionary simulating ADO.Net values.
     // Note: SQL Server returns a DateTime for a date column and a TimeSpan for a time column.
     // Also, sometimes the DB might return a DateTime for a DateTimeOffset column.
-    Dictionary<string, object?> specialInvocation = new()
+    private readonly Dictionary<string, object?> specialInvocation = new()
     {
             // DateOnly property: simulate a SQL date returned as DateTime
             { "DateOnlyValue", new DateTime(2025, 2, 19, 0, 0, 0) },
@@ -29,7 +29,8 @@ public class SpecialInvokerTests
             { "NullableEnumValue", DBNull.Value }
         };
     // Act: Invoke the conversion/invocation process.
-    SpecialEntity entity;
+    private readonly SpecialEntity entity;
+
     public SpecialInvokerTests() =>
         // Act: Invoke the conversion/invocation process
         entity = Invoker<SpecialEntity>.Invoke(specialInvocation);
@@ -41,6 +42,7 @@ public class SpecialInvokerTests
         // DateOnly conversion: Compare with DateOnly converted from the original DateTime.
         Assert.Equal(dateOnlyValue, entity.DateOnlyValue);
     }
+
     [Fact]
     public void Special_Invocation_Test2()
     {
@@ -48,6 +50,7 @@ public class SpecialInvokerTests
         // TimeOnly conversion: Compare with TimeOnly created from the original TimeSpan.
         Assert.Equal(timeOnlyValue, entity.TimeOnlyValue);
     }
+
     [Fact]
     public void Special_Invocation_Test3()
     {            
@@ -55,23 +58,19 @@ public class SpecialInvokerTests
         DateTimeOffset expectedDTO = new((DateTime)specialInvocation["DateTimeOffsetValue"]!);
         Assert.Equal(expectedDTO, entity.DateTimeOffsetValue);
     }
+
     [Fact]
-    public void Special_Invocation_Test4()
-    {
+    public void Special_Invocation_Test4() =>
         // Enum conversion: The string "ValueB" should map to TestEnum.ValueB.
         Assert.Equal(TestEnum.ValueB, entity.EnumValueString);
-    }
+
     [Fact]
-    public void Special_Invocation_Test5()
-    {
+    public void Special_Invocation_Test5() =>
         // Enum conversion: The int "ValueB" should map to TestEnum.ValueB.
         Assert.Equal(TestEnum.ValueB, entity.EnumValueInt);
-    }
-    [Fact]
-    public void Special_Invocation_Test6()
-    {
 
+    [Fact]
+    public void Special_Invocation_Test6() =>
         // Nullable enum: Since the input was DBNull, the resulting property should be null.
         Assert.Null(entity.NullableEnumValue);
-    }
 }

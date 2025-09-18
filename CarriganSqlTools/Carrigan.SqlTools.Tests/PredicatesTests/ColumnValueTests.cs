@@ -18,9 +18,9 @@ public class ColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ParameterCount()
     {
-        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
-        int actual = byColoumnValues.Parameter.Count();
+        int actual = byColumnValues.Parameter.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -28,7 +28,7 @@ public class ColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ParameterValidate()
     {
-        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
 
         string expectedValue;
         object actualValue;
@@ -37,7 +37,7 @@ public class ColumnValueTests
 
         Parameters parameter;
 
-        parameter = byColoumnValues.Parameter.Where(param => param.Name == "Col1").First();
+        parameter = byColumnValues.Parameter.Where(param => param.Name == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
         actualValue = parameter.Value ?? string.Empty;
@@ -49,9 +49,9 @@ public class ColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ColumnCount()
     {
-        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
-        int actual = byColoumnValues.Column.Count();
+        int actual = byColumnValues.Column.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -59,13 +59,13 @@ public class ColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_Validate()
     {
-        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         string expectedString;
         string actualString;
 
         IColumnValue column;
 
-        column = byColoumnValues.Column.Where(col => col.ColumnTag.ToString() == "[ColumnTable].[Col1]").First();
+        column = byColumnValues.Column.Where(col => col.ColumnTag.ToString() == "[ColumnTable].[Col1]").First();
         expectedString = "[ColumnTable].[Col1]";
         actualString = column.ColumnTag.ToString();
         Assert.Equal(expectedString, actualString);
@@ -74,9 +74,9 @@ public class ColumnValueTests
     [Fact]
     public void ByColumnValue_ConstructorSimple_ToSql()
     {
-        ColumnValues<ColumnTable> byColoumnValues = new(nameof(ColumnTable.Col1), "1");
+        ColumnValues<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         string expectedString = "([ColumnTable].[Col1] = @Parameter_Col1)";
-        string actualString = byColoumnValues.ToSql();
+        string actualString = byColumnValues.ToSql();
         Assert.Equal(expectedString, actualString);
     }
 }

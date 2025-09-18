@@ -6,16 +6,12 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 public class OrTests
 {
     [Fact]
-    public void Or_Empty_ToSql()
-    {
+    public void Or_Empty_ToSql() => 
         Assert.Throws<ArgumentNullException>(() => new Or([]));
-    }
 
     [Fact]
-    public void Or_null_ToSql()
-    {
+    public void Or_null_ToSql() => 
         Assert.Throws<ArgumentNullException>(() => new Or(null!));
-    }
 
     [Fact]
     public void Or_Single_ToSql()

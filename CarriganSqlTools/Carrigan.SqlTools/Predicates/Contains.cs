@@ -18,8 +18,8 @@
 /// </example>
 public class Contains<T> : PredicatesBase
 {
-    private Columns<T> _column;
-    private Parameters _parameter;
+    private readonly Columns<T> _column;
+    private readonly Parameters _parameter;
     /// <summary>
     /// Constructor for the CONTAINS operator.
     /// </summary>

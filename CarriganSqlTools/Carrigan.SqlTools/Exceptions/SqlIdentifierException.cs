@@ -79,9 +79,9 @@ public class SqlIdentifierException : Exception
     }
 
     // Builds the exception message from a collection of ColumnTag values.
-    private static string CreateMessage(IEnumerable<RoleTag> inavlidRoles)
+    private static string CreateMessage(IEnumerable<RoleTag> invalidRoles)
     {
-        IEnumerable<string> rolesStrings = inavlidRoles.Select(role => role.ToString());
+        IEnumerable<string> rolesStrings = invalidRoles.Select(role => role.ToString());
         string roles = rolesStrings.JoinAnd();
         return "Invalid SQL identifier(s): " + roles;
     }

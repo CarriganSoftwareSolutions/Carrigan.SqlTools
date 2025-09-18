@@ -23,13 +23,10 @@ public static class SortDirectionEnumExtension
     /// <param name="value"></param>
     /// <returns>Ascending -> ASC, Descending-> DESC</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static string ToSql(this SortDirectionEnum value)
+    public static string ToSql(this SortDirectionEnum value) => value switch
     {
-        return value switch
-        {
-            SortDirectionEnum.Descending => "DESC",
-            SortDirectionEnum.Ascending => "ASC",
-            _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-        };
-    }
+        SortDirectionEnum.Descending => "DESC",
+        SortDirectionEnum.Ascending => "ASC",
+        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
+    };
 }

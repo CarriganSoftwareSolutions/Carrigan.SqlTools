@@ -105,17 +105,17 @@ public class SqlNamePatternException : Exception
     }
 
     // Builds the exception message from a collection of ColumnTag values.
-    private static string CreateMessage(IEnumerable<RoleTag> inavlidRoles)
+    private static string CreateMessage(IEnumerable<RoleTag> invalidRoles)
     {
-        IEnumerable<string> rolesStrings = inavlidRoles.Select(role => role.ToString());
+        IEnumerable<string> rolesStrings = invalidRoles.Select(role => role.ToString());
         string roles = rolesStrings.JoinAnd();
         return $"The following role names do not follow the SQL naming convention: {roles}";
     }
 
-    // Builds the exception message from a collection of unspecified sql Identifier values.
-    private static string CreateMessage(IEnumerable<string> inavlidRoles)
+    // Builds the exception message from a collection of unspecified sql Identifier values. invalidRoles
+    private static string CreateMessage(IEnumerable<string> invalidRoles)
     {
-        IEnumerable<string> rolesStrings = inavlidRoles.Select(role => role.ToString());
+        IEnumerable<string> rolesStrings = invalidRoles.Select(role => role.ToString());
         string roles = rolesStrings.JoinAnd();
         return $"The following sql identifiers do not follow the SQL naming convention: {roles}";
     }

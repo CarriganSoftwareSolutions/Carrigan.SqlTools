@@ -22,10 +22,8 @@ public class OrderByItemTests
     }
 
     [Fact]
-    public void OrderByItem_Constructor_ArgumentException()
-    {
+    public void OrderByItem_Constructor_ArgumentException() => 
         Assert.Throws<ArgumentException>(() => new OrderByItem<Address>("LiveLongAndProsper", SortDirectionEnum.Descending));
-    }
 
 
     // IEquatable<IOrderByItem>.Equals against null
@@ -40,13 +38,13 @@ public class OrderByItemTests
     [Fact]
     public void Equals_SameTableAndColumn_IgnoresSortDirection()
     {
-        IOrderByItem asc = new OrderByItem<Address>("City", SortDirectionEnum.Ascending);
-        IOrderByItem desc = new OrderByItem<Address>("City", SortDirectionEnum.Descending);
+        IOrderByItem ascending = new OrderByItem<Address>("City", SortDirectionEnum.Ascending);
+        IOrderByItem descending = new OrderByItem<Address>("City", SortDirectionEnum.Descending);
 
-        Assert.True(asc.Equals(desc));
-        Assert.True(desc.Equals(asc));
+        Assert.True(ascending.Equals(descending));
+        Assert.True(descending.Equals(ascending));
   
-        Assert.True(asc.Equals((object)desc));
+        Assert.True(ascending.Equals((object)descending));
     }
 
     //  Different ColumnName → not equal
@@ -123,7 +121,7 @@ public class OrderByItemTests
         // TableTags sequence
         List<TableTag> newTags =
             [.. returned.TableTags];
-        Assert.Equal(2, newTags.Count());
+        Assert.Equal(2, newTags.Count);
         Assert.Equal("[Address]", newTags[0]);
         Assert.Equal("[Address]", newTags[1]);
 
@@ -187,12 +185,12 @@ public class OrderByItemTests
     [Fact]
     public void Contains_ReturnsTrue_ForDifferentInstanceWithSameTableAndColumn()
     {
-        OrderByItem<Address> cityDesc = new("City", SortDirectionEnum.Descending);
+        OrderByItem<Address> cityDescending = new("City", SortDirectionEnum.Descending);
 
         // Different instance but same TableTag + ColumnTag
-        OrderByItem<Address> cityAsc = new("City", SortDirectionEnum.Ascending);
+        OrderByItem<Address> cityAscending = new("City", SortDirectionEnum.Ascending);
 
-        Assert.True(cityDesc.Contains(cityAsc));
+        Assert.True(cityDescending.Contains(cityAscending));
     }
 
     [Fact]
@@ -214,11 +212,9 @@ public class OrderByItemTests
     }
 
     [Fact]
-    public void Empty()
-    {
+    public void Empty() =>
         //There is currently no way to test IsEmpty is true, as that should always generate an exception.
         Assert.Throws<ArgumentException>(() => { OrderByItem<Address> streetItem = new(string.Empty); });
-    }
 }
 
 #pragma warning restore CA1859 // Use concrete types when possible for improved performance

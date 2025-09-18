@@ -5,7 +5,7 @@ namespace Carrigan.SqlTools.Tests.InvocationTests;
 
 public class InvokerTests
 {
-    private static Guid guid = new("bf08ee23-82af-4640-8e21-3de23bbc2a51");
+    private readonly static Guid guid = new("bf08ee23-82af-4640-8e21-3de23bbc2a51");
     private static Dictionary<string, object?> StandardInvocation => new        (
             [
                 new("IntValue", int.MaxValue),

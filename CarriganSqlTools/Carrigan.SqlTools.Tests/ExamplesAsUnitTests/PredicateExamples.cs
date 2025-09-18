@@ -61,8 +61,8 @@ public class PredicateExamples
     [Fact]
     public void PredicateColumnValues()
     {
-        ColumnValues<Customer> coumnValue = new(nameof(Customer.Name), "Hank");
-        SqlQuery query = customerGenerator.Select(null, coumnValue, null, null);
+        ColumnValues<Customer> columnValue = new(nameof(Customer.Name), "Hank");
+        SqlQuery query = customerGenerator.Select(null, columnValue, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

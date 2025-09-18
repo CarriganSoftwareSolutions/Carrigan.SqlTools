@@ -5,14 +5,14 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 
 public class LessThanEqualsTests
 {
-    private readonly PredicatesBase ColumnPoppisTastyPizza = new Columns<ColumnTable>("Pizza");
-    private readonly string ColumnPoppisTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
+    private readonly PredicatesBase ColumnTastyPizza = new Columns<ColumnTable>("Pizza");
+    private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly PredicatesBase ColumnDestructCode = new Columns<ColumnTable>("D000descruct0");
-    private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000descruct0]";
+    private readonly PredicatesBase ColumnDestructCode = new Columns<ColumnTable>("D000destruct0");
+    private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly PredicatesBase ColumnFuturama = new Columns<ColumnTable>("Express");
-    private readonly string ColumnFuturamaSql = "[ColumnTable].[Express]";
+    private readonly PredicatesBase ColumnFutureCity = new Columns<ColumnTable>("Express");
+    private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
     private readonly PredicatesBase ParameterPi = new Parameters("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Parameter_Pi";
@@ -27,8 +27,8 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_1_ToSql()
     {
-        PredicatesBase left = ColumnPoppisTastyPizza;
-        string leftSql = ColumnPoppisTastyPizzaExpectedSql;
+        PredicatesBase left = ColumnTastyPizza;
+        string leftSql = ColumnTastyPizzaExpectedSql;
 
         PredicatesBase right = ColumnDestructCode;
         string rightSql = ColumnDestructCodeSql;
@@ -43,7 +43,7 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_1_ParameterCount()
     {
-        PredicatesBase left = ColumnPoppisTastyPizza;
+        PredicatesBase left = ColumnTastyPizza;
 
         PredicatesBase right = ColumnDestructCode;
 
@@ -58,8 +58,8 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ToSql()
     {
-        PredicatesBase left = ColumnFuturama;
-        string leftSql = ColumnFuturamaSql;
+        PredicatesBase left = ColumnFutureCity;
+        string leftSql = ColumnFutureCitySql;
 
         PredicatesBase right = ParameterPi;
         string rightSql = ParameterPiSql;
@@ -75,7 +75,7 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ParameterCount()
     {
-        PredicatesBase left = ColumnFuturama;
+        PredicatesBase left = ColumnFutureCity;
 
         PredicatesBase right = ParameterPi;
 
@@ -90,7 +90,7 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ParameterValues()
     {
-        PredicatesBase left = ColumnFuturama;
+        PredicatesBase left = ColumnFutureCity;
 
         PredicatesBase right = ParameterPi;
 
@@ -147,8 +147,8 @@ public class LessThanEqualsTests
         PredicatesBase left = ParamerterElite;
         string leftSql = ParamerterEliteSql;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFuturama, ColumnDestructCode);
-        string rightSql = $"({ParamerterHelloWorldSql} AND {ColumnFuturamaSql} AND {ColumnDestructCodeSql})";
+        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        string rightSql = $"({ParamerterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
 
         PredicatesBase predicate = new LessThanEquals(left, right);
 
@@ -163,7 +163,7 @@ public class LessThanEqualsTests
     {
         PredicatesBase left = ParamerterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFuturama, ColumnDestructCode);
+        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new LessThanEquals(left, right);
 
@@ -178,7 +178,7 @@ public class LessThanEqualsTests
     {
         PredicatesBase left = ParamerterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFuturama, ColumnDestructCode);
+        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new LessThanEquals(left, right);
 
@@ -197,7 +197,7 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_1_ColumnCount()
     {
-        PredicatesBase left = ColumnPoppisTastyPizza;
+        PredicatesBase left = ColumnTastyPizza;
 
         PredicatesBase right = ColumnDestructCode;
 
@@ -212,7 +212,7 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_1_ColumnName()
     {
-        PredicatesBase left = ColumnPoppisTastyPizza;
+        PredicatesBase left = ColumnTastyPizza;
 
         PredicatesBase right = ColumnDestructCode;
 
@@ -220,13 +220,13 @@ public class LessThanEqualsTests
 
 
         _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[Pizza]").Single();
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000descruct0]").Single();
+        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000destruct0]").Single();
     }
 
     [Fact]
     public void LessThanEquals_2_ColumnCount()
     {
-        PredicatesBase left = ColumnFuturama;
+        PredicatesBase left = ColumnFutureCity;
 
         PredicatesBase right = ParameterPi;
 
@@ -241,7 +241,7 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ColumnName()
     {
-        PredicatesBase left = ColumnFuturama;
+        PredicatesBase left = ColumnFutureCity;
 
         PredicatesBase right = ParameterPi;
 
@@ -270,7 +270,7 @@ public class LessThanEqualsTests
     {
         PredicatesBase left = ParamerterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFuturama, ColumnDestructCode);
+        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new LessThanEquals(left, right);
 
@@ -285,11 +285,11 @@ public class LessThanEqualsTests
     {
         PredicatesBase left = ParamerterElite;
 
-        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFuturama, ColumnDestructCode);
+        PredicatesBase right = new And(ParamerterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
         PredicatesBase predicate = new LessThanEquals(left, right);
 
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000descruct0]").Single();
+        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000destruct0]").Single();
         _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[Express]").Single();
     }
 }

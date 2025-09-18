@@ -75,7 +75,7 @@ public  class ColumnsTests
     [InlineData("ColA", "ColA")]
     [InlineData("ColB", "ColB")]
     [InlineData("Pizza", "Pizza")]
-    [InlineData("D000descruct0", "D000descruct0")]
+    [InlineData("D000destruct0", "D000destruct0")]
     [InlineData("Express", "Express")]
     public void Columns_Tests(string propertyName, string expectedColumnName)
     {

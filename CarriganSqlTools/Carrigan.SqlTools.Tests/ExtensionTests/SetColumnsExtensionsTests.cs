@@ -37,7 +37,7 @@ public class SetColumnsExtensionsTests
         // Arrange: pass a non-empty IEnumerable<string> containing property names.
         List<string> propertyNames =
         [
-            "Col1", "Col2", "ColA", "ColB", "Pizza", "D000descruct0", "Express"
+            "Col1", "Col2", "ColA", "ColB", "Pizza", "D000destruct0", "Express"
         ];
         SetColumns<ColumnTable> setColumns = new(propertyNames);
 
@@ -80,7 +80,7 @@ public class SetColumnsExtensionsTests
         // Arrange: pass a non-empty IEnumerable<string> containing property names.
         List<string> propertyNames =
         [
-            "Col1", "Col2", "ColA", "ColB", "Pizza", "D000descruct0", "Express"
+            "Col1", "Col2", "ColA", "ColB", "Pizza", "D000destruct0", "Express"
         ];
         SetColumns<ColumnTable> setColumns = new(propertyNames);
 

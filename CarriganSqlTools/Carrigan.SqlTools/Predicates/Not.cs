@@ -21,7 +21,7 @@ namespace Carrigan.SqlTools.Predicates;
 /// </example>
 public class Not : PredicatesBase
 {
-    PredicatesBase _someValue;
+    private readonly PredicatesBase _someValue;
     /// <summary>
     /// This is the constructor for the classes that represents SQL's NOT operators
     /// </summary>

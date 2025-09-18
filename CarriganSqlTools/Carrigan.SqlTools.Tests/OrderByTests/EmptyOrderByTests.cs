@@ -7,14 +7,14 @@ public class EmptyOrderByTests
     [Fact]
     public void EmptyOrderByTests_ToSql()
     {
-        IOrderByClause orderBy = OrderBy.Empty;
+        OrderBy orderBy = OrderBy.Empty;
 
         Assert.Equal(string.Empty, orderBy.ToSql());
     }
     [Fact]
     public void EmptyOrderByTests_TableTags()
     {
-        IOrderByClause orderBy = OrderBy.Empty;
+        OrderBy orderBy = OrderBy.Empty;
 
         Assert.Empty(orderBy.TableTags);
     }

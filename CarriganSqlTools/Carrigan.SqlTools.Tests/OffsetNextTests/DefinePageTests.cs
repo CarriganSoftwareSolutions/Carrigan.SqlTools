@@ -22,9 +22,7 @@ public class DefinePageTests
     [InlineData(0, 10)]    // Invalid: pageNumber is 0
     [InlineData(1, 0)]     // Invalid: pageSize is 0
     [InlineData(0, 0)]     // Invalid: pageSize is 0
-    public void Constructor_InvalidParameters_ThrowsArgumentOutOfRangeException(uint pageNumber, uint pageSize)
-    {
+    public void Constructor_InvalidParameters_ThrowsArgumentOutOfRangeException(uint pageNumber, uint pageSize) =>
         // Act & Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => new DefinePage(pageNumber, pageSize));
-    }
 }
