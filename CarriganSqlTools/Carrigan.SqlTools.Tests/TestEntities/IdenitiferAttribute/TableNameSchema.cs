@@ -2,8 +2,8 @@
 
 namespace Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
 [Table("TableNameSchemaTable", Schema="Table")]
-internal class TableNameSchema
+public class TableNameSchema
 {
-    internal Guid Id { get; set; }
-    internal string? Text { get; set; }
+    public Guid Id { get; set; }
+    public string? Text { get; set; }
 }

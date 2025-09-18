@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
 [Identifier("IdentifierNameOverrideTable")]
 [Table("WtfMate")]
-internal class IdentifierNameOverride
+public class IdentifierNameOverride
 {
-    internal Guid Id { get; set; }
-    internal string? Text { get; set; }
+    public Guid Id { get; set; }
+    public string? Text { get; set; }
 }
 

@@ -15,6 +15,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Used to build an SQL Query that selects all records from a table.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <exception cref="ArgumentException"></exception>
     /// <param name="orderBy">optional parameter to add an order by clause</param>
@@ -44,6 +45,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Builds an SqlQuery object, which contains a parameterized Sql SELECT * with a Dictionary representing the parameter value pairs.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="joins">Defines the joins. Leave as null to leave out joins.</param>
     /// <param name="predicates">Defines the WHERE clause. Leave as null to leave out the WHERE clause.</param>
@@ -195,6 +197,10 @@ public partial class SqlGenerator<T>
         
     }
 
+    //TODO: Needs additional documentation for the summary.
+    /// <summary>
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// </summary>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Id = 42 };

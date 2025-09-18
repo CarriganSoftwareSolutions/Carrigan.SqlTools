@@ -8,6 +8,7 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 /// <summary>
 /// The SQL generator class. Provides SQL generation methods for type, <see cref="T"/>
+/// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class

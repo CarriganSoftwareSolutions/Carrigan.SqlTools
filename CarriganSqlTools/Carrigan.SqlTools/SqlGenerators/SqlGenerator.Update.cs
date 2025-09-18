@@ -86,6 +86,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// This method generates SQL to update one or more records.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="entity">Record being updates</param>
     /// <param name="columns">Specify columns to update, leave null to update all except key fields.</param>
@@ -135,6 +136,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// This method generates SQL to update one or more records.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="entity">Record being updates</param>
     /// <param name="columns">Specify columns to update, leave null to update all except key fields.</param>

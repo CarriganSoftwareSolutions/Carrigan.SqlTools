@@ -13,6 +13,7 @@ public partial class SqlGenerator<T>
     /// <summary>
     /// Generates SQL to delete the record passed in.  
     /// It only looks at the key fields for generating the SQL.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="entity">use the data model as an id holder, uses only the key fields</param>
     /// <returns>Returns an SqlQuery object</returns>
@@ -40,6 +41,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Generates SQL to delete all records for the given data model
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <returns>an SqlQuery object</returns>
     /// <example>
@@ -62,6 +64,7 @@ public partial class SqlGenerator<T>
     /// <summary>
     /// Generates SQL to delete the record passed in by Id.  
     /// It only looks at the key fields for generating the SQL.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="entity">use the data model as an id holder, uses only the key fields</param>
     /// <returns>Returns an SqlQuery object</returns>
@@ -79,6 +82,7 @@ public partial class SqlGenerator<T>
         Delete(null, new Or(entities.Select(entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
     /// <summary>
     /// Generates SQL delete. 
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="joins">any joins</param>
     /// <param name="predicates">any where predicates</param>

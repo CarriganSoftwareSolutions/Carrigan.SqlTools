@@ -8,6 +8,7 @@ public partial class SqlGenerator<T>
 {
     /// <summary>
     /// This is a helper method that modifies insert queries to return a key field from the insert
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="queryText">Insert Sql Query</param>
     /// <returns>modified Insert Sql Query</returns>
@@ -20,6 +21,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// This is a helper method that generates the Values portion of the query
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     private static string EnumeratedInsertValues(IEnumerable<PropertyInfo> properties, int? i = null) =>
         i == null  
@@ -35,6 +37,7 @@ public partial class SqlGenerator<T>
     /// <summary>
     /// This method generates an Insert SQL query, utilizing default values for key fields.
     /// Note: in order for this to work correctly, the key fields must have a default value.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="entity">a data model representing a new SQL record</param>
     /// <returns>an SQL query object</returns>
@@ -87,6 +90,7 @@ public partial class SqlGenerator<T>
     /// <summary>
     /// This method generates an Insert SQL query for one or more record, utilizing default values for key fields.
     /// Note: in order for this to work correctly, the key fields must have a default value.
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
     /// <param name="entity">a data model representing a new SQL record</param>
     /// <returns>an SQL query object</returns>
