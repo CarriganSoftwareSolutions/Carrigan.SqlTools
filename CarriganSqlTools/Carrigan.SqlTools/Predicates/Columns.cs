@@ -34,8 +34,8 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// </summary>
     public TableTag TableTag { get; }
 
-    internal static ArgumentException NoSuchProperty(string properyName) =>
-        new ($"{properyName} is not the valid name of a property in the class, {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(properyName));
+    internal static ArgumentException NoSuchProperty(string propertyName) =>
+        new ($"{propertyName} is not the valid name of a property in the class, {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(propertyName));
 
     /// <summary>
     /// A constructor for a column in the predicate logic.
@@ -94,20 +94,4 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
     internal override IEnumerable<KeyValuePair<string, object>> GetParameters(string prefix, IEnumerable<string> duplicates) =>
         [];
-
-    /// <summary>
-    /// used for unit testing only
-    /// </summary>
-    internal static IEnumerable<Columns<T>> Get(params IEnumerable<string> propertyNames)
-    {
-        IEnumerable<string> invalid = propertyNames.Where(propertyName => SqlToolsReflectorCache<T>.ContainsProperty(propertyName) is false);
-        if (invalid.Any())
-            throw SqlIdentifierException.FromInvalidColumnNames<T>(invalid);
-        return propertyNames.Select(propertyName => new Columns<T>(propertyName));
-    }
-    /// <summary>
-    /// used for unit testing only
-    /// </summary>
-    public static IEnumerable<Columns<T>> Get() =>
-        SqlToolsReflectorCache<T>.Columns.Select(column => new Columns<T>(column._columnName));
 }

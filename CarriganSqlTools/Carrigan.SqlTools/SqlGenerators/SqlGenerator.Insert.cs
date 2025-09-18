@@ -71,7 +71,7 @@ public partial class SqlGenerator<T>
         }
         else
         {
-            parameters = PropertiesLessKeys.Select(key => GetSqlParameterKeyValue(key, true, entity));
+            parameters = ColumnsLessKeys.Select(key => GetSqlParameterKeyValue(key, true, entity));
 
 
             string columns = string.Join(", ", ColumnsLessKeys.Select(column => $"[{column._columnName}]"));

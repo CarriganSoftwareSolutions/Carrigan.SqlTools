@@ -83,42 +83,4 @@ public  class ColumnsTests
 
         Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnTag);
     }
-
-    [Theory]
-    [InlineData("Col1")]
-    [InlineData("Col2")]
-    [InlineData("ColA")]
-    [InlineData("ColB")]
-    [InlineData("Pizza")]
-    [InlineData("D000descruct0")]
-    [InlineData("Express")]
-    public void Columns_Tests_Bulk_No_Arguments(string propertyName)
-    {
-        IEnumerable<Columns<ColumnTable>> columns = Columns<ColumnTable>.Get();
-
-        Assert.True(columns.Where(column => column.PropertyName == propertyName).Any());
-    }
-
-    [Theory]
-    [InlineData("Pizza")]
-    [InlineData("D000descruct0")]
-    [InlineData("Express")]
-    public void Columns_Tests_Bulk_Limited(string propertyName)
-    {
-        IEnumerable<Columns<ColumnTable>> columns = Columns<ColumnTable>.Get("Pizza", "Express", "D000descruct0");
-
-        Assert.True(columns.Where(column => column.PropertyName == propertyName).Any());
-    }
-
-    [Theory]
-    [InlineData("Col1")]
-    [InlineData("Col2")]
-    [InlineData("ColA")]
-    [InlineData("ColB")]
-    public void Columns_Tests_Bulk_Limited_False(string propertyName)
-    {
-        IEnumerable<Columns<ColumnTable>> columns = Columns<ColumnTable>.Get("Pizza", "Express", "D000descruct0");
-
-        Assert.False(columns.Where(column => column.PropertyName == propertyName).Any());
-    }
 }

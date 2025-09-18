@@ -67,7 +67,7 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// <exception cref="ArgumentException">Column name not found.</exception>
     public void AddColumn(string propertyName)
     {
-        ColumnTag? newTag = GetColumnTagByProperty(propertyName);
+        ColumnTag? newTag = SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName).Single();
         if(newTag is not null)
             ColumnTags = ColumnTags.Append(newTag);
     }

@@ -28,10 +28,8 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         {
             if (_Encryption is null)
                 throw new NullReferenceException($"No encryption key data model, {Table}, with encrypted properties.");
-            if (KeyVersionProperty is null)
-                throw new NullReferenceException($"KeyVersion attribute not set on data model, {Table}, with encrypted properties.");
-            if ((Nullable.GetUnderlyingType(KeyVersionProperty.PropertyType) ?? KeyVersionProperty.PropertyType) != typeof(int))
-                throw new NullReferenceException($"The KeyVersion, {KeyVersionProperty.Name}, attribute is not a int for data model, {Table}");
+            if (KeyVersionColumn is null)
+                throw new NullReferenceException($"KeyVersion attribute of type int not set on data model, {Table}, with encrypted properties. ");
         }
     }
 
@@ -59,36 +57,12 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <param name="entity">holder for the key fields values</param>
     /// <returns>an And predicate useful for selecting a record by Id.</returns>
     private static And GetByKeyPredicates(T entity) =>
-        new (Key.Select(key => new Equal(new Columns<T>(key.Name), new Parameters(key.Name, key.GetValue(entity)))));
+        new (KeyColumns.Select(key => new Equal(new Columns<T>(key._columnName), new Parameters(key._columnName, GetValue(key, entity)))));
 
     /// <summary>
     /// Gets an SQL Parameters as a Key Value pair
     /// </summary>
-    /// <param name="property">The property (which corresponds to a column in the database)</param>
-    /// <param name="useEncryption">Is it encrypted?</param>
-    /// <param name="entity">An instance of the data model (corresponds to a row in the database)</param>
-    /// <param name="entityIndex">the index value of the enumerated record in the collection</param>
-    /// <param name="parameterPrepend">The prefix for the parameter that corresponds the value</param>
-    /// <returns>Gets an SQL Parameters as a Key Value pair</returns>
-    private KeyValuePair<string, object> GetSqlParameterKeyValue(PropertyInfo property, bool useEncryption, T entity, int? entityIndex = null, string? parameterPrepend = null)
-    {
-        string key;
-        if(parameterPrepend.IsNullOrEmpty())
-            key = entityIndex == null ? property.Name : $"{property.Name}_{entityIndex}";
-        else
-            key = entityIndex == null ? $"{parameterPrepend}{property.Name}" : $"{parameterPrepend}{property.Name}_{entityIndex}";
-        if(_Encryption is not null && useEncryption && KeyVersionProperty is not null && KeyVersionProperty.Name.Equals(property.Name))
-            return new KeyValuePair<string, object>(key, ((object?)_Encryption?.Version) ?? DBNull.Value);
-        if (_Encryption is not null && useEncryption && ContainsEncryptedProperty(property.Name))
-            //the explicit conversion of _Encryption?.Encrypt(property.GetValue(entity)?.ToString()) to an object is required to avoid a compiler error.
-            return new KeyValuePair<string, object>(key, ((object?)_Encryption?.Encrypt(property.GetValue(entity)?.ToString())) ?? DBNull.Value);
-        else
-            return new KeyValuePair<string, object>(key, property.GetValue(entity) ?? DBNull.Value);
-    }
-    /// <summary>
-    /// Gets an SQL Parameters as a Key Value pair
-    /// </summary>
-    /// <param name="column">The property (which corresponds to a column in the database)</param>
+    /// <param name="column">The column</param>
     /// <param name="useEncryption">Is it encrypted?</param>
     /// <param name="entity">An instance of the data model (corresponds to a row in the database)</param>
     /// <param name="entityIndex">the index value of the enumerated record in the collection</param>
@@ -101,23 +75,14 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             key = entityIndex == null ? column._columnName : $"{column._columnName}_{entityIndex}";
         else
             key = entityIndex == null ? $"{parameterPrepend}{column._columnName}" : $"{parameterPrepend}{column._columnName}_{entityIndex}";
-        if (_Encryption is not null && useEncryption && KeyVersionProperty is not null && KeyVersionProperty.Name.Equals(column._columnName))
+        if (_Encryption is not null && useEncryption && KeyVersionColumn is not null && KeyVersionColumn.Equals(column))
             return new KeyValuePair<string, object>(key, ((object?)_Encryption?.Version) ?? DBNull.Value);
-        if (_Encryption is not null && useEncryption && ContainsEncryptedProperty(column._columnName))
+        if (_Encryption is not null && useEncryption && ContainsEncryptedProperty(column))
             //the explicit conversion of _Encryption?.Encrypt(property.GetValue(entity)?.ToString()) to an object is required to avoid a compiler error.
             return new KeyValuePair<string, object>(key, ((object?)_Encryption?.Encrypt(GetValue(column, entity)?.ToString())) ?? DBNull.Value);
         else
             return new KeyValuePair<string, object>(key, GetValue(column, entity) ?? DBNull.Value);
     }
-
-    /// <summary>
-    /// Gets the value from an entity T for the given column definition.
-    /// </summary>
-    /// <param name="column">Represents a column definition for the entity of type T.</param>
-    /// <param name="entity"></param>
-    /// <returns>The value from an entity T for the given column definition as a nullable object.</returns>
-    private static object? GetValue(ColumnTag column, T entity) =>
-        PropertyInfoDictionary.TryGetValue(column, out PropertyInfo? value) ? value.GetValue(entity) : null;
 
     /// <summary>
     /// Get enumeration of key value pairs of parameters associated with the query
@@ -127,7 +92,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <param name="entityIndex">the index value of the enumerated record in the collection</param>
     /// <returns>key value pairs of parameters associated with the query</returns>
     private IEnumerable<KeyValuePair<string, object>> GetSqlParameterKeyValuePairs(bool useEncryption, T entity, int? entityIndex = null) =>
-        Properties.Select(property => GetSqlParameterKeyValue(property, useEncryption, entity, entityIndex));
+        Columns.Select(column => GetSqlParameterKeyValue(column, useEncryption, entity, entityIndex));
 
     /// <summary>
     /// Get enumeration of key value pairs of parameters associated with the query, from many

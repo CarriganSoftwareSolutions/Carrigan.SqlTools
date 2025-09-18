@@ -13,7 +13,7 @@ public class SqlGenerator_InsertTests
     private readonly SqlGenerator<EntityWithoutTableAttribute> _sqlGeneratorForEntityWithoutTableAttribute;
     private readonly SqlGenerator<EntityWithSchema> _sqlGeneratorForEntityWithSchema;
     private readonly SqlGenerator<SqlTypeEntity> _sqlGeneratorForSqlTypeEntity;
-    private readonly SqlGenerator<NullablesTestEntity> _sqlGeneratorForNullablesTestEntity;
+    private readonly SqlGenerator<NullablesTestEntity> _sqlGeneratorForNullableTestEntity;
     private readonly SqlGenerator<EntityWithEncryption> _sqlGeneratorForEntityWithEncryption;
 
     public SqlGenerator_InsertTests()
@@ -23,7 +23,7 @@ public class SqlGenerator_InsertTests
         _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>();
         _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>();
         _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>();
-        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullablesTestEntity>();
+        _sqlGeneratorForNullableTestEntity = new SqlGenerator<NullablesTestEntity>();
         _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
     }
 
@@ -299,7 +299,7 @@ public class SqlGenerator_InsertTests
         DateTimeOffset dateTimeOffsetTestValue = NullablesTestEntity.DateTimeOffsetTestValue;
         NullablesTestEntity entity = NullablesTestEntity.GetStandardTestSet();
 
-        SqlQuery query = _sqlGeneratorForNullablesTestEntity.Insert(entity);
+        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(entity);
 
         string expectedSql = "INSERT INTO [NullablesTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -330,7 +330,7 @@ public class SqlGenerator_InsertTests
     {
         NullablesTestEntity entity = NullablesTestEntity.GetNullTestSet();
 
-        SqlQuery query = _sqlGeneratorForNullablesTestEntity.Insert(entity);
+        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(entity);
 
         string expectedSql = "INSERT INTO [NullablesTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
