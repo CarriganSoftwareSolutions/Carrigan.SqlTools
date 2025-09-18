@@ -25,10 +25,10 @@ public  class ColumnsTests
     public void ColumnValues_One_Constructor_Value_ParameterCount(string propertyName)
     {
         Columns<ColumnTable> cv = new(propertyName);
-        int expectvalue = 0;
+        int expectedValue = 0;
         int actual = cv.Parameter.Count();
 
-        Assert.Equal(expectvalue, actual);
+        Assert.Equal(expectedValue, actual);
     }
 
     [Theory]
@@ -39,10 +39,10 @@ public  class ColumnsTests
     public void ColumnValues_One_Constructor_Value_ColumnCount(string propertyName)
     {
         Columns<ColumnTable> cv = new(propertyName);
-        int expectvalue = 1;
+        int expectedValue = 1;
         int actual = cv.Column.Count();
 
-        Assert.Equal(expectvalue, actual);
+        Assert.Equal(expectedValue, actual);
     }
 
     [InlineData("Col1", "Col1")]

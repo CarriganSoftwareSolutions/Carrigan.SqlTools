@@ -31,16 +31,14 @@ public class OrderBy: IOrderByClause
     /// <summary>
     /// Represents all the different parts of an order by clause, one for each individual column.
     /// </summary>
-    private IEnumerable<IOrderByItem> _orderByItems;
+    private readonly IEnumerable<IOrderByItem> _orderByItems;
 
     /// <summary>
     /// Constructor of an object representing the Order By clause
     /// </summary>
     /// <param name="orderByItems">partial order by representing an individual column.</param>
-    public OrderBy(params IEnumerable<IOrderByItem> orderByItems)
-    {
+    public OrderBy(params IEnumerable<IOrderByItem> orderByItems) =>
         _orderByItems = orderByItems;
-    }
 
     /// <summary>
     /// Determines if the individual column ordering is represented in the Order By Clauses.
