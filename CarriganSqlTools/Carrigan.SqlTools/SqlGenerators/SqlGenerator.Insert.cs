@@ -21,18 +21,6 @@ public partial class SqlGenerator<T>
             .AppendLine("SELECT InsertedId FROM @OutputTable;")
             .ToString();
 
-    /// <summary>
-    /// This is a helper method that generates the Values portion of the query
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
-    /// </summary>
-    private static string EnumeratedInsertValues(IEnumerable<PropertyInfo> properties, int? i = null) =>
-        i == null  
-            ? $"({string.Join(", ", properties.Select(property => $"@{property.Name}"))})" 
-            : $"({string.Join(", ", properties.Select(property => $"@{property.Name}_{i}"))})";
-    /// <summary>
-    /// This is a helper method that generates the Values portion of the query
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
-    /// </summary>
     private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, int? i = null) =>
         i == null
             ? $"({string.Join(", ", columns.Select(column => $"@{column._columnName}"))})"

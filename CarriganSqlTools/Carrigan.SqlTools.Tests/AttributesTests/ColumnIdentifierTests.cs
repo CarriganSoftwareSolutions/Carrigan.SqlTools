@@ -46,26 +46,6 @@ public class ColumnIdentifierTests
     }
 
     [Fact]
-    public void DeleteWithWhere()
-    {
-        ColumnValues<ColumnIdentifiers> whereIdEquals = new(nameof(ColumnIdentifiers.Id), 1);
-        SqlQuery query = _generator.Delete(null, whereIdEquals);
-        string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Id] = @Parameter_Id)";
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void DeleteWithJoin()
-    {
-        InnerJoin<ColumnIdentifiers, JoinRightTable> join = new (new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
-        SqlQuery query = _generator.Delete(join, null);
-        string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
     public void InsertTest()
     {
         SqlQuery query = _generator.Insert(_entity);
@@ -98,6 +78,26 @@ public class ColumnIdentifierTests
         SqlQuery query = _generator.UpdateByIds(_updateValues, null, _entities);
         string actual = query.QueryText;
         string expected = "UPDATE [ColumnIdentifiers] SET [ColumnIdentifiers].[Property] = @ParameterSet_Property, [ColumnIdentifiers].[Column] = @ParameterSet_Column, [ColumnIdentifiers].[Identifier] = @ParameterSet_Identifier, [ColumnIdentifiers].[IdentifierOverride] = @ParameterSet_IdentifierOverride FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Id] = @Parameter_0_R_Id) OR ([ColumnIdentifiers].[Id] = @Parameter_1_R_Id))";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void WhereTest()
+    {
+        ColumnValues<ColumnIdentifiers> whereIdEquals = new(nameof(ColumnIdentifiers.Id), 1);
+        SqlQuery query = _generator.Delete(null, whereIdEquals);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Id] = @Parameter_Id)";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void JoinTest()
+    {
+        InnerJoin<ColumnIdentifiers, JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
+        SqlQuery query = _generator.Delete(join, null);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
         Assert.Equal(expected, actual);
     }
 }
