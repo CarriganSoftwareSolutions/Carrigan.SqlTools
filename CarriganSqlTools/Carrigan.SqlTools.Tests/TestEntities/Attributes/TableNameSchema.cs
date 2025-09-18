@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
+namespace Carrigan.SqlTools.Tests.TestEntities.Attributes;
 [Table("TableNameSchemaTable", Schema="Table")]
 public class TableNameSchema
 {

@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
+﻿namespace Carrigan.SqlTools.Tests.TestEntities.Attributes;
 public class EntityName
 {
     public Guid Id { get; set; }

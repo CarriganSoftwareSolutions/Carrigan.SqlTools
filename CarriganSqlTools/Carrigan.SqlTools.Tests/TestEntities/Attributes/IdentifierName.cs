@@ -1,6 +1,6 @@
 ﻿using Carrigan.SqlTools.Attributes;
 
-namespace Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
+namespace Carrigan.SqlTools.Tests.TestEntities.Attributes;
 [Identifier("IdentifierNameTable")]
 public class IdentifierName
 {

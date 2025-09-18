@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
+using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.IdentifierTests;
 public  class TableIdentifierTests

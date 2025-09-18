@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
+namespace Carrigan.SqlTools.Tests.TestEntities.Attributes;
 public class ColumnIdentifiers
 {
     [Key]
