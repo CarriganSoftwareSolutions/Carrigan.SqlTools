@@ -30,7 +30,7 @@ public partial class SqlGenerator<T>
     public SqlQuery Delete(T entity)
     {
         IEnumerable<KeyValuePair<string, object>> parameters = Key.Select(property => GetSqlParameterKeyValue(property, true, entity));
-        string whereClause = string.Join(" and ", Key.Select(property => $"[{property.Name}] = @{property.Name}"));
+        string whereClause = string.Join(" and ", KeyColumns.Select(column => $"[{column._columnName}] = @{column._columnName}"));
         return new SqlQuery()
         {
             Parameters = [.. parameters],

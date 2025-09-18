@@ -15,6 +15,15 @@ public class ColumnIdentifierTests
     };
 
     [Fact]
+    public void DeleteTest()
+    {
+        SqlQuery query = _generator.Delete(_identifier);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] WHERE [Id] = @Id;";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void InsertTest()
     {
         SqlQuery query = _generator.Insert(_identifier);
