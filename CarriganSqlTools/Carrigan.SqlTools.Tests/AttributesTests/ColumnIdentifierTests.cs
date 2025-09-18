@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
@@ -20,6 +21,16 @@ public class ColumnIdentifierTests
         SqlQuery query = _generator.Delete(_identifier);
         string actual = query.QueryText;
         string expected = "DELETE FROM [ColumnIdentifiers] WHERE [Id] = @Id;";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void DeleteWithWhere()
+    {
+        ColumnValues<ColumnIdentifiers> whereIdEquals = new(nameof(ColumnIdentifiers.Id), 1);
+        SqlQuery query = _generator.Delete(null, whereIdEquals);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Id] = @Parameter_Id)";
         Assert.Equal(expected, actual);
     }
 
