@@ -54,18 +54,22 @@ public class SqlToolsReflectorCache<T>
     internal static bool HasEncryptedColumns() =>
         _LazyEncryptedColumnsHashSet.Value.Count != 0;
 
-    internal static void ValidateEntityPropertyNames(params IEnumerable<string> propertyNames)
+    internal static IEnumerable<ColumnTag> ValidateEntityPropertyNames(params IEnumerable<string> propertyNames)
     {
         List<Exception> exceptions = [];
+
         IEnumerable<string> invalidPropertyNames = 
             propertyNames
                 .Where(propertyName => ContainsProperty(propertyName) is false);
 
-        IEnumerable<ColumnTag?> invalidColumns =
+        IEnumerable<ColumnTag?> columns =
             propertyNames
                 .Where(propertyName => ContainsProperty(propertyName)) //we are testing column names here, so filter out property names with no corresponding column
-                .Where(propertyName => SqlIdentifierPattern.Fails(GetColumnTagByProperty(propertyName)?._columnName ?? string.Empty))
                 .Select(propertyName => GetColumnTagByProperty(propertyName));
+
+        IEnumerable<ColumnTag?> invalidColumns =
+            columns
+                .Where(column => SqlIdentifierPattern.Fails(column?._columnName ?? string.Empty));
 
         if (invalidPropertyNames.Any())
             exceptions.Add(new ArgumentException($"The property names {invalidPropertyNames.JoinAnd()} do not have an associated column in {Table}.", nameof(propertyNames)));
@@ -73,7 +77,8 @@ public class SqlToolsReflectorCache<T>
             exceptions.Add(new SqlNamePatternException(invalidPropertyNames));
 
         if (exceptions.None())
-            return;
+            return columns
+                .OfType<ColumnTag>(); //clear the null reference warning
         else if (exceptions.Count == 1)
             throw exceptions.Single();
         else
@@ -225,6 +230,24 @@ public class SqlToolsReflectorCache<T>
                 throw new SqlNamePatternException(property.Name);
             else
                 return property.Name;
+        }
+    }
+
+    //TODO: unit tests
+    private static string GetParameterName(PropertyInfo property)
+    {
+        ParameterAttribute? parameterName = property.GetCustomAttribute<ParameterAttribute>();
+
+        if (parameterName != null && parameterName.Name.IsNotNullOrWhiteSpace())
+        {
+            if (SqlIdentifierPattern.Fails(parameterName.Name))
+                throw new SqlNamePatternException(parameterName.Name);
+            else
+                return parameterName.Name;
+        }
+        else
+        {
+            return GetColumnName(property);
         }
     }
 

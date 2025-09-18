@@ -27,8 +27,7 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// <param name="sortDirection">The sort direction to use.</param>
     public OrderByItem(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
     {
-        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName);
-        ColumnTag = new(TableTag, propertyName);
+        ColumnTag = SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName).Single();
         SortDirection = sortDirection;
     }
 

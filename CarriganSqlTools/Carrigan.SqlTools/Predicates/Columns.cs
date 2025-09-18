@@ -44,10 +44,8 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// <exception cref="ArgumentException">Gets thrown if the propertyName is not is not a valid property for the class <see cref="T"/> representing the table.</exception>
     public Columns(string propertyName)
     {
-        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName);
-
         TableTag = SqlToolsReflectorCache<T>.Table;
-        ColumnTag = SqlToolsReflectorCache<T>.GetColumnTagByProperty(propertyName) ?? throw NoSuchProperty(propertyName);
+        ColumnTag = SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);
         PropertyName = propertyName;
     }
 

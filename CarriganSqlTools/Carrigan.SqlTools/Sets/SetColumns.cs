@@ -57,11 +57,8 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// Constructor
     /// </summary>
     /// <param name="propertyNames">Names of the properties that represent the names of columns to be used</param>
-    public SetColumns(params IEnumerable<string> propertyNames)
-    {
-        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyNames);
-        ColumnTags = propertyNames.Select(property => GetColumnTagByProperty(property)).OfType<ColumnTag>();
-    }
+    public SetColumns(params IEnumerable<string> propertyNames) =>
+        ColumnTags = SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyNames);
 
     /// <summary>
     /// Add an additional column
