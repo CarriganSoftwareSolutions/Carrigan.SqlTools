@@ -5,8 +5,15 @@ namespace Carrigan.SqlTools.Attributes;
 
 /// <summary>
 /// A data annotation to specify a name schema identifier to use with the SQL Generator
-/// Note: this doe not override the EF used annotations or fluent name and schema.
-/// This should have been part of Carrigan.SqlTools
+/// Note: this doe not override the effects of name and schema annotation used with Entity Framework
+/// Note: it will override name and schema annotation in terms of the SQL Generator
+/// It is recommended to use one of the other annotation type depending.
+/// Use the Microsoft provided annotations, if you need annotations for Entity Framework
+/// Use the annotations provided with the SQL generator if you are using Entity Frame work,but are using fluent to define identities.
+/// Use either one if you aren't using Entity Framework at all.
+/// Use neither if you want to just use the class/property names as the sql identity.
+/// Note: The SQL generator doesn't generate SQL to create, modify or delete tables, procedures or columns.
+/// The SQL generator only generates SQL to Select, Delete, Insert Update or exec a procedure.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
 public class IdentifierAttribute : Attribute
@@ -23,7 +30,7 @@ public class IdentifierAttribute : Attribute
         bool validSchema = true;
         if (Name.IsNullOrWhiteSpace())
         {
-            throw new ArgumentException("Procedure name cannot be null or empty.", nameof(Name));
+            throw new ArgumentException("SQL identity names cannot be null or empty.", nameof(Name));
         }
         else if (SqlIdentifierPattern.Fails(Name))
         {
