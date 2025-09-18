@@ -1,8 +1,7 @@
 ﻿using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
-using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
-namespace Carrigan.SqlTools.Tests.IdentifierTests;
+namespace Carrigan.SqlTools.Tests.AttributesTests;
 public  class TableIdentifierTests
 {
     private static readonly SqlGenerator<EntityName> _entityNameSqlGenerator = new();

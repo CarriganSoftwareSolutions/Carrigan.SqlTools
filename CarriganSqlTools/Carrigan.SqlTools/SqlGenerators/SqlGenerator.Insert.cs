@@ -1,4 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 using System.Reflection;
 using System.Text;
 
@@ -27,12 +29,20 @@ public partial class SqlGenerator<T>
         i == null  
             ? $"({string.Join(", ", properties.Select(property => $"@{property.Name}"))})" 
             : $"({string.Join(", ", properties.Select(property => $"@{property.Name}_{i}"))})";
+    /// <summary>
+    /// This is a helper method that generates the Values portion of the query
+    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// </summary>
+    private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, int? i = null) =>
+        i == null
+            ? $"({string.Join(", ", columns.Select(column => $"@{column._columnName}"))})"
+            : $"({string.Join(", ", columns.Select(column => $"@{column._columnName}_{i}"))})";
 
     /// <summary>
     /// This is a helper method that generates the Values portion of the query
     /// </summary>
-    private static string EnumeratedInsertValues(IEnumerable<PropertyInfo> properties, params IEnumerable<T> entities) =>
-        $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(properties, index)))}";
+    private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, params IEnumerable<T> entities) =>
+        $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
 
     /// <summary>
     /// This method generates an Insert SQL query, utilizing default values for key fields.
@@ -126,7 +136,6 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Insert(params IEnumerable<T> entities)
     {
-        IEnumerable<PropertyInfo> properties = properties = Properties;
         IEnumerable<KeyValuePair<string, object>> parameters;
         string values;
 
@@ -135,11 +144,11 @@ public partial class SqlGenerator<T>
         else
             parameters = [.. GetSqlParameterKeyValuePairs(true, entities)];
 
-        string columns = string.Join(", ", properties.Select(property => $"[{property.Name}]"));
+        string columns = string.Join(", ", Columns.Select(column => $"[{column._columnName}]"));
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            values = SqlGenerator<T>.EnumeratedInsertValues(Properties);
+            values = SqlGenerator<T>.EnumeratedInsertValues(Columns);
         else
-            values = SqlGenerator<T>.EnumeratedInsertValues(Properties, entities);
+            values = SqlGenerator<T>.EnumeratedInsertValues(Columns, entities);
 
 
         return new SqlQuery()

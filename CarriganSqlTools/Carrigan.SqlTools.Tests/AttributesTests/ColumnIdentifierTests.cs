@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
-namespace Carrigan.SqlTools.Tests.IdentifierTests;
+namespace Carrigan.SqlTools.Tests.AttributesTests;
 public class ColumnIdentifierTests
 {
     private static readonly SqlGenerator<ColumnIdentifiers> _generator = new();
@@ -15,11 +15,20 @@ public class ColumnIdentifierTests
     };
 
     [Fact]
-    public void PropertyNameTest()
+    public void UpdateByIdTest()
     {
         SqlQuery query = _generator.UpdateById(_identifier);
         string actual = query.QueryText;
         string expected = "UPDATE [ColumnIdentifiers] SET [Property] = @Property, [Column] = @Column, [Identifier] = @Identifier, [IdentifierOverride] = @IdentifierOverride WHERE [Id] = @Id;";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void InsertTest()
+    {
+        SqlQuery query = _generator.Insert(_identifier);
+        string actual = query.QueryText;
+        string expected = "INSERT INTO [ColumnIdentifiers] ([Id], [Property], [Column], [Identifier], [IdentifierOverride]) VALUES (@Id, @Property, @Column, @Identifier, @IdentifierOverride);";
         Assert.Equal(expected, actual);
     }
 }
