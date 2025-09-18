@@ -1,5 +1,7 @@
-﻿using Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
@@ -31,6 +33,16 @@ public class ColumnIdentifierTests
         SqlQuery query = _generator.Delete(null, whereIdEquals);
         string actual = query.QueryText;
         string expected = "DELETE FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Id] = @Parameter_Id)";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void DeleteWithJoin()
+    {
+        InnerJoin<ColumnIdentifiers, JoinRightTable> join = new (new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
+        SqlQuery query = _generator.Delete(join, null);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
         Assert.Equal(expected, actual);
     }
 
