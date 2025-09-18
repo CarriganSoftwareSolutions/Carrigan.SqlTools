@@ -6,6 +6,6 @@ namespace Carrigan.SqlTools.Tests.TestEntities.IdenitiferAttribute;
 [Table("WtfMate")]
 internal class IdentifierNameOverrideSchema
 {
-    Guid Id { get; set; }
-    string? Text { get; set; }
+    internal Guid Id { get; set; }
+    internal string? Text { get; set; }
 }
