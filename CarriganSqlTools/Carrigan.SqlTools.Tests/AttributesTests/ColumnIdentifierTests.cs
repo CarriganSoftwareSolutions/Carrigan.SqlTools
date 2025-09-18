@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -98,6 +99,15 @@ public class ColumnIdentifierTests
         SqlQuery query = _generator.Delete(join, null);
         string actual = query.QueryText;
         string expected = "DELETE FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+        Assert.Equal(expected, actual);
+    }
+    [Fact]
+    public void OrderByTest()
+    {
+        OrderByItem<ColumnIdentifiers> orderByItem = new(nameof(ColumnIdentifiers.ColumnName));
+        SqlQuery query = _generator.Select(null, null, orderByItem, null);
+        string actual = query.QueryText;
+        string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] ORDER BY [ColumnIdentifiers].[Column] ASC";
         Assert.Equal(expected, actual);
     }
 }

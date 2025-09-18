@@ -163,7 +163,7 @@ public partial class SqlGenerator<T>
         {
             //add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server that has unexpected behavior if the order by values are not unique
             orderBy ??= new OrderBy();
-            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. Key.Select(key => new OrderByItem<T>(key.Name, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
+            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. KeyColumns.Select(key => new OrderByItem<T>(key._columnName, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
             orderBy = orderBy.WithConcat(oderByKeyItems);
         }
 
