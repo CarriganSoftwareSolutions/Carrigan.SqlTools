@@ -14,7 +14,7 @@ public partial class SqlGenerator<T>
     /// </summary>
     /// <param name="queryText">Insert Sql Query</param>
     /// <returns>modified Insert Sql Query</returns>
-    private static string ModifyInsertQueryToReturnScalar(string queryText) =>
+    internal static string ModifyInsertQueryToReturnScalar(string queryText) =>
         // Build the final query using a temporary table to store the GUID
         new StringBuilder().AppendLine("DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);")
             .AppendLine(queryText.Replace("VALUES", "OUTPUT INSERTED.Id INTO @OutputTable VALUES"))
@@ -72,7 +72,7 @@ public partial class SqlGenerator<T>
     {
         IEnumerable<KeyValuePair<string, object>> parameters;
 
-        if (PropertiesLessKeys.None())
+        if (ColumnsLessKeys.None())
         {
             return new SqlQuery()
             {
@@ -86,8 +86,8 @@ public partial class SqlGenerator<T>
             parameters = PropertiesLessKeys.Select(key => GetSqlParameterKeyValue(key, true, entity));
 
 
-            string columns = string.Join(", ", PropertiesLessKeys.Select(property => $"[{property.Name}]"));
-            string values = SqlGenerator<T>.EnumeratedInsertValues(PropertiesLessKeys);
+            string columns = string.Join(", ", ColumnsLessKeys.Select(column => $"[{column._columnName}]"));
+            string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnsLessKeys);
 
             return new SqlQuery()
             {
