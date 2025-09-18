@@ -2,7 +2,7 @@
 
 public partial class SqlGenerator<T>
 {
-    //TODO: Needs aditional documentation.
+    //TODO: Needs additional documentation.
     /// <summary>
     /// 
     /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.

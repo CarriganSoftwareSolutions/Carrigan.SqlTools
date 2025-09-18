@@ -49,8 +49,8 @@ public class SqlToolsReflectorCache<T>
     internal static bool ContainsEncryptedProperty(string propertyName) =>
         _LazyEncryptedColumnsHashSet.Value.Contains(propertyName);
 
-    internal static Dictionary<ColumnTag, PropertyInfo> PropertyInfoDicitionary =>
-        _LazyPropertyInfoDicitionary.Value;
+    internal static Dictionary<ColumnTag, PropertyInfo> PropertyInfoDictionary =>
+        _LazyPropertyInfoDictionary.Value;
     internal static bool HasEncryptedColumns() =>
         _LazyEncryptedColumnsHashSet.Value.Count != 0;
 
@@ -92,7 +92,7 @@ public class SqlToolsReflectorCache<T>
 
     private static readonly Lazy<Dictionary<string, ColumnTag>> _LazyColumnsDictionary;
     private static readonly Lazy<HashSet<string>> _LazyEncryptedColumnsHashSet;
-    private static readonly Lazy<Dictionary<ColumnTag, PropertyInfo>> _LazyPropertyInfoDicitionary;
+    private static readonly Lazy<Dictionary<ColumnTag, PropertyInfo>> _LazyPropertyInfoDictionary;
 
 
     static SqlToolsReflectorCache()
@@ -175,7 +175,7 @@ public class SqlToolsReflectorCache<T>
                     .Select(property => new KeyValuePair<string, ColumnTag>(property.Name, new ColumnTag(_LazyTableTag.Value, GetColumnName(property))))]
             );
 
-        _LazyPropertyInfoDicitionary = new
+        _LazyPropertyInfoDictionary = new
             (() =>
                 [.. _LazyProperties
                     .Value
@@ -205,7 +205,6 @@ public class SqlToolsReflectorCache<T>
             );
     }
 
-    //TODO: write unit test
     private static string GetColumnName(PropertyInfo property)
     {
         IdentifierAttribute? identifier = property.GetCustomAttribute<IdentifierAttribute>();
@@ -229,7 +228,6 @@ public class SqlToolsReflectorCache<T>
         }
     }
 
-    //TODO: write unit test
     private static string GetTableName()
     {
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
@@ -267,8 +265,6 @@ public class SqlToolsReflectorCache<T>
             return Type.Name;
     }
 
-
-    //TODO: write unit test
     private static string GetSchemaName()
     {
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();

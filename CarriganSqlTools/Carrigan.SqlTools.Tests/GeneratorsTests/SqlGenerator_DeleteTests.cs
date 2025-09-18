@@ -7,17 +7,17 @@ namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 public class SqlGenerator_DeleteTests
 {
-    private readonly MockEncryption _mockEncryptor;
+    private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
     private readonly SqlGenerator<EntityWithoutTableAttribute> _sqlGeneratorForEntityWithoutTableAttribute;
     private readonly SqlGenerator<EntityWithSchema> _sqlGeneratorForEntityWithSchema;
 
     public SqlGenerator_DeleteTests()
     {
-        _mockEncryptor = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncryptor);
+        _mockEncrypter = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncrypter);
     }
 
     [Fact]

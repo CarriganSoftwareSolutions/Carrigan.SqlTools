@@ -6,15 +6,15 @@ namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 //ignore spelling: fbaa
 public class SqlGenerator_DeleteByIdTests
 {
-    private readonly MockEncryption _mockEncryptor;
+    private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
     private readonly SqlGenerator<CompositeKeyTable> _sqlGeneratorForCompositeKeyTable;
 
     public SqlGenerator_DeleteByIdTests()
     {
-        _mockEncryptor = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncryptor);
+        _mockEncrypter = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncrypter);
     }
 
     [Fact]

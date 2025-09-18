@@ -5,14 +5,14 @@ namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 public class SqlGenerator_SelectByIdTests
 {
-    private readonly MockEncryption _mockEncryptor;
+    private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
     private readonly SqlGenerator<CompositeKeyTable> _sqlGeneratorForCompositeKeyTable;
     public SqlGenerator_SelectByIdTests()
     {
-        _mockEncryptor = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncryptor);
+        _mockEncrypter = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncrypter);
     }
 
     private Guid _guid = new("711c4dff-6e8a-4e43-9eab-b83115244a57");

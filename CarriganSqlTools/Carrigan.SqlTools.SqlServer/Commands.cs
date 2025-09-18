@@ -84,14 +84,14 @@ public static class Commands
         }
     }
 
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecryptors decryptors) where T : class?, new()
+    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecryptors decrypters) where T : class?, new()
     {
         List<T> results = [];
         PropertyInfo? keyVersionProperty = ClientReflectorCache<T>.KeyVersionProperty;
         IEnumerable<PropertyInfo> encrytptedProperties = ClientReflectorCache<T>.EncryptedProperties;
         int? decryptionVersion = 1; //in later versions this will be read from a field marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
-        IEncryption? decryptor;
+        IEncryption? decrypter;
 
         if (connection.State != ConnectionState.Open)
         {
@@ -134,28 +134,28 @@ public static class Commands
             else if((Nullable.GetUnderlyingType(keyVersionProperty.PropertyType) ?? keyVersionProperty.PropertyType) != typeof(int))
                 throw new NullReferenceException($"The KeyVersion, {keyVersionProperty.Name}, attribute is not a int for data model, {ClientReflectorCache<T>.Type.Name}");
 
-            decryptor = null;
+            decrypter = null;
             foreach (T record in results)
             {
                 decryptionVersion = (int?)keyVersionProperty.GetValue(record);
-                if (decryptionVersion is not null && decryptors.Keys.Contains(decryptionVersion.Value))
+                if (decryptionVersion is not null && decrypters.Keys.Contains(decryptionVersion.Value))
                 {
-                    decryptor = decryptionVersion is not null ? decryptors.Decryptor(decryptionVersion.Value) : null;
+                    decrypter = decryptionVersion is not null ? decrypters.Decryptor(decryptionVersion.Value) : null;
 
-                    if (decryptor is not null)
+                    if (decrypter is not null)
                     {
                         foreach (PropertyInfo property in encrytptedProperties)
                         {
                             string? value = property.GetValue(record)?.ToString();
                             if (value.IsNotNullOrWhiteSpace())
                             {
-                                value = decryptor.Decrypt(value);
+                                value = decrypter.Decrypt(value);
                                 property.SetValue(record, value);
                             }
                         }
                     }
                 }
-                if(decryptor is null)
+                if(decrypter is null)
                 {
                     foreach (PropertyInfo property in encrytptedProperties)
                     {

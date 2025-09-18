@@ -5,7 +5,7 @@ namespace Carrigan.SqlTools.Tests.IdentifierTests;
 public class ColumnIdentifierTests
 {
     private static readonly SqlGenerator<ColumnIdentifiers> _generator = new();
-    private static readonly ColumnIdentifiers _identifier = new ColumnIdentifiers()
+    private static readonly ColumnIdentifiers _identifier = new ()
     {
         Id = 1,
         Property = 2,

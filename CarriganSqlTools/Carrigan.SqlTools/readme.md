@@ -1,5 +1,5 @@
 ﻿# Carrigan.SqlTools  
-
+<!--Ignore Spelling: executenonqueryasync executescalarasync executereaderasynct executenonquery executescalar executereadert adonet sqlquery exampleencryptor aesgcm idecryptors dotnet csharp nameof foreach readonly const gcm decryptor decryptors encryptor encryptors-->
 Carrigan.SqlTools is a .NET library that simplifies SQL generation for **Microsoft SQL Server**, while still giving you control when you need it.  
 
 It automatically generates `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements using reflection. **Carrigan.Core** provides interfaces and property attributes to integrate your custom field-level encryption, and Carrigan.SqlTools adds a safe, object-oriented API for building more advanced queries.  
@@ -554,7 +554,7 @@ public sealed class ExampleEncryptor : IEncryption
     }
 }
 
-// Minimal IDecryptors impl mapping versions → encryptors
+// Minimal IDecryptors imply mapping versions → encryptors
 
 //THIS IS JUST A SIMPLE EXAMPLE OF A ENCRYPTION CLASS
 //I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.

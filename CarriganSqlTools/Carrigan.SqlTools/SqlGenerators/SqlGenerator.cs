@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
 {
     /// <summary>
-    /// Holds the encryptor, null if there is no encryption and no encryptor is provided.
+    /// Holds the encrypter, null if there is no encryption and no encrypter is provided.
     /// </summary>
     private readonly IEncryption? _Encryption;
 
@@ -110,8 +110,14 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             return new KeyValuePair<string, object>(key, GetValue(column, entity) ?? DBNull.Value);
     }
 
-    private object? GetValue(ColumnTag column, T entity) =>
-        PropertyInfoDicitionary.TryGetValue(column, out PropertyInfo? value) ? value.GetValue(entity) : null;
+    /// <summary>
+    /// Gets the value from an entity T for the given column definition.
+    /// </summary>
+    /// <param name="column">Represents a column definition for the entity of type T.</param>
+    /// <param name="entity"></param>
+    /// <returns>The value from an entity T for the given column definition as a nullable object.</returns>
+    private static object? GetValue(ColumnTag column, T entity) =>
+        PropertyInfoDictionary.TryGetValue(column, out PropertyInfo? value) ? value.GetValue(entity) : null;
 
     /// <summary>
     /// Get enumeration of key value pairs of parameters associated with the query

@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 public class SqlGenerator_ProcedureTests
 {
-    private readonly MockEncryption _mockEncryptor;
+    private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
     private readonly SqlGenerator<EntityWithoutTableAttribute> _sqlGeneratorForEntityWithoutTableAttribute;
     private readonly SqlGenerator<EntityWithSchema> _sqlGeneratorForEntityWithSchema;
@@ -19,13 +19,13 @@ public class SqlGenerator_ProcedureTests
 
     public SqlGenerator_ProcedureTests()
     {
-        _mockEncryptor = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncryptor);
-        _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(_mockEncryptor);
-        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullablesTestEntity>(_mockEncryptor);
-        _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncryptor);
+        _mockEncrypter = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncrypter);
+        _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(_mockEncrypter);
+        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullablesTestEntity>(_mockEncrypter);
+        _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
     }
 
     [Fact]
@@ -280,7 +280,7 @@ public class SqlGenerator_ProcedureTests
         Assert.Equal(1337, query.Parameters.Where(param => param.Key == "Id").Single().Value); // Id
         Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
         Assert.NotEqual("Shhh...", query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
-        Assert.Equal("Shhh...", _mockEncryptor.Decrypt(query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value.ToString()));
+        Assert.Equal("Shhh...", _mockEncrypter.Decrypt(query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value.ToString()));
         Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
     }
 

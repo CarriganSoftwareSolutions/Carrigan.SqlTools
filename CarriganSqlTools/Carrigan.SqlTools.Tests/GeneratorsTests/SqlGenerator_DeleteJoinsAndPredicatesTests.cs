@@ -7,18 +7,18 @@ namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 public class SqlGenerator_DeleteJoinsAndPredicatesTests
 {
-    private readonly MockEncryption _mockEncryptor;
+    private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
     private readonly SqlGenerator<EntityWithoutTableAttribute> _sqlGeneratorForEntityWithoutTableAttribute;
     private readonly SqlGenerator<JoinLeftTable> _sqlGeneratorForJoinLeftTable;
     private readonly SqlGenerator<ColumnTable> _sqlGeneratorForColumnTable;
     public SqlGenerator_DeleteJoinsAndPredicatesTests()
     {
-        _mockEncryptor = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncryptor);
-        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(_mockEncryptor);
-        _sqlGeneratorForColumnTable = new SqlGenerator<ColumnTable>(_mockEncryptor);
+        _mockEncrypter = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(_mockEncrypter);
+        _sqlGeneratorForColumnTable = new SqlGenerator<ColumnTable>(_mockEncrypter);
     }
 
     [Fact]

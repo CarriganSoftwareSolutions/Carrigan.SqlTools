@@ -8,13 +8,13 @@ namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 public class SqlGenerator_UpdateJoinsAndPredicatesTests
 {
-    private readonly MockEncryption _mockEncryptor;
+    private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<JoinLeftTable> _sqlGeneratorForJoinLeftTable;
     private readonly SetColumns<JoinLeftTable> _leftLabelSetColumns = new("Col1", "Col2");
     public SqlGenerator_UpdateJoinsAndPredicatesTests()
     {
-        _mockEncryptor = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(_mockEncryptor);
+        _mockEncrypter = new MockEncryption("+Encrypted+");
+        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(_mockEncrypter);
     }
 
     [Fact]
