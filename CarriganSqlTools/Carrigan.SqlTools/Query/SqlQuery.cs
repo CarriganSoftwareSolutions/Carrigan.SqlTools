@@ -2,7 +2,7 @@
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
-namespace Carrigan.SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.Query;
 
 public class SqlQuery
 {

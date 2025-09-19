@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Query;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;

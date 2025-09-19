@@ -1,7 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Invocation;
-using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Query;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;

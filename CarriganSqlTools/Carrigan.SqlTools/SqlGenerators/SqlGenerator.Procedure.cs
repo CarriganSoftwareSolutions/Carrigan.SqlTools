@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Query;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 

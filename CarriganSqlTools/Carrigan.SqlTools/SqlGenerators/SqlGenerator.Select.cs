@@ -4,6 +4,7 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Query;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Text;

@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Query;
 using Carrigan.SqlTools.Tags;
 using System.Reflection;
 using System.Text;
