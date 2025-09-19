@@ -23,8 +23,14 @@ public class SqlQuery
     public CommandType CommandType { get; set; }
 
     /// <summary>
-    /// Gets the value of a parameter. This is intended for testing only.
+    /// Gets the value of a parameter. This is intended for unit testing only.
     /// </summary>
     internal T GetParameterValue<T>(string parameterTestName) =>
         (T)Parameters.Where(param => param.Key == parameterTestName).Single().Value;
+
+    /// <summary>
+    /// Gets the value number of parameters. This is intended for unit testing only.
+    /// </summary>
+    internal int GetParameterCount() =>
+        Parameters.Count;
 }
