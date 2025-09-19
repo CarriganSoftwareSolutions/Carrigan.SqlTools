@@ -126,7 +126,7 @@ public partial class SqlGenerator<T>
                     KeyColumns.Select(column => new Equal
                         (
                             new Columns<T>(column._columnName), 
-                            new Parameters(column._columnName, GetValue(column, entity)))
+                            new Parameters(GetParameterTagFromColumn(column) ?? throw new NullReferenceException($"ParameterTag not found for column: {column}."), GetValue(column, entity)))
                         )
                 ))
         );
@@ -201,9 +201,9 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
-        string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = @ParameterSet_{column._columnName}"));
+        string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = {GetParameterTagFromColumn(column)?.PrefixPrepend("@ParameterSet")}"));
 
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Select(property => GetSqlParameterKeyValue(property, true, entity, null, "@ParameterSet"));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Select(column => GetSqlParameterKeyValue(column, true, entity, null, "@ParameterSet"));
         Dictionary<ParameterTag, object> parametersDictionary = [.. parameters];
 
 

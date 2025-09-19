@@ -68,7 +68,7 @@ public class SqlToolsReflectorCache<T>
             throw new AggregateException(exceptions);
     }
 
-    protected static ParameterTag? GetParameterTagFromColumn(ColumnTag columnTag) =>
+    public static ParameterTag? GetParameterTagFromColumn(ColumnTag columnTag) =>
         _LazyParameterTags.Value.TryGetValue(columnTag, out ParameterTag? value) ? value : null;
 
     /// <summary>

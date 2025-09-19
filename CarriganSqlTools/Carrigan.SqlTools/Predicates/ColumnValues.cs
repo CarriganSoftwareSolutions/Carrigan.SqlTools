@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Tags;
+using System.Data.Common;
 
 namespace Carrigan.SqlTools.Predicates;
 
@@ -29,10 +30,14 @@ public class ColumnValues<T> : PredicatesBase
     public ColumnValues(string propertyName, object parameterValue)
     {
         SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName);
+        Columns<T> left = new (propertyName);
+        Parameters right =
+            new(SqlToolsReflectorCache<T>
+                .GetParameterTagFromColumn(left.ColumnTag) ?? throw new NullReferenceException($"ParameterTag not found for column: {left.ColumnTag}."), parameterValue);
         value = new Equal
         (
-            new Columns<T>(propertyName),
-            new Parameters(propertyName, parameterValue)
+           left,
+           right
         );
     }
 
