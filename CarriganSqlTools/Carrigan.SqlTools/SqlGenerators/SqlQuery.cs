@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -20,4 +21,10 @@ public class SqlQuery
     public Dictionary<ParameterTag, object> Parameters { get; set; }
 
     public CommandType CommandType { get; set; }
+
+    /// <summary>
+    /// Gets the value of a parameter. This is intended for testing only.
+    /// </summary>
+    internal T GetParameterValue<T>(string parameterTestName) =>
+        (T)Parameters.Where(param => param.Key == parameterTestName).Single().Value;
 }
