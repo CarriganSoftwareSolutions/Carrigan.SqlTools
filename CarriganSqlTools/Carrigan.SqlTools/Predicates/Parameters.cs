@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Tags;
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
@@ -21,7 +23,7 @@ public class Parameters : PredicatesBase
     /// <summary>
     /// Name of the parameter
     /// </summary>
-    internal readonly string Name;
+    internal readonly ParameterTag Name;
 
     /// <summary>
     /// Constructor for Parameter
@@ -53,7 +55,7 @@ public class Parameters : PredicatesBase
         {
             throw new ArgumentException($"White space character exists in {nameof(parameter)} name of SQL \"{parameter}\"", nameof(parameter));
         }
-        Name = parameter;
+        Name = new ParameterTag(null, parameter, null);
         Value = value;
     }
 
@@ -84,7 +86,7 @@ public class Parameters : PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>partially completed sql string</returns>
-    internal override string ToSql(string prefix, IEnumerable<string> duplicates) =>
+    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         GetFinalParameterName(prefix, duplicates);
 
     /// <summary>
@@ -100,12 +102,12 @@ public class Parameters : PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
-    internal override IEnumerable<KeyValuePair<string, object>> GetParameters(string prefix, IEnumerable<string> duplicates)
+    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates)
     {
-        string key = GetFinalParameterName(prefix, duplicates);
+        ParameterTag key = GetFinalParameterName(prefix, duplicates);
         object value = Value ?? DBNull.Value;
-        KeyValuePair<string, object> keyValuePair = new(key, value);
-        return (new KeyValuePair<string, object>[] { keyValuePair }).AsEnumerable();
+        KeyValuePair<ParameterTag, object> keyValuePair = new(key, value);
+        return (new KeyValuePair<ParameterTag, object>[] { keyValuePair }).AsEnumerable();
     }
     /// <summary>
     /// Leaf node for Recursive logic to get all the parameters associated within clause, as key value pairs..
@@ -120,6 +122,8 @@ public class Parameters : PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
-    private string GetFinalParameterName(string prefix, IEnumerable<string> duplicates) =>
-        duplicates.Contains(Name) ? $"@Parameter{prefix}_{Name}" : $"@Parameter_{Name}";
+    private ParameterTag GetFinalParameterName(string prefix, IEnumerable<ParameterTag> duplicates) =>
+        duplicates.Contains(Name) ? Name.PrefixPrepend($"@Parameter{prefix}") : Name.PrefixPrepend($"@Parameter");
+
+    //duplicates.Contains(Name) ? $"@Parameter{prefix}_{Name}" : $"@Parameter_{Name}";
 }

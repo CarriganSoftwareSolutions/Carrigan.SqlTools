@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Tags;
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
@@ -38,8 +40,8 @@ public class IsNotNull : PredicatesBase
     internal override IEnumerable<IColumnValue> Column =>
        _someValue.Column;
 
-    internal override string ToSql(string prefix, IEnumerable<string> duplicates) =>
+    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         $"({_someValue.ToSql(prefix, duplicates)} IS NOT NULL)";
-    internal override IEnumerable<KeyValuePair<string, object>> GetParameters(string prefix, IEnumerable<string> duplicates) =>
+    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
         _someValue.GetParameters(prefix, duplicates);
 }

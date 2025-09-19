@@ -6,6 +6,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Reflection;
 
 namespace Carrigan.SqlTools;
@@ -67,6 +68,9 @@ public class SqlToolsReflectorCache<T>
             throw new AggregateException(exceptions);
     }
 
+    protected static ParameterTag? GetParameterTagFromColumn(ColumnTag columnTag) =>
+        _LazyParameterTags.Value.TryGetValue(columnTag, out ParameterTag? value) ? value : null;
+
     /// <summary>
     /// Gets the value from an entity T for the given column definition.
     /// </summary>
@@ -94,11 +98,11 @@ public class SqlToolsReflectorCache<T>
     private static readonly Lazy<IEnumerable<ColumnTag>> _LazyKeyColumns;
     private static readonly Lazy<IEnumerable<ColumnTag>> _LazyColumnsLessKeys;
     private static readonly Lazy<ColumnTag?> _LazyKeyVersionColumn;
-
-    private static readonly Lazy<TableAttribute?> _LazyTableAttribute;
-
     private static readonly Lazy<HashSet<ColumnTag>> _LazyEncryptedColumnsHashSet;
 
+    private static readonly Lazy<Dictionary<ColumnTag, ParameterTag>> _LazyParameterTags;
+
+    private static readonly Lazy<TableAttribute?> _LazyTableAttribute;
 
     static SqlToolsReflectorCache()
     {
@@ -204,6 +208,13 @@ public class SqlToolsReflectorCache<T>
                             .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property)))
                             .FirstOrDefault()
             );
+        _LazyParameterTags = new
+            (() =>
+                [.. _LazyProperties
+                    .Value
+                    .Where(property => ContainsProperty(property.Name))
+                    .Select(property => new KeyValuePair<ColumnTag, ParameterTag>(GetColumnTagByProperty(property.Name) ?? new ColumnTag(_LazyTableTag.Value, GetColumnName(property)), GetParameterName(property)))]
+            );
     }
 
     private static string GetColumnName(PropertyInfo property)
@@ -230,7 +241,7 @@ public class SqlToolsReflectorCache<T>
     }
 
     //TODO: unit tests
-    private static string GetParameterName(PropertyInfo property)
+    private static ParameterTag GetParameterName(PropertyInfo property)
     {
         ParameterAttribute? parameterName = property.GetCustomAttribute<ParameterAttribute>();
 
@@ -239,11 +250,11 @@ public class SqlToolsReflectorCache<T>
             if (SqlIdentifierPattern.Fails(parameterName.Name))
                 throw new SqlNamePatternException(parameterName.Name);
             else
-                return parameterName.Name;
+                return new(null, parameterName.Name, null);
         }
         else
         {
-            return GetColumnName(property);
+            return new(null, GetColumnName(property), null);
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Predicates;
 
@@ -53,7 +54,7 @@ public abstract class LogicalOperators : PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns a SQL string represented by this class.</returns>
-    internal override string ToSql(string prefix, IEnumerable<string> duplicates)
+    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates)
     {
         if (_predicates.Count() == 1)
             return _predicates.Single().ToSql(prefix, duplicates);
@@ -75,7 +76,7 @@ public abstract class LogicalOperators : PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
-    internal override IEnumerable<KeyValuePair<string, object>> GetParameters(string prefix, IEnumerable<string> duplicates)
+    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates)
     {
         if (_predicates.Count() == 1)
             return _predicates.Single().GetParameters(prefix, duplicates);

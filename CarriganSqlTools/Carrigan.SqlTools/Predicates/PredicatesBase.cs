@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Tags;
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
@@ -23,7 +25,8 @@ public abstract class PredicatesBase
     public string ToSql()
     {
         //get an IEnumerable of all the duplicate parameter names
-        IEnumerable<string> duplicates = Parameter.Select(parameter => parameter.Name)
+        IEnumerable<ParameterTag> duplicates = Parameter
+            .Select(parameter => parameter.Name)
             .GroupBy(name => name)
             .Where(nameGroup => nameGroup.Count() > 1)
             .Select(nameGroup => nameGroup.Key);
@@ -44,7 +47,7 @@ public abstract class PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>partially completed sql string</returns>
-    internal abstract string ToSql(string prefix, IEnumerable<string> duplicates);
+    internal abstract string ToSql(string prefix, IEnumerable<ParameterTag> duplicates);
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic, as key value pairs.
@@ -59,11 +62,12 @@ public abstract class PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
-    public Dictionary<string,object> GetParameters()
+    public Dictionary<ParameterTag,object> GetParameters()
     {
         //get an IEnumerable of all the duplicate parameter names
-        IEnumerable<string> duplicates = Parameter.Select(parameter => parameter.Name)
-            .GroupBy(name => name)
+        IEnumerable<ParameterTag> duplicates = Parameter
+            .Select(parameter => parameter.Name)
+            .GroupBy(parameter => parameter)
             .Where(nameGroup => nameGroup.Count() > 1)
             .Select(nameGroup => nameGroup.Key);
 
@@ -84,5 +88,5 @@ public abstract class PredicatesBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
-    internal abstract IEnumerable<KeyValuePair<string, object>> GetParameters(string prefix, IEnumerable<string> duplicates);
+    internal abstract IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates);
 }

@@ -76,7 +76,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns a SQL string represented by this class.</returns>
-    internal override string ToSql(string prefix, IEnumerable<string> duplicates) =>
+    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         ColumnTag;
 
     /// <summary>
@@ -92,6 +92,6 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
-    internal override IEnumerable<KeyValuePair<string, object>> GetParameters(string prefix, IEnumerable<string> duplicates) =>
+    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
         [];
 }

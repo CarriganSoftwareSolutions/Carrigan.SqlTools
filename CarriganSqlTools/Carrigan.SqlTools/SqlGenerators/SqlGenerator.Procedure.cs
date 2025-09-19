@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Tags;
+
+namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
@@ -11,11 +13,11 @@ public partial class SqlGenerator<T>
     /// <returns></returns>
     public SqlQuery Procedure(T entity)
     {
-        IEnumerable<KeyValuePair<string, object>> parameters = Columns.Select(columns => GetSqlParameterKeyValue(columns, true, entity));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = Columns.Select(columns => GetSqlParameterKeyValue(columns, true, entity));
 
         return new SqlQuery()
         {
-            Parameters = new Dictionary<string, object>([.. parameters]),
+            Parameters = new Dictionary<ParameterTag, object>([.. parameters]),
             QueryText = ProcedureTag,
             CommandType = System.Data.CommandType.StoredProcedure
         };

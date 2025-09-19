@@ -58,12 +58,12 @@ public partial class SqlGenerator<T>
         IEnumerable<ColumnTag> updateTheseColumns = 
             (columns?.ColumnTags?.Any() ?? false) ? columns.ColumnTags : ColumnsLessKeys;
 
-        IEnumerable<KeyValuePair<string, object>> parameters = updateTheseColumns.Concat(KeyColumns).Select(column => GetSqlParameterKeyValue(column, true, entity));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Concat(KeyColumns).Select(column => GetSqlParameterKeyValue(column, true, entity));
 
-        List<Tuple<ColumnTag, string>> setColumnAndParameterName = [];
+        List<Tuple<ColumnTag, ParameterTag>> setColumnAndParameterName = [];
         foreach (ColumnTag column in updateTheseColumns)
         {
-            KeyValuePair<string, object> parameter = GetSqlParameterKeyValue(column, true, entity);
+            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, true, entity);
             setColumnAndParameterName.Add(new(column, parameter.Key));
         }
         string sets = string.Join(", ", setColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
@@ -71,7 +71,7 @@ public partial class SqlGenerator<T>
         List<Tuple<ColumnTag, string>> whereColumnAndParameterName = [];
         foreach (ColumnTag column in KeyColumns)
         {
-            KeyValuePair<string, object> parameter = GetSqlParameterKeyValue(column, true, entity);
+            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, true, entity);
             whereColumnAndParameterName.Add(new(column, parameter.Key));
         }
         string where = string.Join(", ", whereColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
@@ -203,8 +203,8 @@ public partial class SqlGenerator<T>
 
         string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = @ParameterSet_{column._columnName}"));
 
-        IEnumerable<KeyValuePair<string, object>> parameters = updateTheseColumns.Select(property => GetSqlParameterKeyValue(property, true, entity, null, "@ParameterSet_"));
-        Dictionary<string, object> parametersDictionary = [.. parameters];
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Select(property => GetSqlParameterKeyValue(property, true, entity, null, "@ParameterSet"));
+        Dictionary<ParameterTag, object> parametersDictionary = [.. parameters];
 
 
         StringBuilder queryBuilder = new($"UPDATE {Table} SET {setColumnValues} FROM {Table}");

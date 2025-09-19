@@ -11,7 +11,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
 {
     private readonly string _columnTag;
     internal readonly string _columnName; //TODO: Unit tests
-    internal ColumnTag(TableTag tableTag,  string columnName)
+    internal ColumnTag(TableTag tableTag, string columnName)
     {
         if (columnName.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(columnName), $"{nameof(columnName)} requires a value.");
@@ -23,7 +23,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     }
 
     //TODO: Make sure there is a unit test for this constructor
-    internal ColumnTag(string? schemaName, string? tableName,  string columnName)
+    internal ColumnTag(string? schemaName, string? tableName, string columnName)
     {
         if (columnName.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(columnName), $"{nameof(columnName)} requires a value.");

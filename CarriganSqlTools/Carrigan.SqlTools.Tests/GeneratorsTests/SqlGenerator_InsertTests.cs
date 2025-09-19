@@ -204,19 +204,19 @@ public class SqlGenerator_InsertTests
         Assert.Equal(expectedSql, query.QueryText);
 
         int expectedInt = 1;
-        int actualInt = (int)query.Parameters["Id_0"];
+        int actualInt = (int)query.Parameters[query.Parameters.Keys.Where(parameter => parameter == "Id_0").Single()];
         Assert.Equal(expectedInt, actualInt);
 
         expectedInt = 2;
-        actualInt = (int)query.Parameters["Id_1"];
+        actualInt = (int)query.Parameters[query.Parameters.Keys.Where(parameter => parameter == "Id_1").Single()];
         Assert.Equal(expectedInt, actualInt);
 
         string expectedString = "1a";
-        string actualString = (string)query.Parameters["Description_0"];
+        string actualString = (string)query.Parameters[query.Parameters.Keys.Where(parameter => parameter == "Description_0").Single()];
         Assert.Equal(expectedString, actualString);
 
         expectedString = "2b";
-        actualString = (string)query.Parameters["Description_1"];
+        actualString = (string)query.Parameters[query.Parameters.Keys.Where(parameter => parameter == "Description_1").Single()];
         Assert.Equal(expectedString, actualString);
     }
 

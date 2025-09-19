@@ -23,8 +23,8 @@ public partial class SqlGenerator<T>
 
     private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, int? i = null) =>
         i == null
-            ? $"({string.Join(", ", columns.Select(column => $"@{column._columnName}"))})"
-            : $"({string.Join(", ", columns.Select(column => $"@{column._columnName}_{i}"))})";
+            ? $"({string.Join(", ", columns.Select(column => $"@{GetParameterTagFromColumn(column)}"))})"
+            : $"({string.Join(", ", columns.Select(column => $"@{GetParameterTagFromColumn(column)?.AddIndex(i.Value.ToString())}"))})";
 
     /// <summary>
     /// This is a helper method that generates the Values portion of the query
@@ -58,7 +58,7 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery InsertAutoId(T entity)
     {
-        IEnumerable<KeyValuePair<string, object>> parameters;
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
 
         if (ColumnsLessKeys.None())
         {
@@ -124,7 +124,7 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Insert(params IEnumerable<T> entities)
     {
-        IEnumerable<KeyValuePair<string, object>> parameters;
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
         string values;
 
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
