@@ -69,11 +69,6 @@ public partial class SqlGenerator<T>
         {
             queryBuilder.Append($" WHERE {predicates.ToSql()}");
         }
-        return new SqlQuery()
-        {
-            QueryText = queryBuilder.ToString(),
-            Parameters = predicates?.GetParameters() ?? [],
-            CommandType = CommandType.Text
-        };
+        return new SqlQuery(queryBuilder.ToString(), predicates?.GetParameters() ?? []);
     }
 }

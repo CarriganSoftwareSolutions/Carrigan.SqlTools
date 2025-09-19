@@ -63,12 +63,7 @@ public partial class SqlGenerator<T>
 
         if (ColumnsLessKeys.None())
         {
-            return new SqlQuery()
-            {
-                Parameters = [],
-                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} DEFAULT VALUES;"),
-                CommandType = System.Data.CommandType.Text
-            };
+            return new SqlQuery(SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} DEFAULT VALUES;"), []);
         }
         else
         {
@@ -78,12 +73,7 @@ public partial class SqlGenerator<T>
             string columns = string.Join(", ", ColumnsLessKeys.Select(column => $"[{column._columnName}]"));
             string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnsLessKeys);
 
-            return new SqlQuery()
-            {
-                Parameters = [.. parameters],
-                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} ({columns}) VALUES {values};"),
-                CommandType = System.Data.CommandType.Text
-            };
+            return new SqlQuery(SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} ({columns}) VALUES {values};"), [.. parameters]);
         }
     }
     /// <summary>
@@ -140,11 +130,6 @@ public partial class SqlGenerator<T>
             values = SqlGenerator<T>.EnumeratedInsertValues(Columns, entities);
 
 
-        return new SqlQuery()
-        {
-            Parameters = [.. parameters],
-            QueryText = $"INSERT INTO {Table} ({columns}) VALUES {values};",
-            CommandType = System.Data.CommandType.Text
-        };
+        return new SqlQuery($"INSERT INTO {Table} ({columns}) VALUES {values};", [.. parameters]);
     }
 }

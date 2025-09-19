@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Tags;
+using System.Collections.Immutable;
 using System.Data;
 
 namespace Carrigan.SqlTools.Query;
@@ -7,20 +8,22 @@ namespace Carrigan.SqlTools.Query;
 public class SqlQuery
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public SqlQuery()
+    internal SqlQuery()
     {
     }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public SqlQuery(string query, Dictionary<ParameterTag, object> parameters)
+    internal SqlQuery(string query, Dictionary<ParameterTag, object> parameters, CommandType commandType = CommandType.Text)
     {
         QueryText = query;
-        Parameters = parameters;
+        Parameters = ImmutableDictionary.CreateRange(parameters.Keys.Select(key => new KeyValuePair<ParameterTag, object>(key, parameters[key])));
+        CommandType = commandType;
     }
 
-    public string QueryText { get; set; }
-    public Dictionary<ParameterTag, object> Parameters { get; set; }
+    public string QueryText { get; internal set; }
 
-    public CommandType CommandType { get; set; }
+    public ImmutableDictionary<ParameterTag, object> Parameters { get; internal set; }
+
+    public CommandType CommandType { get; internal set; }
 
     /// <summary>
     /// Gets the value of a parameter. This is intended for unit testing only.

@@ -77,12 +77,7 @@ public partial class SqlGenerator<T>
         }
         string where = string.Join(", ", whereColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
 
-        return new SqlQuery()
-        {
-            Parameters = [.. parameters],
-            QueryText = $"UPDATE {Table} SET {sets} WHERE {where};",
-            CommandType = CommandType.Text
-        };
+        return new SqlQuery($"UPDATE {Table} SET {sets} WHERE {where};", [.. parameters]);
     }
 
     /// <summary>
@@ -224,11 +219,6 @@ public partial class SqlGenerator<T>
             queryBuilder.Append($" WHERE {predicates.ToSql()}");
             parametersDictionary.Add(predicates.GetParameters());
         }
-        return new SqlQuery()
-        {
-            QueryText = queryBuilder.ToString(),
-            Parameters = parametersDictionary,
-            CommandType = CommandType.Text
-        };
+        return new SqlQuery(queryBuilder.ToString(), parametersDictionary, CommandType.Text);
     }
 }

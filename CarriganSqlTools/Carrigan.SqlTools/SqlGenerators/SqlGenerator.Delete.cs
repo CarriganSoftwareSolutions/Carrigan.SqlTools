@@ -32,12 +32,7 @@ public partial class SqlGenerator<T>
     {
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = KeyColumns.Select(column => GetSqlParameterKeyValue(column, true, entity));
         string whereClause = string.Join(" and ", KeyColumns.Select(column => $"[{column._columnName}] = @{GetParameterTagFromColumn(column)}"));
-        return new SqlQuery()
-        {
-            Parameters = [.. parameters],
-            QueryText = $"DELETE FROM {Table} WHERE {whereClause};",
-            CommandType = CommandType.Text
-        };
+        return new SqlQuery($"DELETE FROM {Table} WHERE {whereClause}", [.. parameters]);
     }
 
     /// <summary>
@@ -54,13 +49,8 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Customer];
     /// ]]></code>
     /// </example>
-    public SqlQuery DeleteAll() => new ()
-    {
-        Parameters = [],
-        QueryText = $"DELETE FROM {Table};",
-        CommandType = CommandType.Text
-    };
-
+    public SqlQuery DeleteAll() => 
+        new($"DELETE FROM {Table};", []);
 
     /// <summary>
     /// Generates SQL to delete the record passed in by Id.  
@@ -168,12 +158,7 @@ public partial class SqlGenerator<T>
             {
                 queryBuilder.Append($" WHERE {predicates.ToSql()}");
             }
-            return new SqlQuery()
-            {
-                QueryText = queryBuilder.ToString(),
-                Parameters = predicates?.GetParameters() ?? [],
-                CommandType = CommandType.Text
-            };
+            return new SqlQuery(queryBuilder.ToString(), predicates?.GetParameters() ?? []);
         }
     }
 }
