@@ -100,4 +100,27 @@ public  class TableIdentifierTests
         Assert.Equal("Test", query.GetParameterValue<string>("Text"));
         Assert.Equal(guid, query.GetParameterValue<Guid>("Id"));
     }
+
+    [Fact]
+    public void ProcedureTestWithJustTableAttribute()
+    {
+        TableNameSchema entity = new TableNameSchema()
+        {
+            Text = "Test",
+            Id = guid
+        };
+
+        //Note: The context that determines if it is a procedure or a table is the generator function used.
+        SqlQuery query = _tableNameSchemaSqlGenerator.Procedure(entity);
+
+        //Note: when the table attribute is used, it will use the scheme name,
+        //but not the table name, which will fall back the class name unless an Identifier Attribute is provided.
+        string expectedSql = "[Table].[TableNameSchema]";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal("Test", query.GetParameterValue<string>("Text"));
+        Assert.Equal(guid, query.GetParameterValue<Guid>("Id"));
+    }
 }
