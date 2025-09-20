@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -11,7 +12,9 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
 {
     private readonly string _columnTag;
     internal readonly string _columnName; //TODO: Unit tests
-    internal ColumnTag(TableTag tableTag, string columnName)
+    internal readonly PropertyInfo _propertyInfo; //TODO: Unit tests
+    internal readonly ParameterTag _parameterTag; //TODO: Unit tests
+    internal ColumnTag(TableTag tableTag, string columnName, PropertyInfo propertyInfo, ParameterTag parameterTag)
     {
         if (columnName.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(columnName), $"{nameof(columnName)} requires a value.");
@@ -19,24 +22,14 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
         {
             _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
             _columnName = columnName;
+            _propertyInfo = propertyInfo;
+            _parameterTag = parameterTag;
         }
-    }
-
-    //TODO: Make sure there is a unit test for this constructor
-    internal ColumnTag(string? schemaName, string? tableName, string columnName)
-    {
-        if (columnName.IsNullOrEmpty())
-            throw new ArgumentNullException(nameof(columnName), $"{nameof(columnName)} requires a value.");
-        if (tableName.IsNotNullOrEmpty())
-            _columnTag = _columnTag = new ColumnTag(new TableTag(schemaName, tableName), columnName);
-        else
-            _columnTag = $"[{columnName}]";
-        _columnName = columnName;
     }
 
     public static implicit operator string(ColumnTag value) => value._columnTag;
 
-    public override string ToString() => _columnTag;
+    public override string ToString() => this;
 
     public string ToString(bool useTableTag)
     {
@@ -49,13 +42,13 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     public int CompareTo(ColumnTag? other)
     {
         if (other is null) return 1;
-        return string.Compare(_columnTag, other._columnTag, StringComparison.OrdinalIgnoreCase);
+        return string.Compare(this, other, StringComparison.OrdinalIgnoreCase);
     }
 
     public bool Equals(ColumnTag? other)
     {
         if (other is null) return false;
-        return string.Equals(_columnTag, other._columnTag, StringComparison.OrdinalIgnoreCase);
+        return string.Equals(this, other, StringComparison.OrdinalIgnoreCase);
     }
 
     public override bool Equals(object? obj) =>
@@ -87,5 +80,5 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     }
 
     public bool IsEmpty() =>
-        _columnName.IsNullOrWhiteSpace();
+        ToString().IsNullOrWhiteSpace();
 }

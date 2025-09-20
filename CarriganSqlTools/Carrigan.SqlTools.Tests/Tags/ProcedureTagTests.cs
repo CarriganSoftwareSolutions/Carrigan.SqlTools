@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.Tests.Tags;
 public class ProcedureTagTests
 {
     [Theory]
-    [InlineData("Poppies", "Pizza", "[Poppies].[Pizza]")]
+    [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
     [InlineData(null, "Pizza", "[Pizza]")]
     [InlineData("", "Pizza", "[Pizza]")]
     public void Procedure_Tag_Tests(string? schemaName, string name, string expected)
@@ -21,21 +21,21 @@ public class ProcedureTagTests
     }
 
     [Theory]
-    [InlineData("Poppies", "")]
+    [InlineData("Franks", "")]
     [InlineData(null, "")]
     [InlineData("", "")]
-    [InlineData("Poppies", null)]
+    [InlineData("Franks", null)]
     [InlineData(null, null)]
     [InlineData("", null)]
     public void Procedure_Tag_Tests_Argument_Exception(string? schemaName, string? procedureName) => 
         Assert.Throws<ArgumentNullException>(() => new ProcedureTag(schemaName, procedureName!));
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void ProcedureTag_Comparisons(string? schema1, string? procedure1, string? schema2, string? procedure2)
     {
         ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
@@ -53,11 +53,11 @@ public class ProcedureTagTests
 
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void ProcedureTag_Equals(string? schema1, string? procedure1, string? schema2, string? procedure2)
     {
         ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
@@ -74,11 +74,11 @@ public class ProcedureTagTests
     }
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void ProcedureTag_EqualsObject(string? schema1, string? procedure1, string? schema2, string? procedure2)
     {
         ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
@@ -96,11 +96,11 @@ public class ProcedureTagTests
 
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void ProcedureTag_EqualsEquals(string? schema1, string? procedure1, string? schema2, string? procedure2)
     {
         ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
@@ -117,11 +117,11 @@ public class ProcedureTagTests
 
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void ProcedureTag_NotEquals(string? schema1, string? procedure1, string? schema2, string? procedure2)
     {
         ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;

@@ -29,11 +29,9 @@ public class ColumnValues<T> : PredicatesBase
     /// <param name="parameterValue">Value</param>
     public ColumnValues(string propertyName, object parameterValue)
     {
-        SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName);
+        _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); //called for validation.
         Columns<T> left = new (propertyName);
-        Parameters right =
-            new(SqlToolsReflectorCache<T>
-                .GetParameterTagFromColumn(left.ColumnTag) ?? throw new NullReferenceException($"ParameterTag not found for column: {left.ColumnTag}."), parameterValue);
+        Parameters right = new(left.ColumnTag._parameterTag, parameterValue);
         value = new Equal
         (
            left,

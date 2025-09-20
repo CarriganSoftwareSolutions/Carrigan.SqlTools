@@ -58,7 +58,7 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// </summary>
     /// <param name="propertyNames">Names of the properties that represent the names of columns to be used</param>
     public SetColumns(params IEnumerable<string> propertyNames) =>
-        ColumnTags = SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyNames);
+        ColumnTags = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
 
     /// <summary>
     /// Add an additional column
@@ -67,7 +67,7 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// <exception cref="ArgumentException">Column name not found.</exception>
     public void AddColumn(string propertyName)
     {
-        ColumnTag? newTag = SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName).Single();
+        ColumnTag? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
         if(newTag is not null)
             ColumnTags = ColumnTags.Append(newTag);
     }

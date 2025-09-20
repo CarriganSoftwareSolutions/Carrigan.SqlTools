@@ -13,7 +13,7 @@ public partial class SqlGenerator<T>
     /// <returns></returns>
     public SqlQuery Procedure(T entity)
     {
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = Columns.Select(columns => GetSqlParameterKeyValue(columns, true, entity));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = Columns.Select(columns => GetSqlParameterKeyValue(columns, entity));
 
         return new SqlQuery()
         {

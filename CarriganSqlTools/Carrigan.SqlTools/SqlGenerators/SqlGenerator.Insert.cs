@@ -23,8 +23,8 @@ public partial class SqlGenerator<T>
 
     private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, int? i = null) =>
         i == null
-            ? $"({string.Join(", ", columns.Select(column => $"@{GetParameterTagFromColumn(column)}"))})"
-            : $"({string.Join(", ", columns.Select(column => $"@{GetParameterTagFromColumn(column)?.AddIndex(i.Value.ToString())}"))})";
+            ? $"({string.Join(", ", columns.Select(column => $"@{column._parameterTag}"))})"
+            : $"({string.Join(", ", columns.Select(column => $"@{column._parameterTag.AddIndex(i.Value.ToString())}"))})";
 
     /// <summary>
     /// This is a helper method that generates the Values portion of the query
@@ -71,7 +71,7 @@ public partial class SqlGenerator<T>
         }
         else
         {
-            parameters = ColumnsLessKeys.Select(key => GetSqlParameterKeyValue(key, true, entity));
+            parameters = ColumnsLessKeys.Select(key => GetSqlParameterKeyValue(key, entity));
 
 
             string columns = string.Join(", ", ColumnsLessKeys.Select(column => $"[{column._columnName}]"));
@@ -128,9 +128,9 @@ public partial class SqlGenerator<T>
         string values;
 
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            parameters = [.. GetSqlParameterKeyValuePairs(true, entities.Single())];
+            parameters = [.. GetSqlParameterKeyValuePairs(entities.Single())];
         else
-            parameters = [.. GetSqlParameterKeyValuePairs(true, entities)];
+            parameters = [.. GetSqlParameterKeyValuePairs(entities)];
 
         string columns = string.Join(", ", Columns.Select(column => $"[{column._columnName}]"));
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters

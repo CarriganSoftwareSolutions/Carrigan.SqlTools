@@ -58,12 +58,12 @@ public partial class SqlGenerator<T>
         IEnumerable<ColumnTag> updateTheseColumns = 
             (columns?.ColumnTags?.Any() ?? false) ? columns.ColumnTags : ColumnsLessKeys;
 
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Concat(KeyColumns).Select(column => GetSqlParameterKeyValue(column, true, entity));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Concat(KeyColumns).Select(column => GetSqlParameterKeyValue(column, entity));
 
         List<Tuple<ColumnTag, ParameterTag>> setColumnAndParameterName = [];
         foreach (ColumnTag column in updateTheseColumns)
         {
-            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, true, entity);
+            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, entity);
             setColumnAndParameterName.Add(new(column, parameter.Key));
         }
         string sets = string.Join(", ", setColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
@@ -71,7 +71,7 @@ public partial class SqlGenerator<T>
         List<Tuple<ColumnTag, string>> whereColumnAndParameterName = [];
         foreach (ColumnTag column in KeyColumns)
         {
-            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, true, entity);
+            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, entity);
             whereColumnAndParameterName.Add(new(column, parameter.Key));
         }
         string where = string.Join(", ", whereColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
@@ -126,7 +126,7 @@ public partial class SqlGenerator<T>
                     KeyColumns.Select(column => new Equal
                         (
                             new Columns<T>(column._columnName), 
-                            new Parameters(GetParameterTagFromColumn(column) ?? throw new NullReferenceException($"ParameterTag not found for column: {column}."), GetValue(column, entity)))
+                            new Parameters(column._parameterTag, column._propertyInfo.GetValue(entity)))
                         )
                 ))
         );
@@ -201,18 +201,15 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
-        string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = {GetParameterTagFromColumn(column)?.PrefixPrepend("@ParameterSet")}"));
-
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Select(column => GetSqlParameterKeyValue(column, true, entity, null, "@ParameterSet"));
-        Dictionary<ParameterTag, object> parametersDictionary = [.. parameters];
-
-
-        StringBuilder queryBuilder = new($"UPDATE {Table} SET {setColumnValues} FROM {Table}");
-
         if (invalidTags.Any())
         {
             throw new ArgumentException($"{nameof(predicates)} contains the following invalid table identifiers: {invalidTags.Select(it => it.ToString()).JoinAnd()}", nameof(predicates));
         }
+
+        Dictionary<ParameterTag, object> parametersDictionary = [.. updateTheseColumns.Select(column => GetSqlParameterKeyValue(column, entity, null, "@ParameterSet"))];
+
+        string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = {column._parameterTag.PrefixPrepend("@ParameterSet")}"));
+        StringBuilder queryBuilder = new($"UPDATE {Table} SET {setColumnValues} FROM {Table}");
 
         if (joins?.IsNotNullOrEmpty() ?? false)
         {

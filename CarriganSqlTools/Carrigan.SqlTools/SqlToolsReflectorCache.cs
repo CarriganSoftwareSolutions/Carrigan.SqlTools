@@ -37,7 +37,7 @@ public class SqlToolsReflectorCache<T>
     internal static bool HasEncryptedColumns() =>
         _LazyEncryptedColumnsHashSet.Value.Count != 0;
 
-    internal static IEnumerable<ColumnTag> ValidateEntityPropertyNames(params IEnumerable<string> propertyNames)
+    internal static IEnumerable<ColumnTag> GetColumnsFromProperties(params IEnumerable<string> propertyNames)
     {
         List<Exception> exceptions = [];
 
@@ -45,14 +45,16 @@ public class SqlToolsReflectorCache<T>
             propertyNames
                 .Where(propertyName => ContainsProperty(propertyName) is false);
 
-        IEnumerable<ColumnTag?> columns =
+        IEnumerable<ColumnTag> columns =
             propertyNames
                 .Where(propertyName => ContainsProperty(propertyName)) //we are testing column names here, so filter out property names with no corresponding column
-                .Select(propertyName => GetColumnTagByProperty(propertyName));
+                .Select(propertyName => GetColumnByProperty(propertyName))
+                .OfType<ColumnTag>(); //filter nulls, clear null reference warning
 
-        IEnumerable<ColumnTag?> invalidColumns =
+        IEnumerable<ColumnTag> invalidColumns =
             columns
-                .Where(column => SqlIdentifierPattern.Fails(column?._columnName ?? string.Empty));
+                .Where(column => SqlIdentifierPattern.Fails(column?._columnName ?? string.Empty))
+                .OfType<ColumnTag>();
 
         if (invalidPropertyNames.Any())
             exceptions.Add(new ArgumentException($"The property names {invalidPropertyNames.JoinAnd()} do not have an associated column in {Table}.", nameof(propertyNames)));
@@ -60,49 +62,32 @@ public class SqlToolsReflectorCache<T>
             exceptions.Add(new SqlNamePatternException(invalidPropertyNames));
 
         if (exceptions.None())
-            return columns
-                .OfType<ColumnTag>(); //clear the null reference warning
+            return columns; 
         else if (exceptions.Count == 1)
             throw exceptions.Single();
         else
             throw new AggregateException(exceptions);
     }
 
-    public static ParameterTag? GetParameterTagFromColumn(ColumnTag columnTag) =>
-        _LazyParameterTags.Value.TryGetValue(columnTag, out ParameterTag? value) ? value : null;
-
-    /// <summary>
-    /// Gets the value from an entity T for the given column definition.
-    /// </summary>
-    /// <param name="column">Represents a column definition for the entity of type T.</param>
-    /// <param name="entity"></param>
-    /// <returns>The value from an entity T for the given column definition as a nullable object.</returns>
-    protected static object? GetValue(ColumnTag column, T entity) =>
-        _LazyPropertyInfoDictionary.Value.TryGetValue(column, out PropertyInfo? value) ? value.GetValue(entity) : null;
-
     private static bool ContainsProperty(string propertyName) =>
         _LazyColumnsDictionary.Value.ContainsKey(propertyName);
 
-    private static ColumnTag? GetColumnTagByProperty(string propertyName) =>
+    private static ColumnTag? GetColumnByProperty(string propertyName) =>
         ContainsProperty(propertyName) ? _LazyColumnsDictionary.Value[propertyName] : null;
 
     private static readonly Lazy<TableTag> _LazyTableTag;
     private static readonly Lazy<ProcedureTag> _LazyProcedureTag;
+    private static readonly Lazy<ColumnTag?> _LazyKeyVersionColumn;
+    private static readonly Lazy<TableAttribute?> _LazyTableAttribute;
 
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyProperties;
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyPropertiesLessKeys;
-
-    private static readonly Lazy<Dictionary<ColumnTag, PropertyInfo>> _LazyPropertyInfoDictionary;
-
-    private static readonly Lazy<Dictionary<string, ColumnTag>> _LazyColumnsDictionary;
     private static readonly Lazy<IEnumerable<ColumnTag>> _LazyKeyColumns;
     private static readonly Lazy<IEnumerable<ColumnTag>> _LazyColumnsLessKeys;
-    private static readonly Lazy<ColumnTag?> _LazyKeyVersionColumn;
+
     private static readonly Lazy<HashSet<ColumnTag>> _LazyEncryptedColumnsHashSet;
 
-    private static readonly Lazy<Dictionary<ColumnTag, ParameterTag>> _LazyParameterTags;
-
-    private static readonly Lazy<TableAttribute?> _LazyTableAttribute;
+    private static readonly Lazy<Dictionary<string, ColumnTag>> _LazyColumnsDictionary;
 
     static SqlToolsReflectorCache()
     {
@@ -167,21 +152,14 @@ public class SqlToolsReflectorCache<T>
                 [.. _LazyPropertiesLessKeys
                         .Value
                         .Where(property => property.GetCustomAttribute<EncryptedAttribute>() != null)
-                        .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property)))]
+                        .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))]
             );
 
         _LazyColumnsDictionary = new Lazy<Dictionary<string, ColumnTag>>
             (() =>
                 [.. _LazyProperties
                     .Value
-                    .Select(property => new KeyValuePair<string, ColumnTag>(property.Name, new ColumnTag(_LazyTableTag.Value, GetColumnName(property))))]
-            );
-
-        _LazyPropertyInfoDictionary = new
-            (() =>
-                [.. _LazyProperties
-                    .Value
-                    .Select(property => new KeyValuePair<ColumnTag, PropertyInfo>(new ColumnTag(_LazyTableTag.Value, GetColumnName(property)), property))]
+                    .Select(property => new KeyValuePair<string, ColumnTag>(property.Name, new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property))))]
             );
 
         _LazyColumnsLessKeys = new
@@ -189,7 +167,7 @@ public class SqlToolsReflectorCache<T>
                 _LazyProperties
                     .Value
                     .Where(property => property.GetCustomAttribute<KeyAttribute>() == null)
-                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property)))
+                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))
             );
 
         _LazyKeyColumns = new
@@ -197,7 +175,7 @@ public class SqlToolsReflectorCache<T>
                 ReflectorCache<T>
                     .ReadablePublicInstanceProperties
                     .Where(property => property.GetCustomAttribute<KeyAttribute>() != null)
-                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property)))
+                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))
             );
 
         _LazyKeyVersionColumn = new
@@ -205,15 +183,8 @@ public class SqlToolsReflectorCache<T>
                             .Value
                             .Where(property => property.GetCustomAttribute<KeyVersionAttribute>() != null)
                             .Where(property => ((Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType) == typeof(int)))
-                            .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property)))
+                            .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))
                             .FirstOrDefault()
-            );
-        _LazyParameterTags = new
-            (() =>
-                [.. _LazyProperties
-                    .Value
-                    .Where(property => ContainsProperty(property.Name))
-                    .Select(property => new KeyValuePair<ColumnTag, ParameterTag>(GetColumnTagByProperty(property.Name) ?? new ColumnTag(_LazyTableTag.Value, GetColumnName(property)), GetParameterName(property)))]
             );
     }
 

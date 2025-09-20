@@ -45,7 +45,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     public Columns(string propertyName)
     {
         TableTag = SqlToolsReflectorCache<T>.Table;
-        ColumnTag = SqlToolsReflectorCache<T>.ValidateEntityPropertyNames(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);
+        ColumnTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);
         PropertyName = propertyName;
     }
 

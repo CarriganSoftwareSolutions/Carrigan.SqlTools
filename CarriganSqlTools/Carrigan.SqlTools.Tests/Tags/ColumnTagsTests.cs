@@ -6,49 +6,45 @@ public class ColumnTagsTests
 {
 
     [Theory]
-    [InlineData("Poppies", "Sloppy", "Pizza", "[Poppies].[Sloppy].[Pizza]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
     [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
     [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
-    [InlineData("Poppies", null, "Pizza", "[Pizza]")]
-    [InlineData("", "", "Pizza", "[Pizza]")]
-    [InlineData("", null, "Pizza", "[Pizza]")]
-    [InlineData(null, "", "Pizza", "[Pizza]")]
-    [InlineData(null, null, "Pizza", "[Pizza]")]
-    public void Col_Tag_Tests_3_Params(string? schemaName, string? tableName, string columnName, string expected)
+    public void Col_Tag_Tests_3_Params(string? schemaName, string tableName, string columnName, string expected)
     {
-        string actual = new ColumnTag(schemaName, tableName, columnName);
+        TableTag tableTag = new(schemaName, tableName);
+        string actual = new ColumnTag(tableTag, columnName, null!, null!);
 
         Assert.Equal(expected, actual);
     }
 
     [Theory]
-    [InlineData("Poppies", "Sloppy", "")]
+    [InlineData("Franks", "Sloppy", "")]
     [InlineData(null, "Sloppy", "")]
     [InlineData("", "Sloppy", "")]
-    [InlineData("Poppies", null, "")]
+    [InlineData("Franks", null, "")]
     [InlineData("", "", "")]
     [InlineData("", null, "")]
     [InlineData(null, "", "")]
     [InlineData(null, null, "")]
-    [InlineData("Poppies", "Sloppy", null)]
+    [InlineData("Franks", "Sloppy", null)]
     [InlineData(null, "Sloppy", null)]
     [InlineData("", "Sloppy", null)]
-    [InlineData("Poppies", null, null)]
+    [InlineData("Franks", null, null)]
     [InlineData("", "", null)]
     [InlineData("", null, null)]
     [InlineData(null, "", null)]
     [InlineData(null, null, null)]
     public void Col_Tag_Tests_3_Params_null_column(string? schemaName, string? tableName, string? columnName) 
-        => Assert.Throws<ArgumentNullException>(() => new ColumnTag(schemaName, tableName, columnName!));
+        => Assert.Throws<ArgumentNullException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
 
     [Theory]
-    [InlineData("Poppies", "Sloppy", "Pizza", "[Poppies].[Sloppy].[Pizza]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
     [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
     [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
     public void Col_Tag_Tests_2_Params(string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tg = new(schemaName, tableName);
-        string actual = new ColumnTag(tg, columnName);
+        string actual = new ColumnTag(tg, columnName, null!, null!);
 
         Assert.Equal(expected, actual);
     }
@@ -56,17 +52,17 @@ public class ColumnTagsTests
 
 
     [Theory]
-    [InlineData("Poppies", "Sloppy", "")]
+    [InlineData("Franks", "Sloppy", "")]
     [InlineData(null, "Sloppy", "")]
     [InlineData("", "Sloppy", "")]
-    [InlineData("Poppies", "Sloppy", null)]
+    [InlineData("Franks", "Sloppy", null)]
     [InlineData(null, "Sloppy", null)]
     [InlineData("", "Sloppy", null)]
     public void Col_Tag_Tests_2_Params_argument_exception(string? schemaName, string tableName, string? columnName)
     {
         TableTag tg = new(schemaName, tableName);
 
-        Assert.Throws<ArgumentNullException>(() => new ColumnTag(tg, columnName!));
+        Assert.Throws<ArgumentNullException>(() => new ColumnTag(tg, columnName!, null!, null!));
     }
 
 
@@ -77,9 +73,8 @@ public class ColumnTagsTests
     [InlineData("", "T", "C", "[T].[C]")]
     public void ImplicitStringAndToString_AreEquivalent(string? schema, string table, string column, string expected)
     {
-        ColumnTag colTag = string.IsNullOrEmpty(schema)
-            ? new ColumnTag(new TableTag(schema, table), column)
-            : new ColumnTag(schema, table, column);
+        TableTag tableTag = new(schema, table);
+        ColumnTag colTag = new (tableTag, column, null!, null!);
 
         // implicit cast
         string viaImplicit = colTag;
@@ -93,8 +88,9 @@ public class ColumnTagsTests
     [Fact]
     public void Equals_SameUnderlyingTag_ReturnsTrue()
     {
-        ColumnTag a = new ("S", "T", "C");
-        ColumnTag b = new ("S", "T", "C");
+        TableTag tableTag = new("S", "T");
+        ColumnTag a = new (tableTag, "C", null!, null!);
+        ColumnTag b = new (tableTag, "C", null!, null!);
 
         Assert.True(a.Equals(b));
         Assert.True(b.Equals(a));
@@ -103,8 +99,9 @@ public class ColumnTagsTests
     [Fact]
     public void Equals_DifferentUnderlyingTag_ReturnsFalse()
     {
-        ColumnTag a = new ("S", "T", "C1");
-        ColumnTag b = new ("S", "T", "C2");
+        TableTag tableTag = new("S", "T");
+        ColumnTag a = new (tableTag, "C1", null!, null!);
+        ColumnTag b = new (tableTag , "C2", null!, null!);
 
         Assert.False(a.Equals(b));
         Assert.False(b.Equals(a));
@@ -114,9 +111,10 @@ public class ColumnTagsTests
     [Fact]
     public void EqualityOperator_WorksLikeEquals()
     {
-        ColumnTag x = new ("S", "T", "C");
-        ColumnTag y = new ("S", "T", "C");
-        ColumnTag z = new ("S", "T", "Different");
+        TableTag tableTag = new("S", "T");
+        ColumnTag x = new (tableTag, "C", null!, null!);
+        ColumnTag y = new (tableTag, "C", null!, null!);
+        ColumnTag z = new (tableTag, "Different", null!, null!);
 
         Assert.True(x == y);
         Assert.False(x == z);
@@ -127,8 +125,9 @@ public class ColumnTagsTests
     [Fact]
     public void GetHashCode_EqualInstances_HaveSameHash()
     {
-        ColumnTag a = new ("S", "T", "C");
-        ColumnTag b = new ("S", "T", "C");
+        TableTag tableTag = new("S", "T");
+        ColumnTag a = new (tableTag, "C", null!, null!);
+        ColumnTag b = new (tableTag, "C", null!, null!);
 
         Assert.Equal(a.GetHashCode(), b.GetHashCode());
     }
@@ -137,10 +136,11 @@ public class ColumnTagsTests
     [Fact]
     public void Comparer_EqualsAndHashCode_ViaIEqualityComparer()
     {
-        ColumnTag a = new ("S", "T", "C");
-        ColumnTag b = new ("S", "T", "C");
-        ColumnTag c = new ("S", "T", "Other");
-        ColumnTag comparer = new("S", "T", "D");
+        TableTag tableTag = new("S", "T");
+        ColumnTag a = new (tableTag, "C", null!, null!);
+        ColumnTag b = new (tableTag, "C", null!, null!);
+        ColumnTag c = new (tableTag, "Other", null!, null!);
+        ColumnTag comparer = new(tableTag, "D", null!, null!);
 
         Assert.True(comparer.Equals(a, b));
         Assert.False(comparer.Equals(a, c));
@@ -151,21 +151,23 @@ public class ColumnTagsTests
     [Fact]
     public void CompareTo_SortsByUnderlyingStringOrdinal()
     {
-        ColumnTag lower = new ("S", "T", "A");
-        ColumnTag higher = new ("S", "T", "B");
+        TableTag tableTag = new("S", "T");
+        ColumnTag lower = new (tableTag, "A", null!, null!);
+        ColumnTag higher = new (tableTag, "B", null!, null!);
 
         Assert.True(lower.CompareTo(higher) < 0);
         Assert.True(higher.CompareTo(lower) > 0);
-        Assert.Equal(0, lower.CompareTo(new ColumnTag("S", "T", "A")));
+        Assert.Equal(0, lower.CompareTo(new ColumnTag(tableTag, "A", null!, null!)));
     }
 
     // Sorting a list of ColumnTags
     [Fact]
     public void Sort_ListOfColumnTags_OrdersLexicographically()
     {
-        ColumnTag charlie = new ("S", "T", "Charlie");
-        ColumnTag bravo = new ("S", "T", "Bravo");
-        ColumnTag alpha = new ("S", "T", "Alpha");
+        TableTag tableTag = new("S", "T");
+        ColumnTag charlie = new (tableTag, "Charlie", null!, null!);
+        ColumnTag bravo = new (tableTag, "Bravo", null!, null!);
+        ColumnTag alpha = new (tableTag, "Alpha", null!, null!);
 
         List<ColumnTag> tags =
             [
@@ -186,11 +188,12 @@ public class ColumnTagsTests
     public void DictionaryKey_RetrievalByEquivalentColumnTag_Works()
     {
         Dictionary<ColumnTag, string> dict = [];
-        ColumnTag key1 = new ("S", "T", "C");
+        TableTag tableTag = new("S", "T");
+        ColumnTag key1 = new (tableTag, "C", null!, null!);
         dict[key1] = "value";
 
 
-        ColumnTag key2 = new ("S", "T", "C");
+        ColumnTag key2 = new (tableTag, "C", null!, null!);
         Assert.True(dict.ContainsKey(key2));
         Assert.Equal("value", dict[key2]);
     }
@@ -199,18 +202,20 @@ public class ColumnTagsTests
     [Fact]
     public void CompareTo_Null_IsGreaterThanNull()
     {
-        ColumnTag ct = new ("S", "T", "C");
-        Assert.True(ct.CompareTo(null) > 0);
+        TableTag tableTag = new("S", "T");
+        ColumnTag columnTag = new(tableTag, "C", null!, null!);
+        Assert.True(columnTag.CompareTo(null) > 0);
     }
 
     [Fact]
     public void Equals_Null_ReturnsFalse()
     {
-        ColumnTag ct = new ("S", "T", "C");
-        Assert.False(ct.Equals(null));
-        Assert.NotNull(ct);
-        Assert.NotNull(ct);
-        Assert.NotNull(ct);
-        Assert.NotNull(ct);
+        TableTag tableTag = new("S", "T");
+        ColumnTag columnTag = new (tableTag, "C", null!, null!);
+        Assert.False(columnTag.Equals(null));
+        Assert.NotNull(columnTag);
+        Assert.NotNull(columnTag);
+        Assert.NotNull(columnTag);
+        Assert.NotNull(columnTag);
     }
 }

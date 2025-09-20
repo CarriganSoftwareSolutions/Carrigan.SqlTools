@@ -57,39 +57,39 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <param name="entity">holder for the key fields values</param>
     /// <returns>an And predicate useful for selecting a record by Id.</returns>
     private static And GetByKeyPredicates(T entity) =>
-        new (KeyColumns.Select(key => new Equal(new Columns<T>(key._columnName), new Parameters(key._columnName, GetValue(key, entity)))));
+        new (KeyColumns.Select(key => new Equal(new Columns<T>(key._columnName), new Parameters(key._columnName, key._propertyInfo.GetValue(entity)))));
 
     /// <summary>
     /// Gets an SQL Parameters as a Key Value pair
     /// </summary>
     /// <param name="column">The column</param>
-    /// <param name="useEncryption">Is it encrypted?</param>
     /// <param name="entity">An instance of the data model (corresponds to a row in the database)</param>
     /// <param name="entityIndex">the index value of the enumerated record in the collection</param>
     /// <param name="parameterPrepend">The prefix for the parameter that corresponds the value</param>
+    /// 
     /// <returns>Gets an SQL Parameters as a Key Value pair</returns>
-    private KeyValuePair<ParameterTag, object> GetSqlParameterKeyValue(ColumnTag column, bool useEncryption, T entity, int? entityIndex = null, string? parameterPrepend = null)
+    private KeyValuePair<ParameterTag, object> GetSqlParameterKeyValue(ColumnTag column, T entity, int? entityIndex = null, string? parameterPrepend = null)
     {
-        ParameterTag? key = (GetParameterTagFromColumn(column) ?? throw new NullReferenceException()).PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
+        ParameterTag? key = (column._parameterTag ?? throw new NullReferenceException()).PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
 
-        if (_Encryption is not null && useEncryption && KeyVersionColumn is not null && KeyVersionColumn.Equals(column))
+        if (_Encryption is not null && KeyVersionColumn is not null && KeyVersionColumn.Equals(column))
             return new (key, ((object?)_Encryption?.Version) ?? DBNull.Value);
-        if (_Encryption is not null && useEncryption && ContainsEncryptedProperty(column))
+        if (_Encryption is not null && ContainsEncryptedProperty(column))
             //the explicit conversion of _Encryption?.Encrypt(property.GetValue(entity)?.ToString()) to an object is required to avoid a compiler error.
-            return new (key, ((object?)_Encryption?.Encrypt(GetValue(column, entity)?.ToString())) ?? DBNull.Value);
+            return new (key, ((object?)_Encryption?.Encrypt(column._propertyInfo.GetValue(entity)?.ToString())) ?? DBNull.Value);
         else
-            return new (key, GetValue(column, entity) ?? DBNull.Value);
+            return new (key, column._propertyInfo.GetValue(entity) ?? DBNull.Value);
     }
 
     /// <summary>
     /// Get enumeration of key value pairs of parameters associated with the query
     /// </summary>
-    /// <param name="useEncryption">Is it encrypted?</param>
     /// <param name="entity">An instance of the data model (corresponds to a row in the database)</param>
     /// <param name="entityIndex">the index value of the enumerated record in the collection</param>
+    /// 
     /// <returns>key value pairs of parameters associated with the query</returns>
-    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(bool useEncryption, T entity, int? entityIndex = null) =>
-        Columns.Select(column => GetSqlParameterKeyValue(column, useEncryption, entity, entityIndex));
+    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(T entity, int? entityIndex = null) =>
+        Columns.Select(column => GetSqlParameterKeyValue(column, entity, entityIndex));
 
     /// <summary>
     /// Get enumeration of key value pairs of parameters associated with the query, from many
@@ -97,6 +97,6 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <param name="entity">An instance of the data model (corresponds to a row in the database)</param>
     /// <param name="entityIndex">the index value of the enumerated record in the collection</param>
     /// <returns>enumeration of key value pairs of parameters associated with the query, from many</returns>
-    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(bool useEncryption, params IEnumerable<T> entities) =>
-        entities.SelectMany((entity, index) => GetSqlParameterKeyValuePairs(useEncryption, entity, index));
+    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(params IEnumerable<T> entities) =>
+        entities.SelectMany((entity, index) => GetSqlParameterKeyValuePairs(entity, index));
 }

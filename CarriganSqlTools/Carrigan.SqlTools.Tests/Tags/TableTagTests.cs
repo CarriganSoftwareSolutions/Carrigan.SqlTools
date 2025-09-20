@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.Tests.Tags;
 public class TableTagTests
 {
     [Theory]
-    [InlineData("Poppies", "Pizza", "[Poppies].[Pizza]")]
+    [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
     [InlineData(null, "Pizza", "[Pizza]")]
     [InlineData("", "Pizza", "[Pizza]")]
     public void Table_Tag_Tests(string? schemaName, string tableName, string expected)
@@ -21,21 +21,21 @@ public class TableTagTests
     }
 
     [Theory]
-    [InlineData("Poppies", "")]
+    [InlineData("Franks", "")]
     [InlineData(null, "")]
     [InlineData("", "")]
-    [InlineData("Poppies", null)]
+    [InlineData("Franks", null)]
     [InlineData(null, null)]
     [InlineData("", null)]
     public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName) => 
         Assert.Throws<ArgumentNullException>(() => new TableTag(schemaName, tableName!));
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_Comparisons(string? schema1, string? table1, string? schema2, string? table2)
     {
         TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
@@ -53,11 +53,11 @@ public class TableTagTests
 
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_Equals(string? schema1, string? table1, string? schema2, string? table2)
     {
         TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
@@ -74,11 +74,11 @@ public class TableTagTests
     }
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_EqualsObject(string? schema1, string? table1, string? schema2, string? table2)
     {
         TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
@@ -96,11 +96,11 @@ public class TableTagTests
 
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_EqualsEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
         TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
@@ -117,11 +117,11 @@ public class TableTagTests
 
 
     [Theory]
-    [InlineData("Poppies", "Pizza", "Poppies", "Pizza")]
-    [InlineData("Planet", "Express", "Poppies", "Pizza")]
-    [InlineData("Poppies", "Pizza", "Planet", "Express")]
+    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
+    [InlineData("Planet", "Express", "Franks", "Pizza")]
+    [InlineData("Franks", "Pizza", "Planet", "Express")]
     [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Poppies", "Pizza", null, null)]
+    [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_NotEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
         TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
