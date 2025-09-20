@@ -1,4 +1,3 @@
-using Carrigan.SqlTools.Query;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 

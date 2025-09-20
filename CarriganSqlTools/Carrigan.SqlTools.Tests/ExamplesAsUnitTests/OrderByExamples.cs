@@ -1,5 +1,4 @@
 ﻿using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.Query;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
