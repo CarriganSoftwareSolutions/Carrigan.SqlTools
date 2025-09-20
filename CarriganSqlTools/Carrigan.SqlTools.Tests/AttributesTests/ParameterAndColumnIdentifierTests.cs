@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
-public class ColumnIdentifierTests
+public class ParameterAndColumnIdentifierTests
 {
     private static readonly SqlGenerator<ColumnIdentifiers> _generator = new();
     private static readonly ColumnIdentifiers _entity = new ()
@@ -434,5 +434,23 @@ public class ColumnIdentifierTests
         Assert.Equal(2, query.GetParameterCount());
         Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
         Assert.Equal(2, query.GetParameterValue<int>("@Parameter_p2"));
+    }
+
+    [Fact] 
+    public void ProcedureTest()
+    {
+        //Note: The context that determines if it is a procedure or a table is the generator function used.
+        SqlQuery query = _generator.Procedure(_entity);
+
+        string expectedSql = "[ColumnIdentifiers]";
+        string actualSql = query.QueryText; 
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(5, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("IdParameter"));
+        Assert.Equal(2, query.GetParameterValue<int>("PropertyParameter"));
+        Assert.Equal(3, query.GetParameterValue<int>("ColumnParameter"));
+        Assert.Equal(4, query.GetParameterValue<int>("IdentifierParameter"));
+        Assert.Equal(5, query.GetParameterValue<int>("IdentifierOverrideParameter"));
     }
 }

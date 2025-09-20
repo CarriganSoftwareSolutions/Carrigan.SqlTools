@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using System.Reflection.Emit;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 public  class TableIdentifierTests
@@ -12,6 +13,8 @@ public  class TableIdentifierTests
     private static readonly SqlGenerator<IdentifierNameSchema> _identifierNameSchemaSqlGenerator = new();
     private static readonly SqlGenerator<TableName> _tableNameSqlGenerator = new();
     private static readonly SqlGenerator<TableNameSchema> _tableNameSchemaSqlGenerator = new();
+
+    private static readonly Guid guid = Guid.NewGuid();
 
     [Fact]
     public void EntityNameTest()
@@ -75,5 +78,26 @@ public  class TableIdentifierTests
         SqlQuery query = _tableNameSchemaSqlGenerator.SelectAll();
         string queryText = query.QueryText;
         Assert.Equal("SELECT [Table].[TableNameSchemaTable].* FROM [Table].[TableNameSchemaTable]", queryText);
+    }
+
+    [Fact]
+    public void ProcedureTest()
+    {
+        IdentifierNameSchema identifierNameSchema = new IdentifierNameSchema()
+        {
+            Text = "Test",
+            Id = guid
+        };
+
+        //Note: The context that determines if it is a procedure or a table is the generator function used.
+        SqlQuery query = _identifierNameSchemaSqlGenerator.Procedure(identifierNameSchema);
+
+        string expectedSql = "[Identifier].[IdentifierNameSchemaTable]";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal("Test", query.GetParameterValue<string>("Text"));
+        Assert.Equal(guid, query.GetParameterValue<Guid>("Id"));
     }
 }

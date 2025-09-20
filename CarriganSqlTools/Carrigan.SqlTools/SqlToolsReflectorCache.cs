@@ -211,7 +211,6 @@ public class SqlToolsReflectorCache<T>
         }
     }
 
-    //TODO: unit tests
     private static ParameterTag GetParameterName(PropertyInfo property)
     {
         ParameterAttribute? parameterName = property.GetCustomAttribute<ParameterAttribute>();
