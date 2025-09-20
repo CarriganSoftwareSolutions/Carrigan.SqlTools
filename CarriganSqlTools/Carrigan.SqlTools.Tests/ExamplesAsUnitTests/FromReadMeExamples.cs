@@ -135,7 +135,7 @@ public class FromReadMeExamples
         Customer entity = new() { Id = 42 };
         SqlQuery query = customerGenerator.Delete(entity);
 
-        Assert.Equal("DELETE FROM [Customer] WHERE [Id] = @Id", query.QueryText);
+        Assert.Equal("DELETE FROM [Customer] WHERE [Id] = @Id;", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
         Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "Id").Single().Value);
