@@ -1,6 +1,5 @@
 ﻿using Carrigan.SqlTools.Query;
 using Carrigan.SqlTools.Tags;
-using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -17,6 +16,11 @@ public partial class SqlGenerator<T>
     {
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = Columns.Select(columns => GetSqlParameterKeyValue(columns, true, entity));
 
-        return new SqlQuery(ProcedureTag, new Dictionary<ParameterTag, object>([.. parameters]), CommandType.StoredProcedure);
+        return new SqlQuery()
+        {
+            Parameters = new Dictionary<ParameterTag, object>([.. parameters]),
+            QueryText = ProcedureTag,
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
     }
 }

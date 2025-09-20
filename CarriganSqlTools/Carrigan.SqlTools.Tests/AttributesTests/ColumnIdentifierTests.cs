@@ -43,7 +43,7 @@ public class ColumnIdentifierTests
     {
         SqlQuery query = _generator.Delete(_entity);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] WHERE [Id] = @IdParameter";
+        string expected = "DELETE FROM [ColumnIdentifiers] WHERE [Id] = @IdParameter;";
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());

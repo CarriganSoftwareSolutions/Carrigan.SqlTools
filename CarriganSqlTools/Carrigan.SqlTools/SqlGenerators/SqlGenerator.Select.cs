@@ -189,7 +189,12 @@ public partial class SqlGenerator<T>
         {
             queryBuilder.Append($" {offsetNext.ToSql()}");
         }
-        return new SqlQuery(queryBuilder.ToString(), predicates?.GetParameters() ?? []);
+        return new SqlQuery()
+        {
+            QueryText = queryBuilder.ToString(),
+            Parameters = predicates?.GetParameters() ?? [],
+            CommandType = CommandType.Text
+        };
         
     }
 
