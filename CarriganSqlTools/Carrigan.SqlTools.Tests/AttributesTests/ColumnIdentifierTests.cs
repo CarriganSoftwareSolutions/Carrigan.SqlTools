@@ -114,7 +114,108 @@ public class ColumnIdentifierTests
     }
 
     [Fact]
-    public void WhereTest()
+    public void JoinTest()
+    {
+        LeftJoin<ColumnIdentifiers, JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
+        SqlQuery query = _generator.Delete(join, null);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+        Assert.Equal(expected, actual);
+
+        Assert.Equal(0, query.GetParameterCount());
+    }
+
+    [Fact]
+    public void LeftJoinTest()
+    {
+        LeftJoin<ColumnIdentifiers, JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
+        SqlQuery query = _generator.Delete(join, null);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+        Assert.Equal(expected, actual);
+
+        Assert.Equal(0, query.GetParameterCount());
+    }
+
+    [Fact]
+    public void InnerJoinTest()
+    {
+        InnerJoin<ColumnIdentifiers, JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
+        SqlQuery query = _generator.Delete(join, null);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+        Assert.Equal(expected, actual);
+
+        Assert.Equal(0, query.GetParameterCount());
+    }
+
+    [Fact]
+    public void OrderByTest()
+    {
+        OrderByItem<ColumnIdentifiers> orderByItem = new(nameof(ColumnIdentifiers.ColumnName));
+        SqlQuery query = _generator.Select(null, null, orderByItem, null);
+        string actual = query.QueryText;
+        string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] ORDER BY [ColumnIdentifiers].[Column] ASC";
+        Assert.Equal(expected, actual);
+
+        Assert.Equal(0, query.GetParameterCount());
+    }
+
+    [Fact]
+    public void AndTest()
+    {
+        Columns<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter1 = new("p1", 1);
+        Columns<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
+        Parameters parameter2 = new("p2", 2);
+        Equal equal1 = new(identifierColumn, parameter1);
+        Equal equal2 = new(columnColumn, parameter2);
+        And and = new (equal1, equal2);
+
+        SqlQuery query = _generator.Select(null, and, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) AND ([ColumnIdentifiers].[Column] = @Parameter_p2))";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(2, query.GetParameterValue<int>("@Parameter_p2"));
+    }
+
+    [Fact]
+    public void ColumnEqualsColumnTest()
+    {
+        ColumnEqualsColumn<ColumnIdentifiers, ColumnIdentifiers> columns = new (nameof(ColumnIdentifiers.IdentifierOverrideName), nameof(ColumnIdentifiers.ColumnName));
+
+        SqlQuery query = _generator.Select(null, columns, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[IdentifierOverride] = [ColumnIdentifiers].[Column])";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(0, query.GetParameterCount());
+    }
+
+    [Fact]
+    public void ColumnTest()
+    {
+        Columns<ColumnIdentifiers> identifierOverrideColumn = new(nameof(ColumnIdentifiers.IdentifierOverrideName));
+        Parameters parameter = new("p1", 1);
+        Equal equal = new(identifierOverrideColumn, parameter);
+
+        SqlQuery query = _generator.Select(null, equal, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[IdentifierOverride] = @Parameter_p1)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void ColumnValueTest()
     {
         ColumnValues<ColumnIdentifiers> whereIdEquals = new(nameof(ColumnIdentifiers.Id), 1);
         SqlQuery query = _generator.Delete(null, whereIdEquals);
@@ -127,25 +228,211 @@ public class ColumnIdentifierTests
     }
 
     [Fact]
-    public void JoinTest()
+    public void ContainsTest()
     {
-        InnerJoin<ColumnIdentifiers, JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
-        SqlQuery query = _generator.Delete(join, null);
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter = new("p1", 1);
+        Contains<ColumnIdentifiers> contains = new (column, parameter);
+
+        SqlQuery query = _generator.Select(null, contains, null, null);
+        string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE CONTAINS([ColumnIdentifiers].[Identifier], @Parameter_p1)";
         string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+
         Assert.Equal(expected, actual);
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void EqualTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter = new("p1", 1);
+        Equal equal = new(column, parameter);
+
+        SqlQuery query = _generator.Select(null, equal, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] = @Parameter_p1)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void GreaterThanEqualsTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter = new("p1", 1);
+        GreaterThanEquals op = new(column, parameter);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] >= @Parameter_p1)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void GreaterThanTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter = new("p1", 1);
+        GreaterThan op = new(column, parameter);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] > @Parameter_p1)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void IsNotNullTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        IsNotNull op = new(column);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] IS NOT NULL)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(0, query.GetParameterCount());
     }
+
     [Fact]
-    public void OrderByTest()
+    public void IsNullTest()
     {
-        OrderByItem<ColumnIdentifiers> orderByItem = new(nameof(ColumnIdentifiers.ColumnName));
-        SqlQuery query = _generator.Select(null, null, orderByItem, null);
-        string actual = query.QueryText;
-        string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] ORDER BY [ColumnIdentifiers].[Column] ASC";
-        Assert.Equal(expected, actual);
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        IsNull op = new(column);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] IS NULL)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(0, query.GetParameterCount());
+    }
+
+    
+
+    [Fact]
+    public void LessThanEqualsTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter = new("p1", 1);
+        LessThanEquals op = new(column, parameter);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <= @Parameter_p1)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void LessThanTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter = new("p1", 1);
+        LessThan op = new(column, parameter);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] < @Parameter_p1)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void NotEqualTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter = new("p1", 1);
+        NotEqual op = new(column, parameter);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <> @Parameter_p1)";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+    }
+
+    [Fact]
+    public void NotTest()
+    {
+        Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
+        Not op = new(column);
+
+        SqlQuery query = _generator.Select(null, op, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (NOT [ColumnIdentifiers].[Identifier])";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(0, query.GetParameterCount());
+    }
+
+    [Fact]
+    public void OrTest()
+    {
+        Columns<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter1 = new("p1", 1);
+        Columns<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
+        Parameters parameter2 = new("p2", 2);
+        Equal equal1 = new(identifierColumn, parameter1);
+        Equal equal2 = new(columnColumn, parameter2);
+        Or or = new(equal1, equal2);
+
+        SqlQuery query = _generator.Select(null, or, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) OR ([ColumnIdentifiers].[Column] = @Parameter_p2))";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(2, query.GetParameterValue<int>("@Parameter_p2"));
+    }
+
+    [Fact]
+    public void XOrTest()
+    {
+        Columns<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
+        Parameters parameter1 = new("p1", 1);
+        Columns<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
+        Parameters parameter2 = new("p2", 2);
+        Equal equal1 = new(identifierColumn, parameter1);
+        Equal equal2 = new(columnColumn, parameter2);
+        Xor xor = new(equal1, equal2);
+
+        SqlQuery query = _generator.Select(null, xor, null, null);
+        string expectedSql =
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) ^ ([ColumnIdentifiers].[Column] = @Parameter_p2))";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(2, query.GetParameterValue<int>("@Parameter_p2"));
     }
 }
