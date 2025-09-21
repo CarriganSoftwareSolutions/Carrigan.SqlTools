@@ -250,7 +250,6 @@ public class SqlToolsReflectorCache<T>
         }
     }
 
-    //TODO: write unit test
     private static string GetProcedureName()
     {
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();

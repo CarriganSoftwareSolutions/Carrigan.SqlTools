@@ -13,7 +13,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
 
     internal ParameterTag(string? prefix, string parameterName, string? index)
     {
-        if (parameterName.IsNullOrEmpty())
+        if (parameterName.IsNullOrWhiteSpace())
             throw new ArgumentNullException(nameof(parameterName), parameterName);
 
         _parameterBaseName = parameterName;
@@ -34,7 +34,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     public int CompareTo(ParameterTag? other)
     {
         if (other is null) return 1;
-        return string.Compare((string)this, (string)other, StringComparison.OrdinalIgnoreCase);
+        return string.Compare(this, (string)other, StringComparison.OrdinalIgnoreCase);
     }
 
     public bool Equals(ParameterTag? other)
