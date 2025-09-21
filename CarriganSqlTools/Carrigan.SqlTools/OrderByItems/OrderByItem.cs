@@ -4,9 +4,13 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.OrderByItems;
 
 /// <summary>
-/// This represents a part of an order by clause for an individual column in SQL
-/// It also implements the <see cref="IOrderByClause"/> to reduce the amount of code needed to create a single column order by.
+/// Represents a single-column specification within an SQL <c>ORDER BY</c> clause.
+/// Also implements <see cref="IOrderByClause"/> to simplify creation of single-column
+/// order-by clauses.
 /// </summary>
+/// <typeparam name="T">
+/// The entity or data model type that defines the table containing the column to order by.
+/// </typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// OrderByItem&lt;Customer&gt; orderBy = new(nameof(Customer.Name));
@@ -21,51 +25,70 @@ namespace Carrigan.SqlTools.OrderByItems;
 public class OrderByItem<T> : IOrderByItem, IOrderByClause
 {
     /// <summary>
-    /// Constructor, provide the table with the Type <see cref="T"/> and the property name that represents the column name and sort direction as parameters.
+    /// Initializes a new instance of the <see cref="OrderByItem{T}"/> class,
+    /// specifying the table type <typeparamref name="T"/>, the column name,
+    /// and the desired sort direction.
     /// </summary>
-    /// <param name="propertyName">The name of the parameter that represents the column to use.</param>
-    /// <param name="sortDirection">The sort direction to use.</param>
+    /// <param name="propertyName">
+    /// The name of the property that represents the column to order by.
+    /// </param>
+    /// <param name="sortDirection">
+    /// The sort direction to apply.
+    /// </param>
     public OrderByItem(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
     {
         ColumnTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
         SortDirection = sortDirection;
     }
 
+    /// <summary>
+    /// Gets the <see cref="ColumnTag"/> that specifies the column being ordered.
+    /// </summary>
     public ColumnTag ColumnTag { get; private set; }
 
     /// <summary>
-    /// Returns a TableTag representing the table being sorted on.
+    /// Gets the <see cref="TableTag"/> representing the table whose column is being sorted.
     /// </summary>
+
     public TableTag TableTag 
         => SqlToolsReflectorCache<T>.Table;
 
     /// <summary>
-    /// Get the sort direction being used.
+    /// Gets the <see cref="SortDirectionEnum"/> value that specifies the sort direction applied.
     /// </summary>
     public SortDirectionEnum SortDirection { get; private set; }
 
     /// <summary>
-    /// This is part of the <see cref="IOrderByClause"/>. 
-    /// In the context of this class, this returns the name of the table involved in the sort as a Enumerable.
+    /// Part of the <see cref="IOrderByClause"/> implementation.
+    /// Returns an <see cref="IEnumerable{TableTag}"/> containing the table
+    /// involved in the sort for this order-by item.
     /// </summary>
     public IEnumerable<TableTag> TableTags => 
         [TableTag];
 
     /// <summary>
-    /// Returns the SQL as a string for the given instance.
-    /// Note: <see cref="OrderByItem{T}"/> unlike <see cref="OrderBy"/> does not include the "ORDER BY" text which has to be added in by the <see cref="SqlGenerator{T}"/>
+    /// Generates the SQL fragment for this order-by item.
     /// </summary>
-    /// <returns>Returns the SQL as a string for the given instance.</returns>
-    /// <example>[Order].[OrderDate] ASC</example>
+    /// <remarks>
+    /// Unlike <see cref="OrderBy"/>, <see cref="OrderByItem{T}"/> does not include the
+    /// <c>ORDER BY</c> keyword; it must be added separately by <see cref="SqlGenerator{T}"/>.
+    /// </remarks>
+    /// <returns>
+    /// A SQL string representing this item, for example <c>[Order].[OrderDate] ASC</c>.
+    /// </returns>
     public string ToSql() =>
         $"{ColumnTag} {SortDirection.ToSql()}";
 
     /// <summary>
-    /// Equals method required for <see cref="IEquatable{IOrderByItem}"/>. 
-    /// Note: It is sort direction insensitive.
+    /// Determines whether the current instance is equal to another <see cref="IOrderByItem"/>.
     /// </summary>
-    /// <param name="other">The other instance being compared to.</param>
-    /// <returns>true or false based on if the Table and Column tags are equal.</returns>
+    /// <remarks>
+    /// The comparison is based on the table and column tags only and ignores the sort direction.
+    /// </remarks>
+    /// <param name="other">The <see cref="IOrderByItem"/> to compare with this instance.</param>
+    /// <returns>
+    /// <c>true</c> if the table and column tags are equal; otherwise, <c>false</c>.
+    /// </returns>
     public bool Equals(IOrderByItem? other)
     {
         if (ReferenceEquals(this, other)) return true;
@@ -76,16 +99,24 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     }
 
     /// <summary>
-    /// Equals method required for <see cref="IEquatable{IOrderByItem}"/>. 
+    /// Determines whether the specified object is equal to the current
+    /// <see cref="IOrderByItem"/> instance.
     /// </summary>
-    /// <param name="other">The other instance being compared to.</param>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="obj"/> is an <see cref="IOrderByItem"/>
+    /// and represents the same table and column; otherwise, <c>false</c>.
+    /// </returns>
     public override bool Equals(object? obj)
         => Equals(obj as IOrderByItem);
 
     /// <summary>
-    /// GetHashCode method required for <see cref="IEquatable{IOrderByItem}"/>. 
-    /// The Hash Value uses the TableTag and ColumnTag as part of the hash.
+    /// Serves as the default hash function for <see cref="IOrderByItem"/>.
+    /// The hash code is computed from the <see cref="TableTag"/> and <see cref="ColumnTag"/> values.
     /// </summary>
+    /// <returns>
+    /// An integer hash code based on the table and column tags.
+    /// </returns>
     public override int GetHashCode()
         => HashCode.Combine(TableTag, ColumnTag);
 
@@ -100,10 +131,15 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
         EqualityComparer<IOrderByItem>.Default.Equals(this, orderByItem);
 
     /// <summary>
-    /// The item is considered empty if the Column name is null, empty or whitespace.
+    /// Determines whether this order-by item is empty.
+    /// An item is considered empty if its column name is <c>null</c>, empty, or consists only of white space.
     /// </summary>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <returns>
+    /// <c>true</c> if the column name is <c>null</c>, empty, or white space; otherwise, <c>false</c>.
+    /// </returns>
+    /// <exception cref="NotImplementedException">
+    /// Thrown if the method is not implemented.
+    /// </exception>
     public bool IsEmpty() =>
         ColumnTag.IsEmpty();
 
@@ -116,17 +152,24 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
         new (new List<IOrderByItem>([this, orderByItem]));
 
     /// <summary>
-    /// Creates a new order by clause with a <see cref="IEnumerable<IOrderByItem>"> concatenated. This operation is immutable to the original object.
+    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="IOrderByItem"/> appended.  
+    /// This operation is immutable and does not modify the original instance.
     /// </summary>
-    /// <param name="orderByItem">Represents another individual order by item consisting of a table, column and sort direction.</param>
-    /// <returns>Returns a new order by clause with a <see cref="IEnumerable<IOrderByItem>"> concatenated.</returns>
+    /// <param name="orderByItem">
+    /// The <see cref="IOrderByItem"/> to append, representing a table, column, and sort direction.
+    /// </param>
+    /// <returns>
+    /// A new <c>ORDER BY</c> clause that includes the appended <see cref="IOrderByItem"/>.
+    /// </returns>
     public OrderBy WithConcat(params IEnumerable<IOrderByItem> orderByItems) =>
         new (orderByItems.Prepend(this));
 
     /// <summary>
-    /// Returns this object cast as the concrete implementation <see cref="OrderBy"/>
+    /// Returns a new <see cref="OrderBy"/> instance that represents this object.
     /// </summary>
-    /// <returns>Returns this object cast as the concrete implementation <see cref="OrderBy"/></returns>
+    /// <returns>
+    /// A new <see cref="OrderBy"/> instance created from this object.
+    /// </returns>
     public OrderBy AsOrderBy() =>
         new (this);
 }

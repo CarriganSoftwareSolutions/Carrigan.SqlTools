@@ -1,32 +1,16 @@
 ﻿namespace Carrigan.SqlTools.OrderByItems;
 
 /// <summary>
-/// Enum options for Order By directions
+/// Specifies the sort direction for an <c>ORDER BY</c> clause.
 /// </summary>
 public enum SortDirectionEnum
 {
     /// <summary>
-    /// Ascending
+    /// Sorts the results in ascending order.
     /// </summary>
     Ascending,
     /// <summary>
-    /// Descending
+    /// Sorts the results in descending order.
     /// </summary>
     Descending
-}
-
-public static class SortDirectionEnumExtension
-{
-    /// <summary>
-    /// Get the SQL string to represent the value.
-    /// </summary>
-    /// <param name="value"></param>
-    /// <returns>Ascending -> ASC, Descending-> DESC</returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static string ToSql(this SortDirectionEnum value) => value switch
-    {
-        SortDirectionEnum.Descending => "DESC",
-        SortDirectionEnum.Ascending => "ASC",
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
 }
