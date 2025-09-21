@@ -1,11 +1,18 @@
 ﻿namespace Carrigan.SqlTools.OffsetNexts;
 
 /// <summary>
-/// This class also represents the Offset Next feature in SQL Server, 
-/// however this one wraps the concept with the more tangible idea of a page from a book.
-/// The page number and page size are used to calculate the offset and next values in a query needed to result in a given page.
+/// Represents SQL Server’s <c>OFFSET…FETCH NEXT</c> paging feature,
+/// expressed through the more tangible concept of a book page.
+/// Uses the specified page number and page size to calculate the
+/// offset and fetch values required to return the desired page of results.
 /// </summary>
-/// <example>
+/// <remarks>
+/// When this paging option is used, an additional <c>ORDER BY</c> criterion for the key
+/// fields of the queried table is automatically appended at the end of the
+/// <c>ORDER BY</c> clause. This ensures stable and consistent results without
+/// altering the intended sort order, compensating for quirks in SQL Server’s
+/// <c>OFFSET</c> and <c>FETCH NEXT</c> behavior.
+/// </remarks>
 /// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
 /// SqlQuery query = customerGenerator.Select(null, null, null, definePage);
@@ -28,16 +35,21 @@
 public class DefinePage : OffsetNext
 {
     /// <summary>
-    /// The constructor of <see cref="DefinePage"/>
-    /// Note: Using this option adds an additional order by criteria for the key fields of the table being queried.
-    /// This is added to the end of the Order By clause, so as not to affect the order.
-    /// This is done to ensure a consistent result, due to eccentricities of off set and next in SQL Server.
-    /// Offset = (pageNumber - 1) * pageSize
-    /// Next = pageSize
+    /// Initializes a new instance of the <see cref="DefinePage"/> class,
+    /// which represents a single results page based on SQL Server’s
+    /// <c>OFFSET…FETCH NEXT</c> paging feature.
     /// </summary>
-    /// <param name="pageNumber"></param>
-    /// <param name="pageSize"></param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <remarks>
+    /// Using this constructor automatically appends an additional ORDER BY criterion
+    /// for the key fields of the queried table. This is placed at the end of the
+    /// <c>ORDER BY</c> clause to avoid altering the intended sort order, while ensuring
+    /// stable and consistent results when using SQL Server’s <c>OFFSET</c> and <c>FETCH NEXT</c>.
+    /// </remarks>
+    /// <param name="pageNumber">The 1-based page number to retrieve.</param>
+    /// <param name="pageSize">The number of rows to include in each page.</param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when <paramref name="pageNumber"/> or <paramref name="pageSize"/> is less than 1.
+    /// </exception>
     public DefinePage(uint pageNumber, uint pageSize)
     {
         if (pageNumber <= 0 || pageSize <= 0)

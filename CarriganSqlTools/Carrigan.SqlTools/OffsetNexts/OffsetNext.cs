@@ -1,11 +1,16 @@
 ﻿namespace Carrigan.SqlTools.OffsetNexts;
 
 /// <summary>
-/// This class represents the offset and page feature in SQL Server.  Used together this can define a page of data records.
-/// Note: Using this option adds an additional order by criteria for the key fields of the table being queried.
-/// This is added to the end of the Order By clause, so as not to affect the order.
-/// This is done to ensure a consistent result, due to eccentricities of off set and next in SQL Server/
+/// Represents SQL Server’s <c>OFFSET…FETCH NEXT</c> paging feature, which can be
+/// used to define a page of data records.
 /// </summary>
+/// <remarks>
+/// When this paging option is used, an additional <c>ORDER BY</c> criterion for the key
+/// fields of the queried table is automatically appended at the end of the
+/// <c>ORDER BY</c> clause. This ensures stable and consistent results without
+/// altering the intended sort order, compensating for quirks in SQL Server’s
+/// <c>OFFSET</c> and <c>FETCH NEXT</c> behavior.
+/// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// OffsetNext offsetNext = new(50, 25);
@@ -21,26 +26,28 @@
 public class OffsetNext
 {
     /// <summary>
-    /// Represents the SQL Offset
+    /// Represents the SQL <c>OFFSET</c> clause used for result set paging.
     /// </summary>
     public uint Offset { get; protected set; }
     /// <summary>
-    /// Represents the SQL Next
+    /// Represents the SQL <c>FETCH NEXT</c> clause used for result set paging.
     /// </summary>
     public uint Next { get; protected set; }
 
     /// <summary>
-    /// Protected constructor needed for inheritance.
+    /// Initializes a new instance of the <see cref="OffsetNext"/> class
+    /// for use by derived classes.
     /// </summary>
+
     protected OffsetNext()
     {
     }
-
     /// <summary>
-    /// public constructor to define Offset and Next
+    /// Initializes a new instance of the <see cref="OffsetNext"/> class,
+    /// defining the SQL <c>OFFSET</c> and <c>FETCH NEXT</c> values for paging.
     /// </summary>
-    /// <param name="offset"></param>
-    /// <param name="next"></param>
+    /// <param name="offset">The number of rows to skip before starting to return rows.</param>
+    /// <param name="next">The number of rows to return after the offset.</param>
     public OffsetNext(uint offset, uint next)
     {
         Offset = offset;
@@ -48,9 +55,11 @@ public class OffsetNext
     }
 
     /// <summary>
-    /// Produces the SQL for the given values Offset and Next
+    /// Generates the SQL fragment for the specified <c>OFFSET</c> and <c>FETCH NEXT</c> values.
     /// </summary>
-    /// <returns>the SQL for the given values Offset and Next</returns>
+    /// <returns>
+    /// A SQL string representing the <c>OFFSET</c> and <c>FETCH NEXT</c> clauses.
+    /// </returns>
     public string ToSql()
     {
         if(Next == 0 && Offset ==0)
