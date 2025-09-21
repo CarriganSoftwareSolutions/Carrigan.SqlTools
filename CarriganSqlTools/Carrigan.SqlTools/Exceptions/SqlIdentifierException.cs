@@ -3,6 +3,8 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Exceptions;
 
+//TODO: Go back and make sure the correct exceptions are being thrown.
+
 public class SqlIdentifierException : Exception
 {
     /// <summary>
