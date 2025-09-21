@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.Attributes;
 
 /// <summary>
 /// Attribute for classes and properties that specifies the identifiers to use in generated SQL,
-/// including table names, column names, and schema names.
+/// including table <see cref="Name"/>, column <see cref="Name"/>, and <see cref="Schema"/> names.
 /// 
 /// Behavior:
 /// - If <see cref="IdentifierAttribute"/> is not defined, the SQL generator falls back to
@@ -41,19 +41,23 @@ public class IdentifierAttribute : Attribute
     /// </summary>
     public string? Schema { get; }
 
+    /// <summary>
+    /// Public constructor
+    /// </summary>
+    /// <param name="Name">Sql Table/Column Identifier name</param>
+    /// <param name="Schema">Sql Schema name</param>
+    /// <exception cref="SqlNamePatternException">If <see cref="Name"/> or <see cref="Name"/> have an invalid Sql Identifier</exception>
     public IdentifierAttribute(string Name, string Schema = "")
     {
         bool validName = true;
         bool validSchema = true;
-        if (Name.IsNullOrWhiteSpace())
-        {
-            throw new ArgumentException("SQL identity names cannot be null or empty.", nameof(Name));
-        }
-        else if (SqlIdentifierPattern.Fails(Name))
+        if (SqlIdentifierPattern.Fails(Name))
         {
             validName = false;
         }
 
+        //Note: Schema is optional, and this is allowed to be null or empty.
+        //It should not be whitespace.
         if (Schema.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(Schema))
         {
             validSchema = false;
