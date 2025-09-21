@@ -4,6 +4,8 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.Invocation;
 
+//TODO: I still need to update this to take advantage to the new Attributes
+
 /// <summary>
 /// This class is serves as a cache for reflection operations commonly used by this library.
 /// </summary>

@@ -4,6 +4,8 @@ namespace Carrigan.SqlTools.Invocation;
 
 //IGNORE SPELLING: datetime
 
+//TODO: I still need to update this to take advantage to the new Attributes
+
 /// <summary>
 /// Invoke a class of type <see cref="T"/> using values defined <see cref="Dictionary{string, object?}"/> 
 /// where the key represents a property in <see cref="T"/> and the value the value of that property.
