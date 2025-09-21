@@ -1,20 +1,22 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
+
+//IGNORE SPELLING: joins
 
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
-/// This class represents multiple joins to be strung together.
+/// Defines a class that represent one or more SQL join operations.
 /// </summary>
 /// <example>
+/// <para>
+/// Note: <c>ColumnEqualsColumn&lt;lefT, rightT&gt;</c> validates property names and throws an exception if a property name is invalid.
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// Columns&lt;Customer&gt; id = new(nameof(Customer.Id));
-/// Columns&lt;Order&gt; customerId = new(nameof(Order.CustomerId));
-/// Equal customerIdEquals = new(id, customerId);
+/// ColumnEqualsColumn&lt;Customer, Order&gt; customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin&lt;Customer, Order&gt; join1 = new(customerIdEquals);
 /// 
-/// Columns&lt;Order&gt; orderPaymentMethodId = new(nameof(Order.PaymentMethodId));
-/// Columns&lt;PaymentMethod&gt; paymentMethodId = new(nameof(PaymentMethod.Id));
-/// Equal paymentMethodIdEquals = new(orderPaymentMethodId, paymentMethodId);
+/// ColumnEqualsColumn&lt;Order, PaymentMethod&gt; paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
 /// InnerJoin&lt;Order, PaymentMethod&gt; join2 = new(paymentMethodIdEquals);
 /// 
 /// Joins joins = new(join1, join2);
@@ -31,22 +33,34 @@ namespace Carrigan.SqlTools.JoinTypes;
 public class Joins : IJoins
 {
     /// <summary>
-    /// An enumeration of all the joins.
+    /// Represents a collection of classes where each class defines a single SQL join operation.
+    /// The name differs from the preferred “Joins” to avoid a naming conflict (e.g., Joins.Joins),
+    /// which would result in a compiler error.
     /// </summary>
     public IEnumerable<IJoins> Joints { get; private set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Joins"/> class.
+    /// </summary>
+    /// <param name="joins">
+    /// One or more sequences of <see cref="IJoins"/> objects, where each object represents a single SQL join operation.
+    /// </param>
+
     public Joins(params IEnumerable<IJoins> joins) =>
         Joints = joins;
 
     /// <summary>
-    /// This enumeration provides a quick way to determine what all tables are involved in all of the Joins.
+    /// Enumerates all tables included in <see cref="Joints"/>
+    /// providing a quick way to determine whether a given table
+    /// participates in any join operation.
     /// </summary>
     public IEnumerable<TableTag> TableTags =>
         Joints.SelectMany(join => join.TableTags);
 
     /// <summary>
-    /// This generates the SQL for the Joins as a string.
+    /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.
     /// </summary>
-    /// <returns>A string for the Joins' SQL</returns>
+    /// <returns>The SQL fragment for the JOIN clause represented by <see cref="Joints"/>.</returns>
     public string ToSql() =>
         string.Join(" ", Joints.Select(join => join.ToSql()));
 }

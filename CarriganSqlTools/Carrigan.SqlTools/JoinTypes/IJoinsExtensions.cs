@@ -4,22 +4,26 @@ using System.Diagnostics.CodeAnalysis;
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
-/// Just some extensions methods for IJoins.
+/// Provides extension methods for the <see cref="IJoins"/> interface.
 /// </summary>
 public static class IJoinsExtensions
 {
     /// <summary>
-    /// Is null or empty?
+    /// Determines whether the specified <see cref="IJoins"/> instance is <c>null</c>
+    /// or contains no join elements.
     /// </summary>
-    /// <param name="joins"></param>
-    /// <returns>True if null or empty, else false.</returns>
+    /// <param name="joins">The <see cref="IJoins"/> instance to evaluate.</param>
+    /// <returns><c>true</c> if <paramref name="joins"/> is <c>null</c> or empty; otherwise, <c>false</c>.</returns>
     public static bool IsNullOrEmpty(this IJoins? joins) =>
         joins?.Joints?.None() ?? true;
+
     /// <summary>
-    /// Is not null and is not empty?
+    /// Determines whether the specified <see cref="IJoins"/> instance is not null
+    /// and contains at least one join element.
     /// </summary>
-    /// <param name="joins"></param>
-    /// <returns>False if null or empty, else true.</returns>
+    /// <param name="joins">The <see cref="IJoins"/> instance to evaluate.</param>
+    /// <returns><c>true</c> if <paramref name="joins"/> is not <c>null</c> and contains at least one element; otherwise, <c>false</c>.</returns>
+
     public static bool IsNotNullOrEmpty([NotNullWhen(true)] this IJoins? joins) =>
         joins.IsNullOrEmpty() == false;
 }

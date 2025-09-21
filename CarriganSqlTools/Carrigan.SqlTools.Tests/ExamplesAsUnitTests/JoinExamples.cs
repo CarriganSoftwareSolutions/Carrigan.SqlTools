@@ -11,11 +11,9 @@ public class JoinExamples
     [Fact]
     public void SelectWithInnerJoin()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Customer> id = new(nameof(Customer.Id));
-        Columns<Order> customerId = new(nameof(Order.CustomerId));
-        Equal equals = new(id, customerId);
-        InnerJoin<Customer, Order> join = new(equals);
+        //Note: ColumnEqualsColumn<lefT, rightT> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        InnerJoin<Customer, Order> join = new(predicate);
 
         SqlQuery query = customerGenerator.Select(join, null, null, null);
 
@@ -27,11 +25,9 @@ public class JoinExamples
     [Fact]
     public void SelectWithJoin()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Customer> id = new(nameof(Customer.Id));
-        Columns<Order> customerId = new(nameof(Order.CustomerId));
-        Equal equals = new(id, customerId);
-        Join<Customer, Order> join = new(equals);
+        //Note: ColumnEqualsColumn<lefT, rightT> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        Join<Customer, Order> join = new(predicate);
 
         SqlQuery query = customerGenerator.Select(join, null, null, null);
 
@@ -43,11 +39,9 @@ public class JoinExamples
     [Fact]
     public void SelectWithLeftJoin()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Customer> id = new(nameof(Customer.Id));
-        Columns<Order> customerId = new(nameof(Order.CustomerId));
-        Equal equals = new(id, customerId);
-        LeftJoin<Customer, Order> join = new(equals);
+        //Note: ColumnEqualsColumn<lefT, rightT> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        LeftJoin<Customer, Order> join = new(predicate);
 
         SqlQuery query = customerGenerator.Select(join, null, null, null);
 
@@ -59,15 +53,11 @@ public class JoinExamples
     [Fact]
     public void SelectWithTwoJoins()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Customer> id = new(nameof(Customer.Id));
-        Columns<Order> customerId = new(nameof(Order.CustomerId));
-        Equal customerIdEquals = new(id, customerId);
+        //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Customer, Order> join1 = new(customerIdEquals);
 
-        Columns<Order> orderPaymentMethodId = new(nameof(Order.PaymentMethodId));
-        Columns<PaymentMethod> paymentMethodId = new(nameof(PaymentMethod.Id));
-        Equal paymentMethodIdEquals = new(orderPaymentMethodId, paymentMethodId);
+        ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
         InnerJoin<Order, PaymentMethod> join2 = new(paymentMethodIdEquals);
 
         Joins joins = new(join1, join2);

@@ -4,17 +4,22 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
-/// This class represents an SQL Inner Join
+/// Represents an SQL <c>INNER JOIN</c> operation.
 /// </summary>
-/// <typeparam name="T">A data model representing the main table, left table or base table. This is the table you are selecting from, updating or deleting.</typeparam>
-/// <typeparam name="J">A data model representing the right table or joined table. This is the table being joined to the main table.</typeparam>
-/// /// <example>
-/// <para>Note: Columns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <typeparam name="T">
+/// The data model for the primary (left or base) table from which records are selected,
+/// updated, or deleted.
+/// </typeparam>
+/// <typeparam name="J">
+/// The data model for the secondary (right or joined) table that is joined to the primary table.
+/// </typeparam>
+/// <example>
+/// <para>
+/// Note: <c>ColumnEqualsColumn&lt;lefT, rightT&gt;</c> validates property names and throws an exception if a property name is invalid.
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// Columns&lt;Customer&gt; id = new(nameof(Customer.Id));
-/// Columns&lt;Order&gt; customerId = new(nameof(Order.CustomerId));
-/// Equal equals = new(id, customerId);
-/// InnerJoin&lt;Customer, Order&gt; join = new(equals);
+/// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// InnerJoin&lt;Customer, Order&gt; join = new(predicate);
 ///
 /// SqlQuery query = customerGenerator.Select(join, null, null, null);
 /// ]]></code>
@@ -29,10 +34,14 @@ public class InnerJoin<T, J> : JoinBaseClass
 {
     private readonly string _sql;
     /// <summary>
-    /// Constructor for the inner join class.
+    /// Initializes a new instance of the <see cref="InnerJoin{T,J}"/> class.
     /// </summary>
-    /// <param name="predicate">Represents the "on" part of the join clause.</param>
-    /// <exception cref="SqlIdentifierException"></exception>
+    /// <param name="predicate">
+    /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
+    /// </param>
+    /// <exception cref="SqlIdentifierException">
+    /// Thrown when an invalid SQL identifier is encountered while building the join clause.
+    /// </exception>
     public InnerJoin(Predicates.PredicatesBase predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
@@ -50,10 +59,9 @@ public class InnerJoin<T, J> : JoinBaseClass
         _tableTags = [leftTableTag, rightTableTag];
     }
 
-    /// <summary>
-    /// Convert the object to a SQL string.
+    /// Converts the current <see cref="InnerJoin{T,J}"/> instance to its SQL representation.
     /// </summary>
-    /// <returns>An SQL string for the inner join.</returns>
+    /// <returns>A SQL string representing the <c>INNER JOIN</c> clause.</returns>
     public override string ToSql() =>
         _sql;
 }

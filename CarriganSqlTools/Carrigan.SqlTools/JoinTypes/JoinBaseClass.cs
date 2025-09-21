@@ -3,44 +3,42 @@
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
-/// Base class for join classes.
+/// Serves as the base class for all SQL <c>JOIN</c> operation classes.
 /// </summary>
 public abstract class JoinBaseClass : IJoins
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     /// <summary>
     /// Base constructor.
     /// </summary>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public JoinBaseClass() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
+    
     /// <summary>
-    /// Derived classes should set this in the constructor, or <see cref="TableTags"/> should be overwritten. 
+    /// Derived classes should assign this property in their constructor
+    /// or override <see cref="TableTags"/> to provide the required table information.
     /// </summary>
     protected IEnumerable<TableTag> _tableTags;
 
     /// <summary>
-    /// An enumeration of classes that each represent single join.
-    /// 
-    /// As I already explained in the IJoins interface:
-    /// Admittedly this is a terrible name, but the name I wanted, Joins, couldn't be used, 
-    /// because then there has to be a Joins.Joins, which causes a compiler error.
-    /// In the highly unlikely chance anyone ever takes any interest in this project, I want to state for the record,
-    /// this was never intended to be reference to recreational substances. I was thinking more like joins of a frame.
-    /// Get your minds of out of the gutter.
+    /// Represents a collection of classes, each describing a single SQL join operation.
+    /// The name differs from the preferred “Joins” to avoid a naming conflict
+    /// (e.g., a Joins.Joins type), which would result in a compiler error.
     /// </summary>
     public IEnumerable<IJoins> Joints => 
         [this];
 
     /// <summary>
-    /// This enumeration provides a quick way to determine what all tables are involved in the Join.
+    /// Enumerates all tables included in <see cref="Joints"/>
+    /// providing a quick way to determine whether a given table
+    /// participates in any join operation.
     /// </summary>
     public IEnumerable<TableTag> TableTags => 
         _tableTags;
 
     /// <summary>
-    /// This generates the SQL for the Join as a string.
+    /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.
     /// </summary>
-    /// <returns>A string for the Join's SQL</returns>
+    /// <returns>The SQL fragment for the JOIN clause represented by <see cref="Joints"/>.</returns>
     public abstract string ToSql();
 }
