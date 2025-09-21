@@ -2,11 +2,13 @@
 
 namespace Carrigan.SqlTools.Sets;
 /// <summary>
-/// This class is used as part of generating SQL updates statements. 
-/// It used when you need to change from the default behavior to update all columns to only update specific columns.
-/// This class is named to mirror the SQL "SET [Column] = @Parameter".
+/// Represents a SQL <c>SET</c> clause used when generating <c>UPDATE</c> statements.
+/// Use this class to specify only certain columns to update instead of updating all columns
+/// by default. The name mirrors the SQL syntax <c>SET [Column] = @Parameter</c>.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">
+/// The entity or data model type that defines the table being updated.
+/// </typeparam>
 /// <para>Update example not using SetColumns</para>
 /// <example>
 /// <code language="csharp"><![CDATA[
@@ -49,22 +51,30 @@ namespace Carrigan.SqlTools.Sets;
 public class SetColumns<T> : SqlToolsReflectorCache<T>
 {
     /// <summary>
-    /// Name of the columns used in the instance
+    /// Gets the collection of <see cref="ColumnTag"/> objects representing
+    /// the columns used in this instance.
     /// </summary>
     public IEnumerable<ColumnTag> ColumnTags { get; private set; }
 
     /// <summary>
-    /// Constructor
+    /// Initializes a new instance of the <see cref="SetColumns"/> class,
+    /// specifying the properties (columns) to include in the SQL <c>SET</c> clause.
     /// </summary>
-    /// <param name="propertyNames">Names of the properties that represent the names of columns to be used</param>
+    /// <param name="propertyNames">
+    /// The names of the properties that represent the column names to be updated.
+    /// </param>
     public SetColumns(params IEnumerable<string> propertyNames) =>
         ColumnTags = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
 
     /// <summary>
-    /// Add an additional column
+    /// Adds an additional column to the <c>SET</c> clause.
     /// </summary>
-    /// <param name="propertyName">additional property that represent the names of a column to be used</param>
-    /// <exception cref="ArgumentException">Column name not found.</exception>
+    /// <param name="propertyName">
+    /// The name of the property that represents the column to add.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the specified column name is not found.
+    /// </exception>
     public void AddColumn(string propertyName)
     {
         ColumnTag? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
