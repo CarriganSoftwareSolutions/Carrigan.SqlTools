@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Carrigan.SqlTools.Tests.TestEntities.Attributes;
 public class ColumnIdentifiers
 {
-    [Key]
+    [PrimaryKey] //note: PrimaryKey take precedence over key for the Sql Generator
     [Parameter("IdParameter")]
     public int Id { get; set; }
     [Parameter("PropertyParameter")]
@@ -16,6 +16,7 @@ public class ColumnIdentifiers
     [Parameter("IdentifierParameter")]
     [Identifier("Identifier")]
     public int IdentifierName { get; set; }
+    [Key]
     [Parameter("IdentifierOverrideParameter")]
     [Identifier("IdentifierOverride")]
     [Column("Column")]

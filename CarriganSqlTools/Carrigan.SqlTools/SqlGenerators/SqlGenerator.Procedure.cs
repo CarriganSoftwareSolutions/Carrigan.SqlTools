@@ -4,7 +4,6 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
-    //TODO: Needs additional documentation.
     /// <summary>
     /// Creates a Sql Query object that represents a stored procedure call.
     /// 

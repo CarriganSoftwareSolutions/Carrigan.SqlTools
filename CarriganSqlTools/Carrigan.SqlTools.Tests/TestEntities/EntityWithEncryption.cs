@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Attributes;
+using Carrigan.SqlTools.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -11,6 +12,7 @@ internal class EntityWithEncryption
     public EntityWithEncryption() { }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     [Key]
+    [PrimaryKey] //note: PrimaryKey take precedence over key for the Sql Generator
     public int Id { get; set; }
     public string NotSensitiveData { get; set; }
     [Encrypted]

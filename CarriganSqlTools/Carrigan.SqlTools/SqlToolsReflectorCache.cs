@@ -6,7 +6,6 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Reflection;
 
 namespace Carrigan.SqlTools;
@@ -140,11 +139,35 @@ public class SqlToolsReflectorCache<T>
                         )
             );
 
+        _LazyKeyColumns = new
+            (() =>
+                {
+                    IEnumerable<PropertyInfo> keys =
+                        ReflectorCache<T>
+                            .ReadablePublicInstanceProperties
+                            .Where(property => property.GetCustomAttribute<PrimaryKeyAttribute>() != null);
+                    if(keys.None()) 
+                        keys =
+                            ReflectorCache<T>
+                                .ReadablePublicInstanceProperties
+                                .Where(property => property.GetCustomAttribute<KeyAttribute>() != null);
+
+                    return keys
+                        .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)));
+                }
+            );
+
         _LazyPropertiesLessKeys = new 
             (() =>
-                _LazyProperties
-                    .Value
-                    .Where(property => property.GetCustomAttribute<KeyAttribute>() == null)
+                {
+                    IEnumerable<PropertyInfo> keyProperties = 
+                        _LazyKeyColumns
+                            .Value
+                            .Select(column => column._propertyInfo);
+                    return _LazyProperties
+                        .Value
+                        .Where(property => keyProperties.DoesNotContain(property));
+                }
             );
 
         _LazyEncryptedColumnsHashSet = new
@@ -164,18 +187,10 @@ public class SqlToolsReflectorCache<T>
 
         _LazyColumnsLessKeys = new
             (() =>
-                _LazyProperties
+                _LazyColumnsDictionary
                     .Value
-                    .Where(property => property.GetCustomAttribute<KeyAttribute>() == null)
-                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))
-            );
-
-        _LazyKeyColumns = new
-            (() =>
-                ReflectorCache<T>
-                    .ReadablePublicInstanceProperties
-                    .Where(property => property.GetCustomAttribute<KeyAttribute>() != null)
-                    .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))
+                    .Values
+                    .Where(column => _LazyKeyColumns.Value.DoesNotContain(column))
             );
 
         _LazyKeyVersionColumn = new
