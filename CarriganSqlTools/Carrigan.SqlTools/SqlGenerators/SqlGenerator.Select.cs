@@ -197,10 +197,12 @@ public partial class SqlGenerator<T>
         
     }
 
-    //TODO: Needs additional documentation for the summary.
     /// <summary>
+    /// Returns an Sql Query object that represents a Select query that selects records based on the Key fields in the <paramref name="entities"/> provided.
     /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
     /// </summary>
+    /// <param name="joins"></param>
+    /// <returns>Returns an Sql Query object that represents a Select query that selects records based on the Key fields in the <paramref name="entities"/> provided.</returns>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Id = 42 };
