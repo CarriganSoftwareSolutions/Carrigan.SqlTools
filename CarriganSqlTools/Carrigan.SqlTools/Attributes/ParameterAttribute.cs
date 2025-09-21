@@ -4,8 +4,10 @@ using Carrigan.SqlTools.Exceptions;
 namespace Carrigan.SqlTools.Attributes;
 
 /// <summary>
-/// A data annotation to specify a parameter identifier to use with the SQL Generator
-/// This lets you map properties in a class to a default parameter name, for generations that use default parameter names based on property info.
+/// Specifies a parameter identifier for use with the SQL generator.
+/// Enables mapping of class properties to custom parameter <see cref="Name"/> when
+/// generating SQL based on property information. If not provided,
+/// the parameter name defaults to the property name.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property)]
 public class ParameterAttribute : Attribute
@@ -15,13 +17,14 @@ public class ParameterAttribute : Attribute
     /// </summary>
     public string Name { get; }
 
+    /// <summary>
+    /// The constructor for <see cref="ParameterAttribute"/>
+    /// </summary>
+    /// <param name="Name">Parameter name</param>
+    /// <exception cref="SqlNamePatternException">Throws an  exception if the <see cref="Name"/> is an invalid SQL identifier.</exception>
     public ParameterAttribute(string Name)
     {
-        if (Name.IsNullOrWhiteSpace())
-        {
-            throw new ArgumentException("SQL parameter names name cannot be null or empty.", nameof(Name));
-        }
-        else if (SqlIdentifierPattern.Fails(Name))
+        if (SqlIdentifierPattern.Fails(Name))
         {
             throw new SqlNamePatternException(Name);
         }
