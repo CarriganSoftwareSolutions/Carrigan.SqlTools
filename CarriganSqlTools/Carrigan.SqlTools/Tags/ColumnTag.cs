@@ -11,9 +11,9 @@ namespace Carrigan.SqlTools.Tags;
 public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
 {
     private readonly string _columnTag;
-    internal readonly string _columnName; //TODO: Unit tests
-    internal readonly PropertyInfo _propertyInfo; //TODO: Unit tests
-    internal readonly ParameterTag _parameterTag; //TODO: Unit tests
+    internal readonly string _columnName;
+    internal readonly PropertyInfo _propertyInfo;
+    internal readonly ParameterTag _parameterTag;
     internal ColumnTag(TableTag tableTag, string columnName, PropertyInfo propertyInfo, ParameterTag parameterTag)
     {
         if (columnName.IsNullOrEmpty())
