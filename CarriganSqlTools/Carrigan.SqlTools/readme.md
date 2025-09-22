@@ -25,6 +25,10 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
   - [Delete with Join and Where](#delete-with-join-and-where)
   - [Select Count With Where](#select-count-with-where)
   - [Update with Joins and Where](#update-with-joins-and-where)
+- [Attribute Examples](#attribute-examples)
+  - [Table, Column and Key](#table-and-column)
+  - [Identifier and Primary Key](#identifier-and-primary-key)
+  - [Procedure and Parameter](#procedure-and-parameter)
 - [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
@@ -351,6 +355,92 @@ SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, cus
 
 [Table of Contents](#table-of-contents)
 
+
+---
+
+## Attribute Examples
+### Table, Column and Key
+
+```csharp
+[Table("Phone", Schema = "schema")]
+public class PhoneModel
+{
+    [Key]
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    [Column("Phone")]
+    public string? PhoneNumber { get; set; }
+}
+
+SqlGenerator<PhoneModel> phoneGenerator = new();
+
+PhoneModel phone = new()
+{
+    Id = 2718,
+    CustomerId = 3141,
+    PhoneNumber = "+15555555555"
+};
+SqlQuery query = phoneGenerator.UpdateById(phone);
+
+// UPDATE [schema].[Phone] 
+// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+// WHERE [Id] = @Id;
+```
+
+[Table of Contents](#table-of-contents)
+
+### Identifier and Primary Key
+
+```csharp
+[Identifier("Email", "schema")]
+public class EmailModel
+{
+    [PrimaryKey]
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    [Identifier("Email")]
+    public string? EmailAddress { get; set; }
+}
+
+SqlGenerator<EmailModel> emailGenerator = new();
+
+EmailModel email = new()
+{
+    Id = 10,
+    CustomerId = 313,
+    EmailAddress = "Exterminate@Skaro.gov"
+};
+SqlQuery query = emailGenerator.UpdateById(email);
+
+// UPDATE [schema].[Email] 
+// SET [CustomerId] = @CustomerId, [Email] = @Email 
+// WHERE [Id] = @Id;
+```
+
+[Table of Contents](#table-of-contents)
+
+### Procedure and Parameter
+
+```csharp
+[Identifier("UpdateThing", "schema")]
+public class ProcedureExec
+{
+    [Parameter ("SomeValue")]
+    public string? ValueColumn { get; set; }
+}
+
+SqlGenerator<ProcedureExec> procedureExecGenerator = new();
+
+ProcedureExec procedureExec = new()
+{
+    ValueColumn = "DangItBobby"
+};
+SqlQuery query = procedureExlGenerator.Procedure(procedureExec);
+
+// [schema].[UpdateThing]
+```
+
+[Table of Contents](#table-of-contents)
 
 ---
 

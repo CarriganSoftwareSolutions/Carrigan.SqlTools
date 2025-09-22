@@ -6,12 +6,17 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 using System.Text;
 
+//IGNORE SPELLING: dbo
+
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
 public class FromReadMeExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
     private static readonly SqlGenerator<Order> orderGenerator = new();
+    private static readonly SqlGenerator<PhoneModel> phoneGenerator = new();
+    private static readonly SqlGenerator<EmailModel> emailGenerator = new();
+    private static readonly SqlGenerator<ProcedureExec> procedureExlGenerator = new();
 
     private static string ModifyInsertQueryToReturnScalar(string queryText)
     {
@@ -252,5 +257,61 @@ public class FromReadMeExamples
 
         Assert.Equal(123.45m, (decimal)query.Parameters.Where(param => param.Key == "@ParameterSet_Total").Single().Value);
         Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Parameter_Email").Single().Value);
+    }
+
+    [Fact]
+    public void TableColumnKey()
+    {
+        PhoneModel phone = new()
+        {
+            Id = 2718,
+            CustomerId = 3141,
+            PhoneNumber = "07700 900461"
+        };
+        SqlQuery query = phoneGenerator.UpdateById(phone);
+
+        string expectedSql = "UPDATE [schema].[Phone] SET [CustomerId] = @CustomerId, [Phone] = @Phone WHERE [Id] = @Id;";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+        Assert.Equal(3, query.GetParameterCount());
+        Assert.Equal(2718, query.GetParameterValue<int>("Id"));
+        Assert.Equal(3141, query.GetParameterValue<int>("CustomerId"));
+        Assert.Equal("07700 900461", query.GetParameterValue<string>("Phone"));
+    }
+
+    [Fact]
+    public void IdentifierPrimaryKey()
+    {
+        EmailModel email = new()
+        {
+            Id = 10,
+            CustomerId = 313,
+            EmailAddress = "Exterminate@Skaro.gov"
+        };
+        SqlQuery query = emailGenerator.UpdateById(email);
+
+        string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId, [Email] = @Email WHERE [Id] = @Id;";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+        Assert.Equal(3, query.GetParameterCount());
+        Assert.Equal(10, query.GetParameterValue<int>("Id"));
+        Assert.Equal(313, query.GetParameterValue<int>("CustomerId"));
+        Assert.Equal("Exterminate@Skaro.gov", query.GetParameterValue<string>("Email"));
+    }
+
+    [Fact]
+    public void Procedure()
+    {
+        ProcedureExec procedureExec = new()
+        {
+            ValueColumn = "DangItBobby"
+        };
+        SqlQuery query = procedureExlGenerator.Procedure(procedureExec);
+
+        string expectedSql = "[schema].[UpdateThing]";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal("DangItBobby", query.GetParameterValue<string>("SomeValue"));
     }
 }
