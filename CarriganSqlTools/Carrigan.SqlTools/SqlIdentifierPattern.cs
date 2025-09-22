@@ -5,25 +5,40 @@ namespace Carrigan.SqlTools;
 //Ignore Spelling: Za
 
 /// <summary>
-/// Pattern match used to check certain identifier names.
+/// Provides helper methods to validate SQL Server identifier names
+/// (e.g., table names, column names, parameter names) against
+/// SQL Server’s identifier naming rules.
 /// </summary>
 public static class SqlIdentifierPattern
 {
     /// <summary>
-    /// Defines the pattern to check for, based on the SQL Server Identifier naming rules.
+    /// The regular expression pattern that enforces SQL Server identifier rules:
+    /// must begin with a letter, underscore, @, or # and may contain letters,
+    /// digits, underscores, @, $, or # thereafter.
     /// </summary>
     private static readonly string _pattern = @"^[A-Za-z_@#][A-Za-z0-9_@$#]*$";
+
     /// <summary>
-    /// Determine if <see <paramref name="identifier"/> passes the test.
+    /// Determines whether the specified <paramref name="identifier"/> complies
+    /// with SQL Server identifier naming rules.
     /// </summary>
-    /// <param name="identifier"></param>
-    /// <returns>true if  <see <paramref name="identifier"/> passes the test. Otherwise false</returns>
+    /// <param name="identifier">The identifier name to validate.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="identifier"/> matches the SQL Server
+    /// naming pattern; otherwise, <c>false</c>.
+    /// </returns>
     public static bool Passes(string identifier) =>
          Regex.IsMatch(identifier, _pattern);
+
     /// <summary>
-    /// Determine if <see <paramref name="identifier"/> failed the test.
+    /// Determines whether the specified <paramref name="identifier"/> violates
+    /// SQL Server identifier naming rules.
     /// </summary>
-    /// <returns>true if  <see <paramref name="identifier"/> fails the test. Otherwise false</returns>
+    /// <param name="identifier">The identifier name to validate.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="identifier"/> does not match the SQL Server
+    /// naming pattern; otherwise, <c>false</c>.
+    /// </returns>
     public static bool Fails(string identifier) =>
          Regex.IsMatch(identifier, _pattern) == false;
 }
