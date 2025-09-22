@@ -16,7 +16,7 @@ public class FromReadMeExamples
     private static readonly SqlGenerator<Order> orderGenerator = new();
     private static readonly SqlGenerator<PhoneModel> phoneGenerator = new();
     private static readonly SqlGenerator<EmailModel> emailGenerator = new();
-    private static readonly SqlGenerator<ProcedureExec> procedureExlGenerator = new();
+    private static readonly SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 
     private static string ModifyInsertQueryToReturnScalar(string queryText)
     {
@@ -306,7 +306,7 @@ public class FromReadMeExamples
         {
             ValueColumn = "DangItBobby"
         };
-        SqlQuery query = procedureExlGenerator.Procedure(procedureExec);
+        SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 
         string expectedSql = "[schema].[UpdateThing]";
         string actualSql = query.QueryText;
