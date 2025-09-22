@@ -1,17 +1,29 @@
 ﻿using Carrigan.SqlTools.Tags;
+using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
     /// <summary>
-    /// Creates a Sql Query object that represents a stored procedure call.
-    /// 
-    /// Note:When creating a data model, the contextual difference between a data model for a table and a stored procedure is which method you call from the SQL Generator.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Creates an <see cref="SqlQuery"/> that represents a stored procedure call
+    /// for the specified data model instance.
     /// </summary>
-    /// <param name="entity">A class that represents a stored procedure call.</param>
-    /// <returns>A SqlQuery representing a stored procedure call.</returns>
+    /// <param name="entity">
+    /// A data model instance that represents the stored procedure to execute,
+    /// with its public properties mapped to procedure parameters.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> configured to call the stored procedure,
+    /// including parameter values and <see cref="CommandType.StoredProcedure"/>.
+    /// </returns>
+    /// <remarks>
+    /// When creating a data model for a stored procedure, the key distinction from
+    /// a table-based model is that you call <c>Procedure</c> instead of an
+    /// insert, update, or delete method on the <see cref="SqlGenerator{T}"/>.  
+    /// The data model type must be <c>public</c>, and any properties intended
+    /// as parameters must be public instance properties with a public getter.
+    /// </remarks>
     public SqlQuery Procedure(T entity)
     {
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = Columns.Select(columns => GetSqlParameterKeyValue(columns, entity));

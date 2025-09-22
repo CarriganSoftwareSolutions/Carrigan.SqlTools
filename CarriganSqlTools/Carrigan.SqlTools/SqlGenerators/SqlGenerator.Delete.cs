@@ -11,12 +11,20 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public partial class SqlGenerator<T>
 {
     /// <summary>
-    /// Generates SQL to delete the record passed in.  
-    /// It only looks at the key fields for generating the SQL.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>DELETE</c> statement for the specified entity,
+    /// using only its key fields to identify the record to remove.
     /// </summary>
-    /// <param name="entity">use the data model as an id holder, uses only the key fields</param>
-    /// <returns>Returns an SqlQuery object</returns>
+    /// <param name="entity">
+    /// An instance of the data model that supplies the key field values
+    /// used to locate the record to delete.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// The data model type must be <c>public</c>, and any properties that should map to
+    /// columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Id = 42 };
@@ -40,10 +48,16 @@ public partial class SqlGenerator<T>
     }
 
     /// <summary>
-    /// Generates SQL to delete all records for the given data model
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>DELETE</c> statement that removes all rows
+    /// from the table represented by the data model type <typeparamref name="T"/>.
     /// </summary>
-    /// <returns>an SqlQuery object</returns>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// The data model type must be <c>public</c>, and any properties that should map to
+    /// columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = customerGenerator.DeleteAll();
@@ -60,13 +74,22 @@ public partial class SqlGenerator<T>
         CommandType = CommandType.Text
     };
 
-
     /// <summary>
-    /// Generates SQL to delete the record passed in by Id.  
-    /// It only looks at the key fields for generating the SQL.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>DELETE</c> statement that removes the rows matching the key
+    /// fields of the specified entities.
     /// </summary>
-    /// <param name="entity">use the data model as an id holder, uses only the key fields</param>
+    /// <param name="entities">
+    /// A sequence of data model instances used only as ID holders;  
+    /// their key field values determine which rows to delete.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// The data model type must be <c>public</c>, and any properties intended for use as
+    /// columns must be public instance properties with a public getter.
+    /// </remarks>
+    /// <param name="entity">an IEnumerable use the data model as an id holder, uses only the key fields</param>
     /// <returns>Returns an SqlQuery object</returns>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -80,14 +103,25 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery DeleteById(params IEnumerable<T> entities) =>
         Delete(null, new Or(entities.Select(entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
+
     /// <summary>
-    /// Generates SQL delete. 
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>DELETE</c> statement for the table represented by
+    /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
-    /// <param name="joins">any joins</param>
-    /// <param name="predicates">any where predicates</param>
-    /// <returns>Returns an SqlQuery object</returns>
-    /// <exception cref="SqlIdentifierException"></exception>
+    /// <param name="joins">
+    /// Optional <see cref="IJoins"/> that specify related tables to join when forming the delete statement.
+    /// </param>
+    /// <param name="predicates">
+    /// Optional <see cref="PredicatesBase"/> representing the <c>WHERE</c> conditions
+    /// that determine which rows to delete.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// The data model type must be <c>public</c>, and any properties intended to map to columns
+    /// must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <para>Example with null Joins and null predicates</para>
     /// <code language="csharp"><![CDATA[
@@ -109,12 +143,10 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// </example>
     /// <example>
-    /// <para>Note: Columns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
-    /// Columns&lt;Customer&gt; id = new(nameof(Customer.Id));
-    /// Columns&lt;Order&gt; customerId = new(nameof(Order.CustomerId));
-    /// Equal equals = new(id, customerId);
-    /// InnerJoin&lt;Order, Customer&gt; join = new(equals);
+    /// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// InnerJoin&lt;Order, Customer&gt; join = new(predicate);
     /// 
     /// SqlQuery query = orderGenerator.Delete(join, null);
     /// ]]></code>
@@ -124,13 +156,11 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// </example>
     /// <example>
-    /// <para>Note: Columns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
-    /// Columns&lt;Customer&gt; id = new(nameof(Customer.Id));
-    /// Columns&lt;Order&gt; customerId = new(nameof(Order.CustomerId));
-    /// Equal equals = new(id, customerId);
-    /// InnerJoin&lt;Order, Customer&gt; join = new(equals);
+    /// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// InnerJoin&lt;Order, Customer&gt; join = new(predicate);
     /// 
     /// ColumnValues&lt;Customer&gt; customerEmail = new(nameof(Customer.Email), "spam@example.com");
     /// 

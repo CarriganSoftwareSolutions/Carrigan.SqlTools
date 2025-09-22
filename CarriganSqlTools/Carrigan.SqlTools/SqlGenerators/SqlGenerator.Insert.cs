@@ -1,19 +1,27 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Tags;
-using System.Reflection;
 using System.Text;
+//IGNORE SPELLING: newid
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
     /// <summary>
-    /// This is a helper method that modifies insert queries to return a key field from the insert
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Modifies a SQL <c>INSERT</c> statement so that it returns the generated key value
+    /// (for example, a <c>UNIQUEIDENTIFIER</c> primary key) after insertion.
     /// </summary>
-    /// <param name="queryText">Insert Sql Query</param>
-    /// <returns>modified Insert Sql Query</returns>
+    /// <param name="queryText">
+    /// The original SQL <c>INSERT</c> statement to modify.
+    /// </param>
+    /// <returns>
+    /// A SQL string that inserts the row and returns the generated key value
+    /// using an output table and a <c>SELECT</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// The data model type must be <c>public</c>, and any properties intended to map to columns
+    /// must be public instance properties with a public getter.
+    /// </remarks>
     internal static string ModifyInsertQueryToReturnScalar(string queryText) =>
         // Build the final query using a temporary table to store the GUID
         new StringBuilder().AppendLine("DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);")
@@ -21,24 +29,58 @@ public partial class SqlGenerator<T>
             .AppendLine("SELECT InsertedId FROM @OutputTable;")
             .ToString();
 
+    /// <summary>
+    /// Builds the <c>VALUES</c> clause for a single SQL <c>INSERT</c> row,
+    /// generating parameter placeholders for the specified columns.
+    /// </summary>
+    /// <param name="columns">
+    /// The collection of <see cref="ColumnTag"/> objects that identify the columns to insert.
+    /// </param>
+    /// <param name="i">
+    /// Optional zero-based index used to append a unique index to each parameter name.  
+    /// If <c>null</c>, no index is appended.
+    /// </param>
+    /// <returns>
+    /// A SQL string representing the <c>VALUES</c> clause for one row,
+    /// for example <c>(@Column1, @Column2)</c>.
+    /// </returns>
     private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, int? i = null) =>
         i == null
             ? $"({string.Join(", ", columns.Select(column => $"@{column._parameterTag}"))})"
             : $"({string.Join(", ", columns.Select(column => $"@{column._parameterTag.AddIndex(i.Value.ToString())}"))})";
 
     /// <summary>
-    /// This is a helper method that generates the Values portion of the query
+    /// Builds the combined <c>VALUES</c> clause for a multi-row SQL <c>INSERT</c> statement,
+    /// generating a parameterized value list for each entity.
     /// </summary>
+    /// <param name="columns">
+    /// The collection of <see cref="ColumnTag"/> objects that identify the columns to insert.
+    /// </param>
+    /// <param name="entities">
+    /// The collection of entity instances providing values for each row to insert.
+    /// </param>
+    /// <returns>
+    /// A SQL string representing the <c>VALUES</c> clause for all entities,
+    /// for example <c>(@Column1_0, @Column2_0), (@Column1_1, @Column2_1)</c>.
+    /// </returns>
     private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, params IEnumerable<T> entities) =>
         $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
 
     /// <summary>
-    /// This method generates an Insert SQL query, utilizing default values for key fields.
-    /// Note: in order for this to work correctly, the key fields must have a default value.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>INSERT</c> statement for the specified entity,
+    /// relying on database default values for key (identity, newid()) fields.
     /// </summary>
-    /// <param name="entity">a data model representing a new SQL record</param>
-    /// <returns>an SQL query object</returns>
+    /// <param name="entity">
+    /// A data model instance representing the new record to insert.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>INSERT</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// For this method to work correctly, all key fields must have database default values.  
+    /// The data model type must be <c>public</c>, and any properties intended for use as
+    /// columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new()
@@ -85,13 +127,22 @@ public partial class SqlGenerator<T>
             };
         }
     }
+
     /// <summary>
-    /// This method generates an Insert SQL query for one or more record, utilizing default values for key fields.
-    /// Note: in order for this to work correctly, the key fields must have a default value.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>INSERT</c> statement for one or more entities,
+    /// relying on database default values for key (identity) fields.
     /// </summary>
-    /// <param name="entity">a data model representing a new SQL record</param>
-    /// <returns>an SQL query object</returns>
+    /// <param name="entities">
+    /// A collection of data model instances representing the new records to insert.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated multi-row <c>INSERT</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// For this method to work correctly, all key fields must have database default values.  
+    /// The data model type must be <c>public</c>, and any properties intended to map to
+    /// columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// IEnumerable<Customer> customers =

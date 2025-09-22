@@ -11,13 +11,24 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public partial class SqlGenerator<T>
 {
     /// <summary>
-    /// Builds an SqlQuery object, which contains a parameterized Sql SELECT with a Dictionary representing the parameter value pairs.
+    /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
+    /// <c>SELECT COUNT(*)</c> from the table represented by <typeparamref name="T"/>,
+    /// with optional <c>JOIN</c> and <c>WHERE</c> clauses.
     /// </summary>
-    /// <param name="joins">Defines the joins. Leave as null to leave out joins.</param>
-    /// <param name="predicates">Defines the WHERE clause. Leave as null to leave out the WHERE clause.</param>
-    /// <param name="OrderBy">Defines the ORDER BY clause. Leave as null to leave out the ORDER BY clause.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
+    /// <param name="joins">
+    /// Optional joins to include in the count query. Omit to count only rows from the base table.
+    /// </param>
+    /// <param name="predicates">
+    /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated count SQL and whose
+    /// <c>Parameters</c> are derived from <paramref name="predicates"/>.
+    /// </returns>
+    /// <exception cref="SqlIdentifierException">
+    /// Thrown if the <c>WHERE</c> clause references tables that are not included in the base
+    /// table or the specified <paramref name="joins"/>.
+    /// </exception>
     /// <param name="orderBy"></param>
     /// <example>
     /// <code language="csharp"><![CDATA[

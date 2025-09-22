@@ -11,11 +11,21 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public partial class SqlGenerator<T>
 {
     /// <summary>
-    /// This method generates SQL to update a single record.
+    /// Generates a SQL <c>UPDATE</c> statement that modifies a single row identified
+    /// by the entity’s key fields.
     /// </summary>
-    /// <param name="entity">Record being updates</param>
-    /// <param name="columns">Specify columns to update, leave null to update all except key fields.</param>
-    /// <returns>SQL Query object</returns>
+    /// <param name="entity">
+    /// The data model instance whose key fields identify the target row and whose
+    /// property values supply the column values to set.
+    /// </param>
+    /// <param name="columns">
+    /// Optional column selection. When provided, only these columns are updated; when
+    /// <c>null</c>, all non-key columns are updated.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
+    /// including parameters for both the <c>SET</c> values and the key-based <c>WHERE</c> filter.
+    /// </returns>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new()
@@ -85,13 +95,29 @@ public partial class SqlGenerator<T>
     }
 
     /// <summary>
-    /// This method generates SQL to update one or more records.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>UPDATE</c> statement that sets column values from
+    /// <paramref name="valuesEntity"/> for all rows whose key fields match any of the
+    /// specified <paramref name="idEntities"/>.
     /// </summary>
-    /// <param name="entity">Record being updates</param>
-    /// <param name="columns">Specify columns to update, leave null to update all except key fields.</param>
-    /// <param name="idEntities">Id holders to indicate which records to update</param>
-    /// <returns>SQL Query object</returns>
+    /// <param name="valuesEntity">
+    /// The data model instance providing the values for the <c>SET</c> clause.
+    /// </param>
+    /// <param name="columns">
+    /// Optional column selection. When provided, only these columns are updated; when
+    /// <c>null</c>, all non-key columns are updated.
+    /// </param>
+    /// <param name="idEntities">
+    /// One or more data model instances used only as ID holders; their key field values
+    /// are combined into an <c>OR</c> of per-entity <c>AND</c> predicates to select rows to update.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
+    /// including parameters for both the <c>SET</c> values and the key-based <c>WHERE</c> filter.
+    /// </returns>
+    /// <remarks>
+    /// The data model type must be <c>public</c>, and any properties intended to map to
+    /// columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer updateValues = new()
@@ -135,14 +161,31 @@ public partial class SqlGenerator<T>
     }
 
     /// <summary>
-    /// This method generates SQL to update one or more records.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>UPDATE</c> statement that modifies one or more rows,
+    /// with optional <c>JOIN</c> and <c>WHERE</c> conditions.
     /// </summary>
-    /// <param name="entity">Record being updates</param>
-    /// <param name="columns">Specify columns to update, leave null to update all except key fields.</param>
-    /// <param name="joins">Use joins to help determine which record to update</param>
-    /// <param name="predicates">Use where clause predicates to help determine which records to update</param>
-    /// <returns>SQL Query object</returns>
+    /// <param name="entity">
+    /// The data model instance whose property values supply the column values to set.
+    /// </param>
+    /// <param name="columns">
+    /// Optional column selection. When provided, only these columns are updated; when
+    /// <c>null</c>, all non-key columns are updated.
+    /// </param>
+    /// <param name="joins">
+    /// Optional <see cref="IJoins"/> describing tables to join for the update.
+    /// </param>
+    /// <param name="predicates">
+    /// Optional <see cref="PredicatesBase"/> describing the <c>WHERE</c> clause that
+    /// determines which rows to update.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
+    /// including parameters for the <c>SET</c> values and any predicate values.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="predicates"/> reference tables that are not present
+    /// in the base table or the specified <paramref name="joins"/>.
+    /// </exception>
     /// <example>
     /// <para>
     /// Create Update SQL query with a Where clause.

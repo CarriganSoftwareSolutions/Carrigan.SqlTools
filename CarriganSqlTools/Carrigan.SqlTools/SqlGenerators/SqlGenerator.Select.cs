@@ -12,13 +12,24 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
-
     /// <summary>
-    /// Used to build an SQL Query that selects all records from a table.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>SELECT *</c> statement that returns all rows
+    /// from the table represented by <typeparamref name="T"/>.
     /// </summary>
-    /// <exception cref="ArgumentException"></exception>
-    /// <param name="orderBy">optional parameter to add an order by clause</param>
+    /// <param name="orderBy">
+    /// Optional ordering to include in the <c>ORDER BY</c> clause.
+    /// If omitted, the rows are returned without an explicit order.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>SELECT</c> statement.
+    /// </returns>
+    /// <exception cref="SqlIdentifierException">
+    /// Thrown if the generated query references invalid or unrecognized table identifiers.
+    /// </exception>
+    /// <remarks>
+    /// The data model type must be <c>public</c>, and any properties intended to map
+    /// to columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = customerGenerator.SelectAll();
@@ -44,16 +55,37 @@ public partial class SqlGenerator<T>
         Select(null, null, orderBy, null);
 
     /// <summary>
-    /// Builds an SqlQuery object, which contains a parameterized Sql SELECT * with a Dictionary representing the parameter value pairs.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
+    /// <c>SELECT *</c> from the table represented by <typeparamref name="T"/>,
+    /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
+    /// <c>OFFSET … FETCH NEXT</c> clauses.
     /// </summary>
-    /// <param name="joins">Defines the joins. Leave as null to leave out joins.</param>
-    /// <param name="predicates">Defines the WHERE clause. Leave as null to leave out the WHERE clause.</param>
-    /// <param name="OrderBy">Defines the ORDER BY clause. Leave as null to leave out the ORDER BY clause.</param>
-    /// <param name="offsetNext">Defines the Offset Next clause. Leave as null to leave out the Offset Next clause.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    /// <param name="joins"></param>
+    /// <param name="joins">
+    /// Optional joins to include in the query. Omit to select only from the base table.
+    /// </param>
+    /// <param name="predicates">
+    /// Optional filter predicates to compose the <c>WHERE</c> clause.
+    /// </param>
+    /// <param name="orderBy">
+    /// Optional ordering to compose the <c>ORDER BY</c> clause.
+    /// When <paramref name="offsetNext"/> is provided, key columns are appended to
+    /// the ordering (if not already present) to ensure stable paging semantics.
+    /// </param>
+    /// <param name="offsetNext">
+    /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
+    /// <c>Parameters</c> contain values from <paramref name="predicates"/>.
+    /// </returns>
+    /// <exception cref="SqlIdentifierException">
+    /// Thrown if the <c>WHERE</c> or <c>ORDER BY</c> clauses reference tables that are
+    /// not included in the base table or the specified <paramref name="joins"/>.
+    /// </exception>
+    /// <remarks>
+    /// The data model type <typeparamref name="T"/> must be <c>public</c>, and any properties
+    /// intended to map to columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <para>Select with join example:</para>
     /// <para>
@@ -167,11 +199,6 @@ public partial class SqlGenerator<T>
             orderBy = orderBy.WithConcat(oderByKeyItems);
         }
 
-        if (orderBy.IsNullOrEmpty() && offsetNext is not null)
-        {
-            throw new ArgumentException($"Including an {nameof(offsetNext)} is not supported when {orderBy} is null or empty.");
-        }
-
         if (joins?.IsNotNullOrEmpty() ?? false)
         {
             queryBuilder.Append($" {string.Join(' ', joins.ToSql())}");
@@ -197,12 +224,24 @@ public partial class SqlGenerator<T>
         
     }
 
+
     /// <summary>
-    /// Returns an Sql Query object that represents a Select query that selects records based on the Key fields in the <paramref name="entities"/> provided.
-    /// Note: The data model should be public, and any properties you wish to access as columns should be public instance properties with a public getter.
+    /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key
+    /// fields of the specified entities.
     /// </summary>
-    /// <param name="joins"></param>
-    /// <returns>Returns an Sql Query object that represents a Select query that selects records based on the Key fields in the <paramref name="entities"/> provided.</returns>
+    /// <param name="entities">
+    /// One or more data model instances used only as ID holders; their key field values
+    /// are combined into a predicate that selects matching rows.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>SELECT</c> statement.
+    /// </returns>
+    /// <remarks>
+    /// The generated <c>WHERE</c> clause is composed as an <c>OR</c> of per-entity
+    /// <c>AND</c> predicates over the key columns.
+    /// The data model type must be <c>public</c>, and any properties intended to map
+    /// to columns must be public instance properties with a public getter.
+    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Id = 42 };
