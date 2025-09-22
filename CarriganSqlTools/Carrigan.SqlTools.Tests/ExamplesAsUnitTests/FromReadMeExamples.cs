@@ -157,7 +157,7 @@ public class FromReadMeExamples
     [Fact]
     public void SelectWithJoinsAndOrderBy()
     {
-        //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Customer, Order> join = new(columnEqualsColumn);
@@ -174,12 +174,11 @@ public class FromReadMeExamples
     [Fact]
     public void SelectWithTwoPartOrderBy()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Customer> id = new(nameof(Customer.Id));
-        Columns<Order> customerId = new(nameof(Order.CustomerId));
-        Equal equals = new(id, customerId);
-        InnerJoin<Customer, Order> join = new(equals);
+        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+
+        InnerJoin<Customer, Order> join = new(columnEqualsColumn);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
         OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
@@ -195,12 +194,11 @@ public class FromReadMeExamples
     [Fact]
     public void DeleteWithJoinAndWhere()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Customer> id = new (nameof(Customer.Id));
-        Columns<Order> customerId = new (nameof(Order.CustomerId));
-        Equal equals = new (id, customerId);
-        InnerJoin<Order, Customer> join = new(equals);
+        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+
+        InnerJoin<Order, Customer> join = new(columnEqualsColumn);
 
         ColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
@@ -232,17 +230,16 @@ public class FromReadMeExamples
     public void UpdateWithJoinsAndWhere()
     {
         //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Order entity = new () { Id = 10, Total = 123.45m };
 
         SetColumns<Order> setColumns = new(nameof(Order.Total));
 
-        Columns<Customer> customerId = new(nameof(Customer.Id));
-        Columns<Order> orderCustomerId = new(nameof(Order.CustomerId));
-        Equal customerIdsEquals = new(orderCustomerId, customerId);
-        InnerJoin<Order, Customer> joinOnCustomerId = new (customerIdsEquals);
+        ColumnEqualsColumn<Order, Customer> columnEqualsColumn = new(nameof(Order.CustomerId), nameof(Customer.Id));
+
+        InnerJoin<Order, Customer> joinOnCustomerId = new(columnEqualsColumn);
 
         ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 

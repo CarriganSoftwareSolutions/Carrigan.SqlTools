@@ -239,7 +239,7 @@ SqlQuery query = customerGenerator.DeleteById(entities);
 
 
 ### Select with Joins and Order By
-`ColumnEqualsColumn<Customer>`, Order validates the names of the properties, and throws an error if the property isn't valid
+`ColumnEqualsColumn<LeftT, RightT>`, Order validates the names of the properties, and throws an error if the property isn't valid
 
 `OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
@@ -260,14 +260,13 @@ SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
 
 
 ### Select with Two Part Order By
-`Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
+`ColumnEqualsColumn<LeftT, RightT>`, Order validates the names of the properties, and throws an error if the property isn't valid
 
 `OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-Columns<Customer> id = new(nameof(Customer.Id));
-Columns<Order> customerId = new(nameof(Order.CustomerId));
-Equal equals = new(id, customerId);
-InnerJoin<Customer, Order> join = new(equals);
+ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+
+InnerJoin<Customer, Order> join = new(columnEqualsColumn);
 
 OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
@@ -285,14 +284,13 @@ SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
 
 
 ### Delete with Join and Where
-`Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
+`ColumnEqualsColumn<LeftT, RightT>` validates the names of the properties, and throws an error if the property isn't valid
 
 `ColumnValues<T>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-Columns<Customer> id = new(nameof(Customer.Id));
-Columns<Order> customerId = new(nameof(Order.CustomerId));
-Equal equals = new(id, customerId);
-InnerJoin<Order, Customer> join = new(equals);
+ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+
+InnerJoin<Order, Customer> join = new(columnEqualsColumn);
 
 ColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
@@ -327,7 +325,7 @@ SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
 ### Update with Joins and Where
 `SetColumns<T>` validates the names of the properties, and throws an error if the property isn't valid
 
-`Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
+`ColumnEqualsColumn<LeftT, RightT>` validates the names of the properties, and throws an error if the property isn't valid
 
 `ColumnValues<T>` validates the names of the properties, and throws an error if the property isn't valid
 
@@ -336,10 +334,9 @@ Order entity = new () { Id = 10, Total = 123.45m };
 
 SetColumns<Order> setColumns = new(nameof(Order.Total));
 
-Columns<Customer> customerId = new(nameof(Customer.Id));
-Columns<Order> orderCustomerId = new(nameof(Order.CustomerId));
-Equal customerIdsEquals = new(orderCustomerId, customerId);
-InnerJoin<Order, Customer> joinOnCustomerId = new (customerIdsEquals);
+ColumnEqualsColumn<Order, Customer> columnEqualsColumn = new(nameof(Order.CustomerId), nameof(Customer.Id));
+
+InnerJoin<Order, Customer> joinOnCustomerId = new(columnEqualsColumn);
 
 ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
