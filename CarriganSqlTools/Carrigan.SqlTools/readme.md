@@ -20,6 +20,7 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
   - [Update by Id (selected columns)](#update-by-id-selected-columns)
   - [Delete](#delete)
   - [Delete by Id (multiple keys)](#delete-by-id-multiple-keys)
+- [More Complex Examples](#more-complex-examples) 
   - [Select with Joins and Order By](#select-with-joins-and-order-by)
   - [Select with Two Part Order By](#select-with-two-part-order-by)
   - [Delete with Join and Where](#delete-with-join-and-where)
@@ -241,6 +242,9 @@ SqlQuery query = customerGenerator.DeleteById(entities);
 
 [Table of Contents](#table-of-contents)
 
+---
+
+## More Complex Examples
 
 ### Select with Joins and Order By
 `ColumnEqualsColumn<LeftT, RightT>`, Order validates the names of the properties, and throws an error if the property isn't valid
