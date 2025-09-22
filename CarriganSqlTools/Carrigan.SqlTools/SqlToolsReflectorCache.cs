@@ -11,73 +11,84 @@ using System.Reflection;
 namespace Carrigan.SqlTools;
 
 /// <summary>
-/// Provides lazy loaded reflection caching for the library.
+/// Provides lazily initialized, reflection-based metadata for the data model
+/// type <typeparamref name="T"/> used by the SQL tools library.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">
+/// The entity or data model type that maps to a SQL table or stored procedure.
+/// </typeparam>
 public class SqlToolsReflectorCache<T>
 {
     /// <summary>
-    /// Represents the C# <see cref="Type"/> for the class <see cref="T"/>
+    /// Gets the CLR <see cref="Type"/> that represents <typeparamref name="T"/>.
     /// </summary>
     internal static readonly Type Type;
 
     /// <summary>
-    /// Represents an Enumeration  <see cref="ColumnTag"/> for the key fields for the given type <see cref="T"/>
+    /// Gets all key-column <see cref="ColumnTag"/> instances for <typeparamref name="T"/>.
     /// </summary>
     internal static IEnumerable<ColumnTag> KeyColumns =>
         _LazyKeyColumns.Value;
 
     /// <summary>
-    /// Represents an Enumeration <see cref="ColumnTag"/>s for the given type <see cref="T"/>
+    /// Gets all key-column <see cref="ColumnTag"/> instances for <typeparamref name="T"/>.
     /// </summary>
     internal static IEnumerable<ColumnTag> Columns =>
         _LazyColumnsDictionary.Value.Values;
 
     /// <summary>
-    /// Represents an Enumeration <see cref="ColumnTag"/>s for the given type <see cref="T"/> less the key fields
+    /// <summary>
+    /// Gets all non-key <see cref="ColumnTag"/> instances for <typeparamref name="T"/>.
     /// </summary>
     internal static IEnumerable<ColumnTag> ColumnsLessKeys =>
         _LazyColumnsLessKeys.Value;
 
     /// <summary>
-    /// Represents the <see cref="TableTag"/> for the given type <see cref="T"/>
+    /// Gets the <see cref="TableTag"/> for <typeparamref name="T"/>.
     /// </summary>
     internal static TableTag Table => 
         _LazyTableTag.Value;
 
     /// <summary>
-    /// Represents the <see cref="ProcedureTag"/> for the given type <see cref="T"/>
+    /// Gets the <see cref="ProcedureTag"/> for <typeparamref name="T"/>.
     /// </summary>
     internal static ProcedureTag ProcedureTag => 
         _LazyProcedureTag.Value;
 
     /// <summary>
-    /// Represents the <see cref="ColumnTag"/> used to store the encryption version. This should be null if and only if the table doesn't contain encryption
+    /// Gets the <see cref="ColumnTag"/> used to store the encryption key version,
+    /// or <c>null</c> if the model has no encrypted columns.
     /// </summary>
     internal static ColumnTag? KeyVersionColumn =>
         _LazyKeyVersionColumn.Value;
 
     /// <summary>
-    /// Determines if the <see cref="ColumnTag"/> contains a <see cref="PropertyInfo"/> flagged for encryption.
+    /// Determines whether the specified <paramref name="column"/> is flagged for encryption.
     /// </summary>
-    /// <param name="column"></param>
-    /// <returns>True if so, otherwise false.</returns>
+    /// <param name="column">The column to check.</param>
+    /// <returns><c>true</c> if the column is encrypted; otherwise, <c>false</c>.</returns>
     internal static bool ContainsEncryptedProperty(ColumnTag column) =>
         _LazyEncryptedColumnsHashSet.Value.Contains(column);
 
     /// <summary>
-    /// Determines if a if table represented by T has encrypted columns
+    /// Determines whether <typeparamref name="T"/> defines any encrypted columns.
     /// </summary>
-    /// <returns>True if so, false if not</returns>
+    /// <returns><c>true</c> if one or more columns are encrypted; otherwise, <c>false</c>.</returns>
     internal static bool HasEncryptedColumns() =>
         _LazyEncryptedColumnsHashSet.Value.Count != 0;
 
 
     /// <summary>
-    /// Gets an enumeration of <see cref="ColumnTag"/>s one for each property name passed in.
+    /// Resolves an enumeration of <see cref="ColumnTag"/> objects for the provided property names.
     /// </summary>
-    /// <param name="propertyNames">multiple property names </param>
-    /// <returns>the <see cref="IEnumerable{ColumnTag}"/>  associated with a property name in <see cref="T"/></returns>
+    /// <param name="propertyNames">One or more property names on <typeparamref name="T"/>.</param>
+    /// <returns>All matching <see cref="ColumnTag"/> instances.</returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when one or more property names do not map to a column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="SqlNamePatternException">
+    /// Thrown when a resolved column name fails SQL identifier validation.
+    /// </exception>
     internal static IEnumerable<ColumnTag> GetColumnsFromProperties(params IEnumerable<string> propertyNames)
     {
         List<Exception> exceptions = [];
@@ -111,95 +122,93 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Checks if there if a <see cref="ColumnTag"/> exists for a given property name.
+    /// Determines whether a column mapping exists for the specified property name.
     /// </summary>
-    /// <param name="propertyName">PropertyInfo.Name</param>
-    /// <returns>the <see cref="ColumnTag"/>  associated with a property name in <see cref="T"/></returns>
+    /// <param name="propertyName">The <see cref="PropertyInfo.Name"/> to check.</param>
+    /// <returns><c>true</c> if a mapping exists; otherwise, <c>false</c>.</returns>
     private static bool ContainsProperty(string propertyName) =>
         _LazyColumnsDictionary.Value.ContainsKey(propertyName);
 
     /// <summary>
-    /// Gets a nullable <see cref="ColumnTag"/> from a property name
+    /// Returns the <see cref="ColumnTag"/> mapped to the specified property name,
+    /// or <c>null</c> if none exists.
     /// </summary>
-    /// <param name="propertyName">PropertyInfo.Name</param>
-    /// <returns>the <see cref="ColumnTag"/>  associated with a property name in <see cref="T"/></returns>
+    /// <param name="propertyName">The <see cref="PropertyInfo.Name"/> to resolve.</param>
+    /// <returns>The corresponding <see cref="ColumnTag"/>, or <c>null</c>.</returns>
     private static ColumnTag? GetColumnByProperty(string propertyName) =>
         ContainsProperty(propertyName) ? _LazyColumnsDictionary.Value[propertyName] : null;
 
     /// <summary>
-    /// Used for determining a table name associated with <see cref="T"/>
-    /// USed to help set <see cref="Table"/>
-    /// USed to help set <see cref="_LazyKeyColumns"/>
-    /// USed to help set <see cref="_LazyEncryptedColumnsHashSet"/>
-    /// USed to help set <see cref="_LazyColumnsDictionary"/>
-    /// USed to help set <see cref="_LazyKeyVersionColumn"/>
+    /// Lazily resolves the <see cref="TableTag"/> for <typeparamref name="T"/> and
+    /// seeds other table-dependent caches.
     /// </summary>
     private static readonly Lazy<TableTag> _LazyTableTag;
 
     /// <summary>
-    /// Used for determining a procedure name associated with <see cref="T"/>
-    /// USed to help set <see cref="ProcedureTag"/>
+    /// Lazily resolves the <see cref="ProcedureTag"/> for <typeparamref name="T"/>.
     /// </summary>
     private static readonly Lazy<ProcedureTag> _LazyProcedureTag;
 
     /// <summary>
-    /// Determines which ColumnTag is associated with the Encryption KeyVersion used in a record.
-    /// USed to help set <see cref="KeyVersionColumn"/>
+    /// Lazily resolves the <see cref="ColumnTag"/> representing the encryption key version,
+    /// if present on <typeparamref name="T"/>.
     /// </summary>
     private static readonly Lazy<ColumnTag?> _LazyKeyVersionColumn;
 
     /// <summary>
-    /// Used to determine the Table name and Schema name, when the <see cref="TableAttribute"/> is used. 
-    /// USed is in <see cref="GetTableName"/>
-    /// USed is in <see cref="GetSchemaName"/>
+    /// Lazily resolves the <see cref="TableAttribute"/> (if any) on <typeparamref name="T"/>,
+    /// used when deriving table name and schema.
     /// </summary>
     private static readonly Lazy<TableAttribute?> _LazyTableAttribute;
 
     /// <summary>
-    /// LazyIEnumerable that contains all of the <see cref="PropertyInfo"/> for each qualifying property represented by <see cref="T"/>
-    /// USed to help set <see cref="_LazyColumnsDictionary"/>
-    /// USed to help set <see cref="_LazyKeyVersionColumn"/>
+    /// Lazily resolves all public, readable, mapped properties on <typeparamref name="T"/>
+    /// that are supported by the SQL generator.
     /// </summary>
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyProperties;
 
     /// <summary>
-    /// LazyIEnumerable that contains all of the <see cref="PropertyInfo"/> foreach qualifying property represented by <see cref="T"/> that is not part of the key
-    /// USed to help set <see cref="_LazyEncryptedColumnsHashSet"/>
+    /// Lazily resolves all public, readable, mapped properties that are not part of the key
+    /// on <typeparamref name="T"/>.
     /// </summary>
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyPropertiesLessKeys;
 
     /// <summary>
-    /// LazyIEnumerable that contains all of the <see cref="ColumnTag"/> for each key column represented by <see cref="T"/>
-    /// USed to help set <see cref="ColumnsLessKeys"/>
-    /// USed to help set <see cref="_LazyKeyColumns"/>
-    /// USed to help set <see cref="_LazyPropertiesLessKeys"/>
-    /// USed to help set <see cref="_LazyColumnsLessKeys"/>
+    /// Lazily resolves all key-column <see cref="ColumnTag"/> instances for <typeparamref name="T"/>.
+    /// Used to help set <see cref="ColumnsLessKeys"/>
+    /// Used to help set <see cref="_LazyKeyColumns"/>
+    /// Used to help set <see cref="_LazyPropertiesLessKeys"/>
+    /// Used to help set <see cref="_LazyColumnsLessKeys"/>
     /// </summary>
     private static readonly Lazy<IEnumerable<ColumnTag>> _LazyKeyColumns;
 
     /// <summary>
-    /// LazyIEnumerable that contains all of the <see cref="ColumnTag"/> for each column represented by <see cref="T"/>
-    /// USed to help set <see cref="KeyColumns"/>
-    /// USed to help set <see cref="_LazyKeyVersionColumn"/>
+    /// Lazily resolves all non-key <see cref="ColumnTag"/> instances for <typeparamref name="T"/>.
+    /// Used to help set <see cref="KeyColumns"/>
+    /// Used to help set <see cref="_LazyKeyVersionColumn"/>
     /// </summary>
     private static readonly Lazy<IEnumerable<ColumnTag>> _LazyColumnsLessKeys;
 
     /// <summary>
-    /// Lazy HashSet used to determine if a column has been flagged for encryption.
+    /// Lazily resolves the set of encrypted column tags for <typeparamref name="T"/>.
     /// Used by <see cref="ContainsEncryptedProperty"/>
     /// Used by <see cref="HasEncryptedColumns"/>
     /// </summary>
     private static readonly Lazy<HashSet<ColumnTag>> _LazyEncryptedColumnsHashSet;
 
     /// <summary>
-    /// Static Lazy Dictionary holds look up information to get a Column using a C# property name.
+    /// Lazily resolves a dictionary mapping property names to <see cref="ColumnTag"/> instances
+    /// for <typeparamref name="T"/>.
     /// Used by <see cref="Columns"/> 
     /// Used by <see cref="ContainsProperty"/>
-    /// USed by <see cref="GetColumnByProperty"/>
-    /// USed to help set <see cref="_LazyColumnsLessKeys"/>
+    /// Used by <see cref="GetColumnByProperty"/>
+    /// Used to help set <see cref="_LazyColumnsLessKeys"/>
     /// </summary>
     private static readonly Lazy<Dictionary<string, ColumnTag>> _LazyColumnsDictionary;
 
+    /// <summary>
+    /// Static constructor that initializes all lazy caches for <typeparamref name="T"/>.
+    /// </summary>
     static SqlToolsReflectorCache()
     {
         Type = typeof(T);
@@ -316,10 +325,15 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Returns the column name associated with the <see cref="PropertyInfo"/> in class <see cref="T"/>
+    /// Resolves the SQL column name to use for the given <see cref="PropertyInfo"/>.
+    /// Checks custom identifiers first, then <see cref="ColumnAttribute"/>, then falls back
+    /// to the property name; validates against SQL identifier rules.
     /// </summary>
-    /// <returns>The name of the column to be used in SQL generations</returns>
-    /// <exception cref="SqlNamePatternException"></exception>
+    /// <param name="property">The property to resolve.</param>
+    /// <returns>The validated column name.</returns>
+    /// <exception cref="SqlNamePatternException">
+    /// Thrown when the resolved name fails SQL identifier validation.
+    /// </exception>
     private static string GetColumnName(PropertyInfo property)
     {
         IdentifierAttribute? identifier = property.GetCustomAttribute<IdentifierAttribute>();
@@ -344,10 +358,14 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Returns the parameter name associated with the <see cref="PropertyInfo"/> in class <see cref="T"/>
+    /// Resolves the SQL parameter <see cref="ParameterTag"/> for the given <see cref="PropertyInfo"/>.
+    /// Uses <see cref="ParameterAttribute"/> when present; otherwise derives from the column name.
     /// </summary>
-    /// <returns>The name of the parameter to be used in SQL generations</returns>
-    /// <exception cref="SqlNamePatternException"></exception>
+    /// <param name="property">The property to resolve.</param>
+    /// <returns>The <see cref="ParameterTag"/> to use for SQL generation.</returns>
+    /// <exception cref="SqlNamePatternException">
+    /// Thrown when an attribute-specified name fails SQL identifier validation.
+    /// </exception>
     private static ParameterTag GetParameterName(PropertyInfo property)
     {
         ParameterAttribute? parameterName = property.GetCustomAttribute<ParameterAttribute>();
@@ -366,10 +384,13 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Returns the table name associated with the class <see cref="T"/>
+    /// Resolves the SQL table name for <typeparamref name="T"/>. Checks custom identifiers first,
+    /// then <see cref="TableAttribute"/>, then falls back to the CLR type name; validates the result.
     /// </summary>
-    /// <returns>The name of the table to be used in SQL generations</returns>
-    /// <exception cref="SqlNamePatternException"></exception>
+    /// <returns>The validated table name.</returns>
+    /// <exception cref="SqlNamePatternException">
+    /// Thrown when the resolved name fails SQL identifier validation.
+    /// </exception>
     private static string GetTableName()
     {
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
@@ -393,10 +414,13 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Returns the procedure name associated with the class <see cref="T"/>
+    /// Resolves the SQL stored procedure name for <typeparamref name="T"/>.
+    /// Checks custom identifiers first, then falls back to the CLR type name; validates the result.
     /// </summary>
-    /// <returns>The name of the procedure to be used in SQL generations</returns>
-    /// <exception cref="SqlNamePatternException"></exception>
+    /// <returns>The validated procedure name.</returns>
+    /// <exception cref="SqlNamePatternException">
+    /// Thrown when the resolved name fails SQL identifier validation.
+    /// </exception>
     private static string GetProcedureName()
     {
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
@@ -412,10 +436,13 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Returns the schema name associated with the class <see cref="T"/>
+    /// Resolves the SQL schema name for <typeparamref name="T"/>. Checks custom identifiers first,
+    /// then <see cref="TableAttribute"/>, otherwise returns an empty string; validates when present.
     /// </summary>
-    /// <returns>The name of the schema to be used in SQL generations</returns>
-    /// <exception cref="SqlNamePatternException"></exception>
+    /// <returns>The schema name, or <see cref="string.Empty"/> if none.</returns>
+    /// <exception cref="SqlNamePatternException">
+    /// Thrown when a provided schema name fails SQL identifier validation.
+    /// </exception>
     private static string GetSchemaName()
     {
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
