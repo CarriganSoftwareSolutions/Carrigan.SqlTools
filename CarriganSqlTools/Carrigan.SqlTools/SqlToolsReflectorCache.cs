@@ -83,17 +83,13 @@ public class SqlToolsReflectorCache<T>
     /// </summary>
     /// <param name="propertyNames">One or more property names on <typeparamref name="T"/>.</param>
     /// <returns>All matching <see cref="ColumnTag"/> instances.</returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when one or more property names do not map to a column on <typeparamref name="T"/>.
-    /// </exception>
-    /// <exception cref="SqlNamePatternException">
-    /// Thrown when a resolved column name fails SQL identifier validation.
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when one or more property names do not match any qualifying
+    /// column properties in <typeparamref name="T"/>.
     /// </exception>
     internal static IEnumerable<ColumnTag> GetColumnsFromProperties(params IEnumerable<string> propertyNames)
     {
-        List<Exception> exceptions = [];
-
-        IEnumerable<string> invalidPropertyNames = 
+        IEnumerable<string> invalidPropertyNames =
             propertyNames
                 .Where(propertyName => ContainsProperty(propertyName) is false);
 
@@ -103,22 +99,10 @@ public class SqlToolsReflectorCache<T>
                 .Select(propertyName => GetColumnByProperty(propertyName))
                 .OfType<ColumnTag>(); //filter nulls, clear null reference warning
 
-        IEnumerable<ColumnTag> invalidColumns =
-            columns
-                .Where(column => SqlIdentifierPattern.Fails(column?._columnName ?? string.Empty))
-                .OfType<ColumnTag>();
-
         if (invalidPropertyNames.Any())
-            exceptions.Add(new ArgumentException($"The property names {invalidPropertyNames.JoinAnd()} do not have an associated column in {Table}.", nameof(propertyNames)));
-        if (invalidColumns.Any())
-            exceptions.Add(new SqlNamePatternException(invalidPropertyNames));
-
-        if (exceptions.None())
-            return columns; 
-        else if (exceptions.Count == 1)
-            throw exceptions.Single();
+            throw new InvalidPropertyException<T>(invalidPropertyNames);
         else
-            throw new AggregateException(exceptions);
+            return columns; 
     }
 
     /// <summary>
@@ -331,7 +315,7 @@ public class SqlToolsReflectorCache<T>
     /// </summary>
     /// <param name="property">The property to resolve.</param>
     /// <returns>The validated column name.</returns>
-    /// <exception cref="SqlNamePatternException">
+    /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when the resolved name fails SQL identifier validation.
     /// </exception>
     private static string GetColumnName(PropertyInfo property)
@@ -339,7 +323,7 @@ public class SqlToolsReflectorCache<T>
         IdentifierAttribute? identifier = property.GetCustomAttribute<IdentifierAttribute>();
         if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
             if (SqlIdentifierPattern.Fails(identifier.Name))
-                throw new SqlNamePatternException(identifier.Name);
+                throw new InvalidSqlIdentifierException(identifier.Name);
             else
                 return identifier.Name;
         else
@@ -347,11 +331,11 @@ public class SqlToolsReflectorCache<T>
             ColumnAttribute? columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
             if(columnAttribute != null && columnAttribute.Name.IsNotNullOrWhiteSpace())
                 if (SqlIdentifierPattern.Fails(columnAttribute.Name))
-                    throw new SqlNamePatternException(columnAttribute.Name);
+                    throw new InvalidSqlIdentifierException(columnAttribute.Name);
                 else
                     return columnAttribute.Name;
             else  if (SqlIdentifierPattern.Fails(property.Name))
-                throw new SqlNamePatternException(property.Name);
+                throw new InvalidSqlIdentifierException(property.Name);
             else
                 return property.Name;
         }
@@ -363,7 +347,7 @@ public class SqlToolsReflectorCache<T>
     /// </summary>
     /// <param name="property">The property to resolve.</param>
     /// <returns>The <see cref="ParameterTag"/> to use for SQL generation.</returns>
-    /// <exception cref="SqlNamePatternException">
+    /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when an attribute-specified name fails SQL identifier validation.
     /// </exception>
     private static ParameterTag GetParameterName(PropertyInfo property)
@@ -373,7 +357,7 @@ public class SqlToolsReflectorCache<T>
         if (parameterName != null && parameterName.Name.IsNotNullOrWhiteSpace())
         {
             if (SqlIdentifierPattern.Fails(parameterName.Name))
-                throw new SqlNamePatternException(parameterName.Name);
+                throw new InvalidSqlIdentifierException(parameterName.Name);
             else
                 return new(null, parameterName.Name, null);
         }
@@ -388,7 +372,7 @@ public class SqlToolsReflectorCache<T>
     /// then <see cref="TableAttribute"/>, then falls back to the CLR type name; validates the result.
     /// </summary>
     /// <returns>The validated table name.</returns>
-    /// <exception cref="SqlNamePatternException">
+    /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when the resolved name fails SQL identifier validation.
     /// </exception>
     private static string GetTableName()
@@ -396,18 +380,18 @@ public class SqlToolsReflectorCache<T>
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
         if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
             if (SqlIdentifierPattern.Fails(identifier.Name))
-                throw new SqlNamePatternException(identifier.Name);
+                throw new InvalidSqlIdentifierException(identifier.Name);
             else
                 return identifier.Name;
         else
         {
             if (_LazyTableAttribute.Value != null && _LazyTableAttribute.Value.Name.IsNotNullOrWhiteSpace())
                 if (SqlIdentifierPattern.Fails(_LazyTableAttribute.Value.Name))
-                    throw new SqlNamePatternException(_LazyTableAttribute.Value.Name);
+                    throw new InvalidSqlIdentifierException(_LazyTableAttribute.Value.Name);
                 else
                     return _LazyTableAttribute.Value.Name;
             else if (SqlIdentifierPattern.Fails(Type.Name))
-                throw new SqlNamePatternException(Type.Name);
+                throw new InvalidSqlIdentifierException(Type.Name);
             else
                 return Type.Name;
         }
@@ -418,7 +402,7 @@ public class SqlToolsReflectorCache<T>
     /// Checks custom identifiers first, then falls back to the CLR type name; validates the result.
     /// </summary>
     /// <returns>The validated procedure name.</returns>
-    /// <exception cref="SqlNamePatternException">
+    /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when the resolved name fails SQL identifier validation.
     /// </exception>
     private static string GetProcedureName()
@@ -426,11 +410,11 @@ public class SqlToolsReflectorCache<T>
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
         if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
             if (SqlIdentifierPattern.Fails(identifier.Name))
-                throw new SqlNamePatternException(identifier.Name);
+                throw new InvalidSqlIdentifierException(identifier.Name);
             else
                 return identifier.Name;
         else if (SqlIdentifierPattern.Fails(Type.Name))
-                throw new SqlNamePatternException(Type.Name);
+                throw new InvalidSqlIdentifierException(Type.Name);
         else
             return Type.Name;
     }
@@ -440,7 +424,7 @@ public class SqlToolsReflectorCache<T>
     /// then <see cref="TableAttribute"/>, otherwise returns an empty string; validates when present.
     /// </summary>
     /// <returns>The schema name, or <see cref="string.Empty"/> if none.</returns>
-    /// <exception cref="SqlNamePatternException">
+    /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when a provided schema name fails SQL identifier validation.
     /// </exception>
     private static string GetSchemaName()
@@ -448,14 +432,14 @@ public class SqlToolsReflectorCache<T>
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
         if (identifier != null && identifier.Schema.IsNotNullOrWhiteSpace())
             if (SqlIdentifierPattern.Fails(identifier.Schema))
-                throw new SqlNamePatternException(identifier.Schema);
+                throw new InvalidSqlIdentifierException(identifier.Schema);
             else
                 return identifier.Schema;
         else
         {
             if (_LazyTableAttribute.Value != null && _LazyTableAttribute.Value.Schema.IsNotNullOrWhiteSpace())
                 if (SqlIdentifierPattern.Fails(_LazyTableAttribute.Value.Schema))
-                    throw new SqlNamePatternException(_LazyTableAttribute.Value.Schema);
+                    throw new InvalidSqlIdentifierException(_LazyTableAttribute.Value.Schema);
                 else
                     return _LazyTableAttribute.Value.Schema;
             else

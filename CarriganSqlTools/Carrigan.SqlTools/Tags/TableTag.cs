@@ -93,7 +93,7 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="tableName"/> is <c>null</c> or empty.
     /// </exception>
-    /// <exception cref="SqlNamePatternException">
+    /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
     internal TableTag(string? schemaName, string tableName)
@@ -104,9 +104,9 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
             _tableTag = schemaName.IsNullOrEmpty() ? $"[{tableName}]" : $"[{schemaName}].[{tableName}]";
 
         if (SqlIdentifierPattern.Fails(tableName))
-            throw new SqlNamePatternException(this);
+            throw new InvalidSqlIdentifierException(this);
         if(schemaName.IsNotNullOrWhiteSpace() && SqlIdentifierPattern.Fails(schemaName))
-            throw new SqlNamePatternException(this);
+            throw new InvalidSqlIdentifierException(this);
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Tests.Tags;
 
@@ -35,7 +36,7 @@ public class ColumnTagsTests
     [InlineData(null, "", null)]
     [InlineData(null, null, null)]
     public void Col_Tag_Tests_3_Params_null_column(string? schemaName, string? tableName, string? columnName) 
-        => Assert.Throws<ArgumentNullException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
+        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
@@ -62,7 +63,7 @@ public class ColumnTagsTests
     {
         TableTag tg = new(schemaName, tableName);
 
-        Assert.Throws<ArgumentNullException>(() => new ColumnTag(tg, columnName!, null!, null!));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(tg, columnName!, null!, null!));
     }
 
 

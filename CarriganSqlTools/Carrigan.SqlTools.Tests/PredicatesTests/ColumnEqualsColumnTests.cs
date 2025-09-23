@@ -25,18 +25,18 @@ public class ColumnEqualsColumnTests
 
     [Fact]
     public void LeftInvalid() => 
-        Assert.Throws<ArgumentException>(() => { ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new("QWERTY", nameof(JoinRightTable.Id)); });
+        Assert.Throws<InvalidPropertyException<JoinLeftTable>>(() => { ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new("QWERTY", nameof(JoinRightTable.Id)); });
 
     [Fact]
     public void RightInvalid() => 
-        Assert.Throws<ArgumentException>(() => { ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), "ASWD"); });
+        Assert.Throws<InvalidPropertyException<JoinRightTable>>(() => { ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), "ASWD"); });
 
     [Fact]
     public void PredicateColumnEqualsColumn()
     {
         //This error should be thrown, because JoinRightTable isn't being joined in the select statement.
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
-        Assert.Throws<SqlIdentifierException>(() =>
+        Assert.Throws<InvalidTableException>(() =>
         {
             SqlQuery query = leftGenerator.Select(null, columnEqualsColumn, null, null);
         });

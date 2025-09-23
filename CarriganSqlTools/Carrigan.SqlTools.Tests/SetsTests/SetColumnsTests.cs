@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Sets;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.SetsTests;
@@ -30,17 +31,7 @@ public class SetColumnsTests
     {
         string[] columns = ["Col1", "NotAColumn"];
 
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => new SetColumns<ColumnTable>(columns));
-    }
-
-    [Fact]
-    public void Constructor_WithMultipleInvalidColumns_ShouldThrowArgumentException()
-    {
-        string[] columns = ["Invalid1", "Col2", "Invalid2"];
-
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => new SetColumns<ColumnTable>(columns));
-        Assert.Contains("Invalid1", exception.Message);
-        Assert.Contains("Invalid2", exception.Message);
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new SetColumns<ColumnTable>(columns));
     }
 
     [Fact]

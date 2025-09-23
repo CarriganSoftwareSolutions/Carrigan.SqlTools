@@ -21,12 +21,12 @@ public class ParameterAttribute : Attribute
     /// The constructor for <see cref="ParameterAttribute"/>
     /// </summary>
     /// <param name="Name">Parameter name</param>
-    /// <exception cref="SqlNamePatternException">Throws an  exception if the <see cref="Name"/> is an invalid SQL identifier.</exception>
+    /// <exception cref="InvalidSqlIdentifierException">Throws an  exception if the <see cref="Name"/> is an invalid SQL identifier.</exception>
     public ParameterAttribute(string Name)
     {
         if (SqlIdentifierPattern.Fails(Name))
         {
-            throw new SqlNamePatternException(Name);
+            throw new InvalidSqlIdentifierException(Name);
         }
 
         this.Name = Name;

@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -23,7 +24,7 @@ public class OrderByItemTests
 
     [Fact]
     public void OrderByItem_Constructor_ArgumentException() => 
-        Assert.Throws<ArgumentException>(() => new OrderByItem<Address>("LiveLongAndProsper", SortDirectionEnum.Descending));
+        Assert.Throws<InvalidPropertyException<Address>>(() => new OrderByItem<Address>("LiveLongAndProsper", SortDirectionEnum.Descending));
 
 
     // IEquatable<IOrderByItem>.Equals against null
@@ -214,7 +215,7 @@ public class OrderByItemTests
     [Fact]
     public void Empty() =>
         //There is currently no way to test IsEmpty is true, as that should always generate an exception.
-        Assert.Throws<ArgumentException>(() => { OrderByItem<Address> streetItem = new(string.Empty); });
+        Assert.Throws<InvalidPropertyException<Address>>(() => { OrderByItem<Address> streetItem = new(string.Empty); });
 }
 
 #pragma warning restore CA1859 // Use concrete types when possible for improved performance

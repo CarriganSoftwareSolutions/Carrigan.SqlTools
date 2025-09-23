@@ -45,23 +45,21 @@ public class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag>,
     /// </summary>
     /// <param name="schemaName">The optional schema name. If <c>null</c> or empty, only the procedure name is used.</param>
     /// <param name="procedureName">The procedure name. Must not be <c>null</c> or empty.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="procedureName"/> is <c>null</c> or empty.
-    /// </exception>
-    /// <exception cref="SqlNamePatternException">
+    /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="procedureName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
     internal ProcedureTag(string? schemaName, string procedureName)
     {
-        if (procedureName.IsNullOrEmpty())
-            throw new ArgumentNullException(nameof(procedureName), $"{nameof(procedureName)} requires a value.");
+        List<string> invalidIdentifiers = [];
+        if (SqlIdentifierPattern.Fails(procedureName))
+            invalidIdentifiers.Add(procedureName);
+        if (schemaName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(schemaName))
+            invalidIdentifiers.Add(schemaName); 
+
+        if(invalidIdentifiers.Count != 0)
+            throw new InvalidSqlIdentifierException(invalidIdentifiers);
         else
             _procedureTag = schemaName.IsNullOrEmpty() ? $"[{procedureName}]" : $"[{schemaName}].[{procedureName}]";
-
-        if (SqlIdentifierPattern.Fails(procedureName))
-            throw new SqlNamePatternException(this);
-        if(schemaName.IsNotNullOrWhiteSpace() && SqlIdentifierPattern.Fails(schemaName))
-            throw new SqlNamePatternException(this);
     }
 
     /// <summary>

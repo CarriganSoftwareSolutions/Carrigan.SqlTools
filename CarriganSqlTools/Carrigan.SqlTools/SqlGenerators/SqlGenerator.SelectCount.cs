@@ -25,9 +25,8 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated count SQL and whose
     /// <c>Parameters</c> are derived from <paramref name="predicates"/>.
     /// </returns>
-    /// <exception cref="SqlIdentifierException">
-    /// Thrown if the <c>WHERE</c> clause references tables that are not included in the base
-    /// table or the specified <paramref name="joins"/>.
+    /// <exception cref="InvalidTableException">
+    /// Thrown if the generated query references invalid or unrecognized table identifiers.
     /// </exception>
     /// <param name="orderBy"></param>
     /// <example>
@@ -63,12 +62,12 @@ public partial class SqlGenerator<T>
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
+        IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectableTableTags);
         StringBuilder queryBuilder = new($"SELECT COUNT(*) FROM {Table}");
 
-        if (invalidPredicateTags.Any())
+        if (invalidTags.Any())
         {
-            throw new SqlIdentifierException(invalidPredicateTags);
+            throw new InvalidTableException(invalidTags);
         }
 
         if (joins?.IsNotNullOrEmpty() ?? false)

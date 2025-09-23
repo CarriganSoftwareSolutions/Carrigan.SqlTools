@@ -29,7 +29,7 @@ public class RoleTagTests
     [InlineData("Role; DROP TABLE Users")] // Injection attempt.
     public void InvalidRoleTag_ShouldThrowSqlNamePatternException(string invalidRole) =>
         // Assert that constructing a RoleTag with an invalid role name throws the expected exception.
-        Assert.Throws<SqlNamePatternException>(() => new RoleTag(invalidRole));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new RoleTag(invalidRole));
 
     [Fact]
     public void CompareTo_SameRole_ShouldReturnZero()

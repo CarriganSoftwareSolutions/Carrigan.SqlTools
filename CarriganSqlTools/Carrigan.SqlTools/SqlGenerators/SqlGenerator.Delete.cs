@@ -122,6 +122,11 @@ public partial class SqlGenerator<T>
     /// The data model type must be <c>public</c>, and any properties intended to map to columns
     /// must be public instance properties with a public getter.
     /// </remarks>
+    /// <exception cref="InvalidTableException">
+    /// Thrown when a <see cref="TableTag"/> referenced during SQL generation
+    /// belongs to a table that is not included in the <c>JOIN</c> clause or
+    /// specified as the primary table.
+    /// </exception>
     /// <example>
     /// <para>Example with null Joins and null predicates</para>
     /// <code language="csharp"><![CDATA[
@@ -186,9 +191,8 @@ public partial class SqlGenerator<T>
 
             if (invalidTags.Any())
             {
-                throw new SqlIdentifierException(invalidTags);
+                throw new InvalidTableException(invalidTags);
             }
-
             if (joins?.IsNotNullOrEmpty() ?? false)
             {
                 queryBuilder.Append($" {string.Join(' ', joins.ToSql())}");

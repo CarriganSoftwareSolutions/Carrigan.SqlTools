@@ -23,7 +23,7 @@ public partial class SqlGenerator<T>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>SELECT</c> statement.
     /// </returns>
-    /// <exception cref="SqlIdentifierException">
+    /// <exception cref="InvalidTableException">
     /// Thrown if the generated query references invalid or unrecognized table identifiers.
     /// </exception>
     /// <remarks>
@@ -78,9 +78,8 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
     /// <c>Parameters</c> contain values from <paramref name="predicates"/>.
     /// </returns>
-    /// <exception cref="SqlIdentifierException">
-    /// Thrown if the <c>WHERE</c> or <c>ORDER BY</c> clauses reference tables that are
-    /// not included in the base table or the specified <paramref name="joins"/>.
+    /// <exception cref="InvalidTableException">
+    /// Thrown if the generated query references invalid or unrecognized table identifiers.
     /// </exception>
     /// <remarks>
     /// The data model type <typeparamref name="T"/> must be <c>public</c>, and any properties
@@ -180,15 +179,12 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
+        IEnumerable<TableTag> invalidTags = invalidPredicateTags.Concat(invalidOrderByTags).Distinct();
         StringBuilder queryBuilder = new($"SELECT {Table}.* FROM {Table}");
 
-        if (invalidPredicateTags.Any())
+        if (invalidTags.Any())
         {
-            throw new SqlIdentifierException(invalidPredicateTags);
-        }
-        if (invalidOrderByTags.Any())
-        {
-            throw new SqlIdentifierException(invalidOrderByTags);
+            throw new InvalidTableException(invalidTags);
         }
 
         if (offsetNext is not null)

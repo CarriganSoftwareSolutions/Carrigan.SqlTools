@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.PredicatesTests;
@@ -9,7 +10,7 @@ public class ColumnValueTests
 {
     [Fact]
     public void ByColumnValue_ConstructorSimple_InValid_BadCol() => 
-        Assert.Throws<ArgumentException>(() => new ColumnValues<ColumnTable>("ilsabasbdyas", "1"));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new ColumnValues<ColumnTable>("ilsabasbdyas", "1"));
 
     [Fact]
     public void ByColumnValue_ConstructorSimple_Valid() => 

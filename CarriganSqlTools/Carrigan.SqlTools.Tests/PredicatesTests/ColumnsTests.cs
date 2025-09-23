@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.PredicatesTests;
@@ -11,11 +13,11 @@ public  class ColumnsTests
 
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_EmptyString() =>
-        Assert.Throws<ArgumentException>(() => new Columns<ColumnTable>(string.Empty));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Columns<ColumnTable>(string.Empty));
 
     [Fact]
     public void ColumnValues_One_Constructor_Column_DoesNot_Exist() =>
-        Assert.Throws<ArgumentException>(() => new Columns<ColumnTable>("C#"));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Columns<ColumnTable>("C#"));
 
     [Theory]
     [InlineData("Col1")]

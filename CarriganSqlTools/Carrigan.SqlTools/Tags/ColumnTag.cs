@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Exceptions;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
@@ -116,13 +117,13 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// <param name="parameterTag">
     /// The <see cref="ParameterTag"/> used to represent the column as a SQL parameter.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="columnName"/> is <c>null</c>, empty, or white space.
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when <paramref name="columnName"/> fails to meet the SQL identifier naming rules.
     /// </exception>
     internal ColumnTag(TableTag tableTag, string columnName, PropertyInfo propertyInfo, ParameterTag parameterTag)
     {
-        if (columnName.IsNullOrEmpty())
-            throw new ArgumentNullException(nameof(columnName), $"{nameof(columnName)} requires a value.");
+        if(SqlIdentifierPattern.Fails(columnName))
+            throw new InvalidSqlIdentifierException(columnName);
         else
         {
             _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";

@@ -46,7 +46,7 @@ public class IdentifierAttribute : Attribute
     /// </summary>
     /// <param name="Name">Sql Table/Column Identifier name</param>
     /// <param name="Schema">Sql Schema name</param>
-    /// <exception cref="SqlNamePatternException">If <see cref="Name"/> or <see cref="Name"/> have an invalid Sql Identifier</exception>
+    /// <exception cref="InvalidSqlIdentifierException">If <see cref="Name"/> or <see cref="Name"/> have an invalid Sql Identifier</exception>
     public IdentifierAttribute(string Name, string Schema = "")
     {
         bool validName = true;
@@ -65,15 +65,15 @@ public class IdentifierAttribute : Attribute
 
         if(validName == false && validSchema == false)
         {
-            throw new SqlNamePatternException(Name, Schema);
+            throw new InvalidSqlIdentifierException(Name, Schema);
         }
         else if(validName == false)
         {
-            throw new SqlNamePatternException(Name);
+            throw new InvalidSqlIdentifierException(Name);
         }
         else if (validSchema == false)
         {
-            throw new SqlNamePatternException(Schema);
+            throw new InvalidSqlIdentifierException(Schema);
         }
         this.Name = Name;
         this.Schema = Schema;

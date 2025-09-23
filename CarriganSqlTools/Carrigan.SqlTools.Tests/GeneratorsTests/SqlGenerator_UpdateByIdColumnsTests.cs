@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Sets;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -104,7 +105,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             When = "Now",
             DateOf = DateTime.UtcNow
         };
-        Assert.Throws<ArgumentException>(() => new  SetColumns<EntityWithTableAttribute>(["Name", "HideTimeFlag"]));
+        Assert.Throws<InvalidPropertyException<EntityWithTableAttribute>>(() => new  SetColumns<EntityWithTableAttribute>(["Name", "HideTimeFlag"]));
     }
 
     [Fact]

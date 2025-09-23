@@ -252,7 +252,7 @@ public class TableTagTests
         string schemaName = "dbo";
 
         // Act & Assert
-        Assert.Throws<SqlNamePatternException>(() => new TableTag(schemaName, invalidTable));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new TableTag(schemaName, invalidTable));
     }
 
     [Theory]
@@ -265,7 +265,7 @@ public class TableTagTests
         string tableName = "ValidTable";
 
         // Act & Assert
-        Assert.Throws<SqlNamePatternException>(() => new TableTag(invalidSchema, tableName));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new TableTag(invalidSchema, tableName));
     }
 
     [Fact]

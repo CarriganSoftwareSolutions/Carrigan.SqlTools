@@ -23,6 +23,6 @@ public class LeftJoinsTest
     public void InnerJoinTests_ArgumentException_InvalidColumnTable()
     {
         PredicatesBase id = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
-        Assert.Throws<SqlIdentifierException>(() => new LeftJoin<JoinLeftTable, ColumnTable>(id));
+        Assert.Throws<InvalidColumnException>(() => new LeftJoin<JoinLeftTable, ColumnTable>(id));
     }
 }

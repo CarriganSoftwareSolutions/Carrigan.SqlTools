@@ -39,8 +39,9 @@ public class InnerJoin<T, J> : JoinBaseClass
     /// <param name="predicate">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
     /// </param>
-    /// <exception cref="SqlIdentifierException">
-    /// Thrown when an invalid SQL identifier is encountered while building the join clause.
+    /// <exception cref="InvalidColumnException">
+    /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
+    /// that is not included in the <c>JOIN</c>.
     /// </exception>
     public InnerJoin(Predicates.PredicatesBase predicate)
     {
@@ -52,8 +53,8 @@ public class InnerJoin<T, J> : JoinBaseClass
                 .Where(column => column.TableTag != leftTableTag && column.TableTag != rightTableTag)
                 .Select(column => column.ColumnTag);
 
-        if (predicate.Column.Where(column => column.TableTag != leftTableTag && column.TableTag != rightTableTag).Any())
-            throw new SqlIdentifierException(invalidTags);
+        if (invalidTags.Any())
+            throw new InvalidColumnException(invalidTags);
 
         _sql = $"INNER JOIN {rightTableTag} ON {predicate.ToSql()}";
         _tableTags = [leftTableTag, rightTableTag];

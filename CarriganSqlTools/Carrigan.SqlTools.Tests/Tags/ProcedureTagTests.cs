@@ -28,7 +28,7 @@ public class ProcedureTagTests
     [InlineData(null, null)]
     [InlineData("", null)]
     public void Procedure_Tag_Tests_Argument_Exception(string? schemaName, string? procedureName) => 
-        Assert.Throws<ArgumentNullException>(() => new ProcedureTag(schemaName, procedureName!));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new ProcedureTag(schemaName, procedureName!));
 
     [Theory]
     [InlineData("Franks", "Pizza", "Franks", "Pizza")]
@@ -252,7 +252,7 @@ public class ProcedureTagTests
         string schemaName = "dbo";
 
         // Act & Assert
-        Assert.Throws<SqlNamePatternException>(() => new ProcedureTag(schemaName, invalidProcedure));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new ProcedureTag(schemaName, invalidProcedure));
     }
 
     [Theory]
@@ -265,7 +265,7 @@ public class ProcedureTagTests
         string ProcedureName = "ValidProcedure";
 
         // Act & Assert
-        Assert.Throws<SqlNamePatternException>(() => new ProcedureTag(invalidSchema, ProcedureName));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new ProcedureTag(invalidSchema, ProcedureName));
     }
 
     [Fact]

@@ -20,7 +20,7 @@ public class RoleTag : IComparable<RoleTag>, IEquatable<RoleTag>, IEqualityCompa
     {
         _role = role;
         if (SqlIdentifierPattern.Fails(role))
-            throw new SqlNamePatternException(this);
+            throw new InvalidSqlIdentifierException(this);
     }
     public static implicit operator string(RoleTag role) =>
         role._role;
