@@ -9,6 +9,33 @@ namespace Carrigan.SqlTools.Tags;
 /// The <c>[Schema]</c> segment is included only if explicitly provided. Implements
 /// comparison and equality for use in sorting and hashed collections.
 /// </summary>
+/// <example>
+/// <para>
+///  Using Procedure
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.SqlGenerators;
+/// 
+/// [Identifier("UpdateThing", "schema")]
+/// public class ProcedureExec
+/// {
+///     [Parameter("SomeValue")]
+///     public string? ValueColumn { get; set; }
+/// }
+/// 
+/// SqlGenerator<ProcedureExec> procedureExecGenerator = new();
+/// 
+/// ProcedureExec procedureExec = new()
+/// {
+///     ValueColumn = "DangItBobby"
+/// };
+/// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// [schema].[UpdateThing]
+/// ]]></code>
+/// </example>
 public class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag>, IEqualityComparer<ProcedureTag>
 {
     private readonly string _procedureTag;

@@ -1,4 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -12,6 +14,33 @@ namespace Carrigan.SqlTools.Tags;
 /// and <see cref="IEqualityComparer{ParameterTag}"/> to support sorting, equality checks,
 /// and use in collections that rely on hashing.
 /// </remarks>
+/// <example>
+/// <para>
+///  Using Parameter Example
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.SqlGenerators;
+/// 
+/// [Identifier("UpdateThing", "schema")]
+/// public class ProcedureExec
+/// {
+///     [Parameter("SomeValue")]
+///     public string? ValueColumn { get; set; }
+/// }
+/// 
+/// SqlGenerator<ProcedureExec> procedureExecGenerator = new();
+/// 
+/// ProcedureExec procedureExec = new()
+/// {
+///     ValueColumn = "DangItBobby"
+/// };
+/// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// [schema].[UpdateThing]
+/// ]]></code>
+/// </example>
 public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>, IEqualityComparer<ParameterTag>
 {
     /// <summary>

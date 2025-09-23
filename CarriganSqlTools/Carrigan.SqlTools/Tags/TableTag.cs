@@ -1,5 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.SqlGenerators;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
@@ -9,6 +13,74 @@ namespace Carrigan.SqlTools.Tags;
 /// The <c>[Schema]</c> segment is included only if explicitly provided. Implements
 /// comparison and equality for use in sorting and hashed collections.
 /// </summary>
+/// <example>
+/// <para>
+/// Using Table Attribute
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.SqlGenerators;
+/// 
+/// [Table("Phone", Schema = "schema")]
+/// public class PhoneModel
+/// {
+///     [Key]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Column("Phone")]
+///     public string? PhoneNumber { get; set; }
+/// }
+/// 
+/// SqlGenerator<PhoneModel> phoneGenerator = new();
+/// 
+/// PhoneModel phone = new()
+/// {
+///     Id = 2718,
+///     CustomerId = 3141,
+///     PhoneNumber = "07700 900461"
+/// };
+/// SqlQuery query = phoneGenerator.UpdateById(phone);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE [schema].[Phone] 
+/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// WHERE [Id] = @Id;
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>
+/// Using Identifier Attribute
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.SqlGenerators;
+/// 
+/// [Identifier("Email", "schema")]
+/// public class EmailModel
+/// {
+///     [PrimaryKey]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Identifier("Email")]
+///     public string? EmailAddress { get; set; }
+/// }
+/// 
+/// SqlGenerator<EmailModel> emailGenerator = new();
+/// 
+/// EmailModel email = new()
+/// {
+///     Id = 10,
+///     CustomerId = 313,
+///     EmailAddress = "Exterminate@Skaro.gov"
+/// };
+/// SqlQuery query = emailGenerator.UpdateById(email);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE [schema].[Phone] 
+/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// WHERE [Id] = @Id;
+/// ]]></code>
+/// </example>
 public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityComparer<TableTag>
 {
     private readonly string _tableTag;

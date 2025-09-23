@@ -9,6 +9,74 @@ namespace Carrigan.SqlTools.Tags;
 /// Aside from implementing various comparison and equality interfaces,
 /// this class is intended for internal use only.
 /// </summary>
+/// <example>
+/// <para>
+/// Using Column Attribute
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.SqlGenerators;
+/// 
+/// [Table("Phone", Schema = "schema")]
+/// public class PhoneModel
+/// {
+///     [Key]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Column("Phone")]
+///     public string? PhoneNumber { get; set; }
+/// }
+/// 
+/// SqlGenerator<PhoneModel> phoneGenerator = new();
+/// 
+/// PhoneModel phone = new()
+/// {
+///     Id = 2718,
+///     CustomerId = 3141,
+///     PhoneNumber = "07700 900461"
+/// };
+/// SqlQuery query = phoneGenerator.UpdateById(phone);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE [schema].[Phone] 
+/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// WHERE [Id] = @Id;
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>
+/// Using Identifier Attribute
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.SqlGenerators;
+/// 
+/// [Identifier("Email", "schema")]
+/// public class EmailModel
+/// {
+///     [PrimaryKey]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Identifier("Email")]
+///     public string? EmailAddress { get; set; }
+/// }
+/// 
+/// SqlGenerator<EmailModel> emailGenerator = new();
+/// 
+/// EmailModel email = new()
+/// {
+///     Id = 10,
+///     CustomerId = 313,
+///     EmailAddress = "Exterminate@Skaro.gov"
+/// };
+/// SqlQuery query = emailGenerator.UpdateById(email);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE [schema].[Phone] 
+/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// WHERE [Id] = @Id;
+/// ]]></code>
+/// </example>
 public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
 {
     /// <summary>
