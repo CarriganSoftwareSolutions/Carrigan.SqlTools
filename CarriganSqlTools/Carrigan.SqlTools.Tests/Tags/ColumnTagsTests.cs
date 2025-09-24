@@ -17,6 +17,54 @@ public class ColumnTagsTests
 
         Assert.Equal(expected, actual);
     }
+    [Theory]
+    [InlineData(null, "Sloppy", "")]
+    [InlineData(null, "", "")]
+    [InlineData(null, null, "")]
+    [InlineData(null, "Sloppy", null)]
+    [InlineData(null, "", null)]
+    [InlineData(null, null, null)]
+    public void Col_Tag_Tests_Schema_Null(string? schemaName, string? tableName, string? columnName)
+        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
+
+    [Theory]
+    [InlineData("", "Sloppy", "")]
+    [InlineData("", "", "")]
+    [InlineData("", null, "")]
+    [InlineData("", "Sloppy", null)]
+    [InlineData("", "", null)]
+    [InlineData("", null, null)]
+    public void Col_Tag_Tests_Schema_Empty(string? schemaName, string? tableName, string? columnName)
+        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
+
+    [Theory]
+    [InlineData("", null, "")]
+    [InlineData(null, null, "")]
+    [InlineData("Franks", null, null)]
+    [InlineData("", null, null)]
+    [InlineData(null, null, null)]
+    public void Col_Tag_Tests_3_Table_Null(string? schemaName, string? tableName, string? columnName)
+        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
+
+    [Theory]
+    [InlineData("", "", "")]
+    [InlineData(null, "", "")]
+    [InlineData("", "", null)]
+    [InlineData(null, "", null)]
+    public void Col_Tag_Tests_3_Table_Empty(string? schemaName, string? tableName, string? columnName)
+        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
+
+    [Theory]
+    [InlineData("Franks", "Sloppy", null)]
+    [InlineData(null, "Sloppy", null)]
+    [InlineData("", "Sloppy", null)]
+    [InlineData("Franks", null, null)]
+    [InlineData("", "", null)]
+    [InlineData("", null, null)]
+    [InlineData(null, "", null)]
+    [InlineData(null, null, null)]
+    public void Col_Tag_Tests_3_Column_Null(string? schemaName, string? tableName, string? columnName)
+        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", "")]
@@ -27,15 +75,7 @@ public class ColumnTagsTests
     [InlineData("", null, "")]
     [InlineData(null, "", "")]
     [InlineData(null, null, "")]
-    [InlineData("Franks", "Sloppy", null)]
-    [InlineData(null, "Sloppy", null)]
-    [InlineData("", "Sloppy", null)]
-    [InlineData("Franks", null, null)]
-    [InlineData("", "", null)]
-    [InlineData("", null, null)]
-    [InlineData(null, "", null)]
-    [InlineData(null, null, null)]
-    public void Col_Tag_Tests_3_Params_null_column(string? schemaName, string? tableName, string? columnName) 
+    public void Col_Tag_Tests_3_Params_Column_Empty(string? schemaName, string? tableName, string? columnName) 
         => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), columnName!, null!, null!));
 
     [Theory]

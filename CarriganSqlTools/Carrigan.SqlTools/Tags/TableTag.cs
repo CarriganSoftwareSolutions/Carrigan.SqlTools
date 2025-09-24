@@ -98,15 +98,12 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
     /// </exception>
     internal TableTag(string? schemaName, string tableName)
     {
-        if (tableName.IsNullOrEmpty())
-            throw new ArgumentNullException(nameof(tableName), $"{nameof(tableName)} requires a value.");
-        else
-            _tableTag = schemaName.IsNullOrEmpty() ? $"[{tableName}]" : $"[{schemaName}].[{tableName}]";
-
         if (SqlIdentifierPattern.Fails(tableName))
             throw new InvalidSqlIdentifierException(this);
-        if(schemaName.IsNotNullOrWhiteSpace() && SqlIdentifierPattern.Fails(schemaName))
+        else if (schemaName.IsNotNullOrWhiteSpace() && SqlIdentifierPattern.Fails(schemaName))
             throw new InvalidSqlIdentifierException(this);
+        else
+            _tableTag = schemaName.IsNullOrEmpty() ? $"[{tableName}]" : $"[{schemaName}].[{tableName}]";
     }
 
     /// <summary>
