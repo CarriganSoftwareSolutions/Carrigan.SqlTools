@@ -10,6 +10,7 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
+    //TODO: Revisit generated SQL, should it be Select(*) or Select(Table.*)
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT COUNT(*)</c> from the table represented by <typeparamref name="T"/>,
