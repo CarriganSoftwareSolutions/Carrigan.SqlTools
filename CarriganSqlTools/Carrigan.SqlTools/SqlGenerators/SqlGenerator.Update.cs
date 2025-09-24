@@ -257,6 +257,7 @@ public partial class SqlGenerator<T>
         if (joins?.IsNotNullOrEmpty() ?? false)
         {
             queryBuilder.Append($" {string.Join(' ', joins.ToSql())}");
+            parametersDictionary.Add(joins.Parameters);
         }
         if (predicates is not null)
         {

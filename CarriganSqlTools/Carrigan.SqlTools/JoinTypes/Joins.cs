@@ -63,4 +63,9 @@ public class Joins : IJoins
     /// <returns>The SQL fragment for the JOIN clause represented by <see cref="Joints"/>.</returns>
     public string ToSql() =>
         string.Join(" ", Joints.Select(join => join.ToSql()));
+
+    /// <summary>
+    /// Recursively get all the parameters associated with the logic.
+    /// </summary>
+    public Dictionary<ParameterTag, object> Parameters { get => new (Joints.SelectMany(join => join.Parameters)); }
 }

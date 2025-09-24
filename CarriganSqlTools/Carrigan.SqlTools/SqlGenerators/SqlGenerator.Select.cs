@@ -214,7 +214,7 @@ public partial class SqlGenerator<T>
         return new SqlQuery()
         {
             QueryText = queryBuilder.ToString(),
-            Parameters = predicates?.GetParameters() ?? [],
+            Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.GetParameters() ?? [])],
             CommandType = CommandType.Text
         };
         

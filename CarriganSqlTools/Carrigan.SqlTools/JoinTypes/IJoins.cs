@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
@@ -25,4 +26,9 @@ public interface IJoins
     /// participates in any join operation.
     /// </summary>
     public IEnumerable<TableTag> TableTags { get; }
+
+    /// <summary>
+    /// Recursively get all the parameters associated with the logic.
+    /// </summary>
+    internal Dictionary<ParameterTag, object> Parameters { get; }
 }

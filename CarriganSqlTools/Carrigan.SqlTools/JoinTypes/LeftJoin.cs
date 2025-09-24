@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
@@ -31,6 +32,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </example>
 public class LeftJoin<T, J> : JoinBaseClass
 {
+    private readonly IEnumerable<Parameters> _parameters;
     private readonly string _sql;
 
     /// <summary>
@@ -44,7 +46,7 @@ public class LeftJoin<T, J> : JoinBaseClass
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
 
-    public LeftJoin(Predicates.PredicatesBase predicate)
+    public LeftJoin(PredicatesBase predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
         TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;
@@ -59,7 +61,10 @@ public class LeftJoin<T, J> : JoinBaseClass
 
         _sql = $"LEFT JOIN {rightTableTag} ON {predicate.ToSql()}";
         _tableTags = [leftTableTag, rightTableTag];
+        _parameters = predicate.Parameter;
     }
+
+    public override Dictionary<ParameterTag, object> Parameters => new(_parameters.SelectMany(parameter => parameter.GetParameters()));
 
     /// <summary>
     /// Generates the SQL representation of the <c>LEFT JOIN</c> clause.

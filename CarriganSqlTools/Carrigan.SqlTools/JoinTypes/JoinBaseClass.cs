@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -41,4 +42,10 @@ public abstract class JoinBaseClass : IJoins
     /// </summary>
     /// <returns>The SQL fragment for the JOIN clause represented by <see cref="Joints"/>.</returns>
     public abstract string ToSql();
+
+
+    /// <summary>
+    /// Recursively get all the parameters associated with the logic.
+    /// </summary>
+    public abstract Dictionary<ParameterTag, object> Parameters { get; }
 }
