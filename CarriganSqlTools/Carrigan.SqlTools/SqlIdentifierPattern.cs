@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using Carrigan.Core.Extensions;
+using System.Text.RegularExpressions;
 
 namespace Carrigan.SqlTools;
 
@@ -40,5 +41,5 @@ public static class SqlIdentifierPattern
     /// naming pattern; otherwise, <c>false</c>.
     /// </returns>
     public static bool Fails(string identifier) =>
-         Regex.IsMatch(identifier, _pattern) == false;
+         identifier.IsNullOrWhiteSpace() || Regex.IsMatch(identifier, _pattern) == false;
 }
