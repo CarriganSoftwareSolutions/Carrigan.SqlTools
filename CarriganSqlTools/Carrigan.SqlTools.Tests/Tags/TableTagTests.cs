@@ -28,7 +28,7 @@ public class TableTagTests
     [InlineData(null, null)]
     [InlineData("", null)]
     public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName) => 
-        Assert.Throws<ArgumentNullException>(() => new TableTag(schemaName, tableName!));
+        Assert.Throws<InvalidSqlIdentifierException>(() => new TableTag(schemaName, tableName!));
 
     [Theory]
     [InlineData("Franks", "Pizza", "Franks", "Pizza")]
