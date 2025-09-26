@@ -10,12 +10,12 @@ namespace Carrigan.SqlTools;
 /// (e.g., table names, column names, parameter names) against
 /// SQL Server’s identifier naming rules.
 /// </summary>
-public static class SqlIdentifierPattern
+public static class SqlIdentifierNullablePattern
 {
     /// <summary>
     /// The regular expression pattern that enforces SQL Server identifier rules:
     /// must begin with a letter, underscore, @, or # and may contain letters,
-    /// digits, underscores, @, $, or # thereafter.
+    /// digits, underscores, @, $, or # thereafter. Allows null or empty.
     /// </summary>
     private static readonly string _pattern = @"^(?=.{1,128}$)[\p{L}_][\p{L}\p{N}_@$#]*$";
 
@@ -29,7 +29,8 @@ public static class SqlIdentifierPattern
     /// naming pattern; otherwise, <c>false</c>.
     /// </returns>
     public static bool Passes(string? identifier) =>
-         identifier is not null && Regex.IsMatch(identifier, _pattern);
+         //WHITE SPACE IS STILL NOT VALID HERE
+         identifier.IsNullOrEmpty() || Regex.IsMatch(identifier, _pattern);
 
     /// <summary>
     /// Determines whether the specified <paramref name="identifier"/> violates
@@ -41,5 +42,6 @@ public static class SqlIdentifierPattern
     /// naming pattern; otherwise, <c>false</c>.
     /// </returns>
     public static bool Fails(string? identifier) =>
-         identifier is not null && Regex.IsMatch(identifier, _pattern) == false;
+        //WHITE SPACE IS STILL NOT VALID HERE
+        identifier.IsNullOrEmpty() || Regex.IsMatch(identifier, _pattern) == false;
 }
