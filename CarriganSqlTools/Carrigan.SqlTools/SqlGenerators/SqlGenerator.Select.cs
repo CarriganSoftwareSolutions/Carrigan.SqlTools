@@ -52,7 +52,7 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// </example>
     public SqlQuery SelectAll(IOrderByClause? orderBy = null) =>
-        Select(null, null, orderBy, null);
+        Select(null, null, null, orderBy, null);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
@@ -60,6 +60,7 @@ public partial class SqlGenerator<T>
     /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
     /// <c>OFFSET … FETCH NEXT</c> clauses.
     /// </summary>
+    /// <param name="selects"></param>
     /// <param name="joins">
     /// Optional joins to include in the query. Omit to select only from the base table.
     /// </param>
@@ -70,9 +71,6 @@ public partial class SqlGenerator<T>
     /// Optional ordering to compose the <c>ORDER BY</c> clause.
     /// When <paramref name="offsetNext"/> is provided, key columns are appended to
     /// the ordering (if not already present) to ensure stable paging semantics.
-    /// </param>
-    /// <param name="offsetNext">
-    /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
@@ -172,28 +170,38 @@ public partial class SqlGenerator<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(IJoins? joins, PredicatesBase? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
+    /// <param name="offsetNext">
+    /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
+    /// </param>
+    public SqlQuery Select(ISelectTags? selects, IJoins? joins, PredicatesBase? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+        IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
+        IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
-        IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
+        IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
-        IEnumerable<TableTag> invalidTags = invalidPredicateTags.Concat(invalidOrderByTags).Distinct();
-        StringBuilder queryBuilder = new($"SELECT {Table}.* FROM {Table}");
+        IEnumerable<TableTag> invalidTags = invalidSelectedTags.Concat(invalidPredicateTags).Concat(invalidOrderByTags).Distinct();
+        StringBuilder queryBuilder;
 
         if (invalidTags.Any())
-        {
             throw new InvalidTableException(invalidTags);
-        }
+
 
         if (offsetNext is not null)
         {
             //add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server that has unexpected behavior if the order by values are not unique
             orderBy ??= new OrderBy();
-            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. KeyColumns.Select(key => new OrderByItem<T>(key._columnName, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
+            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. KeyColumns.Select(key => new OrderByItem<T>(key.PropertyName, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
             orderBy = orderBy.WithConcat(oderByKeyItems);
         }
+
+
+        if(selects is not null &&  selects.Any())
+            queryBuilder = new($"SELECT {selects.GetSelects()} FROM {Table}");
+        else
+            queryBuilder = new($"SELECT {Table}.* FROM {Table}");
 
         if (joins?.IsNotNullOrEmpty() ?? false)
         {
@@ -216,10 +224,8 @@ public partial class SqlGenerator<T>
             QueryText = queryBuilder.ToString(),
             Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.GetParameters() ?? [])],
             CommandType = CommandType.Text
-        };
-        
+        };        
     }
-
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key
@@ -250,5 +256,5 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// </example>
     public SqlQuery SelectById(params T[] entities) =>
-        Select(null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
+        Select(null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
 }

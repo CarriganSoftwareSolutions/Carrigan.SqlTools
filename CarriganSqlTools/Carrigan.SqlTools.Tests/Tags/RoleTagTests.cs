@@ -8,7 +8,6 @@ public class RoleTagTests
     [Theory]
     [InlineData("UserRole")]
     [InlineData("_Role1")]
-    [InlineData("@Admin")]
     [InlineData("#TempRole")]
     [InlineData("Role$Name")]
     public void ValidRoleTag_ShouldConstructSuccessfully(string validRole)
@@ -27,6 +26,7 @@ public class RoleTagTests
     [InlineData("123Role")]                // Starts with a digit.
     [InlineData("")]                       // Empty string.
     [InlineData("Role; DROP TABLE Users")] // Injection attempt.
+    [InlineData("@Admin")]
     public void InvalidRoleTag_ShouldThrowSqlNamePatternException(string invalidRole) =>
         // Assert that constructing a RoleTag with an invalid role name throws the expected exception.
         Assert.Throws<InvalidSqlIdentifierException>(() => new RoleTag(invalidRole));

@@ -1,5 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.RegularExpressions;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;

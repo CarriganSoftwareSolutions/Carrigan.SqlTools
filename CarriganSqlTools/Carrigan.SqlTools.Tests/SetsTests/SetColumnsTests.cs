@@ -50,7 +50,7 @@ public class SetColumnsTests
     [Fact]
     public void AddColumnToEmpty()
     {
-        SetColumns<ColumnTable> setColumns = new();
+        SetColumns<ColumnTable> setColumns = new(Enumerable.Empty<string>());
 
         setColumns.AddColumn(nameof(ColumnTable.Col1));
         setColumns.AddColumn(nameof(ColumnTable.Col2));

@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Attributes;
 

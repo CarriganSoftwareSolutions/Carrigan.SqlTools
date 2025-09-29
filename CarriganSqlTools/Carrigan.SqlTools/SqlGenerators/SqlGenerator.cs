@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.Tags;
 using Carrigan.Core.Attributes;
+using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -104,7 +105,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// useful for selecting a record by its primary key.
     /// </returns>
     private static And GetByKeyPredicates(T entity) =>
-        new (KeyColumns.Select(key => new Equal(new Columns<T>(key._columnName), new Parameters(key._columnName, key._propertyInfo.GetValue(entity)))));
+        new (KeyColumns.Select(key => new Equal(new Columns<T>(key.PropertyName), new Parameters(key._columnName, key._propertyInfo.GetValue(entity)))));
 
     /// <summary>
     /// Creates a SQL parameter as a key–value pair for the specified column and entity instance.

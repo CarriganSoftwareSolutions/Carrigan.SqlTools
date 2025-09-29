@@ -35,7 +35,7 @@ public class SqlGenerator_SelectTests
     [Fact]
     public void SqlSelect_EmptyOrderBy()
     {
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Select(null, null, OrderBy.Empty, null);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Select(null, null, null, OrderBy.Empty, null);
 
         string expectedSql = "SELECT [Test].* FROM [Test]";
         Assert.Equal(expectedSql, query.QueryText);
@@ -46,7 +46,7 @@ public class SqlGenerator_SelectTests
     {
         PredicatesBase id = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
         IJoins join = new InnerJoin<JoinLeftTable, JoinRightTable>(id);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(new Joins(join), null, null, null);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new Joins(join), null, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expectedSql, query.QueryText);
@@ -57,7 +57,7 @@ public class SqlGenerator_SelectTests
     {
         PredicatesBase id = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
         IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(id);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(new Joins(join), null, null, null);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new Joins(join), null, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expectedSql, query.QueryText);
@@ -67,7 +67,7 @@ public class SqlGenerator_SelectTests
     public void SqlSelect_NoJoins_WithPredicates_WithTableAttribute()
     {
         PredicatesBase id = new Equal(new Columns<ColumnTable>("Col1"), new Parameters("Col1", 3));
-        SqlQuery query = _sqlGeneratorForColumnTable.Select(null, id, null, null);
+        SqlQuery query = _sqlGeneratorForColumnTable.Select(null, null, id, null, null);
 
         string expectedSql = "SELECT [ColumnTable].* FROM [ColumnTable] WHERE ([ColumnTable].[Col1] = @Parameter_Col1)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -94,7 +94,7 @@ public class SqlGenerator_SelectTests
         PredicatesBase joinId = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
         PredicatesBase predicateId = new Equal(new Columns<JoinRightTable>("Id"), new Parameters("Id", 3));
         IJoins join = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(new Joins(join), predicateId, null, null);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new Joins(join), predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -121,7 +121,7 @@ public class SqlGenerator_SelectTests
         PredicatesBase joinId = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
         PredicatesBase predicateId = new Equal(new Columns<JoinRightTable>("Id"), new Parameters("Id", 3));
         IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(joinId);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(new Joins(join), predicateId, null, null);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new Joins(join), predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -150,7 +150,7 @@ public class SqlGenerator_SelectTests
         PredicatesBase predicateId = new Equal(new Columns<JoinLastTable>("Id"), new Parameters("Id", 3));
         IJoins join1 = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId1);
         IJoins join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(new Joins(join1, join2), predicateId, null, null);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new Joins(join1, join2), predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -184,7 +184,7 @@ public class SqlGenerator_SelectTests
         OrderByItem<JoinLastTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
         IOrderByClause orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
         OffsetNext offsetNext = new DefinePage(3, 50);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(new Joins(join1, join2), predicateId, orderBy, offsetNext);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new Joins(join1, join2), predicateId, orderBy, offsetNext);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id) ORDER BY [Left].[Id] ASC, [Right].[Id] DESC, [Last].[Id] ASC OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY";
         Assert.Equal(expectedSql, query.QueryText);
@@ -216,7 +216,7 @@ public class SqlGenerator_SelectTests
         IJoins join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
         OrderByItem<JoinLeftTable> orderByItem = new("Id", SortDirectionEnum.Ascending);
         DefinePage offsetNext = new (3, 50);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(new Joins(join1, join2), predicateId, orderByItem, offsetNext);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new Joins(join1, join2), predicateId, orderByItem, offsetNext);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id) ORDER BY [Left].[Id] ASC OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY";
         Assert.Equal(expectedSql, query.QueryText);

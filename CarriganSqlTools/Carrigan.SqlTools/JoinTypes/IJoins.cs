@@ -28,6 +28,13 @@ public interface IJoins
     public IEnumerable<TableTag> TableTags { get; }
 
     /// <summary>
+    /// Enumerates all possible columns included in <see cref="Joints"/>
+    /// providing a quick way to determine whether a given column
+    /// participates in a table that participates in any join operation.
+    /// </summary>
+    public IEnumerable<ColumnTag> ColumnsTags { get; }
+
+    /// <summary>
     /// Recursively get all the parameters associated with the logic.
     /// </summary>
     internal Dictionary<ParameterTag, object> Parameters { get; }

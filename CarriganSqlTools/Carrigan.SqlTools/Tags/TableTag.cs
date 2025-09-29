@@ -1,6 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.SqlGenerators;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

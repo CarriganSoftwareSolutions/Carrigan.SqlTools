@@ -1,4 +1,7 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
@@ -35,11 +38,25 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// <param name="sortDirection">
     /// The sort direction to apply.
     /// </param>
-    public OrderByItem(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
+    public OrderByItem(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
     {
         ColumnTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
         SortDirection = sortDirection;
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrderByItem{T}"/> class,
+    /// specifying the table type <typeparamref name="T"/>, the column name,
+    /// and the desired sort direction.
+    /// </summary>
+    /// <param name="propertyName">
+    /// The name of the property that represents the column to order by.
+    /// </param>
+    /// <param name="sortDirection">
+    /// The sort direction to apply.
+    /// </param>
+    [ExternalOnly]
+    public OrderByItem(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) :
+        this (new PropertyName(propertyName), sortDirection) {}
 
     /// <summary>
     /// Gets the <see cref="ColumnTag"/> that specifies the column being ordered.

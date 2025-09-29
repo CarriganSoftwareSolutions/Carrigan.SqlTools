@@ -1,4 +1,7 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Predicates;
@@ -42,7 +45,15 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// </summary>
     /// <param name="propertyName">The name of property representing the column.</param>
     /// <exception cref="ArgumentException">Gets thrown if the propertyName is not is not a valid property for the class <see cref="T"/> representing the table.</exception>
-    public Columns(string propertyName)
+    [ExternalOnlyAttribute]
+    public Columns(string propertyName) : this(new PropertyName(propertyName)) { }
+
+    /// <summary>
+    /// A constructor for a column in the predicate logic.
+    /// </summary>
+    /// <param name="propertyName">The name of property representing the column.</param>
+    /// <exception cref="ArgumentException">Gets thrown if the propertyName is not is not a valid property for the class <see cref="T"/> representing the table.</exception>
+    public Columns(PropertyName propertyName)
     {
         TableTag = SqlToolsReflectorCache<T>.Table;
         ColumnTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);

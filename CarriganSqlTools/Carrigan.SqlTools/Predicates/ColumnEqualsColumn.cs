@@ -1,4 +1,7 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.IdentifierTypes;
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
@@ -25,13 +28,24 @@ public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperators
     /// <summary>
     /// This is the constructor for the classes that represents SQL's Equality, =, comparison operators
     /// </summary>
-    /// <param name="leftColumn">left value</param>
-    /// <param name="rightColumn">right value</param>
-    public ColumnEqualsColumn(string leftColumn, string rightColumn)
+    /// <param name="leftPropertyName">left value</param>
+    /// <param name="rightPropertyName">right value</param>
+    public ColumnEqualsColumn(PropertyName leftPropertyName, PropertyName rightPropertyName)
     {
-        Columns<leftT> left = new(leftColumn);
-        Columns<rightT> right = new(rightColumn);
+        Columns<leftT> left = new (leftPropertyName);
+        Columns<rightT> right = new (rightPropertyName);
 
         Initialize(left, right, "=");
+    }
+
+    /// <summary>
+    /// This is the constructor for the classes that represents SQL's Equality, =, comparison operators
+    /// </summary>
+    /// <param name="leftPropertyName">left value</param>
+    /// <param name="rightPropertyName">right value</param>
+    [ExternalOnly]
+    public ColumnEqualsColumn(string leftPropertyName, string rightPropertyName) : 
+        this (new PropertyName(leftPropertyName), new PropertyName(rightPropertyName))
+    {
     }
 }

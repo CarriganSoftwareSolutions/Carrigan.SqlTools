@@ -169,7 +169,7 @@ public class FromReadMeExamples
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
+        SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -189,7 +189,7 @@ public class FromReadMeExamples
         OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
         OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
 
-        SqlQuery query = customerGenerator.Select(join, null, orderBy, null);
+        SqlQuery query = customerGenerator.Select(null, join, null, orderBy, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

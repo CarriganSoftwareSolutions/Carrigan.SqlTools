@@ -1,4 +1,7 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
 using System.Data.Common;
 
 namespace Carrigan.SqlTools.Predicates;
@@ -27,7 +30,7 @@ public class ColumnValues<T> : PredicatesBase
     /// </summary>
     /// <param name="propertyName">Column</param>
     /// <param name="parameterValue">Value</param>
-    public ColumnValues(string propertyName, object parameterValue)
+    public ColumnValues(PropertyName propertyName, object parameterValue)
     {
         _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); //called for validation.
         Columns<T> left = new (propertyName);
@@ -38,6 +41,15 @@ public class ColumnValues<T> : PredicatesBase
            right
         );
     }
+
+    /// <summary>
+    /// A public constructor. 
+    /// </summary>
+    /// <param name="propertyName">Column</param>
+    /// <param name="parameterValue">Value</param>
+    [ExternalOnly]
+    public ColumnValues(string propertyName, object parameterValue) 
+        : this(new PropertyName(propertyName), parameterValue) { }
 
     /// <summary>
     /// Leaf node in recursive logic to get all the parameters associated with the logic.

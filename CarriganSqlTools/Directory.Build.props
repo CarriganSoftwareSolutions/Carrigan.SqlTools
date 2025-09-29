@@ -1,6 +1,11 @@
 <!--IGNORE SPELLING: snupkg-->
 <Project>
   <PropertyGroup>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+  
+  <PropertyGroup>
     <Company>Carrigan Software Solutions LLC</Company>
     <Authors>Carrigan Software Solutions LLC</Authors>
 

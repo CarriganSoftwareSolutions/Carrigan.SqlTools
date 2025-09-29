@@ -1,4 +1,7 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Sets;
 /// <summary>
@@ -63,8 +66,19 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// <param name="propertyNames">
     /// The names of the properties that represent the column names to be updated.
     /// </param>
-    public SetColumns(params IEnumerable<string> propertyNames) =>
+    public SetColumns(params IEnumerable<PropertyName> propertyNames) =>
         ColumnTags = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SetColumns"/> class,
+    /// specifying the properties (columns) to include in the SQL <c>SET</c> clause.
+    /// </summary>
+    /// <param name="propertyNames">
+    /// The names of the properties that represent the column names to be updated.
+    /// </param>
+    [ExternalOnly]
+    public SetColumns(params IEnumerable<string> propertyNames) : 
+        this(propertyNames.Select(name => new PropertyName(name))) { }
 
     /// <summary>
     /// Adds an additional column to the <c>SET</c> clause.
@@ -75,10 +89,23 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// <exception cref="ArgumentException">
     /// Thrown if the specified column name is not found.
     /// </exception>
-    public void AddColumn(string propertyName)
+    public void AddColumn(PropertyName propertyName)
     {
         ColumnTag? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
         if(newTag is not null)
             ColumnTags = ColumnTags.Append(newTag);
     }
+
+    /// <summary>
+    /// Adds an additional column to the <c>SET</c> clause.
+    /// </summary>
+    /// <param name="propertyName">
+    /// The name of the property that represents the column to add.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the specified column name is not found.
+    /// </exception>
+    [ExternalOnly]
+    public void AddColumn(string propertyName) =>
+        AddColumn(new PropertyName(propertyName));
 }

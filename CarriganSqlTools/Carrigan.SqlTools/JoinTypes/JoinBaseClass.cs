@@ -38,6 +38,13 @@ public abstract class JoinBaseClass : IJoins
         _tableTags;
 
     /// <summary>
+    /// Enumerates all possible columns included in <see cref="Joints"/>
+    /// providing a quick way to determine whether a given column
+    /// participates in a table that participates in any join operation.
+    /// </summary>
+    public abstract IEnumerable<ColumnTag> ColumnsTags { get; }
+
+    /// <summary>
     /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.
     /// </summary>
     /// <returns>The SQL fragment for the JOIN clause represented by <see cref="Joints"/>.</returns>

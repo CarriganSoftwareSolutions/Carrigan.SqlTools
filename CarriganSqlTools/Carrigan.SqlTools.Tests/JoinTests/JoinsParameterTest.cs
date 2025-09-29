@@ -25,7 +25,7 @@ public class JoinsParameterTest
 
         Joins joins = new(join1, join2);
 
-        SqlQuery query = customerGenerator.Select(joins, null, null, null);
+        SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Parameter_ZipCode)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

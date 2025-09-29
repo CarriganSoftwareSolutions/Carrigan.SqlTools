@@ -51,7 +51,7 @@ public class SelectExamples
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Customer, Order> join = new(columnEqualsColumn);
 
-        SqlQuery query = customerGenerator.Select(join, null, null, null);
+        SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -69,7 +69,7 @@ public class SelectExamples
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
+        SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -92,7 +92,7 @@ public class SelectExamples
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(join, greaterThan, orderByOrderDate, null);
+        SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Order].[Total] > @Parameter_Total) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -104,7 +104,7 @@ public class SelectExamples
     public void SelectWithOffsetNext()
     {
         OffsetNext offsetNext = new(50, 25);
-        SqlQuery query = customerGenerator.Select(null, null, null, offsetNext);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, offsetNext);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

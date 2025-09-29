@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
@@ -41,7 +42,7 @@ public class InnerJoin<T, J> : JoinBaseClass
     /// <param name="predicate">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
     /// </param>
-    /// <exception cref="InvalidColumnException">
+    /// <exception cref="AmbiguousColumnException">
     /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
@@ -62,6 +63,14 @@ public class InnerJoin<T, J> : JoinBaseClass
         _tableTags = [leftTableTag, rightTableTag];
         _parameters = predicate.Parameter;
     }
+
+    /// <summary>
+    /// Enumerates all possible columns included in <see cref="Joints"/>
+    /// providing a quick way to determine whether a given column
+    /// participates in a table that participates in any join operation.
+    /// </summary>
+    public override IEnumerable<ColumnTag> ColumnsTags =>
+        SqlToolsReflectorCache<T>.Columns.Concat(SqlToolsReflectorCache<J>.Columns);
 
     public override Dictionary<ParameterTag, object> Parameters => new (_parameters.SelectMany(parameter => parameter.GetParameters()));
 

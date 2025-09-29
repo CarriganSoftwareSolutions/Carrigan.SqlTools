@@ -3,12 +3,14 @@ using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace Carrigan.SqlTools;
+namespace Carrigan.SqlTools.ReflectorCache;
 
 /// <summary>
 /// Provides lazily initialized, reflection-based metadata for the data model
@@ -87,9 +89,9 @@ public class SqlToolsReflectorCache<T>
     /// Thrown when one or more property names do not match any qualifying
     /// column properties in <typeparamref name="T"/>.
     /// </exception>
-    internal static IEnumerable<ColumnTag> GetColumnsFromProperties(params IEnumerable<string> propertyNames)
+    internal static IEnumerable<ColumnTag> GetColumnsFromProperties(params IEnumerable<PropertyName> propertyNames)
     {
-        IEnumerable<string> invalidPropertyNames =
+        IEnumerable<PropertyName> invalidPropertyNames =
             propertyNames
                 .Where(propertyName => ContainsProperty(propertyName) is false);
 
@@ -121,6 +123,9 @@ public class SqlToolsReflectorCache<T>
     /// <returns>The corresponding <see cref="ColumnTag"/>, or <c>null</c>.</returns>
     private static ColumnTag? GetColumnByProperty(string propertyName) =>
         ContainsProperty(propertyName) ? _LazyColumnsDictionary.Value[propertyName] : null;
+
+    //TODO: Look into the feasibility of converting some of these Lazes that are only being used in the Constructor to build others in local vars.
+    //I am concerned about loss of scope due to late evaluation.
 
     /// <summary>
     /// Lazily resolves the <see cref="TableTag"/> for <typeparamref name="T"/> and
@@ -190,9 +195,17 @@ public class SqlToolsReflectorCache<T>
     /// </summary>
     private static readonly Lazy<Dictionary<string, ColumnTag>> _LazyColumnsDictionary;
 
+    private static readonly Lazy<PropertyInfoCache<ParameterTag>> _LazyParameterTagCache;
+
+    private static readonly Lazy<PropertyInfoCache<ColumnName>> _LazyColumnNameCache;
+
+    private static readonly Lazy<PropertyInfoCache<AliasTag?>> _LazyAliasTagCache;
+
     /// <summary>
     /// Static constructor that initializes all lazy caches for <typeparamref name="T"/>.
     /// </summary>
+    /// 
+    //TODO: reformat the indents on this method
     static SqlToolsReflectorCache()
     {
         Type = typeof(T);
@@ -244,6 +257,92 @@ public class SqlToolsReflectorCache<T>
                         )
             );
 
+
+        _LazyAliasTagCache = new
+        (() =>
+            new PropertyInfoCache<AliasTag?>
+            (
+                _LazyProperties
+                    .Value
+                    .Select(property =>
+                    {
+                        AliasTag? GetValue()
+                        {
+                            AliasAttribute? alias = property.GetCustomAttribute<AliasAttribute>();
+                            if (alias is not null && alias.Name.IsNotNullOrWhiteSpace())
+                                return new(alias.Name);
+                            else
+                                return null;
+                        }
+                        return new Tuple<PropertyInfo, AliasTag?>(property, GetValue());
+                    })
+            )
+        );
+
+        _LazyColumnNameCache = new
+        (() =>
+            new PropertyInfoCache<ColumnName>
+            (
+                _LazyProperties
+                    .Value
+                    .Select(property =>
+                    {
+                        ColumnName GetValue()
+                        {
+                            IdentifierAttribute? identifier = property.GetCustomAttribute<IdentifierAttribute>();
+                            if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
+                                if (SqlIdentifierPattern.Fails(identifier.Name))
+                                    throw new InvalidSqlIdentifierException(identifier.Name);
+                                else
+                                    return new (identifier.Name);
+                            else
+                            {
+                                ColumnAttribute? columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+                                if (columnAttribute != null && columnAttribute.Name.IsNotNullOrWhiteSpace())
+                                    if (SqlIdentifierPattern.Fails(columnAttribute.Name))
+                                        throw new InvalidSqlIdentifierException(columnAttribute.Name);
+                                    else
+                                        return new (columnAttribute.Name);
+                                else if (SqlIdentifierPattern.Fails(property.Name))
+                                    throw new InvalidSqlIdentifierException(property.Name);
+                                else
+                                    return new (property.Name);
+                            }
+                        }
+                        return new Tuple<PropertyInfo, ColumnName>(property, GetValue());
+                    })
+            )
+        );
+
+        _LazyParameterTagCache = new
+        (() =>
+            new PropertyInfoCache<ParameterTag>
+            (
+                _LazyProperties
+                    .Value
+                    .Select(property =>
+                    {
+                        ParameterTag GetValue()
+                        {
+                            ParameterAttribute? parameterName = property.GetCustomAttribute<ParameterAttribute>();
+
+                            if (parameterName != null && parameterName.Name.IsNotNullOrWhiteSpace())
+                            {
+                                if (SqlIdentifierPattern.Fails(parameterName.Name))
+                                    throw new InvalidSqlIdentifierException(parameterName.Name);
+                                else
+                                    return new ParameterTag(null, parameterName.Name, null);
+                            }
+                            else
+                            {
+                                return new ParameterTag(null, GetColumnName(property), null);
+                            }
+                        }
+                        return new Tuple<PropertyInfo, ParameterTag>(property, GetValue());
+                    })
+            )
+        );
+
         _LazyKeyColumns = new
             (() =>
                 {
@@ -258,7 +357,7 @@ public class SqlToolsReflectorCache<T>
                                 .Where(property => property.GetCustomAttribute<KeyAttribute>() != null);
 
                     return keys
-                        .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)));
+                        .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property), GetAliasName(property)));
                 }
             );
 
@@ -280,14 +379,14 @@ public class SqlToolsReflectorCache<T>
                 [.. _LazyPropertiesLessKeys
                         .Value
                         .Where(property => property.GetCustomAttribute<EncryptedAttribute>() != null)
-                        .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))]
+                        .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property), GetAliasName(property)))]
             );
 
         _LazyColumnsDictionary = new Lazy<Dictionary<string, ColumnTag>>
             (() =>
                 [.. _LazyProperties
                     .Value
-                    .Select(property => new KeyValuePair<string, ColumnTag>(property.Name, new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property))))]
+                    .Select(property => new KeyValuePair<string, ColumnTag>(property.Name, new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property), GetAliasName(property))))]
             );
 
         _LazyColumnsLessKeys = new
@@ -302,8 +401,8 @@ public class SqlToolsReflectorCache<T>
             (() => _LazyProperties
                             .Value
                             .Where(property => property.GetCustomAttribute<KeyVersionAttribute>() != null)
-                            .Where(property => ((Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType) == typeof(int)))
-                            .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property)))
+                            .Where(property => (Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType) == typeof(int))
+                            .Select(property => new ColumnTag(_LazyTableTag.Value, GetColumnName(property), property, GetParameterName(property), GetAliasName(property)))
                             .FirstOrDefault()
             );
     }
@@ -312,60 +411,28 @@ public class SqlToolsReflectorCache<T>
     /// Resolves the SQL column name to use for the given <see cref="PropertyInfo"/>.
     /// Checks custom identifiers first, then <see cref="ColumnAttribute"/>, then falls back
     /// to the property name; validates against SQL identifier rules.
+    /// It now uses a Lazy cache defined above.
     /// </summary>
     /// <param name="property">The property to resolve.</param>
     /// <returns>The validated column name.</returns>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when the resolved name fails SQL identifier validation.
     /// </exception>
-    private static string GetColumnName(PropertyInfo property)
-    {
-        IdentifierAttribute? identifier = property.GetCustomAttribute<IdentifierAttribute>();
-        if (identifier != null && identifier.Name.IsNotNullOrWhiteSpace())
-            if (SqlIdentifierPattern.Fails(identifier.Name))
-                throw new InvalidSqlIdentifierException(identifier.Name);
-            else
-                return identifier.Name;
-        else
-        {
-            ColumnAttribute? columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
-            if(columnAttribute != null && columnAttribute.Name.IsNotNullOrWhiteSpace())
-                if (SqlIdentifierPattern.Fails(columnAttribute.Name))
-                    throw new InvalidSqlIdentifierException(columnAttribute.Name);
-                else
-                    return columnAttribute.Name;
-            else  if (SqlIdentifierPattern.Fails(property.Name))
-                throw new InvalidSqlIdentifierException(property.Name);
-            else
-                return property.Name;
-        }
-    }
+    private static ColumnName GetColumnName(PropertyInfo property) =>
+        _LazyColumnNameCache.Value.Get(property);
 
     /// <summary>
     /// Resolves the SQL parameter <see cref="ParameterTag"/> for the given <see cref="PropertyInfo"/>.
     /// Uses <see cref="ParameterAttribute"/> when present; otherwise derives from the column name.
+    /// It now uses a Lazy cache defined above.
     /// </summary>
     /// <param name="property">The property to resolve.</param>
     /// <returns>The <see cref="ParameterTag"/> to use for SQL generation.</returns>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when an attribute-specified name fails SQL identifier validation.
     /// </exception>
-    private static ParameterTag GetParameterName(PropertyInfo property)
-    {
-        ParameterAttribute? parameterName = property.GetCustomAttribute<ParameterAttribute>();
-
-        if (parameterName != null && parameterName.Name.IsNotNullOrWhiteSpace())
-        {
-            if (SqlIdentifierPattern.Fails(parameterName.Name))
-                throw new InvalidSqlIdentifierException(parameterName.Name);
-            else
-                return new(null, parameterName.Name, null);
-        }
-        else
-        {
-            return new(null, GetColumnName(property), null);
-        }
-    }
+    private static ParameterTag GetParameterName(PropertyInfo property) =>
+        _LazyParameterTagCache.Value.Get(property);
 
     /// <summary>
     /// Resolves the SQL table name for <typeparamref name="T"/>. Checks custom identifiers first,
@@ -427,23 +494,36 @@ public class SqlToolsReflectorCache<T>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when a provided schema name fails SQL identifier validation.
     /// </exception>
-    private static string GetSchemaName()
+    private static SchemaName? GetSchemaName()
     {
         IdentifierAttribute? identifier = Type.GetCustomAttribute<IdentifierAttribute>();
         if (identifier != null && identifier.Schema.IsNotNullOrWhiteSpace())
             if (SqlIdentifierPattern.Fails(identifier.Schema))
                 throw new InvalidSqlIdentifierException(identifier.Schema);
             else
-                return identifier.Schema;
+                return new (identifier.Schema);
         else
         {
             if (_LazyTableAttribute.Value != null && _LazyTableAttribute.Value.Schema.IsNotNullOrWhiteSpace())
                 if (SqlIdentifierPattern.Fails(_LazyTableAttribute.Value.Schema))
                     throw new InvalidSqlIdentifierException(_LazyTableAttribute.Value.Schema);
                 else
-                    return _LazyTableAttribute.Value.Schema;
+                    return new (_LazyTableAttribute.Value.Schema);
             else
-                return string.Empty;
+                return null;
         }
     }
+
+    //ToDO: proof read documentation.
+    /// <summary>
+    /// Resolves the SQL alias tag to use for the given <see cref="PropertyInfo"/>.
+    /// It uses a Lazy cache defined above.
+    /// </summary>
+    /// <param name="property">The property to resolve.</param>
+    /// <returns>The validated alias tag.</returns>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when the resolved name fails SQL identifier validation.
+    /// </exception>
+    private static AliasTag? GetAliasName(PropertyInfo property) =>
+        _LazyAliasTagCache.Value.Get(property);
 }

@@ -151,7 +151,7 @@ public partial class SqlGenerator<T>
                 (
                     KeyColumns.Select(column => new Equal
                         (
-                            new Columns<T>(column._columnName), 
+                            new Columns<T>(column.PropertyName), 
                             new Parameters(column._parameterTag, column._propertyInfo.GetValue(entity)))
                         )
                 ))

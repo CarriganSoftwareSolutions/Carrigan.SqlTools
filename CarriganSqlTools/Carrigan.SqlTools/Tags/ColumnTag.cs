@@ -1,5 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.RegularExpressions;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
@@ -100,6 +102,16 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// </summary>
     internal readonly ParameterTag _parameterTag;
 
+    //TODO: documentation, unit test
+    internal readonly SelectTag _selectTag;
+
+    //TODO: documentation, unit test
+    internal readonly TableTag _tableTag;
+
+    //TODO: documentation, unit tests
+    internal PropertyName PropertyName =>
+        new(_propertyInfo.Name);
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnTag"/> class,
     /// which represents a fully qualified SQL column identifier
@@ -117,12 +129,16 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// <param name="parameterTag">
     /// The <see cref="ParameterTag"/> used to represent the column as a SQL parameter.
     /// </param>
+    /// <param name="aliasTag">
+    /// TODO: proof read documentation
+    /// The <see cref="alias"/> used to represent the <c>COLUMN</c>'s <C>AS</C> alias as a SQL parameter.
+    /// </param>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="columnName"/> fails to meet the SQL identifier naming rules.
     /// </exception>
-    internal ColumnTag(TableTag tableTag, string columnName, PropertyInfo propertyInfo, ParameterTag parameterTag)
+    internal ColumnTag(TableTag tableTag, string columnName, PropertyInfo propertyInfo, ParameterTag parameterTag, AliasTag? aliasTag = null)
     {
-        if(SqlIdentifierPattern.Fails(columnName))
+        if (SqlIdentifierPattern.Fails(columnName))
             throw new InvalidSqlIdentifierException(columnName);
         else
         {
@@ -130,6 +146,8 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
             _columnName = columnName;
             _propertyInfo = propertyInfo;
             _parameterTag = parameterTag;
+            _selectTag = new (this, aliasTag);
+            _tableTag = tableTag;
         }
     }
 

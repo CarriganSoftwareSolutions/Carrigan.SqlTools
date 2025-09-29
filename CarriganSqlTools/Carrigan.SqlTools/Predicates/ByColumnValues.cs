@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.IdentifierTypes;
+
+namespace Carrigan.SqlTools.Predicates;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
@@ -18,7 +20,7 @@
 [Obsolete("Use ColumnValues<T> instead.")]
 public class ByColumnValues<T> : ColumnValues<T>
 {
-    public ByColumnValues(string propertyName, object value) : base(propertyName, value)
+    public ByColumnValues(PropertyName propertyName, object value) : base(propertyName, value)
     {
     }
 }

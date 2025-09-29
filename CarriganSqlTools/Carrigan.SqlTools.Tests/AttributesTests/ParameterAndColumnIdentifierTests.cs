@@ -153,7 +153,7 @@ public class ParameterAndColumnIdentifierTests
     public void OrderByTest()
     {
         OrderByItem<ColumnIdentifiers> orderByItem = new(nameof(ColumnIdentifiers.ColumnName));
-        SqlQuery query = _generator.Select(null, null, orderByItem, null);
+        SqlQuery query = _generator.Select(null, null, null, orderByItem, null);
         string actual = query.QueryText;
         string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] ORDER BY [ColumnIdentifiers].[Column] ASC";
         Assert.Equal(expected, actual);
@@ -172,7 +172,7 @@ public class ParameterAndColumnIdentifierTests
         Equal equal2 = new(columnColumn, parameter2);
         And and = new (equal1, equal2);
 
-        SqlQuery query = _generator.Select(null, and, null, null);
+        SqlQuery query = _generator.Select(null, null, and, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) AND ([ColumnIdentifiers].[Column] = @Parameter_p2))";
         string actualSql = query.QueryText;
@@ -188,7 +188,7 @@ public class ParameterAndColumnIdentifierTests
     {
         ColumnEqualsColumn<ColumnIdentifiers, ColumnIdentifiers> columns = new (nameof(ColumnIdentifiers.IdentifierOverrideName), nameof(ColumnIdentifiers.ColumnName));
 
-        SqlQuery query = _generator.Select(null, columns, null, null);
+        SqlQuery query = _generator.Select(null, null, columns, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[IdentifierOverride] = [ColumnIdentifiers].[Column])";
         string actualSql = query.QueryText;
@@ -204,7 +204,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         Equal equal = new(identifierOverrideColumn, parameter);
 
-        SqlQuery query = _generator.Select(null, equal, null, null);
+        SqlQuery query = _generator.Select(null, null, equal, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[IdentifierOverride] = @Parameter_p1)";
         string actualSql = query.QueryText;
@@ -234,7 +234,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         Contains<ColumnIdentifiers> contains = new (column, parameter);
 
-        SqlQuery query = _generator.Select(null, contains, null, null);
+        SqlQuery query = _generator.Select(null, null, contains, null, null);
         string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE CONTAINS([ColumnIdentifiers].[Identifier], @Parameter_p1)";
         string actual = query.QueryText;
 
@@ -250,7 +250,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         Equal equal = new(column, parameter);
 
-        SqlQuery query = _generator.Select(null, equal, null, null);
+        SqlQuery query = _generator.Select(null, null, equal, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] = @Parameter_p1)";
         string actualSql = query.QueryText;
@@ -267,7 +267,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         GreaterThanEquals op = new(column, parameter);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] >= @Parameter_p1)";
         string actualSql = query.QueryText;
@@ -284,7 +284,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         GreaterThan op = new(column, parameter);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] > @Parameter_p1)";
         string actualSql = query.QueryText;
@@ -300,7 +300,7 @@ public class ParameterAndColumnIdentifierTests
         Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
         IsNotNull op = new(column);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] IS NOT NULL)";
         string actualSql = query.QueryText;
@@ -315,7 +315,7 @@ public class ParameterAndColumnIdentifierTests
         Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
         IsNull op = new(column);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] IS NULL)";
         string actualSql = query.QueryText;
@@ -333,7 +333,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         LessThanEquals op = new(column, parameter);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <= @Parameter_p1)";
         string actualSql = query.QueryText;
@@ -350,7 +350,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         LessThan op = new(column, parameter);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] < @Parameter_p1)";
         string actualSql = query.QueryText;
@@ -367,7 +367,7 @@ public class ParameterAndColumnIdentifierTests
         Parameters parameter = new("p1", 1);
         NotEqual op = new(column, parameter);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <> @Parameter_p1)";
         string actualSql = query.QueryText;
@@ -383,7 +383,7 @@ public class ParameterAndColumnIdentifierTests
         Columns<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
         Not op = new(column);
 
-        SqlQuery query = _generator.Select(null, op, null, null);
+        SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (NOT [ColumnIdentifiers].[Identifier])";
         string actualSql = query.QueryText;
@@ -403,7 +403,7 @@ public class ParameterAndColumnIdentifierTests
         Equal equal2 = new(columnColumn, parameter2);
         Or or = new(equal1, equal2);
 
-        SqlQuery query = _generator.Select(null, or, null, null);
+        SqlQuery query = _generator.Select(null, null, or, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) OR ([ColumnIdentifiers].[Column] = @Parameter_p2))";
         string actualSql = query.QueryText;
@@ -425,7 +425,7 @@ public class ParameterAndColumnIdentifierTests
         Equal equal2 = new(columnColumn, parameter2);
         Xor xor = new(equal1, equal2);
 
-        SqlQuery query = _generator.Select(null, xor, null, null);
+        SqlQuery query = _generator.Select(null, null, xor, null, null);
         string expectedSql =
             "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) ^ ([ColumnIdentifiers].[Column] = @Parameter_p2))";
         string actualSql = query.QueryText;

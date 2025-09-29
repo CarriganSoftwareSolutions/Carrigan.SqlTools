@@ -22,7 +22,7 @@ public class SetColumnsExtensionsTests
     public void IsNullOrEmpty_EmptyColumnNames_ReturnsTrue()
     {
         // Arrange: pass an empty IEnumerable<string>.
-        SetColumns<ColumnTable> setColumns = new([]);
+        SetColumns<ColumnTable> setColumns = new(Enumerable.Empty<string>());
 
         // Act
         bool result = setColumns.IsNullOrEmpty();
@@ -65,7 +65,7 @@ public class SetColumnsExtensionsTests
     public void IsNotNullOrEmpty_EmptyColumnNames_ReturnsFalse()
     {
         // Arrange: pass an empty IEnumerable<string>.
-        SetColumns<ColumnTable> setColumns = new([]);
+        SetColumns<ColumnTable> setColumns = new(Enumerable.Empty<string>());
 
         // Act
         bool result = setColumns.IsNotNullOrEmpty();

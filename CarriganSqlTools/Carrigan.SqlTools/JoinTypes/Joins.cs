@@ -58,6 +58,14 @@ public class Joins : IJoins
         Joints.SelectMany(join => join.TableTags);
 
     /// <summary>
+    /// Enumerates all possible columns included in <see cref="Joints"/>
+    /// providing a quick way to determine whether a given column
+    /// participates in a table that participates in any join operation.
+    /// </summary>
+    public IEnumerable<ColumnTag> ColumnsTags =>
+        Joints.SelectMany(join => join.ColumnsTags);
+
+    /// <summary>
     /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.
     /// </summary>
     /// <returns>The SQL fragment for the JOIN clause represented by <see cref="Joints"/>.</returns>
