@@ -124,6 +124,4 @@ public class Parameters : PredicatesBase
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
     private ParameterTag GetFinalParameterName(string prefix, IEnumerable<ParameterTag> duplicates) =>
         duplicates.Contains(Name) ? Name.PrefixPrepend($"@Parameter{prefix}") : Name.PrefixPrepend($"@Parameter");
-
-    //duplicates.Contains(Name) ? $"@Parameter{prefix}_{Name}" : $"@Parameter_{Name}";
 }

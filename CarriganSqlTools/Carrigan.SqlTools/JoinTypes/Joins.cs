@@ -45,7 +45,6 @@ public class Joins : IJoins
     /// <param name="joins">
     /// One or more sequences of <see cref="IJoins"/> objects, where each object represents a single SQL join operation.
     /// </param>
-
     public Joins(params IEnumerable<IJoins> joins) =>
         Joints = joins;
 
