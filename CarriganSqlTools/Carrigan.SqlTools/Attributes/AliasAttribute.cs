@@ -3,6 +3,10 @@
 namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property)]
 //TODO: Proof read documentation for entire class
+
+/// <summary>
+/// Allows for setting a default <c>AS</c> alias on a property.
+/// </summary>
 public class AliasAttribute : Attribute
 {
     /// <summary>

@@ -7,16 +7,33 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Exceptions;
+//TODO: Proof Read Documentation. entire class
+
+//TODO: Create example for readme.md file.
+//TODO: Unit tests?
+/// <summary>
+/// Thrown when the column tag comes from a table that is not included in the clauses.
+/// </summary>
 public class InvalidColumnException : Exception
 {
+    /// <summary>
+    /// Constructor for InvalidColumnException
+    /// Thrown when the column tag comes from a table that is not included in the clauses.
+    /// </summary>
+    /// <param name="columnTags">Invalid columns to include in exception message.</param>
     public InvalidColumnException(params IEnumerable<ColumnTag> columnTags) :
         base(CreateMessage(columnTags))
     {
+
     }
 
-    // Builds the exception message from a collection of ColumnTag values.
+    /// <summary>
+    /// Builds the exception message from a collection of invalid ColumnTag values.
+    /// </summary>
+    /// <param name="invalidColumns">Invalid columns to include in exception message.</param>
+    /// <returns>An exception message from a collection of invalid ColumnTag values</returns>
     private static string CreateMessage(IEnumerable<ColumnTag> invalidColumns) =>
-        "Invalid SQL identifier(s): " 
+        $"The following columns where not included in the query and are invalid"
             + invalidColumns
                 .Select(column => $"{column?.ToString() ?? "<null>"}")
                 .JoinAnd();
