@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
-//TODO: Proof read documentation
+//TODO: Proof read documentation and unit test
 /// <summary>
 /// Strongly typed string wrapper for Table names
 /// </summary>
@@ -29,16 +29,27 @@ internal readonly record struct TableName(string Value) : IWhiteSpace
     /// <returns></returns>
     public override string ToString() => 
         Value;
-    //TODO: Document Code
+    /// <summary>
+    /// Determines if the underlying string is empty or whitespace.
+    /// </summary>
+    /// <returns>true is the underlying string is empty or whitespace, else false</returns>
     public bool IsWhiteSpace() =>
         Value.IsWhiteSpace();
-    //TODO: Document Code
+    /// <summary>
+    /// Determines if the underlying string is not empty and not whitespace.
+    /// </summary>
+    /// <returns>false is the underlying string is empty or whitespace, else true</returns>
     public bool IsNotWhiteSpace() =>
         IsWhiteSpace() is false;
-    //TODO: Document Code
+    /// Determines if the underlying string is empty.
+    /// </summary>
+    /// <returns>true is the underlying string is empty, else false</returns>
     public bool IsEmpty() =>
         Value.IsEmpty();
-    //TODO: Document Code
+    /// <summary>
+    /// Determines if the underlying string is not empty.
+    /// </summary>
+    /// <returns>false is the underlying string is empty, else true</returns>
     public bool IsNotEmpty() =>
         IsEmpty() is false;
 }
