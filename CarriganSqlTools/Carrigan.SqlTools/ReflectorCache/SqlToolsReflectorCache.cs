@@ -201,19 +201,19 @@ public class SqlToolsReflectorCache<T>
     /// Used indirectly to help set <see cref="_LazyColumnsDictionary"/>
     /// Used indirectly to help set <see cref="_LazyKeyVersionColumn"/>
     /// </summary>
-    private static readonly Lazy<PropertyInfoCache<ParameterTag>> _LazyParameterTagCache;
+    private static readonly Lazy<PropertyInfoCache<T, ParameterTag>> _LazyParameterTagCache;
 
     /// <summary>
-    /// Lazily resolves a <see cref="PropertyInfoCache{ColumnName}/> of <see cref="ColumnName"/>
+    /// Lazily resolves a <see cref="PropertyInfoCache{T, ColumnName}/> of <see cref="ColumnName"/>
     /// 
     /// </summary>
-    private static readonly Lazy<PropertyInfoCache<ColumnName>> _LazyColumnNameCache;
+    private static readonly Lazy<PropertyInfoCache<T, ColumnName>> _LazyColumnNameCache;
 
     /// <summary>
     /// Lazily resolves a <see cref="PropertyInfoCache{AliasTag}/> of <see cref="AliasTag"/>
     /// 
     /// </summary>
-    private static readonly Lazy<PropertyInfoCache<AliasTag?>> _LazyAliasTagCache;
+    private static readonly Lazy<PropertyInfoCache<T, AliasTag?>> _LazyAliasTagCache;
 
     /// <summary>
     /// Static constructor that initializes all lazy caches for <typeparamref name="T"/>.
@@ -273,7 +273,7 @@ public class SqlToolsReflectorCache<T>
 
         _LazyAliasTagCache = new
         (() =>
-            new PropertyInfoCache<AliasTag?>
+            new PropertyInfoCache<T, AliasTag?>
             (
                 _LazyProperties
                     .Value
@@ -294,7 +294,7 @@ public class SqlToolsReflectorCache<T>
 
         _LazyColumnNameCache = new
         (() =>
-            new PropertyInfoCache<ColumnName>
+            new PropertyInfoCache<T, ColumnName>
             (
                 _LazyProperties
                     .Value
@@ -329,7 +329,7 @@ public class SqlToolsReflectorCache<T>
 
         _LazyParameterTagCache = new
         (() =>
-            new PropertyInfoCache<ParameterTag>
+            new PropertyInfoCache<T, ParameterTag>
             (
                 _LazyProperties
                     .Value
