@@ -164,8 +164,7 @@ public class SqlToolsReflectorCache<T>
 
     /// <summary>
     /// Lazily resolves all key-column <see cref="ColumnTag"/> instances for <typeparamref name="T"/>.
-    /// Used to help set <see cref="ColumnsLessKeys"/>
-    /// Used to help set <see cref="_LazyKeyColumns"/>
+    /// Used by <See cref="KeyColumns"/>
     /// Used to help set <see cref="_LazyPropertiesLessKeys"/>
     /// Used to help set <see cref="_LazyColumnsLessKeys"/>
     /// </summary>
@@ -173,8 +172,7 @@ public class SqlToolsReflectorCache<T>
 
     /// <summary>
     /// Lazily resolves all non-key <see cref="ColumnTag"/> instances for <typeparamref name="T"/>.
-    /// Used to help set <see cref="KeyColumns"/>
-    /// Used to help set <see cref="_LazyKeyVersionColumn"/>
+    /// Used by <see cref="ColumnsLessKeys"/>
     /// </summary>
     private static readonly Lazy<IEnumerable<ColumnTag>> _LazyColumnsLessKeys;
 
@@ -193,12 +191,28 @@ public class SqlToolsReflectorCache<T>
     /// Used by <see cref="GetColumnByProperty"/>
     /// Used to help set <see cref="_LazyColumnsLessKeys"/>
     /// </summary>
+    //TODO: expand ProperyInfo cache to accept property names to access, the re-implement this as a PropertyInfo cache
     private static readonly Lazy<Dictionary<string, ColumnTag>> _LazyColumnsDictionary;
 
+    /// <summary>
+    /// Lazily resolves a <see cref="PropertyInfoCache{ParameterTag}/> of <see cref="ParameterTag"/>
+    /// Used indirectly to help set <see cref="_LazyKeyColumns"/>
+    /// Used indirectly to help set <see cref="_LazyEncryptedColumnsHashSet"/>
+    /// Used indirectly to help set <see cref="_LazyColumnsDictionary"/>
+    /// Used indirectly to help set <see cref="_LazyKeyVersionColumn"/>
+    /// </summary>
     private static readonly Lazy<PropertyInfoCache<ParameterTag>> _LazyParameterTagCache;
 
+    /// <summary>
+    /// Lazily resolves a <see cref="PropertyInfoCache{ColumnName}/> of <see cref="ColumnName"/>
+    /// 
+    /// </summary>
     private static readonly Lazy<PropertyInfoCache<ColumnName>> _LazyColumnNameCache;
 
+    /// <summary>
+    /// Lazily resolves a <see cref="PropertyInfoCache{AliasTag}/> of <see cref="AliasTag"/>
+    /// 
+    /// </summary>
     private static readonly Lazy<PropertyInfoCache<AliasTag?>> _LazyAliasTagCache;
 
     /// <summary>
@@ -423,7 +437,11 @@ public class SqlToolsReflectorCache<T>
     /// <summary>
     /// Resolves the SQL parameter <see cref="ParameterTag"/> for the given <see cref="PropertyInfo"/>.
     /// Uses <see cref="ParameterAttribute"/> when present; otherwise derives from the column name.
-    /// It now uses a Lazy cache defined above.
+    /// It now uses a Lazy cache defined above.    /// 
+    /// Used to help set <see cref="_LazyKeyColumns"/>
+    /// Used to help set <see cref="_LazyEncryptedColumnsHashSet"/>
+    /// Used to help set <see cref="_LazyColumnsDictionary"/>
+    /// Used to help set <see cref="_LazyKeyVersionColumn"/>
     /// </summary>
     /// <param name="property">The property to resolve.</param>
     /// <returns>The <see cref="ParameterTag"/> to use for SQL generation.</returns>

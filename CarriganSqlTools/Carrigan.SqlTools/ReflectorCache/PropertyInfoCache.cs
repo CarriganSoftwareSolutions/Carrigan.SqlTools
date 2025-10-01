@@ -6,16 +6,30 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
-//TODO: documentation
+//TODO: proof read documentation
 //TODO: Unit tests
-/// <typeparam name="keyT"></typeparam>
-/// <typeparam name="valueT"></typeparam>
+/// <summary>
+/// This class is a wrapper for a dictionary, where the key is a
+/// <see cref="PropertyInfo"/>.
+/// Note: the key for the wrapped dictionary is actually the property name, 
+/// since ProperrtyInfo does not implement the interfaces required for hashing.
+/// It is meant to serve as a cache for the corresponding values for Attributes related
+/// to PropertyInfo, such as Column, Table, Alias, etc.
+/// </summary>
+/// <typeparam name="valueT">The datatype being cached.</typeparam>
 internal class PropertyInfoCache<valueT> 
 {
     //TODO: documentation
+    /// <summary>
+    /// Read only dictionary used as the core of the cache.
+    /// </summary>
     private readonly IReadOnlyDictionary<PropertyName, valueT> _cache;
 
     //TODO: documentation
+    /// <summary>
+    /// This is the class constructor for PropertyInfoCache.
+    /// </summary>
+    /// <param name="data">An enumeration of tuples consisting of a property info and a value</param>
     internal PropertyInfoCache(IEnumerable<Tuple<PropertyInfo, valueT>> data) =>
         _cache = new ReadOnlyDictionary<PropertyName, valueT>
         (
