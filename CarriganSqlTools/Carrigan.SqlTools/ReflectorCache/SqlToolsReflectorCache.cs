@@ -212,12 +212,6 @@ public class SqlToolsReflectorCache<T>
 
         _LazyTableAttribute = new (() => Type.GetCustomAttribute<TableAttribute>());
 
-        //Procedure Tags self validate the SQL Identifier.
-        _LazyProcedureTag = new (new ProcedureTag(GetSchemaName(), GetProcedureName()));
-
-        //Table Tags self validate the SQL Identifier.
-        _LazyTableTag = new(new TableTag(GetSchemaName(), GetTableName()));
-
         // Get properties that are public, not marked with [NotMapped], and are either value types or strings
         _LazyProperties = new
             (() =>
@@ -257,6 +251,11 @@ public class SqlToolsReflectorCache<T>
                         )
             );
 
+        //Procedure Tags self validate the SQL Identifier.
+        _LazyProcedureTag = new(new ProcedureTag(GetSchemaName(), GetProcedureName()));
+
+        //Table Tags self validate the SQL Identifier.
+        _LazyTableTag = new(new TableTag(GetSchemaName(), GetTableName()));
 
         _LazyAliasTagCache = new
         (() =>
