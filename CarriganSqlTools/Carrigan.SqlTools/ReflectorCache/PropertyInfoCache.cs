@@ -1,4 +1,5 @@
 ﻿
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using System.Collections.ObjectModel;
@@ -77,5 +78,43 @@ internal class PropertyInfoCache<typeT, valueT>
 
     /// <summary>All values (some entries may be <c>null</c> by design).</summary>
     internal IEnumerable<valueT> Values => 
-        _cache.Values; 
+        _cache.Values;
+
+    /// <summary>
+    /// Determines if all of the property names exist in the cache
+    /// </summary>
+    /// <param name="propertyNames">The property names to test</param>
+    /// <returns>true if all items in the enumeration exist. Else false.</returns>
+    internal bool Exists(params IEnumerable<PropertyName> propertyNames) =>
+        propertyNames.All(propertyName => _cache.ContainsKey(propertyName));
+
+    /// <summary>
+    /// Determines if all of the properties exist in the cache
+    /// </summary>
+    /// <param name="propertyNames">The properties to test</param>
+    /// <returns>true if all items in the enumeration exist. Else false.</returns>
+    internal bool Exists(params IEnumerable<PropertyInfo> properties) =>
+        Exists(properties.Select(property => new PropertyName(property.Name)));
+
+    /// <summary>
+    /// Gets an <see cref="InvalidPropertyException{typeT}"/> with the property names in the message, or <c>null</c>.
+    /// </summary>
+    /// <param name="propertyNames">The property names to test</param>
+    /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else <c>null</c>.</returns>
+    internal InvalidPropertyException<typeT>? GetExceptionForInvalidPropertyNames(params IEnumerable<PropertyName> propertyNames)
+    {
+        IEnumerable<PropertyName> invalidPropertyNames = propertyNames.Where(propertyName => _cache.ContainsKey(propertyName) is false);
+        if (invalidPropertyNames.Any())
+            return new(invalidPropertyNames);
+        else
+            return null;
+    }
+
+    /// <summary>
+    /// Gets an <see cref="InvalidPropertyException{typeT}"/> with the name of each property in the message, or <c>null</c>.
+    /// </summary>
+    /// <param name="propertyNames">The properties to test</param>
+    /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else null.</returns>
+    internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyInfo> properties) =>
+        GetExceptionForInvalidPropertyNames(properties.Select(property => new PropertyName(property.Name)));
 }
