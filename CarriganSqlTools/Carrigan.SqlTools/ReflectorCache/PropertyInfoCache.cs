@@ -1,10 +1,7 @@
-﻿
-using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
@@ -54,20 +51,18 @@ internal class PropertyInfoCache<typeT, valueT>
     /// Returns the value for <paramref name="key"/> if present; otherwise <c>null</c>.
     /// Also returns <c>null</c> when the stored value is <c>null</c>.
     /// </summary>
-    internal valueT Get(PropertyInfo key)
-    {
-        if (_cache.TryGetValue(new PropertyName(key.Name), out valueT? value))
-            return value;
-        else
-            throw new InvalidPropertyException<typeT>(new PropertyName(key.Name));
-    }
-
+    /// <param name="key">the property to look up</param>
+    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that the property was invalid</exception>
+    internal valueT Get(PropertyInfo key) =>
+        Get(new PropertyName(key.Name));
 
     //TODO: make sure this can return null
     /// <summary>
     /// Returns the value for <paramref name="key"/> if present; otherwise <c>null</c>.
     /// Also returns <c>null</c> when the stored value is <c>null</c>.
     /// </summary>
+    /// <param name="key">the property to look up</param>
+    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that the property was invalid</exception>
     internal valueT Get(PropertyName key)
     {
         if (_cache.TryGetValue(key, out valueT? value))
@@ -75,6 +70,36 @@ internal class PropertyInfoCache<typeT, valueT>
         else
             throw new InvalidPropertyException<typeT>(key);
     }
+
+
+    //TODO: make sure this can return nulls
+    /// <summary>
+    /// Returns the values for <paramref name="keys"/> if present; 
+    /// otherwise if any one of them doesn't exists, throw a <see cref="InvalidPropertyException{typeT}"/>
+    /// Also returns <c>null</c> when the stored value is <c>null</c>.
+    /// </summary>
+    /// <param name="keys">the properties to look up</param>
+    /// <returns></returns>
+    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that one or more properties were invalid</exception>
+    internal IEnumerable<valueT> GetMany(IEnumerable<PropertyName> keys) 
+    {
+        IEnumerable<PropertyName> invalids = keys.Where(key => Exists(key) is false);
+
+        if (invalids.Any())
+            throw new InvalidPropertyException<typeT>(invalids);
+        else
+            return keys.Select(key => Get(key));
+    }
+
+    //TODO: make sure this can return nulls
+    /// <summary>
+    /// Returns the values for <paramref name="keys"/> if present; 
+    /// otherwise if any one of them doesn't exists, throw a <see cref="InvalidPropertyException{typeT}"/>
+    /// Also returns <c>null</c> when the stored value is <c>null</c>.
+    /// <param name="keys">the properties to look up</param>
+    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that one or more properties were invalid</exception>
+    internal IEnumerable<valueT> GetMany(IEnumerable<PropertyInfo> keys) =>
+        GetMany(keys.Select(key => new PropertyName(key.Name)));
 
     /// <summary>All values (some entries may be <c>null</c> by design).</summary>
     internal IEnumerable<valueT> Values => 
