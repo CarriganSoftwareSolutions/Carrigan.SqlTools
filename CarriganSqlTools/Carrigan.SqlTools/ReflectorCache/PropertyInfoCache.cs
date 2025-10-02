@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reflection;
 
@@ -45,6 +46,25 @@ internal class PropertyInfoCache<typeT, valueT>
                 )
             )
         );
+    /// <summary>
+    /// This is the class constructor for PropertyInfoCache.
+    /// </summary>
+    /// <param name="data">An enumeration of tuples consisting of a property info and a value</param>
+    internal PropertyInfoCache(IEnumerable<Tuple<PropertyName, valueT>> data) =>
+        _cache = new ReadOnlyDictionary<PropertyName, valueT>
+        (
+            new Dictionary<PropertyName, valueT>
+            (
+                data.Select
+                (
+                    tuple => new KeyValuePair<PropertyName, valueT>
+                    (
+                        new PropertyName(tuple.Item1),
+                        tuple.Item2
+                    )
+                )
+            )
+        );
 
     //TODO: make sure this can return null
     /// <summary>
@@ -70,7 +90,6 @@ internal class PropertyInfoCache<typeT, valueT>
         else
             throw new InvalidPropertyException<typeT>(key);
     }
-
 
     //TODO: make sure this can return nulls
     /// <summary>
@@ -142,4 +161,15 @@ internal class PropertyInfoCache<typeT, valueT>
     /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else null.</returns>
     internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyInfo> properties) =>
         GetExceptionForInvalidPropertyNames(properties.Select(property => new PropertyName(property.Name)));
+
+    //TODO: Documentation
+    internal PropertyInfoCache<typeT, valueT> GetSubCache(IEnumerable<PropertyName> keys)
+    {
+        IEnumerable<PropertyName> invalids = keys.Where(key => Exists(key) is false);
+
+        if (invalids.Any())
+            throw new InvalidPropertyException<typeT>(invalids);
+        else
+            return new (keys.Select(property => new Tuple<PropertyName, valueT>(property, Get(property))));
+    }
 }
