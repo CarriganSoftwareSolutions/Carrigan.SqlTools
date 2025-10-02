@@ -290,7 +290,7 @@ public class IsNotNullTests
         PredicatesBase predicate = new IsNotNull(inner);
 
 
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
     }
 
     [Fact]
@@ -313,7 +313,7 @@ public class IsNotNullTests
 
         PredicatesBase predicate = new IsNotNull(inner);
 
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
     }
 
     [Fact]
@@ -336,7 +336,7 @@ public class IsNotNullTests
 
         PredicatesBase predicate = new IsNotNull(inner);
 
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[Express]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 
     [Fact]
@@ -394,7 +394,7 @@ public class IsNotNullTests
     {
         PredicatesBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
-        _ = and.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000destruct0]").Single();
-        _ = and.Column.Where(col => col.ColumnTag == "[ColumnTable].[Express]").Single();
+        _ = and.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = and.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 }

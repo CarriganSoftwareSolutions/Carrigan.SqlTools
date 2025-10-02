@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
 
@@ -10,11 +11,11 @@ public interface IOrderByItem : IEquatable<IOrderByItem>
     /// <summary>
     /// Represents the Column identified associated with this instance
     /// </summary>
-    public ColumnTag ColumnTag { get; }
+    public ColumnInfo ColumnInfo { get; }
     /// <summary>
-    /// Gets the <see cref="ColumnTag"/> associated with this instance.
+    /// Gets the <see cref="ColumnInfo"/> associated with this instance.
     /// </summary>
-    public TableTag TableTag { get; }
+    public TableTag TableTag { get; } //can we get rid of this?
     /// <summary>
     /// Gets the sort direction, as defined by the <see cref="SortDirectionEnum"/> enumeration.
     /// </summary>

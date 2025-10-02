@@ -1,10 +1,16 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Attributes;
+using Carrigan.Core.Extensions;
+using Carrigan.Core.ReflectionCaching;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.RegularExpressions;
+using Carrigan.SqlTools.Tags;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace Carrigan.SqlTools.Tags;
+namespace Carrigan.SqlTools.ReflectorCache;
 
 //TODO: Rework all documentation, examples, and unit tests.
 
@@ -82,57 +88,114 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
+public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqualityComparer<ColumnInfo>
 {
     /// <summary>
-    /// A string that represent the <see cref="ColumnTag"/> .
+    /// The corresponding <see cref="Tags.TableTag"/>.
     /// </summary>
-    private readonly string _columnTag;
-
-    private readonly ColumnName _columnName;
     internal readonly TableTag TableTag;
 
-    //TODO: documentation, unit tests
+    /// <summary>
+    /// A string that represent the <see cref="Tags.ColumnTag"/> .
+    /// </summary>
+    internal readonly ColumnTag ColumnTag;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ColumnTag"/> class,
+    /// The name of the column. Must not be <c>null</c>, empty, or white space.
+    /// </summary>
+    internal readonly ColumnName ColumnName;
+
+    /// <summary>
+    /// <see cref="PropertyInfo"/> associated with the column in the data model.
+    /// </summary>
+    internal readonly PropertyInfo PropertyInfo;
+
+    /// <summary>
+    /// <see cref="PropertyName"/> associated with the column in the data model.
+    /// </summary>
+    internal readonly PropertyName PropertyName;
+
+    /// <summary>
+    /// The <see cref="Tags.ParameterTag"/> used to represent the column as a SQL parameter
+    /// </summary>
+    internal readonly ParameterTag ParameterTag;
+
+    //TODO: documentation, unit test
+    internal readonly SelectTag SelectTag;
+
+    internal readonly bool IsKeyPart;
+
+    internal readonly bool IsEncrypted;
+
+    internal readonly bool IsKeyVersionField;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Tags.ColumnTag"/> class,
     /// which represents a fully qualified SQL column identifier
     /// in the form <c>[Schema].[Table].[Column]</c>.
     /// </summary>
-    /// <param name="tableTag">
-    /// The <see cref="TableTag"/> that identifies the table containing the column.
+    /// <param name="schemaName">
+    /// The <see cref="SchemaName"/> that identifies the table containing the column.
+    /// </param>
+    /// <param name="tableName">
+    /// The <see cref="TableName"/> that identifies the table containing the column.
     /// </param>
     /// <param name="columnName">
-    /// The name of the column. Must not be <c>null</c>, empty, or white space.
+    /// The <see cref="IdentifierTypes.ColumnName"/> of the column. Must not be <c>null</c>, empty, or white space.
+    /// </param>
+    /// <param name="propertyInfo">
+    /// The <see cref="System.Reflection.PropertyInfo"/> associated with the column in the data model.
+    /// </param>
+    /// <param name="parameterTag">
+    /// The <see cref="Tags.ParameterTag"/> used to represent the column as a SQL parameter.
+    /// </param>
+    /// <param name="aliasTag">
+    /// TODO: proof read documentation
+    /// The <see cref="alias"/> used to represent the <c>COLUMN</c>'s <C>AS</C> alias as a SQL parameter.
     /// </param>
     /// <exception cref="InvalidSqlIdentifierException">
-    /// Thrown when <paramref name="columnName"/> fails to meet the SQL identifier naming rules.
+    /// Thrown when <paramref name="columnTag"/> fails to meet the SQL identifier naming rules.
     /// </exception>
-    internal ColumnTag(TableTag tableTag, ColumnName columnName)
+    internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
-        if (SqlIdentifierPattern.Fails(columnName))
-            throw new InvalidSqlIdentifierException(columnName);
-        else
-        {
-            _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
-            _columnName = columnName;
-            TableTag = tableTag;
-        }
+        string? columnName = propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.GetValueOrNull()
+            ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
+            ?? propertyInfo.Name;
+
+        string? parameterName = propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name?.GetValueOrNull() ?? columnName;
+
+        string? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
+
+        TableTag = new(schemaName, tableName);
+        ColumnName = new ColumnName(columnName);
+        ColumnTag = new(TableTag, ColumnName);
+        PropertyInfo = propertyInfo;
+        PropertyName = new(PropertyInfo.Name);
+        ParameterTag = new ParameterTag(null, parameterName, null);
+        SelectTag = new (ColumnTag, aliasName is not null ? new AliasTag( new AliasName(aliasName)): null);
+
+        IsKeyPart = keys.Contains(PropertyInfo);
+        IsEncrypted = PropertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;
+        IsKeyVersionField = PropertyInfo.GetCustomAttribute<KeyVersionAttribute>() != null;
+
+        if (IsKeyVersionField && (Nullable.GetUnderlyingType(PropertyInfo.PropertyType) ?? PropertyInfo.PropertyType) != typeof(int))
+            throw new InvalidKeyVersionFieldType(new PropertyName(PropertyInfo.Name));
+
     }
 
     /// <summary>
-    /// Implicitly converts a <see cref="ColumnTag"/> to its SQL string representation
+    /// Implicitly converts a <see cref="ColumnInfo"/> to its SQL string representation
     /// in the form <c>[Schema].[Table].[Column]</c>.
     /// </summary>
-    /// <param name="value">The <see cref="ColumnTag"/> to convert.</param>
+    /// <param name="value">The <see cref="ColumnInfo"/> to convert.</param>
     /// <returns>
     /// A SQL string that fully qualifies the column name, including schema and table if defined.
     /// </returns>
-    public static implicit operator string(ColumnTag value)
-        => value._columnTag;
+    public static implicit operator string(ColumnInfo value)
+        => value.ColumnTag;
 
     /// <summary>
-    /// Returns the SQL string representation of this <see cref="ColumnTag"/> instance,
+    /// Returns the SQL string representation of this <see cref="ColumnInfo"/> instance,
     /// equivalent to the result of the implicit conversion to <see cref="string"/>.
     /// </summary>
     /// <returns>
@@ -140,7 +203,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
         => this;
 
     /// <summary>
-    /// Returns the SQL string representation of this <see cref="ColumnTag"/>,
+    /// Returns the SQL string representation of this <see cref="ColumnInfo"/>,
     /// optionally including the table (and schema) prefix.
     /// </summary>
     /// <param name="useTableTag">
@@ -155,15 +218,15 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
         if (useTableTag)
             return ToString();
         else
-            return $"[{_columnName}]";
+            return $"[{ColumnName}]";
     }
 
     /// <summary>
-    /// Compares this <see cref="ColumnTag"/> to another instance and returns a value
+    /// Compares this <see cref="ColumnInfo"/> to another instance and returns a value
     /// that indicates their relative sort order.
     /// </summary>
     /// <param name="other">
-    /// The <see cref="ColumnTag"/> to compare with the current instance.
+    /// The <see cref="ColumnInfo"/> to compare with the current instance.
     /// </param>
     /// <returns>
     /// A signed integer that indicates the relative order of the two objects:
@@ -175,28 +238,28 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// The comparison is case-insensitive and uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// If <paramref name="other"/> is <c>null</c>, this instance is considered greater.
     /// </remarks>
-    public int CompareTo(ColumnTag? other)
+    public int CompareTo(ColumnInfo? other)
     {
         if (other is null) return 1;
         return string.Compare(this, other, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
-    /// Determines whether the current <see cref="ColumnTag"/> is equal to another
-    /// <see cref="ColumnTag"/> instance.
+    /// Determines whether the current <see cref="ColumnInfo"/> is equal to another
+    /// <see cref="ColumnInfo"/> instance.
     /// </summary>
     /// <param name="other">
-    /// The <see cref="ColumnTag"/> to compare with this instance.
+    /// The <see cref="ColumnInfo"/> to compare with this instance.
     /// </param>
     /// <returns>
-    /// <c>true</c> if the two <see cref="ColumnTag"/> instances represent the same column,
+    /// <c>true</c> if the two <see cref="ColumnInfo"/> instances represent the same column,
     /// ignoring case; otherwise, <c>false</c>.
     /// </returns>
     /// <remarks>
     /// The comparison is case-insensitive and uses
     /// <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </remarks>
-    public bool Equals(ColumnTag? other)
+    public bool Equals(ColumnInfo? other)
     {
         if (other is null) return false;
         return string.Equals(this, other, StringComparison.OrdinalIgnoreCase);
@@ -204,44 +267,44 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
 
     /// <summary>
     /// Determines whether the specified object is equal to the current
-    /// <see cref="ColumnTag"/> instance.
+    /// <see cref="ColumnInfo"/> instance.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns>
-    /// <c>true</c> if <paramref name="obj"/> is a <see cref="ColumnTag"/> and
+    /// <c>true</c> if <paramref name="obj"/> is a <see cref="ColumnInfo"/> and
     /// represents the same column (case-insensitive); otherwise, <c>false</c>.
     /// </returns>
     /// <remarks>
     /// The comparison is case-insensitive and delegates to
-    /// <see cref="Equals(ColumnTag?)"/>.
+    /// <see cref="Equals(ColumnInfo?)"/>.
     /// </remarks>
     public override bool Equals(object? obj) =>
-        obj is ColumnTag ct && Equals(ct);
+        obj is ColumnInfo ct && Equals(ct);
 
     /// <summary>
-    /// Serves as the default hash function for the <see cref="ColumnTag"/> class.
+    /// Serves as the default hash function for the <see cref="ColumnInfo"/> class.
     /// </summary>
     /// <returns>
-    /// An integer hash code for this <see cref="ColumnTag"/>, computed in a manner
-    /// consistent with the case-insensitive comparison used in <see cref="Equals(ColumnTag?)"/>.
+    /// An integer hash code for this <see cref="ColumnInfo"/>, computed in a manner
+    /// consistent with the case-insensitive comparison used in <see cref="Equals(ColumnInfo?)"/>.
     /// </returns>
     public override int GetHashCode() =>
-        _columnTag.GetHashCode();
+        ColumnTag.GetHashCode();
 
     /// <summary>
-    /// Determines whether two <see cref="ColumnTag"/> instances are equal.
+    /// Determines whether two <see cref="ColumnInfo"/> instances are equal.
     /// </summary>
-    /// <param name="x">The first <see cref="ColumnTag"/> to compare.</param>
-    /// <param name="y">The second <see cref="ColumnTag"/> to compare.</param>
+    /// <param name="x">The first <see cref="ColumnInfo"/> to compare.</param>
+    /// <param name="y">The second <see cref="ColumnInfo"/> to compare.</param>
     /// <returns>
     /// <c>true</c> if <paramref name="x"/> and <paramref name="y"/> represent the same column;
     /// otherwise, <c>false</c>.
     /// </returns>
     /// <remarks>
     /// The comparison is case-insensitive and uses
-    /// <see cref="ColumnTag.Equals(ColumnTag?)"/> for the actual comparison logic.
+    /// <see cref="ColumnInfo.Equals(ColumnInfo?)"/> for the actual comparison logic.
     /// </remarks>
-    public bool Equals(ColumnTag? x, ColumnTag? y)
+    public bool Equals(ColumnInfo? x, ColumnInfo? y)
     {
         if (ReferenceEquals(x, y)) return true;
         if (x is null || y is null) return false;
@@ -249,17 +312,17 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     }
 
     /// <summary>
-    /// Returns a hash code for the specified <see cref="ColumnTag"/> instance.
+    /// Returns a hash code for the specified <see cref="ColumnInfo"/> instance.
     /// </summary>
-    /// <param name="obj">The <see cref="ColumnTag"/> for which to compute a hash code.</param>
+    /// <param name="obj">The <see cref="ColumnInfo"/> for which to compute a hash code.</param>
     /// <returns>
     /// An integer hash code for <paramref name="obj"/>, computed in a manner consistent
-    /// with the case-insensitive comparison defined in <see cref="Equals(ColumnTag?, ColumnTag?)"/>.
+    /// with the case-insensitive comparison defined in <see cref="Equals(ColumnInfo?, ColumnInfo?)"/>.
     /// </returns>
-    public int GetHashCode(ColumnTag obj) =>
+    public int GetHashCode(ColumnInfo obj) =>
         obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
 
-    public static bool operator ==(ColumnTag? left, ColumnTag? right)
+    public static bool operator ==(ColumnInfo? left, ColumnInfo? right)
     {
         if (ReferenceEquals(left, right)) return true;
         if (left is null || right is null) return false;
@@ -267,25 +330,25 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     }
 
     /// <summary>
-    /// Determines whether two <see cref="ColumnTag"/> instances are equal.
+    /// Determines whether two <see cref="ColumnInfo"/> instances are equal.
     /// </summary>
-    /// <param name="left">The first <see cref="ColumnTag"/> to compare.</param>
-    /// <param name="right">The second <see cref="ColumnTag"/> to compare.</param>
+    /// <param name="left">The first <see cref="ColumnInfo"/> to compare.</param>
+    /// <param name="right">The second <see cref="ColumnInfo"/> to compare.</param>
     /// <returns>
     /// <c>true</c> if <paramref name="left"/> and <paramref name="right"/> represent the same column;
     /// otherwise, <c>false</c>.
     /// </returns>
     /// <remarks>
     /// The comparison is case-insensitive and equivalent to calling
-    /// <see cref="Equals(ColumnTag?, ColumnTag?)"/>.
+    /// <see cref="Equals(ColumnInfo?, ColumnInfo?)"/>.
     /// </remarks>
-    public static bool operator !=(ColumnTag? left, ColumnTag? right)
+    public static bool operator !=(ColumnInfo? left, ColumnInfo? right)
     {
         return !(left == right);
     }
 
     /// <summary>
-    /// Determines whether this <see cref="ColumnTag"/> is empty.
+    /// Determines whether this <see cref="ColumnInfo"/> is empty.
     /// </summary>
     /// <returns>
     /// <c>true</c> if the SQL representation of this column is <c>null</c>, empty,

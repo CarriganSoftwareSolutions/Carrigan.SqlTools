@@ -1,4 +1,7 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.RegularExpressions;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Predicates;
 
@@ -31,30 +34,23 @@ public class Parameters : PredicatesBase
     /// </summary>
     /// <param name="parameter">The name you want the parameter to have</param>
     /// <param name="value">The value of the parameter</param>
-    /// <exception cref="ArgumentNullException">Parameter name was null</exception>
-    /// <exception cref="ArgumentException">The parameter name was empty or contained an invalid character</exception>
+    public Parameters(ParameterTag parameter, object? value)
+    {
+        ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));
+        Name = parameter;
+        Value = value;
+    }
+
+    /// <summary>
+    /// Constructor for Parameter
+    /// Note: a prefix maybe added to the final parameter name
+    /// </summary>
+    /// <param name="parameter">The name you want the parameter to have</param>
+    /// <param name="value">The value of the parameter</param>
+    /// <exception cref="InvalidSqlIdentifierException">The parameter name was empty or contained an invalid character</exception>
+    [ExternalOnly]
     public Parameters(string parameter, object? value)
     {
-        if (parameter is null)
-        {
-            throw new ArgumentNullException(nameof(parameter), $"A value for {nameof(parameter)} is required.");
-        }
-        else if (parameter == string.Empty)
-        {
-            throw new ArgumentException($"A value for {nameof(parameter)} is required.", nameof(parameter));
-        }
-        else if(parameter.AsEnumerable().Where(ch => ch == '@' || ch == '$' || ch == '#').Any())
-        {
-            throw new ArgumentException($"Special character exists in {nameof(parameter)} name of SQL \"{parameter}\"", nameof(parameter));
-        }
-        else if(parameter.AsEnumerable().Where(ch => !(char.IsLetter(ch) || char.IsNumber(ch) || ch == '_')).Any())
-        {
-            throw new ArgumentException($"Invalid character exists in {nameof(parameter)} name of SQL \"{parameter}\"", nameof(parameter));
-        }
-        else if (parameter.AsEnumerable().Where(ch => char.IsWhiteSpace(ch)).Any())
-        {
-            throw new ArgumentException($"White space character exists in {nameof(parameter)} name of SQL \"{parameter}\"", nameof(parameter));
-        }
         Name = new ParameterTag(null, parameter, null);
         Value = value;
     }

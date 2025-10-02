@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Predicates;
 //TODO: Consider replacing with just ColumnTag?
@@ -11,9 +12,9 @@ public interface IColumnValue
     /// <summary>
     /// The Tag for the Column
     /// </summary>
-    public ColumnTag ColumnTag { get; }
+    public ColumnInfo ColumnInfo { get; }
     /// <summary>
     /// The Tag for the Table
     /// </summary>
-    public TableTag TableTag { get; }
+    public TableTag TableTag { get; } //TODO: Can we get rid of this now?
 }

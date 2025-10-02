@@ -219,8 +219,8 @@ public class GreaterThanEqualsTests
 
         PredicatesBase predicate = new GreaterThanEquals(left, right);
 
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[Pizza]").Single();
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
     }
 
     [Fact]
@@ -247,7 +247,7 @@ public class GreaterThanEqualsTests
 
         PredicatesBase predicate = new GreaterThanEquals(left, right);
 
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[Express]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public class GreaterThanEqualsTests
 
         PredicatesBase predicate = new GreaterThanEquals(left, right);
 
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[D000destruct0]").Single();
-        _ = predicate.Column.Where(col => col.ColumnTag == "[ColumnTable].[Express]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 }

@@ -2,11 +2,6 @@
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tags;
 //Document and unit test.
@@ -37,7 +32,8 @@ public class SelectTags : ISelectTags
                 (
                     SqlToolsReflectorCache<T>
                         .GetColumnsFromProperties(properties)
-                        .FirstOrDefault() ?? throw new InvalidPropertyException<T>(properties),
+                        .FirstOrDefault()
+                        ?.ColumnTag  ?? throw new InvalidPropertyException<T>(properties),
                     aliasName is not null ? new AliasTag(aliasName.Value) : null
                 )
             )
@@ -55,8 +51,8 @@ public class SelectTags : ISelectTags
             _selectTags.Concat
             (
                 SqlToolsReflectorCache<T>
-                    .GetColumnsFromProperties(properties)   //TODO: It would be nice to get select directly from a property
-                    .Select(column => column._selectTag)    //TODO: It would be nice to skip this step.
+                    .GetColumnsFromProperties(properties)
+                    .Select(column => column.SelectTag)
             )            
         );
 
@@ -75,7 +71,8 @@ public class SelectTags : ISelectTags
             (
                 SqlToolsReflectorCache<T>
                     .GetColumnsFromProperties(properties)
-                    .FirstOrDefault() ?? throw new InvalidPropertyException<T>(properties),
+                    .FirstOrDefault()
+                    ?.ColumnTag ?? throw new InvalidPropertyException<T>(properties),
                 aliasName is not null ? new AliasTag(aliasName.Value) : null
             )
         );
@@ -90,8 +87,8 @@ public class SelectTags : ISelectTags
         new
         (
             SqlToolsReflectorCache<T>
-                    .GetColumnsFromProperties(properties)   //TODO: It would be nice to get select directly from a property
-                    .Select(column => column._selectTag)   //TODO: It would be nice to skip this step.
+                    .GetColumnsFromProperties(properties)
+                    .Select(column => column.SelectTag)
         );
 
     //TODO: Documentation, unit testing

@@ -51,11 +51,11 @@ public class LeftJoin<T, J> : JoinBaseClass
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
         TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;
-        IEnumerable<ColumnTag> invalidTags =
+        IEnumerable<ColumnInfo> invalidTags =
             predicate
                 .Column
                 .Where(column => column.TableTag != leftTableTag && column.TableTag != rightTableTag)
-                .Select(column => column.ColumnTag);
+                .Select(column => column.ColumnInfo);
 
         if (invalidTags.Any())
             throw new InvalidColumnException(invalidTags);
@@ -70,8 +70,8 @@ public class LeftJoin<T, J> : JoinBaseClass
     /// providing a quick way to determine whether a given column
     /// participates in a table that participates in any join operation.
     /// </summary>
-    public override IEnumerable<ColumnTag> ColumnsTags =>
-        SqlToolsReflectorCache<T>.Columns.Concat(SqlToolsReflectorCache<J>.Columns);
+    public override IEnumerable<ColumnInfo> ColumnInfo =>
+        SqlToolsReflectorCache<T>.ColumnInfo.Concat(SqlToolsReflectorCache<J>.ColumnInfo);
 
     public override Dictionary<ParameterTag, object> Parameters => new(_parameters.SelectMany(parameter => parameter.GetParameters()));
 

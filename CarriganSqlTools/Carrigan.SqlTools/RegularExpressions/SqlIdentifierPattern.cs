@@ -45,7 +45,7 @@ public static class SqlIdentifierPattern
     /// naming pattern; otherwise, <c>false</c>.
     /// </returns>
     public static bool Passes(string? identifier) =>
-         identifier is not null && identifier.Length <= 128 && _regexPattern.IsMatch(identifier);
+         identifier is not null && identifier.Length >= 1 && identifier.Length <= 128 && _regexPattern.IsMatch(identifier);
 
     /// <summary>
     /// Determines whether the specified <paramref name="identifier"/> violates

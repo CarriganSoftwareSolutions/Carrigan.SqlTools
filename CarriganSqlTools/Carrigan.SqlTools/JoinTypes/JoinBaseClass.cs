@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
@@ -42,7 +43,7 @@ public abstract class JoinBaseClass : IJoins
     /// providing a quick way to determine whether a given column
     /// participates in a table that participates in any join operation.
     /// </summary>
-    public abstract IEnumerable<ColumnTag> ColumnsTags { get; }
+    public abstract IEnumerable<ColumnInfo> ColumnInfo { get; }
 
     /// <summary>
     /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.

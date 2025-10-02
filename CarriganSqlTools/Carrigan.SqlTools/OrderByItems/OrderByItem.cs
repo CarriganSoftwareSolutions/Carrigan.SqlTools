@@ -40,7 +40,7 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// </param>
     public OrderByItem(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
     {
-        ColumnTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
+        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
         SortDirection = sortDirection;
     }
     /// <summary>
@@ -59,9 +59,9 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
         this (new PropertyName(propertyName), sortDirection) {}
 
     /// <summary>
-    /// Gets the <see cref="ColumnTag"/> that specifies the column being ordered.
+    /// Gets the <see cref="ColumnInfo"/> that specifies the column being ordered.
     /// </summary>
-    public ColumnTag ColumnTag { get; private set; }
+    public ColumnInfo ColumnInfo { get; private set; }
 
     /// <summary>
     /// Gets the <see cref="TableTag"/> representing the table whose column is being sorted.
@@ -94,7 +94,7 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// A SQL string representing this item, for example <c>[Order].[OrderDate] ASC</c>.
     /// </returns>
     public string ToSql() =>
-        $"{ColumnTag} {SortDirection.ToSql()}";
+        $"{ColumnInfo} {SortDirection.ToSql()}";
 
     /// <summary>
     /// Determines whether the current instance is equal to another <see cref="IOrderByItem"/>.
@@ -112,7 +112,7 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
         if (other is null) return false;
 
         return TableTag.Equals(other.TableTag)
-            && ColumnTag.Equals(other.ColumnTag);
+            && ColumnInfo.Equals(other.ColumnInfo);
     }
 
     /// <summary>
@@ -129,13 +129,13 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
 
     /// <summary>
     /// Serves as the default hash function for <see cref="IOrderByItem"/>.
-    /// The hash code is computed from the <see cref="TableTag"/> and <see cref="ColumnTag"/> values.
+    /// The hash code is computed from the <see cref="TableTag"/> and <see cref="ColumnInfo"/> values.
     /// </summary>
     /// <returns>
     /// An integer hash code based on the table and column tags.
     /// </returns>
     public override int GetHashCode()
-        => HashCode.Combine(TableTag, ColumnTag);
+        => HashCode.Combine(TableTag, ColumnInfo);
 
     /// <summary>
     /// In this context Contains is basically an alias to determine if this single item equals the item being passed in.
@@ -158,7 +158,7 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// Thrown if the method is not implemented.
     /// </exception>
     public bool IsEmpty() =>
-        ColumnTag.IsEmpty();
+        ColumnInfo.IsEmpty();
 
     /// <summary>
     /// Creates a new order by clause with a <see cref="IOrderByItem"> appended. This operation is immutable to the original object.

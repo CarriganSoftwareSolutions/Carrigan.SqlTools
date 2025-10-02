@@ -27,7 +27,7 @@ public static class SetColumnsExtensions
     /// otherwise, <c>false</c>.
     /// </returns>
     public static bool IsNullOrEmpty<T>(this SetColumns<T>? setColumns) =>
-        setColumns?.ColumnTags.IsNullOrEmpty() ?? true;
+        setColumns?.ColumnInfo.IsNullOrEmpty() ?? true;
 
     /// <summary>
     /// Determines whether the specified <see cref="SetColumns{T}"/> instance is

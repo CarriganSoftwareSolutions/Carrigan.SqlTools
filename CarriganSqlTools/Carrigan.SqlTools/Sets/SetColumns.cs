@@ -57,7 +57,7 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// Gets the collection of <see cref="ColumnTag"/> objects representing
     /// the columns used in this instance.
     /// </summary>
-    public IEnumerable<ColumnTag> ColumnTags { get; private set; }
+    public IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetColumns"/> class,
@@ -67,7 +67,7 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// The names of the properties that represent the column names to be updated.
     /// </param>
     public SetColumns(params IEnumerable<PropertyName> propertyNames) =>
-        ColumnTags = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
+        ColumnInfo = GetColumnsFromProperties(propertyNames);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetColumns"/> class,
@@ -91,9 +91,9 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// </exception>
     public void AddColumn(PropertyName propertyName)
     {
-        ColumnTag? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
+        ColumnInfo? newTag = GetColumnsFromProperties(propertyName).Single();
         if(newTag is not null)
-            ColumnTags = ColumnTags.Append(newTag);
+            ColumnInfo = ColumnInfo.Append(newTag);
     }
 
     /// <summary>

@@ -37,8 +37,8 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Delete(T entity)
     {
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = KeyColumns.Select(column => GetSqlParameterKeyValue(column, entity));
-        string whereClause = string.Join(" and ", KeyColumns.Select(column => $"[{column._columnName}] = @{column._parameterTag}"));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = KeyColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity));
+        string whereClause = string.Join(" and ", KeyColumnInfo.Select(column => $"[{column.ColumnName}] = @{column.ParameterTag}"));
         return new SqlQuery()
         {
             Parameters = [.. parameters],

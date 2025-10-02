@@ -1,4 +1,5 @@
 ﻿
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using System;
 using System.Collections.Generic;
@@ -193,17 +194,17 @@ public class ParameterTagTests
     [Fact]
     public void Constructor_WhenParameterNameIsNullOrEmpty_Throws_1() =>
         // Null parameter name
-        Assert.Throws<ArgumentNullException>(() => new ParameterTag("FirstPrefix", null!, null));
+        Assert.Throws <InvalidParameterIdentifierException>(() => new ParameterTag("FirstPrefix", null!, null));
 
     [Fact]
     public void Constructor_WhenParameterNameIsNullOrEmpty_Throws_2() =>
         // Empty parameter name
-        Assert.Throws<ArgumentNullException>(() => new ParameterTag("FirstPrefix", string.Empty, null));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new ParameterTag("FirstPrefix", string.Empty, null));
 
     [Fact]
     public void Constructor_WhenParameterNameIsNullOrEmpty_Throws_3() =>
         // Whitespace parameter name
-        Assert.Throws<ArgumentNullException>(() => new ParameterTag("FirstPrefix", "   ", null));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new ParameterTag("FirstPrefix", "   ", null));
 
     [Fact]
     public void CompareTo_NullOther_ReturnsPositive()

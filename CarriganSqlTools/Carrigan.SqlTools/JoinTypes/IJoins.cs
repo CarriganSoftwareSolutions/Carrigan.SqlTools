@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -32,7 +33,7 @@ public interface IJoins
     /// providing a quick way to determine whether a given column
     /// participates in a table that participates in any join operation.
     /// </summary>
-    public IEnumerable<ColumnTag> ColumnsTags { get; }
+    public IEnumerable<ColumnInfo> ColumnInfo { get; }
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic.

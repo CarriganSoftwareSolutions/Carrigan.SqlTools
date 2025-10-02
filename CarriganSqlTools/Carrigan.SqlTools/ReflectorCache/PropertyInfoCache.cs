@@ -145,7 +145,7 @@ internal class PropertyInfoCache<typeT, valueT>
     /// </summary>
     /// <param name="propertyNames">The property names to test</param>
     /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else <c>null</c>.</returns>
-    internal InvalidPropertyException<typeT>? GetExceptionForInvalidPropertyNames(params IEnumerable<PropertyName> propertyNames)
+    internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyName> propertyNames)
     {
         IEnumerable<PropertyName> invalidPropertyNames = propertyNames.Where(propertyName => _cache.ContainsKey(propertyName) is false);
         if (invalidPropertyNames.Any())
@@ -160,7 +160,7 @@ internal class PropertyInfoCache<typeT, valueT>
     /// <param name="propertyNames">The properties to test</param>
     /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else null.</returns>
     internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyInfo> properties) =>
-        GetExceptionForInvalidPropertyNames(properties.Select(property => new PropertyName(property.Name)));
+        GetExceptionForInvalidProperties(properties.Select(property => new PropertyName(property.Name)));
 
     //TODO: Documentation
     internal PropertyInfoCache<typeT, valueT> GetSubCache(IEnumerable<PropertyName> keys)
@@ -172,4 +172,8 @@ internal class PropertyInfoCache<typeT, valueT>
         else
             return new (keys.Select(property => new Tuple<PropertyName, valueT>(property, Get(property))));
     }
+
+    //TODO: Documentation
+    internal PropertyInfoCache<typeT, valueT> GetSubCache(IEnumerable<PropertyInfo> keys) =>
+        GetSubCache(keys.Select(key => new PropertyName(key.Name)));
 }

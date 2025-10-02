@@ -66,9 +66,9 @@ public class ColumnValueTests
 
         IColumnValue column;
 
-        column = byColumnValues.Column.Where(col => col.ColumnTag.ToString() == "[ColumnTable].[Col1]").First();
+        column = byColumnValues.Column.Where(col => col.ColumnInfo.ToString() == "[ColumnTable].[Col1]").First();
         expectedString = "[ColumnTable].[Col1]";
-        actualString = column.ColumnTag.ToString();
+        actualString = column.ColumnInfo.ToString();
         Assert.Equal(expectedString, actualString);
     }
 

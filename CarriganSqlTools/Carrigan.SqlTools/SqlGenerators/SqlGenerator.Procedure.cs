@@ -26,7 +26,7 @@ public partial class SqlGenerator<T>
     /// </remarks>
     public SqlQuery Procedure(T entity)
     {
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = Columns.Select(columns => GetSqlParameterKeyValue(columns, entity));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = ColumnInfo.Select(columns => GetSqlParameterKeyValue(columns, entity));
 
         return new SqlQuery()
         {

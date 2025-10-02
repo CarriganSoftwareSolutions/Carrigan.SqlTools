@@ -9,6 +9,6 @@ namespace Carrigan.SqlTools.Tags;
 public interface ISelectTags
 {
     public string GetSelects();
-    public IEnumerable<TableTag> GetTableTags();
+    public IEnumerable<TableTag> GetTableTags(); //TODO: can we get rid of Table Tag now?
     public bool Any();
 }

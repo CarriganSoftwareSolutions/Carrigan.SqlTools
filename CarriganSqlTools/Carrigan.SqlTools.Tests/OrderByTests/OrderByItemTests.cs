@@ -17,7 +17,7 @@ public class OrderByItemTests
         OrderByItem<Address> orderByItem = new(columnName, direction);
 
         Assert.Equal(tableTag, orderByItem.TableTag);
-        Assert.Equal(columnTag, orderByItem.ColumnTag);
+        Assert.Equal(columnTag, orderByItem.ColumnInfo);
         Assert.Equal(directionString, orderByItem.SortDirection.ToSql());
         Assert.Equal(sql, orderByItem.ToSql());
     }

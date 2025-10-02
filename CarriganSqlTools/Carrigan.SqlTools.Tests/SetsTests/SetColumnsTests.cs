@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -13,7 +14,7 @@ public class SetColumnsTests
 
         SetColumns<ColumnTable> setColumns = new(propertyName);
 
-        Assert.Equal(["Col1"], setColumns.ColumnTags.Select(columnTag => columnTag._columnName));
+        Assert.Equal([new ColumnName("Col1")], setColumns.ColumnInfo.Select(columnTag => columnTag.ColumnName));
     }
 
     [Fact]
@@ -23,7 +24,7 @@ public class SetColumnsTests
 
         SetColumns<ColumnTable> setColumns = new(validColumns);
 
-        Assert.Equal(validColumns, setColumns.ColumnTags.Select(columnTag => columnTag._columnName));
+        Assert.Equal(validColumns.Select(item => new ColumnName(item)), setColumns.ColumnInfo.Select(columnTag => columnTag.ColumnName));
     }
 
     [Fact]
@@ -44,7 +45,7 @@ public class SetColumnsTests
         SetColumns<ColumnTable> setColumns = new(columns);
 
         // Assert
-        Assert.Empty(setColumns.ColumnTags);
+        Assert.Empty(setColumns.ColumnInfo);
     }
 
     [Fact]
@@ -54,6 +55,6 @@ public class SetColumnsTests
 
         setColumns.AddColumn(nameof(ColumnTable.Col1));
         setColumns.AddColumn(nameof(ColumnTable.Col2));
-        Assert.Equal(["Col1", "Col2"], setColumns.ColumnTags.Select(columnTag => columnTag._columnName));
+        Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], setColumns.ColumnInfo.Select(columnTag => columnTag.ColumnName));
     }
 }

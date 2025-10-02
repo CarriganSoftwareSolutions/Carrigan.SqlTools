@@ -16,7 +16,8 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// </summary>
     private readonly string _selectTag;
 
-    private readonly ColumnTag _columnTag;
+    internal readonly ColumnTag ColumnTag;
+    internal readonly AliasTag? AliasTag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class,
@@ -42,16 +43,18 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
         else
             _selectTag = $"{column} AS {aliasTag}";
 
-        _columnTag = column;
+        ColumnTag = column;
+        AliasTag = aliasTag;
     }
 
     //TODO: Documentation, unit testing
     internal static SelectTag Get<T>(PropertyName properties, AliasName? aliasName = null) =>
-        new SelectTag
+        new
         (
             SqlToolsReflectorCache<T>
                 .GetColumnsFromProperties(properties)
-                .FirstOrDefault() ?? throw new InvalidPropertyException<T>(properties),
+                .FirstOrDefault()
+                ?.ColumnTag ?? throw new InvalidPropertyException<T>(properties),
             aliasName is not null ? new AliasTag(aliasName.Value) : null
         );
 
@@ -64,7 +67,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<PropertyName> properties) =>
         SqlToolsReflectorCache<T>
             .GetColumnsFromProperties(properties)  //TODO: It would be nice to get select directly from a property
-            .Select(column => column._selectTag); //TODO: It would be nice to skip this step.
+            .Select(column => column.SelectTag); //TODO: It would be nice to skip this step.
 
     //TODO: Documentation, unit testing
     [ExternalOnly]
@@ -76,8 +79,8 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     //TODO: Documentation, unit testing
     public static IEnumerable<SelectTag> GetAll<T>() =>
         SqlToolsReflectorCache<T>
-            .Columns //TODO: It would be nice to get select directly from a property
-            .Select(column => column._selectTag); //TODO: It would be nice to skip this step.
+            .ColumnInfo
+            .Select(column => column.SelectTag);
 
     /// <summary>
     /// Implicitly converts a <see cref="SelectTag"/> to its SQL string representation
@@ -240,7 +243,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
 
     //Document, unit tests
     public IEnumerable<TableTag> GetTableTags() => 
-        [_columnTag._tableTag];
+        [ColumnTag.TableTag];
 
     //Document, unit tests
     public bool Any() =>

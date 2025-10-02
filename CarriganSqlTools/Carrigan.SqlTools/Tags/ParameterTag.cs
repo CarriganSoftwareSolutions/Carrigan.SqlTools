@@ -1,5 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Tags;
@@ -68,17 +71,20 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <param name="index">
     /// An optional index to append to the parameter name.
     /// </param>
-    /// <exception cref="ArgumentNullException">
+    /// <exception cref="InvalidParameterIdentifierException">
     /// Thrown when <paramref name="parameterName"/> is <c>null</c>, empty, or white space.
     /// </exception>
     internal ParameterTag(string? prefix, string parameterName, string? index)
     {
-        if (parameterName.IsNullOrWhiteSpace())
-            throw new ArgumentNullException(nameof(parameterName), parameterName);
+        if (SqlParameterPattern.Fails(parameterName))
+            throw new InvalidParameterIdentifierException(ToString());
 
         _parameterBaseName = parameterName;
         _prefix = prefix;
         _index = index;
+
+        if (SqlParameterPattern.Fails(ToString()))
+            throw new InvalidParameterIdentifierException(ToString());
     }
 
     /// <summary>

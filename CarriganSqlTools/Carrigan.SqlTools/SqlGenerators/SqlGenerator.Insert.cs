@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using System.Text;
 //IGNORE SPELLING: newid
@@ -44,10 +45,10 @@ public partial class SqlGenerator<T>
     /// A SQL string representing the <c>VALUES</c> clause for one row,
     /// for example <c>(@Column1, @Column2)</c>.
     /// </returns>
-    private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, int? i = null) =>
+    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, int? i = null) =>
         i == null
-            ? $"({string.Join(", ", columns.Select(column => $"@{column._parameterTag}"))})"
-            : $"({string.Join(", ", columns.Select(column => $"@{column._parameterTag.AddIndex(i.Value.ToString())}"))})";
+            ? $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag}"))})"
+            : $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag.AddIndex(i.Value.ToString())}"))})";
 
     /// <summary>
     /// Builds the combined <c>VALUES</c> clause for a multi-row SQL <c>INSERT</c> statement,
@@ -63,7 +64,7 @@ public partial class SqlGenerator<T>
     /// A SQL string representing the <c>VALUES</c> clause for all entities,
     /// for example <c>(@Column1_0, @Column2_0), (@Column1_1, @Column2_1)</c>.
     /// </returns>
-    private static string EnumeratedInsertValues(IEnumerable<ColumnTag> columns, params IEnumerable<T> entities) =>
+    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, params IEnumerable<T> entities) =>
         $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
 
     /// <summary>
@@ -102,7 +103,7 @@ public partial class SqlGenerator<T>
     {
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
 
-        if (ColumnsLessKeys.None())
+        if (ColumnInfoLessKeys.None())
         {
             return new SqlQuery()
             {
@@ -113,11 +114,11 @@ public partial class SqlGenerator<T>
         }
         else
         {
-            parameters = ColumnsLessKeys.Select(key => GetSqlParameterKeyValue(key, entity));
+            parameters = ColumnInfoLessKeys.Select(key => GetSqlParameterKeyValue(key, entity));
 
 
-            string columns = string.Join(", ", ColumnsLessKeys.Select(column => $"[{column._columnName}]"));
-            string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnsLessKeys);
+            string columns = string.Join(", ", ColumnInfoLessKeys.Select(column => $"[{column.ColumnName}]"));
+            string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfoLessKeys);
 
             return new SqlQuery()
             {
@@ -183,11 +184,11 @@ public partial class SqlGenerator<T>
         else
             parameters = [.. GetSqlParameterKeyValuePairs(entities)];
 
-        string columns = string.Join(", ", Columns.Select(column => $"[{column._columnName}]"));
+        string columns = string.Join(", ", ColumnInfo.Select(column => $"[{column.ColumnName}]"));
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            values = SqlGenerator<T>.EnumeratedInsertValues(Columns);
+            values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfo);
         else
-            values = SqlGenerator<T>.EnumeratedInsertValues(Columns, entities);
+            values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfo, entities);
 
 
         return new SqlQuery()

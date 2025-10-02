@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.PredicatesTests;
@@ -6,9 +8,7 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 public class ParameterValuesTests
 {
     [Theory]
-    [InlineData("$")]
     [InlineData("@")]
-    [InlineData("#")]
     [InlineData("!")]
     [InlineData("%")]
     [InlineData("^")]
@@ -40,7 +40,7 @@ public class ParameterValuesTests
     [InlineData("")]
     [InlineData("hello world")]
     public void ParameterValues_Theory_InvalidParameterChars(string param) => 
-        Assert.Throws<ArgumentException>(() => new Parameters(param, 1));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new Parameters(param, 1));
 
     [Fact]
     public void ParameterValues_Fact_NullParameter() => 
@@ -69,7 +69,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_ParameterCount(string parameter, object value)
     {
-        Parameters parameterValue = new(parameter, value);
+        Parameters parameterValue = new(new ParameterTag(null, parameter, null), value);
         int expected = 1;
         int actual = parameterValue.Parameter.Count();
 
@@ -99,7 +99,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_Parameter_Name(string parameter, object value)
     {
-        Parameters parameterValue = new(parameter, value);
+        Parameters parameterValue = new(new ParameterTag(null, parameter, null), value);
         string expected = $"{parameter}";
         string actual = parameterValue.Name;
 

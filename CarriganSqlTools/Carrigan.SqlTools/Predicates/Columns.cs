@@ -31,7 +31,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// <summary>
     /// The Tag for the Column
     /// </summary>
-    public ColumnTag ColumnTag { get; }
+    public ColumnInfo ColumnInfo { get; }
     /// <summary>
     /// The Tag for the Table
     /// </summary>
@@ -56,7 +56,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     public Columns(PropertyName propertyName)
     {
         TableTag = SqlToolsReflectorCache<T>.Table;
-        ColumnTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);
+        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);
         PropertyName = propertyName;
     }
 
@@ -88,7 +88,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// </param>
     /// <returns>Returns a SQL string represented by this class.</returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        ColumnTag;
+        ColumnInfo;
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic, as key value pairs.

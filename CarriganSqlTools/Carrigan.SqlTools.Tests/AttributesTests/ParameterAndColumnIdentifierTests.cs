@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
@@ -165,9 +166,9 @@ public class ParameterAndColumnIdentifierTests
     public void AndTest()
     {
         Columns<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameters parameter1 = new("p1", 1);
+        Parameters parameter1 = new(new ParameterTag(null, "p1", null), 1);
         Columns<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameters parameter2 = new("p2", 2);
+        Parameters parameter2 = new(new ParameterTag(null, "p2", null), 2);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         And and = new (equal1, equal2);
@@ -201,7 +202,7 @@ public class ParameterAndColumnIdentifierTests
     public void ColumnTest()
     {
         Columns<ColumnIdentifiers> identifierOverrideColumn = new(nameof(ColumnIdentifiers.IdentifierOverrideName));
-        Parameters parameter = new("p1", 1);
+        Parameters parameter =new(new ParameterTag(null, "p1", null), 1);
         Equal equal = new(identifierOverrideColumn, parameter);
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);

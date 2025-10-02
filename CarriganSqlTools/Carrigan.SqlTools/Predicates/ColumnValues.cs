@@ -34,7 +34,7 @@ public class ColumnValues<T> : PredicatesBase
     {
         _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); //called for validation.
         Columns<T> left = new (propertyName);
-        Parameters right = new(left.ColumnTag._parameterTag, parameterValue);
+        Parameters right = new(left.ColumnInfo.ParameterTag, parameterValue);
         value = new Equal
         (
            left,

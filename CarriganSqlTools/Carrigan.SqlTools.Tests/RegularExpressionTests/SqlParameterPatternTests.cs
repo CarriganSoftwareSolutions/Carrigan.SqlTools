@@ -4,16 +4,21 @@ namespace Carrigan.SqlTools.Tests.RegularExpressionTests;
 
 //ignore spelling: Имя 😀abc Nl
 
-public class SqlIdentifierNullablePatternTests
+public class SqlParameterPatternTests
 {
 
-    [Theory]   
+    [Theory]
     [InlineData("UserRole")]
     [InlineData("_Role1")]
     [InlineData("#TempRole")]
+    [InlineData("$TempRole")]
+    [InlineData("@TempRole")]
+    [InlineData("@@TempRole")]
+    [InlineData("@@@TempRole")]
     [InlineData("Role$Name")]
-    [InlineData(null)]                   // null
-    [InlineData("")]                     // empty
+    [InlineData("@name")]
+    [InlineData("123Invalid")]           //Note: @ gets added to the start of parameters, so this is actually fine
+    [InlineData("١abc")]                 // starts with digit (Arabic-Indic)
     //Tests suggested by AI:
     [InlineData("Δ")]                    // Greek letter start
     [InlineData("Имя")]                  // Cyrillic
@@ -21,30 +26,31 @@ public class SqlIdentifierNullablePatternTests
     [InlineData("_Δ")]                   // underscore start + Greek
     [InlineData("A١٢٣")]                 // Arabic-Indic digits allowed after first char
     [InlineData("A_B_C")]                // underscores are all correct
-    [InlineData("A$B#C@D")]              // $, #, @ allowed after the first char
-    [InlineData("ⅫTable")]              // Roman numeral twelve \p{Nl} at start
+    [InlineData("A$B#C@D")]
+    [InlineData("ab@c")]
     //___________00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011111111111111111111111111111
     //___________00000000011111111112222222222333333333344444444445555555555666666666677777777778888888888999999999900000000001111111111222222222
     [InlineData("_2345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678")] //size limit
-    public void ValidIdentifiers_ShouldPass(string? identifier)
+    public void ValidIdentifiers_ShouldPass(string identifier)
     {
         // Assert that the identifier passes the pattern.
-        Assert.True(SqlIdentifierNullablePattern.Passes(identifier));
+        Assert.True(SqlParameterPattern.Passes(identifier));
         // And that it does not fail.
-        Assert.False(SqlIdentifierNullablePattern.Fails(identifier));
+        Assert.False(SqlParameterPattern.Fails(identifier));
     }
 
     [Theory]
     [InlineData("Invalid Role")]            // Contains a space.
     [InlineData("Role; DROP TABLE Users")]  // Contains SQL injection payload.
     [InlineData("User-Role")]               // Contains a hyphen.
-    [InlineData("123Invalid")]              // Starts with a digit.
+    [InlineData("")]                        // Empty string.
     [InlineData(" ")]                       // A string with just whitespace.
+    [InlineData(null)]                      // null
+    [InlineData("@@@@@@@")]                 // null
+
     //tests suggested by AI:
-    [InlineData("@name")]                   // variable prefix not allowed for column/table names
     [InlineData("😀abc")]                   // emoji start not a letter/underscore
     [InlineData("\u0301a")]                 // starts with combining mark (invalid)
-    [InlineData("١abc")]                    // starts with digit (Arabic-Indic)
     [InlineData("A Name")]                  // space (already covered similar, but explicit Unicode set unchanged)
     [InlineData("A.Name")]                  // dot not allowed in unquoted identifier
     [InlineData("A-Name")]                  // hyphen not allowed (already similar covered)
@@ -58,11 +64,11 @@ public class SqlIdentifierNullablePatternTests
     //___________000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111111111111
     //___________000000000111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999000000000011111111112222222222
     [InlineData("_23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789")] //size limit
-    public void InvalidIdentifiers_ShouldFail(string identifier)
+    public void InvalidIdentifiers_ShouldFail(string? identifier)
     {
         // Assert that the identifier does not pass the pattern.
-        Assert.False(SqlIdentifierNullablePattern.Passes(identifier));
+        Assert.False(SqlParameterPattern.Passes(identifier));
         // And that it does fail.
-        Assert.True(SqlIdentifierNullablePattern.Fails(identifier));
+        Assert.True(SqlParameterPattern.Fails(identifier));
     }
 }

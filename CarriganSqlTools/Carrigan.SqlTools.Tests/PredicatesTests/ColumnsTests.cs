@@ -10,7 +10,7 @@ public  class ColumnsTests
 {
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_Null() =>
-        Assert.Throws<ArgumentNullException>(() => new Columns<ColumnTable>(null!));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Columns<ColumnTable>(null!));
 
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_EmptyString() =>
@@ -58,7 +58,7 @@ public  class ColumnsTests
         Columns<ColumnTable> cv = new(propertyName);
 
 
-        _ = cv.Column.Where(col => col.ColumnTag == $"[ColumnTable].[{expectedColumnName}]").Single();
+        _ = cv.Column.Where(col => col.ColumnInfo == $"[ColumnTable].[{expectedColumnName}]").Single();
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public  class ColumnsTests
 
         foreach (string columnName in propertyNames)
         {
-            _ = columnValues.Single(col => col.ColumnTag == $"[ColumnTable].[{columnName}]");
+            _ = columnValues.Single(col => col.ColumnInfo == $"[ColumnTable].[{columnName}]");
         }
     }
     [Theory]
@@ -84,6 +84,6 @@ public  class ColumnsTests
     {
         Columns<ColumnTable> column = new(propertyName);
 
-        Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnTag);
+        Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnInfo);
     }
 }
