@@ -8,7 +8,6 @@ using System.Reflection;
 namespace Carrigan.SqlTools.Tags;
 //TODO: proof read documentation
 //TODO: Unit tests
-//TODO: Documentation for class deceleration
 public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>, ISelectTags
 {
     /// <summary>
@@ -47,36 +46,82 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
         AliasTag = aliasTag;
     }
 
-    //TODO: Documentation, unit testing
-    internal static SelectTag Get<T>(PropertyName properties, AliasName? aliasName = null) =>
+    //TODO: Proof read Documentation, unit testing
+    /// <summary>
+    /// Get a new Select Tag based of the property and alias provided.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="property">Property provided</param>
+    /// <param name="aliasName">Alias provided</param>
+    /// <returns>
+    /// A new Select Tag based of the property and alias provided.
+    /// </returns>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Throws in the property is invalid for class T, or ineligible to model a column.
+    /// </exception>
+    internal static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null) =>
         new
         (
             SqlToolsReflectorCache<T>
-                .GetColumnsFromProperties(properties)
+                .GetColumnsFromProperties(property)
                 .FirstOrDefault()
-                ?.ColumnTag ?? throw new InvalidPropertyException<T>(properties),
+                ?.ColumnTag ?? throw new InvalidPropertyException<T>(property),
             aliasName is not null ? new AliasTag(aliasName.Value) : null
         );
 
-    //TODO: Documentation, unit testing
+    //TODO: Proof read Documentation, unit testing
+    /// <summary>
+    /// Get a new Select Tag based of the property and alias provided.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="property">Property provided</param>
+    /// <param name="aliasName">Alias provided</param>
+    /// <returns>
+    /// A new Select Tag based of the property and alias provided.
+    /// </returns>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Throws in the property is invalid for class T, or ineligible to model a column.
+    /// </exception>
     [ExternalOnly]
     public static SelectTag Get<T>(string property, string? aliasName = null) =>
         Get<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
 
-    //TODO: Documentation, unit testing
+    //TODO: Proof read Documentation, unit testing
+    /// <summary>
+    /// Get a multiple existing Select Tags based of the properties provided.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="properties">Properties provided</param>
+    /// <returns>
+    /// A multiple existing Select Tags based of the properties provided.
+    /// </returns>
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<PropertyName> properties) =>
         SqlToolsReflectorCache<T>
             .GetColumnsFromProperties(properties)  //TODO: It would be nice to get select directly from a property
             .Select(column => column.SelectTag); //TODO: It would be nice to skip this step.
 
+    //TODO: Proof read Documentation, unit testing
+    /// <summary>
+    /// Get a multiple existing Select Tags based of the properties provided.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="properties">Properties provided</param>
+    /// <returns>
+    /// A multiple existing Select Tags based of the properties provided.
+    /// </returns>
     //TODO: Documentation, unit testing
     [ExternalOnly]
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<string> properties) =>
         GetMany<T>(properties.Select(name => new PropertyName(name)));
 
-
-
-    //TODO: Documentation, unit testing
+    //TODO: Proof read Documentation, unit testing
+    /// <summary>
+    /// Get all Select Tags associated with T.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns>
+    /// All Select Tags associated with T.
+    /// </returns>
     public static IEnumerable<SelectTag> GetAll<T>() =>
         SqlToolsReflectorCache<T>
             .ColumnInfo
@@ -202,6 +247,13 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public int GetHashCode(SelectTag obj) =>
         obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
 
+    //TODO: Proof read Documentation, unit testing
+    /// <summary>
+    /// == operator
+    /// </summary>
+    /// <param name="left">The first <see cref="SelectTag"/> to compare.</param>
+    /// <param name="right">The second <see cref="SelectTag"/> to compare.</param>
+    /// <returns></returns>
     public static bool operator ==(SelectTag? left, SelectTag? right)
     {
         if (ReferenceEquals(left, right)) return true;
@@ -237,15 +289,36 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public bool IsEmpty() =>
         ToString().IsNullOrWhiteSpace();
 
-    //Document, unit tests
+    // TODO: proof Read Documentation, unit tests
+    /// <summary>
+    /// Get all SelectTags associated with the instance, as a string.
+    /// For SelectTag this will just be itself.
+    /// </summary>
+    /// <returns>All SelectTags associated with the instance, as a string. For SelectTag this will just be itself.</returns>
     public string GetSelects() =>
         this;
 
-    //Document, unit tests
+    //Proof read documentation, unit tests
+    /// <summary>
+    /// Get all TableTags associated with the instance.
+    /// For SelectTag this will just it's TableTag as an Enumerable.
+    /// </summary>
+    /// <returns>
+    /// All TableTags associated with the instance.
+    /// For SelectTag this will just it's TableTag as an Enumerable.
+    /// </returns>
     public IEnumerable<TableTag> GetTableTags() => 
         [ColumnTag.TableTag];
 
-    //Document, unit tests
+    //Proof read documentation, unit tests
+    /// <summary>
+    /// Determines if this instance contains any actual SelectTags
+    /// For SelectTag, this should always be true.
+    /// </summary>
+    /// <returns>
+    /// True if this instance contains any actual SelectTags
+    /// For SelectTag, this should always be true.
+    /// </returns>
     public bool Any() =>
         true;
 }
