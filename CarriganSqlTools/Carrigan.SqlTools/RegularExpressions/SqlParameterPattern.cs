@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.RegularExpressions;
 /// what normalization method any given database may be using.
 /// So please provide pre-normalized identifier names.
 /// </summary>
-public static class SqlParameterPattern
+public static partial class SqlParameterPattern
 {
     /// <summary>
     /// Provides helper methods to validate SQL Server Parameters names against
@@ -24,11 +24,7 @@ public static class SqlParameterPattern
     /// what normalization method any given database may be using.
     /// So please provide pre-normalized identifier names.
     /// </summary>
-    private static readonly Regex _regexPattern = new
-    ( 
-        @"^(?:[_@#$]|\p{L}|\p{Nl}|\p{Nd})*$",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant
-    );
+    private static readonly Regex _regexPattern = SqlParameterRegex();
 
     /// <summary>
     /// Determines whether the specified <paramref name="identifier"/> complies
@@ -61,4 +57,7 @@ public static class SqlParameterPattern
     /// </returns>
     public static bool Fails(string? identifier) =>
         Passes(identifier) is false;
+
+    [GeneratedRegex(@"^(?:[_@#$]|\p{L}|\p{Nl}|\p{Nd})*$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex SqlParameterRegex();
 }
