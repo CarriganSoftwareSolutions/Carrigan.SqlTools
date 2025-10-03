@@ -145,7 +145,7 @@ public partial class SqlGenerator<T>
     /// 
     /// OrderByItem&lt;Order&gt; orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
-    /// SqlQuery query = customerGenerator.Select(join, greaterThan, orderByOrderDate, null);
+    /// SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -160,7 +160,7 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// OffsetNext offsetNext = new(50, 25);
-    /// SqlQuery query = customerGenerator.Select(null, null, null, offsetNext);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, null, offsetNext);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[

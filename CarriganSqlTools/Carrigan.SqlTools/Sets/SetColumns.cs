@@ -51,7 +51,7 @@ namespace Carrigan.SqlTools.Sets;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class SetColumns<T> : SqlToolsReflectorCache<T>
+public class SetColumns<T>
 {
     /// <summary>
     /// Gets the collection of <see cref="ColumnTag"/> objects representing
@@ -67,7 +67,7 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// The names of the properties that represent the column names to be updated.
     /// </param>
     public SetColumns(params IEnumerable<PropertyName> propertyNames) =>
-        ColumnInfo = GetColumnsFromProperties(propertyNames);
+        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetColumns"/> class,
@@ -91,7 +91,7 @@ public class SetColumns<T> : SqlToolsReflectorCache<T>
     /// </exception>
     public void AddColumn(PropertyName propertyName)
     {
-        ColumnInfo? newTag = GetColumnsFromProperties(propertyName).Single();
+        ColumnInfo? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
         if(newTag is not null)
             ColumnInfo = ColumnInfo.Append(newTag);
     }
