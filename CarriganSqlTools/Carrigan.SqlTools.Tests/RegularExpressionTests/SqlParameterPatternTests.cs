@@ -13,8 +13,6 @@ public class SqlParameterPatternTests
     [InlineData("#TempRole")]
     [InlineData("$TempRole")]
     [InlineData("@TempRole")]
-    [InlineData("@@TempRole")]
-    [InlineData("@@@TempRole")]
     [InlineData("Role$Name")]
     [InlineData("@name")]
     [InlineData("123Invalid")]           //Note: @ gets added to the start of parameters, so this is actually fine
@@ -46,7 +44,11 @@ public class SqlParameterPatternTests
     [InlineData("")]                        // Empty string.
     [InlineData(" ")]                       // A string with just whitespace.
     [InlineData(null)]                      // null
-    [InlineData("@@@@@@@")]                 // null
+    [InlineData("@@a")]                     // only reserved words starts with @@
+    [InlineData("@@")]                      // only reserved words starts with @@
+    [InlineData("@@@@")]                    // only reserved words starts with @@
+    [InlineData("@@TempRole")]              // only reserved words starts with @@
+    [InlineData("@@@TempRole")]             // only reserved words starts with @@
 
     //tests suggested by AI:
     [InlineData("😀abc")]                   // emoji start not a letter/underscore

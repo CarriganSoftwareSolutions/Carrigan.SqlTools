@@ -13,6 +13,9 @@ namespace Carrigan.SqlTools.RegularExpressions;
 /// Decomposed normalizations of Unicode will be failed, as I don't know
 /// what normalization method any given database may be using.
 /// So please provide pre-normalized identifier names.
+/// NOTE: This library adds the leading @, which is why parameter names
+/// are not required to have a leading @. However, this check isn't always
+/// performed before this check, so I strip the leading @s from parameter name.
 /// </summary>
 public static partial class SqlParameterPattern
 {
@@ -23,6 +26,9 @@ public static partial class SqlParameterPattern
     /// Decomposed normalizations of Unicode will be failed, as I don't know
     /// what normalization method any given database may be using.
     /// So please provide pre-normalized identifier names.
+    /// NOTE: This library adds the leading @, which is why parameter names
+    /// are not required to have a leading @. However, this check isn't always
+    /// performed before this check, so I strip the leading @s from parameter name.
     /// </summary>
     private static readonly Regex _regexPattern = SqlParameterRegex();
 
@@ -33,6 +39,9 @@ public static partial class SqlParameterPattern
     /// Decomposed normalizations of Unicode will be failed, as I don't know
     /// what normalization method any given database may be using.
     /// So please provide pre-normalized identifier names.
+    /// NOTE: This library adds the leading @, which is why parameter names
+    /// are not required to have a leading @. However, this check isn't always
+    /// performed before this check, so I strip the leading @s from parameter name.
     /// </summary>
     /// <param name="identifier">The identifier name to validate.</param>
     /// <returns>
@@ -40,7 +49,11 @@ public static partial class SqlParameterPattern
     /// naming pattern; otherwise, <c>false</c>.
     /// </returns>
     public static bool Passes(string? identifier) =>
-         identifier is not null && identifier.TrimStart('@').Length >= 1 && identifier.Length <= 128 && _regexPattern.IsMatch(identifier.TrimStart('@'));
+         identifier is not null 
+            && identifier.TrimStart('@').Length >= 1 
+            && identifier.Length <= 128 
+            && _regexPattern.IsMatch(identifier.TrimStart('@'))
+            && identifier.StartsWith("@@") is false; //Only reserved words start with @@
 
     /// <summary>
     /// Determines whether the specified <paramref name="identifier"/> violates
@@ -49,6 +62,9 @@ public static partial class SqlParameterPattern
     /// Decomposed normalizations of Unicode will be failed, as I don't know
     /// what normalization method any given database may be using.
     /// So please provide pre-normalized identifier names.
+    /// NOTE: This library adds the leading @, which is why parameter names
+    /// are not required to have a leading @. However, this check isn't always
+    /// performed before this check, so I strip the leading @s from parameter name.
     /// </summary>
     /// <param name="identifier">The identifier name to validate.</param>
     /// <returns>
