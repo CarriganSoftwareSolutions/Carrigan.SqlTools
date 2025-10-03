@@ -15,79 +15,21 @@ namespace Carrigan.SqlTools.ReflectorCache;
 //TODO: Rework all documentation, examples, and unit tests.
 
 /// <summary>
-/// Represents a column identifier, or “tag,” in the form <c>[Schema].[Table].[Column]</c>.
-/// The <c>[Schema]</c> segment is included only if the table’s schema is explicitly defined.
-/// Aside from implementing various comparison and equality interfaces,
-/// this class is intended for internal use only.
+/// THis represents a variety property information associate with a column.
+/// This class caches various informational items about the column:
+/// <see cref="TableTag"/>
+/// <see cref="ColumnTag"/>
+/// <see cref="ColumnName"/>
+/// <see cref="PropertyInfo"/>
+/// <see cref="PropertyName"/>
+/// <see cref="ParameterTag"/>
+/// <see cref="SelectTag"/>
+/// <c>IsKeyPart</c>
+/// <c>IsEncrypted</c>
+/// <c>IsKeyVersionField</c>
+/// This class is intended for internal use only, but to due to accessibility errors, 
+/// I had to expose most of it as public.
 /// </summary>
-/// <example>
-/// <para>
-/// Using Column Attribute
-/// </para>
-/// <code language="csharp"><![CDATA[
-/// using Carrigan.SqlTools.SqlGenerators;
-/// 
-/// [Table("Phone", Schema = "schema")]
-/// public class PhoneModel
-/// {
-///     [Key]
-///     public int Id { get; set; }
-///     public int CustomerId { get; set; }
-///     [Column("Phone")]
-///     public string? PhoneNumber { get; set; }
-/// }
-/// 
-/// SqlGenerator<PhoneModel> phoneGenerator = new();
-/// 
-/// PhoneModel phone = new()
-/// {
-///     Id = 2718,
-///     CustomerId = 3141,
-///     PhoneNumber = "07700 900461"
-/// };
-/// SqlQuery query = phoneGenerator.UpdateById(phone);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// UPDATE [schema].[Phone] 
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
-/// WHERE [Id] = @Id;
-/// ]]></code>
-/// </example>
-/// <example>
-/// <para>
-/// Using Identifier Attribute
-/// </para>
-/// <code language="csharp"><![CDATA[
-/// using Carrigan.SqlTools.SqlGenerators;
-/// 
-/// [Identifier("Email", "schema")]
-/// public class EmailModel
-/// {
-///     [PrimaryKey]
-///     public int Id { get; set; }
-///     public int CustomerId { get; set; }
-///     [Identifier("Email")]
-///     public string? EmailAddress { get; set; }
-/// }
-/// 
-/// SqlGenerator<EmailModel> emailGenerator = new();
-/// 
-/// EmailModel email = new()
-/// {
-///     Id = 10,
-///     CustomerId = 313,
-///     EmailAddress = "Exterminate@Skaro.gov"
-/// };
-/// SqlQuery query = emailGenerator.UpdateById(email);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// UPDATE [schema].[Phone] 
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
-/// WHERE [Id] = @Id;
-/// ]]></code>
-/// </example>
 public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqualityComparer<ColumnInfo>
 {
     /// <summary>
@@ -130,9 +72,21 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     internal readonly bool IsKeyVersionField;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Tags.ColumnTag"/> class,
-    /// which represents a fully qualified SQL column identifier
-    /// in the form <c>[Schema].[Table].[Column]</c>.
+    /// Initializes a new instance of the <see cref="ColumnInfo"/> class,
+    /// which represents a variety property information associate with a column.
+    /// This class caches various informational items about the column:
+    /// <see cref="TableTag"/>
+    /// <see cref="ColumnTag"/>
+    /// <see cref="ColumnName"/>
+    /// <see cref="PropertyInfo"/>
+    /// <see cref="PropertyName"/>
+    /// <see cref="ParameterTag"/>
+    /// <see cref="SelectTag"/>
+    /// <see cref="IsKeyPart"/>
+    /// <see cref="IsEncrypted"/>
+    /// <see cref="IsKeyVersionField"/>
+    /// This class is intended for internal use only, but to due to accessibility errors, 
+    /// I had to expose most of it as public.
     /// </summary>
     /// <param name="schemaName">
     /// The <see cref="SchemaName"/> that identifies the table containing the column.
@@ -140,21 +94,17 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <param name="tableName">
     /// The <see cref="TableName"/> that identifies the table containing the column.
     /// </param>
-    /// <param name="columnName">
-    /// The <see cref="IdentifierTypes.ColumnName"/> of the column. Must not be <c>null</c>, empty, or white space.
-    /// </param>
     /// <param name="propertyInfo">
-    /// The <see cref="System.Reflection.PropertyInfo"/> associated with the column in the data model.
+    /// The <see cref="PropertyInfo"/> associated with the column in the data model.
     /// </param>
-    /// <param name="parameterTag">
-    /// The <see cref="Tags.ParameterTag"/> used to represent the column as a SQL parameter.
-    /// </param>
-    /// <param name="aliasTag">
-    /// TODO: proof read documentation
-    /// The <see cref="alias"/> used to represent the <c>COLUMN</c>'s <C>AS</C> alias as a SQL parameter.
+    /// <param name="keys">
+    /// An Enumeration of properties that make up the Key for a record, used to determine value of IsKeyPart
     /// </param>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="columnTag"/> fails to meet the SQL identifier naming rules.
+    /// </exception>
+    /// <exception cref="InvalidKeyVersionFieldType">
+    /// Thrown when the  <see cref="KeyVersionAttribute"/> is set, and the key field is not of type <see cref="int"/>
     /// </exception>
     internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
@@ -180,12 +130,11 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         if (IsKeyVersionField && (Nullable.GetUnderlyingType(PropertyInfo.PropertyType) ?? PropertyInfo.PropertyType) != typeof(int))
             throw new InvalidKeyVersionFieldType(new PropertyName(PropertyInfo.Name));
-
     }
 
     /// <summary>
     /// Implicitly converts a <see cref="ColumnInfo"/> to its SQL string representation
-    /// in the form <c>[Schema].[Table].[Column]</c>.
+    /// in the form <c>[Schema].[Table].[Column]</c> using the <see cref="ColumnTag"/> property.
     /// </summary>
     /// <param name="value">The <see cref="ColumnInfo"/> to convert.</param>
     /// <returns>
@@ -203,27 +152,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         => this;
 
     /// <summary>
-    /// Returns the SQL string representation of this <see cref="ColumnInfo"/>,
-    /// optionally including the table (and schema) prefix.
-    /// </summary>
-    /// <param name="useTableTag">
-    /// <c>true</c> to include the full table and schema prefix (e.g., <c>[Schema].[Table].[Column]</c>);
-    /// <c>false</c> to return only the column name (e.g., <c>[Column]</c>).
-    /// </param>
-    /// <returns>
-    /// A SQL string representing the column, formatted according to <paramref name="useTableTag"/>.
-    /// </returns>
-    public string ToString(bool useTableTag)
-    {
-        if (useTableTag)
-            return ToString();
-        else
-            return $"[{ColumnName}]";
-    }
-
-    /// <summary>
     /// Compares this <see cref="ColumnInfo"/> to another instance and returns a value
-    /// that indicates their relative sort order.
+    /// that indicates their relative sort order, using the <see cref="ColumnTag"/> property.
     /// </summary>
     /// <param name="other">
     /// The <see cref="ColumnInfo"/> to compare with the current instance.
@@ -246,7 +176,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
     /// <summary>
     /// Determines whether the current <see cref="ColumnInfo"/> is equal to another
-    /// <see cref="ColumnInfo"/> instance.
+    /// <see cref="ColumnInfo"/> instance, using the <see cref="ColumnTag"/> property.
     /// </summary>
     /// <param name="other">
     /// The <see cref="ColumnInfo"/> to compare with this instance.
@@ -267,7 +197,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
     /// <summary>
     /// Determines whether the specified object is equal to the current
-    /// <see cref="ColumnInfo"/> instance.
+    /// <see cref="ColumnInfo"/> instance, using the <see cref="ColumnTag"/> property
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns>
@@ -282,7 +212,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         obj is ColumnInfo ct && Equals(ct);
 
     /// <summary>
-    /// Serves as the default hash function for the <see cref="ColumnInfo"/> class.
+    /// Serves as the default hash function for the <see cref="ColumnInfo"/> class,
+    /// using the <see cref="ColumnTag"/> property. 
     /// </summary>
     /// <returns>
     /// An integer hash code for this <see cref="ColumnInfo"/>, computed in a manner
@@ -292,7 +223,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         ColumnTag.GetHashCode();
 
     /// <summary>
-    /// Determines whether two <see cref="ColumnInfo"/> instances are equal.
+    /// Determines whether two <see cref="ColumnInfo"/> instances are equal,
+    /// using the <see cref="ColumnTag"/> property.
     /// </summary>
     /// <param name="x">The first <see cref="ColumnInfo"/> to compare.</param>
     /// <param name="y">The second <see cref="ColumnInfo"/> to compare.</param>
@@ -312,7 +244,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     }
 
     /// <summary>
-    /// Returns a hash code for the specified <see cref="ColumnInfo"/> instance.
+    /// Returns a hash code for the specified <see cref="ColumnInfo"/> instance,
+    /// using the <see cref="ColumnTag"/> property.
     /// </summary>
     /// <param name="obj">The <see cref="ColumnInfo"/> for which to compute a hash code.</param>
     /// <returns>
@@ -330,7 +263,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     }
 
     /// <summary>
-    /// Determines whether two <see cref="ColumnInfo"/> instances are equal.
+    /// Determines whether two <see cref="ColumnInfo"/> instances are equal,
+    /// using the <see cref="ColumnTag"/> property
     /// </summary>
     /// <param name="left">The first <see cref="ColumnInfo"/> to compare.</param>
     /// <param name="right">The second <see cref="ColumnInfo"/> to compare.</param>
@@ -348,7 +282,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     }
 
     /// <summary>
-    /// Determines whether this <see cref="ColumnInfo"/> is empty.
+    /// Determines whether the <see cref="ColumnTag"/> is empty, thus 
+    /// the entire class is empty. This should never happen?
     /// </summary>
     /// <returns>
     /// <c>true</c> if the SQL representation of this column is <c>null</c>, empty,

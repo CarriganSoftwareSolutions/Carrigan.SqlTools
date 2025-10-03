@@ -1,6 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
-using System.Collections.Generic;
+using Carrigan.SqlTools.Tags;
 using System.Collections.ObjectModel;
 using System.Reflection;
 
@@ -9,13 +9,14 @@ namespace Carrigan.SqlTools.ReflectorCache;
 //TODO: proof read documentation for entire class
 //TODO: Unit tests for entire class
 /// <summary>
-/// This class is a wrapper for a dictionary, where the key is a
-/// <see cref="PropertyInfo"/>.
-/// Note: the key for the wrapped dictionary is actually the property name, 
+/// This class is a wrapper for a dictionary, where the key is a <see cref="PropertyName"/>
+///  that corresponds to <see cref="PropertyInfo"/>'s Name property.
+/// Note: the key for the wrapped dictionary is actually the property's name, 
 /// since ProperrtyInfo does not implement the interfaces required for hashing.
-/// It is meant to serve as a cache for the corresponding values for Attributes related
-/// to PropertyInfo, such as Column, Table, Alias, etc.
-/// I later added support for to lookup using a <see cref="PropertyName"/> as well.
+/// It was meant to serve as a cache for the corresponding values for Attributes related
+/// to <see cref="PropertyInfo"/>, such as <see cref="ColumnTag"/>, <see cref="TableTag"/>, <see cref="AliasTag"/>, etc, 
+/// however, currently it is only serving as a cache for <see cref="ColumnInfo"/> which 
+/// serves as a container for those fields.
 /// <typeparamref name="typeT"/>
 /// </summary>
 /// <typeparam name="typeT">The type from which the type is being looked up.</typeparam>
@@ -49,7 +50,7 @@ internal class PropertyInfoCache<typeT, valueT>
     /// <summary>
     /// This is the class constructor for PropertyInfoCache.
     /// </summary>
-    /// <param name="data">An enumeration of tuples consisting of a property info and a value</param>
+    /// <param name="data">An enumeration of tuples consisting of a <see cref="PropertyInfo"/> and a value</param>
     internal PropertyInfoCache(IEnumerable<Tuple<PropertyName, valueT>> data) =>
         _cache = new ReadOnlyDictionary<PropertyName, valueT>
         (
@@ -161,19 +162,4 @@ internal class PropertyInfoCache<typeT, valueT>
     /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else null.</returns>
     internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyInfo> properties) =>
         GetExceptionForInvalidProperties(properties.Select(property => new PropertyName(property.Name)));
-
-    //TODO: Documentation
-    internal PropertyInfoCache<typeT, valueT> GetSubCache(IEnumerable<PropertyName> keys)
-    {
-        IEnumerable<PropertyName> invalids = keys.Where(key => Exists(key) is false);
-
-        if (invalids.Any())
-            throw new InvalidPropertyException<typeT>(invalids);
-        else
-            return new (keys.Select(property => new Tuple<PropertyName, valueT>(property, Get(property))));
-    }
-
-    //TODO: Documentation
-    internal PropertyInfoCache<typeT, valueT> GetSubCache(IEnumerable<PropertyInfo> keys) =>
-        GetSubCache(keys.Select(key => new PropertyName(key.Name)));
 }

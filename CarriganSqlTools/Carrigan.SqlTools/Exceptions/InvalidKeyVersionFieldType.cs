@@ -2,7 +2,7 @@
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Exceptions;
-//TODO: Documentation, unit tests
+//TODO: Proof Read Documentation, unit tests
 /// <summary>
 /// Thrown when the column tag comes from a table that is not included in the clauses.
 /// </summary>
