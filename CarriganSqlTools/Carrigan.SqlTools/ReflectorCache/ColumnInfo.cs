@@ -17,7 +17,6 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <summary>
 /// THis represents a variety property information associate with a column.
 /// This class caches various informational items about the column:
-/// <see cref="TableTag"/>
 /// <see cref="ColumnTag"/>
 /// <see cref="ColumnName"/>
 /// <see cref="PropertyInfo"/>
@@ -32,11 +31,6 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// </summary>
 public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqualityComparer<ColumnInfo>
 {
-    /// <summary>
-    /// The corresponding <see cref="Tags.TableTag"/>.
-    /// </summary>
-    internal readonly TableTag TableTag;
-
     /// <summary>
     /// A string that represent the <see cref="Tags.ColumnTag"/> .
     /// </summary>
@@ -75,7 +69,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// Initializes a new instance of the <see cref="ColumnInfo"/> class,
     /// which represents a variety property information associate with a column.
     /// This class caches various informational items about the column:
-    /// <see cref="TableTag"/>
     /// <see cref="ColumnTag"/>
     /// <see cref="ColumnName"/>
     /// <see cref="PropertyInfo"/>
@@ -116,9 +109,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         string? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
 
-        TableTag = new(schemaName, tableName);
         ColumnName = new ColumnName(columnName);
-        ColumnTag = new(TableTag, ColumnName);
+        ColumnTag = new(new(schemaName, tableName), ColumnName);
         PropertyInfo = propertyInfo;
         PropertyName = new(PropertyInfo.Name);
         ParameterTag = new ParameterTag(null, parameterName, null);
@@ -127,9 +119,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         IsKeyPart = keys.Contains(PropertyInfo);
         IsEncrypted = PropertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;
         IsKeyVersionField = PropertyInfo.GetCustomAttribute<KeyVersionAttribute>() != null;
-
-        if (IsKeyVersionField && (Nullable.GetUnderlyingType(PropertyInfo.PropertyType) ?? PropertyInfo.PropertyType) != typeof(int))
-            throw new InvalidKeyVersionFieldType(new PropertyName(PropertyInfo.Name));
     }
 
     /// <summary>

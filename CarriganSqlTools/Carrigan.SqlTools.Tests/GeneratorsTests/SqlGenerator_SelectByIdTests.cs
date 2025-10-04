@@ -7,12 +7,12 @@ public class SqlGenerator_SelectByIdTests
 {
     private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
-    private readonly SqlGenerator<CompositeKeyTable> _sqlGeneratorForCompositeKeyTable;
+    private readonly SqlGenerator<CompositePrimaryKeyTable> _sqlGeneratorForCompositeKeyTable;
     public SqlGenerator_SelectByIdTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
         _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
-        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncrypter);
+        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositePrimaryKeyTable>(_mockEncrypter);
     }
 
     private readonly Guid _guid = new("711c4dff-6e8a-4e43-9eab-b83115244a57");
@@ -69,7 +69,7 @@ public class SqlGenerator_SelectByIdTests
     [Fact]
     public void SqlSelectById_Composite_Key()
     {
-        CompositeKeyTable entity = new() { Id1 = 1, Id2=2, NotKey1=5, NotKey2=6, NotKey3=7 };
+        CompositePrimaryKeyTable entity = new() { Id1 = 1, Id2=2, NotKey1=5, NotKey2=6, NotKey3=7 };
         SqlQuery query = _sqlGeneratorForCompositeKeyTable.SelectById(entity);
 
         string expectedSql = $"SELECT [Ck].* FROM [Ck] WHERE (([Ck].[Id1] = @Parameter_Id1) AND ([Ck].[Id2] = @Parameter_Id2))";
@@ -92,8 +92,8 @@ public class SqlGenerator_SelectByIdTests
     [Fact]
     public void SqlSelectById_Composite_Key_Multiple()
     {
-        CompositeKeyTable entity1 = new() { Id1 = 1, Id2 = 2, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
-        CompositeKeyTable entity2 = new() { Id1 = 3, Id2 = 4, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
+        CompositePrimaryKeyTable entity1 = new() { Id1 = 1, Id2 = 2, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
+        CompositePrimaryKeyTable entity2 = new() { Id1 = 3, Id2 = 4, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
         SqlQuery query = _sqlGeneratorForCompositeKeyTable.SelectById([entity1, entity2]);
 
         string expectedSql = $"SELECT [Ck].* FROM [Ck] WHERE ((([Ck].[Id1] = @Parameter_0_0_R_Id1) AND ([Ck].[Id2] = @Parameter_0_1_R_Id2)) OR (([Ck].[Id1] = @Parameter_1_0_R_Id1) AND ([Ck].[Id2] = @Parameter_1_1_R_Id2)))";

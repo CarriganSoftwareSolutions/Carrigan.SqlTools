@@ -8,13 +8,13 @@ public class SqlGenerator_DeleteByIdTests
 {
     private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
-    private readonly SqlGenerator<CompositeKeyTable> _sqlGeneratorForCompositeKeyTable;
+    private readonly SqlGenerator<CompositePrimaryKeyTable> _sqlGeneratorForCompositeKeyTable;
 
     public SqlGenerator_DeleteByIdTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
         _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
-        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncrypter);
+        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositePrimaryKeyTable>(_mockEncrypter);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class SqlGenerator_DeleteByIdTests
     [Fact]
     public void SqlDeleteById_Composite_Key()
     {
-        CompositeKeyTable entity = new() { Id1 = 1, Id2 = 2, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
+        CompositePrimaryKeyTable entity = new() { Id1 = 1, Id2 = 2, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
         SqlQuery query = _sqlGeneratorForCompositeKeyTable.DeleteById(entity);
 
         string expectedSql = $"DELETE FROM [Ck] WHERE (([Ck].[Id1] = @Parameter_Id1) AND ([Ck].[Id2] = @Parameter_Id2))";

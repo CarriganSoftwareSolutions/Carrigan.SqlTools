@@ -75,14 +75,14 @@ public class SqlToolsReflectorCache<T>
     /// or <c>null</c> if the model has no encrypted columns.
     /// </summary>
     internal static ColumnInfo? KeyVersionColumnInfo =>
-        _LazyKeyVersionColumnInfo.Value;
+        _LazyKeyVersionColumnInfo.Value.FirstOrDefault();
 
     /// <summary>
     /// Determines whether the specified <paramref name="column"/> is flagged for encryption.
     /// </summary>
     /// <param name="column">The column to check.</param>
     /// <returns><c>true</c> if the column is encrypted; otherwise, <c>false</c>.</returns>
-    internal static bool ContainsEncryptedProperty(ColumnInfo column) =>
+    internal static bool IsEncrypted(ColumnInfo column) =>
         _LazyEncryptedColumnInfoHashSet.Value.Contains(column);
 
     /// <summary>
@@ -125,7 +125,7 @@ public class SqlToolsReflectorCache<T>
     /// Lazily resolves the <see cref="ColumnTag"/> representing the encryption key version,
     /// if present on <typeparamref name="T"/>.
     /// </summary>;
-    private static readonly Lazy<ColumnInfo?> _LazyKeyVersionColumnInfo;
+    protected static readonly Lazy<IEnumerable<ColumnInfo>> _LazyKeyVersionColumnInfo;
 
     /// <summary>
     /// Lazily resolves the <see cref="TableAttribute"/> (if any) on <typeparamref name="T"/>,
@@ -258,7 +258,6 @@ public class SqlToolsReflectorCache<T>
                 .Value
                 .Values
                 .Where(column => column.IsKeyVersionField)
-                .FirstOrDefault()
         );
 
         _LazyEncryptedColumnInfoHashSet = new

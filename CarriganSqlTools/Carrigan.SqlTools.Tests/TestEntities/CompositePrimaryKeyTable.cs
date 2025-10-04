@@ -4,12 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
-[Table("Ck1")]
-internal class CompositeKeyTable
+[Table("Ck")]
+internal class CompositePrimaryKeyTable
 {
-    [Key]
+    [PrimaryKey] //note: PrimaryKey take precedence over key for the Sql Generator
     public int Id1 { get; set; }
-    [Key] 
+    [PrimaryKey] //note: PrimaryKey take precedence over key for the Sql Generator
+    [Key]
     public int Id2 { get; set; }
 
     public int NotKey1 { get; set; }

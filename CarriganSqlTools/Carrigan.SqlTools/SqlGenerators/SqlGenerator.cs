@@ -1,8 +1,11 @@
-﻿using Carrigan.Core.Interfaces;
+﻿using Carrigan.Core.Attributes;
+using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Predicates;
-using Carrigan.SqlTools.Tags;
-using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -41,9 +44,13 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         if (HasEncryptedColumns())
         {
             if (_Encryption is null)
-                throw new NullReferenceException($"No encryption key data model, {Table}, with encrypted properties.");
+                throw new EncrypterNotProvided<T>();
             if (KeyVersionColumnInfo is null)
-                throw new NullReferenceException($"KeyVersion attribute of type int not set on data model, {Table}, with encrypted properties. ");
+                throw new NoKeyVersionField<T>();
+            if (_LazyKeyVersionColumnInfo.Value.Count() > 1)
+                throw new MultipleKeyVersionFields<T>(_LazyKeyVersionColumnInfo.Value.Select(column => column.PropertyName));
+            if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
+                throw new InvalidKeyVersionFieldType<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name));
         }
     }
 
@@ -142,7 +149,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
 
         if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
             return new (key, ((object?)_Encryption?.Version) ?? DBNull.Value);
-        if (_Encryption is not null && ContainsEncryptedProperty(column))
+        if (_Encryption is not null && IsEncrypted(column))
             //the explicit conversion of _Encryption?.Encrypt(property.GetValue(entity)?.ToString()) to an object is required to avoid a compiler error.
             return new (key, ((object?)_Encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString())) ?? DBNull.Value);
         else

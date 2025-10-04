@@ -11,7 +11,7 @@ public  class TableIdentifierTests
     private static readonly SqlGenerator<IdentifierNameOverrideSchema> _identifierNameOverrideSchemaSqlGenerator = new();
     private static readonly SqlGenerator<IdentifierNameOverrideSchemaOverride> _identifierNameOverrideSchemaOverrideSqlGenerator = new();
     private static readonly SqlGenerator<IdentifierNameSchema> _identifierNameSchemaSqlGenerator = new();
-    private static readonly SqlGenerator<TableName> _tableNameSqlGenerator = new();
+    private static readonly SqlGenerator<TableNameClass> _tableNameSqlGenerator = new();
     private static readonly SqlGenerator<TableNameSchema> _tableNameSchemaSqlGenerator = new();
 
     private static readonly Guid guid = Guid.NewGuid();

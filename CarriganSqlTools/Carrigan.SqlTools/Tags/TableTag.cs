@@ -98,6 +98,8 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
+    /// 
+    //TODO: Make this use schema name and table name.
     internal TableTag(string? schemaName, string tableName)
     {
         if (SqlIdentifierPattern.Fails(tableName))

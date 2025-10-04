@@ -18,8 +18,8 @@ public class SqlGenerator_UpdateByIdTests
     private readonly SqlGenerator<SqlTypeEntity> _sqlGeneratorForSqlTypeEntity;
     private readonly SqlGenerator<NullableTestEntity> _sqlGeneratorForNullablesTestEntity;
     private readonly SqlGenerator<EntityWithEncryption> _sqlGeneratorForEntityWithEncryption;
-    private readonly SqlGenerator<CompositeKeyTable> _sqlGeneratorCompositeKeyTable;
-    private readonly SetColumns<CompositeKeyTable> _leftCompositeKeyTable = new("NotKey1", "NotKey2");
+    private readonly SqlGenerator<CompositePrimaryKeyTable> _sqlGeneratorCompositeKeyTable;
+    private readonly SetColumns<CompositePrimaryKeyTable> _leftCompositeKeyTable = new("NotKey1", "NotKey2");
 
     public SqlGenerator_UpdateByIdTests()
     {
@@ -30,7 +30,7 @@ public class SqlGenerator_UpdateByIdTests
         _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(_mockEncrypter);
         _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullableTestEntity>(_mockEncrypter);
         _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
-        _sqlGeneratorCompositeKeyTable = new SqlGenerator<CompositeKeyTable>(_mockEncrypter);
+        _sqlGeneratorCompositeKeyTable = new SqlGenerator<CompositePrimaryKeyTable>(_mockEncrypter);
     }
 
     [Fact]
@@ -331,7 +331,7 @@ public class SqlGenerator_UpdateByIdTests
     public void SqlUpdate_WithInnerJoin_WithJoinsAndPredicates()
     {
 
-        CompositeKeyTable entity3 = new()
+        CompositePrimaryKeyTable entity3 = new()
         {
             Id1 = 11,
             Id2 = 12,
@@ -340,7 +340,7 @@ public class SqlGenerator_UpdateByIdTests
             NotKey2 = 14
         };
 
-        CompositeKeyTable entity1 = new()
+        CompositePrimaryKeyTable entity1 = new()
         {
             Id1 = 1,
             Id2 = 2,
@@ -349,7 +349,7 @@ public class SqlGenerator_UpdateByIdTests
             NotKey2 = 4
         };
 
-        CompositeKeyTable entity2 = new()
+        CompositePrimaryKeyTable entity2 = new()
         {
             Id1 = 5,
             Id2 = 6,
