@@ -40,13 +40,13 @@ public class SqlToolsReflectorCache<T>
     /// Gets the <see cref="TableTag"/> for <typeparamref name="T"/>.
     /// </summary>
     internal static TableTag Table =>
-        new TableTag(SchemaName, TableName);
+        new (SchemaName, TableName);
 
     /// <summary>
     /// Gets the <see cref="ProcedureTag"/> for <typeparamref name="T"/>.
     /// </summary>
     internal static ProcedureTag ProcedureTag =>
-        new ProcedureTag(SchemaName, ProcedureName);
+        new (SchemaName, ProcedureName);
 
     /// <summary>
     /// Gets all key-column <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
