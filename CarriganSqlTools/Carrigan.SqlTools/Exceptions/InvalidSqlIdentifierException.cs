@@ -130,13 +130,10 @@ public class InvalidSqlIdentifierException: Exception
     /// <returns>An <see cref="InvalidSqlIdentifierException"/> message.</returns>
     private static string CreateMessage(params IEnumerable<Tuple<PropertyInfo, ColumnName>> names) =>
         $"The following column names do not follow the SQL naming convention: "
-            + Environment.NewLine 
             + names
                 .Select(name => $"\"{name.Item2}\"")
                 .JoinAnd()
-            + Environment.NewLine
-            + "Columns are associated with the following properties:"
-            + Environment.NewLine
+            + " Columns are associated with the following properties: "
             + names
                 .Select(name => $"\"{name.Item1}\"")
                 .JoinAnd();
@@ -160,13 +157,10 @@ public class InvalidSqlIdentifierException: Exception
     /// <returns>An <see cref="InvalidSqlIdentifierException"/> message.</returns>
     private static string CreateMessage(params IEnumerable<Tuple<PropertyInfo, AliasName>> names) =>
         $"The following alias names do not follow the SQL naming convention: "
-            + Environment.NewLine
             + names
                 .Select(name => $"\"{name.Item2}\"")
                 .JoinAnd()
-            + Environment.NewLine
-            + "Aliases are associated with the following properties:"
-            + Environment.NewLine
+            + " Aliases are associated with the following properties: "
             + names
                 .Select(name => $"\"{name.Item1}\"")
                 .JoinAnd();
@@ -190,13 +184,10 @@ public class InvalidSqlIdentifierException: Exception
     /// <returns>An <see cref="InvalidSqlIdentifierException"/> message.</returns>
     private static string CreateMessage(params IEnumerable<Tuple<PropertyInfo, ParameterTag>> names) =>
         $"The following parameter names do not follow the SQL naming convention: "
-            + Environment.NewLine
             + names
                 .Select(name => $"\"{name.Item2}\"")
                 .JoinAnd()
-            + Environment.NewLine
-            + "Parameter are associated with the following properties:"
-            + Environment.NewLine
+            + " Parameter are associated with the following properties: "
             + names
                 .Select(name => $"\"{name.Item1}\"")
                 .JoinAnd();
@@ -224,7 +215,7 @@ public class InvalidSqlIdentifierException: Exception
     /// <param name="identifiers">The names of the invalid identifiers.</param>
     /// <returns>An <see cref="InvalidSqlIdentifierException"/> message.</returns>
     private static string CreateMessage(IEnumerable<string?> identifiers) =>
-        $"The following identifies do not follow the SQL naming convention:" +
+        $"The following identifies do not follow the SQL naming convention: " +
             identifiers
                 .Select(column => $"{column?.ToString() ?? "<null>"}")
                 .JoinAnd();
