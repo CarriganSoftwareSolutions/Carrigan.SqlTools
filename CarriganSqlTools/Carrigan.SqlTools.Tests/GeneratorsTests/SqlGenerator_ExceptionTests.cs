@@ -27,22 +27,47 @@ public class SqlGenerator_ExceptionTests
         _ = new SqlGenerator<NullableIntKeyVersions>(new MockEncryption("the"));
 
     [Fact]
-    public void ColumnNameFromNullIdentifier() =>
-        Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullIdentifier>());
+    public void ColumnNameFromNullIdentifier()
+    {
+        TypeInitializationException ex = 
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullIdentifier>());
+        Assert.IsType<ArgumentNullException>(ex.InnerException);
+    }
     [Fact]
-    public void ColumnNameFromEmptyIdentifier() =>
-        Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyIdentifier>());
-    [Fact]
-    public void ColumnNameFromInvalidIdentifier() =>
-        Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidIdentifier>());
+    public void ColumnNameFromEmptyIdentifier()
+    {
+        TypeInitializationException ex = 
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyIdentifier>());
+        Assert.IsType<ArgumentException>(ex.InnerException);
+    }
 
     [Fact]
-    public void ColumnNameFromNullAnnotation() =>
-        Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullAnnotation>());
+    public void ColumnNameFromInvalidIdentifier()
+    {
+        AggregateException ex =Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidIdentifier>());
+
+        Assert.NotEmpty(ex.InnerExceptions.OfType<InvalidSqlIdentifierException>());
+    }
+
     [Fact]
-    public void ColumnNameFromEmptyAnnotation() =>
-        Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyAnnotation>());
+    public void ColumnNameFromNullAnnotation()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullAnnotation>());
+        Assert.IsType<ArgumentNullException>(ex.InnerException);
+    }
     [Fact]
-    public void ColumnNameFromInvalidAnnotation() =>
-        Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidAnnotation>());
+    public void ColumnNameFromEmptyAnnotation()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyAnnotation>());
+        Assert.IsType<ArgumentException>(ex.InnerException);
+    }
+    [Fact]
+    public void ColumnNameFromInvalidAnnotation()
+    {
+        AggregateException ex = Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidAnnotation>());
+
+        Assert.NotEmpty(ex.InnerExceptions.OfType<InvalidSqlIdentifierException>());
+    }
 }
