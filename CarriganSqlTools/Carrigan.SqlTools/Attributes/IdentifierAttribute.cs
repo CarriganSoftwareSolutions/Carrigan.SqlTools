@@ -1,7 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.RegularExpressions;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Attributes;
 
@@ -36,47 +38,34 @@ public class IdentifierAttribute : Attribute
     /// <summary>
     /// Public getter to indicate the table/column name.
     /// </summary>
-    public string Name { get; }
+    internal string Name { get; }
     /// <summary>
     /// Public getter to indicate the schema name.
     /// </summary>
-    public string? Schema { get; }
+    internal string? Schema { get; }
 
+    internal MemberName MemberName { get; private set; }
+
+    //TODO: documentation
     /// <summary>
     /// Public constructor
     /// </summary>
     /// <param name="Name">Sql Table/Column Identifier name</param>
     /// <param name="Schema">Sql Schema name</param>
     /// <exception cref="InvalidSqlIdentifierException">If <see cref="Name"/> or <see cref="Name"/> have an invalid Sql Identifier</exception>
-    public IdentifierAttribute(string Name, string Schema = "")
+    public IdentifierAttribute(string Name, string? Schema = null)
     {
-        bool validName = true;
-        bool validSchema = true;
-        if (SqlIdentifierPattern.Fails(Name))
-        {
-            validName = false;
-        }
-
-        //Note: Schema is optional, and this is allowed to be null or empty.
-        //It should not be whitespace.
-        if (Schema.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(Schema))
-        {
-            validSchema = false;
-        }
-
-        if(validName == false && validSchema == false)
-        {
-            throw new InvalidSqlIdentifierException(Name, Schema);
-        }
-        else if(validName == false)
-        {
-            throw new InvalidSqlIdentifierException(Name);
-        }
-        else if (validSchema == false)
-        {
-            throw new InvalidSqlIdentifierException(Schema);
-        }
+        ArgumentNullException.ThrowIfNull(Name, nameof(Name));
+        if (Name == string.Empty)
+            throw new ArgumentException("name is an empty string", nameof(Name));
+        if (Schema is not null && Schema == string.Empty)
+            throw new ArgumentException("schema is an empty string", nameof(Schema));
         this.Name = Name;
         this.Schema = Schema;
     }
+
+
+    //TODO: documentation
+    public void Initialize(MemberInfo member) => 
+        MemberName = new(member.GetQualifiedName());
 }

@@ -58,6 +58,9 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     internal readonly ParameterTag ParameterTag;
 
     //TODO: documentation, unit test
+    internal readonly AliasName? AliasName;
+
+    //TODO: documentation, unit test
     internal readonly SelectTag SelectTag;
 
     internal readonly bool IsKeyPart;
@@ -102,29 +105,9 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </exception>
     internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
-        ColumnAttribute? GetColumnAttribute()
-        {
-            //Note: If ColumnAttribute.Name is null, propertyInfo.GetCustomAttribute<ColumnAttribute>() throw a null reference exception
-            //Microsoft controls this, so I am going to catch it and re-throw it as InvalidSqlIdentifierException . Same goes for
-            //ArgumentException and basically any invalid argument, though the unit test used an empty string.
-            //Interestingly, MS seemed to allow an ColumnName of "123", at least at this stage.
-            try
-            {
-                return propertyInfo.GetCustomAttribute<ColumnAttribute>();
-            }
-            catch(NullReferenceException)
-            {
-                throw new InvalidSqlIdentifierException(tableName, propertyInfo.Name);
-            }
-            catch (ArgumentException)
-            {
-                throw new InvalidSqlIdentifierException(tableName, propertyInfo.Name);
-            }
-        }
-
         //TODO: Consolidate SQL Identifier verification in sql cache, or SQL Generator?
-        string? columnName = propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.GetValueOrNull()
-            ?? GetColumnAttribute()?.Name?.GetValueOrNull()
+        string? columnName = propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
+            ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
             ?? propertyInfo.Name;
 
         string? parameterName = propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name?.GetValueOrNull() ?? columnName;
@@ -136,6 +119,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         PropertyInfo = propertyInfo;
         PropertyName = new(PropertyInfo.Name);
         ParameterTag = new ParameterTag(null, parameterName, null);
+        AliasName = aliasName is not null ? new (aliasName) : null;
         SelectTag = new (ColumnTag, aliasName is not null ? new AliasTag( new AliasName(aliasName)): null);
 
         IsKeyPart = keys.Contains(PropertyInfo);

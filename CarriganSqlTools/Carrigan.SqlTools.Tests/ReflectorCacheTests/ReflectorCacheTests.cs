@@ -230,23 +230,4 @@ public class ReflectorCacheTests
     public void HasEncryptedColumns_False() =>
         Assert.False(SqlToolsReflectorCache<ColumnIdentifiers>.HasEncryptedColumns());
 
-    [Fact]
-    public void ColumnNameFromNullIdentifier() => 
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromNullIdentifier>.ColumnInfo);
-    [Fact]
-    public void ColumnNameFromEmptyIdentifier() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromEmptyIdentifier>.ColumnInfo);
-    [Fact]
-    public void ColumnNameFromInvalidIdentifier() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromInvalidIdentifier>.ColumnInfo);
-
-    [Fact]
-    public void ColumnNameFromNullAnnotation() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromNullAnnotation>.ColumnInfo);
-    [Fact]
-    public void ColumnNameFromEmptyAnnotation() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromEmptyAnnotation>.ColumnInfo);
-    [Fact]
-    public void ColumnNameFromInvalidAnnotation() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromInvalidAnnotation>.ColumnInfo);
 }

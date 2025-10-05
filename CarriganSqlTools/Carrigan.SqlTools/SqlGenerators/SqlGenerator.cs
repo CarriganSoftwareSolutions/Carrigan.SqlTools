@@ -4,7 +4,10 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Predicates;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
+using System.Data.Common;
+using System.Linq;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -41,7 +44,41 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </exception>
     private void EncryptionChecks()
     {
-        List<Exception> exceptions = new List<Exception>();
+        List<Exception> exceptions = [];
+        IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
+        IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
+        IEnumerable<Tuple<PropertyInfo, ParameterTag>> invalidParameters = [];
+
+        if (SqlIdentifierPattern.Fails(TableName))
+            exceptions.Add(new InvalidSqlIdentifierException(Type, TableName));
+        if(SchemaName is not null && SqlIdentifierPattern.Fails(TableName))
+            exceptions.Add(new InvalidSqlIdentifierException(Type, SchemaName.Value));
+        if (SqlIdentifierPattern.Fails(ProcedureName))
+            exceptions.Add(new InvalidSqlIdentifierException(Type, ProcedureName));
+
+        invalidColumns =
+            ColumnInfo
+                .Where(column => SqlIdentifierPattern.Fails(column.ColumnName))
+                .Select(column => new Tuple<PropertyInfo, ColumnName>(column.PropertyInfo, column.ColumnName));
+        if (invalidColumns.Any())
+            exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
+
+        invalidAliases =
+            ColumnInfo
+                .Where(column => column.AliasName is not null)
+                .Where(column => SqlIdentifierPattern.Fails(column.AliasName))
+                .Select(column => column.AliasName is not null ? new Tuple<PropertyInfo, AliasName>(column.PropertyInfo, column.AliasName.Value) : null)
+                .OfType<Tuple<PropertyInfo, AliasName>>();
+        if (invalidAliases.Any())
+            exceptions.Add(new InvalidSqlIdentifierException(invalidAliases));
+
+        invalidParameters =
+            ColumnInfo
+                .Where(column => SqlIdentifierPattern.Fails(column.ParameterTag))
+                .Select(column => new Tuple<PropertyInfo, ParameterTag>(column.PropertyInfo, column.ParameterTag));
+        if (invalidParameters.Any())
+            exceptions.Add(new InvalidSqlIdentifierException(invalidParameters));
+
         if (HasEncryptedColumns())
         {
             if (_Encryption is null)
@@ -50,8 +87,8 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
                 exceptions.Add(new NoKeyVersionField<T>());
             else if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
                 exceptions.Add(new InvalidKeyVersionFieldType<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
-            if (_LazyKeyVersionColumnInfo.Value.Count() > 1)
-                exceptions.Add(new MultipleKeyVersionFields<T>(_LazyKeyVersionColumnInfo.Value.Select(column => column.PropertyName)));
+            if (KeyVersionColumnsInfo.Count() > 1)
+                exceptions.Add(new MultipleKeyVersionFields<T>(KeyVersionColumnsInfo.Select(column => column.PropertyName)));
         }
 
         if (exceptions.Count == 1)

@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Attributes;
-
+//TODO: Unit tests
 /// <summary>
 /// Specifies a parameter identifier for use with the SQL generator.
 /// Enables mapping of class properties to custom parameter <see cref="Name"/> when
@@ -23,13 +23,6 @@ public class ParameterAttribute : Attribute
     /// </summary>
     /// <param name="Name">Parameter name</param>
     /// <exception cref="InvalidSqlIdentifierException">Throws an  exception if the <see cref="Name"/> is an invalid SQL identifier.</exception>
-    public ParameterAttribute(string Name)
-    {
-        if (SqlIdentifierPattern.Fails(Name))
-        {
-            throw new InvalidSqlIdentifierException(Name);
-        }
-
+    public ParameterAttribute(string Name) => 
         this.Name = Name;
-    }
 }
