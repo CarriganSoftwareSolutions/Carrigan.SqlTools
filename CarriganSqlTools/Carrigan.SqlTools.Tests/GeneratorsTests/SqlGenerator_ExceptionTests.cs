@@ -21,7 +21,6 @@ public class SqlGenerator_ExceptionTests
     public void NonIntKeyVersions() =>
         Assert.Throws<InvalidKeyVersionFieldType<NonIntKeyVersions>>(() => new SqlGenerator<NonIntKeyVersions>(new MockEncryption("the")));
 
-
     [Fact]
     public void NullableIntKeyVersions() =>
         _ = new SqlGenerator<NullableIntKeyVersions>(new MockEncryption("the"));

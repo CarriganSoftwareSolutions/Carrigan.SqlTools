@@ -9,6 +9,7 @@ using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
@@ -101,8 +102,29 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </exception>
     internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
+        ColumnAttribute? GetColumnAttribute()
+        {
+            //Note: If ColumnAttribute.Name is null, propertyInfo.GetCustomAttribute<ColumnAttribute>() throw a null reference exception
+            //Microsoft controls this, so I am going to catch it and re-throw it as InvalidSqlIdentifierException . Same goes for
+            //ArgumentException and basically any invalid argument, though the unit test used an empty string.
+            //Interestingly, MS seemed to allow an ColumnName of "123", at least at this stage.
+            try
+            {
+                return propertyInfo.GetCustomAttribute<ColumnAttribute>();
+            }
+            catch(NullReferenceException)
+            {
+                throw new InvalidSqlIdentifierException(propertyInfo.Name);
+            }
+            catch (ArgumentException)
+            {
+                throw new InvalidSqlIdentifierException(propertyInfo.Name);
+            }
+        }
+
+        //TODO: Consolidate SQL Identifier verification in sql cache, or SQL Generator?
         string? columnName = propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.GetValueOrNull()
-            ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
+            ?? GetColumnAttribute()?.Name?.GetValueOrNull()
             ?? propertyInfo.Name;
 
         string? parameterName = propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name?.GetValueOrNull() ?? columnName;
