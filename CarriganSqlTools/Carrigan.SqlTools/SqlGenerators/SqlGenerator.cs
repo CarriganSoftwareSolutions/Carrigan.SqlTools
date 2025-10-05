@@ -41,17 +41,23 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </exception>
     private void EncryptionChecks()
     {
+        List<Exception> exceptions = new List<Exception>();
         if (HasEncryptedColumns())
         {
             if (_Encryption is null)
-                throw new EncrypterNotProvided<T>();
+                exceptions.Add(new EncrypterNotProvided<T>());
             if (KeyVersionColumnInfo is null)
-                throw new NoKeyVersionField<T>();
+                exceptions.Add(new NoKeyVersionField<T>());
+            else if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
+                exceptions.Add(new InvalidKeyVersionFieldType<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
             if (_LazyKeyVersionColumnInfo.Value.Count() > 1)
-                throw new MultipleKeyVersionFields<T>(_LazyKeyVersionColumnInfo.Value.Select(column => column.PropertyName));
-            if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
-                throw new InvalidKeyVersionFieldType<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name));
+                exceptions.Add(new MultipleKeyVersionFields<T>(_LazyKeyVersionColumnInfo.Value.Select(column => column.PropertyName)));
         }
+
+        if (exceptions.Count == 1)
+            throw exceptions.First();
+        else if (exceptions.Count > 1)
+            throw new AggregateException(exceptions);
     }
 
     /// <summary>
