@@ -27,7 +27,7 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     internal AliasTag(AliasName aliasName)
     {
         if (SqlIdentifierPattern.Fails(aliasName))
-            throw new InvalidSqlIdentifierException(aliasName);
+            throw new InvalidSqlIdentifierException(aliasName); //TODO: Remove in favor of SqlGenerator constructor's validator?
 
         _aliasTag = aliasName;
     }

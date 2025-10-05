@@ -77,14 +77,14 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     internal ParameterTag(string? prefix, string parameterName, string? index)
     {
         if (SqlParameterPattern.Fails(parameterName))
-            throw new InvalidParameterIdentifierException(ToString());
+            throw new InvalidParameterIdentifierException(ToString()); //TODO: what to do with this now that they are being enforced in sql generator constructor
 
         _parameterBaseName = parameterName;
         _prefix = prefix;
         _index = index;
 
         if (SqlParameterPattern.Fails(ToString()))
-            throw new InvalidParameterIdentifierException(ToString());
+            throw new InvalidParameterIdentifierException(ToString()); //TODO: what to do with this now that they are being enforced in sql generator constructor
     }
 
     /// <summary>

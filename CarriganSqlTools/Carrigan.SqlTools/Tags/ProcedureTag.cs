@@ -50,19 +50,8 @@ public class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag>,
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="procedureName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
-    internal ProcedureTag(string? schemaName, string procedureName)
-    {
-        List<string> invalidIdentifiers = [];
-        if (SqlIdentifierPattern.Fails(procedureName))
-            invalidIdentifiers.Add(procedureName);
-        if (schemaName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(schemaName))
-            invalidIdentifiers.Add(schemaName); 
-
-        if(invalidIdentifiers.Count != 0)
-            throw new InvalidSqlIdentifierException(invalidIdentifiers);
-        else
-            _procedureTag = schemaName.IsNullOrEmpty() ? $"[{procedureName}]" : $"[{schemaName}].[{procedureName}]";
-    }
+    internal ProcedureTag(string? schemaName, string procedureName) => 
+        _procedureTag = schemaName.IsNullOrEmpty() ? $"[{procedureName}]" : $"[{schemaName}].[{procedureName}]";
 
     /// <summary>
     /// Implicitly converts a <see cref="ProcedureTag"/> to its SQL string representation,

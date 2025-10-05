@@ -27,8 +27,11 @@ public class ProcedureTagTests
     [InlineData("Franks", null)]
     [InlineData(null, null)]
     [InlineData("", null)]
+    //These unit tests originally enforced exceptions being throw when you create a procedure tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Procedure_Tag_Tests_Argument_Exception(string? schemaName, string? procedureName) => 
-        Assert.Throws<InvalidSqlIdentifierException>(() => new ProcedureTag(schemaName, procedureName!));
+        _ = new ProcedureTag(schemaName, procedureName!);
 
     [Theory]
     [InlineData("Franks", "Pizza", "Franks", "Pizza")]
@@ -246,26 +249,32 @@ public class ProcedureTagTests
     [InlineData("Invalid Procedure")]    // Contains space.
     [InlineData("123Invalid")]       // Starts with digit.
     [InlineData("Role;DROP")]        // Contains a semicolon.
+    //These unit tests originally enforced exceptions being throw when you create a procedure tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Constructor_InvalidProcedureName_ShouldThrowSqlNamePatternException(string invalidProcedure)
     {
         // Arrange
         string schemaName = "dbo";
 
         // Act & Assert
-        Assert.Throws<InvalidSqlIdentifierException>(() => new ProcedureTag(schemaName, invalidProcedure));
+        _ = new ProcedureTag(schemaName, invalidProcedure);
     }
 
     [Theory]
     [InlineData("Invalid Schema")]   // Contains space.
     [InlineData("123Schema")]        // Starts with digit.
     [InlineData("Sch;ema")]          // Contains special characters.
+    //These unit tests originally enforced exceptions being throw when you create a procedure tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Constructor_InvalidSchemaName_ShouldThrowSqlNamePatternException(string invalidSchema)
     {
         // Arrange
         string ProcedureName = "ValidProcedure";
 
         // Act & Assert
-        Assert.Throws<InvalidSqlIdentifierException>(() => new ProcedureTag(invalidSchema, ProcedureName));
+        _ = new ProcedureTag(invalidSchema, ProcedureName);
     }
 
     [Fact]

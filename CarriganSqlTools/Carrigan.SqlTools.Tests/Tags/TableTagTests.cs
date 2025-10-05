@@ -27,8 +27,11 @@ public class TableTagTests
     [InlineData("Franks", null)]
     [InlineData(null, null)]
     [InlineData("", null)]
+    //These unit tests originally enforced exceptions being throw when you create a table tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName) => 
-        Assert.Throws<InvalidSqlIdentifierException>(() => new TableTag(schemaName, tableName!));
+        _ = new TableTag(schemaName, tableName!);
 
     [Theory]
     [InlineData("Franks", "Pizza", "Franks", "Pizza")]
@@ -246,26 +249,32 @@ public class TableTagTests
     [InlineData("Invalid Table")]    // Contains space.
     [InlineData("123Invalid")]       // Starts with digit.
     [InlineData("Role;DROP")]        // Contains a semicolon.
+    //These unit tests originally enforced exceptions being throw when you create a table tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Constructor_InvalidTableName_ShouldThrowSqlNamePatternException(string invalidTable)
     {
         // Arrange
         string schemaName = "dbo";
 
         // Act & Assert
-        Assert.Throws<InvalidSqlIdentifierException>(() => new TableTag(schemaName, invalidTable));
+        _ = new TableTag(schemaName, invalidTable);
     }
 
     [Theory]
     [InlineData("Invalid Schema")]   // Contains space.
     [InlineData("123Schema")]        // Starts with digit.
     [InlineData("Sch;ema")]          // Contains special characters.
+    //These unit tests originally enforced exceptions being throw when you create a table tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Constructor_InvalidSchemaName_ShouldThrowSqlNamePatternException(string invalidSchema)
     {
         // Arrange
         string tableName = "ValidTable";
 
         // Act & Assert
-        Assert.Throws<InvalidSqlIdentifierException>(() => new TableTag(invalidSchema, tableName));
+        _ = new TableTag(invalidSchema, tableName);
     }
 
     [Fact]

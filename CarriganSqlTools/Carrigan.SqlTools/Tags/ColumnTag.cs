@@ -94,6 +94,8 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
 
     //TODO: documentation, unit tests
 
+
+    //TODO: redo documentation
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnTag"/> class,
     /// which represents a fully qualified SQL column identifier
@@ -110,14 +112,9 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// </exception>
     internal ColumnTag(TableTag tableTag, ColumnName columnName)
     {
-        if (SqlIdentifierPattern.Fails(columnName))
-            throw new InvalidSqlIdentifierException(columnName);
-        else
-        {
-            _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
-            _columnName = columnName;
-            TableTag = tableTag;
-        }
+        _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
+        _columnName = columnName;
+        TableTag = tableTag;
     }
 
     /// <summary>

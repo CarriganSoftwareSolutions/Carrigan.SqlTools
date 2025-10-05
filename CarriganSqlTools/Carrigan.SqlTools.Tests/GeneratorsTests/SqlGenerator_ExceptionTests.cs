@@ -34,7 +34,7 @@ public class SqlGenerator_ExceptionTests
         Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyIdentifier>());
     [Fact]
     public void ColumnNameFromInvalidIdentifier() =>
-        Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromInvalidIdentifier>());
+        Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidIdentifier>());
 
     [Fact]
     public void ColumnNameFromNullAnnotation() =>
@@ -44,5 +44,5 @@ public class SqlGenerator_ExceptionTests
         Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyAnnotation>());
     [Fact]
     public void ColumnNameFromInvalidAnnotation() =>
-        Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromInvalidAnnotation>());
+        Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidAnnotation>());
 }

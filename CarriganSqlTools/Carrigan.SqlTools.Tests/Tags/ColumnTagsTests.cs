@@ -25,8 +25,11 @@ public class ColumnTagsTests
     [InlineData(null, "Sloppy", null)]
     [InlineData(null, "", null)]
     [InlineData(null, null, null)]
+    //These unit tests originally enforced exceptions being throw when you create a column tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_Schema_Null(string? schemaName, string? tableName, string? columnName)
-        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!)));
+        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("", "Sloppy", "")]
@@ -35,8 +38,11 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", null)]
     [InlineData("", "", null)]
     [InlineData("", null, null)]
+    //These unit tests originally enforced exceptions being throw when you create a column tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_Schema_Empty(string? schemaName, string? tableName, string? columnName)
-        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!)));
+        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("", null, "")]
@@ -44,16 +50,22 @@ public class ColumnTagsTests
     [InlineData("Franks", null, null)]
     [InlineData("", null, null)]
     [InlineData(null, null, null)]
+    //These unit tests originally enforced exceptions being throw when you create a column tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_3_Table_Null(string? schemaName, string? tableName, string? columnName)
-        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!)));
+        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("", "", "")]
     [InlineData(null, "", "")]
     [InlineData("", "", null)]
     [InlineData(null, "", null)]
+    //These unit tests originally enforced exceptions being throw when you create a column tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_3_Table_Empty(string? schemaName, string? tableName, string? columnName)
-        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!)));
+        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", null)]
@@ -64,8 +76,11 @@ public class ColumnTagsTests
     [InlineData("", null, null)]
     [InlineData(null, "", null)]
     [InlineData(null, null, null)]
+    //These unit tests originally enforced exceptions being throw when you create a column tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_3_Column_Null(string? schemaName, string? tableName, string? columnName)
-        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!)));
+        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", "")]
@@ -76,8 +91,11 @@ public class ColumnTagsTests
     [InlineData("", null, "")]
     [InlineData(null, "", "")]
     [InlineData(null, null, "")]
-    public void Col_Tag_Tests_3_Params_Column_Empty(string? schemaName, string? tableName, string? columnName) 
-        => Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!)));
+    //These unit tests originally enforced exceptions being throw when you create a column tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
+    public void Col_Tag_Tests_3_Params_Column_Empty(string? schemaName, string? tableName, string? columnName)  =>
+         _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
@@ -100,11 +118,14 @@ public class ColumnTagsTests
     [InlineData("Franks", "Sloppy", null)]
     [InlineData(null, "Sloppy", null)]
     [InlineData("", "Sloppy", null)]
-    public void Col_Tag_Tests_2_Params_argument_exception(string? schemaName, string tableName, string? columnName)
+    //These unit tests originally enforced exceptions being throw when you create a column tag
+    //However, this is now checked in the SqlGenerator's constructor.
+    //I kept the tests, in case I forget I moved them on purpose.
+    public void Col_Tag_Tests_2_Params_no_longer_throws_exception(string? schemaName, string tableName, string? columnName)
     {
         TableTag tg = new(schemaName, tableName);
 
-        Assert.Throws<InvalidSqlIdentifierException>(() => new ColumnTag(tg, new ColumnName(columnName!)));
+        _ = new ColumnTag(tg, new ColumnName(columnName!));
     }
 
 

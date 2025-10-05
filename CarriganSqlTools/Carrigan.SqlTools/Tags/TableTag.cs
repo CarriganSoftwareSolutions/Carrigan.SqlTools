@@ -87,6 +87,7 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
 {
     private readonly string _tableTag;
 
+    //TODO: Redo documentation
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>
@@ -100,15 +101,8 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
     /// </exception>
     /// 
     //TODO: Make this use schema name and table name.
-    internal TableTag(string? schemaName, string tableName)
-    {
-        if (SqlIdentifierPattern.Fails(tableName))
-            throw new InvalidSqlIdentifierException(this);
-        else if (schemaName.IsNotNullOrWhiteSpace() && SqlIdentifierPattern.Fails(schemaName))
-            throw new InvalidSqlIdentifierException(this);
-        else
-            _tableTag = schemaName.IsNullOrEmpty() ? $"[{tableName}]" : $"[{schemaName}].[{tableName}]";
-    }
+    internal TableTag(string? schemaName, string tableName) => 
+        _tableTag = schemaName.IsNullOrEmpty() ? $"[{tableName}]" : $"[{schemaName}].[{tableName}]";
 
     /// <summary>
     /// Implicitly converts a <see cref="TableTag"/> to its SQL string representation,
