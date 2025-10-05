@@ -233,7 +233,6 @@ public class ReflectorCacheTests
     [Fact]
     public void ColumnNameFromNullIdentifier() => 
         Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromNullIdentifier>.ColumnInfo);
-
     [Fact]
     public void ColumnNameFromEmptyIdentifier() =>
         Assert.Throws<InvalidSqlIdentifierException>(() => _ = SqlToolsReflectorCache<ColumnNameFromEmptyIdentifier>.ColumnInfo);

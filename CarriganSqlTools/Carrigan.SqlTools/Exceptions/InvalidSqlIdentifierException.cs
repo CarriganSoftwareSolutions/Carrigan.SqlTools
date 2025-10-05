@@ -13,7 +13,7 @@ namespace Carrigan.SqlTools.Exceptions;
 /// the sql naming pattern. 
 /// Note: for parameters leave off the @, as the generator adds the leading @.
 /// </summary>
-public class InvalidSqlIdentifierException : Exception
+public class InvalidSqlIdentifierException: Exception
 {
     /// <summary>
     /// The class constructor for InvalidSqlIdentifierException
@@ -23,7 +23,7 @@ public class InvalidSqlIdentifierException : Exception
     /// Note: for parameters leave off the @, as the generator adds the leading @.
     /// </summary>
     /// <param name="identifiers">name of identifiers that are invalid</param>
-    public InvalidSqlIdentifierException(params IEnumerable<string?> identifiers) :
+    internal InvalidSqlIdentifierException(params IEnumerable<string?> identifiers) :
         base(CreateMessage(identifiers))
     {
     }
@@ -46,8 +46,8 @@ public class InvalidSqlIdentifierException : Exception
     /// Note: for parameters leave off the @, as the generator adds the leading @.
     /// </summary>
     /// <param name="propertyNames">name of properties that have invalid names.</param>
-    public InvalidSqlIdentifierException(params IEnumerable<PropertyName?> propertyNames) :
-        base(CreateMessage(propertyNames))
+    internal InvalidSqlIdentifierException(TableName tableName, params IEnumerable<PropertyName?> propertyNames) :
+        base(CreateMessage(tableName, propertyNames))
     {
     }
     /// <summary>
@@ -55,8 +55,8 @@ public class InvalidSqlIdentifierException : Exception
     /// </summary>
     /// <param name="propertyNames">The names of the invalid identifiers.</param>
     /// <returns>An <see cref="InvalidSqlIdentifierException"/> message.</returns>
-    private static string CreateMessage(IEnumerable<PropertyName?> propertyNames) =>
-        $"The following properties have SQL identifies that do not follow the SQL naming convention:" +
+    private static string CreateMessage(TableName tableName, IEnumerable<PropertyName?> propertyNames) =>
+        $"The following {tableName} properties have SQL identifies that do not follow the SQL naming convention:" +
             propertyNames
                 .Select(column => $"{column?.ToString() ?? "<null>"}")
                 .JoinAnd();

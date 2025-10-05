@@ -114,11 +114,11 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
             }
             catch(NullReferenceException)
             {
-                throw new InvalidSqlIdentifierException(propertyInfo.Name);
+                throw new InvalidSqlIdentifierException(tableName, propertyInfo.Name);
             }
             catch (ArgumentException)
             {
-                throw new InvalidSqlIdentifierException(propertyInfo.Name);
+                throw new InvalidSqlIdentifierException(tableName, propertyInfo.Name);
             }
         }
 
