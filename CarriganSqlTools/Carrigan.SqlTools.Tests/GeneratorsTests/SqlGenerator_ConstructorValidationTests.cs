@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
 using Carrigan.SqlTools.Tests.TestEntities.NotExceptional;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
-public class SqlGenerator_ExceptionTests
+public class SqlGenerator_ConstructorValidationTests
 {
     [Fact]
     public void MultiKeyVersionException() =>

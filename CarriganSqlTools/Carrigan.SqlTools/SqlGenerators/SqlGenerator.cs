@@ -43,7 +43,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <c>KeyVersionAttribute</c> has not been set on a property in <see cref="KeyVersionAttribute"/>.
     /// </exception>
     /// TODO: Unit tests
-    private void EncryptionChecks()
+    private void ValidationChecks()
     {
         List<Exception> exceptions = [];
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
@@ -104,7 +104,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </summary>
     /// <remarks>
     /// Sets <c>_Encryption</c> to <c>null</c> and immediately calls
-    /// <see cref="EncryptionChecks"/> to validate that encryption
+    /// <see cref="ValidationChecks"/> to validate <typeparamref name="T"/> attribute setups. 
     /// requirements (if any) are satisfied.
     /// </remarks>
     /// <exception cref="NullReferenceException">
@@ -115,7 +115,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     public SqlGenerator()
     {
         _Encryption = null;
-        EncryptionChecks();
+        ValidationChecks();
     }
 
     /// <summary>
@@ -131,7 +131,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </exception>
     /// <remarks>
     /// Assigns the provided <paramref name="encryption"/> to <c>_Encryption</c>
-    /// and calls <see cref="EncryptionChecks"/> to ensure all encryption
+    /// and calls <see cref="ValidationChecks"/> to validate <typeparamref name="T"/> attribute setups. 
     /// prerequisites are satisfied.
     /// </remarks>
     /// <exception cref="NullReferenceException">
@@ -142,7 +142,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     public SqlGenerator(IEncryption encryption)
     {
         _Encryption = encryption ?? throw new ArgumentNullException(nameof(encryption));
-        EncryptionChecks();
+        ValidationChecks();
     }
 
     /// <summary>
