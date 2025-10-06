@@ -19,6 +19,11 @@ public class AliasAttribute : Attribute
     /// Public constructor
     /// </summary>
     /// <param name="aliasName">name of alias</param>
-    public AliasAttribute(string aliasName) => 
+    public AliasAttribute(string aliasName)
+    {
+        ArgumentNullException.ThrowIfNull(aliasName, nameof(aliasName));
+        if (aliasName == string.Empty)
+            throw new ArgumentException("name is an empty string", nameof(aliasName));
         Name = new(aliasName);
+    }
 }

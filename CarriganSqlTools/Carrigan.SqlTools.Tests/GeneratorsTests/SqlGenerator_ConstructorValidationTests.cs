@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
+using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Aliases;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Columns;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Parameters;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Table;
@@ -131,4 +132,22 @@ public class SqlGenerator_ConstructorValidationTests
     [Fact]
     public void ParameterNameInvalid() =>
         Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<ParameterNameInvalid>());
+
+    [Fact]
+    public void AliasNameNull()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameNull>());
+        Assert.IsType<ArgumentNullException>(ex.InnerException);
+    }
+    [Fact]
+    public void AliasNameEmpty()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameEmpty>());
+        Assert.IsType<ArgumentException>(ex.InnerException);
+    }
+    [Fact]
+    public void AliasNameInvalid() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<AliasNameInvalid>());
 }

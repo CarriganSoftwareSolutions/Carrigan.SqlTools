@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.RegularExpressions;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
@@ -83,8 +84,13 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// Throws in the property is invalid for class T, or ineligible to model a column.
     /// </exception>
     [ExternalOnly]
-    public static SelectTag Get<T>(string property, string? aliasName = null) =>
-        Get<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+    public static SelectTag Get<T>(string property, string? aliasName = null)
+    {
+        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
+            throw new InvalidSqlIdentifierException(new AliasName(aliasName)); //TODO: unit test
+
+        return Get<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+    }
 
     //TODO: Proof read Documentation, unit testing
     /// <summary>

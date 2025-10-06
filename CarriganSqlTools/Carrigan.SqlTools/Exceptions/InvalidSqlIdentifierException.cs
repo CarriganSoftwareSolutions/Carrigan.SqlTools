@@ -173,6 +173,29 @@ public class InvalidSqlIdentifierException: Exception
     /// Note: for parameters leave off the @, as the generator adds the leading @.
     /// </summary>
     /// <param name="identifiers">name of identifiers that are invalid</param>
+    internal InvalidSqlIdentifierException(params IEnumerable<AliasName> names) :
+        base(CreateMessage(names))
+    {
+    }
+    /// <summary>
+    /// Create a message for the <see cref="InvalidSqlIdentifierException"/>
+    /// </summary>
+    /// <param name="identifiers">The names of the invalid identifiers.</param>
+    /// <returns>An <see cref="InvalidSqlIdentifierException"/> message.</returns>
+    private static string CreateMessage(params IEnumerable<AliasName> names) =>
+        $"The following alias names do not follow the SQL naming convention: "
+            + names
+                .Select(name => name.ToString())
+                .JoinAnd();
+
+    /// <summary>
+    /// The class constructor for InvalidSqlIdentifierException
+    /// The InvalidSqlIdentifierException is thrown when the identifier used for
+    /// generating a SQL schema, table, column, parameter or alias do not match
+    /// the sql naming pattern. 
+    /// Note: for parameters leave off the @, as the generator adds the leading @.
+    /// </summary>
+    /// <param name="identifiers">name of identifiers that are invalid</param>
     internal InvalidSqlIdentifierException(params IEnumerable<Tuple<PropertyInfo, ParameterTag>> names) :
         base(CreateMessage(names))
     {
@@ -191,10 +214,6 @@ public class InvalidSqlIdentifierException: Exception
             + names
                 .Select(name => $"\"{name.Item1}\"")
                 .JoinAnd();
-
-
-
-
 
     /// <summary>
     /// The class constructor for InvalidSqlIdentifierException

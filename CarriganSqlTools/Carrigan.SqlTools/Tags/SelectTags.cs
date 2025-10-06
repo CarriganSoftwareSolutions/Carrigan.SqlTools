@@ -1,7 +1,9 @@
-﻿using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Tags;
 //TODO: Proof read Documentation and unit test.
@@ -97,8 +99,13 @@ public class SelectTags : ISelectTags
     /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
     /// </exception>
     [ExternalOnly]
-    public SelectTags Append<T>(string property, string? aliasName = null) =>
-        Append<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+    public SelectTags Append<T>(string property, string? aliasName = null)
+    {
+        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
+            throw new InvalidSqlIdentifierException(new AliasName(aliasName)); //TODO: unit test
+
+        return Append<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+    }
 
 
     /// <summary>
@@ -170,8 +177,12 @@ public class SelectTags : ISelectTags
     /// Throws in the property is invalid for class T, or ineligible to model a column.
     /// </exception>
     [ExternalOnly]
-    public static SelectTags Get<T>(string property, string? aliasName = null) =>
-        Get<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+    public static SelectTags Get<T>(string property, string? aliasName = null)
+    {
+        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
+            throw new InvalidSqlIdentifierException(new AliasName(aliasName)); //TODO: unit test
+        return Get<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+    }
 
     //TODO: Proof read Documentation, unit testing
     /// <summary>
