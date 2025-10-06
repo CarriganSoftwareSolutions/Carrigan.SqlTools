@@ -1,9 +1,9 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
-internal class ColumnNameFromInvalidIdentifier
+namespace Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Parameters;
+internal class ParameterNameInvalid
 {
-    [Identifier("123")]
+    [Parameter("123")]
     public int ExceptionColumn { get; set; }
 }

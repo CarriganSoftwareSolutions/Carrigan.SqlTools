@@ -23,6 +23,11 @@ public class ParameterAttribute : Attribute
     /// </summary>
     /// <param name="Name">Parameter name</param>
     /// <exception cref="InvalidSqlIdentifierException">Throws an  exception if the <see cref="Name"/> is an invalid SQL identifier.</exception>
-    public ParameterAttribute(string Name) => 
+    public ParameterAttribute(string Name)
+    {
+        ArgumentNullException.ThrowIfNull(Name, nameof(Name));
+        if (Name == string.Empty)
+            throw new ArgumentException("name is an empty string", nameof(Name));
         this.Name = Name;
+    }
 }

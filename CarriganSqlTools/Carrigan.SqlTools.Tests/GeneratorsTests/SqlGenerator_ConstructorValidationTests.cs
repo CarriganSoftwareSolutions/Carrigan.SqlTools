@@ -1,8 +1,10 @@
 ﻿using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
+using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Columns;
+using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Parameters;
+using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Table;
 using Carrigan.SqlTools.Tests.TestEntities.NotExceptional;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
@@ -70,4 +72,63 @@ public class SqlGenerator_ConstructorValidationTests
 
         Assert.NotEmpty(ex.InnerExceptions.OfType<InvalidSqlIdentifierException>());
     }
+    [Fact]
+    public void TableNameFromNullIdentifier()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromNullIdentifier>());
+        Assert.IsType<ArgumentNullException>(ex.InnerException);
+    }
+    [Fact]
+    public void TableNameFromEmptyIdentifier()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromEmptyIdentifier>());
+        Assert.IsType<ArgumentException>(ex.InnerException);
+    }
+
+    [Fact]
+    public void TableNameFromInvalidIdentifier()
+    {
+        AggregateException ex = Assert.Throws<AggregateException>(() => _ = new SqlGenerator<TableNameFromInvalidIdentifier>());
+
+        Assert.NotEmpty(ex.InnerExceptions.OfType<InvalidSqlIdentifierException>());
+    }
+
+    [Fact]
+    public void TableNameFromNullAnnotation()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromNullAnnotation>());
+        Assert.IsType<ArgumentNullException>(ex.InnerException);
+    }
+    [Fact]
+    public void TableNameFromEmptyAnnotation()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromEmptyAnnotation>());
+        Assert.IsType<ArgumentException>(ex.InnerException);
+    }
+    [Fact]
+    public void TableNameFromInvalidAnnotation() => 
+        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<TableNameFromInvalidAnnotation>());
+
+
+    [Fact]
+    public void ParameterNameNull()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ParameterNameNull>());
+        Assert.IsType<ArgumentNullException>(ex.InnerException);
+    }
+    [Fact]
+    public void ParameterNameEmpty()
+    {
+        TypeInitializationException ex =
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ParameterNameEmpty>());
+        Assert.IsType<ArgumentException>(ex.InnerException);
+    }
+    [Fact]
+    public void ParameterNameInvalid() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<ParameterNameInvalid>());
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
+namespace Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Columns;
 internal class ColumnNameFromNullAnnotation
 {
     [Column(null!)]
