@@ -92,8 +92,6 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     private readonly ColumnName _columnName;
     internal readonly TableTag TableTag;
 
-    //TODO: documentation, unit tests
-
 
     //TODO: redo documentation
     /// <summary>
@@ -147,7 +145,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// <returns>
     /// A SQL string representing the column, formatted according to <paramref name="useTableTag"/>.
     /// </returns>
-    public string ToString(bool useTableTag)
+    public string ToString(bool useTableTag) //TODO: Unit Tests
     {
         if (useTableTag)
             return ToString();

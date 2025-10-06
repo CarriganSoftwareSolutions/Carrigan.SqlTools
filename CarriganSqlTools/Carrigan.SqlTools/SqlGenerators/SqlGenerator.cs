@@ -42,7 +42,6 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// the <c>_Encryption</c> service is <c>null</c> or the
     /// <c>KeyVersionAttribute</c> has not been set on a property in <see cref="KeyVersionAttribute"/>.
     /// </exception>
-    /// TODO: Unit tests
     private void ValidationChecks()
     {
         List<Exception> exceptions = [];

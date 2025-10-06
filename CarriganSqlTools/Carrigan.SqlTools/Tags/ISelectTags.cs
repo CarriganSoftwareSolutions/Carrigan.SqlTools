@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tags;
-//TODO: Proof read Documentation and unit test.
+//TODO: Proof read Documentation
 public interface ISelectTags
 {
     /// <summary>

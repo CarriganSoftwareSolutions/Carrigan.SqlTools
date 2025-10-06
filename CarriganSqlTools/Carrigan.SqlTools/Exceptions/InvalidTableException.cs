@@ -10,8 +10,6 @@ namespace Carrigan.SqlTools.Exceptions;
 //TODO: Proof Read Documentation. entire class
 
 //TODO: Create example for readme.md file.
-//TODO: Unit tests?
-//TODO: do a separate pattern for parameters?
 /// <summary>
 /// The InvalidTableException is thrown when a table used for query
 /// is not included in the query.

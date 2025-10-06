@@ -17,7 +17,6 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <typeparam name="T">
 /// The entity or data model type that maps to a SQL table or stored procedure.
 /// </typeparam>
-//TODO: Unit Tests
 public class SqlToolsReflectorCache<T>
 {
     /// <summary>
@@ -66,7 +65,6 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<ColumnInfo> ColumnInfoLessKeys =>
         ColumnInfo.Where(column => column.IsKeyPart is false); //TODO: cache? Probably b est.
 
-    //TODO: Unit Tests
     /// <summary>
     /// Gets the <see cref="ProcedureName"/> for <typeparamref name="T"/>.
     /// </summary>

@@ -2,7 +2,7 @@
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Exceptions;
-//TODO: Proof Read Documentation, unit tests
+//TODO: Proof Read Documentation
 /// <summary>
 /// Thrown when multiple key version fields exist
 /// </summary>
