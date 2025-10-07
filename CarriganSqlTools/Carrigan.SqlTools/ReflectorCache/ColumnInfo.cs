@@ -120,8 +120,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         PropertyName = new(PropertyInfo.Name);
         ParameterTag = new ParameterTag(null, parameterName, null);
         AliasName = aliasName;
-        if(AliasName.IsNullOrEmpty())
-        SelectTag = new (ColumnTag, AliasName is not null ? new AliasTag(AliasName) : null);
+        SelectTag = new(ColumnTag, AliasTag.New(aliasName));
 
         IsKeyPart = keys.Contains(PropertyInfo);
         IsEncrypted = PropertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;
