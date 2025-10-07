@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
-//TODO: Proof read documentation and unit test
+//TODO: Proof read documentation
 /// <summary>
 /// Strongly typed string wrapper for Property names
 /// </summary>
