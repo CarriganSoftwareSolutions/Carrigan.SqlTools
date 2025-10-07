@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.SqlGenerators;
@@ -101,8 +102,29 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
     /// </exception>
     /// 
     //TODO: Make this use schema name and table name.
-    internal TableTag(string? schemaName, string tableName) => 
+    internal TableTag(SchemaName? schemaName, TableName tableName) => 
         _tableTag = schemaName.IsNullOrEmpty() ? $"[{tableName}]" : $"[{schemaName}].[{tableName}]";
+
+    //TODO: proof read documentation
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TableTag"/> class.
+    /// </summary>
+    /// <remarks>
+    /// An external only marked as internal can still be used by the unit tests class.
+    /// This method is meant for unit tests only.
+    /// </remarks>
+    /// <param name="schemaName">The optional schema name. If <c>null</c> or empty, only the table name is used.</param>
+    /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="tableName"/> is <c>null</c> or empty.
+    /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
+    /// </exception>
+    [ExternalOnly]//An external only marked as internal can still be used by the unit tests class.
+    internal TableTag(string? schemaName, string tableName) : this (SchemaName.New(schemaName), new (tableName))
+    {
+    }
 
     /// <summary>
     /// Implicitly converts a <see cref="TableTag"/> to its SQL string representation,

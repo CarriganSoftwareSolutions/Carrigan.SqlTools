@@ -67,7 +67,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
                 .GetColumnsFromProperties(property)
                 .FirstOrDefault()
                 ?.ColumnTag ?? throw new InvalidPropertyException<T>(property),
-            aliasName is not null ? new AliasTag(aliasName.Value) : null
+            aliasName is not null ? new AliasTag(aliasName) : null
         );
 
     //TODO: Proof read Documentation, unit testing
@@ -86,10 +86,11 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     [ExternalOnly]
     public static SelectTag Get<T>(string property, string? aliasName = null)
     {
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
-            throw new InvalidSqlIdentifierException(new AliasName(aliasName)); //TODO: unit test
+        AliasName? alias = AliasName.New(aliasName);
+        if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
+            throw new InvalidSqlIdentifierException(alias); //TODO: unit test
 
-        return Get<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+        return Get<T>(new PropertyName(property), alias);
     }
 
     //TODO: Proof read Documentation, unit testing

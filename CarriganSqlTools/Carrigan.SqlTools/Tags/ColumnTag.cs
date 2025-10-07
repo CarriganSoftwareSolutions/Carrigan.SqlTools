@@ -1,8 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.RegularExpressions;
-using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -91,7 +89,6 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
 
     private readonly ColumnName _columnName;
     internal readonly TableTag TableTag;
-
 
     //TODO: redo documentation
     /// <summary>

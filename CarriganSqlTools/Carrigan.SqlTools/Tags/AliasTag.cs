@@ -1,8 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.RegularExpressions;
-using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -15,18 +13,33 @@ namespace Carrigan.SqlTools.Tags;
 /// TODO: Example Documentation
 public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityComparer<AliasTag>
 {
-    private readonly string _aliasTag;
+    private readonly string _aliasName;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasTag"/> class.
     /// </summary>
-    /// <param name="aliasName">The optional schema name. If <c>null</c> or empty, only the procedure name is used.</param>
+    /// <param name="aliasName">The alias name. If <c>null</c> or empty, only the procedure name is used.</param>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="aliasName"/>  fails SQL identifier validation.
     /// </exception>
-    internal AliasTag(AliasName aliasName)
+    internal AliasTag(AliasName aliasName) => 
+        _aliasName = aliasName;
+
+    /// <summary>
+    /// If <param name="name"> is not null or empty, it creates a new instance,
+    /// otherwise it returns a null object.
+    /// </summary>
+    /// <param name="name">Alias name</param>
+    /// <returns>
+    /// If <param name="name"> is not null or empty, it creates a new instance,
+    /// otherwise it returns a null object.
+    /// </returns>
+    public static AliasTag? New(AliasName? name)
     {
-        _aliasTag = aliasName;
+        if (name.IsNotNullOrEmpty())
+            return new AliasTag(name);
+        else
+            return null;
     }
 
     /// <summary>
@@ -36,14 +49,14 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     /// <param name="tag">The <see cref="AliasTag"/> to convert.</param>
     /// <returns>The SQL-formatted as string.</returns>
     public static implicit operator string(AliasTag tag) =>
-        tag._aliasTag;
+        tag._aliasName;
 
     /// <summary>
     /// Returns the SQL string representation of this <see cref="AliasTag"/> instance.
     /// </summary>
     /// <returns>The SQL-formatted alias string.</returns>
     public override string ToString() =>
-        _aliasTag;
+        _aliasName;
 
     /// <summary>
     /// Compares this instance to another <see cref="AliasTag"/> and returns a value
@@ -58,7 +71,7 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     public int CompareTo(AliasTag? other)
     {
         if (other is null) return 1; 
-        return string.Compare(_aliasTag, other._aliasTag, StringComparison.Ordinal);
+        return string.Compare(_aliasName, other._aliasName, StringComparison.Ordinal);
     }
     /// <summary>
     /// Determines whether this <see cref="AliasTag"/> is equal to another instance.
@@ -71,7 +84,7 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
         if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
 
-        return string.Equals(_aliasTag, other._aliasTag, StringComparison.Ordinal);
+        return string.Equals(_aliasName, other._aliasName, StringComparison.Ordinal);
     }
     /// <summary>
     /// Determines whether the specified object is equal to the current instance.
@@ -86,7 +99,7 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     /// </summary>
     /// <returns>An integer hash code computed using <see cref="StringComparison.Ordinal"/>.</returns>
     public override int GetHashCode() =>
-        _aliasTag.GetHashCode(StringComparison.Ordinal);
+        _aliasName.GetHashCode(StringComparison.Ordinal);
 
     /// <summary>
     /// Determines whether two <see cref="AliasTag"/> instances are equal.
@@ -99,7 +112,7 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     {
         if (x is null && y is null) return true;
         if (x is null || y is null) return false;
-        return string.Equals(x._aliasTag, y._aliasTag, StringComparison.Ordinal);
+        return string.Equals(x._aliasName, y._aliasName, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -108,7 +121,7 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     /// <param name="obj">The <see cref="AliasTag"/> for which to compute a hash code.</param>
     /// <returns>An integer hash code computed using <see cref="StringComparison.Ordinal"/>.</returns>
     public int GetHashCode(AliasTag obj) =>
-        obj._aliasTag.GetHashCode(StringComparison.Ordinal);
+        obj._aliasName.GetHashCode(StringComparison.Ordinal);
 
     /// <summary>
     /// Determines whether two <see cref="AliasTag"/> instances are equal.

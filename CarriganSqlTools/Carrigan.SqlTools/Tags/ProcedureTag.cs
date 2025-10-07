@@ -1,7 +1,8 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.RegularExpressions;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
@@ -50,8 +51,26 @@ public class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag>,
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="procedureName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
-    internal ProcedureTag(string? schemaName, string procedureName) => 
+    internal ProcedureTag(SchemaName? schemaName, ProcedureName procedureName) =>
         _procedureTag = schemaName.IsNullOrEmpty() ? $"[{procedureName}]" : $"[{schemaName}].[{procedureName}]";
+
+
+    //TODO: proof read documentation
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProcedureTag"/> class.
+    /// </summary>
+    /// <remarks>
+    /// Internal items marked ExternalOnly can still be used in the unit test project for this project.
+    /// This constructor is meant for unit testing only.
+    /// </remarks>
+    /// <param name="schemaName">The optional schema name. If <c>null</c> or empty, only the procedure name is used.</param>
+    /// <param name="procedureName">The procedure name. Must not be <c>null</c> or empty.</param>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when <paramref name="procedureName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
+    /// </exception>
+    [ExternalOnly] //Internal items marked ExternalOnly can still be used in the unit test project for this project.
+    internal ProcedureTag(string? schemaName, string procedureName) : this (SchemaName.New(schemaName), new (procedureName))
+    { }
 
     /// <summary>
     /// Implicitly converts a <see cref="ProcedureTag"/> to its SQL string representation,

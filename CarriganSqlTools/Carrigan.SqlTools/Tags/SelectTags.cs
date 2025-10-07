@@ -81,7 +81,7 @@ public class SelectTags : ISelectTags
                         .GetColumnsFromProperties(property)
                         .FirstOrDefault()
                         ?.ColumnTag  ?? throw new InvalidPropertyException<T>(property),
-                    aliasName is not null ? new AliasTag(aliasName.Value) : null
+                    aliasName is not null ? new AliasTag(aliasName) : null
                 )
             )
         );
@@ -101,10 +101,11 @@ public class SelectTags : ISelectTags
     [ExternalOnly]
     public SelectTags Append<T>(string property, string? aliasName = null)
     {
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
-            throw new InvalidSqlIdentifierException(new AliasName(aliasName)); //TODO: unit test
+        AliasName? alias = AliasName.New(aliasName);
+        if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
+            throw new InvalidSqlIdentifierException(alias); //TODO: unit test
 
-        return Append<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+        return Append<T>(new PropertyName(property), alias);
     }
 
 
@@ -159,7 +160,7 @@ public class SelectTags : ISelectTags
                     .GetColumnsFromProperties(properties)
                     .FirstOrDefault()
                     ?.ColumnTag ?? throw new InvalidPropertyException<T>(properties),
-                aliasName is not null ? new AliasTag(aliasName.Value) : null
+                aliasName is not null ? new AliasTag(aliasName) : null
             )
         );
 
@@ -179,9 +180,11 @@ public class SelectTags : ISelectTags
     [ExternalOnly]
     public static SelectTags Get<T>(string property, string? aliasName = null)
     {
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
-            throw new InvalidSqlIdentifierException(new AliasName(aliasName)); //TODO: unit test
-        return Get<T>(new PropertyName(property), aliasName is not null ? new AliasName(aliasName) : null);
+        AliasName? alias = AliasName.New(aliasName);
+        if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
+            throw new InvalidSqlIdentifierException(alias); //TODO: unit test
+
+        return Get<T>(new PropertyName(property), alias);
     }
 
     //TODO: Proof read Documentation, unit testing

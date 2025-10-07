@@ -2,47 +2,29 @@
 using Carrigan.Core.Interfaces;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
+
+//TODO: Proof read documentation and unit test
 /// <summary>
 /// Strongly typed string wrapper for Member names
 /// </summary>
-/// <param name="Value">Member name</param>
-//TODO: Proof read documentation and unit test
-internal readonly record struct MemberName(string Value) : IWhiteSpace
+public class MemberName : StringWrapper
 {
-    /// <summary>
-    /// implicit operator
-    /// </summary>
-    /// <param name="value">Member name</param>
-    public static implicit operator string(MemberName name) =>
-        name.ToString();
+    public MemberName(string? name) : base(name) { }
 
     /// <summary>
-    /// To string method
+    /// If <param name="name"> is not null or empty, it creates a new instance,
+    /// otherwise it returns a null object.
     /// </summary>
-    /// <returns></returns>
-    public override string ToString() =>
-        Value;
-    /// <summary>
-    /// Determines if the underlying string is empty or whitespace.
-    /// </summary>
-    /// <returns>true is the underlying string is empty or whitespace, else false</returns>
-    public bool IsWhiteSpace() =>
-        Value.IsWhiteSpace();
-    /// <summary>
-    /// Determines if the underlying string is not empty and not whitespace.
-    /// </summary>
-    /// <returns>false is the underlying string is empty or whitespace, else true</returns>
-    public bool IsNotWhiteSpace() =>
-        IsWhiteSpace() is false;
-    /// Determines if the underlying string is empty.
-    /// </summary>
-    /// <returns>true is the underlying string is empty, else false</returns>
-    public bool IsEmpty() =>
-        Value.IsEmpty();
-    /// <summary>
-    /// Determines if the underlying string is not empty.
-    /// </summary>
-    /// <returns>false is the underlying string is empty, else true</returns>
-    public bool IsNotEmpty() =>
-        IsEmpty() is false;
+    /// <param name="name">Member Name</param>
+    /// <returns>
+    /// If <param name="name"> is not null or empty, it creates a new instance,
+    /// otherwise it returns a null object.
+    /// </returns>
+    public static MemberName? New(string? name)
+    {
+        if (name.IsNullOrEmpty())
+            return null;
+        else
+            return new MemberName(name);
+    }
 }

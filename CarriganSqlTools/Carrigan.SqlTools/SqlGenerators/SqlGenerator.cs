@@ -52,7 +52,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         if (SqlIdentifierPattern.Fails(TableName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, TableName));
         if(SchemaName is not null && SqlIdentifierPattern.Fails(TableName))
-            exceptions.Add(new InvalidSqlIdentifierException(Type, SchemaName.Value));
+            exceptions.Add(new InvalidSqlIdentifierException(Type, SchemaName));
         if (SqlIdentifierPattern.Fails(ProcedureName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, ProcedureName));
 
@@ -65,9 +65,8 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
 
         invalidAliases =
             ColumnInfo
-                .Where(column => column.AliasName is not null)
-                .Where(column => SqlIdentifierPattern.Fails(column.AliasName))
-                .Select(column => column.AliasName is not null ? new Tuple<PropertyInfo, AliasName>(column.PropertyInfo, column.AliasName.Value) : null)
+                .Where(column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName))
+                .Select(column => column.AliasName is not null ? new Tuple<PropertyInfo, AliasName>(column.PropertyInfo, column.AliasName) : null)
                 .OfType<Tuple<PropertyInfo, AliasName>>();
         if (invalidAliases.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidAliases));

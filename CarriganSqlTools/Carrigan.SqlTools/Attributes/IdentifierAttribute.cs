@@ -50,10 +50,15 @@ public class IdentifierAttribute : Attribute
     /// <summary>
     /// Public constructor
     /// </summary>
+    /// <remarks>
+    /// MemberName is set in the Initialize method.
+    /// </remarks>
     /// <param name="Name">Sql Table/Column Identifier name</param>
     /// <param name="Schema">Sql Schema name</param>
     /// <exception cref="InvalidSqlIdentifierException">If <see cref="Name"/> or <see cref="Name"/> have an invalid Sql Identifier</exception>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public IdentifierAttribute(string Name, string? Schema = null)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
         ArgumentNullException.ThrowIfNull(Name, nameof(Name));
         if (Name == string.Empty)

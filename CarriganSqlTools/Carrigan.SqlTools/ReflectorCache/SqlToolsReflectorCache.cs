@@ -139,7 +139,7 @@ public class SqlToolsReflectorCache<T>
         string? schemaName =
             Type.GetCustomAttribute<IdentifierAttribute>()?.Schema?.ToString().GetValueOrNull()
                 ?? Type.GetCustomAttribute<TableAttribute>()?.Schema?.GetValueOrNull();
-        SchemaName = schemaName is not null ? new(schemaName) : null;
+        SchemaName = SchemaName.New(schemaName);
 
         TableName = new 
         (

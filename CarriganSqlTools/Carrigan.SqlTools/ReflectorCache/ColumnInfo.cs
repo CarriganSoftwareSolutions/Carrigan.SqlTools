@@ -112,15 +112,16 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         string? parameterName = propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name?.GetValueOrNull() ?? columnName;
 
-        string? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
+        AliasName? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
 
         ColumnName = new ColumnName(columnName);
         ColumnTag = new(new(schemaName, tableName), ColumnName);
         PropertyInfo = propertyInfo;
         PropertyName = new(PropertyInfo.Name);
         ParameterTag = new ParameterTag(null, parameterName, null);
-        AliasName = aliasName is not null ? new (aliasName) : null;
-        SelectTag = new (ColumnTag, aliasName is not null ? new AliasTag( new AliasName(aliasName)): null);
+        AliasName = aliasName;
+        if(AliasName.IsNullOrEmpty())
+        SelectTag = new (ColumnTag, AliasName is not null ? new AliasTag(AliasName) : null);
 
         IsKeyPart = keys.Contains(PropertyInfo);
         IsEncrypted = PropertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;

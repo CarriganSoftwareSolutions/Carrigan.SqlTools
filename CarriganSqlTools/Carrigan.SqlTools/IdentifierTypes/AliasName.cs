@@ -7,44 +7,24 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// <summary>
 /// Strongly typed string wrapper for Alias names
 /// </summary>
-/// <param name="Value">Alias name</param>
-internal readonly record struct AliasName(string Value) : IWhiteSpace
+public class AliasName : StringWrapper
 {
-    /// <summary>
-    /// implicit operator
-    /// </summary>
-    /// <param name="value">Alias name</param>
-    public static implicit operator string(AliasName name) =>
-        name.ToString();
+    internal AliasName(string? name) : base(name) { }
 
     /// <summary>
-    /// To string method
+    /// If <param name="name"> is not null or empty, it creates a new instance,
+    /// otherwise it returns a null object.
     /// </summary>
-    /// <returns></returns>
-    public override string ToString() =>
-        Value;
-    
-    /// <summary>
-    /// Determines if the underlying string is empty or whitespace.
-    /// </summary>
-    /// <returns>true is the underlying string is empty or whitespace, else false</returns>
-    public bool IsWhiteSpace() =>
-        Value.IsWhiteSpace();
-    /// <summary>
-    /// Determines if the underlying string is not empty and not whitespace.
-    /// </summary>
-    /// <returns>false is the underlying string is empty or whitespace, else true</returns>
-    public bool IsNotWhiteSpace() =>
-        IsWhiteSpace() is false;
-    /// Determines if the underlying string is empty.
-    /// </summary>
-    /// <returns>true is the underlying string is empty, else false</returns>
-    public bool IsEmpty() =>
-        Value.IsEmpty();
-    /// <summary>
-    /// Determines if the underlying string is not empty.
-    /// </summary>
-    /// <returns>false is the underlying string is empty, else true</returns>
-    public bool IsNotEmpty() =>
-        IsEmpty() is false;
+    /// <param name="name">Alias name</param>
+    /// <returns>
+    /// If <param name="name"> is not null or empty, it creates a new instance,
+    /// otherwise it returns a null object.
+    /// </returns>
+    public static AliasName? New(string? name)
+    {
+        if (name.IsNullOrEmpty())
+            return null;
+        else
+            return new AliasName(name);
+    }
 }

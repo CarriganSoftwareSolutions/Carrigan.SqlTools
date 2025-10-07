@@ -27,7 +27,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// <summary>
     /// The name of the property representing the column
     /// </summary>
-    public string PropertyName { get; }
+    public PropertyName PropertyName { get; }
     /// <summary>
     /// The Tag for the Column
     /// </summary>
@@ -37,7 +37,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// </summary>
     public TableTag TableTag { get; }
 
-    internal static ArgumentException NoSuchProperty(string propertyName) =>
+    internal static ArgumentException NoSuchProperty(PropertyName propertyName) =>
         new ($"{propertyName} is not the valid name of a property in the class, {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(propertyName));
 
     /// <summary>

@@ -10,7 +10,7 @@ public  class ColumnsTests
 {
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_Null() =>
-        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Columns<ColumnTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => new Columns<ColumnTable>(null!));
 
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_EmptyString() =>
