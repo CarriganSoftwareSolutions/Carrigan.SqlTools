@@ -12,8 +12,7 @@ public class AliasAttribute : Attribute
     /// <summary>
     /// Public getter to get the <c>Alias</c> for the <c>AS</c> clause for a given property.
     /// </summary>
-    internal AliasName Name
-    { get; set; }
+    internal AliasName Name { get; set; }
 
     /// <summary>
     /// Public constructor
@@ -23,7 +22,7 @@ public class AliasAttribute : Attribute
     {
         ArgumentNullException.ThrowIfNull(aliasName, nameof(aliasName));
         if (aliasName == string.Empty)
-            throw new ArgumentException("name is an empty string", nameof(aliasName));
+            throw new ArgumentException("aliasName is an empty string", nameof(aliasName));
         Name = new(aliasName);
     }
 }
