@@ -9,8 +9,7 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
-//TODO: Rework all documentation, examples, and unit tests.
-
+//TODO: Rework all documentation, examples
 /// <summary>
 /// THis represents a variety property information associate with a column.
 /// This class caches various informational items about the column:
@@ -53,10 +52,10 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly ParameterTag ParameterTag;
 
-    //TODO: documentation, unit test
+    //TODO: documentation, 
     internal readonly AliasName? AliasName;
 
-    //TODO: documentation, unit test
+    //TODO: documentation,
     internal readonly SelectTag SelectTag;
 
     internal readonly bool IsKeyPart;
