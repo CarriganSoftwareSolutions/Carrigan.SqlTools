@@ -48,6 +48,10 @@ public class ColumnInfoTests
         "[dbo].[Test].[KeyVersion]", "KeyVersion", "KeyVersion",
         "KeyVersion", null, "[dbo].[Test].[KeyVersion]",
         false, false, true, "[dbo].[Test]")]
+    [InlineData("dbo", "TableWithAliases", typeof(TableWithAliases), "Id", new[] { "Id" },
+        "[dbo].[TableWithAliases].[Id]", "Id", "Id",
+        "Id", "TableId", "[dbo].[TableWithAliases].[Id] AS TableId",
+        true, false, false, "[dbo].[TableWithAliases]")]
     public void New(string? schemaName, string tableName, Type type, string propertyName, string[] keyProperties,
         string expectedColumnTag, string  expectedColumnName, string expectedPropertyName, 
         string parameterTag, string? expectedAliasName, string expectedSelectTag,
