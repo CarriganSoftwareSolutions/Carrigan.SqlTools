@@ -75,12 +75,14 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     //TODO: Proof read Documentation, unit testing
     /// <summary>
     /// Get a new Select Tag based of the property and alias provided.
+    /// If no alias provided, default to alias attribute on property, if available.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="property">Property provided</param>
     /// <param name="aliasName">Alias provided</param>
     /// <returns>
     /// A new Select Tag based of the property and alias provided.
+    /// If no alias provided, default to alias attribute on property, if available.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
     /// Throws in the property is invalid for class T, or ineligible to model a column.
@@ -106,8 +108,8 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// </returns>
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<PropertyName> properties) =>
         SqlToolsReflectorCache<T>
-            .GetColumnsFromProperties(properties)  //TODO: It would be nice to get select directly from a property
-            .Select(column => column.SelectTag); //TODO: It would be nice to skip this step.
+            .GetColumnsFromProperties(properties)
+            .Select(column => column.SelectTag);
 
     //TODO: Proof read Documentation, unit testing
     /// <summary>
@@ -287,16 +289,6 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     {
         return !(left == right);
     }
-
-    /// <summary>
-    /// Determines whether this <see cref="SelectTag"/> is empty.
-    /// </summary>
-    /// <returns>
-    /// <c>true</c> if the SQL representation of this column is <c>null</c>, empty,
-    /// or consists only of white space; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsEmpty() =>
-        ToString().IsNullOrWhiteSpace();
 
     // TODO: proof Read Documentation, unit tests
     /// <summary>
