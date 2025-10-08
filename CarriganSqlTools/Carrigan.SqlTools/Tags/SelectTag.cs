@@ -50,25 +50,27 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     //TODO: Proof read Documentation, unit testing
     /// <summary>
     /// Get a new Select Tag based of the property and alias provided.
+    /// If no alias provided, default to alias attribute on property, if available.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="property">Property provided</param>
     /// <param name="aliasName">Alias provided</param>
     /// <returns>
     /// A new Select Tag based of the property and alias provided.
+    /// If no alias provided, default to alias attribute on property, if available.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
     /// Throws in the property is invalid for class T, or ineligible to model a column.
     /// </exception>
-    internal static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null) =>
-        new
-        (
+    internal static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null)
+    {
+        ColumnInfo columnInfo =
             SqlToolsReflectorCache<T>
                 .GetColumnsFromProperties(property)
-                .FirstOrDefault()
-                ?.ColumnTag ?? throw new InvalidPropertyException<T>(property),
-            aliasName is not null ? new AliasTag(aliasName) : null
-        );
+                .FirstOrDefault() ?? throw new InvalidPropertyException<T>(property);
+        return new(columnInfo.ColumnTag, AliasTag.New(aliasName ?? columnInfo.AliasName));
+
+    }
 
     //TODO: Proof read Documentation, unit testing
     /// <summary>
