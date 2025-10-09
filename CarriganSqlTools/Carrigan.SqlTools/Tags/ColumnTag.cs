@@ -4,7 +4,7 @@ using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tags;
 
-//TODO: Rework all documentation, examples, and unit tests.
+//TODO: Rework all documentation, examples
 
 /// <summary>
 /// Represents a column identifier, or “tag,” in the form <c>[Schema].[Table].[Column]</c>.
@@ -139,7 +139,7 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// <returns>
     /// A SQL string representing the column, formatted according to <paramref name="useTableTag"/>.
     /// </returns>
-    public string ToString(bool useTableTag) //TODO: Unit Tests
+    public string ToString(bool useTableTag) 
     {
         if (useTableTag)
             return ToString();

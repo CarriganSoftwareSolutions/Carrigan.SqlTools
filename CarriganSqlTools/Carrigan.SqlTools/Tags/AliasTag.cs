@@ -5,7 +5,6 @@ using Carrigan.SqlTools.IdentifierTypes;
 namespace Carrigan.SqlTools.Tags;
 
 //TODO: Proof Read Documentation for class.
-//TODO: Write unit tests
 /// <summary>
 /// Represents an SQL Select Alias identifier (“AS”). Implements
 /// comparison and equality for use in sorting and hashed collections.
