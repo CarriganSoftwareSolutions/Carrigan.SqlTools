@@ -73,7 +73,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null)
     {
         if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
-            throw new InvalidSqlIdentifierException(aliasName); //TODO: unit test
+            throw new InvalidSqlIdentifierException(aliasName);
         ColumnInfo columnInfo =
             SqlToolsReflectorCache<T>
                 .GetColumnsFromProperties(property)

@@ -6,7 +6,7 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Tags;
-//TODO: Proof read Documentation and unit test.
+//TODO: Proof read Documentation 
 
 /// <summary>
 /// Contains multiple <see cref="SelectTag"/>
@@ -23,7 +23,7 @@ public class SelectTags : ISelectTags
     public SelectTags(params IEnumerable<SelectTag> selectTags) =>
         _selectTags = selectTags;
 
-    //Proof read documentation, unit tests
+    //Proof read documentation, 
     /// <summary>
     /// Determines if this instance contains any actual SelectTags
     /// For SelectTags, this will be true if the underlying Enumeration is not empty.
@@ -122,7 +122,7 @@ public class SelectTags : ISelectTags
     {
         AliasName? alias = AliasName.New(aliasName);
         if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
-            throw new InvalidSqlIdentifierException(alias); //TODO: unit test
+            throw new InvalidSqlIdentifierException(alias);
 
         return Append<T>(new PropertyName(property), alias);
     }
@@ -197,7 +197,7 @@ public class SelectTags : ISelectTags
             )
         );
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation, 
     /// <summary>
     /// Get a new Select Tags with a new Select Tag based of the property and alias provided.
     /// </summary>
@@ -220,7 +220,7 @@ public class SelectTags : ISelectTags
         return Get<T>(new PropertyName(property), alias);
     }
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// Get new a <see cref="SelectTags"/> for multiple existing <see cref="SelectTag"/>s based of the properties provided.
     /// </summary>
@@ -237,7 +237,7 @@ public class SelectTags : ISelectTags
                     .Select(column => column.SelectTag)
         );
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// Get new a <see cref="SelectTags"/> for multiple existing <see cref="SelectTag"/>s based of the properties provided.
     /// </summary>
