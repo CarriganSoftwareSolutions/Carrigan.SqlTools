@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using System.Collections.Generic;
@@ -179,8 +180,6 @@ public class SelectTagTests
         Assert.Equal(expected, selects);
     }
 
-
-
     [Theory]
     [InlineData(null, "SomeTable", "SomeColumn", null, "[SomeTable].[SomeColumn]")]
     [InlineData("dbo", "SomeTable", "SomeColumn", null, "[dbo].[SomeTable].[SomeColumn]")]
@@ -234,7 +233,6 @@ public class SelectTagTests
         Assert.True(c != d);
     }
 
-
     [Fact]
     public void Dictionary()
     {
@@ -258,4 +256,40 @@ public class SelectTagTests
         Assert.Equal(3, dictionary[cAlt]);
         Assert.Equal(4, dictionary[dAlt]);
     }
+
+    [Fact]
+    public void InvalidGet_PropertyExceptionPropertyString() => 
+        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTag.Get<TableNameSchema>("NotAProperty", "ValidAlias"));
+
+    [Fact]
+    public void InvalidGet_PropertyExceptionPropertyName() => 
+        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTag.Get<TableNameSchema>(new("NotAProperty"), new("ValidAlias")));
+
+    [Fact]
+    public void InvalidGet_SqlIdentifierExceptionAliasString() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTag.Get<TableNameSchema>("Id", "123"));
+
+    [Fact]
+    public void InvalidGet_PropertyExceptionAliasName() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTag.Get<TableNameSchema>(new("Id"), new("123")));
+
+    [Fact]
+    public void ValidGet_FromString() =>
+        _ = SelectTag.Get<TableNameSchema>("Id", "ValidAlias");
+
+    [Fact]
+    public void ValidGet_FromName() =>
+        _ = SelectTag.Get<TableNameSchema>(new("Id"), new("ValidAlias"));
+
+
+    [Fact]
+    public void InvalidGetMany_PropertyExceptionPropertyString() =>
+        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTag.Get<TableNameSchema>("NotAProperty"));
+
+    [Fact]
+    public void InvalidGetMany_PropertyExceptionPropertyName() =>
+        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTag.Get<TableNameSchema>(new("NotAProperty")));
+    [Fact]
+    public void ValidGetMany_FromString() =>
+        _ = SelectTag.Get<TableNameSchema>("Id", "Text");
 }

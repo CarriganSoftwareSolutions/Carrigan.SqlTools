@@ -51,6 +51,12 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// Get a new Select Tag based of the property and alias provided.
     /// If no alias provided, default to alias attribute on property, if available.
     /// </summary>
+    /// <remarks>
+    /// <paramref name="aliasName"/> needs to be validated here, because it is how
+    /// library users are allowed to specify an alias name on a select, and that
+    /// isn't check by the SQL generator's constructor. Unlike the an alias specified
+    /// in with an attribute.
+    /// </remarks>
     /// <typeparam name="T"></typeparam>
     /// <param name="property">Property provided</param>
     /// <param name="aliasName">Alias provided</param>
@@ -61,14 +67,18 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// <exception cref="InvalidPropertyException{T}">
     /// Throws in the property is invalid for class T, or ineligible to model a column.
     /// </exception>
-    internal static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null)
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Throws InvalidSqlIdentifierException, if the alias name doesn't follow the SQL naming convention.
+    /// </exception>
+    public static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null)
     {
+        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
+            throw new InvalidSqlIdentifierException(aliasName); //TODO: unit test
         ColumnInfo columnInfo =
             SqlToolsReflectorCache<T>
                 .GetColumnsFromProperties(property)
                 .FirstOrDefault() ?? throw new InvalidPropertyException<T>(property);
         return new(columnInfo.ColumnTag, AliasTag.New(aliasName ?? columnInfo.AliasName));
-
     }
 
     //TODO: Proof read Documentation
@@ -76,6 +86,9 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// Get a new Select Tag based of the property and alias provided.
     /// If no alias provided, default to alias attribute on property, if available.
     /// </summary>
+    /// <paramref name="aliasName"/> validation of parameters is down in the other
+    /// <see cref"Get{T}"/> method, which is called by this method. 
+    /// </remarks>
     /// <typeparam name="T"></typeparam>
     /// <param name="property">Property provided</param>
     /// <param name="aliasName">Alias provided</param>
@@ -86,12 +99,13 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// <exception cref="InvalidPropertyException{T}">
     /// Throws in the property is invalid for class T, or ineligible to model a column.
     /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Throws InvalidSqlIdentifierException, if the alias name doesn't follow the SQL naming convention.
+    /// </exception>
     [ExternalOnly]
     public static SelectTag Get<T>(string property, string? aliasName = null)
     {
         AliasName? alias = AliasName.New(aliasName);
-        if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
-            throw new InvalidSqlIdentifierException(alias); //TODO: unit test
 
         return Get<T>(new PropertyName(property), alias);
     }
@@ -110,7 +124,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
             .GetColumnsFromProperties(properties)
             .Select(column => column.SelectTag);
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// Get a multiple existing Select Tags based of the properties provided.
     /// </summary>
@@ -119,7 +133,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// <returns>
     /// A multiple existing Select Tags based of the properties provided.
     /// </returns>
-    //TODO: Documentation, unit testing
+    //TODO: Documentation
     [ExternalOnly]
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<string> properties) =>
         GetMany<T>(properties.Select(name => new PropertyName(name)));
