@@ -6,6 +6,17 @@ namespace Carrigan.SqlTools.Tests.Tags;
 //TODO: We are going to make sure these tests are still valid.
 public class ColumnTagsTests
 {
+    [Theory]
+    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy]")]
+    [InlineData(null, "Sloppy", "Pizza", "[Sloppy]")]
+    [InlineData("", "Sloppy", "Pizza", "[Sloppy]")]
+    public void ColumnTagTable(string? schemaName, string tableName, string columnName, string expected)
+    {
+        TableTag tableTag = new(schemaName, tableName);
+        ColumnTag actual = new (tableTag, new ColumnName(columnName));
+
+        Assert.Equal(expected, actual.TableTag);
+    }
 
     [Theory]
     [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
@@ -18,6 +29,43 @@ public class ColumnTagsTests
 
         Assert.Equal(expected, actual);
     }
+
+    [Theory]
+    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
+    [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    public void Col_Tag_Tests_3_Params_ExplicitToString(string? schemaName, string tableName, string columnName, string expected)
+    {
+        TableTag tableTag = new(schemaName, tableName);
+        string actual = (new ColumnTag(tableTag, new ColumnName(columnName))).ToString();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
+    [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    public void Col_Tag_Tests_3_Params_ExplicitToString_UseTable (string? schemaName, string tableName, string columnName, string expected)
+    {
+        TableTag tableTag = new(schemaName, tableName);
+        string actual = (new ColumnTag(tableTag, new ColumnName(columnName))).ToString(true);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("Franks", "Sloppy", "Pizza", "[Pizza]")]
+    [InlineData(null, "Sloppy", "Pizza", "[Pizza]")]
+    [InlineData("", "Sloppy", "Pizza", "[Pizza]")]
+    public void Col_Tag_Tests_3_Params_ExplicitToString_DoNotUseTable(string? schemaName, string tableName, string columnName, string expected)
+    {
+        TableTag tableTag = new(schemaName, tableName);
+        string actual = (new ColumnTag(tableTag, new ColumnName(columnName))).ToString(false);
+
+        Assert.Equal(expected, actual);
+    }
+
     [Theory]
     [InlineData(null, "Sloppy", "")]
     [InlineData(null, "", "")]

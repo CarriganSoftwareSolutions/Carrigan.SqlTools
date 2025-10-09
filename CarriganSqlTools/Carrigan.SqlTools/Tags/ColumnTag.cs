@@ -100,11 +100,8 @@ public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualit
     /// The <see cref="TableTag"/> that identifies the table containing the column.
     /// </param>
     /// <param name="columnName">
-    /// The name of the column. Must not be <c>null</c>, empty, or white space.
+    /// The name of the column.
     /// </param>
-    /// <exception cref="InvalidSqlIdentifierException">
-    /// Thrown when <paramref name="columnName"/> fails to meet the SQL identifier naming rules.
-    /// </exception>
     internal ColumnTag(TableTag tableTag, ColumnName columnName)
     {
         _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
