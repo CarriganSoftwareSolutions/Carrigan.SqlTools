@@ -184,8 +184,11 @@ public class SelectTags : ISelectTags
         Concat<T>(properties.Select(name => new PropertyName(name)));
 
 
-    internal static SelectTags Get<T>(PropertyName properties, AliasName? aliasName = null) =>
-        new
+    internal static SelectTags Get<T>(PropertyName properties, AliasName? aliasName = null)
+    {
+        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
+            throw new InvalidSqlIdentifierException(aliasName); 
+        return new
         (
             new SelectTag
             (
@@ -196,6 +199,7 @@ public class SelectTags : ISelectTags
                 aliasName is not null ? new AliasTag(aliasName) : null
             )
         );
+    }
 
     //TODO: Proof read Documentation, 
     /// <summary>
@@ -215,7 +219,7 @@ public class SelectTags : ISelectTags
     {
         AliasName? alias = AliasName.New(aliasName);
         if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
-            throw new InvalidSqlIdentifierException(alias); //TODO: unit test
+            throw new InvalidSqlIdentifierException(alias); 
 
         return Get<T>(new PropertyName(property), alias);
     }

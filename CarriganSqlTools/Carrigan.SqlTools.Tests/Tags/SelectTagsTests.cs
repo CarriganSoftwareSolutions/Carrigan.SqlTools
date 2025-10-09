@@ -2,7 +2,6 @@
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
-using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.Tags;
 public class SelectTagsTests
@@ -220,4 +219,48 @@ public class SelectTagsTests
 
         Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
     }
+
+    [Fact]
+    public void AppendInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Append<Order>("InvalidColumn"));
+    [Fact]
+    public void AppendInvalidAliasStringException() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => (new SelectTags()).Append<Order>("Id", "123Invalid"));
+
+    [Fact]
+    public void AppendInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Append<Order>(new("InvalidColumn")));
+    [Fact]
+    public void AppendInvalidAliasNameException() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => (new SelectTags()).Append<Order>(new("Id"), new("123Invalid")));
+
+
+    [Fact]
+    public void ConcatInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Concat<Order>("InvalidColumn"));
+    [Fact]
+    public void ConcatInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Concat<Order>(new PropertyName("InvalidColumn")));
+
+
+    [Fact]
+    public void GetInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.Get<Order>("InvalidColumn"));
+    [Fact]
+    public void GetInvalidAliasStringException() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTags.Get<Order>("Id", "123Invalid"));
+    [Fact]
+    public void GetInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.Get<Order>(new ("InvalidColumn")));
+
+    [Fact]
+    public void GetInvalidAliasNameException() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTags.Get<Order>(new("Id"), new("123Invalid")));
+
+    [Fact]
+    public void GetManyInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.GetMany<Order>("InvalidColumn"));
+    [Fact]
+    public void GetManyInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.GetMany<Order>(new PropertyName("InvalidColumn")));
 }
