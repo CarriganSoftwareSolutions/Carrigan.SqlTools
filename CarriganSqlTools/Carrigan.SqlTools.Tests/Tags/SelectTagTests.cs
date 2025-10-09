@@ -13,6 +13,11 @@ public class SelectTagTests
     private static SelectTag New(SchemaName? schemaName, TableName tableName, ColumnName columnName, AliasName? aliasName) =>
         new (new ColumnTag(new TableTag(schemaName, tableName), columnName), AliasTag.New(aliasName));
 
+    private static readonly SelectTag a = New(null, "SomeTable", "SomeColumn", null);
+    private static readonly SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);
+    private static readonly SelectTag c = New(null, "SomeTable", "SomeColumn", "SomeAlias");
+    private static readonly SelectTag d = New("dbo", "SomeTable", "SomeColumn", "SomeAlias");
+
     [Theory]
     [InlineData(null, "SomeTable", "SomeColumn", null,
         "[SomeTable]", "[SomeTable].[SomeColumn]", null, "[SomeTable].[SomeColumn]")]
@@ -208,11 +213,6 @@ public class SelectTagTests
     [Fact]
     public void NotEqual()
     {
-        SelectTag a = New(null, "SomeTable", "SomeColumn", null);
-        SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);
-        SelectTag c = New(null, "SomeTable", "SomeColumn", "SomeAlias");
-        SelectTag d = New("dbo", "SomeTable", "SomeColumn", "SomeAlias");
-
         Assert.NotEqual(a, b);
         Assert.NotEqual(a, c);
         Assert.NotEqual(a, d);
@@ -237,10 +237,6 @@ public class SelectTagTests
     [Fact]
     public void Dictionary()
     {
-        SelectTag a = New(null, "SomeTable", "SomeColumn", null);
-        SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);
-        SelectTag c = New(null, "SomeTable", "SomeColumn", "SomeAlias");
-        SelectTag d = New("dbo", "SomeTable", "SomeColumn", "SomeAlias");
         SelectTag aAlt = New(null, "SomeTable", "SomeColumn", null);
         SelectTag bAlt = New("dbo", "SomeTable", "SomeColumn", null);
         SelectTag cAlt = New(null, "SomeTable", "SomeColumn", "SomeAlias");
@@ -293,4 +289,20 @@ public class SelectTagTests
     [Fact]
     public void ValidGetMany_FromString() =>
         _ = SelectTag.Get<TableNameSchema>("Id", "Text");
+
+    [Fact]
+    public void All()
+    {
+        SelectTag a = New(null, "SomeTable", "SomeColumn", null);
+        Assert.Equal(a, a.All().Single());
+    }
+
+    [Fact]
+    public void GetTableTags()
+    {
+        Assert.Equal("[SomeTable]", a.GetTableTags().Single());
+        Assert.Equal("[dbo].[SomeTable]", b.GetTableTags().Single());
+        Assert.Equal("[SomeTable]", c.GetTableTags().Single());
+        Assert.Equal("[dbo].[SomeTable]", d.GetTableTags().Single());
+    }
 }

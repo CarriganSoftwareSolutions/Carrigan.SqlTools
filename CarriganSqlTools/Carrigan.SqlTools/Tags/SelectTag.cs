@@ -347,4 +347,16 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// </returns>
     public bool Empty() =>
         false;
+
+
+    /// <summary>
+    /// Get all SelectTags associated with the instance, as an Enumeration.
+    /// For SelectTag this will just be itself as an IEnumerable.
+    /// </summary>
+    /// <returns>
+    /// All SelectTags associated with the instance, as an Enumeration. 
+    /// For SelectTag this will just be itself as an IEnumerable.
+    /// </returns>
+    public IEnumerable<SelectTag> All() =>
+        [this];
 }

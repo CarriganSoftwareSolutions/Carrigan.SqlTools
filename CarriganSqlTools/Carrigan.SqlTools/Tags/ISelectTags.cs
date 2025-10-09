@@ -3,6 +3,16 @@
 public interface ISelectTags
 {
     /// <summary>
+    /// Get all SelectTags associated with the instance, as an Enumeration.
+    /// For SelectTag this will just be itself as an IEnumerable.
+    /// </summary>
+    /// <returns>
+    /// All SelectTags associated with the instance, as a string. 
+    /// For SelectTag this will just be itself.
+    /// </returns>
+    public IEnumerable<SelectTag> All();
+
+    /// <summary>
     /// Get all SelectTags associated with the instance, as a string.
     /// For SelectTag this will just be itself.
     /// For SelectTags this will be a comma separated list.

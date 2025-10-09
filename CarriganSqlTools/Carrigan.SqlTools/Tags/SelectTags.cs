@@ -67,44 +67,52 @@ public class SelectTags : ISelectTags
     /// </returns>
     public IEnumerable<TableTag> GetTableTags() =>
         _selectTags
-            .SelectMany(select => select.GetTableTags());
+            .SelectMany(select => select.GetTableTags())
+            .Distinct();
 
     /// <summary>
-    /// Create a new <see cref="SelectTag"/> and append it to a copy of the underlying enumeration.
+    /// Create a new <see cref="SelectTags"/> and append <paramref name="selectTag"/> to it.
+    /// </summary>
+    /// <typeparam name="T">T</typeparam>
+    /// <param name="selectTag">Provided <see cref="SelectTag"/></param>
+    /// <returns>
+    /// Create a new <see cref="SelectTags"/> and append <see cref="SelectTag"/> to it.
+    /// </returns>
+     public SelectTags Append(SelectTag selectTag) =>
+        new(_selectTags.Append(selectTag));
+
+    /// <summary>
+    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
+    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
+    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
     /// </summary>
     /// <typeparam name="T">T</typeparam>
     /// <param name="property">Provided property name</param>
     /// <param name="aliasName">provided alias name</param>
     /// <returns>
-    /// Create a new <see cref="SelectTag"/> and append it to a copy of the underlying enumeration.
+    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
+    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
+    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
     /// </exception>
-    internal SelectTags Append<T>(PropertyName property, AliasName? aliasName = null) =>
-        new
-        (
-            _selectTags.Append
-            (
-                new SelectTag
-                (
-                    SqlToolsReflectorCache<T>
-                        .GetColumnsFromProperties(property)
-                        .FirstOrDefault()
-                        ?.ColumnTag  ?? throw new InvalidPropertyException<T>(property),
-                    aliasName is not null ? new AliasTag(aliasName) : null
-                )
-            )
-        );
+    public SelectTags Append<T>(PropertyName property, AliasName? aliasName = null) =>
+        Append (SelectTag.Get<T>(property, aliasName));
+
 
     /// <summary>
-    /// Create a new <see cref="SelectTag"/> and append it to a copy of the underlying enumeration.
+    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
+    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
+    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
     /// </summary>
     /// <typeparam name="T">T</typeparam>
     /// <param name="property">Provided property name</param>
     /// <param name="aliasName">provided alias name</param>
     /// <returns>
-    /// Create a new <see cref="SelectTag"/> and append it to a copy of the underlying enumeration.
+    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
+    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
+    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
@@ -118,6 +126,20 @@ public class SelectTags : ISelectTags
 
         return Append<T>(new PropertyName(property), alias);
     }
+
+    /// <summary>
+    /// Return a new <see cref="SelectTags"/> with <paramref name="selectTags"/> concatenated.
+    /// </summary>
+    /// <param name="selectTags">Provided <see cref="IEnumerable{ISelectTags}"/></param>
+    /// <returns>
+    /// Return a new <see cref="SelectTags"/> with <paramref name="selectTags"/> concatenated.
+    /// to the provided properties.
+    /// </returns>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
+    /// </exception>
+    public SelectTags Concat(params IEnumerable<ISelectTags> selectTags) =>
+        new (_selectTags.Concat(selectTags.SelectMany(selects => selects.All())));
 
 
     /// <summary>
@@ -227,4 +249,14 @@ public class SelectTags : ISelectTags
     [ExternalOnly]
     public static SelectTags GetMany<T>(params IEnumerable<string> properties) =>
         GetMany<T>(properties.Select(name => new PropertyName(name)));
+
+
+    /// <summary>
+    /// Get all SelectTags associated with the instance, as an Enumeration.
+    /// </summary>
+    /// <returns>
+    /// All SelectTags associated with the instance, as an Enumeration.
+    /// </returns>
+    public IEnumerable<SelectTag> All() => 
+        _selectTags;
 }
