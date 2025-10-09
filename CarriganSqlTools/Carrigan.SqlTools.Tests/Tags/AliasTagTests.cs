@@ -1,13 +1,7 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.IdentifierTypes;
+﻿using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Carrigan.SqlTools.Tests.IdentifierTypes;
+namespace Carrigan.SqlTools.Tests.Tags;
 public class AliasTagTests
 {
     private readonly string white = " ";
