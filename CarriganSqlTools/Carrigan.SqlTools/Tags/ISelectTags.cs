@@ -36,4 +36,16 @@ public interface ISelectTags
     /// For SelectTags, this will be true if the underlying Enumeration is not empty.
     /// </returns>
     public bool Any();
+
+    /// <summary>
+    /// Determines if this instance contains no SelectTags
+    /// For SelectTag, this should always be false.
+    /// For SelectTags, this will be true if the underlying Enumeration is empty.
+    /// </summary>
+    /// <returns>
+    /// Determines if this instance contains no SelectTags
+    /// For SelectTag, this should always be false.
+    /// For SelectTags, this will be true if the underlying Enumeration is empty.
+    /// </returns>
+    public bool Empty();
 }

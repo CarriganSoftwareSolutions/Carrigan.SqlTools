@@ -335,4 +335,16 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// </returns>
     public bool Any() =>
         true;
+
+    //Proof read documentation
+    /// <summary>
+    /// Determines if this instance contains no SelectTags
+    /// For SelectTag, this should always be false.
+    /// </summary>
+    /// <returns>
+    /// True if this instance contains no SelectTags
+    /// For SelectTag, this should always be false.
+    /// </returns>
+    public bool Empty() =>
+        false;
 }

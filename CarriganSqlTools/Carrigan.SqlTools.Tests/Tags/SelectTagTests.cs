@@ -202,6 +202,7 @@ public class SelectTagTests
         Assert.True(expectedSelect == selectAlt);
         Assert.Equal(expectedSelect, select.GetSelects());
         Assert.True(select.Any());
+        Assert.False(select.Empty());
     }
 
     [Fact]

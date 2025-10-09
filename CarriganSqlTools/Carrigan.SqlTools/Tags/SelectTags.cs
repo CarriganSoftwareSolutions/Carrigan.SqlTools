@@ -36,6 +36,17 @@ public class SelectTags : ISelectTags
         _selectTags.Any();
 
     /// <summary>
+    /// Determines if this instance contains no SelectTags
+    /// For SelectTags, this will be true if the underlying Enumeration is empty.
+    /// </summary>
+    /// <returns>
+    /// Determines if this instance contains no SelectTags
+    /// For SelectTags, this will be true if the underlying Enumeration is empty.
+    /// </returns>
+    public bool Empty() =>
+        Any() is false;
+
+    /// <summary>
     /// Get all SelectTags associated with the instance, as a string.
     /// For SelectTags this will be a comma separated list.
     /// </summary>
