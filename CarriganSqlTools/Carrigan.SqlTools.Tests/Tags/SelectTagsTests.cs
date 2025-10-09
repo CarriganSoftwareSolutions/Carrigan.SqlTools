@@ -17,10 +17,10 @@ public class SelectTagsTests
     private static readonly SelectTag c = New(null, "SomeTable", "SomeColumn", "SomeAlias");
     private static readonly SelectTag d = New("dbo", "SomeTable", "SomeColumn", "SomeAlias");
 
-    private static string aExpectedString = "[SomeTable].[SomeColumn]";
-    private static string bExpectedString = "[dbo].[SomeTable].[SomeColumn]";
-    private static string cExpectedString = "[SomeTable].[SomeColumn] AS SomeAlias";
-    private static string dExpectedString = "[dbo].[SomeTable].[SomeColumn] AS SomeAlias";
+    private static readonly string aExpectedString = "[SomeTable].[SomeColumn]";
+    private static readonly string bExpectedString = "[dbo].[SomeTable].[SomeColumn]";
+    private static readonly string cExpectedString = "[SomeTable].[SomeColumn] AS SomeAlias";
+    private static readonly string dExpectedString = "[dbo].[SomeTable].[SomeColumn] AS SomeAlias";
 
     [Fact]
     public void Empty()
