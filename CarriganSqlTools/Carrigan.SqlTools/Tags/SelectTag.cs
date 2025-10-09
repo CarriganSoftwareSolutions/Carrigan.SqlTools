@@ -8,7 +8,6 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 //TODO: proof read documentation
-//TODO: Unit tests
 public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>, ISelectTags
 {
     /// <summary>
@@ -47,7 +46,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
         AliasTag = aliasTag;
     }
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// Get a new Select Tag based of the property and alias provided.
     /// If no alias provided, default to alias attribute on property, if available.
@@ -72,7 +71,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
 
     }
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// Get a new Select Tag based of the property and alias provided.
     /// If no alias provided, default to alias attribute on property, if available.
@@ -97,7 +96,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
         return Get<T>(new PropertyName(property), alias);
     }
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// Get a multiple existing Select Tags based of the properties provided.
     /// </summary>
@@ -125,7 +124,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<string> properties) =>
         GetMany<T>(properties.Select(name => new PropertyName(name)));
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// Get all Select Tags associated with T.
     /// </summary>
@@ -258,7 +257,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public int GetHashCode(SelectTag obj) =>
         obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
 
-    //TODO: Proof read Documentation, unit testing
+    //TODO: Proof read Documentation
     /// <summary>
     /// == operator
     /// </summary>
@@ -290,7 +289,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
         return !(left == right);
     }
 
-    // TODO: proof Read Documentation, unit tests
+    // TODO: proof Read Documentation
     /// <summary>
     /// Get all SelectTags associated with the instance, as a string.
     /// For SelectTag this will just be itself.
@@ -299,7 +298,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public string GetSelects() =>
         this;
 
-    //Proof read documentation, unit tests
+    //Proof read documentation
     /// <summary>
     /// Get all TableTags associated with the instance.
     /// For SelectTag this will just it's TableTag as an Enumerable.
@@ -311,7 +310,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     public IEnumerable<TableTag> GetTableTags() => 
         [ColumnTag.TableTag];
 
-    //Proof read documentation, unit tests
+    //Proof read documentation
     /// <summary>
     /// Determines if this instance contains any actual SelectTags
     /// For SelectTag, this should always be true.
