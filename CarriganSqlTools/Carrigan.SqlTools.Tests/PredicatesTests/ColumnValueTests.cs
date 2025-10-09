@@ -64,7 +64,7 @@ public class ColumnValueTests
         string expectedString;
         string actualString;
 
-        IColumnValue column;
+        IColumns column;
 
         column = byColumnValues.Column.Where(col => col.ColumnInfo.ToString() == "[ColumnTable].[Col1]").First();
         expectedString = "[ColumnTable].[Col1]";

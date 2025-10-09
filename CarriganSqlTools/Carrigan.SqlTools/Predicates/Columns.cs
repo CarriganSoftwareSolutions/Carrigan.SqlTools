@@ -22,7 +22,7 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class Columns  <T> : PredicatesBase, IColumnValue
+public class Columns  <T> : PredicatesBase, IColumns
 {
     /// <summary>
     /// The name of the property representing the column
@@ -71,7 +71,7 @@ public class Columns  <T> : PredicatesBase, IColumnValue
     /// Leaf node in recursive logic to get all the Columns associated with the logic.
     /// Since this there will be only this Column, return it as an enumerable.
     /// </summary>
-    internal override IEnumerable<IColumnValue> Column =>
+    internal override IEnumerable<IColumns> Column =>
         [this];
 
     /// <summary>

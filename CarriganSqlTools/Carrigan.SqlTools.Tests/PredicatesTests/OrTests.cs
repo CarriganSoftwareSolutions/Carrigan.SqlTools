@@ -158,7 +158,7 @@ public class OrTests
         ]);
 
         //if the column doesn't exist an exception will be throw and the test will fail
-        IColumnValue col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
+        IColumns col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
         col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
         col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
         col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();

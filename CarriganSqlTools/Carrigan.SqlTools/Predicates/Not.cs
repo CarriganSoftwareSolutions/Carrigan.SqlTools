@@ -40,7 +40,7 @@ public class Not : PredicatesBase
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal override IEnumerable<IColumnValue> Column =>
+    internal override IEnumerable<IColumns> Column =>
        _someValue.Column;
 
     /// <summary>

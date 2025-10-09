@@ -16,7 +16,7 @@ public abstract class PredicatesBase
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal abstract IEnumerable<IColumnValue> Column { get; }
+    internal abstract IEnumerable<IColumns> Column { get; }
 
     /// <summary>
     /// Produces the SQL represented by this class.
