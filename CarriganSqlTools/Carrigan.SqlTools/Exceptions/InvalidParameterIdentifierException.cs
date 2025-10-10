@@ -21,7 +21,7 @@ public class InvalidParameterIdentifierException : Exception
     /// Note: for parameters leave off the @, as the generator adds the leading @.
     /// </summary>
     /// <param name="identifiers">name of identifiers that are invalid</param>
-    public InvalidParameterIdentifierException(params IEnumerable<string?> identifiers) :
+    internal InvalidParameterIdentifierException(params IEnumerable<string?> identifiers) :
         base(CreateMessage(identifiers))
     {
     }

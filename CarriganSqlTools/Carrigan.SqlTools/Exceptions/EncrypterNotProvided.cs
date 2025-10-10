@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.Exceptions;
 /// <summary>
 /// Thrown when an encrypter is not provided
 /// </summary>
-internal class EncrypterNotProvided<T> : Exception
+public class EncrypterNotProvided<T> : Exception
 {
     /// <summary>
     /// Constructor for EncrypterNotProvided

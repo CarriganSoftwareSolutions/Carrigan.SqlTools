@@ -60,7 +60,7 @@ public class OffsetNext
     /// <returns>
     /// A SQL string representing the <c>OFFSET</c> and <c>FETCH NEXT</c> clauses.
     /// </returns>
-    public string ToSql()
+    internal string ToSql()
     {
         if(Next == 0 && Offset ==0)
         {

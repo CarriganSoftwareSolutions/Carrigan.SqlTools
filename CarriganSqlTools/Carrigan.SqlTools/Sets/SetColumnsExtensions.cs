@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.Sets;
 /// <c>true</c> if <paramref name="setColumns"/> is <c>null</c> or contains no columns;
 /// otherwise, <c>false</c>.
 /// </returns>
-public static class SetColumnsExtensions
+internal static class SetColumnsExtensions
 {
     /// <summary>
     /// Determines whether the specified <see cref="SetColumns{T}"/> instance is
@@ -26,7 +26,7 @@ public static class SetColumnsExtensions
     /// <c>true</c> if <paramref name="setColumns"/> is <c>null</c> or contains no columns;
     /// otherwise, <c>false</c>.
     /// </returns>
-    public static bool IsNullOrEmpty<T>(this SetColumns<T>? setColumns) =>
+    internal static bool IsNullOrEmpty<T>(this SetColumns<T>? setColumns) =>
         setColumns?.ColumnInfo.IsNullOrEmpty() ?? true;
 
     /// <summary>
@@ -39,6 +39,6 @@ public static class SetColumnsExtensions
     /// <c>true</c> if <paramref name="setColumns"/> is not <c>null</c> and contains at least one column;
     /// otherwise, <c>false</c>.
     /// </returns>
-    public static bool IsNotNullOrEmpty<T>([NotNullWhen(true)] this SetColumns<T>? setColumns) =>
+    internal static bool IsNotNullOrEmpty<T>([NotNullWhen(true)] this SetColumns<T>? setColumns) =>
         setColumns.IsNullOrEmpty() == false;
 }

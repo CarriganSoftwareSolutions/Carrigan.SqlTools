@@ -3,7 +3,7 @@
 /// <summary>
 /// Provides extension methods for the <see cref="SortDirectionEnum"/> enumeration.
 /// </summary>
-public static class SortDirectionEnumExtension
+internal static class SortDirectionEnumExtension
 {
     /// <summary>
     /// Converts the specified <see cref="SortDirectionEnum"/> value to its SQL representation.
@@ -17,7 +17,7 @@ public static class SortDirectionEnumExtension
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when <paramref name="value"/> is not a defined <see cref="SortDirectionEnum"/> value.
     /// </exception>
-    public static string ToSql(this SortDirectionEnum value) => value switch
+    internal static string ToSql(this SortDirectionEnum value) => value switch
     {
         SortDirectionEnum.Descending => "DESC",
         SortDirectionEnum.Ascending => "ASC",

@@ -11,14 +11,14 @@ namespace Carrigan.SqlTools.Predicates;
 /// to take place to allow me to more generically use Columns T. For now it is not worth the 
 /// time and effort to attempt to replace it, it may not even be possible.
 /// </remarks>
-public interface IColumn
+internal interface IColumn
 {
     /// <summary>
     /// The Tag for the Column
     /// </summary>
-    public ColumnInfo ColumnInfo { get; }
+    internal ColumnInfo ColumnInfo { get; }
     /// <summary>
     /// The Tag for the Table
     /// </summary>
-    public TableTag TableTag { get; } //TODO: Can we get rid of this now?
+    internal TableTag TableTag { get; } //TODO: Can we get rid of this now?
 }

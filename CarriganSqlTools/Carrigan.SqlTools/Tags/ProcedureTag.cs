@@ -39,7 +39,7 @@ namespace Carrigan.SqlTools.Tags;
 /// [schema].[UpdateThing]
 /// ]]></code>
 /// </example>
-public class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag>, IEqualityComparer<ProcedureTag>
+internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag>, IEqualityComparer<ProcedureTag>
 {
     private readonly string _procedureTag;
 
@@ -191,7 +191,7 @@ public class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag>,
     /// Thrown when the underlying reflection cache does not expose a non-public static
     /// <c>ProcedureTag</c> property, or when it returns <c>null</c>.
     /// </exception>
-    public static ProcedureTag Get(Type value)
+    internal static ProcedureTag Get(Type value)
     {
         ArgumentNullException.ThrowIfNull(value);
 

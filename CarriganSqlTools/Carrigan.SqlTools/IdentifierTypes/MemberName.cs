@@ -7,9 +7,9 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// <summary>
 /// Strongly typed string wrapper for Member names
 /// </summary>
-public class MemberName : StringWrapper
+internal class MemberName : StringWrapper
 {
-    public MemberName(string? name) : base(name) { }
+    internal MemberName(string? name) : base(name) { }
 
     /// <summary>
     /// If <param name="name"> is not null or empty, it creates a new instance,
@@ -20,7 +20,7 @@ public class MemberName : StringWrapper
     /// If <param name="name"> is not null or empty, it creates a new instance,
     /// otherwise it returns a null object.
     /// </returns>
-    public static MemberName? New(string? name)
+    internal static MemberName? New(string? name)
     {
         if (name.IsNullOrEmpty())
             return null;

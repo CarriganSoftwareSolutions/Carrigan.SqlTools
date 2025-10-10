@@ -260,7 +260,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <c>true</c> if the parameter name is <c>null</c>, empty, or consists only of white space;
     /// otherwise, <c>false</c>.
     /// </returns>
-    public bool IsEmpty() =>
+    internal bool IsEmpty() =>
         ((string)this).IsNullOrWhiteSpace();
 
     /// <summary>
@@ -274,7 +274,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <returns>
     /// A new <see cref="ParameterTag"/> with the updated prefix.
     /// </returns>
-    public ParameterTag PrefixPrepend(string? textToAppend)
+    internal ParameterTag PrefixPrepend(string? textToAppend)
     {
         if (_prefix.IsNullOrWhiteSpace())
             return new(textToAppend, _parameterBaseName, _index);
@@ -293,7 +293,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <returns>
     /// A new <see cref="ParameterTag"/> with the updated prefix.
     /// </returns>
-    public ParameterTag PrefixAppend(string? textToAppend)
+    internal ParameterTag PrefixAppend(string? textToAppend)
     {
         if (_prefix.IsNullOrWhiteSpace())
             return new(textToAppend, _parameterBaseName, _index);
@@ -314,7 +314,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <exception cref="ArgumentException">
     /// Thrown if an index has already been defined on this <see cref="ParameterTag"/>.
     /// </exception>
-    public ParameterTag AddIndex(string? newIndex)
+    internal ParameterTag AddIndex(string? newIndex)
     {
         if (_index.IsNullOrWhiteSpace())
             return new(_prefix, _parameterBaseName, newIndex);

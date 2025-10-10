@@ -7,9 +7,9 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// <summary>
 /// Strongly typed string wrapper for Procedure names
 /// </summary>
-public class ProcedureName : StringWrapper
+internal class ProcedureName : StringWrapper
 {
-    public ProcedureName(string? name) : base(name) { }
+    internal ProcedureName(string? name) : base(name) { }
 
     /// <summary>
     /// If <param name="name"> is not null or empty, it creates a new instance,
@@ -20,7 +20,7 @@ public class ProcedureName : StringWrapper
     /// If <param name="name"> is not null or empty, it creates a new instance,
     /// otherwise it returns a null object.
     /// </returns>
-    public static ProcedureName? New(string? name)
+    internal static ProcedureName? New(string? name)
     {
         if (name.IsNullOrEmpty())
             return null;

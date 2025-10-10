@@ -184,7 +184,7 @@ public class SelectTags : ISelectTags
         Concat<T>(properties.Select(name => new PropertyName(name)));
 
 
-    internal static SelectTags Get<T>(PropertyName properties, AliasName? aliasName = null)
+    public static SelectTags Get<T>(PropertyName properties, AliasName? aliasName = null)
     {
         if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
             throw new InvalidSqlIdentifierException(aliasName); 

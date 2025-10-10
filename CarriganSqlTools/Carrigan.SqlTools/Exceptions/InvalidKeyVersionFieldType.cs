@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.Exceptions;
 /// <summary>
 /// Thrown when the column tag comes from a table that is not included in the clauses.
 /// </summary>
-internal class InvalidKeyVersionFieldType<T> : Exception
+public class InvalidKeyVersionFieldType<T> : Exception
 {
     /// <summary>
     /// Constructor for InvalidKeyVersionFieldType

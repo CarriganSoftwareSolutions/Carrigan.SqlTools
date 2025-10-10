@@ -23,7 +23,7 @@ public class InvalidTableException : Exception
     /// is not included in the query.
     /// </summary>
     /// <param name="tableTags">Table that are invalid</param>
-    public InvalidTableException(params IEnumerable<TableTag> tableTags) :
+    internal InvalidTableException(params IEnumerable<TableTag> tableTags) :
         base(CreateMessage(tableTags))
     {
     }

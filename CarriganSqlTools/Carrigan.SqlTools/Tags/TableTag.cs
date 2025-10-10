@@ -247,7 +247,7 @@ public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityCo
     /// Thrown when the reflection cache does not expose a non-public static <c>Table</c> property,
     /// or when it returns <c>null</c>.
     /// </exception>
-    public static TableTag Get(Type value)
+    internal static TableTag Get(Type value)
     {
         ArgumentNullException.ThrowIfNull(value);
 

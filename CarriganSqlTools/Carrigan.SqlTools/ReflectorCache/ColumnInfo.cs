@@ -279,6 +279,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <c>true</c> if the SQL representation of this column is <c>null</c>, empty,
     /// or consists only of white space; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsEmpty() =>
+    internal bool IsEmpty() =>
         ToString().IsNullOrWhiteSpace();
 }

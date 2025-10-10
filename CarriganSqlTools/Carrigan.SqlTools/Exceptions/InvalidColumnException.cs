@@ -22,7 +22,7 @@ public class InvalidColumnException : Exception
     /// Thrown when the column tag comes from a table that is not included in the clauses.
     /// </summary>
     /// <param name="columnInfo">Invalid columns to include in exception message.</param>
-    public InvalidColumnException(params IEnumerable<ColumnInfo> columnInfo) :
+    internal InvalidColumnException(params IEnumerable<ColumnInfo> columnInfo) :
         base(CreateMessage(columnInfo))
     {
 

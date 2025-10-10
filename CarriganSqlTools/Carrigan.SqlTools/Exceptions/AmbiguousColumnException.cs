@@ -19,7 +19,7 @@ public class AmbiguousColumnException : Exception
     /// <param name="columnTags">The ambiguous columns to include in the exception</param>
     /// 
     //TODO: Or should this be for SelectTag?
-    public AmbiguousColumnException(params IEnumerable<ColumnTag> columnTags) :
+    internal AmbiguousColumnException(params IEnumerable<ColumnTag> columnTags) :
         base(CreateMessage(columnTags))
     {
     }

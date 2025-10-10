@@ -5,7 +5,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// <summary>
 /// Provides extension methods for <see cref="IOrderByClause"/> instances.
 /// </summary>
-public static class OrderByExtensions
+internal static class OrderByExtensions
 {
     /// <summary>
     /// Determines whether the specified <see cref="IOrderByClause"/> instance is
@@ -16,7 +16,7 @@ public static class OrderByExtensions
     /// <c>true</c> if <paramref name="value"/> is <c>null</c> or contains no items;
     /// otherwise, <c>false</c>.
     /// </returns>
-    public static bool IsNullOrEmpty(this IOrderByClause? value) =>
+    internal static bool IsNullOrEmpty(this IOrderByClause? value) =>
         value?.IsEmpty() ?? true;
 
     /// <summary>
@@ -28,6 +28,6 @@ public static class OrderByExtensions
     /// <c>true</c> if <paramref name="value"/> is not <c>null</c> and contains at least one item;
     /// otherwise, <c>false</c>.
     /// </returns>
-    public static bool IsNotNullOrEmpty([NotNullWhen(true)]this IOrderByClause? value) =>
+    internal static bool IsNotNullOrEmpty([NotNullWhen(true)]this IOrderByClause? value) =>
         value.IsNullOrEmpty() ==  false;
 }

@@ -22,7 +22,7 @@ public abstract class PredicateBase
     /// Produces the SQL represented by this class.
     /// </summary>
     /// <returns>Returns a SQL string represented by this class.</returns>
-    public string ToSql()
+    internal string ToSql()
     {
         //get an IEnumerable of all the duplicate parameter names
         IEnumerable<ParameterTag> duplicates = Parameters
@@ -62,7 +62,7 @@ public abstract class PredicateBase
     /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
     /// </param>
     /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
-    public Dictionary<ParameterTag,object> GetParameters()
+    internal Dictionary<ParameterTag,object> GetParameters()
     {
         //get an IEnumerable of all the duplicate parameter names
         IEnumerable<ParameterTag> duplicates = Parameters

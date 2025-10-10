@@ -13,7 +13,7 @@ public interface IJoins
     /// The name differs from the preferred “Joins” to avoid a naming conflict (e.g., Joins.Joins),
     /// which would result in a compiler error.
     /// </summary>
-    IEnumerable<IJoins> Joints { get; }
+    public IEnumerable<IJoins> Joints { get; }
 
     /// <summary>
     /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.
@@ -38,5 +38,5 @@ public interface IJoins
     /// <summary>
     /// Recursively get all the parameters associated with the logic.
     /// </summary>
-    internal Dictionary<ParameterTag, object> Parameters { get; }
+    public Dictionary<ParameterTag, object> Parameters { get; }
 }

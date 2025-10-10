@@ -23,7 +23,7 @@ public class InvalidPropertyException<T> : Exception
     /// be used as a class.
     /// </summary>
     /// <param name="propertyNames">The names of the invalid properties.</param>
-    public InvalidPropertyException(params IEnumerable<PropertyName> propertyNames) :
+    internal InvalidPropertyException(params IEnumerable<PropertyName> propertyNames) :
         base(CreateMessage(propertyNames))
     {
     }

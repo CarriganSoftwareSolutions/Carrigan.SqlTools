@@ -57,7 +57,7 @@ public class SetColumns<T>
     /// Gets the collection of <see cref="ColumnTag"/> objects representing
     /// the columns used in this instance.
     /// </summary>
-    public IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
+    internal IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetColumns"/> class,

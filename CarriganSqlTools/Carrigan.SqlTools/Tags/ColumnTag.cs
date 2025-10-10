@@ -80,7 +80,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
+internal class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqualityComparer<ColumnTag>
 {
     /// <summary>
     /// A string that represent the <see cref="ColumnTag"/> .

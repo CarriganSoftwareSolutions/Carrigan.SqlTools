@@ -16,7 +16,7 @@ public class ParameterAttribute : Attribute
     /// <summary>
     /// Public getter to indicate the name and schema.
     /// </summary>
-    public string Name { get; }
+    internal string Name { get; }
 
     /// <summary>
     /// The constructor for <see cref="ParameterAttribute"/>

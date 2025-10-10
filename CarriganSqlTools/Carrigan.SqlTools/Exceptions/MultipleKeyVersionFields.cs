@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.Exceptions;
 /// <summary>
 /// Thrown when multiple key version fields exist
 /// </summary>
-internal class MultipleKeyVersionFields<T> : Exception
+public class MultipleKeyVersionFields<T> : Exception
 {
     /// <summary>
     /// Constructor for InvalidKeyVersionFieldType
