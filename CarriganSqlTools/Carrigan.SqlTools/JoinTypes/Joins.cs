@@ -1,11 +1,16 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
+using System;
+using System.Linq;
 
 //IGNORE SPELLING: joins
 
 namespace Carrigan.SqlTools.JoinTypes;
 
+//TODO: REDO Documentation, Unit Tests, Examples
 /// <summary>
 /// Defines a class that represent one or more SQL join operations.
 /// </summary>
@@ -31,39 +36,57 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
-public class Joins : IJoins
+public class Joins<leftT>
 {
     /// <summary>
     /// Represents a collection of classes where each class defines a single SQL join operation.
     /// The name differs from the preferred “Joins” to avoid a naming conflict (e.g., Joins.Joins),
     /// which would result in a compiler error.
     /// </summary>
-    public IEnumerable<IJoins> Joints { get; private set; }
+    public IEnumerable<Relation> Joints { get; private set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Joins"/> class.
     /// </summary>
     /// <param name="joins">
-    /// One or more sequences of <see cref="IJoins"/> objects, where each object represents a single SQL join operation.
+    /// One or more sequences of <see cref="Joins"/> objects, where each object represents a single SQL join operation.
     /// </param>
-    public Joins(params IEnumerable<IJoins> joins) =>
-        Joints = joins;
+    public Joins(params IEnumerable<Relation> joins)
+    {
+        List<TableTag> tables = [SqlToolsReflectorCache<leftT>.Table]; //tables that the current join being evaluated
+        Joints = [];
+
+        //validate each join to ensure it is joined in the proper order for column participation.
+        foreach(Relation join in joins)
+        {
+            IEnumerable<TableTag> valid = TableTags.Append(join.TableTag);
+            //ensure each column involved in the join comes from either an earlier table or the table being joined on 
+            IEnumerable<TableTag> invalids = join.JoinsOn.Where(table => valid.DoesNotContain(table));
+            if (invalids.IsNullOrEmpty())
+                tables.Add(join.TableTag); //add it to the table list, for the next join, since the join is before the next one.
+            else
+                throw new InvalidTableException(invalids);
+
+            Joints = Joints.Append(join);
+        }
+    }
+
+    public static Joins<leftT> LeftJoin<rightT>(Predicates predicates) =>
+        JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates);
+
+    public static Joins<leftT> Join<rightT>(Predicates predicates) =>
+        JoinTypes.Join<rightT>.Joins<leftT>(predicates);
+
+    public static Joins<leftT> InnerJoin<rightT>(Predicates predicates) =>
+        JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates);
 
     /// <summary>
-    /// Enumerates all tables included in <see cref="Joints"/>
+    /// Enumerates all tables included in <see cref="Joints"/> and <typeparamref name="leftT"/>
     /// providing a quick way to determine whether a given table
     /// participates in any join operation.
     /// </summary>
     public IEnumerable<TableTag> TableTags =>
-        Joints.SelectMany(join => join.TableTags);
-
-    /// <summary>
-    /// Enumerates all possible columns included in <see cref="Joints"/>
-    /// providing a quick way to determine whether a given column
-    /// participates in a table that participates in any join operation.
-    /// </summary>
-    public IEnumerable<ColumnInfo> ColumnInfo =>
-        Joints.SelectMany(join => join.ColumnInfo);
+        Joints.Select(join => join.TableTag).Append(SqlToolsReflectorCache<leftT>.Table);
 
     /// <summary>
     /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.
@@ -75,5 +98,6 @@ public class Joins : IJoins
     /// <summary>
     /// Recursively get all the parameters associated with the logic.
     /// </summary>
-    public Dictionary<ParameterTag, object> Parameters { get => new (Joints.SelectMany(join => join.Parameters)); }
+    public Dictionary<ParameterTag, object> Parameters =>
+        [.. Joints.SelectMany(join => join.Parameters)];
 }

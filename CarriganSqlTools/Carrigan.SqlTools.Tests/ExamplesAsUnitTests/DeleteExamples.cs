@@ -71,7 +71,7 @@ public class DeleteExamples
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        InnerJoin<Order, Customer> join = new(predicate);
+        Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
 
         SqlQuery query = orderGenerator.Delete(join, null);
 
@@ -86,7 +86,7 @@ public class DeleteExamples
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        InnerJoin<Order, Customer> join = new(predicate);
+        Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
 
         ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 

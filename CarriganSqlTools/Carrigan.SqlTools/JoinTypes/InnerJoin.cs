@@ -3,6 +3,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
+//TODO: REDO Documentation, Unit Tests, Examples
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
@@ -32,51 +33,37 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class InnerJoin<T, J> : JoinBaseClass
+public class InnerJoin<rightT> : Relation
 {
     private readonly string _sql;
-    private readonly IEnumerable<Parameter> _parameters;
     /// <summary>
-    /// Initializes a new instance of the <see cref="InnerJoin{T,J}"/> class.
+    /// Initializes a new instance of the <see cref="InnerJoin{rightT}"/> class.
     /// </summary>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
     /// </param>
     /// <exception cref="AmbiguousColumnException">
     /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
-    public InnerJoin(PredicatesLogic.Predicates predicate)
-    {
-        TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
-        TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;
-        IEnumerable<ColumnInfo> invalidTags = 
-            predicate
-                .Columns
-                .Where(column => column.TableTag != leftTableTag && column.TableTag != rightTableTag)
-                .Select(column => column.ColumnInfo);
+    public InnerJoin(Predicates predicates) : base(predicates) => 
+        _sql = $"INNER JOIN {TableTag} ON {predicates.ToSql()}";
 
-        if (invalidTags.Any())
-            throw new InvalidColumnException(invalidTags);
+    //TODO: Documentation, Unit Tests, Examples
+    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
+        new(new InnerJoin<rightT>(predicate));
 
-        _sql = $"INNER JOIN {rightTableTag} ON {predicate.ToSql()}";
-        _tableTags = [leftTableTag, rightTableTag];
-        _parameters = predicate.Parameters;
-    }
+    //TODO: Documentation, Unit Tests, Examples
+    public Joins<leftT> AsJoins<leftT>() =>
+        new(this);
 
-    /// <summary>
-    /// Enumerates all possible columns included in <see cref="Joints"/>
-    /// providing a quick way to determine whether a given column
-    /// participates in a table that participates in any join operation.
-    /// </summary>
-    public override IEnumerable<ColumnInfo> ColumnInfo =>
-        SqlToolsReflectorCache<T>.ColumnInfo.Concat(SqlToolsReflectorCache<J>.ColumnInfo);
-
-    public override Dictionary<ParameterTag, object> Parameters => new (_parameters.SelectMany(parameter => parameter.GetParameters()));
+    //TODO: documentation, unit tests.
+    internal override TableTag TableTag =>
+        SqlToolsReflectorCache<rightT>.Table;
 
     /// Converts the current <see cref="InnerJoin{T,J}"/> instance to its SQL representation.
     /// </summary>
     /// <returns>A SQL string representing the <c>INNER JOIN</c> clause.</returns>
-    public override string ToSql() =>
+    internal override string ToSql() =>
         _sql;
 }

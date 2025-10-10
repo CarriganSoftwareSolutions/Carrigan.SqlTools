@@ -173,7 +173,7 @@ public partial class SqlGenerator<T>
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
     /// <param name="joins">
-    /// Optional <see cref="IJoins"/> describing tables to join for the update.
+    /// Optional <see cref="Joins"/> describing tables to join for the update.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
@@ -236,7 +236,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, SetColumns<T>? columns, IJoins? joins, PredicatesLogic.Predicates? predicates)
+    public SqlQuery Update(T entity, SetColumns<T>? columns, Joins<T>? joins, PredicatesLogic.Predicates? predicates)
     {
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;

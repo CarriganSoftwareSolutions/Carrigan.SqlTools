@@ -2,12 +2,6 @@
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
 public class JoinsParameterTest
@@ -18,14 +12,12 @@ public class JoinsParameterTest
     public void SelectJoinParameterTest()
     {
         ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
-        InnerJoin<Customer, Order> join1 = new(orderCondition);
+        InnerJoin<Order> join1 = new(orderCondition);
 
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
-        InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
+        InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
-        Joins joins = new(join1, join2);
-
-        SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
+        SqlQuery query = customerGenerator.Select(null, new(join1, join2), null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Parameter_ZipCode)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -38,14 +30,12 @@ public class JoinsParameterTest
     public void SelectCountJoinParameterTest()
     {
         ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
-        InnerJoin<Customer, Order> join1 = new(orderCondition);
+        InnerJoin<Order> join1 = new(orderCondition);
 
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
-        InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
+        InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
-        Joins joins = new(join1, join2);
-
-        SqlQuery query = customerGenerator.SelectCount(joins, null);
+        SqlQuery query = customerGenerator.SelectCount(new(join1, join2), null);
 
         Assert.Equal("SELECT COUNT(*) FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Parameter_ZipCode)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -65,14 +55,12 @@ public class JoinsParameterTest
             Phone = "867-5309"
         };
         ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
-        InnerJoin<Customer, Order> join1 = new(orderCondition);
+        InnerJoin<Order> join1 = new(orderCondition);
 
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
-        InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
+        InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
-        Joins joins = new(join1, join2);
-
-        SqlQuery query = customerGenerator.Update(customer, null, joins, null);
+        SqlQuery query = customerGenerator.Update(customer, null, new(join1, join2), null);
 
         Assert.Equal("UPDATE [Customer] SET [Customer].[Name] = @ParameterSet_Name, [Customer].[Email] = @ParameterSet_Email, [Customer].[Phone] = @ParameterSet_Phone FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Parameter_ZipCode)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -88,14 +76,12 @@ public class JoinsParameterTest
     public void DeleteJoinParameterTest()
     {
         ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
-        InnerJoin<Customer, Order> join1 = new(orderCondition);
+        InnerJoin<Order> join1 = new(orderCondition);
 
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
-        InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
+        InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
-        Joins joins = new(join1, join2);
-
-        SqlQuery query = customerGenerator.Delete(joins, null);
+        SqlQuery query = customerGenerator.Delete(new(join1, join2), null);
         
         Assert.Equal("DELETE FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Parameter_ZipCode)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

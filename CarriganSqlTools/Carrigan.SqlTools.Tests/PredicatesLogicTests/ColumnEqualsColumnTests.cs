@@ -46,7 +46,7 @@ public class ColumnEqualsColumnTests
     public void LeftRightSql()
     {
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
-        SqlQuery query = leftGenerator.Select(null, new Join<JoinLeftTable, JoinRightTable>(columnEqualsColumn), null, null, null);
+        SqlQuery query = leftGenerator.Select(null, new(new Join<JoinRightTable>(columnEqualsColumn)), null, null, null);
 
         Assert.Equal("SELECT [Left].* FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
         Assert.Empty(query.Parameters);
@@ -56,7 +56,7 @@ public class ColumnEqualsColumnTests
     public void RightLastSql()
     {
         ColumnEqualsColumn<JoinRightTable, JoinLastTable> columnEqualsColumn = new(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        SqlQuery query = rightGenerator.Select(null, new Join<JoinRightTable, JoinLastTable>(columnEqualsColumn), null, null, null);
+        SqlQuery query = rightGenerator.Select(null, new(new Join<JoinLastTable>(columnEqualsColumn)), null, null, null);
 
         Assert.Equal("SELECT [Right].* FROM [Right] LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])", query.QueryText);
         Assert.Empty(query.Parameters);

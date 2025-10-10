@@ -26,10 +26,10 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
             Col2 = "World"
         };
 
-        PredicatesLogic.Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        PredicatesLogic.Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
-        IJoins join = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new Joins([join]), predicateId);
+        Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
+        InnerJoin<JoinRightTable> join = new (joinId);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new (join), predicateId);
 
         string expectedSql = "UPDATE [Left] SET [Left].[Col1] = @ParameterSet_Col1, [Left].[Col2] = @ParameterSet_Col2 FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -64,12 +64,12 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
             Col2 = "World"
         };
 
-        PredicatesLogic.Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        PredicatesLogic.Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        PredicatesLogic.Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
-        IJoins join1 = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId1);
-        IJoins join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new Joins(join1, join2), predicateId);
+        Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
+        InnerJoin<JoinRightTable> join1 = new (joinId1);
+        LeftJoin<JoinLastTable> join2 = new (joinId2);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new (join1, join2), predicateId);
 
         string expectedSql = "UPDATE [Left] SET [Left].[Col1] = @ParameterSet_Col1, [Left].[Col2] = @ParameterSet_Col2 FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);

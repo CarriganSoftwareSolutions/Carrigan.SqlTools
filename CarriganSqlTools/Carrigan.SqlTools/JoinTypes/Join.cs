@@ -1,5 +1,8 @@
-﻿namespace Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.PredicatesLogic;
 
+namespace Carrigan.SqlTools.JoinTypes;
+
+//TODO: REDO Documentation, Unit Tests, Examples
 /// <summary>
 /// Represents an SQL <c>JOIN</c> operation. This class functions as an alias
 /// for the <see cref="LeftJoin{T,J}"/> class.
@@ -30,7 +33,7 @@
 /// ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class Join<T, J> : LeftJoin<T, J>
+public class Join<rightT> : LeftJoin<rightT>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Join"/> class.
@@ -38,6 +41,10 @@ public class Join<T, J> : LeftJoin<T, J>
     /// <param name="predicate">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
-    public Join(PredicatesLogic.Predicates predicate) : base(predicate)
+    public Join(Predicates predicate) : base(predicate)
     { }
+
+    //TODO: Documentation, Unit Tests, Examples
+    public static new Joins<leftT> Joins<leftT>(Predicates predicate) =>
+        new(new Join<rightT>(predicate));
 }

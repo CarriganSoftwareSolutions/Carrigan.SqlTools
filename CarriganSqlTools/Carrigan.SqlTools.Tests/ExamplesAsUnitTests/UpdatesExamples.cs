@@ -91,7 +91,7 @@ public class UpdatesExamples
         Column<Customer> customerId = new(nameof(Customer.Id));
         Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
         Equal customerIdsEquals = new(orderCustomerId, customerId);
-        InnerJoin<Order, Customer> joinOnCustomerId = new(customerIdsEquals);
+        Joins<Order> joinOnCustomerId = Joins<Order>.InnerJoin<Customer>(customerIdsEquals);
 
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 

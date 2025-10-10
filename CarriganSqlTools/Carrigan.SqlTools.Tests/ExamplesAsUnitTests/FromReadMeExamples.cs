@@ -4,6 +4,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
+using System;
 using System.Text;
 
 //IGNORE SPELLING: dbo
@@ -164,8 +165,8 @@ public class FromReadMeExamples
     {
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
-        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        InnerJoin<Customer, Order> join = new(columnEqualsColumn);
+        ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
@@ -181,9 +182,9 @@ public class FromReadMeExamples
     {
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
-        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-        InnerJoin<Customer, Order> join = new(columnEqualsColumn);
+        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
         OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
@@ -201,9 +202,9 @@ public class FromReadMeExamples
     {
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
-        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-        InnerJoin<Order, Customer> join = new(columnEqualsColumn);
+        Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
 
         ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
@@ -242,13 +243,13 @@ public class FromReadMeExamples
 
         SetColumns<Order> setColumns = new(nameof(Order.Total));
 
-        ColumnEqualsColumn<Order, Customer> columnEqualsColumn = new(nameof(Order.CustomerId), nameof(Customer.Id));
+        ColumnEqualsColumn<Order, Customer> predicate = new(nameof(Order.CustomerId), nameof(Customer.Id));
 
-        InnerJoin<Order, Customer> joinOnCustomerId = new(columnEqualsColumn);
+        Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
 
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
-        SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
+        SqlQuery query = orderGenerator.Update(entity, setColumns, join, customerEmailEquals);
 
 
         Assert.Equal("UPDATE [Order] SET [Order].[Total] = @ParameterSet_Total FROM [Order] INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);

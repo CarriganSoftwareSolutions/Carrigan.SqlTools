@@ -9,20 +9,23 @@ public class IJoinsExtensionTest
     [Fact]
     public void IsNullOrEmpty_Null()
     {
-        IJoins? joins = null;
+        Joins<Order>? joins = null;
         Assert.True(joins.IsNullOrEmpty());
     }
+
     [Fact]
     public void IsNullOrEmpty_Empty()
     {
-        IJoins joins = new Joins([]);
+        Joins<Order> joins = new ([]);
         Assert.True(joins.IsNullOrEmpty());
     }
+
     [Fact]
     public void IsNullOrEmpty_Single()
     {
-        PredicatesLogic.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(id);
-        _ = new Joins([join]);
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        LeftJoin<JoinRightTable> join = new (id);
+        Joins<JoinLeftTable> joins_ = new (join);
+        Assert.False(joins_.IsNullOrEmpty());
     }
 }
