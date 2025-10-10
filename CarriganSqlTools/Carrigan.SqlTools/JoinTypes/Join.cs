@@ -38,6 +38,6 @@ public class Join<T, J> : LeftJoin<T, J>
     /// <param name="predicate">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
-    public Join(Predicates.Predicates predicate) : base(predicate)
+    public Join(PredicatesLogic.Predicates predicate) : base(predicate)
     { }
 }

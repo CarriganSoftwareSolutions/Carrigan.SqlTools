@@ -1,6 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
@@ -176,7 +176,7 @@ public partial class SqlGenerator<T>
     /// Optional <see cref="IJoins"/> describing tables to join for the update.
     /// </param>
     /// <param name="predicates">
-    /// Optional <see cref="Predicates.Predicates"/> describing the <c>WHERE</c> clause that
+    /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
     /// </param>
     /// <returns>
@@ -236,7 +236,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, SetColumns<T>? columns, IJoins? joins, Predicates.Predicates? predicates)
+    public SqlQuery Update(T entity, SetColumns<T>? columns, IJoins? joins, PredicatesLogic.Predicates? predicates)
     {
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;

@@ -1,7 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Text;
@@ -59,7 +59,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectCount(IJoins? joins, Predicates.Predicates? predicates)
+    public SqlQuery SelectCount(IJoins? joins, PredicatesLogic.Predicates? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];

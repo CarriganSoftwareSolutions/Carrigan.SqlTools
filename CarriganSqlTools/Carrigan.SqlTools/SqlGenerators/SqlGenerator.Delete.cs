@@ -1,7 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Text;
@@ -112,7 +112,7 @@ public partial class SqlGenerator<T>
     /// Optional <see cref="IJoins"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
-    /// Optional <see cref="Predicates.Predicates"/> representing the <c>WHERE</c> conditions
+    /// Optional <see cref="PredicatesLogic.Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
     /// </param>
     /// <returns>
@@ -176,7 +176,7 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete(IJoins? joins, Predicates.Predicates? predicates)
+    public SqlQuery Delete(IJoins? joins, PredicatesLogic.Predicates? predicates)
     {
         if (predicates == null && joins.IsNullOrEmpty())
         {

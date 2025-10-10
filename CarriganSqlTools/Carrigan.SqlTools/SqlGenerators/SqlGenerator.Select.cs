@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Text;
@@ -173,7 +173,7 @@ public partial class SqlGenerator<T>
     /// <param name="offsetNext">
     /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
     /// </param>
-    public SqlQuery Select(ISelectTags? selects, IJoins? joins, Predicates.Predicates? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
+    public SqlQuery Select(ISelectTags? selects, IJoins? joins, PredicatesLogic.Predicates? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];

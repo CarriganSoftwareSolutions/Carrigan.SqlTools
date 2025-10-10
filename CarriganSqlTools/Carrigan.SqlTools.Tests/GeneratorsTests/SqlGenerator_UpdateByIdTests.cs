@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -358,7 +358,7 @@ public class SqlGenerator_UpdateByIdTests
             NotKey2 = 8
         };
 
-        Predicates.Predicates predicateId = new Equal(new Column<JoinLeftTable>("Id"), new Parameter("Id", 3));
+        PredicatesLogic.Predicates predicateId = new Equal(new Column<JoinLeftTable>("Id"), new Parameter("Id", 3));
         SqlQuery query = _sqlGeneratorCompositeKeyTable.UpdateByIds(entity3, _leftCompositeKeyTable, entity1, entity2);
 
         string expectedSql = "UPDATE [Ck] SET [Ck].[NotKey1] = @ParameterSet_NotKey1, [Ck].[NotKey2] = @ParameterSet_NotKey2 FROM [Ck] WHERE " +

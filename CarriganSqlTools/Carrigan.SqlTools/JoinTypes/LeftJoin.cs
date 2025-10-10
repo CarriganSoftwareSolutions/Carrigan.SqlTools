@@ -1,5 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
@@ -47,7 +47,7 @@ public class LeftJoin<T, J> : JoinBaseClass
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
 
-    public LeftJoin(Predicates.Predicates predicate)
+    public LeftJoin(PredicatesLogic.Predicates predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
         TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;

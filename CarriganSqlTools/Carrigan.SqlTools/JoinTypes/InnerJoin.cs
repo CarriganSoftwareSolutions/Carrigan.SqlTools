@@ -1,5 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
@@ -46,7 +46,7 @@ public class InnerJoin<T, J> : JoinBaseClass
     /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
-    public InnerJoin(Predicates.Predicates predicate)
+    public InnerJoin(PredicatesLogic.Predicates predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
         TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;

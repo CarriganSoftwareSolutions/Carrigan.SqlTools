@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Predicates;
+﻿using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 

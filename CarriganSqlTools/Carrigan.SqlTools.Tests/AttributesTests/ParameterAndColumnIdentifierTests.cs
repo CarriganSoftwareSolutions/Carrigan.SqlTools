@@ -1,6 +1,6 @@
 ﻿using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
