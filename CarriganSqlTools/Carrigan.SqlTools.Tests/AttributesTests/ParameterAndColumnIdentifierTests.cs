@@ -9,6 +9,7 @@ using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 public class ParameterAndColumnIdentifierTests
 {
+    //IGNORE SPELLING: tac
     private static readonly SqlGenerator<ColumnIdentifiers> _generator = new();
     private static readonly ColumnIdentifiers _entity = new ()
     {
@@ -35,83 +36,113 @@ public class ParameterAndColumnIdentifierTests
         IdentifierOverrideName = 15
     };
 
+    private static readonly SqlGenerator<TableAndColumnIdentifiers> _tacGenerator = new();
+    private static readonly TableAndColumnIdentifiers _tacEntity = new()
+    {
+        Id = 1,
+        Column = 3
+    };
+    private static readonly TableAndColumnIdentifiers _tacModel = new()
+    {
+        Id = 6,
+        Column = 8
+    };
+
+    private static readonly TableAndColumnIdentifiers _tacUpdateValues = new()
+    {
+        Column = 13
+    };
 
     private static readonly IEnumerable<ColumnIdentifiers> _entities = [_entity, _model];
+    private static readonly IEnumerable<TableAndColumnIdentifiers> _tacEntities = [_tacEntity, _tacModel];
 
     [Fact]
     public void DeleteTest()
     {
-        SqlQuery query = _generator.Delete(_entity);
+        SqlQuery query = _tacGenerator.Delete(_tacEntity);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] WHERE [Id] = @IdParameter;";
+        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE [SomeId] = @SomeIdParameter;";
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("IdParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("SomeIdParameter"));
+    }
+    [Fact]
+    public void DeleteAllTest()
+    {
+        SqlQuery query = _tacGenerator.DeleteAll();
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [SomeSchema].[SomeTable];";
+        Assert.Equal(expected, actual);
+
+        Assert.Equal(0, query.GetParameterCount());
+    }
+
+    [Fact]
+    public void DeleteIdPredicate()
+    {
+        ColumnValue<TableAndColumnIdentifiers> id = new(nameof(TableAndColumnIdentifiers.Id), 1);
+        ColumnValue<TableAndColumnIdentifiers> column = new(nameof(TableAndColumnIdentifiers.Column), 3);
+        And and = new(id, column);
+        SqlQuery query = _tacGenerator.Delete(null, and);
+        string actual = query.QueryText;
+        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE (([SomeSchema].[SomeTable].[SomeId] = @Parameter_SomeIdParameter) AND ([SomeSchema].[SomeTable].[SomeColumn] = @Parameter_SomeColumnParameter))";
+        Assert.Equal(expected, actual);
+
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_SomeIdParameter"));
+        Assert.Equal(3, query.GetParameterValue<int>("@Parameter_SomeColumnParameter"));
     }
 
     [Fact]
     public void InsertTest()
     {
-        SqlQuery query = _generator.Insert(_entity);
+        SqlQuery query = _tacGenerator.Insert(_tacEntity);
         string actual = query.QueryText;
-        string expected = "INSERT INTO [ColumnIdentifiers] ([Id], [Property], [Column], [Identifier], [IdentifierOverride]) VALUES (@IdParameter, @PropertyParameter, @ColumnParameter, @IdentifierParameter, @IdentifierOverrideParameter);";
+        string expected = "INSERT INTO [SomeSchema].[SomeTable] ([SomeId], [SomeColumn]) VALUES (@SomeIdParameter, @SomeColumnParameter);";
         Assert.Equal(expected, actual);
 
-        Assert.Equal(5, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("IdParameter"));
-        Assert.Equal(2, query.GetParameterValue<int>("PropertyParameter"));
-        Assert.Equal(3, query.GetParameterValue<int>("ColumnParameter"));
-        Assert.Equal(4, query.GetParameterValue<int>("IdentifierParameter"));
-        Assert.Equal(5, query.GetParameterValue<int>("IdentifierOverrideParameter"));
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("SomeIdParameter"));
+        Assert.Equal(3, query.GetParameterValue<int>("SomeColumnParameter"));
     }
 
     [Fact]
     public void InsertAutoIdTest()
     {
-        SqlQuery query = _generator.InsertAutoId(_entity);
+        SqlQuery query = _tacGenerator.InsertAutoId(_tacEntity);
         string actual = query.QueryText;
-        string expected = SqlGenerator<ColumnIdentifiers>.ModifyInsertQueryToReturnScalar("INSERT INTO [ColumnIdentifiers] ([Property], [Column], [Identifier], [IdentifierOverride]) VALUES (@PropertyParameter, @ColumnParameter, @IdentifierParameter, @IdentifierOverrideParameter);");
-        Assert.Equal(expected, actual);
+        string expected = SqlGenerator<TableAndColumnIdentifiers>.ModifyInsertQueryToReturnScalar("INSERT INTO [SomeSchema].[SomeTable] ([SomeColumn]) VALUES (SomeColumnParameter)");
 
-        Assert.Equal(4, query.GetParameterCount());
-        Assert.Equal(2, query.GetParameterValue<int>("PropertyParameter"));
-        Assert.Equal(3, query.GetParameterValue<int>("ColumnParameter"));
-        Assert.Equal(4, query.GetParameterValue<int>("IdentifierParameter"));
-        Assert.Equal(5, query.GetParameterValue<int>("IdentifierOverrideParameter"));
+        Assert.Equal(1, query.GetParameterCount());
+        Assert.Equal(3, query.GetParameterValue<int>("SomeColumnParameter"));
     }
 
     [Fact]
     public void UpdateByIdTest()
     {
-        SqlQuery query = _generator.UpdateById(_entity);
+        SqlQuery query = _tacGenerator.UpdateById(_tacEntity);
         string actual = query.QueryText;
-        string expected = "UPDATE [ColumnIdentifiers] SET [Property] = @PropertyParameter, [Column] = @ColumnParameter, [Identifier] = @IdentifierParameter, [IdentifierOverride] = @IdentifierOverrideParameter WHERE [Id] = @IdParameter;";
+        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeColumn] = @SomeColumnParameter WHERE [SomeId] = @SomeIdParameter;";
         Assert.Equal(expected, actual);
 
-        Assert.Equal(5, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("IdParameter"));
-        Assert.Equal(2, query.GetParameterValue<int>("PropertyParameter"));
-        Assert.Equal(3, query.GetParameterValue<int>("ColumnParameter"));
-        Assert.Equal(4, query.GetParameterValue<int>("IdentifierParameter"));
-        Assert.Equal(5, query.GetParameterValue<int>("IdentifierOverrideParameter"));
+        Assert.Equal(2, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("SomeIdParameter"));
+        Assert.Equal(3, query.GetParameterValue<int>("SomeColumnParameter"));
     }
 
     [Fact]
     public void UpdateByIdsTest()
     {
-        SqlQuery query = _generator.UpdateByIds(_updateValues, null, _entities);
+        SqlQuery query = _tacGenerator.UpdateByIds(_tacUpdateValues, null, _tacEntities);
         string actual = query.QueryText;
-        string expected = "UPDATE [ColumnIdentifiers] SET [ColumnIdentifiers].[Property] = @ParameterSet_PropertyParameter, [ColumnIdentifiers].[Column] = @ParameterSet_ColumnParameter, [ColumnIdentifiers].[Identifier] = @ParameterSet_IdentifierParameter, [ColumnIdentifiers].[IdentifierOverride] = @ParameterSet_IdentifierOverrideParameter FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Id] = @Parameter_0_R_IdParameter) OR ([ColumnIdentifiers].[Id] = @Parameter_1_R_IdParameter))";
+        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeSchema].[SomeTable].[SomeColumn] = @ParameterSet_SomeColumnParameter FROM [SomeSchema].[SomeTable] WHERE (([SomeSchema].[SomeTable].[SomeId] = @Parameter_0_R_SomeIdParameter) OR ([SomeSchema].[SomeTable].[SomeId] = @Parameter_1_R_SomeIdParameter))";
         Assert.Equal(expected, actual);
 
-        Assert.Equal(6, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_0_R_IdParameter"));
-        Assert.Equal(6, query.GetParameterValue<int>("@Parameter_1_R_IdParameter"));
-        Assert.Equal(12, query.GetParameterValue<int>("@ParameterSet_PropertyParameter"));
-        Assert.Equal(13, query.GetParameterValue<int>("@ParameterSet_ColumnParameter"));
-        Assert.Equal(14, query.GetParameterValue<int>("@ParameterSet_IdentifierParameter"));
-        Assert.Equal(15, query.GetParameterValue<int>("@ParameterSet_IdentifierOverrideParameter"));
+        Assert.Equal(3, query.GetParameterCount());
+        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_0_R_SomeIdParameter"));
+        Assert.Equal(6, query.GetParameterValue<int>("@Parameter_1_R_SomeIdParameter"));
+        Assert.Equal(13, query.GetParameterValue<int>("@ParameterSet_SomeColumnParameter"));
     }
 
     [Fact]

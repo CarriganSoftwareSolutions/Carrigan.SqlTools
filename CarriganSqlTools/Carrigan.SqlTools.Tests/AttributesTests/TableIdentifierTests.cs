@@ -83,7 +83,7 @@ public  class TableIdentifierTests
     [Fact]
     public void ProcedureTest()
     {
-        IdentifierNameSchema identifierNameSchema = new IdentifierNameSchema()
+        IdentifierNameSchema identifierNameSchema = new ()
         {
             Text = "Test",
             Id = guid
@@ -104,7 +104,7 @@ public  class TableIdentifierTests
     [Fact]
     public void ProcedureTestWithJustTableAttribute()
     {
-        TableNameSchema entity = new TableNameSchema()
+        TableNameSchema entity = new ()
         {
             Text = "Test",
             Id = guid
