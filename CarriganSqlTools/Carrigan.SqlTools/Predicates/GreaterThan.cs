@@ -23,7 +23,7 @@ public class GreaterThan : ComparisonOperator
     /// </summary>
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
-    public GreaterThan(PredicateBase left, PredicateBase right) : base (left, right, ">")
+    public GreaterThan(Predicates left, Predicates right) : base (left, right, ">")
     {
     }
 }

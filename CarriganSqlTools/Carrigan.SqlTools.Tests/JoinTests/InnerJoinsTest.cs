@@ -10,7 +10,7 @@ public class InnerJoinsTest
     [Fact]
     public void InnerJoinTests_ToSql()
     {
-        PredicateBase id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
         string actual = ((IJoins)new InnerJoin<JoinLeftTable, JoinRightTable>(id)).ToSql();
         string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
@@ -20,7 +20,7 @@ public class InnerJoinsTest
     [Fact]
     public void InnerJoinTests_ArgumentException_InvalidColumnTable()
     {
-        PredicateBase id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Assert.Throws<InvalidColumnException>(() => new InnerJoin<JoinLeftTable, ColumnTable>(id));
     }
 }

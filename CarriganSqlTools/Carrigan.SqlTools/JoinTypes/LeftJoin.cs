@@ -47,7 +47,7 @@ public class LeftJoin<T, J> : JoinBaseClass
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
 
-    public LeftJoin(PredicateBase predicate)
+    public LeftJoin(Predicates.Predicates predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
         TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;

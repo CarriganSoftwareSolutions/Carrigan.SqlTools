@@ -7,10 +7,10 @@ namespace Carrigan.SqlTools.Predicates;
 /// Predicates control the boolean logic for join and where clauses.
 /// This class is a base class to represent SQL's logical AND and OR operator for logical operations on one more predicate values.
 /// </summary>
-public abstract class LogicalOperator : PredicateBase
+public abstract class LogicalOperator : Predicates
 {
     private readonly string _operator;
-    private readonly IEnumerable<PredicateBase> _predicates;
+    private readonly IEnumerable<Predicates> _predicates;
 
     /// <summary>
     /// Base constructor for the logical boolean operator "AND" and "OR".
@@ -21,7 +21,7 @@ public abstract class LogicalOperator : PredicateBase
     /// <param name="op">One or more boolean predicates.</param>
     /// <param name="predicates">One or more boolean predicates.</param>
     /// <exception cref="ArgumentNullException">thrown if no predicates are provided</exception>
-    public LogicalOperator(string op, params IEnumerable<PredicateBase> predicates)
+    public LogicalOperator(string op, params IEnumerable<Predicates> predicates)
     {
         if (predicates.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(predicates), $"{nameof(predicates)} must contain at least one value.");

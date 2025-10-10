@@ -22,7 +22,7 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class Column  <T> : PredicateBase, IColumn
+public class Column  <T> : Predicates, IColumn
 {
     /// <summary>
     /// The name of the property representing the column

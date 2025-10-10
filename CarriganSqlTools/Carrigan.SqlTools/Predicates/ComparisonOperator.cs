@@ -6,16 +6,16 @@ namespace Carrigan.SqlTools.Predicates;
 /// Predicates control the boolean logic for join and where clauses.
 /// This is the base class that represents SQL's comparison operators.
 /// </summary>
-public abstract class ComparisonOperator : PredicateBase
+public abstract class ComparisonOperator : Predicates
 {
     /// <summary>
     /// Left value
     /// </summary>
-    private PredicateBase _left;
+    private Predicates _left;
     /// <summary>
     /// Right value
     /// </summary>
-    private PredicateBase _right;
+    private Predicates _right;
     /// <summary>
     /// string representing the comparison operator as the operator is represented in SQL.
     /// </summary>
@@ -27,7 +27,7 @@ public abstract class ComparisonOperator : PredicateBase
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
     /// <param name="op">SQL string representation of the operator</param>
-    protected void Initialize(PredicateBase left, PredicateBase right, string op)
+    protected void Initialize(Predicates left, Predicates right, string op)
     {
         _operator = op;
         _left = left;
@@ -49,7 +49,7 @@ public abstract class ComparisonOperator : PredicateBase
     /// <param name="right">right value</param>
     /// <param name="op">SQL string representation of the operator</param>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public ComparisonOperator(PredicateBase left, PredicateBase right, string op) => 
+    public ComparisonOperator(Predicates left, Predicates right, string op) => 
         Initialize(left, right, op);
 
     /// <summary>

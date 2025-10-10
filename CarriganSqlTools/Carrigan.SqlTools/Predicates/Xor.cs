@@ -11,7 +11,7 @@ public class Xor : ComparisonOperator
     /// </summary>
     /// <param name="left">Left predicate</param>
     /// <param name="right">Right predicate</param>
-    public Xor(PredicateBase left, PredicateBase right) : base(left, right, "^")
+    public Xor(Predicates left, Predicates right) : base(left, right, "^")
     {
     }
 }

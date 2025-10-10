@@ -59,7 +59,7 @@ public class And : LogicalOperator
     /// If two or more are provided then each predicate is chained together with the AND logical operator.
     /// </summary>
     /// <param name="predicates">One or more boolean predicates.</param>
-    public And(params IEnumerable<PredicateBase> predicates) : base("AND", predicates)
+    public And(params IEnumerable<Predicates> predicates) : base("AND", predicates)
     {
     }
 }

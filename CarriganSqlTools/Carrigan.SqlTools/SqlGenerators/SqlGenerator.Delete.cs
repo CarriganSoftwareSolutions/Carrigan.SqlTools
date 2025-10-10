@@ -112,7 +112,7 @@ public partial class SqlGenerator<T>
     /// Optional <see cref="IJoins"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
-    /// Optional <see cref="PredicateBase"/> representing the <c>WHERE</c> conditions
+    /// Optional <see cref="Predicates.Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
     /// </param>
     /// <returns>
@@ -176,7 +176,7 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete(IJoins? joins, PredicateBase? predicates)
+    public SqlQuery Delete(IJoins? joins, Predicates.Predicates? predicates)
     {
         if (predicates == null && joins.IsNullOrEmpty())
         {

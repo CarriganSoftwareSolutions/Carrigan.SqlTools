@@ -6,7 +6,8 @@ namespace Carrigan.SqlTools.Predicates;
 /// Predicates control the boolean logic for join and where clauses.
 /// This is the base class that represents SQL's predicates.
 /// </summary>
-public abstract class PredicateBase
+public abstract class Predicates
+
 {
     /// <summary>
     /// Recursively get all the parameters associated with the logic.

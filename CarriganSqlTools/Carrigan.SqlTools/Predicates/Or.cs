@@ -58,7 +58,7 @@ public class Or : LogicalOperator
     /// If two or more are provided then each predicate is chained together with the OR logical operator.
     /// </summary>
     /// <param name="predicates">One or more boolean predicates.</param>
-    public Or(params IEnumerable<PredicateBase> predicates) : base ("OR", predicates)
+    public Or(params IEnumerable<Predicates> predicates) : base ("OR", predicates)
     {
     }
 }

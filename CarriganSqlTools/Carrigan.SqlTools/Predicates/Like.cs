@@ -23,7 +23,7 @@ public class Like : ComparisonOperator
     /// </summary>
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
-    public Like(PredicateBase left, PredicateBase right) : base (left, right, "LIKE")
+    public Like(Predicates left, Predicates right) : base (left, right, "LIKE")
     {
     }
 }

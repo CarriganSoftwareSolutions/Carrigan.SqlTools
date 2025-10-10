@@ -17,15 +17,15 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NOT NULL)
 /// ]]></code>
 /// </example>
-public class IsNotNull : PredicateBase
+public class IsNotNull : Predicates
 {
-    private readonly PredicateBase _someValue;
+    private readonly Predicates _someValue;
 
     /// <summary>
     /// This is the constructor for the classes that represents SQL's IS NOT NULL operator
     /// </summary>
     /// <param name="someValue">should represent something that may or may not be a null value in SQL</param>
-    public IsNotNull(PredicateBase someValue) => 
+    public IsNotNull(Predicates someValue) => 
         _someValue = someValue;
 
     /// <summary>

@@ -17,7 +17,7 @@ namespace Carrigan.SqlTools.Predicates;
 /// SqlQuery query = customerGenerator.Select(null, equalName, null, null);
 /// ]]></code>
 /// </example>
-public class Parameter : PredicateBase
+public class Parameter : Predicates
 {
     /// <summary>
     /// Value of parameter

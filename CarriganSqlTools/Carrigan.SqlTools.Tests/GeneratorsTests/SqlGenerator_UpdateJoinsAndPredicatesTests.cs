@@ -26,8 +26,8 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
             Col2 = "World"
         };
 
-        PredicateBase joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        PredicateBase predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
+        Predicates.Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates.Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
         IJoins join = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new Joins([join]), predicateId);
 
@@ -64,9 +64,9 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
             Col2 = "World"
         };
 
-        PredicateBase joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        PredicateBase joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        PredicateBase predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
+        Predicates.Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates.Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
+        Predicates.Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         IJoins join1 = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId1);
         IJoins join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelSetColumns, new Joins(join1, join2), predicateId);

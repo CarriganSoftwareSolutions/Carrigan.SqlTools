@@ -21,9 +21,9 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class ColumnValue<T> : PredicateBase
+public class ColumnValue<T> : Predicates
 {
-    protected readonly PredicateBase value;
+    protected readonly Predicates value;
 
     /// <summary>
     /// A public constructor. 

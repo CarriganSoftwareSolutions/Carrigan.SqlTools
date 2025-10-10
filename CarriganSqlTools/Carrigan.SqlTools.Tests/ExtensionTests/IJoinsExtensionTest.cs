@@ -21,7 +21,7 @@ public class IJoinsExtensionTest
     [Fact]
     public void IsNullOrEmpty_Single()
     {
-        PredicateBase id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(id);
         _ = new Joins([join]);
     }

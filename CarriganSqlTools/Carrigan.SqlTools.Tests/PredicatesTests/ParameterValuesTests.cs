@@ -110,7 +110,7 @@ public class ParameterValuesTests
     [Fact]
     public void Parameter_Multiple_Same_Name()
     {
-        PredicateBase predicate = new Or
+        Predicates.Predicates predicate = new Or
             (
                 new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 0)),
                 new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 1)),
@@ -155,7 +155,7 @@ public class ParameterValuesTests
     [Fact]
     public void Parameter_Multiple_Same_Name_Complex()
     {
-        PredicateBase predicate = new Or
+        Predicates.Predicates predicate = new Or
             (
                 new And
                     (

@@ -5,32 +5,32 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 
 public class IsNotNullTests
 {
-    private readonly PredicateBase ColumnTastyPizza = new Column<ColumnTable>("Pizza");
+    private readonly Predicates.Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly PredicateBase ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
+    private readonly Predicates.Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly PredicateBase ColumnFutureCity = new Column<ColumnTable>("Express");
+    private readonly Predicates.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicateBase ParameterPi = new Parameter("Pi", 3.14f);
+    private readonly Predicates.Predicates ParameterPi = new Parameter("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private readonly PredicateBase ParameterElite = new Parameter("Elite", 1337);
+    private readonly Predicates.Predicates ParameterElite = new Parameter("Elite", 1337);
     private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicateBase ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
+    private readonly Predicates.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
     private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 
     [Fact]
     public void IsNotNull_1_ToSql()
     {
-        PredicateBase inner = ColumnTastyPizza;
+        Predicates.Predicates inner = ColumnTastyPizza;
         string innerSql = ColumnTastyPizzaExpectedSql;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
         string actualValue = predicate.ToSql();
@@ -40,9 +40,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_1_ParameterCount()
     {
-        PredicateBase inner = ColumnTastyPizza;
+        Predicates.Predicates inner = ColumnTastyPizza;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
         int actualValue = predicate.Parameters.Count();
@@ -53,10 +53,10 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ToSql()
     {
-        PredicateBase inner = ColumnDestructCode;
+        Predicates.Predicates inner = ColumnDestructCode;
         string innerSql = ColumnDestructCodeSql;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
         string actualValue = predicate.ToSql();
@@ -66,9 +66,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ParameterCount()
     {
-        PredicateBase inner = ColumnDestructCode;
+        Predicates.Predicates inner = ColumnDestructCode;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
         int actualValue = predicate.Parameters.Count();
@@ -79,10 +79,10 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ToSql()
     {
-        PredicateBase inner = ColumnFutureCity;
+        Predicates.Predicates inner = ColumnFutureCity;
         string innerSql = ColumnFutureCitySql;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
         string actualValue = predicate.ToSql();
@@ -93,9 +93,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ParameterCount()
     {
-        PredicateBase inner = ColumnFutureCity;
+        Predicates.Predicates inner = ColumnFutureCity;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
         int actualValue = predicate.Parameters.Count();
@@ -106,10 +106,10 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ToSql()
     {
-        PredicateBase inner = ParameterPi;
+        Predicates.Predicates inner = ParameterPi;
         string innerSql = ParameterPiSql;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
         string actualValue = predicate.ToSql();
@@ -120,9 +120,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ParameterCount()
     {
-        PredicateBase inner = ParameterPi;
+        Predicates.Predicates inner = ParameterPi;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
         int actualValue = predicate.Parameters.Count();
@@ -133,9 +133,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ParameterValues()
     {
-        PredicateBase inner = ParameterPi;
+        Predicates.Predicates inner = ParameterPi;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         float expectedValue = 3.14f;
         object? nullableActualValueFloat = predicate.Parameters.First().Value;
@@ -149,10 +149,10 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ToSql()
     {
-        PredicateBase inner = ParameterElite;
+        Predicates.Predicates inner = ParameterElite;
         string innerSql = ParameterEliteSql;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
         string actualValue = predicate.ToSql();
@@ -163,9 +163,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ParameterCount()
     {
-        PredicateBase inner = ParameterElite;
+        Predicates.Predicates inner = ParameterElite;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
         int actualValue = predicate.Parameters.Count();
@@ -176,9 +176,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ParameterValue()
     {
-        PredicateBase inner = ParameterElite;
+        Predicates.Predicates inner = ParameterElite;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValueInt = 1337;
         object? nullableActualValueInt = predicate.Parameters.Where(p => p.Name == "Elite").First().Value;
@@ -191,10 +191,10 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ToSql()
     {
-        PredicateBase inner = ParameterHelloWorld;
+        Predicates.Predicates inner = ParameterHelloWorld;
         string innerSql = ParameterHelloWorldSql;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
         string actualValue = predicate.ToSql();
@@ -205,9 +205,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ParameterCount()
     {
-        PredicateBase inner = ParameterHelloWorld;
+        Predicates.Predicates inner = ParameterHelloWorld;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
         int actualValue = predicate.Parameters.Count();
@@ -219,9 +219,9 @@ public class IsNotNullTests
     public void IsNotNull_6_ParameterValue()
     {
 
-        PredicateBase inner = ParameterHelloWorld;
+        Predicates.Predicates inner = ParameterHelloWorld;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         string expectedValueString = "Hello World!";
         string actualValueString = (string?)predicate.Parameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
@@ -232,7 +232,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ToSql()
     {
-        PredicateBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        Predicates.Predicates and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
         string andSql = $"(({ParameterEliteSql} IS NOT NULL) AND ({ParameterHelloWorldSql} IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
 
         string expectedValue = andSql;
@@ -244,7 +244,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ParameterCount()
     {
-        PredicateBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        Predicates.Predicates and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         int expectedValue = 2;
         int actualValue = and.Parameters.Count();
@@ -255,7 +255,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ParameterValue()
     {
-        PredicateBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        Predicates.Predicates and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         int expectedValueInt = 1337;
         object? nullableActualValueInt = and.Parameters.Where(p => p.Name == "Elite").First().Value;
@@ -272,9 +272,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_1_ColumnCount()
     {
-        PredicateBase inner = ColumnTastyPizza;
+        Predicates.Predicates inner = ColumnTastyPizza;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
         int actualValue = predicate.Columns.Count();
@@ -285,9 +285,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_1_ColumnName()
     {
-        PredicateBase inner = ColumnTastyPizza;
+        Predicates.Predicates inner = ColumnTastyPizza;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
 
         _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
@@ -296,9 +296,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ColumnCount()
     {
-        PredicateBase inner = ColumnDestructCode;
+        Predicates.Predicates inner = ColumnDestructCode;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
         int actualValue = predicate.Columns.Count();
@@ -309,9 +309,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ColumnName()
     {
-        PredicateBase inner = ColumnDestructCode;
+        Predicates.Predicates inner = ColumnDestructCode;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
     }
@@ -319,9 +319,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ColumnCount()
     {
-        PredicateBase inner = ColumnFutureCity;
+        Predicates.Predicates inner = ColumnFutureCity;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
         int actualValue = predicate.Columns.Count();
@@ -332,9 +332,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ColumnName()
     {
-        PredicateBase inner = ColumnFutureCity;
+        Predicates.Predicates inner = ColumnFutureCity;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
@@ -342,9 +342,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ColumnCount()
     {
-        PredicateBase inner = ParameterPi;
+        Predicates.Predicates inner = ParameterPi;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
         int actualValue = predicate.Columns.Count();
@@ -355,9 +355,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ColumnCount()
     {
-        PredicateBase inner = ParameterElite;
+        Predicates.Predicates inner = ParameterElite;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
         int actualValue = predicate.Columns.Count();
@@ -368,9 +368,9 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ColumnCount()
     {
-        PredicateBase inner = ParameterHelloWorld;
+        Predicates.Predicates inner = ParameterHelloWorld;
 
-        PredicateBase predicate = new IsNotNull(inner);
+        Predicates.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
         int actualValue = predicate.Columns.Count();
@@ -381,7 +381,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ColumnCount()
     {
-        PredicateBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        Predicates.Predicates and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         int expectedValue = 2;
         int actualValue = and.Parameters.Count();
@@ -392,7 +392,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_Nested_ColumnName()
     {
-        PredicateBase and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        Predicates.Predicates and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         _ = and.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
         _ = and.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();

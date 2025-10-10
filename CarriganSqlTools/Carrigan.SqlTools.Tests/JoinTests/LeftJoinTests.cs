@@ -10,7 +10,7 @@ public class LeftJoinsTest
     [Fact]
     public void LeftJoinTests_ToSql()
     {
-        PredicateBase id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinLeftTable, JoinRightTable> leftJoin = new(id);
 
         string actual = ((IJoins)leftJoin).ToSql();
@@ -22,7 +22,7 @@ public class LeftJoinsTest
     [Fact]
     public void InnerJoinTests_ArgumentException_InvalidColumnTable()
     {
-        PredicateBase id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Assert.Throws<InvalidColumnException>(() => new LeftJoin<JoinLeftTable, ColumnTable>(id));
     }
 }

@@ -23,7 +23,7 @@ public class Equal : ComparisonOperator
     /// </summary>
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
-    public Equal(PredicateBase left, PredicateBase right) : base (left, right, "=")
+    public Equal(Predicates left, Predicates right) : base (left, right, "=")
     {
     }
 }
