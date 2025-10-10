@@ -152,8 +152,8 @@ public partial class SqlGenerator<T>
                 (
                     KeyColumnInfo.Select(column => new Equal
                         (
-                            new Columns<T>(column.PropertyName), 
-                            new Parameters(column.ParameterTag, column.PropertyInfo.GetValue(entity)))
+                            new Column<T>(column.PropertyName), 
+                            new Parameter(column.ParameterTag, column.PropertyInfo.GetValue(entity)))
                         )
                 ))
         );
@@ -176,7 +176,7 @@ public partial class SqlGenerator<T>
     /// Optional <see cref="IJoins"/> describing tables to join for the update.
     /// </param>
     /// <param name="predicates">
-    /// Optional <see cref="PredicatesBase"/> describing the <c>WHERE</c> clause that
+    /// Optional <see cref="PredicateBase"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
     /// </param>
     /// <returns>
@@ -236,13 +236,13 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, SetColumns<T>? columns, IJoins? joins, PredicatesBase? predicates)
+    public SqlQuery Update(T entity, SetColumns<T>? columns, IJoins? joins, PredicateBase? predicates)
     {
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
 
         IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
         if (invalidTags.Any())

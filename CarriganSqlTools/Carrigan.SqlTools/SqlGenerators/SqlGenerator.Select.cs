@@ -173,12 +173,12 @@ public partial class SqlGenerator<T>
     /// <param name="offsetNext">
     /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
     /// </param>
-    public SqlQuery Select(ISelectTags? selects, IJoins? joins, PredicatesBase? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
+    public SqlQuery Select(ISelectTags? selects, IJoins? joins, PredicateBase? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Column?.Select(col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);

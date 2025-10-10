@@ -7,10 +7,10 @@ namespace Carrigan.SqlTools.Predicates;
 /// Predicates control the boolean logic for join and where clauses.
 /// This class is a base class to represent SQL's logical AND and OR operator for logical operations on one more predicate values.
 /// </summary>
-public abstract class LogicalOperators : PredicatesBase
+public abstract class LogicalOperator : PredicateBase
 {
     private readonly string _operator;
-    private readonly IEnumerable<PredicatesBase> _predicates;
+    private readonly IEnumerable<PredicateBase> _predicates;
 
     /// <summary>
     /// Base constructor for the logical boolean operator "AND" and "OR".
@@ -21,7 +21,7 @@ public abstract class LogicalOperators : PredicatesBase
     /// <param name="op">One or more boolean predicates.</param>
     /// <param name="predicates">One or more boolean predicates.</param>
     /// <exception cref="ArgumentNullException">thrown if no predicates are provided</exception>
-    public LogicalOperators(string op, params IEnumerable<PredicatesBase> predicates)
+    public LogicalOperator(string op, params IEnumerable<PredicateBase> predicates)
     {
         if (predicates.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(predicates), $"{nameof(predicates)} must contain at least one value.");
@@ -32,14 +32,14 @@ public abstract class LogicalOperators : PredicatesBase
     /// <summary>
     /// Recursively get all the parameters associated with the logic.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter =>
-        _predicates.SelectMany(predicate => predicate.Parameter);
+    internal override IEnumerable<Parameter> Parameters =>
+        _predicates.SelectMany(predicate => predicate.Parameters);
 
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal override IEnumerable<IColumns> Column =>
-        _predicates.SelectMany(predicate => predicate.Column);
+    internal override IEnumerable<IColumn> Columns =>
+        _predicates.SelectMany(predicate => predicate.Columns);
 
     /// <summary>
     /// Produces the SQL represented by this class.

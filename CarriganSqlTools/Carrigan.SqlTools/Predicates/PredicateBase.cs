@@ -6,17 +6,17 @@ namespace Carrigan.SqlTools.Predicates;
 /// Predicates control the boolean logic for join and where clauses.
 /// This is the base class that represents SQL's predicates.
 /// </summary>
-public abstract class PredicatesBase
+public abstract class PredicateBase
 {
     /// <summary>
     /// Recursively get all the parameters associated with the logic.
     /// </summary>
-    internal abstract IEnumerable<Parameters> Parameter { get; }
+    internal abstract IEnumerable<Parameter> Parameters { get; }
 
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal abstract IEnumerable<IColumns> Column { get; }
+    internal abstract IEnumerable<IColumn> Columns { get; }
 
     /// <summary>
     /// Produces the SQL represented by this class.
@@ -25,7 +25,7 @@ public abstract class PredicatesBase
     public string ToSql()
     {
         //get an IEnumerable of all the duplicate parameter names
-        IEnumerable<ParameterTag> duplicates = Parameter
+        IEnumerable<ParameterTag> duplicates = Parameters
             .Select(parameter => parameter.Name)
             .GroupBy(name => name)
             .Where(nameGroup => nameGroup.Count() > 1)
@@ -65,7 +65,7 @@ public abstract class PredicatesBase
     public Dictionary<ParameterTag,object> GetParameters()
     {
         //get an IEnumerable of all the duplicate parameter names
-        IEnumerable<ParameterTag> duplicates = Parameter
+        IEnumerable<ParameterTag> duplicates = Parameters
             .Select(parameter => parameter.Name)
             .GroupBy(parameter => parameter)
             .Where(nameGroup => nameGroup.Count() > 1)

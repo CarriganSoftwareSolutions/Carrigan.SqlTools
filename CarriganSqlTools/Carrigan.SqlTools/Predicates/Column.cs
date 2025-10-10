@@ -22,7 +22,7 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class Columns  <T> : PredicatesBase, IColumns
+public class Column  <T> : PredicateBase, IColumn
 {
     /// <summary>
     /// The name of the property representing the column
@@ -46,14 +46,14 @@ public class Columns  <T> : PredicatesBase, IColumns
     /// <param name="propertyName">The name of property representing the column.</param>
     /// <exception cref="ArgumentException">Gets thrown if the propertyName is not is not a valid property for the class <see cref="T"/> representing the table.</exception>
     [ExternalOnlyAttribute]
-    public Columns(string propertyName) : this(new PropertyName(propertyName)) { }
+    public Column(string propertyName) : this(new PropertyName(propertyName)) { }
 
     /// <summary>
     /// A constructor for a column in the predicate logic.
     /// </summary>
     /// <param name="propertyName">The name of property representing the column.</param>
     /// <exception cref="ArgumentException">Gets thrown if the propertyName is not is not a valid property for the class <see cref="T"/> representing the table.</exception>
-    public Columns(PropertyName propertyName)
+    public Column(PropertyName propertyName)
     {
         TableTag = SqlToolsReflectorCache<T>.Table;
         ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);
@@ -64,14 +64,14 @@ public class Columns  <T> : PredicatesBase, IColumns
     /// Leaf node in recursive logic to get all the parameters associated with the logic.
     /// Since this class doesn't have parameters, just return an empty.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter =>
+    internal override IEnumerable<Parameter> Parameters =>
         [];
 
     /// <summary>
     /// Leaf node in recursive logic to get all the Columns associated with the logic.
     /// Since this there will be only this Column, return it as an enumerable.
     /// </summary>
-    internal override IEnumerable<IColumns> Column =>
+    internal override IEnumerable<IColumn> Columns =>
         [this];
 
     /// <summary>

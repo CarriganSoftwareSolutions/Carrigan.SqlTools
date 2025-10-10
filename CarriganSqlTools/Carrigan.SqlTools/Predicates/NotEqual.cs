@@ -16,14 +16,14 @@
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] <> @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class NotEqual : ComparisonOperators
+public class NotEqual : ComparisonOperator
 {
     /// <summary>
     /// This is the constructor for the classes that represents SQL's Not Equal, <>, comparison operators
     /// </summary>
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
-    public NotEqual(PredicatesBase left, PredicatesBase right) : base (left, right, "<>")
+    public NotEqual(PredicateBase left, PredicateBase right) : base (left, right, "<>")
     {
     }
 }

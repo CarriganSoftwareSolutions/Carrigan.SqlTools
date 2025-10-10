@@ -17,28 +17,28 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NULL)
 /// ]]></code>
 /// </example>
-public class IsNull : PredicatesBase
+public class IsNull : PredicateBase
 {
-    private readonly PredicatesBase _someValue;
+    private readonly PredicateBase _someValue;
 
     /// <summary>
     /// This is the constructor for the classes that represents SQL's IS NOT NULL operator
     /// </summary>
     /// <param name="someValue">should represent something that may or may not be a null value in SQL</param>
-    public IsNull(PredicatesBase someValue) => 
+    public IsNull(PredicateBase someValue) => 
         _someValue = someValue;
 
     /// <summary>
     ///  Recursively get all the parameters associated with the logic.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter =>
-       _someValue.Parameter;
+    internal override IEnumerable<Parameter> Parameters =>
+       _someValue.Parameters;
 
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal override IEnumerable<IColumns> Column =>
-       _someValue.Column;
+    internal override IEnumerable<IColumn> Columns =>
+       _someValue.Columns;
 
 
     //TODO: Proof read documentation

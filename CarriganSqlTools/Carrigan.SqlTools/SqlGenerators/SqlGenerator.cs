@@ -154,7 +154,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// useful for selecting a record by its primary key.
     /// </returns>
     private static And GetByKeyPredicates(T entity) =>
-        new (KeyColumnInfo.Select(key => new Equal(new Columns<T>(key.PropertyName), new Parameters(key.ParameterTag, key.PropertyInfo.GetValue(entity)))));
+        new (KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.ParameterTag, key.PropertyInfo.GetValue(entity)))));
 
     /// <summary>
     /// Creates a SQL parameter as a key–value pair for the specified column and entity instance.

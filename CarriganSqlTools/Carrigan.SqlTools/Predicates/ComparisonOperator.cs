@@ -6,16 +6,16 @@ namespace Carrigan.SqlTools.Predicates;
 /// Predicates control the boolean logic for join and where clauses.
 /// This is the base class that represents SQL's comparison operators.
 /// </summary>
-public abstract class ComparisonOperators : PredicatesBase
+public abstract class ComparisonOperator : PredicateBase
 {
     /// <summary>
     /// Left value
     /// </summary>
-    private PredicatesBase _left;
+    private PredicateBase _left;
     /// <summary>
     /// Right value
     /// </summary>
-    private PredicatesBase _right;
+    private PredicateBase _right;
     /// <summary>
     /// string representing the comparison operator as the operator is represented in SQL.
     /// </summary>
@@ -27,7 +27,7 @@ public abstract class ComparisonOperators : PredicatesBase
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
     /// <param name="op">SQL string representation of the operator</param>
-    protected void Initialize(PredicatesBase left, PredicatesBase right, string op)
+    protected void Initialize(PredicateBase left, PredicateBase right, string op)
     {
         _operator = op;
         _left = left;
@@ -38,7 +38,7 @@ public abstract class ComparisonOperators : PredicatesBase
     /// <summary>
     /// This is needed for an implied call from a derived class. This is intentionally protected.
     /// </summary>
-    protected ComparisonOperators()
+    protected ComparisonOperator()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     { }
 
@@ -49,20 +49,20 @@ public abstract class ComparisonOperators : PredicatesBase
     /// <param name="right">right value</param>
     /// <param name="op">SQL string representation of the operator</param>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-    public ComparisonOperators(PredicatesBase left, PredicatesBase right, string op) => 
+    public ComparisonOperator(PredicateBase left, PredicateBase right, string op) => 
         Initialize(left, right, op);
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter =>
-        _left.Parameter.Concat(_right.Parameter);
+    internal override IEnumerable<Parameter> Parameters =>
+        _left.Parameters.Concat(_right.Parameters);
 
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal override IEnumerable<IColumns> Column =>
-        _left.Column.Concat(_right.Column);
+    internal override IEnumerable<IColumn> Columns =>
+        _left.Columns.Concat(_right.Columns);
 
     /// <summary>
     /// Produces the SQL represented by this class.

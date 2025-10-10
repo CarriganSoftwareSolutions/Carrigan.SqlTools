@@ -5,32 +5,32 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 
 public class IsNullTests
 {
-    private readonly PredicatesBase ColumnTastyPizza = new Columns<ColumnTable>("Pizza");
+    private readonly PredicateBase ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly PredicatesBase ColumnDestructCode = new Columns<ColumnTable>("D000destruct0");
+    private readonly PredicateBase ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly PredicatesBase ColumnFutureCity = new Columns<ColumnTable>("Express");
+    private readonly PredicateBase ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicatesBase ParameterPi = new Parameters("Pi", 3.14f);
+    private readonly PredicateBase ParameterPi = new Parameter("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private readonly PredicatesBase ParameterElite = new Parameters("Elite", 1337);
+    private readonly PredicateBase ParameterElite = new Parameter("Elite", 1337);
     private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicatesBase ParameterHelloWorld = new Parameters("HelloWorld", "Hello World!");
+    private readonly PredicateBase ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
     private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 
     [Fact]
     public void IsNull_1_ToSql()
     {
-        PredicatesBase inner = ColumnTastyPizza;
+        PredicateBase inner = ColumnTastyPizza;
         string innerSql = ColumnTastyPizzaExpectedSql;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
         string actualValue = predicate.ToSql();
@@ -40,12 +40,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_1_ParameterCount()
     {
-        PredicatesBase inner = ColumnTastyPizza;
+        PredicateBase inner = ColumnTastyPizza;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -53,10 +53,10 @@ public class IsNullTests
     [Fact]
     public void IsNull_2_ToSql()
     {
-        PredicatesBase inner = ColumnDestructCode;
+        PredicateBase inner = ColumnDestructCode;
         string innerSql = ColumnDestructCodeSql;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
         string actualValue = predicate.ToSql();
@@ -66,12 +66,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_2_ParameterCount()
     {
-        PredicatesBase inner = ColumnDestructCode;
+        PredicateBase inner = ColumnDestructCode;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -79,10 +79,10 @@ public class IsNullTests
     [Fact]
     public void IsNull_3_ToSql()
     {
-        PredicatesBase inner = ColumnFutureCity;
+        PredicateBase inner = ColumnFutureCity;
         string innerSql = ColumnFutureCitySql;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
         string actualValue = predicate.ToSql();
@@ -93,12 +93,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_3_ParameterCount()
     {
-        PredicatesBase inner = ColumnFutureCity;
+        PredicateBase inner = ColumnFutureCity;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -106,10 +106,10 @@ public class IsNullTests
     [Fact]
     public void IsNull_4_ToSql()
     {
-        PredicatesBase inner = ParameterPi;
+        PredicateBase inner = ParameterPi;
         string innerSql = ParameterPiSql;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
         string actualValue = predicate.ToSql();
@@ -120,12 +120,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_4_ParameterCount()
     {
-        PredicatesBase inner = ParameterPi;
+        PredicateBase inner = ParameterPi;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -133,12 +133,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_4_ParameterValues()
     {
-        PredicatesBase inner = ParameterPi;
+        PredicateBase inner = ParameterPi;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         float expectedValue = 3.14f;
-        object? nullableActualValueFloat = predicate.Parameter.First().Value;
+        object? nullableActualValueFloat = predicate.Parameters.First().Value;
         Assert.NotNull(nullableActualValueFloat);
         float actualValue = (float)nullableActualValueFloat;
 
@@ -149,10 +149,10 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ToSql()
     {
-        PredicatesBase inner = ParameterElite;
+        PredicateBase inner = ParameterElite;
         string innerSql = ParameterEliteSql;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
         string actualValue = predicate.ToSql();
@@ -163,12 +163,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ParameterCount()
     {
-        PredicatesBase inner = ParameterElite;
+        PredicateBase inner = ParameterElite;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -176,12 +176,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ParameterValue()
     {
-        PredicatesBase inner = ParameterElite;
+        PredicateBase inner = ParameterElite;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.Parameter.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.Parameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         Assert.Equal(expectedValueInt, actualValueInt);
@@ -195,10 +195,10 @@ public class IsNullTests
     [Fact]
     public void IsNull_6_ToSql()
     {
-        PredicatesBase inner = ParameterHelloWorld;
+        PredicateBase inner = ParameterHelloWorld;
         string innerSql = ParameterHelloWorldSql;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
         string actualValue = predicate.ToSql();
@@ -209,12 +209,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_6_ParameterCount()
     {
-        PredicatesBase inner = ParameterHelloWorld;
+        PredicateBase inner = ParameterHelloWorld;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -223,12 +223,12 @@ public class IsNullTests
     public void IsNull_6_ParameterValue()
     {
 
-        PredicatesBase inner = ParameterHelloWorld;
+        PredicateBase inner = ParameterHelloWorld;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.Parameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueString, actualValueString);
     }
@@ -236,7 +236,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_Nested_ToSql()
     {
-        PredicatesBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
+        PredicateBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
         string andSql = $"(({ParameterEliteSql} IS NULL) AND ({ParameterHelloWorldSql} IS NULL) AND ({ColumnFutureCitySql} IS NULL) AND ({ColumnDestructCodeSql} IS NULL))";
 
         string expectedValue = andSql;
@@ -248,10 +248,10 @@ public class IsNullTests
     [Fact]
     public void IsNull_Nested_ParameterCount()
     {
-        PredicatesBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
+        PredicateBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
         int expectedValue = 2;
-        int actualValue = and.Parameter.Count();
+        int actualValue = and.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -259,14 +259,14 @@ public class IsNullTests
     [Fact]
     public void IsNull_Nested_ParameterValue()
     {
-        PredicatesBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
+        PredicateBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = and.Parameter.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = and.Parameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)and.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)and.Parameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -275,12 +275,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_1_ColumnCount()
     {
-        PredicatesBase inner = ColumnTastyPizza;
+        PredicateBase inner = ColumnTastyPizza;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -288,22 +288,22 @@ public class IsNullTests
     [Fact]
     public void IsNull_1_ColumnName()
     {
-        PredicatesBase inner = ColumnTastyPizza;
+        PredicateBase inner = ColumnTastyPizza;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
-        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
     }
 
     [Fact]
     public void IsNull_2_ColumnCount()
     {
-        PredicatesBase inner = ColumnDestructCode;
+        PredicateBase inner = ColumnDestructCode;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -311,22 +311,22 @@ public class IsNullTests
     [Fact]
     public void IsNull_2_ColumnName()
     {
-        PredicatesBase inner = ColumnDestructCode;
+        PredicateBase inner = ColumnDestructCode;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
-        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
     }
 
     [Fact]
     public void IsNull_3_ColumnCount()
     {
-        PredicatesBase inner = ColumnFutureCity;
+        PredicateBase inner = ColumnFutureCity;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -334,22 +334,22 @@ public class IsNullTests
     [Fact]
     public void IsNull_3_ColumnName()
     {
-        PredicatesBase inner = ColumnFutureCity;
+        PredicateBase inner = ColumnFutureCity;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
-        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 
     [Fact]
     public void IsNull_4_ColumnCount()
     {
-        PredicatesBase inner = ParameterPi;
+        PredicateBase inner = ParameterPi;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -357,12 +357,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ColumnCount()
     {
-        PredicatesBase inner = ParameterElite;
+        PredicateBase inner = ParameterElite;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -370,12 +370,12 @@ public class IsNullTests
     [Fact]
     public void IsNull_6_ColumnCount()
     {
-        PredicatesBase inner = ParameterHelloWorld;
+        PredicateBase inner = ParameterHelloWorld;
 
-        PredicatesBase predicate = new IsNull(inner);
+        PredicateBase predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -383,10 +383,10 @@ public class IsNullTests
     [Fact]
     public void IsNull_Nested_ColumnCount()
     {
-        PredicatesBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
+        PredicateBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
         int expectedValue = 2;
-        int actualValue = and.Parameter.Count();
+        int actualValue = and.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -394,9 +394,9 @@ public class IsNullTests
     [Fact]
     public void IsNull_Nested_ColumnName()
     {
-        PredicatesBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
+        PredicateBase and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
-        _ = and.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
-        _ = and.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = and.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = and.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 }

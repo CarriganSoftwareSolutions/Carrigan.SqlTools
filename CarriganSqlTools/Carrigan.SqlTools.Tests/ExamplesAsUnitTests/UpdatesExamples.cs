@@ -88,12 +88,12 @@ public class UpdatesExamples
 
         SetColumns<Order> setColumns = new(nameof(Order.Total));
 
-        Columns<Customer> customerId = new(nameof(Customer.Id));
-        Columns<Order> orderCustomerId = new(nameof(Order.CustomerId));
+        Column<Customer> customerId = new(nameof(Customer.Id));
+        Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
         Equal customerIdsEquals = new(orderCustomerId, customerId);
         InnerJoin<Order, Customer> joinOnCustomerId = new(customerIdsEquals);
 
-        ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+        ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
         SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
 
@@ -114,7 +114,7 @@ public class UpdatesExamples
 
         Customer entity = new() { Email = "spam@example.com" };
         SetColumns<Customer> setColumns = new(nameof(Customer.Email));
-        ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
+        ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
 
         SqlQuery query = customerGenerator.Update(entity, setColumns, null, customerEmailEquals);
 

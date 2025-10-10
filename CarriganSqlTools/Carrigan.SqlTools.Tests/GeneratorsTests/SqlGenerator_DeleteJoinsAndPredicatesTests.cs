@@ -24,7 +24,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     [Fact]
     public void SqlDelete_InnerInnerJoin_NoPredicates_WithTableAttribute()
     {
-        PredicatesBase id = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
+        PredicateBase id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         IJoins join = new InnerJoin<JoinLeftTable, JoinRightTable>(id);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(join, null);
 
@@ -35,7 +35,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     [Fact]
     public void SqlDelete_InnerLeftJoin_NoPredicates_WithTableAttribute()
     {
-        PredicatesBase id = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
+        PredicateBase id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(id);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins(join), null);
 
@@ -47,7 +47,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     [Fact]
     public void SqlDelete_NoJoins_WithPredicates_WithTableAttribute()
     {
-        PredicatesBase id = new Equal(new Columns<ColumnTable>("Col1"), new Parameters("Col1", 3));
+        PredicateBase id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3));
         SqlQuery query = _sqlGeneratorForColumnTable.Delete(null,id);
 
         string expectedSql = "DELETE FROM [ColumnTable] WHERE ([ColumnTable].[Col1] = @Parameter_Col1)";
@@ -72,8 +72,8 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     [Fact]
     public void SqlDelete_WithInnerJoin_WithPredicates_WithTableAttribute()
     {
-        PredicatesBase joinId = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
-        PredicatesBase predicateId = new Equal(new Columns<JoinRightTable>("Id"), new Parameters("Id", 3));
+        PredicateBase joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        PredicateBase predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
         IJoins join = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins ( [join] ), predicateId);
 
@@ -99,8 +99,8 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     [Fact]
     public void SqlDelete_WithLeftJoin_WithPredicates_WithTableAttribute()
     {
-        PredicatesBase joinId = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
-        PredicatesBase predicateId = new Equal(new Columns<JoinRightTable>("Id"), new Parameters("Id", 3));
+        PredicateBase joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        PredicateBase predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
         IJoins join = new LeftJoin<JoinLeftTable, JoinRightTable>(joinId);
         IEnumerable<IJoins> joins = new List<IJoins>([join]);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins(joins), predicateId);
@@ -127,9 +127,9 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     [Fact]
     public void SqlDelete_WithLeftAndInnerJoin_WithPredicates_WithTableAttribute()
     {
-        PredicatesBase joinId1 = new Equal(new Columns<JoinLeftTable>("RightId"), new Columns<JoinRightTable>("Id"));
-        PredicatesBase joinId2 = new Equal(new Columns<JoinRightTable>("LastId"), new Columns<JoinLastTable>("Id"));
-        PredicatesBase predicateId = new Equal(new Columns<JoinLastTable>("Id"), new Parameters("Id", 3));
+        PredicateBase joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        PredicateBase joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
+        PredicateBase predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         IJoins join1 = new InnerJoin<JoinLeftTable, JoinRightTable>(joinId1);
         IJoins join2 = new LeftJoin<JoinRightTable, JoinLastTable>(joinId2);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins( join1, join2 ), predicateId);

@@ -35,7 +35,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 public class InnerJoin<T, J> : JoinBaseClass
 {
     private readonly string _sql;
-    private readonly IEnumerable<Parameters> _parameters;
+    private readonly IEnumerable<Parameter> _parameters;
     /// <summary>
     /// Initializes a new instance of the <see cref="InnerJoin{T,J}"/> class.
     /// </summary>
@@ -46,13 +46,13 @@ public class InnerJoin<T, J> : JoinBaseClass
     /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
-    public InnerJoin(PredicatesBase predicate)
+    public InnerJoin(PredicateBase predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
         TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;
         IEnumerable<ColumnInfo> invalidTags = 
             predicate
-                .Column
+                .Columns
                 .Where(column => column.TableTag != leftTableTag && column.TableTag != rightTableTag)
                 .Select(column => column.ColumnInfo);
 
@@ -61,7 +61,7 @@ public class InnerJoin<T, J> : JoinBaseClass
 
         _sql = $"INNER JOIN {rightTableTag} ON {predicate.ToSql()}";
         _tableTags = [leftTableTag, rightTableTag];
-        _parameters = predicate.Parameter;
+        _parameters = predicate.Parameters;
     }
 
     /// <summary>

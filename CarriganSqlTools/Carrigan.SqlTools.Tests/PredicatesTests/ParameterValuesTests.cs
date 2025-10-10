@@ -40,11 +40,11 @@ public class ParameterValuesTests
     [InlineData("")]
     [InlineData("hello world")]
     public void ParameterValues_Theory_InvalidParameterChars(string param) => 
-        Assert.Throws<InvalidParameterIdentifierException>(() => new Parameters(param, 1));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new Parameter(param, 1));
 
     [Fact]
     public void ParameterValues_Fact_NullParameter() => 
-        Assert.Throws<ArgumentNullException>(() => new Parameters(null!, 1));
+        Assert.Throws<ArgumentNullException>(() => new Parameter(null!, 1));
 
 
     [Theory]
@@ -55,7 +55,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1, "@Parameter__1")]
     public void ParameterValues_Theory_SqlValues(string parameter, object value, object expected)
     {
-        Parameters parameterValue = new(parameter, value);
+        Parameter parameterValue = new(parameter, value);
         string actual = parameterValue.ToSql();
 
         Assert.Equal(expected, actual);
@@ -69,9 +69,9 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_ParameterCount(string parameter, object value)
     {
-        Parameters parameterValue = new(new ParameterTag(null, parameter, null), value);
+        Parameter parameterValue = new(new ParameterTag(null, parameter, null), value);
         int expected = 1;
-        int actual = parameterValue.Parameter.Count();
+        int actual = parameterValue.Parameters.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -84,7 +84,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_Parameter_Value(string parameter, object value)
     {
-        Parameters parameterValue = new(parameter, value);
+        Parameter parameterValue = new(parameter, value);
         object? expected = value;
         object? actual = parameterValue.Value;
 
@@ -99,7 +99,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_Parameter_Name(string parameter, object value)
     {
-        Parameters parameterValue = new(new ParameterTag(null, parameter, null), value);
+        Parameter parameterValue = new(new ParameterTag(null, parameter, null), value);
         string expected = $"{parameter}";
         string actual = parameterValue.Name;
 
@@ -110,21 +110,21 @@ public class ParameterValuesTests
     [Fact]
     public void Parameter_Multiple_Same_Name()
     {
-        PredicatesBase predicate = new Or
+        PredicateBase predicate = new Or
             (
-                new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("Test", 0)),
-                new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("Test", 1)),
-                new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("Test", 2)),
-                new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("Test", 3)),
-                new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("NotTest", 4)),
-                new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("Test", 10))
+                new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 0)),
+                new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 1)),
+                new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 2)),
+                new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 3)),
+                new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("NotTest", 4)),
+                new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 10))
             );
 
         string expected = "(([TestSqlTypes].[IntValue] = @Parameter_0_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_1_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_2_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_3_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_NotTest) OR ([TestSqlTypes].[IntValue] = @Parameter_5_R_Test))";
         string actual = predicate.ToSql();
         Assert.Equal(expected, actual);
 
-        int actualInt = predicate.Parameter.Where(parameter => parameter.Name == "Test").Count();
+        int actualInt = predicate.Parameters.Where(parameter => parameter.Name == "Test").Count();
         int expectedInt = 5;
         Assert.Equal(expectedInt, actualInt);
 
@@ -155,17 +155,17 @@ public class ParameterValuesTests
     [Fact]
     public void Parameter_Multiple_Same_Name_Complex()
     {
-        PredicatesBase predicate = new Or
+        PredicateBase predicate = new Or
             (
                 new And
                     (
-                        new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("Test", 0)),
-                        new Equal(new Columns<SqlTypeEntity>("CharValue"), new Parameters("Test", 'A'))
+                        new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 0)),
+                        new Equal(new Column<SqlTypeEntity>("CharValue"), new Parameter("Test", 'A'))
                     ),
                 new And
                     (
-                        new Equal(new Columns<SqlTypeEntity>("IntValue"), new Parameters("Test", 1)),
-                        new Equal(new Parameters("Test", 'B'), new Columns<SqlTypeEntity>("CharValue"))
+                        new Equal(new Column<SqlTypeEntity>("IntValue"), new Parameter("Test", 1)),
+                        new Equal(new Parameter("Test", 'B'), new Column<SqlTypeEntity>("CharValue"))
                     )
             );
 
@@ -173,7 +173,7 @@ public class ParameterValuesTests
         string actual = predicate.ToSql();
         Assert.Equal(expected, actual);
 
-        int actualInt = predicate.Parameter.Where(parameter => parameter.Name == "Test").Count();
+        int actualInt = predicate.Parameters.Where(parameter => parameter.Name == "Test").Count();
         int expectedInt = 4;
         Assert.Equal(expectedInt, actualInt);
 

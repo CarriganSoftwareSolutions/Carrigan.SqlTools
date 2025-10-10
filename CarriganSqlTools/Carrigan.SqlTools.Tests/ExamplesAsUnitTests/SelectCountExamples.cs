@@ -22,8 +22,8 @@ public class SelectCountExamples
     public void SelectCountWithWhere()
     {
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Order> totalCol = new(nameof(Order.Total));
-        Parameters minTotal = new("Total", 500m);
+        Column<Order> totalCol = new(nameof(Order.Total));
+        Parameter minTotal = new("Total", 500m);
         GreaterThan greaterThan = new(totalCol, minTotal);
 
         SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
@@ -38,8 +38,8 @@ public class SelectCountExamples
     public void SelectCountWithWhereAndJoin()
     {
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Order> totalCol = new(nameof(Order.Total));
-        Parameters minTotal = new("Total", 500m);
+        Column<Order> totalCol = new(nameof(Order.Total));
+        Parameter minTotal = new("Total", 500m);
         GreaterThan greaterThan = new(totalCol, minTotal);
 
         ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));

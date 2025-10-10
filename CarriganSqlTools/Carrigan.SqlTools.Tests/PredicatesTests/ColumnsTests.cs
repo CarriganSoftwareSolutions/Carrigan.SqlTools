@@ -10,15 +10,15 @@ public  class ColumnsTests
 {
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_Null() =>
-        Assert.Throws<ArgumentNullException>(() => new Columns<ColumnTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => new Column<ColumnTable>(null!));
 
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_EmptyString() =>
-        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Columns<ColumnTable>(string.Empty));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Column<ColumnTable>(string.Empty));
 
     [Fact]
     public void ColumnValues_One_Constructor_Column_DoesNot_Exist() =>
-        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Columns<ColumnTable>("C#"));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Column<ColumnTable>("C#"));
 
     [Theory]
     [InlineData("Col1")]
@@ -27,9 +27,9 @@ public  class ColumnsTests
     [InlineData("ColB")]
     public void ColumnValues_One_Constructor_Value_ParameterCount(string propertyName)
     {
-        Columns<ColumnTable> cv = new(propertyName);
+        Column<ColumnTable> cv = new(propertyName);
         int expectedValue = 0;
-        int actual = cv.Parameter.Count();
+        int actual = cv.Parameters.Count();
 
         Assert.Equal(expectedValue, actual);
     }
@@ -41,9 +41,9 @@ public  class ColumnsTests
     [InlineData("ColB")]
     public void ColumnValues_One_Constructor_Value_ColumnCount(string propertyName)
     {
-        Columns<ColumnTable> cv = new(propertyName);
+        Column<ColumnTable> cv = new(propertyName);
         int expectedValue = 1;
-        int actual = cv.Column.Count();
+        int actual = cv.Columns.Count();
 
         Assert.Equal(expectedValue, actual);
     }
@@ -55,17 +55,17 @@ public  class ColumnsTests
     [Theory]
     public void ColumnValues_One_Constructor_Value_ColumnName(string propertyName, string expectedColumnName)
     {
-        Columns<ColumnTable> cv = new(propertyName);
+        Column<ColumnTable> cv = new(propertyName);
 
 
-        _ = cv.Column.Where(col => col.ColumnInfo == $"[ColumnTable].[{expectedColumnName}]").Single();
+        _ = cv.Columns.Where(col => col.ColumnInfo == $"[ColumnTable].[{expectedColumnName}]").Single();
     }
 
     [Fact]
     public void ColumnValues_Get()
     {
         string[] propertyNames = ["Col1", "Col2", "ColA", "ColB"];
-        IEnumerable<Columns<ColumnTable>> columnValues = propertyNames.Select(propertyName => new Columns<ColumnTable>(propertyName));
+        IEnumerable<Column<ColumnTable>> columnValues = propertyNames.Select(propertyName => new Column<ColumnTable>(propertyName));
 
         foreach (string columnName in propertyNames)
         {
@@ -82,7 +82,7 @@ public  class ColumnsTests
     [InlineData("Express", "Express")]
     public void Columns_Tests(string propertyName, string expectedColumnName)
     {
-        Columns<ColumnTable> column = new(propertyName);
+        Column<ColumnTable> column = new(propertyName);
 
         Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnInfo);
     }

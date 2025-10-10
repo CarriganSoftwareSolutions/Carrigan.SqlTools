@@ -18,7 +18,7 @@ public class OrTests
     {
         And and = new(
         [
-                new Parameters("P1", 1),
+                new Parameter("P1", 1),
         ]);
 
         string expected = $"@Parameter_P1";
@@ -32,15 +32,15 @@ public class OrTests
     {
         Or or = new(
         [
-            new Parameters("P1", 1),
-            new Parameters("P2", 2),
-            new Columns<ColumnTable>("Col1"),
-            new Columns<ColumnTable>("Col2"),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
+            new Column<ColumnTable>("Col1"),
+            new Column<ColumnTable>("Col2"),
             new And (
             [
-                new Columns<ColumnTable>("ColA"),
-                new Columns<ColumnTable>("ColB"),
-                new Parameters("PA", 2)
+                new Column<ColumnTable>("ColA"),
+                new Column<ColumnTable>("ColB"),
+                new Parameter("PA", 2)
             ])
         ]);
 
@@ -56,19 +56,19 @@ public class OrTests
     {
         Or or = new(
         [
-            new Parameters("P1", 1),
-            new Parameters("P2", 2),
-            new Columns<ColumnTable>("Col1"),
-            new Columns<ColumnTable>("Col2"),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
+            new Column<ColumnTable>("Col1"),
+            new Column<ColumnTable>("Col2"),
             new And (
             [
-                new Columns<ColumnTable>("ColA"),
-                new Columns<ColumnTable>("ColB"),
-                new Parameters("PA", 2)
+                new Column<ColumnTable>("ColA"),
+                new Column<ColumnTable>("ColB"),
+                new Parameter("PA", 2)
             ])
         ]);
 
-        int actual = or.Parameter.Count();
+        int actual = or.Parameters.Count();
         int expected = 3;
 
         Assert.Equal(expected, actual);
@@ -79,20 +79,20 @@ public class OrTests
     {
         Or or = new(
         [
-            new Parameters("P1", 1),
-            new Parameters("P2", 2),
-            new Columns<ColumnTable>("Col1"),
-            new Columns<ColumnTable>("Col2"),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
+            new Column<ColumnTable>("Col1"),
+            new Column<ColumnTable>("Col2"),
             new And (
             [
-                new Columns<ColumnTable>("ColA"),
-                new Columns<ColumnTable>("ColB"),
-                new Parameters("PA", 3)
+                new Column<ColumnTable>("ColA"),
+                new Column<ColumnTable>("ColB"),
+                new Parameter("PA", 3)
             ])
         ]);
 
 
-        Parameters p = or.Parameter.Where(p => p.Name == "P1").Single(); 
+        Parameter p = or.Parameters.Where(p => p.Name == "P1").Single(); 
         object? nullableActual = p.Value;
         Assert.NotNull(nullableActual);
         int actual = (int)nullableActual;
@@ -100,7 +100,7 @@ public class OrTests
 
         Assert.Equal(expected, actual);
 
-        p = or.Parameter.Where(p => p.Name == "P2").Single();
+        p = or.Parameters.Where(p => p.Name == "P2").Single();
         nullableActual = p.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
@@ -108,7 +108,7 @@ public class OrTests
 
         Assert.Equal(expected, actual);
 
-        p = or.Parameter.Where(p => p.Name == "PA").Single();
+        p = or.Parameters.Where(p => p.Name == "PA").Single();
         nullableActual = p.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
@@ -122,19 +122,19 @@ public class OrTests
     {
         Or or = new(
         [
-                new Parameters("P1", 1),
-                new Parameters("P2", 2),
-                new Columns<ColumnTable>("Col1"),
-                new Columns<ColumnTable>("Col2"),
+                new Parameter("P1", 1),
+                new Parameter("P2", 2),
+                new Column<ColumnTable>("Col1"),
+                new Column<ColumnTable>("Col2"),
                 new Or (
                 [
-                    new Columns<ColumnTable>("ColA"),
-                    new Columns<ColumnTable>("ColB"),
-                    new Parameters("PA", 2)
+                    new Column<ColumnTable>("ColA"),
+                    new Column<ColumnTable>("ColB"),
+                    new Parameter("PA", 2)
                 ])
         ]);
 
-        int actual = or.Column.Count();
+        int actual = or.Columns.Count();
         int expected = 4;
 
         Assert.Equal(expected, actual);
@@ -145,22 +145,22 @@ public class OrTests
     {
         Or or = new(
         [
-                new Parameters("P1", 1),
-                new Parameters("P2", 2),
-                new Columns<ColumnTable>("Col1"),
-                new Columns<ColumnTable>("Col2"),
+                new Parameter("P1", 1),
+                new Parameter("P2", 2),
+                new Column<ColumnTable>("Col1"),
+                new Column<ColumnTable>("Col2"),
                 new Or (
                 [
-                    new Columns<ColumnTable>("ColA"),
-                    new Columns<ColumnTable>("ColB"),
-                    new Parameters("PA", 3)
+                    new Column<ColumnTable>("ColA"),
+                    new Column<ColumnTable>("ColB"),
+                    new Parameter("PA", 3)
                 ])
         ]);
 
         //if the column doesn't exist an exception will be throw and the test will fail
-        IColumns col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
-        col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
-        col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
-        col = or.Column.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
+        IColumn col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
+        col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
+        col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
+        col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
     }
 }

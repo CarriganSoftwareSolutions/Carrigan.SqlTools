@@ -17,10 +17,10 @@ public class JoinsParameterTest
     [Fact]
     public void SelectJoinParameterTest()
     {
-        ColumnValues<Order> orderCondition = new(nameof(Order.Total), 1000m);
+        ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
         InnerJoin<Customer, Order> join1 = new(orderCondition);
 
-        ColumnValues<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
+        ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
 
         Joins joins = new(join1, join2);
@@ -37,10 +37,10 @@ public class JoinsParameterTest
     [Fact]
     public void SelectCountJoinParameterTest()
     {
-        ColumnValues<Order> orderCondition = new(nameof(Order.Total), 1000m);
+        ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
         InnerJoin<Customer, Order> join1 = new(orderCondition);
 
-        ColumnValues<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
+        ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
 
         Joins joins = new(join1, join2);
@@ -64,10 +64,10 @@ public class JoinsParameterTest
             Email = "Jenny@wall.com",
             Phone = "867-5309"
         };
-        ColumnValues<Order> orderCondition = new(nameof(Order.Total), 1000m);
+        ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
         InnerJoin<Customer, Order> join1 = new(orderCondition);
 
-        ColumnValues<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
+        ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
 
         Joins joins = new(join1, join2);
@@ -87,10 +87,10 @@ public class JoinsParameterTest
     [Fact]
     public void DeleteJoinParameterTest()
     {
-        ColumnValues<Order> orderCondition = new(nameof(Order.Total), 1000m);
+        ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);
         InnerJoin<Customer, Order> join1 = new(orderCondition);
 
-        ColumnValues<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
+        ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<Order, PaymentMethod> join2 = new(paymentCondition);
 
         Joins joins = new(join1, join2);

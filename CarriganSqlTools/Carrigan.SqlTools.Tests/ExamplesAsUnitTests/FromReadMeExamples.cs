@@ -205,7 +205,7 @@ public class FromReadMeExamples
 
         InnerJoin<Order, Customer> join = new(columnEqualsColumn);
 
-        ColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
+        ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
         SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
@@ -219,8 +219,8 @@ public class FromReadMeExamples
     public void SelectCountWithWhere()
     {
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Columns<Order> totalCol = new (nameof(Order.Total));
-        Parameters minTotal = new ("Total", 500m);
+        Column<Order> totalCol = new (nameof(Order.Total));
+        Parameter minTotal = new ("Total", 500m);
         GreaterThan greaterThan = new (totalCol, minTotal);
 
         SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
@@ -246,7 +246,7 @@ public class FromReadMeExamples
 
         InnerJoin<Order, Customer> joinOnCustomerId = new(columnEqualsColumn);
 
-        ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+        ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
         SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
 

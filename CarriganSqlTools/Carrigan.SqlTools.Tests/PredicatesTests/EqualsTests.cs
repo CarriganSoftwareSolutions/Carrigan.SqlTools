@@ -5,35 +5,35 @@ namespace Carrigan.SqlTools.Tests.PredicatesTests;
 
 public class EqualsTests
 {
-    private readonly PredicatesBase ColumnTastyPizza = new Columns<ColumnTable>("Pizza");
+    private readonly PredicateBase ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly PredicatesBase ColumnDestructCode = new Columns<ColumnTable>("D000destruct0");
+    private readonly PredicateBase ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly PredicatesBase ColumnFutureCity = new Columns<ColumnTable>("Express");
+    private readonly PredicateBase ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicatesBase ParameterPi = new Parameters("Pi", 3.14f);
+    private readonly PredicateBase ParameterPi = new Parameter("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private readonly PredicatesBase ParameterElite = new Parameters("Elite", 1337);
+    private readonly PredicateBase ParameterElite = new Parameter("Elite", 1337);
     private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicatesBase ParameterHelloWorld = new Parameters("HelloWorld", "Hello World!");
+    private readonly PredicateBase ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
     private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 
     [Fact]
     public void Equals_ToSql1()
     {
-        PredicatesBase left = ColumnTastyPizza;
+        PredicateBase left = ColumnTastyPizza;
         string leftSql = ColumnTastyPizzaExpectedSql;
 
-        PredicatesBase right = ColumnDestructCode;
+        PredicateBase right = ColumnDestructCode;
         string rightSql = ColumnDestructCodeSql;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
         string actualValue = predicate.ToSql();
@@ -43,28 +43,28 @@ public class EqualsTests
     [Fact]
     public void Equals1_ParameterCount()
     {
-        PredicatesBase left = ColumnTastyPizza;
+        PredicateBase left = ColumnTastyPizza;
 
-        PredicatesBase right = ColumnDestructCode;
+        PredicateBase right = ColumnDestructCode;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValue = 0;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
     [Fact]
     public void Equals1_ColumnCount()
     {
-        PredicatesBase left = ColumnTastyPizza;
+        PredicateBase left = ColumnTastyPizza;
 
-        PredicatesBase right = ColumnDestructCode;
+        PredicateBase right = ColumnDestructCode;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValue = 2;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -72,26 +72,26 @@ public class EqualsTests
 
     public void Equals1_ColumnName()
     {
-        PredicatesBase left = ColumnTastyPizza;
+        PredicateBase left = ColumnTastyPizza;
 
-        PredicatesBase right = ColumnDestructCode;
+        PredicateBase right = ColumnDestructCode;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
-        _ = predicate.Column.Where(col => col.ColumnInfo == $"[ColumnTable].[Pizza]").Single();
-        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == $"[ColumnTable].[Pizza]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
     }
 
     [Fact]
     public void Equals_ToSql2()
     {
-        PredicatesBase left = ColumnFutureCity;
+        PredicateBase left = ColumnFutureCity;
         string leftSql = ColumnFutureCitySql;
 
-        PredicatesBase right = ParameterPi;
+        PredicateBase right = ParameterPi;
         string rightSql = ParameterPiSql;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
         string actualValue = predicate.ToSql();
@@ -102,14 +102,14 @@ public class EqualsTests
     [Fact]
     public void Equals2_ParameterCount()
     {
-        PredicatesBase left = ColumnFutureCity;
+        PredicateBase left = ColumnFutureCity;
 
-        PredicatesBase right = ParameterPi;
+        PredicateBase right = ParameterPi;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValue = 1;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -117,15 +117,15 @@ public class EqualsTests
     [Fact]
     public void Equals2_ParameterValues()
     {
-        PredicatesBase left = ColumnFutureCity;
+        PredicateBase left = ColumnFutureCity;
 
-        PredicatesBase right = ParameterPi;
+        PredicateBase right = ParameterPi;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         float expectedValue = 3.14f;
 
-        object? nullableActualValue = predicate.Parameter.First().Value;
+        object? nullableActualValue = predicate.Parameters.First().Value;
         Assert.NotNull(nullableActualValue);
         float actualValue = (float)nullableActualValue;
 
@@ -134,14 +134,14 @@ public class EqualsTests
     [Fact]
     public void Equals2_ColumnCount()
     {
-        PredicatesBase left = ColumnFutureCity;
+        PredicateBase left = ColumnFutureCity;
 
-        PredicatesBase right = ParameterPi;
+        PredicateBase right = ParameterPi;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValue = 1;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -149,25 +149,25 @@ public class EqualsTests
 
     public void Equals2_ColumnName()
     {
-        PredicatesBase left = ColumnFutureCity;
+        PredicateBase left = ColumnFutureCity;
 
-        PredicatesBase right = ParameterPi;
+        PredicateBase right = ParameterPi;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
-        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 
     [Fact]
     public void Equals_ToSql3()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        PredicatesBase right = ParameterHelloWorld;
+        PredicateBase right = ParameterHelloWorld;
         string rightSql = ParameterHelloWorldSql;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
         string actualValue = predicate.ToSql();
@@ -178,18 +178,18 @@ public class EqualsTests
     [Fact]
     public void Equals3_ParameterCount()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
 
-        PredicatesBase right = ParameterHelloWorld;
+        PredicateBase right = ParameterHelloWorld;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.Parameter.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.Parameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.Parameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -197,14 +197,14 @@ public class EqualsTests
     [Fact]
     public void Equals3_ColumnCount()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
 
-        PredicatesBase right = ParameterPi;
+        PredicateBase right = ParameterPi;
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValue = 0;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -212,13 +212,13 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ToSql()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicateBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
         string rightSql = $"({ParameterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
         string actualValue = predicate.ToSql();
@@ -229,14 +229,14 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ParameterCount()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicateBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValue = 2;
-        int actualValue = predicate.Parameter.Count();
+        int actualValue = predicate.Parameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -244,14 +244,14 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ColumnCount()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicateBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValue = 2;
-        int actualValue = predicate.Column.Count();
+        int actualValue = predicate.Columns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -259,20 +259,20 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ParameterValue()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicateBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
         int expectedValueInt = 1337;
 
-        object? nullableActualValueInt = predicate.Parameter.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.Parameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
 
         string expectedValueString = "Hello World!";
-        string actualValueString = ((string?)predicate.Parameter.Where(p => p.Name == "HelloWorld").First().Value) ?? string.Empty;
+        string actualValueString = ((string?)predicate.Parameters.Where(p => p.Name == "HelloWorld").First().Value) ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -281,13 +281,13 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ColumnName()
     {
-        PredicatesBase left = ParameterElite;
+        PredicateBase left = ParameterElite;
 
-        PredicatesBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        PredicateBase right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesBase predicate = new Equal(left, right);
+        PredicateBase predicate = new Equal(left, right);
 
-        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
-        _ = predicate.Column.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 }

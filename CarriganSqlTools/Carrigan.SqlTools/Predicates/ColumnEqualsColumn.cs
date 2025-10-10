@@ -23,7 +23,7 @@ namespace Carrigan.SqlTools.Predicates;
 /// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperators
+public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator
 {
     /// <summary>
     /// This is the constructor for the classes that represents SQL's Equality, =, comparison operators
@@ -32,8 +32,8 @@ public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperators
     /// <param name="rightPropertyName">right value</param>
     public ColumnEqualsColumn(PropertyName leftPropertyName, PropertyName rightPropertyName)
     {
-        Columns<leftT> left = new (leftPropertyName);
-        Columns<rightT> right = new (rightPropertyName);
+        Column<leftT> left = new (leftPropertyName);
+        Column<rightT> right = new (rightPropertyName);
 
         Initialize(left, right, "=");
     }

@@ -50,7 +50,7 @@
 /// ]]></code>
 /// </example>
 /// 
-public class And : LogicalOperators
+public class And : LogicalOperator
 {
     /// <summary>
     /// Constructor for the logical boolean operator "AND".
@@ -59,7 +59,7 @@ public class And : LogicalOperators
     /// If two or more are provided then each predicate is chained together with the AND logical operator.
     /// </summary>
     /// <param name="predicates">One or more boolean predicates.</param>
-    public And(params IEnumerable<PredicatesBase> predicates) : base("AND", predicates)
+    public And(params IEnumerable<PredicateBase> predicates) : base("AND", predicates)
     {
     }
 }

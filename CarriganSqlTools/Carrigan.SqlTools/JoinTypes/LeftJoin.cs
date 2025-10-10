@@ -33,7 +33,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </example>
 public class LeftJoin<T, J> : JoinBaseClass
 {
-    private readonly IEnumerable<Parameters> _parameters;
+    private readonly IEnumerable<Parameter> _parameters;
     private readonly string _sql;
 
     /// <summary>
@@ -47,13 +47,13 @@ public class LeftJoin<T, J> : JoinBaseClass
     /// that is not included in the <c>JOIN</c>.
     /// </exception>
 
-    public LeftJoin(PredicatesBase predicate)
+    public LeftJoin(PredicateBase predicate)
     {
         TableTag leftTableTag = SqlToolsReflectorCache<T>.Table;
         TableTag rightTableTag = SqlToolsReflectorCache<J>.Table;
         IEnumerable<ColumnInfo> invalidTags =
             predicate
-                .Column
+                .Columns
                 .Where(column => column.TableTag != leftTableTag && column.TableTag != rightTableTag)
                 .Select(column => column.ColumnInfo);
 
@@ -62,7 +62,7 @@ public class LeftJoin<T, J> : JoinBaseClass
 
         _sql = $"LEFT JOIN {rightTableTag} ON {predicate.ToSql()}";
         _tableTags = [leftTableTag, rightTableTag];
-        _parameters = predicate.Parameter;
+        _parameters = predicate.Parameters;
     }
 
     /// <summary>

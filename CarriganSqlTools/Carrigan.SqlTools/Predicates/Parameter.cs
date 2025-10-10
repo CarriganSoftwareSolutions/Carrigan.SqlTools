@@ -17,7 +17,7 @@ namespace Carrigan.SqlTools.Predicates;
 /// SqlQuery query = customerGenerator.Select(null, equalName, null, null);
 /// ]]></code>
 /// </example>
-public class Parameters : PredicatesBase
+public class Parameter : PredicateBase
 {
     /// <summary>
     /// Value of parameter
@@ -34,7 +34,7 @@ public class Parameters : PredicatesBase
     /// </summary>
     /// <param name="parameter">The name you want the parameter to have</param>
     /// <param name="value">The value of the parameter</param>
-    public Parameters(ParameterTag parameter, object? value)
+    public Parameter(ParameterTag parameter, object? value)
     {
         ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));
         Name = parameter;
@@ -49,7 +49,7 @@ public class Parameters : PredicatesBase
     /// <param name="value">The value of the parameter</param>
     /// <exception cref="InvalidSqlIdentifierException">The parameter name was empty or contained an invalid character</exception>
     [ExternalOnly]
-    public Parameters(string parameter, object? value)
+    public Parameter(string parameter, object? value)
     {
         Name = new ParameterTag(null, parameter, null);
         Value = value;
@@ -59,14 +59,14 @@ public class Parameters : PredicatesBase
     /// Leaf node in recursive logic to get all the parameters associated with the logic.
     /// Note: In this case, it will be just this parameter name inserted into an enumeration.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter =>
+    internal override IEnumerable<Parameter> Parameters =>
        [this];
 
     /// <summary>
     /// Leaf node in recursive logic to get all the Columns associated within the logic.
     /// Since this class doesn't have Column, just return an empty.
     /// </summary>
-    internal override IEnumerable<IColumns> Column =>
+    internal override IEnumerable<IColumn> Columns =>
        [];
 
     /// <summary>

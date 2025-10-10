@@ -18,16 +18,16 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class Contains<T> : PredicatesBase
+public class Contains<T> : PredicateBase
 {
-    private readonly Columns<T> _column;
-    private readonly Parameters _parameter;
+    private readonly Column<T> _column;
+    private readonly Parameter _parameter;
     /// <summary>
     /// Constructor for the CONTAINS operator.
     /// </summary>
-    /// <param name="column">The left hand side should be a <see cref="Columns{T}"/></param>
-    /// <param name="parameter">The right hand side should be a <see cref="Parameters"/></param>
-    public Contains(Columns<T> column, Parameters parameter)
+    /// <param name="column">The left hand side should be a <see cref="Column{T}"/></param>
+    /// <param name="parameter">The right hand side should be a <see cref="Predicates.Parameter"/></param>
+    public Contains(Column<T> column, Parameter parameter)
     {
         _column = column;
         _parameter = parameter;
@@ -37,14 +37,14 @@ public class Contains<T> : PredicatesBase
     /// Leaf node in recursive logic to get all the parameters associated with the logic.
     /// Since this class doesn't have parameters, just return an empty.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter =>
+    internal override IEnumerable<Parameter> Parameters =>
        [_parameter];
 
     /// <summary>
     /// Leaf node in recursive logic to get all the Columns associated with the logic.
     /// Since this there will be only this Column, return it as an enumerable.
     /// </summary>
-    internal override IEnumerable<IColumns> Column =>
+    internal override IEnumerable<IColumn> Columns =>
        [_column];
 
     /// <summary>

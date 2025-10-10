@@ -21,20 +21,20 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class ColumnValues<T> : PredicatesBase
+public class ColumnValue<T> : PredicateBase
 {
-    protected readonly PredicatesBase value;
+    protected readonly PredicateBase value;
 
     /// <summary>
     /// A public constructor. 
     /// </summary>
     /// <param name="propertyName">Column</param>
     /// <param name="parameterValue">Value</param>
-    public ColumnValues(PropertyName propertyName, object parameterValue)
+    public ColumnValue(PropertyName propertyName, object parameterValue)
     {
         _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); //called for validation.
-        Columns<T> left = new (propertyName);
-        Parameters right = new(left.ColumnInfo.ParameterTag, parameterValue);
+        Column<T> left = new (propertyName);
+        Parameter right = new(left.ColumnInfo.ParameterTag, parameterValue);
         value = new Equal
         (
            left,
@@ -48,22 +48,22 @@ public class ColumnValues<T> : PredicatesBase
     /// <param name="propertyName">Column</param>
     /// <param name="parameterValue">Value</param>
     [ExternalOnly]
-    public ColumnValues(string propertyName, object parameterValue) 
+    public ColumnValue(string propertyName, object parameterValue) 
         : this(new PropertyName(propertyName), parameterValue) { }
 
     /// <summary>
     /// Leaf node in recursive logic to get all the parameters associated with the logic.
     /// Since this class doesn't have parameters, just return an empty.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter => 
-        value.Parameter;
+    internal override IEnumerable<Parameter> Parameters => 
+        value.Parameters;
 
     /// <summary>
     /// Leaf node in recursive logic to get all the Columns associated with the logic.
     /// Since this there will be only this Column, return it as an enumerable.
     /// </summary>
-    internal override IEnumerable<IColumns> Column => 
-        value.Column;
+    internal override IEnumerable<IColumn> Columns => 
+        value.Columns;
 
     /// <summary>
     /// Produces the SQL represented by this class.

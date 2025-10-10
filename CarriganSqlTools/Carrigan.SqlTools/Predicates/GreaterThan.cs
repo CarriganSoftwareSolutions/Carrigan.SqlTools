@@ -16,14 +16,14 @@
 /// SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)
 /// ]]></code>
 /// </example>
-public class GreaterThan : ComparisonOperators
+public class GreaterThan : ComparisonOperator
 {
     /// <summary>
     /// This is the constructor for the classes that represents SQL's Greater Than, >, comparison operators
     /// </summary>
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
-    public GreaterThan(PredicatesBase left, PredicatesBase right) : base (left, right, ">")
+    public GreaterThan(PredicateBase left, PredicateBase right) : base (left, right, ">")
     {
     }
 }

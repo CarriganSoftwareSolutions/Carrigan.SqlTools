@@ -49,7 +49,7 @@
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class Or : LogicalOperators
+public class Or : LogicalOperator
 {
     /// <summary>
     /// Constructor for the logical boolean operator "OR".
@@ -58,7 +58,7 @@ public class Or : LogicalOperators
     /// If two or more are provided then each predicate is chained together with the OR logical operator.
     /// </summary>
     /// <param name="predicates">One or more boolean predicates.</param>
-    public Or(params IEnumerable<PredicatesBase> predicates) : base ("OR", predicates)
+    public Or(params IEnumerable<PredicateBase> predicates) : base ("OR", predicates)
     {
     }
 }

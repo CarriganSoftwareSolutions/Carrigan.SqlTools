@@ -16,14 +16,14 @@
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Email] LIKE @Parameter_Email)
 /// ]]></code>
 /// </example>
-public class Like : ComparisonOperators
+public class Like : ComparisonOperator
 {
     /// <summary>
     /// This is the constructor for the classes that represents SQL's LIKE, comparison operators
     /// </summary>
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
-    public Like(PredicatesBase left, PredicatesBase right) : base (left, right, "LIKE")
+    public Like(PredicateBase left, PredicateBase right) : base (left, right, "LIKE")
     {
     }
 }

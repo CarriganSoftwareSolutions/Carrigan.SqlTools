@@ -21,27 +21,27 @@ namespace Carrigan.SqlTools.Predicates;
 /// SELECT [Customer].* FROM [Customer] WHERE (NOT ([Customer].[Name] = @Parameter_Name))
 /// ]]></code>
 /// </example>
-public class Not : PredicatesBase
+public class Not : PredicateBase
 {
-    private readonly PredicatesBase _someValue;
+    private readonly PredicateBase _someValue;
     /// <summary>
     /// This is the constructor for the classes that represents SQL's NOT operators
     /// </summary>
     /// <param name="someValue">should represent something that would be a boolean value in SQL</param>
-    public Not(PredicatesBase someValue) => 
+    public Not(PredicateBase someValue) => 
         _someValue = someValue;
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic.
     /// </summary>
-    internal override IEnumerable<Parameters> Parameter =>
-       _someValue.Parameter;
+    internal override IEnumerable<Parameter> Parameters =>
+       _someValue.Parameters;
 
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal override IEnumerable<IColumns> Column =>
-       _someValue.Column;
+    internal override IEnumerable<IColumn> Columns =>
+       _someValue.Columns;
 
     /// <summary>
     /// Produces the SQL represented by this class.

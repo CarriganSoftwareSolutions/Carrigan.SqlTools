@@ -16,14 +16,14 @@
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class Equal : ComparisonOperators
+public class Equal : ComparisonOperator
 {
     /// <summary>
     /// This is the constructor for the classes that represents SQL's Equality, =, comparison operators
     /// </summary>
     /// <param name="left">left value</param>
     /// <param name="right">right value</param>
-    public Equal(PredicatesBase left, PredicatesBase right) : base (left, right, "=")
+    public Equal(PredicateBase left, PredicateBase right) : base (left, right, "=")
     {
     }
 }

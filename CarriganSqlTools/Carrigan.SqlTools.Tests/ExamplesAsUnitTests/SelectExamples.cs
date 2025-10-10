@@ -86,8 +86,8 @@ public class SelectExamples
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Customer, Order> join = new(columnEqualsColumn);
 
-        Columns<Order> totalCol = new(nameof(Order.Total));
-        Parameters minTotal = new("Total", 500m);
+        Column<Order> totalCol = new(nameof(Order.Total));
+        Parameter minTotal = new("Total", 500m);
         GreaterThan greaterThan = new(totalCol, minTotal);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
