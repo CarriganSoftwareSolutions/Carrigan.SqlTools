@@ -32,7 +32,7 @@ public class JoinExamples
 
         SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] LEFT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
+        Assert.Equal("SELECT [Customer].* FROM [Customer] JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }

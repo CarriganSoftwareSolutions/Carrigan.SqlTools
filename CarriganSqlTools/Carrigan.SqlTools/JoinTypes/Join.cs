@@ -1,11 +1,13 @@
 ﻿using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
 //TODO: REDO Documentation, Unit Tests, Examples
 /// <summary>
 /// Represents an SQL <c>JOIN</c> operation. This class functions as an alias
-/// for the <see cref="LeftJoin{T,J}"/> class.
+/// for the <see cref="Join{rightT}"/> class.
 /// </summary>
 /// <typeparam name="T">
 /// The data model for the primary (left or base) table from which records are
@@ -29,22 +31,51 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// SELECT [Customer].* FROM [Customer] 
-/// LEFT JOIN [Order]  ON 
+/// JOIN [Order]  ON 
 /// ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class Join<rightT> : LeftJoin<rightT>
+public class Join<rightT> : Relation
 {
+    protected readonly string _sql;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="Join"/> class.
+    /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
     /// <param name="predicate">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
-    public Join(Predicates predicate) : base(predicate)
-    { }
+    /// <exception cref="AmbiguousColumnException">
+    /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
+    /// that is not included in the <c>JOIN</c>.
+    /// </exception>
+
+    public Join(Predicates predicate) : base(predicate) =>
+        _sql = $"JOIN {TableTag} ON {predicate.ToSql()}";
 
     //TODO: Documentation, Unit Tests, Examples
-    public static new Joins<leftT> Joins<leftT>(Predicates predicate) =>
+    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new(new Join<rightT>(predicate));
+
+    //TODO: Documentation, Unit Tests, Examples
+    public Joins<leftT> AsJoins<leftT>() =>
+        new(this);
+
+    /// <summary>
+    /// Enumerates all possible columns included in <see cref="Joints"/>
+    /// providing a quick way to determine whether a given column
+    /// participates in a table that participates in any join operation.
+    /// </summary>
+    //public override IEnumerable<ColumnInfo> ColumnInfo =>
+    //    SqlToolsReflectorCache<T>.ColumnInfo.Concat(SqlToolsReflectorCache<rightT>.ColumnInfo);
+
+    internal override TableTag TableTag =>
+        SqlToolsReflectorCache<rightT>.Table;
+
+    /// <summary>
+    /// Generates the SQL representation of the <c>LEFT JOIN</c> clause.
+    /// </summary>
+    /// <returns>A SQL string representing the <c>LEFT JOIN</c> clause.</returns>
+    internal override string ToSql() =>
+        _sql;
 }

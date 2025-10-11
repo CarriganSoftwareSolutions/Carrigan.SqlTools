@@ -47,7 +47,7 @@ public class SelectCountExamples
 
         SqlQuery query = orderGenerator.SelectCount(joins, greaterThan);
 
-        Assert.Equal("SELECT COUNT(*) FROM [Order] LEFT JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
+        Assert.Equal("SELECT COUNT(*) FROM [Order] JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
         Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
