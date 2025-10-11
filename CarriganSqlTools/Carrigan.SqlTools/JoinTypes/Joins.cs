@@ -72,7 +72,7 @@ public class Joins<leftT>
     }
 
     public static Joins<leftT> LeftJoin<rightT>(Predicates predicates) =>
-        JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates);
+        JoinTypes.LeftJoin<rightT>.LeftJoins<leftT>(predicates);
 
     public static Joins<leftT> Join<rightT>(Predicates predicates) =>
         JoinTypes.Join<rightT>.Joins<leftT>(predicates);

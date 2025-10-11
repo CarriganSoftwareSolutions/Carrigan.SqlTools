@@ -8,12 +8,35 @@ namespace Carrigan.SqlTools.Tests.JoinTests;
 public class LeftJoinsTest
 {
     [Fact]
-    public void LeftJoinTests_ToSql()
+    public void NewJoinsNewLeftJoin()
     {
-        PredicatesLogic.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinRightTable> leftJoin = new(id);
 
         string actual = (new Joins<JoinLeftTable>(leftJoin)).ToSql();
+        string expected = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void NewLeftJoinAsJoins()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        LeftJoin<JoinRightTable> leftJoin = new(id);
+
+        string actual = leftJoin.AsJoins<JoinLeftTable>().ToSql();
+        string expected = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void JoinsLeftJoin()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+
+        string actual = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(id).ToSql();
         string expected = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);

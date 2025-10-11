@@ -50,6 +50,8 @@ public class InnerJoin<rightT> : Relation
         _sql = $"INNER JOIN {TableTag} ON {predicates.ToSql()}";
 
     //TODO: Documentation, Unit Tests, Examples
+    //Note: the deceleration may seem counter intuitive, however this gets called like this:
+    //Joins<leftT>.InnerJoin<rightT>(predicate);
     public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new(new InnerJoin<rightT>(predicate));
 

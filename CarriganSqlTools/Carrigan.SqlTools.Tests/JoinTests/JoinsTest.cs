@@ -1,7 +1,9 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -189,5 +191,18 @@ public class JoinsTest
         string expected2 = "INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
         string expected = $"{expected1} {expected2}";
         Assert.Equal(expected, relation.ToSql());
+    }
+
+    [Fact]
+    public void InvalidTableException()
+    {
+
+        Predicates stupidPredicate = new ColumnEqualsColumn<ColumnIdentifiers, PhoneModel>(nameof(ColumnIdentifiers.Id), nameof(PhoneModel.Id));
+        Assert.Throws<InvalidTableException>(() =>  new Joins<JoinLeftTable>
+        (
+            new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
+            new InnerJoin<JoinLastTable>(LastOnRightPredicate),
+            new InnerJoin<ColumnIdentifiers>(stupidPredicate)
+        ));
     }
 }
