@@ -76,8 +76,8 @@ public class PredicateExamples
     {
         //Note: ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        LeftJoin<Order> join = new(columnValue);
-        SqlQuery query = customerGenerator.Select(null, new(join), null, null, null);
+        Joins<Customer> joins = LeftJoin<Order>.Joins<Customer>(columnValue);
+        SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] LEFT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

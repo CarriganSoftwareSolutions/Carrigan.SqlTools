@@ -43,9 +43,9 @@ public class SelectCountExamples
         GreaterThan greaterThan = new(totalCol, minTotal);
 
         ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
-        Join<Customer> join = new(columnCompare);
+        Joins<Order> joins = Joins<Order>.Join<Customer>(columnCompare);
 
-        SqlQuery query = orderGenerator.SelectCount(new (join), greaterThan);
+        SqlQuery query = orderGenerator.SelectCount(joins, greaterThan);
 
         Assert.Equal("SELECT COUNT(*) FROM [Order] LEFT JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
