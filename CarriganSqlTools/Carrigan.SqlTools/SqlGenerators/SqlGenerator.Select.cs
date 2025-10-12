@@ -173,7 +173,7 @@ public partial class SqlGenerator<T>
     /// <param name="offsetNext">
     /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
     /// </param>
-    public SqlQuery Select(ISelectTags? selects, Joins<T>? joins, Predicates? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
+    public SqlQuery Select(ISelectTags? selects, Relations? joins, Predicates? predicates, IOrderByClause? orderBy, OffsetNext? offsetNext)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];

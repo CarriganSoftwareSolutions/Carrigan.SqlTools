@@ -59,7 +59,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectCount(Joins<T>? joins, Predicates? predicates)
+    public SqlQuery SelectCount(Relations? joins, Predicates? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];

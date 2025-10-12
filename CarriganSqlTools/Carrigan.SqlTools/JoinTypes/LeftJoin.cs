@@ -48,9 +48,7 @@ public class LeftJoin<rightT> : Relation
         _sql = $"LEFT JOIN {TableTag} ON {predicate.ToSql()}";
 
     //TODO: Documentation, Unit Tests, Examples
-    //Note: the deceleration may seem counter intuitive, however this gets called like this:
-    //Joins<leftT>.LeftJoin<rightT>(predicate);
-    public static Joins<leftT> LeftJoins<leftT>(Predicates predicate) =>
+    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new (new LeftJoin<rightT>(predicate)) ;
 
     //TODO: Documentation, Unit Tests, Examples

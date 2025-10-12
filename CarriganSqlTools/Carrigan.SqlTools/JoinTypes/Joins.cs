@@ -36,14 +36,14 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
-public class Joins<leftT>
+public class Joins<leftT> : Relations
 {
     /// <summary>
     /// Represents a collection of classes where each class defines a single SQL join operation.
     /// The name differs from the preferred “Joins” to avoid a naming conflict (e.g., Joins.Joins),
     /// which would result in a compiler error.
     /// </summary>
-    public IEnumerable<Relation> Joints { get; private set; }
+    protected override IEnumerable<Relation> Joints { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Joins"/> class.
@@ -53,26 +53,24 @@ public class Joins<leftT>
     /// </param>
     public Joins(params IEnumerable<Relation> joins)
     {
-        List<TableTag> tables = [SqlToolsReflectorCache<leftT>.Table]; //tables that the current join being evaluated
         Joints = [];
+        IEnumerable<TableTag> invalids; ;
 
         //validate each join to ensure it is joined in the proper order for column participation.
-        foreach(Relation join in joins)
+        foreach (Relation join in joins)
         {
             IEnumerable<TableTag> valid = TableTags.Append(join.TableTag);
             //ensure each column involved in the join comes from either an earlier table or the table being joined on 
-            IEnumerable<TableTag> invalids = join.JoinsOn.Where(table => valid.DoesNotContain(table));
+            invalids = join.JoinsOn.Where(table => valid.DoesNotContain(table));
             if (invalids.IsNullOrEmpty())
-                tables.Add(join.TableTag); //add it to the table list, for the next join, since the join is before the next one.
+                Joints = Joints.Append(join);
             else
                 throw new InvalidTableException(invalids);
-
-            Joints = Joints.Append(join);
         }
     }
 
     public static Joins<leftT> LeftJoin<rightT>(Predicates predicates) =>
-        JoinTypes.LeftJoin<rightT>.LeftJoins<leftT>(predicates);
+        JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates);
 
     public static Joins<leftT> Join<rightT>(Predicates predicates) =>
         JoinTypes.Join<rightT>.Joins<leftT>(predicates);
@@ -80,24 +78,6 @@ public class Joins<leftT>
     public static Joins<leftT> InnerJoin<rightT>(Predicates predicates) =>
         JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates);
 
-    /// <summary>
-    /// Enumerates all tables included in <see cref="Joints"/> and <typeparamref name="leftT"/>
-    /// providing a quick way to determine whether a given table
-    /// participates in any join operation.
-    /// </summary>
-    public IEnumerable<TableTag> TableTags =>
-        Joints.Select(join => join.TableTag).Append(SqlToolsReflectorCache<leftT>.Table);
-
-    /// <summary>
-    /// Generates the SQL fragment for the JOIN clause represented by <see cref="Joints"/>.
-    /// </summary>
-    /// <returns>The SQL fragment for the JOIN clause represented by <see cref="Joints"/>.</returns>
-    public string ToSql() =>
-        string.Join(" ", Joints.Select(join => join.ToSql()));
-
-    /// <summary>
-    /// Recursively get all the parameters associated with the logic.
-    /// </summary>
-    public Dictionary<ParameterTag, object> Parameters =>
-        [.. Joints.SelectMany(join => join.Parameters)];
+    internal override TableTag TableTag =>
+        SqlToolsReflectorCache<leftT>.Table;
 }

@@ -93,8 +93,8 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
-        InnerJoin<JoinRightTable> join = new (joinId);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new (join), predicateId, null, null);
+        Relations relation = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relation, predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -120,8 +120,8 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
-        LeftJoin<JoinRightTable> join = new (joinId);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new (join), predicateId, null, null);
+        Relations relations = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relations, predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -150,7 +150,8 @@ public class SqlGenerator_SelectTests
         Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new (join1, join2), predicateId, null, null);
+        Joins<JoinLeftTable> joins = new(join1, join2);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, joins, predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id)";
         Assert.Equal(expectedSql, query.QueryText);
@@ -179,12 +180,13 @@ public class SqlGenerator_SelectTests
         Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
+        Relations joins = new Joins<JoinLeftTable>(join1, join2);
         OrderByItem<JoinLeftTable> orderByItem1 = new("Id", SortDirectionEnum.Ascending);
         OrderByItem<JoinRightTable> orderByItem2 = new("Id", SortDirectionEnum.Descending);
         OrderByItem<JoinLastTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
         IOrderByClause orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
         OffsetNext offsetNext = new DefinePage(3, 50);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new (join1, join2), predicateId, orderBy, offsetNext);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, joins, predicateId, orderBy, offsetNext);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id) ORDER BY [Left].[Id] ASC, [Right].[Id] DESC, [Last].[Id] ASC OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY";
         Assert.Equal(expectedSql, query.QueryText);
@@ -214,9 +216,10 @@ public class SqlGenerator_SelectTests
         Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
+        Relations relation = new Joins<JoinLeftTable>(join1, join2);
         OrderByItem<JoinLeftTable> orderByItem = new("Id", SortDirectionEnum.Ascending);
         DefinePage offsetNext = new (3, 50);
-        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, new (join1, join2), predicateId, orderByItem, offsetNext);
+        SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relation, predicateId, orderByItem, offsetNext);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id) ORDER BY [Left].[Id] ASC OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY";
         Assert.Equal(expectedSql, query.QueryText);
