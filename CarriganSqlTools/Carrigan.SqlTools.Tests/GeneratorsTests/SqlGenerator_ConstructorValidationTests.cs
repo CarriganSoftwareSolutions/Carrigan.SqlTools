@@ -1,8 +1,12 @@
 ﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Aliases;
+using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Ambiguous;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Columns;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Parameters;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Table;
@@ -150,4 +154,28 @@ public class SqlGenerator_ConstructorValidationTests
     [Fact]
     public void AliasNameInvalid() =>
         Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<AliasNameInvalid>());
+
+    [Fact]
+    public void EncrypterNotProvided() =>
+        Assert.Throws<EncrypterNotProvided<EntityWithEncryption>>(() => _ = new SqlGenerator<EntityWithEncryption>());
+
+    [Fact]
+    public void EntityWithEncryptionNull() =>
+        Assert.Throws<ArgumentNullException>(() => _ = new SqlGenerator<EntityWithEncryption>(null!));
+
+    [Fact]
+    public void EncryptionProvided() =>
+        _ = new SqlGenerator<EntityWithEncryption>(new MockEncryption("Hello"));
+
+    [Fact]
+    public void AmbiguousException()
+    {
+        SqlGenerator<AmbiguousLeft> sqlGenerator = new SqlGenerator<AmbiguousLeft>();
+        ColumnEqualsColumn<AmbiguousLeft, AmbiguousRight> id = new (nameof(AmbiguousLeft.Id), nameof(AmbiguousRight.Id));
+        Joins<AmbiguousLeft> joins = Joins<AmbiguousLeft>.LeftJoin<AmbiguousRight>(id);
+        SelectTags selects = 
+            SelectTags.Get<AmbiguousLeft>(nameof(AmbiguousLeft.Id))
+                .Append<AmbiguousRight>(nameof(AmbiguousRight.Id));
+        Assert.Throws<AmbiguousResultColumnException> (() => _ = sqlGenerator.Select(selects, joins, null, null, null));
+    }
 }

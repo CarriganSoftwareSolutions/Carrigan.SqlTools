@@ -95,6 +95,4 @@ public class JoinExamples
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }
-
-    //TODO: write unit tests for Alias Tag, CompositeSelect exceptions, composite with ambiguous but aliased columns. IColoumn tag with comparer, Ambiguous Column Exception, Identifier Name "roles"
 }

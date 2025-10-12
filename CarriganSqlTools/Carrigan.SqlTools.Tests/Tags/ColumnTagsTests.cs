@@ -7,6 +7,18 @@ namespace Carrigan.SqlTools.Tests.Tags;
 public class ColumnTagsTests
 {
     [Theory]
+    [InlineData("Franks", "Sloppy", "Pizza", "Sloppy")]
+    [InlineData(null, "Sloppy", "Pizza", "Sloppy")]
+    [InlineData("", "Sloppy", "Pizza", "Sloppy")]
+    public void ColumnNameTest(string? schemaName, string tableName, string columnName, string expected)
+    {
+        TableTag tableTag = new(schemaName, tableName);
+        ColumnTag actual = new(tableTag, new ColumnName(columnName));
+
+        Assert.Equal(expected, actual.ColumnName);
+    }
+
+    [Theory]
     [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy]")]
     [InlineData(null, "Sloppy", "Pizza", "[Sloppy]")]
     [InlineData("", "Sloppy", "Pizza", "[Sloppy]")]

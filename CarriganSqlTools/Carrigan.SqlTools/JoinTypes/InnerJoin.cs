@@ -42,7 +42,7 @@ public class InnerJoin<rightT> : Relation
     /// <param name="predicates">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
     /// </param>
-    /// <exception cref="AmbiguousColumnException">
+    /// <exception cref="AmbiguousResultColumnException">
     /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
     /// that is not included in the <c>JOIN</c>.
     /// </exception>

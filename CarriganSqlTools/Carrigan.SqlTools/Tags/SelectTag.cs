@@ -46,6 +46,9 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
         AliasTag = aliasTag;
     }
 
+    internal ResultColumnName ResultColumnName =>
+        new (AliasTag?.ToString() ?? ColumnTag.ColumnName);
+
     //TODO: Proof read Documentation
     /// <summary>
     /// Get a new Select Tag based of the property and alias provided.

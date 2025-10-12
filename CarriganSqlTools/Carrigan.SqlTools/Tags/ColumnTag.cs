@@ -87,7 +87,7 @@ internal class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqual
     /// </summary>
     private readonly string _columnTag;
 
-    private readonly ColumnName _columnName;
+    internal readonly ColumnName ColumnName;
     internal readonly TableTag TableTag;
 
     //TODO: redo documentation
@@ -105,7 +105,7 @@ internal class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqual
     internal ColumnTag(TableTag tableTag, ColumnName columnName)
     {
         _columnTag = tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
-        _columnName = columnName;
+        ColumnName = columnName;
         TableTag = tableTag;
     }
 
@@ -144,7 +144,7 @@ internal class ColumnTag : IComparable<ColumnTag>, IEquatable<ColumnTag>, IEqual
         if (useTableTag)
             return ToString();
         else
-            return $"[{_columnName}]";
+            return $"[{ColumnName}]";
     }
 
     /// <summary>

@@ -39,7 +39,7 @@ public class LeftJoin<rightT> : Relation
     /// <param name="predicate">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
     /// </param>
-    /// <exception cref="AmbiguousColumnException">
+    /// <exception cref="AmbiguousResultColumnException">
     /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
     /// that is not included in the <c>JOIN</c>.
     /// </exception>

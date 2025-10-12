@@ -79,6 +79,9 @@ public partial class SqlGenerator<T>
     /// <exception cref="InvalidTableException">
     /// Thrown if the generated query references invalid or unrecognized table identifiers.
     /// </exception>
+    /// <exception cref="AmbiguousResultColumnException">
+    /// Thrown if there is an ambiguous select tag.
+    /// </exception>
     /// <remarks>
     /// The data model type <typeparamref name="T"/> must be <c>public</c>, and any properties
     /// intended to map to columns must be public instance properties with a public getter.
@@ -184,6 +187,9 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> invalidTags = invalidSelectedTags.Concat(invalidPredicateTags).Concat(invalidOrderByTags).Distinct();
         StringBuilder queryBuilder;
+        AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
+        if (ambiguousResultColumns is not null)
+            throw ambiguousResultColumns;
 
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);

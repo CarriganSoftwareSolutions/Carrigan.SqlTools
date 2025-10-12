@@ -17,6 +17,7 @@ public class AliasTagTests
     private readonly string goldenString = "Golden Ratio is 1.618";
     private readonly string tString = "t is 6.28318m";
     private readonly string piString = "Pi is 3.14159m";
+
     [Fact]
     public void Constructor_Null()
     {

@@ -23,6 +23,26 @@ public class SelectTagsTests
     private static readonly string dExpectedString = "[dbo].[SomeTable].[SomeColumn] AS SomeAlias";
 
     [Fact]
+    public void ResultColumnNames() 
+    {
+        ResultColumnName aName = a.ResultColumnName;
+        ResultColumnName bName = b.ResultColumnName;
+        ResultColumnName cName = c.ResultColumnName;
+        ResultColumnName dName = d.ResultColumnName;
+
+
+        string aExpectedName = "SomeColumn";
+        string bExpectedName = "SomeColumn";
+        string cExpectedName = "SomeAlias";
+        string dExpectedName = "SomeAlias";
+
+        Assert.Equal(aExpectedName, aName);
+        Assert.Equal(bExpectedName, bName);
+        Assert.Equal(cExpectedName, cName);
+        Assert.Equal(dExpectedName, dName);
+    }
+
+    [Fact]
     public void Empty()
     {
         SelectTags selectTags = new ();
