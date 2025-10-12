@@ -4,11 +4,6 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
 public class JoinsTest
