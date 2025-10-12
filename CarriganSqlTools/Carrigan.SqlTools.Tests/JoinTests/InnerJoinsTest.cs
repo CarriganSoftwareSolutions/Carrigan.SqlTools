@@ -1,6 +1,7 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
@@ -40,5 +41,14 @@ public class InnerJoinsTest
         string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TableTag()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        InnerJoin<JoinRightTable> join = new (id);
+        TableTag expected = new (null, "Right");
+        Assert.Equal(expected, join.TableTag);
     }
 }

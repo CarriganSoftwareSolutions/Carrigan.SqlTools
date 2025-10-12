@@ -3,7 +3,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
-//TODO: REDO Documentation, Unit Tests, Examples
+//TODO: REDO Documentation, Examples
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
@@ -49,15 +49,14 @@ public class InnerJoin<rightT> : Relation
     public InnerJoin(Predicates predicates) : base(predicates) => 
         _sql = $"INNER JOIN {TableTag} ON {predicates.ToSql()}";
 
-    //TODO: Documentation, Unit Tests, Examples
+    //TODO: Documentation,  Examples
     public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new(new InnerJoin<rightT>(predicate));
 
-    //TODO: Documentation, Unit Tests, Examples
+    //TODO: Documentation,  Examples
     public Joins<leftT> AsJoins<leftT>() =>
         new(this);
 
-    //TODO: documentation, unit tests.
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<rightT>.Table;
 

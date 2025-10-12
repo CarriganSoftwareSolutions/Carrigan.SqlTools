@@ -200,4 +200,16 @@ public class JoinsTest
             new InnerJoin<ColumnIdentifiers>(stupidPredicate)
         ));
     }
+
+    [Fact]
+    public void TableTag()
+    {
+        Joins<JoinLeftTable> relation = new
+        (
+            new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
+            new InnerJoin<JoinLastTable>(LastOnRightPredicate)
+        );
+        TableTag expected = new(null, "Left");
+        Assert.Equal(expected, relation.TableTag);
+    }
 }

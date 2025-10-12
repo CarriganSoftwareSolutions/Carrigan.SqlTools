@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: REDO Documentation, Unit Tests, Examples
+//TODO: REDO Documentation,  Examples
 /// <summary>
 /// Defines a class that represent one or more SQL join operations.
 /// </summary>

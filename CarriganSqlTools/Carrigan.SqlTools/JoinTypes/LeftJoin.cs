@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: REDO Documentation, Unit Tests, Examples
+//TODO: REDO Documentation,  Examples
 /// <summary>
 /// Represents an SQL <c>LEFT JOIN</c>.
 /// </summary>
@@ -47,11 +47,11 @@ public class LeftJoin<rightT> : Relation
     public LeftJoin(Predicates predicate) : base(predicate) => 
         _sql = $"LEFT JOIN {TableTag} ON {predicate.ToSql()}";
 
-    //TODO: Documentation, Unit Tests, Examples
+    //TODO: Documentation, Examples
     public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new (new LeftJoin<rightT>(predicate)) ;
 
-    //TODO: Documentation, Unit Tests, Examples
+    //TODO: Documentation, Examples
     public Joins<leftT> AsJoins<leftT>() =>
         new (this);
 
