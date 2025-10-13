@@ -72,7 +72,7 @@ internal class PropertyInfoCache<typeT, valueT>
     /// <param name="keys">the properties to look up</param>
     /// <returns></returns>
     /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that one or more properties were invalid</exception>
-    internal IEnumerable<valueT> GetMany(IEnumerable<PropertyName> keys) 
+    internal IEnumerable<valueT> GetMany(params IEnumerable<PropertyName> keys) 
     {
         IEnumerable<PropertyName> invalids = keys.Where(key => Exists(key) is false);
 
@@ -93,14 +93,6 @@ internal class PropertyInfoCache<typeT, valueT>
     /// <returns>true if all items in the enumeration exist. Else false.</returns>
     internal bool Exists(params IEnumerable<PropertyName> propertyNames) =>
         propertyNames.All(propertyName => _cache.ContainsKey(propertyName));
-
-    /// <summary>
-    /// Determines if all of the properties exist in the cache
-    /// </summary>
-    /// <param name="propertyNames">The properties to test</param>
-    /// <returns>true if all items in the enumeration exist. Else false.</returns>
-    internal bool Exists(params IEnumerable<PropertyInfo> properties) =>
-        Exists(properties.Select(property => new PropertyName(property.Name)));
 
     /// <summary>
     /// Gets an <see cref="InvalidPropertyException{typeT}"/> with the property names in the message, or <c>null</c>.
