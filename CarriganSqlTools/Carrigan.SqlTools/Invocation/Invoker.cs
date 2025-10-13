@@ -1,10 +1,12 @@
-﻿using System.Reflection;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Invocation;
 
 //IGNORE SPELLING: datetime
 
-//TODO: I still need to update this to take advantage to the new Attributes
+//TODO: Update Documentation
 
 /// <summary>
 /// Invoke a class of type <see cref="T"/> using values defined <see cref="Dictionary{string, object?}"/> 
@@ -22,23 +24,25 @@ public static class Invoker<T> where T : class?, new()
     /// <exception cref="InvalidOperationException"></exception>
     public static T Invoke(Dictionary<string, object?> invocation)
     {
+        InvalidResultColumnNameException<T>? exception = null;
         if (Activator.CreateInstance(InvocationReflectorCache<T>.Type) is not T invoked)
         {
             throw new InvalidOperationException("Instance creation failed or the cast was invalid.");
         }
+        exception =
+            InvocationReflectorCache<T>
+                .ResultColumnCache
+                .GetExceptionForInvalidProperties(invocation.Keys.Select(name => new ResultColumnName(name)));
+        if (exception != null)
+            throw exception;
         foreach (string key in invocation.Keys)
         {
-            if (InvocationReflectorCache<T>.Properties.TryGetValue(key, out PropertyInfo? property))
-            {
-                object? rawValue = invocation[key];
-                object? valueToSet = Invoker<T>.ConvertValue(rawValue, property.PropertyType);
+            ResultColumnName columnName = new(key);
+            PropertyInfo property = InvocationReflectorCache<T>.ResultColumnCache.Get(columnName);
+            object? rawValue = invocation[key];
+            object? valueToSet = Invoker<T>.ConvertValue(rawValue, property.PropertyType);
 
-                property.SetValue(invoked, valueToSet);
-            }
-            else
-            {
-                throw new InvalidOperationException($"There is no corresponding property name to match the ADO column name: '{key}'");
-            }
+            property.SetValue(invoked, valueToSet);
         }
         return invoked;
     }

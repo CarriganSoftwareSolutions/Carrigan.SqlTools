@@ -7,6 +7,8 @@ using System.Reflection;
 namespace Carrigan.SqlTools.ReflectorCache;
 
 //TODO: proof read documentation for entire class
+
+//TODO: rename to ColumnInfo cache, and get rid of valueT
 /// <summary>
 /// This class is a wrapper for a dictionary, where the key is a <see cref="PropertyName"/>
 ///  that corresponds to <see cref="PropertyInfo"/>'s Name property.
@@ -97,7 +99,7 @@ internal class PropertyInfoCache<typeT, valueT>
     /// Gets an <see cref="InvalidPropertyException{typeT}"/> with the property names in the message, or <c>null</c>.
     /// </summary>
     /// <param name="propertyNames">The property names to test</param>
-    /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else <c>null</c>.</returns>
+    /// <returns>An <see cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else <c>null</c>.</returns>
     internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyName> propertyNames)
     {
         IEnumerable<PropertyName> invalidPropertyNames = propertyNames.Where(propertyName => _cache.ContainsKey(propertyName) is false);

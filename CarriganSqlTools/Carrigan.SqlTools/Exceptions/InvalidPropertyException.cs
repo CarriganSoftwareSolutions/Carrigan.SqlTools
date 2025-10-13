@@ -32,7 +32,7 @@ public class InvalidPropertyException<T> : Exception
     /// <param name="propertyNames">The names of the invalid properties.</param>
     /// <returns>An <see cref="InvalidPropertyException{T}"/> message.</returns>
     private static string CreateMessage(IEnumerable<PropertyName> propertyNames) =>
-        $"Property names for {SqlToolsReflectorCache<T>.Type.Name}, do not exist, are invalid or do qualify: " +
+        $"Property names for {SqlToolsReflectorCache<T>.Type.Name}, do not exist, are invalid or do not qualify: " +
             propertyNames
                 .Select(property => (string)property) //TODO: simplify this?
                 .JoinAnd();
