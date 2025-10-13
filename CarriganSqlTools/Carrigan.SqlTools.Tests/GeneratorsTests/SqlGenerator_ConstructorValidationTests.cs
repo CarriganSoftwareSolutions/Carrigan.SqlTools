@@ -170,7 +170,7 @@ public class SqlGenerator_ConstructorValidationTests
     [Fact]
     public void AmbiguousException()
     {
-        SqlGenerator<AmbiguousLeft> sqlGenerator = new SqlGenerator<AmbiguousLeft>();
+        SqlGenerator<AmbiguousLeft> sqlGenerator = new ();
         ColumnEqualsColumn<AmbiguousLeft, AmbiguousRight> id = new (nameof(AmbiguousLeft.Id), nameof(AmbiguousRight.Id));
         Joins<AmbiguousLeft> joins = Joins<AmbiguousLeft>.LeftJoin<AmbiguousRight>(id);
         SelectTags selects = 
