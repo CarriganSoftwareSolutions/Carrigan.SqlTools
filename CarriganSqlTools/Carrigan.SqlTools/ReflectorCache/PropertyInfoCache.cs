@@ -1,6 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.Tags;
 using System.Collections.ObjectModel;
 using System.Reflection;
 
@@ -8,103 +7,94 @@ namespace Carrigan.SqlTools.ReflectorCache;
 
 //TODO: proof read documentation for entire class
 
-//TODO: rename to ColumnInfo cache, and get rid of valueT
+//TODO: rename to PropertyInfo cache, and get rid of valueT
 /// <summary>
-/// This class is a wrapper for a dictionary, where the key is a <see cref="PropertyName"/>
-///  that corresponds to <see cref="PropertyInfo"/>'s Name property.
-/// Note: the key for the wrapped dictionary is actually the property's name, 
-/// since ProperrtyInfo does not implement the interfaces required for hashing.
-/// It was meant to serve as a cache for the corresponding values for Attributes related
-/// to <see cref="PropertyInfo"/>, such as <see cref="ColumnTag"/>, <see cref="TableTag"/>, <see cref="AliasTag"/>, etc, 
-/// however, currently it is only serving as a cache for <see cref="ColumnInfo"/> which 
-/// serves as a container for those fields.
-/// <typeparamref name="typeT"/>
+/// This class is a wrapper for a dictionary, where the key is a <see cref="ResultColumnName"/>
+///  that corresponds to <see cref="ResultColumnName"/>'s .
+/// Note: the key for the wrapped dictionary is actually the <see cref="ResultColumnName"/>.
 /// </summary>
 /// <typeparam name="typeT">The type from which the type is being looked up.</typeparam>
-/// <typeparam name="valueT">The datatype being cached.</typeparam>
-internal class PropertyInfoCache<typeT, valueT> 
+internal class PropertyInfoCache<typeT> 
 {
     /// <summary>
     /// Read only dictionary used as the core of the cache.
     /// </summary>
-    private readonly IReadOnlyDictionary<PropertyName, valueT> _cache;
+    private readonly IReadOnlyDictionary<ResultColumnName, PropertyInfo> _cache;
 
     /// <summary>
     /// This is the class constructor for PropertyInfoCache.
     /// </summary>
-    /// <param name="data">An enumeration of tuples consisting of a property info and a value</param>
-    internal PropertyInfoCache(IEnumerable<Tuple<PropertyInfo, valueT>> data) =>
-        _cache = new ReadOnlyDictionary<PropertyName, valueT>
+    /// <param name="data">An enumeration of tuples consisting of a <see cref="ResultColumnName"/> and a <see cref="PropertyInfo"/> value</param>
+    internal PropertyInfoCache(IEnumerable<Tuple<ResultColumnName, PropertyInfo>> data) =>
+        _cache = new ReadOnlyDictionary<ResultColumnName, PropertyInfo>
         (
-            new Dictionary<PropertyName, valueT> 
+            new Dictionary<ResultColumnName, PropertyInfo> 
             (
                 data.Select
                 (
-                    tuple => new KeyValuePair<PropertyName, valueT>
+                    tuple => new KeyValuePair<ResultColumnName, PropertyInfo>
                     (
-                        new PropertyName(tuple.Item1.Name),
+                        new ResultColumnName(tuple.Item1),
                         tuple.Item2
                     )
                 )
             )
         );
 
-    //TODO: make sure this can return null
     /// <summary>
     /// Returns the value for <paramref name="key"/> if present; otherwise <c>null</c>.
     /// Also returns <c>null</c> when the stored value is <c>null</c>.
     /// </summary>
-    /// <param name="key">the property to look up</param>
-    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that the property was invalid</exception>
-    internal valueT Get(PropertyName key)
+    /// <param name="key">the select to look up from</param>
+    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that the <see cref="ResultColumnName"/> that was invalid</exception>
+    internal PropertyInfo Get(ResultColumnName key)
     {
-        if (_cache.TryGetValue(key, out valueT? value))
+        if (_cache.TryGetValue(key, out PropertyInfo? value))
             return value;
         else
-            throw new InvalidPropertyException<typeT>(key);
+            throw new InvalidResultColumnNameException<typeT>(key);
     }
 
-    //TODO: make sure this can return nulls
     /// <summary>
     /// Returns the values for <paramref name="keys"/> if present; 
     /// otherwise if any one of them doesn't exists, throw a <see cref="InvalidPropertyException{typeT}"/>
     /// Also returns <c>null</c> when the stored value is <c>null</c>.
     /// </summary>
-    /// <param name="keys">the properties to look up</param>
+    /// <param name="keys">the ResultColumnName to look up from</param>
     /// <returns></returns>
     /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that one or more properties were invalid</exception>
-    internal IEnumerable<valueT> GetMany(params IEnumerable<PropertyName> keys) 
+    internal IEnumerable<PropertyInfo> GetMany(params IEnumerable<ResultColumnName> keys) 
     {
-        IEnumerable<PropertyName> invalids = keys.Where(key => Exists(key) is false);
+        IEnumerable<ResultColumnName> invalids = keys.Where(key => Exists(key) is false);
 
         if (invalids.Any())
-            throw new InvalidPropertyException<typeT>(invalids);
+            throw new InvalidResultColumnNameException<typeT>(invalids);
         else
             return keys.Select(key => Get(key));
     }
 
     /// <summary>All values (some entries may be <c>null</c> by design).</summary>
-    internal IEnumerable<valueT> Values => 
+    internal IEnumerable<PropertyInfo> Values => 
         _cache.Values;
 
     /// <summary>
-    /// Determines if all of the property names exist in the cache
+    /// Determines if all of the <see cref="ResultColumnName"/> exist in the cache
     /// </summary>
-    /// <param name="propertyNames">The property names to test</param>
+    /// <param name="resultColumnNames">The <see cref="ResultColumnName"/>s to test</param>
     /// <returns>true if all items in the enumeration exist. Else false.</returns>
-    internal bool Exists(params IEnumerable<PropertyName> propertyNames) =>
-        propertyNames.All(propertyName => _cache.ContainsKey(propertyName));
+    internal bool Exists(params IEnumerable<ResultColumnName> resultColumnNames) =>
+        resultColumnNames.All(ResultColumnName => _cache.ContainsKey(ResultColumnName));
 
     /// <summary>
-    /// Gets an <see cref="InvalidPropertyException{typeT}"/> with the property names in the message, or <c>null</c>.
+    /// Gets an <see cref="InvalidResultColumnNameException{typeT}"/> with the <see cref="ResultColumnName"/>s in the message, or <c>null</c>.
     /// </summary>
-    /// <param name="propertyNames">The property names to test</param>
-    /// <returns>An <see cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else <c>null</c>.</returns>
-    internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyName> propertyNames)
+    /// <param name="resultColumnNames">The <see cref="ResultColumnName"/>s to test</param>
+    /// <returns>An <see cref="InvalidResultColumnNameException{typeT}"/> if any invalid result column names exist, else <c>null</c>.</returns>
+    internal InvalidResultColumnNameException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<ResultColumnName> resultColumnNames)
     {
-        IEnumerable<PropertyName> invalidPropertyNames = propertyNames.Where(propertyName => _cache.ContainsKey(propertyName) is false);
-        if (invalidPropertyNames.Any())
-            return new(invalidPropertyNames);
+        IEnumerable<ResultColumnName> invalidResultColumnNames = resultColumnNames.Where(ResultColumnName => _cache.ContainsKey(ResultColumnName) is false);
+        if (invalidResultColumnNames.Any())
+            return new(invalidResultColumnNames);
         else
             return null;
     }

@@ -31,14 +31,14 @@ public static class Invoker<T> where T : class?, new()
         }
         exception =
             InvocationReflectorCache<T>
-                .ResultColumnCache
+                .PropertyInfoCache
                 .GetExceptionForInvalidProperties(invocation.Keys.Select(name => new ResultColumnName(name)));
         if (exception != null)
             throw exception;
         foreach (string key in invocation.Keys)
         {
             ResultColumnName columnName = new(key);
-            PropertyInfo property = InvocationReflectorCache<T>.ResultColumnCache.Get(columnName);
+            PropertyInfo property = InvocationReflectorCache<T>.PropertyInfoCache.Get(columnName);
             object? rawValue = invocation[key];
             object? valueToSet = Invoker<T>.ConvertValue(rawValue, property.PropertyType);
 

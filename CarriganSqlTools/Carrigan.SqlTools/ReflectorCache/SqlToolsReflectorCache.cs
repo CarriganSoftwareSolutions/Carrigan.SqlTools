@@ -127,7 +127,7 @@ public class SqlToolsReflectorCache<T>
     /// Lazily resolves a PropertyInfoCache for <see cref="ColumnInfo"/> instances
     /// for <typeparamref name="T"/>.
     /// </summary>
-    private static readonly PropertyInfoCache<T, ColumnInfo> _ColumnInfoCache;
+    private static readonly ColumnInfoCache<T, ColumnInfo> _ColumnInfoCache;
 
     /// <summary>
     /// Static constructor that initializes all lazy caches for <typeparamref name="T"/>.
@@ -202,7 +202,7 @@ public class SqlToolsReflectorCache<T>
                     .ReadablePublicInstanceProperties
                     .Where(property => property.GetCustomAttribute<KeyAttribute>() != null);
 
-        _ColumnInfoCache = new PropertyInfoCache<T, ColumnInfo>
+        _ColumnInfoCache = new ColumnInfoCache<T, ColumnInfo>
         (
             properties.Select
             (

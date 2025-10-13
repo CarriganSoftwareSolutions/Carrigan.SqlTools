@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.Invocation;
 
-//TODO: Update Documentation
+//TODO: Update Documentation, Unit tests
 
 /// <summary>
 /// This class is serves as a cache for reflection operations commonly used by this library.
@@ -20,9 +20,9 @@ internal static class InvocationReflectorCache<T>
     internal static Type Type =>
         SqlToolsReflectorCache<T>.Type;
 
-    internal static readonly ResultColumnCache<T> ResultColumnCache;
+    internal static readonly PropertyInfoCache<T> PropertyInfoCache;
     static InvocationReflectorCache() =>
-        ResultColumnCache = new
+        PropertyInfoCache = new
                 (
                     //yes, we get this is caching from a lower level of caching
                     //yes, this seems redundant, but I want to cache the reflection operations at various levels

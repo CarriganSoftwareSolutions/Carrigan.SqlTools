@@ -7,18 +7,18 @@ using Carrigan.SqlTools.Tests.TestEntities;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tests.RegularExpressionTests;
-public class PropertyInfoCacheTests
+public class ColumnInfoCacheTests
 {
 
     private readonly List<Tuple<PropertyInfo, PropertyName>> _properties;
-    private readonly PropertyInfoCache<Address, PropertyName> _cache;
+    private readonly ColumnInfoCache<Address, PropertyName> _cache;
 
     private readonly PropertyName _streetPropertyName;
     private readonly PropertyName _cityPropertyName;
     private readonly PropertyName _postalCodePropertyName;
 
     private readonly PropertyName _invalid;
-    public PropertyInfoCacheTests()
+    public ColumnInfoCacheTests()
     {
         Type addressType = typeof(Address);
         _properties = [];
