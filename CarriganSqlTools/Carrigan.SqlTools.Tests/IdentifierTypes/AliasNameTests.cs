@@ -1,4 +1,5 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tests.IdentifierTypes;

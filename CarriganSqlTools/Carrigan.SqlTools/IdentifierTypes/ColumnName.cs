@@ -1,5 +1,5 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.Core.Interfaces;
+﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
