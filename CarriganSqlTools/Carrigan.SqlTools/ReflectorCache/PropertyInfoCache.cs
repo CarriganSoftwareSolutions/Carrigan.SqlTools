@@ -7,7 +7,6 @@ using System.Reflection;
 namespace Carrigan.SqlTools.ReflectorCache;
 
 //TODO: proof read documentation for entire class
-//TODO: Unit tests for entire class
 /// <summary>
 /// This class is a wrapper for a dictionary, where the key is a <see cref="PropertyName"/>
 ///  that corresponds to <see cref="PropertyInfo"/>'s Name property.

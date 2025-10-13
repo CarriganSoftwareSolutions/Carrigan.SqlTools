@@ -1,11 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.Tags;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tests.IdentifierTypes;
 public class MemberNameTests
@@ -26,28 +20,28 @@ public class MemberNameTests
     [Fact]
     public void Constructor_Null()
     {
-        AliasName nameWrapper = new (nul);
+        MemberName nameWrapper = new (nul);
         Assert.NotNull(nameWrapper);
     }
 
     [Fact]
     public void New_Null()
     {
-        AliasName? nameWrapper = AliasName.New(nul);
+        MemberName? nameWrapper = MemberName.New(nul);
         Assert.Null(nameWrapper);
     }
 
     [Fact]
     public void New_Empty()
     {
-        AliasName? nameWrapper = AliasName.New(empty);
+        MemberName? nameWrapper = MemberName.New(empty);
         Assert.Null(nameWrapper);
     }
 
     [Fact]
     public void New_White()
     {
-        AliasName? nameWrapper = AliasName.New(white);
+        MemberName? nameWrapper = MemberName.New(white);
         Assert.NotNull(nameWrapper);
     }
 
@@ -55,21 +49,21 @@ public class MemberNameTests
     [Fact]
     public void ToString_Null()
     {
-        AliasName nameWrapper = new(nul);
+        MemberName nameWrapper = new(nul);
         Assert.Equal(string.Empty, nameWrapper.ToString());
     }
 
     [Fact]
     public void ToString_Empty()
     {
-        AliasName nameWrapper = new(empty);
+        MemberName nameWrapper = new(empty);
         Assert.Equal(empty, nameWrapper.ToString());
     }
 
     [Fact]
     public void ToString_Text()
     {
-        AliasName nameWrapper = new(eStr);
+        MemberName nameWrapper = new(eStr);
         Assert.Equal(eStr, nameWrapper.ToString());
     }
 
@@ -78,8 +72,8 @@ public class MemberNameTests
     {
         string? name = null;
 
-        AliasName nameWrapper1 = new(name);
-        AliasName nameWrapper2 = new(name);
+        MemberName nameWrapper1 = new(name);
+        MemberName nameWrapper2 = new(name);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(string.Empty, nameWrapper2);
     }
@@ -89,8 +83,8 @@ public class MemberNameTests
     {
         string? name = string.Empty;
 
-        AliasName nameWrapper1 = new(name);
-        AliasName nameWrapper2 = new(name);
+        MemberName nameWrapper1 = new(name);
+        MemberName nameWrapper2 = new(name);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(string.Empty, nameWrapper2);
     }
@@ -98,8 +92,8 @@ public class MemberNameTests
     [Fact]
     public void Equal_Default_Text()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(eStrAlt);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(eStr, nameWrapper2);
     }
@@ -107,8 +101,8 @@ public class MemberNameTests
     [Fact]
     public void EqualEqual_Null()
     {
-        AliasName nameWrapper1 = new(nul);
-        AliasName nameWrapper2 = new(nul);
+        MemberName nameWrapper1 = new(nul);
+        MemberName nameWrapper2 = new(nul);
         Assert.True(nameWrapper1 == nameWrapper2);
         Assert.True(string.Empty == nameWrapper2);
     }
@@ -116,8 +110,8 @@ public class MemberNameTests
     [Fact]
     public void EqualEqual_Empty()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(empty);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(empty);
         Assert.True(nameWrapper1 == nameWrapper2);
         Assert.True(string.Empty == nameWrapper2);
     }
@@ -125,8 +119,8 @@ public class MemberNameTests
     [Fact]
     public void EqualEqual_Text()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(eStrAlt);
         bool test = eStr == nameWrapper2;
         bool test2 = eStr != nameWrapper2;
         Assert.True(nameWrapper1 == nameWrapper2);
@@ -138,8 +132,8 @@ public class MemberNameTests
     [Fact]
     public void EqualEqual_NullComparisons()
     {
-        AliasName nonNull = new(string.Empty);
-        AliasName? isNull = null;
+        MemberName nonNull = new(string.Empty);
+        MemberName? isNull = null;
 
         Assert.False(nonNull == isNull);
         Assert.False(isNull == nonNull);
@@ -148,8 +142,8 @@ public class MemberNameTests
     [Fact]
     public void NotEqualEqual_NullComparisons()
     {
-        AliasName nonNull = new(string.Empty);
-        AliasName? isNull = null;
+        MemberName nonNull = new(string.Empty);
+        MemberName? isNull = null;
         Assert.True(nonNull != isNull);
         Assert.True(isNull != nonNull);
     }
@@ -158,10 +152,10 @@ public class MemberNameTests
     public void DictionaryKey_Null()
     {
         string? name = null;
-        Dictionary<AliasName, decimal> dictionary= [];
+        Dictionary<MemberName, decimal> dictionary= [];
 
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(name);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(name);
         dictionary[nameWrapper1] = pi;
         Assert.True(dictionary.ContainsKey(nameWrapper2));
         Assert.True(dictionary[nameWrapper1] == pi);
@@ -171,10 +165,10 @@ public class MemberNameTests
     [Fact]
     public void DictionaryKey_Empty()
     {
-        Dictionary<AliasName, decimal> dictionary = [];
+        Dictionary<MemberName, decimal> dictionary = [];
 
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(empty);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(empty);
         dictionary[nameWrapper1] = pi;
         Assert.True(dictionary.ContainsKey(nameWrapper2));
         Assert.True(dictionary[nameWrapper1] == pi);
@@ -185,10 +179,10 @@ public class MemberNameTests
     public void DictionaryKey_Text()
     {
         string? name = eStr;
-        Dictionary<AliasName, decimal> dictionary = [];
+        Dictionary<MemberName, decimal> dictionary = [];
 
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(eStrAlt);
         dictionary[nameWrapper1] = pi;
         Assert.True(dictionary.ContainsKey(nameWrapper2));
         Assert.True(dictionary[nameWrapper1] == pi);
@@ -199,14 +193,14 @@ public class MemberNameTests
     public void DictionaryKey_Multi()
     {
         string? name = eStr;
-        Dictionary<AliasName, decimal> dictionary = [];
+        Dictionary<MemberName, decimal> dictionary = [];
 
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
-        AliasName nameWrapper3 = new(tString);
-        AliasName nameWrapper4 = new(goldenString);
-        AliasName nameWrapper5 = new(piString);
-        AliasName nameWrapper6 = new(empty);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(eStrAlt);
+        MemberName nameWrapper3 = new(tString);
+        MemberName nameWrapper4 = new(goldenString);
+        MemberName nameWrapper5 = new(piString);
+        MemberName nameWrapper6 = new(empty);
         dictionary[nameWrapper1] = e;
         dictionary[nameWrapper3] = t;
         dictionary[nameWrapper4] = pi;
@@ -227,8 +221,8 @@ public class MemberNameTests
     [Fact]
     public void NotEqual_Null()
     {
-        AliasName nameWrapper1 = new(nul);
-        AliasName nameWrapper2 = new(goldenString);
+        MemberName nameWrapper1 = new(nul);
+        MemberName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.NotEqual(empty, nameWrapper2);
     }
@@ -236,8 +230,8 @@ public class MemberNameTests
     [Fact]
     public void NotEqual_Empty()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(goldenString);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.NotEqual(empty, nameWrapper2);
     }
@@ -245,8 +239,8 @@ public class MemberNameTests
     [Fact]
     public void NotEqual_Text()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(goldenString);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.NotEqual(eStr, nameWrapper2);
     }
@@ -254,8 +248,8 @@ public class MemberNameTests
     [Fact]
     public void NotEqualEqual_Null()
     {
-        AliasName nameWrapper1 = new(nul);
-        AliasName nameWrapper2 = new(eStr);
+        MemberName nameWrapper1 = new(nul);
+        MemberName nameWrapper2 = new(eStr);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.True(empty != nameWrapper2);
     }
@@ -263,8 +257,8 @@ public class MemberNameTests
     [Fact]
     public void NotEqualEqual_Empty()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(eStr);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(eStr);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.True(empty != nameWrapper2);
     }
@@ -272,8 +266,8 @@ public class MemberNameTests
     [Fact]
     public void NotEqualEqual_Text()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(goldenString);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(goldenString);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.True(nameWrapper1 != nameWrapper2);
     }
@@ -281,19 +275,19 @@ public class MemberNameTests
     [Fact]
     public void IsEmpty_True()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
         Assert.True(nameWrapper1.IsEmpty());
         Assert.True(nameWrapper2.IsEmpty());
     }
     [Fact]
     public void IsNullOrEmpty_True()
     {
-        AliasName? nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
-        AliasName? nameWrapper3 = null;
-        AliasName? nameWrapper4 = AliasName.New(nul);
-        AliasName? nameWrapper5 = AliasName.New(empty);
+        MemberName? nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
+        MemberName? nameWrapper3 = null;
+        MemberName? nameWrapper4 = MemberName.New(nul);
+        MemberName? nameWrapper5 = MemberName.New(empty);
         Assert.True(nameWrapper1.IsNullOrEmpty());
         Assert.True(nameWrapper2.IsNullOrEmpty());
         Assert.True(nameWrapper3.IsNullOrEmpty());
@@ -304,8 +298,8 @@ public class MemberNameTests
     [Fact]
     public void IsEmpty_False()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(white);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(white);
         Assert.False(nameWrapper1.IsEmpty());
         Assert.False(nameWrapper2.IsEmpty());
     }
@@ -313,10 +307,10 @@ public class MemberNameTests
     [Fact]
     public void IsNullOrEmpty_False()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(white);
-        AliasName? nameWrapper3 = AliasName.New(eStr);
-        AliasName? nameWrapper4 = AliasName.New(white);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(white);
+        MemberName? nameWrapper3 = MemberName.New(eStr);
+        MemberName? nameWrapper4 = MemberName.New(white);
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
@@ -326,8 +320,8 @@ public class MemberNameTests
     [Fact]
     public void IsNotEmpty_False()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
         Assert.False(nameWrapper1.IsNotEmpty());
         Assert.False(nameWrapper2.IsNotEmpty());
     }
@@ -335,12 +329,12 @@ public class MemberNameTests
     [Fact]
     public void IsNotNullOrEmpty_False()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
-        AliasName? nameWrapper3 = null;
-        AliasName? nameWrapper4 = AliasName.New(null);
-        AliasName? nameWrapper5 = AliasName.New(nul);
-        AliasName? nameWrapper6 = AliasName.New(empty);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
+        MemberName? nameWrapper3 = null;
+        MemberName? nameWrapper4 = MemberName.New(null);
+        MemberName? nameWrapper5 = MemberName.New(nul);
+        MemberName? nameWrapper6 = MemberName.New(empty);
         Assert.False(nameWrapper1.IsNotNullOrEmpty());
         Assert.False(nameWrapper2.IsNotNullOrEmpty());
         Assert.False(nameWrapper3.IsNotNullOrEmpty());
@@ -352,8 +346,8 @@ public class MemberNameTests
     [Fact]
     public void IsNotEmpty_True()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(white);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(white);
         Assert.True(nameWrapper1.IsNotEmpty());
         Assert.True(nameWrapper2.IsNotEmpty());
     }
@@ -361,10 +355,10 @@ public class MemberNameTests
     [Fact]
     public void IsNotNullOrEmpty_True()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(white);
-        AliasName? nameWrapper3 = AliasName.New(eStr);
-        AliasName? nameWrapper4 = AliasName.New(white);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(white);
+        MemberName? nameWrapper3 = MemberName.New(eStr);
+        MemberName? nameWrapper4 = MemberName.New(white);
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
@@ -374,9 +368,9 @@ public class MemberNameTests
     [Fact]
     public void IsWhitespace_True()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
-        AliasName nameWrapper3 = new(white);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
+        MemberName nameWrapper3 = new(white);
         Assert.True(nameWrapper1.IsWhiteSpace());
         Assert.True(nameWrapper2.IsWhiteSpace());
         Assert.True(nameWrapper3.IsWhiteSpace());
@@ -385,14 +379,14 @@ public class MemberNameTests
     [Fact]
     public void IsNullOrWhitespace_True()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
-        AliasName nameWrapper3 = new(white);
-        AliasName? nameWrapper4 = null;
-        AliasName? nameWrapper5 = AliasName.New(null);
-        AliasName? nameWrapper6 = AliasName.New(nul);
-        AliasName? nameWrapper7 = AliasName.New(empty);
-        AliasName? nameWrapper8 = AliasName.New(white);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
+        MemberName nameWrapper3 = new(white);
+        MemberName? nameWrapper4 = null;
+        MemberName? nameWrapper5 = MemberName.New(null);
+        MemberName? nameWrapper6 = MemberName.New(nul);
+        MemberName? nameWrapper7 = MemberName.New(empty);
+        MemberName? nameWrapper8 = MemberName.New(white);
         Assert.True(nameWrapper1.IsNullOrWhiteSpace());
         Assert.True(nameWrapper2.IsNullOrWhiteSpace());
         Assert.True(nameWrapper3.IsNullOrWhiteSpace());
@@ -406,15 +400,15 @@ public class MemberNameTests
     [Fact]
     public void IsWhitespace_False()
     {
-        AliasName nameWrapper1 = new(eStr);
+        MemberName nameWrapper1 = new(eStr);
         Assert.False(nameWrapper1.IsWhiteSpace());
     }
 
     [Fact]
     public void IsNullOrWhitespace_False()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName? nameWrapper2 = AliasName.New(eStr);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName? nameWrapper2 = MemberName.New(eStr);
         Assert.False(nameWrapper1.IsNullOrWhiteSpace());
         Assert.False(nameWrapper2.IsNullOrWhiteSpace());
     }
@@ -422,9 +416,9 @@ public class MemberNameTests
     [Fact]
     public void IsNotWhitespace_False()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
-        AliasName nameWrapper3 = new(white);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
+        MemberName nameWrapper3 = new(white);
         Assert.False(nameWrapper1.IsNotWhiteSpace());
         Assert.False(nameWrapper2.IsNotWhiteSpace());
         Assert.False(nameWrapper3.IsNotWhiteSpace());
@@ -433,13 +427,13 @@ public class MemberNameTests
     [Fact]
     public void IsNotNullOrWhitespace_False()
     {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(nul);
-        AliasName nameWrapper3 = new(white);
-        AliasName? nameWrapper4 = null;
-        AliasName? nameWrapper5 = AliasName.New(empty);
-        AliasName? nameWrapper6 = AliasName.New(nul);
-        AliasName? nameWrapper7 = AliasName.New(white);
+        MemberName nameWrapper1 = new(empty);
+        MemberName nameWrapper2 = new(nul);
+        MemberName nameWrapper3 = new(white);
+        MemberName? nameWrapper4 = null;
+        MemberName? nameWrapper5 = MemberName.New(empty);
+        MemberName? nameWrapper6 = MemberName.New(nul);
+        MemberName? nameWrapper7 = MemberName.New(white);
         Assert.False(nameWrapper1.IsNotNullOrWhiteSpace());
         Assert.False(nameWrapper2.IsNotNullOrWhiteSpace());
         Assert.False(nameWrapper3.IsNotNullOrWhiteSpace());
@@ -452,21 +446,21 @@ public class MemberNameTests
     [Fact]
     public void IsNotWhitespace_True()
     {
-        AliasName nameWrapper1 = new(eStr);
+        MemberName nameWrapper1 = new(eStr);
         Assert.True(nameWrapper1.IsNotWhiteSpace());
     }
 
     [Fact]
     public void IsNotNullOrWhitespace_True()
     {
-        AliasName nameWrapper1 = new(eStr);
+        MemberName nameWrapper1 = new(eStr);
         Assert.True(nameWrapper1.IsNotNullOrWhiteSpace());
     }
 
     [Fact]
     public void ImplicitConversion_ToString_AssignmentAndInterpolation()
     {
-        AliasName a = new(eStr);
+        MemberName a = new(eStr);
         string assigned = eStr;
         string interpolated = $"{eStr}";
 
@@ -477,8 +471,8 @@ public class MemberNameTests
     [Fact]
     public void GetHashCode_EqualObjects_SameHash()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStr);
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new(eStr);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(nameWrapper1.GetHashCode(), nameWrapper2.GetHashCode());
     }
@@ -486,8 +480,8 @@ public class MemberNameTests
     [Fact]
     public void Equality_PreservesWhitespace()
     {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new($" {eStr} ");
+        MemberName nameWrapper1 = new(eStr);
+        MemberName nameWrapper2 = new($" {eStr} ");
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.False(nameWrapper2.IsWhiteSpace()); 
@@ -496,8 +490,8 @@ public class MemberNameTests
     [Fact]
     public void Equals_ObjectAndTyped_Agree()
     {
-        AliasName nameWrapper1 = new(eStr);
-        object nameWrapper2 = new AliasName(eStr);
+        MemberName nameWrapper1 = new(eStr);
+        object nameWrapper2 = new MemberName(eStr);
         Assert.True(nameWrapper1.Equals((StringWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }

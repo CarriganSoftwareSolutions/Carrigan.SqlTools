@@ -3,7 +3,6 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Attributes;
-//TODO: Unit tests
 /// <summary>
 /// Specifies a parameter identifier for use with the SQL generator.
 /// Enables mapping of class properties to custom parameter <see cref="Name"/> when
