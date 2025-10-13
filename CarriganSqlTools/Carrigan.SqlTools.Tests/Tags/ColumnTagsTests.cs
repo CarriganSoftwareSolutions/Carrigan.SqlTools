@@ -7,9 +7,9 @@ namespace Carrigan.SqlTools.Tests.Tags;
 public class ColumnTagsTests
 {
     [Theory]
-    [InlineData("Franks", "Sloppy", "Pizza", "Sloppy")]
-    [InlineData(null, "Sloppy", "Pizza", "Sloppy")]
-    [InlineData("", "Sloppy", "Pizza", "Sloppy")]
+    [InlineData("Franks", "Sloppy", "Pizza", "Pizza")]
+    [InlineData(null, "Sloppy", "Pizza", "Pizza")]
+    [InlineData("", "Sloppy", "Pizza", "Pizza")]
     public void ColumnNameTest(string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tableTag = new(schemaName, tableName);

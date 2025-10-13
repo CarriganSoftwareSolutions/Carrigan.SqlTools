@@ -47,35 +47,6 @@ internal class PropertyInfoCache<typeT, valueT>
                 )
             )
         );
-    /// <summary>
-    /// This is the class constructor for PropertyInfoCache.
-    /// </summary>
-    /// <param name="data">An enumeration of tuples consisting of a <see cref="PropertyInfo"/> and a value</param>
-    internal PropertyInfoCache(IEnumerable<Tuple<PropertyName, valueT>> data) =>
-        _cache = new ReadOnlyDictionary<PropertyName, valueT>
-        (
-            new Dictionary<PropertyName, valueT>
-            (
-                data.Select
-                (
-                    tuple => new KeyValuePair<PropertyName, valueT>
-                    (
-                        new PropertyName(tuple.Item1),
-                        tuple.Item2
-                    )
-                )
-            )
-        );
-
-    //TODO: make sure this can return null
-    /// <summary>
-    /// Returns the value for <paramref name="key"/> if present; otherwise <c>null</c>.
-    /// Also returns <c>null</c> when the stored value is <c>null</c>.
-    /// </summary>
-    /// <param name="key">the property to look up</param>
-    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that the property was invalid</exception>
-    internal valueT Get(PropertyInfo key) =>
-        Get(new PropertyName(key.Name));
 
     //TODO: make sure this can return null
     /// <summary>
@@ -111,16 +82,6 @@ internal class PropertyInfoCache<typeT, valueT>
             return keys.Select(key => Get(key));
     }
 
-    //TODO: make sure this can return nulls
-    /// <summary>
-    /// Returns the values for <paramref name="keys"/> if present; 
-    /// otherwise if any one of them doesn't exists, throw a <see cref="InvalidPropertyException{typeT}"/>
-    /// Also returns <c>null</c> when the stored value is <c>null</c>.
-    /// <param name="keys">the properties to look up</param>
-    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that one or more properties were invalid</exception>
-    internal IEnumerable<valueT> GetMany(IEnumerable<PropertyInfo> keys) =>
-        GetMany(keys.Select(key => new PropertyName(key.Name)));
-
     /// <summary>All values (some entries may be <c>null</c> by design).</summary>
     internal IEnumerable<valueT> Values => 
         _cache.Values;
@@ -154,12 +115,4 @@ internal class PropertyInfoCache<typeT, valueT>
         else
             return null;
     }
-
-    /// <summary>
-    /// Gets an <see cref="InvalidPropertyException{typeT}"/> with the name of each property in the message, or <c>null</c>.
-    /// </summary>
-    /// <param name="propertyNames">The properties to test</param>
-    /// <returns>An cref="InvalidPropertyException{typeT}"/> if any invalid property names exist, else null.</returns>
-    internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyInfo> properties) =>
-        GetExceptionForInvalidProperties(properties.Select(property => new PropertyName(property.Name)));
 }

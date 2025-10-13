@@ -77,7 +77,7 @@ public class JoinExamples
             SelectTags.Get<Customer>("Id", "CustomerId")
                 .Concat<Customer>(["Name", "Email", "Phone"])
                 .Append<Order>("Id", "OrderId")
-                .Concat<Order>(["PaymentMethodId", "OrderDate", "Total"])
+                .Concat<Order>(["OrderDate", "Total"])
                 .Append<PaymentMethod>("Id", "PaymentMethodId")
                 .Append<PaymentMethod>("ZipCode");
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -91,7 +91,7 @@ public class JoinExamples
 
         SqlQuery query = customerGenerator.Select(selectTags, joins, null, null, null);
 
-        Assert.Equal("SELECT [Customer].[Id] AS CustomerId, [Customer].[Name], [Customer].[Email], [Customer].[Phone], [Order].[Id] AS OrderId, [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total], [PaymentMethod].[Id] AS PaymentMethodId, [PaymentMethod].[ZipCode] FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
+        Assert.Equal("SELECT [Customer].[Id] AS CustomerId, [Customer].[Name], [Customer].[Email], [Customer].[Phone], [Order].[Id] AS OrderId, [Order].[OrderDate], [Order].[Total], [PaymentMethod].[Id] AS PaymentMethodId, [PaymentMethod].[ZipCode] FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }
