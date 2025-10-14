@@ -9,7 +9,7 @@ using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
 
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;
-public class ReflectorCacheTests
+public class SqlToolsReflectorCacheTests
 {
     [Fact]
     public void TypeTest()

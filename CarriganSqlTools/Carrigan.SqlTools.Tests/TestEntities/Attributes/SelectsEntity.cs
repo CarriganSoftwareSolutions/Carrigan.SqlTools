@@ -1,11 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tests.TestEntities.Attributes;
 [Identifier("RedHerring")] //just to make sure it doesn't get confused by this.
