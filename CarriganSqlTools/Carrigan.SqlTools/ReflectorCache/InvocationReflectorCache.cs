@@ -2,11 +2,10 @@
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace Carrigan.SqlTools.Invocation;
+namespace Carrigan.SqlTools.ReflectorCache;
 
 //TODO: Update Documentation, Unit tests
 
