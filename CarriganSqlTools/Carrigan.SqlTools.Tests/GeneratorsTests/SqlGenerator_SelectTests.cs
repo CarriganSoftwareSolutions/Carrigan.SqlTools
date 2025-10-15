@@ -93,7 +93,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
-        Relations relation = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
+        JoinsBase relation = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relation, predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
@@ -120,7 +120,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
-        Relations relations = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
+        JoinsBase relations = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relations, predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
@@ -180,11 +180,11 @@ public class SqlGenerator_SelectTests
         Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
-        Relations joins = new Joins<JoinLeftTable>(join1, join2);
+        JoinsBase joins = new Joins<JoinLeftTable>(join1, join2);
         OrderByItem<JoinLeftTable> orderByItem1 = new("Id", SortDirectionEnum.Ascending);
         OrderByItem<JoinRightTable> orderByItem2 = new("Id", SortDirectionEnum.Descending);
         OrderByItem<JoinLastTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
-        IOrderByClause orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
+        OrderByBase orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
         OffsetNext offsetNext = new DefinePage(3, 50);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, joins, predicateId, orderBy, offsetNext);
 
@@ -216,7 +216,7 @@ public class SqlGenerator_SelectTests
         Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
-        Relations relation = new Joins<JoinLeftTable>(join1, join2);
+        JoinsBase relation = new Joins<JoinLeftTable>(join1, join2);
         OrderByItem<JoinLeftTable> orderByItem = new("Id", SortDirectionEnum.Ascending);
         DefinePage offsetNext = new (3, 50);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relation, predicateId, orderByItem, offsetNext);

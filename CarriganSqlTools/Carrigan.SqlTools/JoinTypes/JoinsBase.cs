@@ -3,14 +3,14 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-public abstract class Relations
+public abstract class JoinsBase
 {
     /// <summary>
     /// Represents a collection of classes where each class defines a single SQL join operation.
     /// The name differs from the preferred “Joins” to avoid a naming conflict (e.g., Joins.Joins),
     /// which would result in a compiler error.
     /// </summary>
-    protected abstract IEnumerable<Relation> Joints { get; set; }
+    protected abstract IEnumerable<JoinBase> Joints { get; set; }
 
     /// <summary>
     /// Recursively get all the parameters associated with the logic.

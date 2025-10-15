@@ -35,7 +35,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class Join<rightT> : Relation
+public class Join<rightT> : JoinBase
 {
     protected readonly string _sql;
 

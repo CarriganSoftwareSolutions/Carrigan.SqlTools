@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 
 /// <summary>
 /// Represents a single-column specification within an SQL <c>ORDER BY</c> clause.
-/// Also implements <see cref="IOrderByClause"/> to simplify creation of single-column
+/// Also implements <see cref="OrderByBase"/> to simplify creation of single-column
 /// order-by clauses.
 /// </summary>
 /// <typeparam name="T">
@@ -25,7 +25,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// ORDER BY [Customer].[Name] ASC
 /// ]]></code>
 /// </example>
-public class OrderByItem<T> : IOrderByItem, IOrderByClause
+public class OrderByItem<T> : OrderByItemBase
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderByItem{T}"/> class,
@@ -39,10 +39,9 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// The sort direction to apply.
     /// </param>
     public OrderByItem(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
-    {
+        : base(sortDirection) =>
         ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
-        SortDirection = sortDirection;
-    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderByItem{T}"/> class,
     /// specifying the table type <typeparamref name="T"/>, the column name,
@@ -61,74 +60,30 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// <summary>
     /// Gets the <see cref="ColumnInfo"/> that specifies the column being ordered.
     /// </summary>
-    public ColumnInfo ColumnInfo { get; private set; }
+    internal override ColumnInfo ColumnInfo { get; }
 
     /// <summary>
-    /// Gets the <see cref="TableTag"/> representing the table whose column is being sorted.
-    /// </summary>
-
-    public TableTag TableTag 
-        => SqlToolsReflectorCache<T>.Table;
-
-    /// <summary>
-    /// Gets the <see cref="SortDirectionEnum"/> value that specifies the sort direction applied.
-    /// </summary>
-    public SortDirectionEnum SortDirection { get; private set; }
-
-    /// <summary>
-    /// Part of the <see cref="IOrderByClause"/> implementation.
+    /// Part of the <see cref="OrderByBase"/> implementation.
     /// Returns an <see cref="IEnumerable{TableTag}"/> containing the table
     /// involved in the sort for this order-by item.
     /// </summary>
-    public IEnumerable<TableTag> TableTags => 
+    internal override IEnumerable<TableTag> TableTags => 
         [TableTag];
 
     /// <summary>
-    /// Generates the SQL fragment for this order-by item.
-    /// </summary>
-    /// <remarks>
-    /// Unlike <see cref="OrderBy"/>, <see cref="OrderByItem{T}"/> does not include the
-    /// <c>ORDER BY</c> keyword; it must be added separately by <see cref="SqlGenerator{T}"/>.
-    /// </remarks>
-    /// <returns>
-    /// A SQL string representing this item, for example <c>[Order].[OrderDate] ASC</c>.
-    /// </returns>
-    public string ToSql() =>
-        $"{ColumnInfo} {SortDirection.ToSql()}";
-
-    /// <summary>
-    /// Determines whether the current instance is equal to another <see cref="IOrderByItem"/>.
-    /// </summary>
-    /// <remarks>
-    /// The comparison is based on the table and column tags only and ignores the sort direction.
-    /// </remarks>
-    /// <param name="other">The <see cref="IOrderByItem"/> to compare with this instance.</param>
-    /// <returns>
-    /// <c>true</c> if the table and column tags are equal; otherwise, <c>false</c>.
-    /// </returns>
-    public bool Equals(IOrderByItem? other)
-    {
-        if (ReferenceEquals(this, other)) return true;
-        if (other is null) return false;
-
-        return TableTag.Equals(other.TableTag)
-            && ColumnInfo.Equals(other.ColumnInfo);
-    }
-
-    /// <summary>
     /// Determines whether the specified object is equal to the current
-    /// <see cref="IOrderByItem"/> instance.
+    /// <see cref="OrderByItemBase"/> instance.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns>
-    /// <c>true</c> if <paramref name="obj"/> is an <see cref="IOrderByItem"/>
+    /// <c>true</c> if <paramref name="obj"/> is an <see cref="OrderByItemBase"/>
     /// and represents the same table and column; otherwise, <c>false</c>.
     /// </returns>
     public override bool Equals(object? obj)
-        => Equals(obj as IOrderByItem);
+        => Equals(obj as OrderByItemBase);
 
     /// <summary>
-    /// Serves as the default hash function for <see cref="IOrderByItem"/>.
+    /// Serves as the default hash function for <see cref="OrderByItemBase"/>.
     /// The hash code is computed from the <see cref="TableTag"/> and <see cref="ColumnInfo"/> values.
     /// </summary>
     /// <returns>
@@ -144,8 +99,8 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// </summary>
     /// <param name="orderByItem"></param>
     /// <returns>true if equal, else false.</returns>
-    public bool Contains(IOrderByItem orderByItem) =>
-        EqualityComparer<IOrderByItem>.Default.Equals(this, orderByItem);
+    public override bool Contains(OrderByItemBase orderByItem) =>
+        EqualityComparer<OrderByItemBase>.Default.Equals(this, orderByItem);
 
     /// <summary>
     /// Determines whether this order-by item is empty.
@@ -157,28 +112,28 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// <exception cref="NotImplementedException">
     /// Thrown if the method is not implemented.
     /// </exception>
-    public bool IsEmpty() =>
+    public override bool IsEmpty() =>
         ColumnInfo.IsEmpty();
 
     /// <summary>
-    /// Creates a new order by clause with a <see cref="IOrderByItem"> appended. This operation is immutable to the original object.
+    /// Creates a new order by clause with a <see cref="OrderByItemBase"> appended. This operation is immutable to the original object.
     /// </summary>
     /// <param name="orderByItem">Represents another individual order by item consisting of a table, column and sort direction.</param>
-    /// <returns>Returns a new order by clause with a <see cref="IOrderByItem"> appended.</returns>
-    public OrderBy WithAppend(IOrderByItem orderByItem) =>
-        new (new List<IOrderByItem>([this, orderByItem]));
+    /// <returns>Returns a new order by clause with a <see cref="OrderByItemBase"> appended.</returns>
+    public override OrderBy WithAppend(OrderByItemBase orderByItem) =>
+        new (new List<OrderByItemBase>([this, orderByItem]));
 
     /// <summary>
-    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="IOrderByItem"/> appended.  
+    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="OrderByItemBase"/> appended.  
     /// This operation is immutable and does not modify the original instance.
     /// </summary>
     /// <param name="orderByItem">
-    /// The <see cref="IOrderByItem"/> to append, representing a table, column, and sort direction.
+    /// The <see cref="OrderByItemBase"/> to append, representing a table, column, and sort direction.
     /// </param>
     /// <returns>
-    /// A new <c>ORDER BY</c> clause that includes the appended <see cref="IOrderByItem"/>.
+    /// A new <c>ORDER BY</c> clause that includes the appended <see cref="OrderByItemBase"/>.
     /// </returns>
-    public OrderBy WithConcat(params IEnumerable<IOrderByItem> orderByItems) =>
+    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems) =>
         new (orderByItems.Prepend(this));
 
     /// <summary>
@@ -187,6 +142,6 @@ public class OrderByItem<T> : IOrderByItem, IOrderByClause
     /// <returns>
     /// A new <see cref="OrderBy"/> instance created from this object.
     /// </returns>
-    public OrderBy AsOrderBy() =>
+    public override OrderBy AsOrderBy() =>
         new (this);
 }

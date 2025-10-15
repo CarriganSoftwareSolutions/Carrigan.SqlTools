@@ -36,14 +36,14 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
-public class Joins<leftT> : Relations
+public class Joins<leftT> : JoinsBase
 {
     /// <summary>
     /// Represents a collection of classes where each class defines a single SQL join operation.
     /// The name differs from the preferred “Joins” to avoid a naming conflict (e.g., Joins.Joins),
     /// which would result in a compiler error.
     /// </summary>
-    protected override IEnumerable<Relation> Joints { get; set; }
+    protected override IEnumerable<JoinBase> Joints { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Joins"/> class.
@@ -51,13 +51,13 @@ public class Joins<leftT> : Relations
     /// <param name="joins">
     /// One or more sequences of <see cref="Joins"/> objects, where each object represents a single SQL join operation.
     /// </param>
-    public Joins(params IEnumerable<Relation> joins)
+    public Joins(params IEnumerable<JoinBase> joins)
     {
         Joints = [];
         IEnumerable<TableTag> invalids; ;
 
         //validate each join to ensure it is joined in the proper order for column participation.
-        foreach (Relation join in joins)
+        foreach (JoinBase join in joins)
         {
             IEnumerable<TableTag> valid = TableTags.Append(join.TableTag);
             //ensure each column involved in the join comes from either an earlier table or the table being joined on 

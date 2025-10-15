@@ -111,12 +111,12 @@ public class OrderByTests
         OrderBy newOrder = order.WithConcat(more1, more2);
 
         // Should have one items now
-        List<IOrderByItem> oldItems =
+        List<OrderByItemBase> oldItems =
             [.. order.OrderByItemsAsEnumerable()];
         Assert.Single(oldItems);
 
         // Should have three items now
-        List<IOrderByItem> newItems =
+        List<OrderByItemBase> newItems =
             [.. newOrder.OrderByItemsAsEnumerable()];
         Assert.Equal(3, newItems.Count);
 

@@ -31,7 +31,7 @@ public class OrderByItemTests
     [Fact]
     public void Equals_Null_ReturnsFalse()
     {
-        IOrderByItem item = new OrderByItem<Address>("Street");
+        OrderByItemBase item = new OrderByItem<Address>("Street");
         Assert.False(item.Equals(null));
     }
 
@@ -39,8 +39,8 @@ public class OrderByItemTests
     [Fact]
     public void Equals_SameTableAndColumn_IgnoresSortDirection()
     {
-        IOrderByItem ascending = new OrderByItem<Address>("City", SortDirectionEnum.Ascending);
-        IOrderByItem descending = new OrderByItem<Address>("City", SortDirectionEnum.Descending);
+        OrderByItemBase ascending = new OrderByItem<Address>("City", SortDirectionEnum.Ascending);
+        OrderByItemBase descending = new OrderByItem<Address>("City", SortDirectionEnum.Descending);
 
         Assert.True(ascending.Equals(descending));
         Assert.True(descending.Equals(ascending));
@@ -52,8 +52,8 @@ public class OrderByItemTests
     [Fact]
     public void Equals_DifferentColumn_ReturnsFalse()
     {
-        IOrderByItem street = new OrderByItem<Address>("Street");
-        IOrderByItem city = new OrderByItem<Address>("City");
+        OrderByItemBase street = new OrderByItem<Address>("Street");
+        OrderByItemBase city = new OrderByItem<Address>("City");
 
         Assert.False(street.Equals(city));
         Assert.False(city.Equals(street));
@@ -63,7 +63,7 @@ public class OrderByItemTests
     [Fact]
     public void Equals_DifferentEntityType_ReturnsFalse()
     {
-        IOrderByItem addressItem = new OrderByItem<Address>("Street");
+        OrderByItemBase addressItem = new OrderByItem<Address>("Street");
 
         OrderByItem<Person> personItem = new("Name");
 
@@ -75,7 +75,7 @@ public class OrderByItemTests
     [Fact]
     public void ListContains_FindsEquivalentItem()
     {
-        List<IOrderByItem> list = 
+        List<OrderByItemBase> list = 
             [
                 new OrderByItem<Address>("Street"),
                 new OrderByItem<Address>("City")
@@ -92,7 +92,7 @@ public class OrderByItemTests
     [Fact]
     public void DictionaryKey_EquivalentItem_WorksAsKey()
     {
-        Dictionary<IOrderByItem, string> dictionary = [];
+        Dictionary<OrderByItemBase, string> dictionary = [];
         OrderByItem<Address> key1 = new ("Street");
         dictionary[key1] = "hello";
 
@@ -108,7 +108,7 @@ public class OrderByItemTests
 
         OrderBy returned = streetSort.WithAppend(citySort);
 
-        List<IOrderByItem> twoItems =
+        List<OrderByItemBase> twoItems =
             [.. returned.OrderByItemsAsEnumerable()];
 
         //immutable
@@ -140,10 +140,10 @@ public class OrderByItemTests
         OrderBy order = new(initial);
 
         OrderBy orderWithThreeItems = initial.WithConcat(more1, more2);
-        List<IOrderByItem> oldItems =
+        List<OrderByItemBase> oldItems =
             [.. order.OrderByItemsAsEnumerable()];
 
-        List<IOrderByItem> threeItems =
+        List<OrderByItemBase> threeItems =
             [.. orderWithThreeItems.OrderByItemsAsEnumerable()];
 
         // immutable

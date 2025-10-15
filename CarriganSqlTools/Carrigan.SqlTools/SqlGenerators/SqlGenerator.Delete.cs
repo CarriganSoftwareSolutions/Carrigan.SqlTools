@@ -177,7 +177,7 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete(Relations? joins, Predicates? predicates)
+    public SqlQuery Delete(JoinsBase? joins, Predicates? predicates)
     {
         if (predicates == null && joins.IsNullOrEmpty())
         {

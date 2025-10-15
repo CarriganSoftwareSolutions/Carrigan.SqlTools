@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.OrderByItems;
 
 /// <summary>
-/// Concrete implementation of <see cref="IOrderByClause"/> for an <c>ORDER BY</c>
+/// Concrete implementation of <see cref="OrderByBase"/> for an <c>ORDER BY</c>
 /// clause that supports multiple columns.
 /// </summary>
 /// <example>
@@ -21,7 +21,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
 /// ]]></code>
 /// </example>
-public class OrderBy: IOrderByClause
+public class OrderBy: OrderByBase
 {
     /// <summary>
     /// Gets an empty <c>ORDER BY</c> clause.
@@ -30,20 +30,20 @@ public class OrderBy: IOrderByClause
         new();
 
     /// <summary>
-    /// Holds all parts of the <c>ORDER BY</c> clause, with one <see cref="IOrderByItem"/>
+    /// Holds all parts of the <c>ORDER BY</c> clause, with one <see cref="OrderByItemBase"/>
     /// for each individual column.
     /// </summary>
-    private readonly IEnumerable<IOrderByItem> _orderByItems;
+    private readonly IEnumerable<OrderByItemBase> _orderByItems;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderBy"/> class,
     /// representing an <c>ORDER BY</c> clause.
     /// </summary>
     /// <param name="orderByItems">
-    /// One or more sequences of <see cref="IOrderByItem"/> objects,
+    /// One or more sequences of <see cref="OrderByItemBase"/> objects,
     /// each defining an individual column and sort direction.
     /// </param>
-    public OrderBy(params IEnumerable<IOrderByItem> orderByItems) => 
+    public OrderBy(params IEnumerable<OrderByItemBase> orderByItems) => 
         _orderByItems = orderByItems;
 
     /// <summary>
@@ -59,14 +59,14 @@ public class OrderBy: IOrderByClause
     /// <returns>
     /// <c>true</c> if the column is represented in the <c>ORDER BY</c> clause; otherwise, <c>false</c>.
     /// </returns>
-    public bool Contains(IOrderByItem orderByItem) =>
+    public override bool Contains(OrderByItemBase orderByItem) =>
         _orderByItems.Contains(orderByItem);
 
     /// <summary>
     /// Enumerates all <see cref="TableTag"/> objects referenced
     /// in the <c>ORDER BY</c> clause.
     /// </summary>
-    public virtual IEnumerable<TableTag>TableTags =>
+    internal override IEnumerable<TableTag>TableTags =>
         _orderByItems.Select(item => item.TableTag);
 
     /// <summary>
@@ -80,18 +80,18 @@ public class OrderBy: IOrderByClause
     /// A SQL string for the <c>ORDER BY</c> clause, or <see cref="string.Empty"/>
     /// if no ordering is defined.
     /// </returns>
-    public virtual string ToSql() =>
+    internal override string ToSql() =>
         IsEmpty() 
             ? string.Empty
             : $"ORDER BY {string.Join(", ", _orderByItems.Select(item => item.ToSql()))}";
 
     /// <summary>
-    /// Returns all contained <see cref="IOrderByItem"/> objects.
+    /// Returns all contained <see cref="OrderByItemBase"/> objects.
     /// </summary>
     /// <returns>
-    /// An enumeration of all <see cref="IOrderByItem"/> objects contained in this instance.
+    /// An enumeration of all <see cref="OrderByItemBase"/> objects contained in this instance.
     /// </returns>
-    public virtual IEnumerable<IOrderByItem> OrderByItemsAsEnumerable() =>
+    public virtual IEnumerable<OrderByItemBase> OrderByItemsAsEnumerable() =>
         _orderByItems;
 
     /// <summary>
@@ -100,36 +100,36 @@ public class OrderBy: IOrderByClause
     /// <returns>
     /// <c>true</c> if the <c>ORDER BY</c> clause contains no items; otherwise, <c>false</c>.
     /// </returns>
-    public virtual bool IsEmpty() =>
+    public override bool IsEmpty() =>
         OrderByItemsAsEnumerable().IsNullOrEmpty();
 
     /// <summary>
-    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="IOrderByItem"/> appended.  
+    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="OrderByItemBase"/> appended.  
     /// This operation is immutable and does not modify the original instance.
     /// </summary>
     /// <param name="orderByItem">
-    /// The <see cref="IOrderByItem"/> to append, representing a table, column, and sort direction.
+    /// The <see cref="OrderByItemBase"/> to append, representing a table, column, and sort direction.
     /// </param>
     /// <returns>
-    /// A new <c>ORDER BY</c> clause that includes the appended <see cref="IOrderByItem"/>.
+    /// A new <c>ORDER BY</c> clause that includes the appended <see cref="OrderByItemBase"/>.
     /// </returns>
-    public OrderBy WithAppend(IOrderByItem orderByItem) =>
+    public override OrderBy WithAppend(OrderByItemBase orderByItem) =>
         new(_orderByItems.Append(orderByItem));
 
     /// <summary>
     /// Creates a new <c>ORDER BY</c> clause with the specified sequence of
-    /// <see cref="IOrderByItem"/> objects concatenated.  
+    /// <see cref="OrderByItemBase"/> objects concatenated.  
     /// This operation is immutable and does not modify the original instance.
     /// </summary>
     /// <param name="orderByItems">
-    /// One or more sequences of <see cref="IOrderByItem"/> objects—each defining a table,
+    /// One or more sequences of <see cref="OrderByItemBase"/> objects—each defining a table,
     /// column, and sort direction—to append to the clause.
     /// </param>
     /// <returns>
     /// A new <c>ORDER BY</c> clause that includes the concatenated
     /// <see cref="IEnumerable{IOrderByItem}"/> items.
     /// </returns>
-    public OrderBy WithConcat(params IEnumerable<IOrderByItem> orderByItems) =>
+    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems) =>
         new (_orderByItems.Concat(orderByItems));
 
     /// <summary>
@@ -138,5 +138,5 @@ public class OrderBy: IOrderByClause
     /// <returns>
     /// This instance as an <see cref="OrderBy"/> object.
     /// </returns>
-    public OrderBy AsOrderBy() => this;
+    public override OrderBy AsOrderBy() => this;
 }

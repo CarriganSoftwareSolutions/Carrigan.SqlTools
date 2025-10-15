@@ -7,13 +7,13 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <summary>
 /// Serves as the base class for all SQL <c>JOIN</c> operation classes.
 /// </summary>
-public abstract class Relation
+public abstract class JoinBase
 {
     protected readonly Predicates _predicates;
     /// <summary>
     /// Base constructor.
     /// </summary>
-   public Relation(Predicates predicates) =>
+   public JoinBase(Predicates predicates) =>
         _predicates = predicates;
 
     /// <summary>

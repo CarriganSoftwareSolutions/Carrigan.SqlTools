@@ -29,7 +29,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class LeftJoin<rightT> : Relation
+public class LeftJoin<rightT> : JoinBase
 {
     private readonly string _sql;
 

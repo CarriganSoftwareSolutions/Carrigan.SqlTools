@@ -236,7 +236,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, SetColumns<T>? columns, Relations? joins, Predicates? predicates)
+    public SqlQuery Update(T entity, SetColumns<T>? columns, JoinsBase? joins, Predicates? predicates)
     {
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
