@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.Tags;
 /// comparison and equality for use in sorting and hashed collections.
 /// </summary>
 /// TODO: Example Documentation
-internal class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityComparer<AliasTag>
+public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityComparer<AliasTag>
 {
     private readonly string _aliasName;
 
@@ -21,7 +21,7 @@ internal class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEquality
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="aliasName"/>  fails SQL identifier validation.
     /// </exception>
-    internal AliasTag(AliasName aliasName) => 
+    public AliasTag(AliasName aliasName) => 
         _aliasName = aliasName;
 
     /// <summary>
@@ -33,7 +33,7 @@ internal class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEquality
     /// If <param name="name"> is not null or empty, it creates a new instance,
     /// otherwise it returns a null object.
     /// </returns>
-    internal static AliasTag? New(AliasName? name)
+    public static AliasTag? New(AliasName? name)
     {
         if (name.IsNotNullOrEmpty())
             return new AliasTag(name);

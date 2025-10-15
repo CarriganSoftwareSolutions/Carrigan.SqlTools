@@ -7,9 +7,9 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// <summary>
 /// Strongly typed string wrapper for Table names
 /// </summary>
-internal class TableName : StringWrapper
+public class TableName : StringWrapper
 {
-    internal TableName(string? name) : base(name) { }
+    public TableName(string? name) : base(name) { }
 
     /// <summary>
     /// If <param name="name"> is not null or empty, it creates a new instance,
@@ -20,7 +20,7 @@ internal class TableName : StringWrapper
     /// If <param name="name"> is not null or empty, it creates a new instance,
     /// otherwise it returns a null object.
     /// </returns>
-    internal static TableName? New(string? name)
+    public static TableName? New(string? name)
     {
         if (name.IsNullOrEmpty())
             return null;

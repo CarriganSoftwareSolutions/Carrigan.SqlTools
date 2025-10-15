@@ -7,9 +7,9 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// <summary>
 /// Strongly typed string wrapper for ResultColumn names
 /// </summary>
-internal class ResultColumnName : StringWrapper
+public class ResultColumnName : StringWrapper
 {
-    internal ResultColumnName(string? name) : base(name) { }
+    public ResultColumnName(string? name) : base(name) { }
 
     /// <summary>
     /// If <param name="name"> is not null or empty, it creates a new instance,
@@ -20,7 +20,7 @@ internal class ResultColumnName : StringWrapper
     /// If <param name="name"> is not null or empty, it creates a new instance,
     /// otherwise it returns a null object.
     /// </returns>
-    internal static ResultColumnName? New(string? name)
+    public static ResultColumnName? New(string? name)
     {
         if (name.IsNullOrEmpty())
             return null;

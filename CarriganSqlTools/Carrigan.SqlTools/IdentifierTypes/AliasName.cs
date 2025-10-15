@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// </summary>
 public class AliasName : StringWrapper
 {
-    internal AliasName(string? name) : base(name) { }
+    public AliasName(string? name) : base(name) { }
 
     /// <summary>
     /// If <param name="name"> is not null or empty, it creates a new instance,

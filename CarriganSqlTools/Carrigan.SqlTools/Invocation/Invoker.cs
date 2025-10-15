@@ -47,7 +47,7 @@ public static class Invoker<T> where T : class?, new()
         }
         return invoked;
     }
-    private static object? ConvertValue(object? value, Type targetType)
+    public static object? ConvertValue(object? value, Type targetType)
     {
         // If the value is null or DBNull, return null
         if (value == null || value == DBNull.Value)

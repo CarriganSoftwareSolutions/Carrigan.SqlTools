@@ -155,7 +155,7 @@ public class AndTests
         ]);
 
         //if the column doesn't exist an exception will be throw and the test will fail
-        IColumn col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
+        ColumnBase col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
         col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
         col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
         col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();

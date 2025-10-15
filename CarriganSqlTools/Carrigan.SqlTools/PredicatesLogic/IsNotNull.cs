@@ -37,7 +37,7 @@ public class IsNotNull : Predicates
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal override IEnumerable<IColumn> Columns =>
+    internal override IEnumerable<ColumnBase> Columns =>
        _someValue.Columns;
 
     //TODO: Proof read documentation

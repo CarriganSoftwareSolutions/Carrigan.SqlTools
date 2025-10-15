@@ -34,7 +34,7 @@ public class AmbiguousResultColumnException : Exception
                 .JoinAnd();
 
 
-    internal static AmbiguousResultColumnException? CheckNames(ISelectTags? selects)
+    internal static AmbiguousResultColumnException? CheckNames(SelectTagsBase? selects)
     {
         if (selects is null || selects.Empty())
             return null;

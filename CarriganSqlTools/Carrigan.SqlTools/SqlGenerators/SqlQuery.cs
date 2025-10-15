@@ -7,7 +7,12 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// <summary>
 /// Represents a parameterized SQL command, including the command text,
 /// parameters, and the ADO.NET <see cref="CommandType"/>.
+/// DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION
 /// </summary>
+/// <remarks>
+/// Intentionally left public, to allow for manual sql.
+/// Use at your own risk, and DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION.
+/// </remarks>
 public class SqlQuery
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -21,7 +26,12 @@ public class SqlQuery
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlQuery"/> class with the specified
     /// command text and parameters.
+    /// DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION
     /// </summary>
+    /// <remarks>
+    /// Intentionally left public, to allow for manual sql.
+    /// Use at your own risk, and DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION.
+    /// </remarks>
     /// <param name="query">The SQL command text.</param>
     /// <param name="parameters">
     /// The parameter dictionary for the command, keyed by <see cref="ParameterTag"/>.

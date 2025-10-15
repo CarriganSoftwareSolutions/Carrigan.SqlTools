@@ -9,9 +9,9 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// Strongly typed string wrapper for Schema names
 /// </summary>
 
-internal class SchemaName : StringWrapper
+public class SchemaName : StringWrapper
 {
-    internal SchemaName(string? name) : base(name) { }
+    public SchemaName(string? name) : base(name) { }
 
     /// <summary>
     /// If <param name="name"> is not null or empty, it creates a new instance,
@@ -22,7 +22,7 @@ internal class SchemaName : StringWrapper
     /// If <param name="name"> is not null or empty, it creates a new instance,
     /// otherwise it returns a null object.
     /// </returns>
-    internal static SchemaName? New(string? name)
+    public static SchemaName? New(string? name)
     {
         if (name.IsNullOrEmpty())
             return null;

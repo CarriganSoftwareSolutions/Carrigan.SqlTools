@@ -1,6 +1,6 @@
 ﻿namespace Carrigan.SqlTools.Tags;
 //TODO: Proof read Documentation
-public interface ISelectTags
+public abstract class SelectTagsBase
 {
     /// <summary>
     /// Get all SelectTags associated with the instance, as an Enumeration.
@@ -10,7 +10,7 @@ public interface ISelectTags
     /// All SelectTags associated with the instance, as a string. 
     /// For SelectTag this will just be itself.
     /// </returns>
-    public IEnumerable<SelectTag> All();
+    public abstract IEnumerable<SelectTag> All();
 
     /// <summary>
     /// Get all SelectTags associated with the instance, as a string.
@@ -22,7 +22,7 @@ public interface ISelectTags
     /// For SelectTag this will just be itself.
     /// For SelectTags this will be a comma separated list.
     /// </returns>
-    public string GetSelects();
+    public abstract string GetSelects();
     /// <summary>
     /// Get all TableTags associated with the instance.
     /// For SelectTag this will just it's TableTag as an Enumerable.
@@ -33,7 +33,7 @@ public interface ISelectTags
     /// For SelectTag this will just it's TableTag as an Enumerable.
     /// For SelectTags this will be multiple TableTags.
     /// </returns>
-    public IEnumerable<TableTag> GetTableTags();
+    internal abstract IEnumerable<TableTag> GetTableTags();
 
     /// <summary>
     /// Determines if this instance contains any actual SelectTags
@@ -45,7 +45,7 @@ public interface ISelectTags
     /// For SelectTag, this should always be true.
     /// For SelectTags, this will be true if the underlying Enumeration is not empty.
     /// </returns>
-    public bool Any();
+    public abstract bool Any();
 
     /// <summary>
     /// Determines if this instance contains no SelectTags
@@ -57,5 +57,5 @@ public interface ISelectTags
     /// For SelectTag, this should always be false.
     /// For SelectTags, this will be true if the underlying Enumeration is empty.
     /// </returns>
-    public bool Empty();
+    public abstract bool Empty();
 }

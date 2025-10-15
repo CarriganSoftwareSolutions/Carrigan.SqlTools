@@ -61,7 +61,7 @@ public abstract class ComparisonOperator : Predicates
     /// <summary>
     ///  Recursively get all the columns associated with the logic.
     /// </summary>
-    internal override IEnumerable<IColumn> Columns =>
+    internal override IEnumerable<ColumnBase> Columns =>
         _left.Columns.Concat(_right.Columns);
 
     /// <summary>

@@ -66,7 +66,7 @@ public class Parameter : Predicates
     /// Leaf node in recursive logic to get all the Columns associated within the logic.
     /// Since this class doesn't have Column, just return an empty.
     /// </summary>
-    internal override IEnumerable<IColumn> Columns =>
+    internal override IEnumerable<ColumnBase> Columns =>
        [];
 
     /// <summary>

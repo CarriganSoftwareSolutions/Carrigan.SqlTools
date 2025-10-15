@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.RegularExpressions;
 
@@ -74,14 +75,36 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     internal ParameterTag(string? prefix, string parameterName, string? index)
     {
         if (SqlParameterPattern.Fails(parameterName))
-            throw new InvalidParameterIdentifierException(ToString()); //TODO: what to do with this now that they are being enforced in sql generator constructor
+            throw new InvalidParameterIdentifierException(ToString()); 
 
         _parameterBaseName = parameterName;
         _prefix = prefix;
         _index = index;
 
         if (SqlParameterPattern.Fails(ToString()))
-            throw new InvalidParameterIdentifierException(ToString()); //TODO: what to do with this now that they are being enforced in sql generator constructor
+            throw new InvalidParameterIdentifierException(ToString()); 
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ParameterTag"/> class.
+    /// </summary>
+    /// <param name="parameterName">
+    /// The base name of the parameter. Must not be <c>null</c>, empty, or white space.
+    /// </param>
+    /// <exception cref="InvalidParameterIdentifierException">
+    /// Thrown when <paramref name="parameterName"/> is <c>null</c>, empty, or white space.
+    /// </exception>
+    public ParameterTag(string parameterName)
+    {
+        if (SqlParameterPattern.Fails(parameterName))
+            throw new InvalidParameterIdentifierException(ToString()); 
+
+        _parameterBaseName = parameterName;
+        _prefix = null;
+        _index = null;
+
+        if (SqlParameterPattern.Fails(ToString()))
+            throw new InvalidParameterIdentifierException(ToString()); 
     }
 
     /// <summary>

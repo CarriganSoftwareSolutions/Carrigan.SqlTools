@@ -62,7 +62,7 @@ public class ColumnValue<T> : Predicates
     /// Leaf node in recursive logic to get all the Columns associated with the logic.
     /// Since this there will be only this Column, return it as an enumerable.
     /// </summary>
-    internal override IEnumerable<IColumn> Columns => 
+    internal override IEnumerable<ColumnBase> Columns => 
         value.Columns;
 
     /// <summary>

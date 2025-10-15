@@ -22,20 +22,12 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class Column  <T> : Predicates, IColumn
+public class Column<T> : ColumnBase
 {
     /// <summary>
     /// The name of the property representing the column
     /// </summary>
-    public PropertyName PropertyName { get; }
-    /// <summary>
-    /// The Tag for the Column
-    /// </summary>
-    public ColumnInfo ColumnInfo { get; }
-    /// <summary>
-    /// The Tag for the Table
-    /// </summary>
-    public TableTag TableTag { get; }
+    internal PropertyName PropertyName { get; }
 
     internal static ArgumentException NoSuchProperty(PropertyName propertyName) =>
         new ($"{propertyName} is not the valid name of a property in the class, {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(propertyName));
@@ -54,11 +46,8 @@ public class Column  <T> : Predicates, IColumn
     /// <param name="propertyName">The name of property representing the column.</param>
     /// <exception cref="ArgumentException">Gets thrown if the propertyName is not is not a valid property for the class <see cref="T"/> representing the table.</exception>
     public Column(PropertyName propertyName)
-    {
-        TableTag = SqlToolsReflectorCache<T>.Table;
-        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName);
+        : base(SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName)) => 
         PropertyName = propertyName;
-    }
 
     /// <summary>
     /// Leaf node in recursive logic to get all the parameters associated with the logic.
@@ -71,7 +60,7 @@ public class Column  <T> : Predicates, IColumn
     /// Leaf node in recursive logic to get all the Columns associated with the logic.
     /// Since this there will be only this Column, return it as an enumerable.
     /// </summary>
-    internal override IEnumerable<IColumn> Columns =>
+    internal override IEnumerable<ColumnBase> Columns =>
         [this];
 
     /// <summary>

@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 //TODO: proof read documentation
-public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>, ISelectTags
+public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>
 {
     /// <summary>
     /// A string that represent the alias, <c>AS</c> clause.
@@ -312,7 +312,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// For SelectTag this will just be itself.
     /// </summary>
     /// <returns>All SelectTags associated with the instance, as a string. For SelectTag this will just be itself.</returns>
-    public string GetSelects() =>
+    public override string GetSelects() =>
         this;
 
     //Proof read documentation
@@ -324,7 +324,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// All TableTags associated with the instance.
     /// For SelectTag this will just it's TableTag as an Enumerable.
     /// </returns>
-    public IEnumerable<TableTag> GetTableTags() => 
+    internal override IEnumerable<TableTag> GetTableTags() => 
         [ColumnTag.TableTag];
 
     //Proof read documentation
@@ -336,7 +336,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// True if this instance contains any actual SelectTags
     /// For SelectTag, this should always be true.
     /// </returns>
-    public bool Any() =>
+    public override bool Any() =>
         true;
 
     //Proof read documentation
@@ -348,7 +348,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// True if this instance contains no SelectTags
     /// For SelectTag, this should always be false.
     /// </returns>
-    public bool Empty() =>
+    public override bool Empty() =>
         false;
 
 
@@ -360,6 +360,6 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// All SelectTags associated with the instance, as an Enumeration. 
     /// For SelectTag this will just be itself as an IEnumerable.
     /// </returns>
-    public IEnumerable<SelectTag> All() =>
+    public override IEnumerable<SelectTag> All() =>
         [this];
 }

@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.Tags;
 /// <summary>
 /// Contains multiple <see cref="SelectTag"/>
 /// </summary>
-public class SelectTags : ISelectTags
+public class SelectTags : SelectTagsBase
 {
 
     private readonly IEnumerable<SelectTag> _selectTags;
@@ -32,7 +32,7 @@ public class SelectTags : ISelectTags
     /// True if this instance contains any actual SelectTags
     /// For SelectTags, this will be true if the underlying Enumeration is not empty.
     /// </returns>
-    public bool Any() =>
+    public override bool Any() =>
         _selectTags.Any();
 
     /// <summary>
@@ -43,7 +43,7 @@ public class SelectTags : ISelectTags
     /// Determines if this instance contains no SelectTags
     /// For SelectTags, this will be true if the underlying Enumeration is empty.
     /// </returns>
-    public bool Empty() =>
+    public override bool Empty() =>
         Any() is false;
 
     /// <summary>
@@ -54,7 +54,7 @@ public class SelectTags : ISelectTags
     /// All SelectTags associated with the instance, as a string. 
     /// For SelectTags this will be a comma separated list.
     /// </returns>
-    public string GetSelects() =>
+    public override string GetSelects() =>
         string.Join(", ", _selectTags);
 
     /// <summary>
@@ -65,7 +65,7 @@ public class SelectTags : ISelectTags
     /// All TableTags associated with the instance.
     /// For SelectTags this will be multiple TableTags.
     /// </returns>
-    public IEnumerable<TableTag> GetTableTags() =>
+    internal override IEnumerable<TableTag> GetTableTags() =>
         _selectTags
             .SelectMany(select => select.GetTableTags())
             .Distinct();
@@ -78,7 +78,7 @@ public class SelectTags : ISelectTags
     /// <returns>
     /// Create a new <see cref="SelectTags"/> and append <see cref="SelectTag"/> to it.
     /// </returns>
-     public SelectTags Append(SelectTag selectTag) =>
+     public  SelectTags Append(SelectTag selectTag) =>
         new(_selectTags.Append(selectTag));
 
     /// <summary>
@@ -138,7 +138,7 @@ public class SelectTags : ISelectTags
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
     /// </exception>
-    public SelectTags Concat(params IEnumerable<ISelectTags> selectTags) =>
+    public SelectTags Concat(params IEnumerable<SelectTagsBase> selectTags) =>
         new (_selectTags.Concat(selectTags.SelectMany(selects => selects.All())));
 
 
@@ -261,6 +261,6 @@ public class SelectTags : ISelectTags
     /// <returns>
     /// All SelectTags associated with the instance, as an Enumeration.
     /// </returns>
-    public IEnumerable<SelectTag> All() => 
+    public override IEnumerable<SelectTag> All() => 
         _selectTags;
 }

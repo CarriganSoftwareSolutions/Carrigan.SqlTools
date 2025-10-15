@@ -84,7 +84,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityComparer<TableTag>
+internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEqualityComparer<TableTag>
 {
     private readonly string _tableTag;
 
