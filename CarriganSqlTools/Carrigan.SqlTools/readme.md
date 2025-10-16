@@ -91,37 +91,68 @@ All examples use `using` statements to keep code clean, and initialize generator
 
 ```csharp
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.Predicates;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using Carrigan.SqlTools.Tests.TestEntities; 
+using System.Text;
 
 // Example data models
+using Carrigan.SqlTools.Attributes;
+
 public class Customer
 {
-    [Key] //Required attribute for certain SQL Generations
+    [PrimaryKey] //note: PrimaryKey take precedence over key for the Sql Generator
     public int Id { get; set; }
     public string Name { get; set; } = "";
     public string Email { get; set; } = "";
+    public string Phone { get; set; } = "";
 }
 
 public class Order
 {
-    [Key] //Required attribute for certain SQL Generations
+    [PrimaryKey] //Required attribute for certain SQL Generations
     public int Id { get; set; }
     public int CustomerId { get; set; }
+    public int PaymentMethodId { get; set; }
     public DateTime OrderDate { get; set; }
     public decimal Total { get; set; }
 }
 
+[Identifier("Phone", "schema")]
+public class PhoneModel
+{
+    [PrimaryKey]
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    [Identifier("Phone")]
+    public string? PhoneNumber { get; set; }
+}
+
+[Identifier("Email", "schema")]
+public class EmailModel
+{
+    [PrimaryKey]
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    [Identifier("Email")]
+    public string? EmailAddress { get; set; }
+}
+
+[Identifier("UpdateThing", "schema")]
+public class ProcedureExec
+{
+    [Parameter ("SomeValue")]
+    public string? ValueColumn { get; set; }
+}
 
 // Generators
-SqlGenerator<Customer> customerGenerator = new ();
-SqlGenerator<Order>    orderGenerator    = new ();
+public SqlGenerator<Customer> customerGenerator = new();
+public SqlGenerator<Order> orderGenerator = new();
+public SqlGenerator<PhoneModel> phoneGenerator = new();
+public SqlGenerator<EmailModel> emailGenerator = new();
+public SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 ```
 
 [Table of Contents](#table-of-contents)

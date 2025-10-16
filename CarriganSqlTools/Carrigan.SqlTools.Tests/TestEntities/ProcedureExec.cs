@@ -3,7 +3,7 @@
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
 [Identifier("UpdateThing", "schema")]
-public class ProcedureExec
+internal class ProcedureExec
 {
     [Parameter ("SomeValue")]
     public string? ValueColumn { get; set; }

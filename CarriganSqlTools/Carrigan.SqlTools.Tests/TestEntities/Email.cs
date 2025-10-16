@@ -3,7 +3,7 @@
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
 [Identifier("Email", "schema")]
-public class EmailModel
+internal class EmailModel
 {
     [PrimaryKey]
     public int Id { get; set; }

@@ -1,10 +1,9 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using Carrigan.SqlTools.Attributes;
 
 namespace Carrigan.SqlTools.Tests.TestEntities;
 internal class Order
 {
-    [Key] //Required attribute for certain SQL Generations
+    [PrimaryKey] //Required attribute for certain SQL Generations
     public int Id { get; set; }
     public int CustomerId { get; set; }
     public int PaymentMethodId { get; set; }
