@@ -34,6 +34,6 @@ public class InvalidPropertyException<T> : Exception
     private static string CreateMessage(IEnumerable<PropertyName> propertyNames) =>
         $"Property names for {SqlToolsReflectorCache<T>.Type.Name}, do not exist, are invalid or do not qualify: " +
             propertyNames
-                .Select(property => (string)property) //TODO: simplify this?
+                .Select(property => (string)property)
                 .JoinAnd();
 }

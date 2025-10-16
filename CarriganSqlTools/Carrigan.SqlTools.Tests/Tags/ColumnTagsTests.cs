@@ -3,7 +3,7 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Tests.Tags;
-//TODO: We are going to make sure these tests are still valid.
+
 public class ColumnTagsTests
 {
     [Theory]

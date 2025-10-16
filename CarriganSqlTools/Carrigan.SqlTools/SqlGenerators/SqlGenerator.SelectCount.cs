@@ -10,7 +10,6 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
-    //TODO: Revisit generated SQL, should it be Select(*) or Select(Table.*)
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT COUNT(*)</c> from the table represented by <typeparamref name="T"/>,
@@ -64,7 +63,7 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectableTableTags);
-        StringBuilder queryBuilder = new($"SELECT COUNT(*) FROM {Table}");
+        StringBuilder queryBuilder = new($"SELECT COUNT({Table}.*) FROM {Table}");
 
         if (invalidTags.Any())
         {

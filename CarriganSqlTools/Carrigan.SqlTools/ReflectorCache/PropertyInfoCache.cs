@@ -7,7 +7,6 @@ namespace Carrigan.SqlTools.ReflectorCache;
 
 //TODO: proof read documentation for entire class
 
-//TODO: rename to PropertyInfo cache, and get rid of valueT
 /// <summary>
 /// This class is a wrapper for a dictionary, where the key is a <see cref="ResultColumnName"/>
 ///  that corresponds to <see cref="ResultColumnName"/>'s .

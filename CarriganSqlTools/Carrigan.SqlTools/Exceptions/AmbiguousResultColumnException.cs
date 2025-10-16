@@ -3,7 +3,6 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Exceptions;
-//TODO: throw this if ambiguous columns passed into select, may apply to other query types and areas.
 //TODO: Proof Read Documentation. entire class
 
 /// <summary>

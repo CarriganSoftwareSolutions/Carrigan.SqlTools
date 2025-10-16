@@ -38,7 +38,7 @@ public class JoinsParameterTest
 
         SqlQuery query = customerGenerator.SelectCount(new Joins<JoinLeftTable>(join1, join2), null);
 
-        Assert.Equal("SELECT COUNT(*) FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Parameter_ZipCode)", query.QueryText);
+        Assert.Equal("SELECT COUNT([Customer].*) FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Parameter_ZipCode)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.GetParameterCount());
         Assert.Equal(1000m, query.GetParameterValue<decimal>("@Parameter_Total"));
