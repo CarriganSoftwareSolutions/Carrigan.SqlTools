@@ -17,16 +17,17 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// Note: <c>ColumnEqualsColumn&lt;lefT, rightT&gt;</c> validates property names and throws an exception if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// LeftJoin&lt;Customer, Order&gt; join = new(predicate);
-///
-/// SqlQuery query = customerGenerator.Select(join, null, null, null);
+/// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// JoinsBase join = Joins<Customer>.LeftJoin<Order>(predicate);
+/// 
+/// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] 
-/// LEFT JOIN [Order]  ON 
-/// ([Customer].[Id] = [Order].[CustomerId])
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// LEFT JOIN [Order] 
+/// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
 public class LeftJoin<rightT> : JoinBase

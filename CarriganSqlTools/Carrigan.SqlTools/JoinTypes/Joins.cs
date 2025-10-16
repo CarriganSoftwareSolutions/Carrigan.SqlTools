@@ -3,8 +3,6 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
-using System;
-using System.Linq;
 
 //IGNORE SPELLING: joins
 
@@ -19,23 +17,66 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// Note: <c>ColumnEqualsColumn&lt;lefT, rightT&gt;</c> validates property names and throws an exception if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// ColumnEqualsColumn&lt;Customer, Order&gt; customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// InnerJoin&lt;Customer, Order&gt; join1 = new(customerIdEquals);
+/// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// InnerJoin<Order> join1 = new(predicate);
 /// 
-/// ColumnEqualsColumn&lt;Order, PaymentMethod&gt; paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
-/// InnerJoin&lt;Order, PaymentMethod&gt; join2 = new(paymentMethodIdEquals);
+/// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
+/// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
 /// 
-/// Joins joins = new(join1, join2);
+/// Joins<Customer> joins = new(join1, join2);
 /// 
-/// SqlQuery query = customerGenerator.Select(joins, null, null, null);
+/// SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] 
-/// INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) 
-/// INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// INNER JOIN [Order] 
+/// ON ([Customer].[Id] = [Order].[CustomerId]) 
+/// INNER JOIN [PaymentMethod] 
+/// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
+/// <para>
+/// Note: <c><ColumnEqualsColumn<Customer, Order>/c> validates the names of the properties, and throws an error if the property isn't valid
+/// </para>
+/// /// <code language="csharp"><![CDATA[
+/// SelectTags selectTags =
+///     SelectTags.Get<Customer>("Id", "CustomerId")
+///         .Concat<Customer>(["Name", "Email", "Phone"])
+///         .Append<Order>("Id", "OrderId")
+///         .Concat<Order>(["OrderDate", "Total"])
+///         .Append<PaymentMethod>("Id", "PaymentMethodId")
+///         .Append<PaymentMethod>("ZipCode");
+/// 
+/// ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// InnerJoin<Order> join1 = new(customerIdEquals);
+/// 
+/// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
+/// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
+/// 
+/// Joins<Customer> joins = new(join1, join2);
+/// 
+/// SqlQuery query = customerGenerator.Select(selectTags, joins, null, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT 
+///     [Customer].[Id] AS CustomerId, 
+///     [Customer].[Name], 
+///     [Customer].[Email], 
+///     [Customer].[Phone], 
+///     [Order].[Id] AS OrderId, 
+///     [Order].[OrderDate], 
+///     [Order].[Total], 
+///     [PaymentMethod].[Id] AS PaymentMethodId, 
+///     [PaymentMethod].[ZipCode] 
+/// FROM [Customer] 
+/// INNER JOIN [Order] 
+/// ON ([Customer].[Id] = [Order].[CustomerId]) 
+/// INNER JOIN [PaymentMethod] 
+/// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
+/// ]]></code>
 public class Joins<leftT> : JoinsBase
 {
     /// <summary>

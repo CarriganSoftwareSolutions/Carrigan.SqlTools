@@ -1,5 +1,4 @@
 ﻿using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;

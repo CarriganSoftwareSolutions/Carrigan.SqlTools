@@ -23,16 +23,17 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// Join&lt;Customer, Order&gt; join = new(predicate);
-/// Join<Customer, Order> join = new(equals);
-///
-/// SqlQuery query = customerGenerator.Select(join, null, null, null);
+/// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// JoinsBase join = Joins<Customer>.Join<Order>(predicate);
+/// 
+/// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] 
-/// JOIN [Order]  ON 
-/// ([Customer].[Id] = [Order].[CustomerId])
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// JOIN [Order] 
+/// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
 public class Join<rightT> : JoinBase

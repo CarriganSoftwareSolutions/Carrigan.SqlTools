@@ -1,5 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Carrigan.SqlTools.JoinTypes;
 //TODO: proof read documentation

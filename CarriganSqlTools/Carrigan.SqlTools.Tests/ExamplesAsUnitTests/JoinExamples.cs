@@ -14,7 +14,7 @@ public class JoinExamples
     {
         //Note: ColumnEqualsColumn<lefT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+        JoinsBase join = Joins<Customer>.InnerJoin<Order>(predicate);
 
         SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 
@@ -28,7 +28,7 @@ public class JoinExamples
     {
         //Note: ColumnEqualsColumn<lefT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Joins<Customer> join = Joins<Customer>.Join<Order>(predicate);
+        JoinsBase join = Joins<Customer>.Join<Order>(predicate);
 
         SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 
@@ -42,7 +42,7 @@ public class JoinExamples
     {
         //Note: ColumnEqualsColumn<lefT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Joins<Customer> join = Joins<Customer>.LeftJoin<Order>(predicate);
+        JoinsBase join = Joins<Customer>.LeftJoin<Order>(predicate);
 
         SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 
@@ -73,6 +73,7 @@ public class JoinExamples
     [Fact]
     public void SelectWithSelectsOnTheJoin()
     {
+        //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         SelectTags selectTags =
             SelectTags.Get<Customer>("Id", "CustomerId")
                 .Concat<Customer>(["Name", "Email", "Phone"])
@@ -80,7 +81,7 @@ public class JoinExamples
                 .Concat<Order>(["OrderDate", "Total"])
                 .Append<PaymentMethod>("Id", "PaymentMethodId")
                 .Append<PaymentMethod>("ZipCode");
-        //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
+        
         ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join1 = new(customerIdEquals);
 
