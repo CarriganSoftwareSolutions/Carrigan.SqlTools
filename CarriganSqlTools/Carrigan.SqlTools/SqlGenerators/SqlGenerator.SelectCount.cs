@@ -51,24 +51,32 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT COUNT(*) 
+    /// SELECT COUNT([Order].*) 
     /// FROM [Order] 
     /// LEFT JOIN [Customer] 
     /// ON ([Order].[CustomerId] = [Customer].[Id]) 
     /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectCount(JoinsBase? joins, Predicates? predicates)
+    public SqlQuery SelectCount(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectableTableTags);
-        StringBuilder queryBuilder = new($"SELECT COUNT({Table}.*) FROM {Table}");
+        StringBuilder queryBuilder;
+        AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
+        if (ambiguousResultColumns is not null)
+            throw ambiguousResultColumns;
 
         if (invalidTags.Any())
         {
             throw new InvalidTableException(invalidTags);
         }
+
+        if (selects is not null && selects.Any())
+            queryBuilder = new($"SELECT COUNT({selects.GetSelects()}) FROM {Table}");
+        else
+            queryBuilder = new($"SELECT COUNT({Table}.*) FROM {Table}");
 
         if (joins?.IsNotNullOrEmpty() ?? false)
         {

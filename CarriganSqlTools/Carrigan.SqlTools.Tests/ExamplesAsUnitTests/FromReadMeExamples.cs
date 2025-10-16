@@ -224,7 +224,7 @@ public class FromReadMeExamples
         Parameter minTotal = new ("Total", 500m);
         GreaterThan greaterThan = new (totalCol, minTotal);
 
-        SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
+        SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
 
         Assert.Equal("SELECT COUNT([Order].*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
