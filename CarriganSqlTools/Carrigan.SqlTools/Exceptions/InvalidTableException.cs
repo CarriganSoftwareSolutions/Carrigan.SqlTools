@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Exceptions;
 //TODO: Proof Read Documentation. entire class
-
-//TODO: Create example for readme.md file.
 /// <summary>
 /// The InvalidTableException is thrown when a table used for query
 /// is not included in the query.

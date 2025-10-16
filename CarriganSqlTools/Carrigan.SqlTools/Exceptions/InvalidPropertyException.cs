@@ -5,8 +5,6 @@ using Carrigan.SqlTools.ReflectorCache;
 namespace Carrigan.SqlTools.Exceptions;
 
 //TODO: Proof Read Documentation. entire class
-
-//TODO: Create example for readme.md file.
 /// <summary>
 /// The InvalidPropertyException is thrown when a property is passed in that does exist
 /// in the target class <see cref="T"/>, or the property does not meet the criteria to

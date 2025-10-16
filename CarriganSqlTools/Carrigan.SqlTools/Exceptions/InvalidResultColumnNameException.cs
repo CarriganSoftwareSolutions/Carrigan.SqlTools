@@ -1,13 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Exceptions;
 
 //TODO: Proof Read Documentation. entire class
-
-//TODO: Create example for readme.md file.
 /// <summary>
 /// The InvalidResultColumnNameException is thrown when a <see cref="ResultColumnName"/> is passed in that does exist
 /// in the target class <see cref="T"/>, or the <see cref="ResultColumnName"/> does not meet the criteria to

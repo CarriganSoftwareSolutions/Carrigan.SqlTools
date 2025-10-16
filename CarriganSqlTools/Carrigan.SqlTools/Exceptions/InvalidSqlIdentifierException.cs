@@ -1,15 +1,12 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
 //TODO: Redo documentation.
 //TODO: Proof Read Documentation. entire class
-
-//TODO: Create example for readme.md file.
 /// <summary>
 /// The InvalidSqlIdentifierException is thrown when the identifier used for
 /// generating a SQL schema, table, column, parameter or alias do not match

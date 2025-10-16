@@ -2,8 +2,6 @@
 
 namespace Carrigan.SqlTools.Exceptions;
 //TODO: Proof Read Documentation. entire class
-
-//TODO: Create example for readme.md file.
 /// <summary>
 /// The InvalidParameterIdentifierException is thrown when the identifier used for
 /// generating a SQL schema, table, column, parameter or alias do not match

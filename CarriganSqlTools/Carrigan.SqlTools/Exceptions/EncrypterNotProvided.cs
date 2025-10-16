@@ -1,7 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.IdentifierTypes;
-
-namespace Carrigan.SqlTools.Exceptions;
+﻿namespace Carrigan.SqlTools.Exceptions;
 //TODO: Proof Read Documentation
 /// <summary>
 /// Thrown when an encrypter is not provided
