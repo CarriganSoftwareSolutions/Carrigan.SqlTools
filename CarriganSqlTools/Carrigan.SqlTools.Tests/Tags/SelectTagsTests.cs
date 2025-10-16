@@ -58,7 +58,7 @@ public class SelectTagsTests
         Assert.True(selectTags.Any());
         Assert.Single(selectTags.All());
 
-        Assert.Equal(dExpectedString, selectTags.GetSelects());
+        Assert.Equal(dExpectedString, selectTags.ToSql());
 
         Assert.Equal("[dbo].[SomeTable]", selectTags.GetTableTags().Single());
     }
@@ -77,7 +77,7 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal("[Order].[Id] AS Override", selectTagsAlpha.GetSelects());
+        Assert.Equal("[Order].[Id] AS Override", selectTagsAlpha.ToSql());
 
         Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single());
     }
@@ -96,7 +96,7 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal("[Order].[Id] AS Override", selectTagsAlpha.GetSelects());
+        Assert.Equal("[Order].[Id] AS Override", selectTagsAlpha.ToSql());
 
         Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single());
     }
@@ -115,7 +115,7 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal(aExpectedString, selectTagsAlpha.GetSelects());
+        Assert.Equal(aExpectedString, selectTagsAlpha.ToSql());
 
         Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().Single());;
     }
@@ -135,7 +135,7 @@ public class SelectTagsTests
         Assert.True(selectTagsAlpha.Any());
         Assert.Equal(4, selectTagsAlpha.All().Count());
 
-        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.GetSelects());
+        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.ToSql());
 
         Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(0));
         Assert.Equal("[dbo].[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(1));
@@ -158,7 +158,7 @@ public class SelectTagsTests
 
         Assert.Equal(4, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.GetSelects());
+        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.ToSql());
 
         Assert.Equal("[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(0));
         Assert.Equal("[dbo].[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(1));
@@ -181,7 +181,7 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.GetSelects());
+        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql());
 
         Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
     }
@@ -210,7 +210,7 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id] AS Override, [Order].[CustomerId] AS Override2, [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.GetSelects());
+        Assert.Equal($"[Order].[Id] AS Override, [Order].[CustomerId] AS Override2, [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql());
 
         Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
     }
@@ -235,7 +235,7 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.GetSelects());
+        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql());
 
         Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
     }

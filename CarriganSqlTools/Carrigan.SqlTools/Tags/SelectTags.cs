@@ -54,7 +54,7 @@ public class SelectTags : SelectTagsBase
     /// All SelectTags associated with the instance, as a string. 
     /// For SelectTags this will be a comma separated list.
     /// </returns>
-    public override string GetSelects() =>
+    public override string ToSql() =>
         string.Join(", ", _selectTags);
 
     /// <summary>

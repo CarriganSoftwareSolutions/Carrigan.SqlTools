@@ -22,7 +22,7 @@ public abstract class SelectTagsBase
     /// For SelectTag this will just be itself.
     /// For SelectTags this will be a comma separated list.
     /// </returns>
-    public abstract string GetSelects();
+    public abstract string ToSql();
     /// <summary>
     /// Get all TableTags associated with the instance.
     /// For SelectTag this will just it's TableTag as an Enumerable.

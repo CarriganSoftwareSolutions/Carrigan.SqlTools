@@ -12,5 +12,13 @@
 /// for internal type safety.
 /// THIS MUST BE PUBLIC, to be exposed to the Roslyn analyzer.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// [ExternalOnly]
+/// public void SomeExternalOnlyMethod()
+/// {
+/// }
+/// ]]></code>
+/// </example>
 //Note: THIS MUST BE PUBLIC, to be exposed to the Roslyn analyzer.
 public sealed class ExternalOnlyAttribute : Attribute { }

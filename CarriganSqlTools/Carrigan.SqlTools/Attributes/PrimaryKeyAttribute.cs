@@ -12,6 +12,34 @@ namespace Carrigan.SqlTools.Attributes;
 /// This does not affect Entity Framework’s use of <see cref="KeyAttribute"/> and does not
 /// override its behavior at runtime.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// [Identifier("Email", "schema")]
+/// internal class EmailModel
+/// {
+///     [PrimaryKey]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Identifier("Email")]
+///     public string? EmailAddress { get; set; }
+/// }
+/// 
+/// SqlGenerator<EmailModel> emailGenerator = new();
+/// EmailModel email = new()
+/// {
+///     Id = 10,
+///     CustomerId = 313,
+///     EmailAddress = "Exterminate@Skaro.gov"
+/// };
+/// SqlQuery query = emailGenerator.UpdateById(email);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE [schema].[Email] 
+/// SET [CustomerId] = @CustomerId, [Email] = @Email 
+/// WHERE [Id] = @Id;
+/// ]]></code>
+/// </example>
 [AttributeUsage(AttributeTargets.Property)]
 public  class PrimaryKeyAttribute : Attribute
 {

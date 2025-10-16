@@ -7,6 +7,34 @@ namespace Carrigan.SqlTools.Attributes;
 /// <summary>
 /// Allows for setting a default <c>AS</c> alias on a property.
 /// </summary>
+/// <example>
+/// <para>
+/// 
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// internal class AliasEntity
+/// {
+///      public int Id { get; set; }
+///      [Alias("AnAlias")]
+///      public string? TestColumn { get; set; }
+///      public string? NoAlias { get; set; }
+/// }
+/// SelectTags tags = SelectTags.GetMany<AliasEntity>
+/// (
+///     nameof(AliasEntity.Id),
+///     nameof(AliasEntity.TestColumn),
+///     nameof(AliasEntity.NoAlias)
+/// );
+/// 
+/// SqlGenerator<AliasEntity> generator = new();
+/// SqlQuery query = generator.Select(tags, null, null, null, null)
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias] 
+/// FROM [AliasEntity]
+/// ]]></code>
+/// </example>
 public class AliasAttribute : Attribute
 {
     /// <summary>

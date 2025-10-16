@@ -205,7 +205,7 @@ public class SelectTagTests
         Assert.Equal(expectedSelect.GetHashCode(), select.GetHashCode());
         Assert.True(select == selectAlt);
         Assert.True(expectedSelect == selectAlt);
-        Assert.Equal(expectedSelect, select.GetSelects());
+        Assert.Equal(expectedSelect, select.ToSql());
         Assert.True(select.Any());
         Assert.False(select.Empty());
     }

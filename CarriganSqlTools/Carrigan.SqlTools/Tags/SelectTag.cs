@@ -312,7 +312,7 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// For SelectTag this will just be itself.
     /// </summary>
     /// <returns>All SelectTags associated with the instance, as a string. For SelectTag this will just be itself.</returns>
-    public override string GetSelects() =>
+    public override string ToSql() =>
         this;
 
     //Proof read documentation

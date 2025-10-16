@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.RegularExpressions;
+using Carrigan.SqlTools.SqlGenerators;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
@@ -32,6 +33,34 @@ namespace Carrigan.SqlTools.Attributes;
 /// columns, or stored procedures. It only generates SQL for SELECT, DELETE, INSERT, UPDATE,
 /// and stored procedure execution.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// [Identifier("Email", "schema")]
+/// internal class EmailModel
+/// {
+///     [PrimaryKey]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Identifier("Email")]
+///     public string? EmailAddress { get; set; }
+/// }
+/// 
+/// SqlGenerator<EmailModel> emailGenerator = new();
+/// EmailModel email = new()
+/// {
+///     Id = 10,
+///     CustomerId = 313,
+///     EmailAddress = "Exterminate@Skaro.gov"
+/// };
+/// SqlQuery query = emailGenerator.UpdateById(email);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE [schema].[Email] 
+/// SET [CustomerId] = @CustomerId, [Email] = @Email 
+/// WHERE [Id] = @Id;
+/// ]]></code>
+/// </example>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
 public class IdentifierAttribute : Attribute
 {

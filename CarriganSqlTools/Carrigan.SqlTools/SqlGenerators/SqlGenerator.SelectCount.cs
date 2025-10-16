@@ -74,7 +74,7 @@ public partial class SqlGenerator<T>
         }
 
         if (selects is not null && selects.Any())
-            queryBuilder = new($"SELECT COUNT({selects.GetSelects()}) FROM {Table}");
+            queryBuilder = new($"SELECT COUNT({selects.ToSql()}) FROM {Table}");
         else
             queryBuilder = new($"SELECT COUNT({Table}.*) FROM {Table}");
 
