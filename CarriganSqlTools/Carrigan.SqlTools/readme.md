@@ -84,23 +84,17 @@ dotnet add package Carrigan.SqlTools.SqlServer
 ## Getting Started Examples
 
 We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`). 
+ 
 
-You can use the `[Table]` attribute from `System.ComponentModel.DataAnnotations.Schema` to override the table name, otherwise the table name is assumed to be the same as the class. You can also specify the schema name or not.
-
-All examples use `using` statements to keep code clean, and initialize generators **with an encryptor** (required).
+All examples use the following `using` statements to keep code clean in the examples.
 
 ```csharp
-using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities; 
-using System.Text;
+using Carrigan.SqlTools.Tests.TestEntities;
 
 // Example data models
-using Carrigan.SqlTools.Attributes;
-
 public class Customer
 {
     [PrimaryKey] //note: PrimaryKey take precedence over key for the Sql Generator
@@ -120,39 +114,8 @@ public class Order
     public decimal Total { get; set; }
 }
 
-[Identifier("Phone", "schema")]
-public class PhoneModel
-{
-    [PrimaryKey]
-    public int Id { get; set; }
-    public int CustomerId { get; set; }
-    [Identifier("Phone")]
-    public string? PhoneNumber { get; set; }
-}
-
-[Identifier("Email", "schema")]
-public class EmailModel
-{
-    [PrimaryKey]
-    public int Id { get; set; }
-    public int CustomerId { get; set; }
-    [Identifier("Email")]
-    public string? EmailAddress { get; set; }
-}
-
-[Identifier("UpdateThing", "schema")]
-public class ProcedureExec
-{
-    [Parameter ("SomeValue")]
-    public string? ValueColumn { get; set; }
-}
-
 // Generators
 public SqlGenerator<Customer> customerGenerator = new();
-public SqlGenerator<Order> orderGenerator = new();
-public SqlGenerator<PhoneModel> phoneGenerator = new();
-public SqlGenerator<EmailModel> emailGenerator = new();
-public SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 ```
 
 [Table of Contents](#table-of-contents)
@@ -162,7 +125,7 @@ public SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 
 ```csharp
 SqlQuery query = customerGenerator.SelectAll();
-// query.QueryText → SELECT [Customer].* FROM [Customer]
+// SELECT [Customer].* FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -173,7 +136,9 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.SelectById(entity);
-// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)
+// SELECT [Customer].* 
+// FROM [Customer] 
+// WHERE ([Customer].[Id] = @Parameter_Id)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -183,14 +148,15 @@ SqlQuery query = customerGenerator.SelectById(entity);
 
 ```csharp
 Customer entity = new() 
-{   
-    Id = 42, Name = "Hank", 
+{ 
+    Id = 42, 
+    Name = "Hank", 
     Email = "Hank@example.com", 
     Phone = "+1(555)555-5555" 
 };
 SqlQuery query = customerGenerator.Insert(entity);
 
-// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) 
+// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone])
 // VALUES (@Id, @Name, @Email, @Phone);
 ```
 
@@ -210,6 +176,7 @@ SqlQuery query = customerGenerator.InsertAutoId(entity);
 
 // DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);
 // INSERT INTO [Customer] ([Name], [Email], [Phone]) 
+// VALUES (@Name, @Email, @Phone);
 // OUTPUT INSERTED.Id INTO @OutputTable 
 // VALUES (@Name, @Email, @Phone);
 // SELECT InsertedId FROM @OutputTable;
@@ -231,7 +198,7 @@ Customer entity = new()
 SqlQuery query = customerGenerator.UpdateById(entity);
 
 // UPDATE [Customer] 
-// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone
+// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone 
 // WHERE [Id] = @Id;
 ```
 
@@ -266,9 +233,10 @@ SqlQuery query = customerGenerator.Delete(entity);
 ### Delete by Id (multiple keys)
 Key attribute required, and composite keys are supported by specifying multiple Keys.
 ```csharp
-Customer[] entities = new Customer[] { new Customer { Id = 1 }, new Customer { Id = 2 } };
+Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
-// ... WHERE [Id] = @Id OR [Id] = @Id_1
+// DELETE FROM [Customer] 
+// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
 ```
 
 [Table of Contents](#table-of-contents)
@@ -277,21 +245,57 @@ SqlQuery query = customerGenerator.DeleteById(entities);
 
 ## More Complex Examples
 
+We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`). 
+
+All examples use the following `using` statements to keep code clean in the examples.
+
+```csharp
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.SqlGenerators;
+
+// Example data models
+public class Customer
+{
+    [PrimaryKey] //note: PrimaryKey take precedence over key for the Sql Generator
+    public int Id { get; set; }
+    public string Name { get; set; } = "";
+    public string Email { get; set; } = "";
+    public string Phone { get; set; } = "";
+}
+
+public class Order
+{
+    [PrimaryKey] //Required attribute for certain SQL Generations
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    public int PaymentMethodId { get; set; }
+    public DateTime OrderDate { get; set; }
+    public decimal Total { get; set; }
+}
+
+// Generators
+public SqlGenerator<Customer> customerGenerator = new();
+```
+
 ### Select with Joins and Order By
 `ColumnEqualsColumn<LeftT, RightT>`, Order validates the names of the properties, and throws an error if the property isn't valid
 
 `OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
-InnerJoin<Customer, Order> join = new(columnEqualsColumn);
+ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
 
 OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
 SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
 
-// SELECT [Order].* FROM [Order] 
-// INNER JOIN [Order] ON 
-// ([Customer].[Id] = [Order].[CustomerId]) 
+// SELECT [Customer].* 
+// FROM [Customer] 
+// INNER JOIN [Order] 
+// ON ([Customer].[Id] = [Order].[CustomerId]) 
 // ORDER BY [Order].[OrderDate] ASC
 ```
 
@@ -303,9 +307,9 @@ SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, nu
 
 `OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-InnerJoin<Customer, Order> join = new(columnEqualsColumn);
+Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
 
 OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
@@ -313,10 +317,11 @@ OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
 
 SqlQuery query = customerGenerator.Select(null, join, null, orderBy, null);
 
-// SELECT [Order].* FROM [Order] 
-// INNER JOIN [Order] ON 
-// ([Customer].[Id] = [Order].[CustomerId]) 
-// ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC
+// SELECT [Customer].* 
+// FROM [Customer]
+// INNER JOIN [Order]
+// ON ([Customer].[Id] = [Order].[CustomerId])
+// ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -327,17 +332,17 @@ SqlQuery query = customerGenerator.Select(null, join, null, orderBy, null);
 
 `ColumnValues<T>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-InnerJoin<Order, Customer> join = new(columnEqualsColumn);
+Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
 
-ColumnValues<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
+ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
 SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
-// DELETE FROM [Order] 
-// INNER JOIN [Customer] ON 
-// ([Customer].[Id] = [Order].[CustomerId]) 
+// DELETE FROM [Order]
+// INNER JOIN [Customer]
+// ON ([Customer].[Id] = [Order].[CustomerId])
 // WHERE ([Customer].[Email] = @Parameter_Email)
 ```
 
@@ -349,13 +354,15 @@ SqlQuery query = orderGenerator.Delete(join, customerEmail);
 `Columns<T>` validates the names of the properties, and throws an error if the property isn't valid
 
 ```csharp
-Columns<Order> totalCol = new (nameof(Order.Total));
-Parameters minTotal = new ("Total", 500m);
+Column<Order> totalCol = new (nameof(Order.Total));
+Parameter minTotal = new ("Total", 500m);
 GreaterThan greaterThan = new (totalCol, minTotal);
 
-SqlQuery query = orderGenerator.SelectCount(null, greaterThan);
+SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
 
-// SELECT COUNT(*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)
+// SELECT COUNT([Order].*)
+// FROM [Order]
+// WHERE ([Order].[Total] > @Parameter_Total)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -373,18 +380,19 @@ Order entity = new () { Id = 10, Total = 123.45m };
 
 SetColumns<Order> setColumns = new(nameof(Order.Total));
 
-ColumnEqualsColumn<Order, Customer> columnEqualsColumn = new(nameof(Order.CustomerId), nameof(Customer.Id));
+ColumnEqualsColumn<Order, Customer> predicate = new(nameof(Order.CustomerId), nameof(Customer.Id));
 
-InnerJoin<Order, Customer> joinOnCustomerId = new(columnEqualsColumn);
+Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
 
-ColumnValues<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
-SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
+SqlQuery query = orderGenerator.Update(entity, setColumns, join, customerEmailEquals);
 
-// UPDATE [Order] SET [Order].[Total] = @ParameterSet_Total 
-// FROM [Order] 
-// INNER JOIN [Customer] ON 
-// ([Order].[CustomerId] = [Customer].[Id]) 
+// UPDATE [Order]
+// SET [Order].[Total] = @ParameterSet_Total
+// FROM [Order]
+// INNER JOIN [Customer]
+// ON ([Order].[CustomerId] = [Customer].[Id])
 // WHERE ([Customer].[Email] = @Parameter_Email)
 ```
 
@@ -394,11 +402,29 @@ SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, cus
 ---
 
 ## Attribute Examples
+
+We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`). 
+
+You can use the `[Table]` attribute from `System.ComponentModel.DataAnnotations.Schema` to override the table name, otherwise the table name is assumed to be the same as the class. You can also specify the schema name or not.
+
+All examples use `using` statements to keep code clean, and initialize generators **with an encryptor** (required).
+
+```csharp
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Attributes;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+// Generators
+private static readonly SqlGenerator<PhoneModel> phoneGenerator = new();
+private static readonly SqlGenerator<EmailModel> emailGenerator = new();
+private static readonly SqlGenerator<ProcedureExec> procedureExecGenerator = new();
+```
 ### Table, Column and Key
 
 ```csharp
-[Table("Phone", Schema = "schema")]
-public class PhoneModel
+[Table("Phone", Schema="schema")]
+internal class PhoneModel
 {
     [Key]
     public int Id { get; set; }
@@ -407,18 +433,16 @@ public class PhoneModel
     public string? PhoneNumber { get; set; }
 }
 
-SqlGenerator<PhoneModel> phoneGenerator = new();
-
 PhoneModel phone = new()
 {
     Id = 2718,
     CustomerId = 3141,
-    PhoneNumber = "+15555555555"
+    PhoneNumber = "07700 900461"
 };
 SqlQuery query = phoneGenerator.UpdateById(phone);
 
 // UPDATE [schema].[Phone] 
-// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+// SET [CustomerId] = @CustomerId, [Phone] = @Phone
 // WHERE [Id] = @Id;
 ```
 
@@ -428,7 +452,7 @@ SqlQuery query = phoneGenerator.UpdateById(phone);
 
 ```csharp
 [Identifier("Email", "schema")]
-public class EmailModel
+internal class EmailModel
 {
     [PrimaryKey]
     public int Id { get; set; }
@@ -436,8 +460,6 @@ public class EmailModel
     [Identifier("Email")]
     public string? EmailAddress { get; set; }
 }
-
-SqlGenerator<EmailModel> emailGenerator = new();
 
 EmailModel email = new()
 {
@@ -448,7 +470,7 @@ EmailModel email = new()
 SqlQuery query = emailGenerator.UpdateById(email);
 
 // UPDATE [schema].[Email] 
-// SET [CustomerId] = @CustomerId, [Email] = @Email 
+// SET [CustomerId] = @CustomerId, [Email] = @Email
 // WHERE [Id] = @Id;
 ```
 
@@ -458,19 +480,17 @@ SqlQuery query = emailGenerator.UpdateById(email);
 
 ```csharp
 [Identifier("UpdateThing", "schema")]
-public class ProcedureExec
+internal class ProcedureExec
 {
     [Parameter ("SomeValue")]
     public string? ValueColumn { get; set; }
 }
 
-SqlGenerator<ProcedureExec> procedureExecGenerator = new();
-
 ProcedureExec procedureExec = new()
 {
     ValueColumn = "DangItBobby"
 };
-SqlQuery query = procedureExlGenerator.Procedure(procedureExec);
+SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 
 // [schema].[UpdateThing]
 ```

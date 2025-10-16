@@ -1,13 +1,14 @@
-﻿using Carrigan.SqlTools.Attributes;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carrigan.SqlTools.Tests.TestEntities;
 
-[Identifier("Phone", "schema")]
+[Table("Phone", Schema="schema")]
 internal class PhoneModel
 {
-    [PrimaryKey]
+    [Key]
     public int Id { get; set; }
     public int CustomerId { get; set; }
-    [Identifier("Phone")]
+    [Column("Phone")]
     public string? PhoneNumber { get; set; }
 }
