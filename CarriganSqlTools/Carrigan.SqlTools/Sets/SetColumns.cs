@@ -27,7 +27,8 @@ namespace Carrigan.SqlTools.Sets;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [Customer] SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone 
+/// UPDATE [Customer] 
+/// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone 
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>

@@ -30,7 +30,7 @@ namespace Carrigan.SqlTools.Tags;
 /// 
 /// ProcedureExec procedureExec = new()
 /// {
-///     ValueColumn = "DangItBobby"
+///     ValueColumn = "DangIt"
 /// };
 /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 /// ]]></code>

@@ -57,7 +57,7 @@ public class FromReadMeAttributeExamples
     {
         ProcedureExec procedureExec = new()
         {
-            ValueColumn = "DangItBobby"
+            ValueColumn = "DangIt"
         };
         SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 
@@ -65,6 +65,6 @@ public class FromReadMeAttributeExamples
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal("DangItBobby", query.GetParameterValue<string>("SomeValue"));
+        Assert.Equal("DangIt", query.GetParameterValue<string>("SomeValue"));
     }
 }
