@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
-//TODO: Rework all documentation, examples
+//TODO: Rework all documentation
 /// <summary>
 /// THis represents a variety property information associate with a column.
 /// This class caches various informational items about the column:

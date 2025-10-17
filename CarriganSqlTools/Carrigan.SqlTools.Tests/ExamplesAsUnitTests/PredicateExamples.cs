@@ -253,7 +253,6 @@ public class PredicateExamples
         ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
         ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
         ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
-
         Or or = new(equalName, equalEmail, equalPhone);
 
         SqlQuery query = customerGenerator.Select(null, null, or, null, null);

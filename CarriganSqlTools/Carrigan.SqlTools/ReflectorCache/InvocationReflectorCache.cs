@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
-//TODO: Update Documentation, Unit tests
+//TODO: Update Documentation
 
 /// <summary>
 /// This class is serves as a cache for reflection operations commonly used by this library.
