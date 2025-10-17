@@ -1,6 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data.Common;
 
@@ -12,13 +13,18 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// The intent is to reduce the amount of code needed to perform a routine task.
 /// </summary>
 /// <example>
+/// <para>
+/// <see cref="ColumnValue{T}"/> validates the names of the properties, and throws an error if the property isn't valid
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// ColumnValues&lt;Customer&gt; coumnValue = new(nameof(Customer.Name), "Hank");
-/// SqlQuery query = customerGenerator.Select(null, coumnValue, null, null);
+/// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
+/// SqlQuery query = customerGenerator.Select(null, null, columnValue, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
 public class ColumnValue<T> : Predicates

@@ -187,6 +187,21 @@ public class PredicateExamples
     }
 
     [Fact]
+    public void PredicateLessThanEquals()
+    {
+        Parameter parameterTotal = new("Total", 1776.00m);
+        Column<Order> columnTotal = new(nameof(Order.Total));
+        LessThanEqual predicate = new(columnTotal, parameterTotal);
+        SqlQuery query = orderGenerator.Select(null, null, predicate, null, null);
+
+        Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] <= @Parameter_Total)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Single(query.Parameters);
+
+        Assert.Equal(1776.00m, (decimal)query.Parameters.Single(param => param.Key == "@Parameter_Total").Value);
+    }
+
+    [Fact]
     public void PredicateLike()
     {
         Parameter parameterEmail = new("Email", "%@example.com");
@@ -233,35 +248,11 @@ public class PredicateExamples
     }
 
     [Fact]
-    public void PredicateLessThanEquals()
-    {
-        Parameter parameterTotal = new("Total", 1776.00m);
-        Column<Order> columnTotal = new(nameof(Order.Total));
-        LessThanEqual predicate = new(columnTotal, parameterTotal);
-        SqlQuery query = orderGenerator.Select(null, null, predicate, null, null);
-
-        Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] <= @Parameter_Total)", query.QueryText);
-        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-
-        Assert.Equal(1776.00m, (decimal)query.Parameters.Single(param => param.Key == "@Parameter_Total").Value);
-    }
-
-    [Fact]
     public void PredicateOr()
     {
-        Parameter parameterName = new("Name", "Hank");
-        Column<Customer> columnName = new(nameof(Customer.Name));
-        Equal equalName = new(columnName, parameterName);
-
-        Parameter parameterEmail = new("Email", "Hank@example.com");
-        Column<Customer> columnEmail = new(nameof(Customer.Email));
-        Equal equalEmail = new(columnEmail, parameterEmail);
-
-
-        Parameter parameterPhone = new("Phone", "+1(555)555-5555");
-        Column<Customer> columnPhone = new(nameof(Customer.Phone));
-        Equal equalPhone = new(columnPhone, parameterPhone);
+        ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+        ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
+        ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
 
         Or or = new(equalName, equalEmail, equalPhone);
 

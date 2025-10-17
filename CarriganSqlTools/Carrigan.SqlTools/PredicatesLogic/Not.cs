@@ -1,5 +1,7 @@
 ﻿//IGNORE SPELLING: equal
 
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -9,16 +11,21 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This class represents SQL's logical NOT operator for logical operations on one boolean predicate values.
 /// </summary>
 /// <example>
+/// <para>
+/// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameters parameterName = new("Name", "Hank");
-/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+/// Parameter parameterName = new("Name", "Hank");
+/// Column<Customer> columnName = new(nameof(Customer.Name));
 /// Equal equal = new(columnName, parameterName);
 /// Not not = new(equal);
-/// SqlQuery query = customerGenerator.Select(null, not, null, null);
+/// SqlQuery query = customerGenerator.Select(null, null, not, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] WHERE (NOT ([Customer].[Name] = @Parameter_Name))
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// WHERE (NOT ([Customer].[Name] = @Parameter_Name))
 /// ]]></code>
 /// </example>
 public class Not : Predicates

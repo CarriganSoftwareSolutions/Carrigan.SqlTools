@@ -1,5 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,18 +11,20 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// It allows you to generate SQL Column1 = Column2 with fewer lines of C#.
 /// </summary>
 /// <example>
-/// <para><see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <para>
+/// <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// ColumnEqualsColumn&lt;Customer, Order&gt; columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// LeftJoin&lt;Customer, Order&gt; join = new(columnValue);
-/// SqlQuery query = customerGenerator.Select(join, null, null, null);
+/// ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// Joins<Customer> joins = LeftJoin<Order>.Joins<Customer>(columnValue);
+/// SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// SELECT [Customer].* 
 /// FROM [Customer] 
 /// LEFT JOIN [Order] 
-/// ON ([Customer].[Id] = [Order].[CustomerId])
+///   ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
 public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator

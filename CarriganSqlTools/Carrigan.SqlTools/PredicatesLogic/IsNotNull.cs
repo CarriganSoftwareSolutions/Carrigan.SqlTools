@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -7,14 +9,19 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This class represents SQL's logical IS NOT NULL operator.
 /// </summary>
 /// <example>
+/// <para>
+/// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
+/// Column<Customer> columnName = new(nameof(Customer.Name));
 /// IsNotNull notNull = new(columnName);
-/// SqlQuery query = customerGenerator.Select(null, notNull, null, null);
+/// SqlQuery query = customerGenerator.Select(null, null, notNull, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NOT NULL)
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// WHERE ([Customer].[Name] IS NOT NULL)
 /// ]]></code>
 /// </example>
 public class IsNotNull : Predicates

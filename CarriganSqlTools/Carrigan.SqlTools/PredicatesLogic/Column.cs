@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -11,15 +12,20 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This is the base class that represents a SQL column in the predicate logic.
 /// </summary>
 /// <example>
+/// <para>
+///  <see cref="Column{T}"/> validates property names and throws an exception if a property name is invalid.
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameters parameterName = new("Name", "Hank");
-/// Columns&lt;Customer@gt; columnName = new(nameof(Customer.Name));
+/// Parameter parameterName = new("Name", "Hank");
+/// Column<Customer> columnName = new(nameof(Customer.Name));
 /// Equal equalName = new(columnName, parameterName);
-/// SqlQuery query = customerGenerator.Select(null, equalName, null, null);
+/// SqlQuery query = customerGenerator.Select(null, null, equalName, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
 public class Column<T> : ColumnBase
