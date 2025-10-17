@@ -89,8 +89,8 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <para>Select with join example:</para>
     /// <para>
-    /// Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: InnerJoin&lt;Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note:<see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="InnerJoin{reightT}"/> validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn&lt;Customer, Order&gt; columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -109,9 +109,9 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <para>Select with join and order by example:</para>
     /// <para>
-    /// Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: InnerJoin&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: OrderByItem&lt;Order&gt; validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="InnerJoin{reightT}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn&lt;Customer, Order&gt; columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -133,10 +133,10 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <para>Select with join and order by example:</para>
     /// <para>
-    /// Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: InnerJoin&lt;Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: Columns&lt;Order> validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: OrderByItem&lt;Order> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="InnerJoin{reightT}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn&lt;Customer, Order&gt; columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));

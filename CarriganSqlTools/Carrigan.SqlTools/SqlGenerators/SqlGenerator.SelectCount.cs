@@ -33,7 +33,7 @@ public partial class SqlGenerator<T>
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = orderGenerator.SelectCount(null, null);
     /// ]]></code>
-    /// <para>Columns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para><see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code><![CDATA[
     /// SELECT COUNT(*) FROM [Order]
     /// ]]></code>

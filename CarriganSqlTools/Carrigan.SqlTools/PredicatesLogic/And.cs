@@ -1,52 +1,48 @@
-﻿namespace Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.SqlGenerators;
+
+namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Predicates control the boolean logic for join and where clauses.
 /// This class represents SQL's logical AND operator for logical operations on one more predicate values.
 /// </summary>
 /// <example>
-/// <para>AND example, note it intelligently handles more than two predicates.</para>
-/// 
+/// <para>
+/// AND example, note it intelligently handles more than two predicates.
+/// Note: <see cref="ColumnValue{T}"/> validates property names and throws an exception if a property name is invalid.
+/// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameters parameterName = new("Name", "Hank");
-/// Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
-/// Equal equalName = new(columnName, parameterName);
-/// 
-/// Parameters parameterEmail = new("Email", "Hank@example.com");
-/// Columns&lt;Customer&gt; columnEmail = new(nameof(Customer.Email));
-/// Equal equalEmail = new(columnEmail, parameterEmail);
-/// 
-/// Parameters parameterPhone = new("Phone", ("+1(555)555-5555"));
-/// Columns&lt;Customer&gt; columnPhone = new(nameof(Customer.Phone));
-/// Equal equalPhone = new(columnPhone, parameterPhone);
-/// 
+/// ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+/// ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
+/// ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
 /// And and = new(equalName, equalEmail, equalPhone);
-/// 
-/// SqlQuery query = customerGenerator.Select(null, and, null, null);
+///
+/// SqlQuery query = customerGenerator.Select(null, null, and, null, null);
 /// ]]></code>
 /// 
 /// <para>Resulting SQL:</para>
 /// 
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] 
+/// SELECT [Customer].* 
+/// FROM [Customer] 
 /// WHERE (([Customer].[Name] = @Parameter_Name) 
-/// AND ([Customer].[Email] = @Parameter_Email) 
-/// AND ([Customer].[Phone] = @Parameter_Phone))
+///     AND ([Customer].[Email] = @Parameter_Email) 
+///     AND ([Customer].[Phone] = @Parameter_Phone))
 /// ]]></code>
 /// </example>
 /// 
 /// <example>
 /// <para>Edge case, single predicates are handled intelligently by AND.</para>
 /// <code language="csharp"><![CDATA[
-///  Parameters parameterName = new("Name", "Hank");
-///  Columns&lt;Customer&gt; columnName = new(nameof(Customer.Name));
-///  Equal equalName = new(columnName, parameterName);
-///  And and = new(equalName);
-///  SqlQuery query = customerGenerator.Select(null, and, null, null);
+/// ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+/// And and = new(equalName);
+/// SqlQuery query = customerGenerator.Select(null, null, and, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
 /// 

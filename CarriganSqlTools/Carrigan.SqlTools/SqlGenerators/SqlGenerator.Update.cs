@@ -46,7 +46,7 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// </example>
     /// <example>
-    /// <para>Note: SetColumns&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>Note: <see cref="SetColumns{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// SetColumns&lt;Customer&gt; columns = new(nameof(Customer.Email));
     /// Customer entity = new() 

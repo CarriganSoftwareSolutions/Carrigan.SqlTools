@@ -15,19 +15,9 @@ public class PredicateExamples
     [Fact]
     public void PredicateAnd()
     {
-        Parameter parameterName = new("Name", "Hank");
-        Column<Customer> columnName = new(nameof(Customer.Name));
-        Equal equalName = new(columnName, parameterName);
-
-        Parameter parameterEmail = new ("Email", "Hank@example.com");
-        Column<Customer> columnEmail = new(nameof(Customer.Email));
-        Equal equalEmail = new(columnEmail, parameterEmail);
-
-
-        Parameter parameterPhone = new("Phone", "+1(555)555-5555");
-        Column<Customer> columnPhone = new(nameof(Customer.Phone));
-        Equal equalPhone = new(columnPhone, parameterPhone);
-
+        ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+        ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
+        ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
         And and = new (equalName, equalEmail, equalPhone);
 
         SqlQuery query = customerGenerator.Select(null, null, and, null, null);
@@ -44,9 +34,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateSingleAnd()
     {
-        Parameter parameterName = new("Name", "Hank");
-        Column<Customer> columnName = new(nameof(Customer.Name));
-        Equal equalName = new(columnName, parameterName);
+        ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
         And and = new(equalName);
         SqlQuery query = customerGenerator.Select(null, null, and, null, null);
 

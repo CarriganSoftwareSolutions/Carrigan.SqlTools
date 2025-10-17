@@ -19,7 +19,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </typeparam>
 /// <example>
 /// <para>
-/// Note: <c>ColumnEqualsColumn&lt;lefT, rightT&gt;</c> validates property names and throws an exception if a property name is invalid.
+/// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates property names and throws an exception if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
