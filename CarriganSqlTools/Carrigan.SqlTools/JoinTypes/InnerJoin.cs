@@ -3,7 +3,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
-//TODO: REDO Documentation, Examples
+//TODO: REDO Documentation
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>

@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: REDO Documentation,  Examples
+//TODO: REDO Documentation
 /// <summary>
 /// Represents an SQL <c>LEFT JOIN</c>.
 /// </summary>

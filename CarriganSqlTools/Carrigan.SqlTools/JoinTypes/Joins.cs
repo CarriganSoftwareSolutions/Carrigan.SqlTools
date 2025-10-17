@@ -8,7 +8,7 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: REDO Documentation,  Examples
+//TODO: REDO Documentation
 /// <summary>
 /// Defines a class that represent one or more SQL join operations.
 /// </summary>
