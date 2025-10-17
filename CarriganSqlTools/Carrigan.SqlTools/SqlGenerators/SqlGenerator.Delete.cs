@@ -140,41 +140,47 @@ public partial class SqlGenerator<T>
     /// </example>
     /// <example>
     /// <code language="csharp"><![CDATA[
-    /// ColumnValues&lt;Customer&gt; coumnValue = new(nameof(Customer.Name), "Hank");
-    /// SqlQuery query = customerGenerator.Delete(null, coumnValue);
+    /// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
+    /// SqlQuery query = customerGenerator.Delete(null, columnValue);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)
+    /// DELETE FROM [Customer] 
+    /// WHERE ([Customer].[Name] = @Parameter_Name)
     /// ]]></code>
     /// </example>
     /// <example>
     /// <para>Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin&lt;Order, Customer&gt; join = new(predicate);
+    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
     /// 
     /// SqlQuery query = orderGenerator.Delete(join, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId])
+    /// DELETE FROM [Order] 
+    /// INNER JOIN [Customer] 
+    /// ON ([Customer].[Id] = [Order].[CustomerId])
     /// ]]></code>
     /// </example>
     /// <example>
     /// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin&lt;Order, Customer&gt; join = new(predicate);
+    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
     /// 
-    /// ColumnValues&lt;Customer&gt; customerEmail = new(nameof(Customer.Email), "spam@example.com");
+    /// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
     /// 
     /// SqlQuery query = orderGenerator.Delete(join, customerEmail);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Parameter_Email)
+    /// DELETE FROM [Order] 
+    /// INNER JOIN [Customer] 
+    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
+    /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
     public SqlQuery Delete(JoinsBase? joins, Predicates? predicates)

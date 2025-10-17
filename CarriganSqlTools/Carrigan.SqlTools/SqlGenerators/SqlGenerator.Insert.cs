@@ -91,7 +91,6 @@ public partial class SqlGenerator<T>
     ///     Phone = "+1(555)555-5555"
     /// };
     /// SqlQuery query = customerGenerator.InsertAutoId(entity);
-    ///
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -162,16 +161,13 @@ public partial class SqlGenerator<T>
     ///                 Email = "Homer@example.com",
     ///                 Phone = "+1(555)555-1234"
     ///             },
-    ///     ];
+    ///         ];
     /// SqlQuery query = customerGenerator.Insert(customers);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// INSERT INTO 
-    /// [Customer] ([Id], [Name], [Email], [Phone])
-    /// VALUES 
-    /// (@Id_0, @Name_0, @Email_0, @Phone_0), 
-    /// (@Id_1, @Name_1, @Email_1, @Phone_1);
+    /// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) 
+    /// VALUES (@Id_0, @Name_0, @Email_0, @Phone_0), (@Id_1, @Name_1, @Email_1, @Phone_1);
     /// ]]></code>
     /// </example>
     public SqlQuery Insert(params IEnumerable<T> entities)

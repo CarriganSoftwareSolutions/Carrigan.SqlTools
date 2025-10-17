@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
-public class SelectCountExamples
+public class SqlGeneratorSelectCountExamples
 {
     private static readonly SqlGenerator<Order> orderGenerator = new();
     private static readonly SqlGenerator<Customer> customerGenerator = new();
@@ -39,7 +39,8 @@ public class SelectCountExamples
     [Fact]
     public void SelectCountWithWhereAndJoin()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnEqualsColumn<leftT, righT> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: Column<T> validates the names of the properties, and throws an error if the property isn't valid
         Column<Order> totalCol = new(nameof(Order.Total));
         Parameter minTotal = new("Total", 500m);
         GreaterThan greaterThan = new(totalCol, minTotal);
@@ -58,6 +59,7 @@ public class SelectCountExamples
     [Fact]
     public void SelectCountWithSelectsOnTheJoin()
     {
+        //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         SelectTags selectTags =
             SelectTags.Get<Customer>("Id", "CustomerId")
                 .Concat<Customer>(["Name", "Email", "Phone"])
@@ -65,7 +67,7 @@ public class SelectCountExamples
                 .Concat<Order>(["OrderDate", "Total"])
                 .Append<PaymentMethod>("Id", "PaymentMethodId")
                 .Append<PaymentMethod>("ZipCode");
-        //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
+
         ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join1 = new(customerIdEquals);
 

@@ -24,6 +24,22 @@ public partial class SqlGenerator<T>
     /// The data model type must be <c>public</c>, and any properties intended
     /// as parameters must be public instance properties with a public getter.
     /// </remarks>
+    /// <example>
+    /// <para>
+    /// 
+    /// </para>
+    /// <code language="csharp"><![CDATA[
+    /// ProcedureExec procedureExec = new()
+    /// {
+    ///     ValueColumn = "DangIt"
+    /// };
+    /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// [schema].[UpdateThing]
+    /// ]]></code>
+    /// </example>
     public SqlQuery Procedure(T entity)
     {
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = ColumnInfo.Select(columns => GetSqlParameterKeyValue(columns, entity));

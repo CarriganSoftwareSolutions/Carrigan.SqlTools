@@ -5,7 +5,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
-public class UpdatesExamples
+public class SqlGeneratorUpdatesExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
     private static readonly SqlGenerator<Order> orderGenerator = new();
@@ -37,7 +37,12 @@ public class UpdatesExamples
     {
         //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
         SetColumns<Customer> columns = new(nameof(Customer.Email));
-        Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
+        Customer entity = new() 
+        { 
+            Id = 42, 
+            Name = "Hank", 
+            Email = "Hank@example.gov" 
+        };
         SqlQuery query = customerGenerator.UpdateById(entity, columns);
 
         Assert.Equal("UPDATE [Customer] SET [Email] = @Email WHERE [Id] = @Id;", query.QueryText);
@@ -84,7 +89,11 @@ public class UpdatesExamples
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
-        Order entity = new() { Id = 10, Total = 123.45m };
+        Order entity = new() 
+        { 
+            Id = 10, 
+            Total = 123.45m 
+        };
 
         SetColumns<Order> setColumns = new(nameof(Order.Total));
 
@@ -112,7 +121,10 @@ public class UpdatesExamples
         //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
-        Customer entity = new() { Email = "spam@example.com" };
+        Customer entity = new() 
+        { 
+            Email = "spam@example.com" 
+        };
         SetColumns<Customer> setColumns = new(nameof(Customer.Email));
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
 

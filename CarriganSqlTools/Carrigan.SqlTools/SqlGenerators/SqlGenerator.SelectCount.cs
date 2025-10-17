@@ -31,31 +31,97 @@ public partial class SqlGenerator<T>
     /// <param name="orderBy"></param>
     /// <example>
     /// <code language="csharp"><![CDATA[
-    /// SqlQuery query = orderGenerator.SelectCount(null, null);
+    /// SqlQuery query = orderGenerator.SelectCount(null, null, null);
     /// ]]></code>
     /// <para><see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code><![CDATA[
-    /// SELECT COUNT(*) FROM [Order]
+    /// SELECT COUNT([Order].*) FROM [Order]
     /// ]]></code>
     /// </example>
     /// <example>
+    /// <para>
+    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// </para>
     /// <code language="csharp"><![CDATA[
-    /// Columns&lt;Order&gt; totalCol = new(nameof(Order.Total));
-    /// Parameters minTotal = new("Total", 500m);
+    /// Column<Order> totalCol = new(nameof(Order.Total));
+    /// Parameter minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
     /// 
-    /// ColumnEqualsColumn&lt;Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
-    /// Join&lt;Order, Customer&gt; join = new(columnCompare);
-    /// 
-    /// SqlQuery query = orderGenerator.SelectCount(join, greaterThan);
+    /// SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
     /// SELECT COUNT([Order].*) 
     /// FROM [Order] 
-    /// LEFT JOIN [Customer] 
+    /// WHERE ([Order].[Total] > @Parameter_Total)
+    /// ]]></code>
+    /// </example>
+    /// <example>
+    /// <para>
+    /// <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if a property isn't valid
+    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// </para>
+    /// <code language="csharp"><![CDATA[
+    /// Column<Order> totalCol = new(nameof(Order.Total));
+    /// Parameter minTotal = new("Total", 500m);
+    /// GreaterThan greaterThan = new(totalCol, minTotal);
+    /// 
+    /// ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
+    /// Joins<Order> joins = Joins<Order>.Join<Customer>(columnCompare);
+    /// 
+    /// SqlQuery query = orderGenerator.SelectCount(null, joins, greaterThan);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// SELECT COUNT([Order].*) 
+    /// FROM [Order] 
+    /// JOIN [Customer] 
     /// ON ([Order].[CustomerId] = [Customer].[Id]) 
     /// WHERE ([Order].[Total] > @Parameter_Total)
+    /// ]]></code>
+    /// </example>
+    /// <example>
+    /// <para>
+    /// <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if a property isn't valid
+    /// </para>
+    /// <code language="csharp"><![CDATA[
+    /// SelectTags selectTags =
+    ///  SelectTags.Get<Customer>("Id", "CustomerId")
+    ///      .Concat<Customer>(["Name", "Email", "Phone"])
+    ///      .Append<Order>("Id", "OrderId")
+    ///      .Concat<Order>(["OrderDate", "Total"])
+    ///      .Append<PaymentMethod>("Id", "PaymentMethodId")
+    ///      .Append<PaymentMethod>("ZipCode");
+    /// 
+    /// ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// InnerJoin<Order> join1 = new(customerIdEquals);
+    /// 
+    /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
+    /// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
+    /// 
+    /// Joins<Customer> joins = new(join1, join2);
+    /// 
+    /// SqlQuery query = customerGenerator.SelectCount(selectTags, joins, null);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// SELECT COUNT
+    /// (
+    ///     [Customer].[Id] AS CustomerId, 
+    ///     [Customer].[Name], 
+    ///     [Customer].[Email], 
+    ///     [Customer].[Phone], 
+    ///     [Order].[Id] AS OrderId, 
+    ///     [Order].[OrderDate], 
+    ///     [Order].[Total], 
+    ///     [PaymentMethod].[Id] AS PaymentMethodId, 
+    ///     [PaymentMethod].[ZipCode]
+    /// ) 
+    /// FROM [Customer] 
+    /// INNER JOIN [Order] 
+    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
+    /// INNER JOIN [PaymentMethod] 
+    /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
     /// ]]></code>
     /// </example>
     public SqlQuery SelectCount(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates)

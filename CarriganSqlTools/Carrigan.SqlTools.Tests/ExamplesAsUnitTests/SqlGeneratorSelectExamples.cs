@@ -7,7 +7,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
-public class SelectExamples
+public class SqlGeneratorSelectExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
 
@@ -33,18 +33,6 @@ public class SelectExamples
     }
 
     [Fact]
-    public void SelectById()
-    {
-        Customer entity = new() { Id = 42 };
-        SqlQuery query = customerGenerator.SelectById(entity);
-
-        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)", query.QueryText);
-        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal(42, (int)query.Parameters.Single().Value);
-    }
-
-    [Fact]
     public void SelectWithJoin()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -62,7 +50,6 @@ public class SelectExamples
     public void SelectWithJoinsAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: InnerJoin<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
@@ -80,7 +67,6 @@ public class SelectExamples
     public void SelectWithJoinsWhereAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: InnerJoin<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: Columns<Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -109,5 +95,17 @@ public class SelectExamples
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
+    }
+
+    [Fact]
+    public void SelectById()
+    {
+        Customer entity = new() { Id = 42 };
+        SqlQuery query = customerGenerator.SelectById(entity);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Single(query.Parameters);
+        Assert.Equal(42, (int)query.Parameters.Single().Value);
     }
 }

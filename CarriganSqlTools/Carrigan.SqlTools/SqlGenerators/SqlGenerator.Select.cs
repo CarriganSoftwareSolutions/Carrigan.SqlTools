@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
@@ -41,7 +42,7 @@ public partial class SqlGenerator<T>
     /// </example>
     /// <example>
     /// <code language="csharp"><![CDATA[
-    /// OrderByItem&lt;Customer&gt; orderByItem = new(nameof(Customer.Email));
+    /// OrderByItem<Customer> orderByItem = new(nameof(Customer.Email));
     /// SqlQuery query = customerGenerator.SelectAll(orderByItem);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
@@ -92,17 +93,16 @@ public partial class SqlGenerator<T>
     /// Note:<see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn&lt;Customer, Order&gt; columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin&lt;Customer, Order&gt; join = new(columnEqualsColumn);
+    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
     /// 
-    /// SqlQuery query = customerGenerator.Select(join, null, null, null);
+    /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
     /// SELECT [Customer].* 
     /// FROM [Customer] 
-    /// INNER JOIN [Order] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId])
+    /// INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])
     /// ]]></code>
     /// </example>
     /// <example>
@@ -112,12 +112,12 @@ public partial class SqlGenerator<T>
     /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn&lt;Customer, Order&gt; columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin&lt;Customer, Order&gt; join = new(columnEqualsColumn);
+    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
     /// 
-    /// OrderByItem&lt;Order&gt; orderByOrderDate = new(nameof(Order.OrderDate));
+    /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
-    /// SqlQuery query = customerGenerator.Select(join, null, orderByOrderDate, null);
+    /// SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -136,14 +136,14 @@ public partial class SqlGenerator<T>
     /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn&lt;Customer, Order&gt; columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin&lt;Customer, Order&gt; join = new(columnEqualsColumn);
+    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+    /// Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
     /// 
-    /// Columns&lt;Order&gt; totalCol = new(nameof(Order.Total));
-    /// Parameters minTotal = new("Total", 500m);
+    /// Column<Order> totalCol = new(nameof(Order.Total));
+    /// Parameter minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
     /// 
-    /// OrderByItem&lt;Order&gt; orderByOrderDate = new(nameof(Order.OrderDate));
+    /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
     /// SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
     /// ]]></code>
@@ -254,7 +254,8 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* FROM [Customer] 
+    /// SELECT [Customer].* 
+    /// FROM [Customer] 
     /// WHERE ([Customer].[Id] = @Parameter_Id)
     /// ]]></code>
     /// </example>

@@ -40,27 +40,29 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone
+    /// UPDATE [Customer] 
+    /// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone 
     /// WHERE [Id] = @Id;
     /// ]]></code>
     /// </example>
     /// <example>
-    /// <para>Note: <see cref="SetColumns{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>
+    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// </para>
     /// <code language="csharp"><![CDATA[
-    /// SetColumns&lt;Customer&gt; columns = new(nameof(Customer.Email));
-    /// Customer entity = new() 
-    /// { 
-    ///     Id = 42, 
-    ///     Name = "Hank", 
-    ///     Email = "Hank@example.gov" 
+    /// SetColumns<Customer> columns = new(nameof(Customer.Email));
+    /// Customer entity = new()
+    /// {
+    ///     Id = 42,
+    ///     Name = "Hank",
+    ///     Email = "Hank@example.gov"
     /// };
     /// SqlQuery query = customerGenerator.UpdateById(entity, columns);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Email] = @Email
+    /// UPDATE [Customer] 
+    /// SET [Email] = @Email 
     /// WHERE [Id] = @Id;
     /// ]]></code>
     /// </example>
@@ -120,6 +122,9 @@ public partial class SqlGenerator<T>
     /// columns must be public instance properties with a public getter.
     /// </remarks>
     /// <example>
+    /// <para>
+    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// </para>
     /// <code language="csharp"><![CDATA[
     /// Customer updateValues = new()
     /// {
@@ -127,13 +132,13 @@ public partial class SqlGenerator<T>
     ///     Email = string.Empty
     /// };
     /// 
-    /// IEnumerable&lt;Customer&gt; customerIds =
-    /// [
-    ///     new () { Id = 42 },
-    ///     new () { Id = 732 }
-    /// ];
+    /// IEnumerable<Customer> customerIds =
+    ///     [
+    ///         new() { Id = 42 },
+    ///             new() { Id = 732 }
+    ///     ];
     /// 
-    /// SetColumns&lt;Customer&gt; updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
+    /// SetColumns<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
     /// 
     /// SqlQuery query = customerGenerator.UpdateByIds(updateValues, updateColumns, customerIds);
     /// ]]></code>
@@ -190,14 +195,50 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <para>
     /// Create Update SQL query with a Where clause.
-    /// Note: SetColumns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: Columns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: ColumnValues&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
+    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
-    /// Customer entity = new() { Email = "spam@example.com" };
-    /// SetColumns&lte;Customer&gt; setColumns = new(nameof(Customer.Email));
-    /// ColumnValues&lte;Customer&gt; customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
+    /// Order entity = new()
+    /// {
+    ///     Id = 10,
+    ///     Total = 123.45m
+    /// };
+    /// 
+    /// SetColumns<Order> setColumns = new(nameof(Order.Total));
+    /// 
+    /// Column<Customer> customerId = new(nameof(Customer.Id));
+    /// Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
+    /// Equal customerIdsEquals = new(orderCustomerId, customerId);
+    /// Joins<Order> joinOnCustomerId = Joins<Order>.InnerJoin<Customer>(customerIdsEquals);
+    /// 
+    /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+    /// 
+    /// SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// UPDATE [Order] 
+    /// SET [Order].[Total] = @ParameterSet_Total 
+    /// FROM [Order] 
+    /// INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) 
+    /// WHERE ([Customer].[Email] = @Parameter_Email)
+    /// ]]></code>
+    /// </example>
+    /// <example>
+    /// <para>
+    /// Create Update SQL query with Joins and a Where clause.
+    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// </para>
+    /// <code language="csharp"><![CDATA[
+    /// Customer entity = new()
+    /// {
+    ///     Email = "spam@example.com"
+    /// };
+    /// SetColumns<Customer> setColumns = new(nameof(Customer.Email));
+    /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
     /// 
     /// SqlQuery query = customerGenerator.Update(entity, setColumns, null, customerEmailEquals);
     /// ]]></code>
@@ -206,33 +247,6 @@ public partial class SqlGenerator<T>
     /// UPDATE [Customer] 
     /// SET [Customer].[Email] = @ParameterSet_Email 
     /// FROM [Customer] 
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <para>
-    /// Create Update SQL query with Joins and a Where clause.
-    /// Note: SetColumns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: Columns&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: ColumnValues&lte;T&gt; validates the names of the properties, and throws an error if the property isn't valid
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// Order entity = new() { Id = 10, Total = 123.45m };
-    /// SetColumns&lte;Order&gt; setColumns = new(nameof(Order.Total));
-    /// 
-    /// Columns&lte;Customer&gt; customerId = new(nameof(Customer.Id));
-    /// Columns&lte;Order&gt; orderCustomerId = new(nameof(Order.CustomerId));
-    /// Equal customerIdsEquals = new(orderCustomerId, customerId);
-    /// InnerJoin&lte;Order, Customer&gt; joinOnCustomerId = new(customerIdsEquals);
-    /// 
-    /// ColumnValues&lte;Customer&gt; customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
-    /// 
-    /// SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// UPDATE [Order] SET [Order].[Total] = @ParameterSet_Total FROM [Order] 
-    /// INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) 
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>

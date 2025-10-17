@@ -4,7 +4,7 @@ using System.Text;
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
-public class InsertExamples
+public class SqlGeneratorInsertExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
 
