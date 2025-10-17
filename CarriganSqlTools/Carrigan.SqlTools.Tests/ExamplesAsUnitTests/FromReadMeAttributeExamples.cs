@@ -39,7 +39,7 @@ public class FromReadMeAttributeExamples
         {
             Id = 10,
             CustomerId = 313,
-            EmailAddress = "Exterminate@Skaro.gov"
+            EmailAddress = "Exterminate@GenericTinCanLand.gov"
         };
         SqlQuery query = emailGenerator.UpdateById(email);
 
@@ -49,7 +49,7 @@ public class FromReadMeAttributeExamples
         Assert.Equal(3, query.GetParameterCount());
         Assert.Equal(10, query.GetParameterValue<int>("Id"));
         Assert.Equal(313, query.GetParameterValue<int>("CustomerId"));
-        Assert.Equal("Exterminate@Skaro.gov", query.GetParameterValue<string>("Email"));
+        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("Email"));
     }
 
     [Fact]

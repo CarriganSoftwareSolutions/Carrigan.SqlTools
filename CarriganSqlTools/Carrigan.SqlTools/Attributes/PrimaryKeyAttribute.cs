@@ -29,7 +29,7 @@ namespace Carrigan.SqlTools.Attributes;
 /// {
 ///     Id = 10,
 ///     CustomerId = 313,
-///     EmailAddress = "Exterminate@Skaro.gov"
+///     EmailAddress = "Exterminate@GenericTinCanLand.gov"
 /// };
 /// SqlQuery query = emailGenerator.UpdateById(email);
 /// ]]></code>
