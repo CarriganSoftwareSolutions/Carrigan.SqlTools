@@ -1,5 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -38,18 +40,19 @@ namespace Carrigan.SqlTools.Sets;
 /// Note: <see cref="SetColumns{T}"/> validates the names of the properties, and throws an error if the property isn't valid
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// SetColumns&lt;Customer&gt; columns = new(nameof(Customer.Email));
+/// SetColumns<Customer> columns = new(nameof(Customer.Email));
 /// Customer entity = new()
 /// {
-///    Id = 42,
-///    Name = "Hank",
-///    Email = "Hank@example.gov"
+///     Id = 42,
+///     Name = "Hank",
+///     Email = "Hank@example.gov"
 /// };
 /// SqlQuery query = customerGenerator.UpdateById(entity, columns);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [Customer] SET [Email] = @Email 
+/// UPDATE [Customer] 
+/// SET [Email] = @Email 
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>

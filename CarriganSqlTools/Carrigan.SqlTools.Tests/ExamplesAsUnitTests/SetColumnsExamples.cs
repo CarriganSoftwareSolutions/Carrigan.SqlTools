@@ -1,5 +1,8 @@
-﻿using Carrigan.SqlTools.Sets;
+﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 
