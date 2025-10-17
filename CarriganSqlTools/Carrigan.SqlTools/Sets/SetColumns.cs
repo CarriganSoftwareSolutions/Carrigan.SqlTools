@@ -1,6 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Sets;
@@ -15,14 +16,14 @@ namespace Carrigan.SqlTools.Sets;
 /// <para>Update example not using SetColumns</para>
 /// <example>
 /// <code language="csharp"><![CDATA[
-///Customer entity = new()
-///{
-///    Id = 42,
-///    Name = "Hank Hill",
-///    Email = "Hank.Hill@example.com",
-///    Phone = "+1(555)555-5555"
-///};
-///SqlQuery query = customerGenerator.UpdateById(entity);
+/// Customer entity = new()
+/// {
+///     Id = 42,
+///     Name = "Hank",
+///     Email = "Hank@tx.gov",
+///     Phone = "+1(555)555-5555"
+/// };
+/// SqlQuery query = customerGenerator.UpdateById(entity);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

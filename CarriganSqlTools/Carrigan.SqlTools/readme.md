@@ -193,8 +193,8 @@ Key attribute required, and composite keys are supported by specifying multiple 
 Customer entity = new() 
 { 
     Id = 42, 
-    Name = "Hank Hill", 
-    Email = "Hank.Hill@example.com",
+    Name = "Hank", 
+    Email = "Hank@example.com",
     Phone = "+1(555)555-5555"
 };
 SqlQuery query = customerGenerator.UpdateById(entity);

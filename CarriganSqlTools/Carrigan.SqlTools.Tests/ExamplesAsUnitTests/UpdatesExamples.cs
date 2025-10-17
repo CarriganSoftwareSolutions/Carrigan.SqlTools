@@ -16,8 +16,8 @@ public class UpdatesExamples
         Customer entity = new()
         {
             Id = 42,
-            Name = "Hank Hill",
-            Email = "Hank.Hill@example.com",
+            Name = "Hank",
+            Email = "Hank@example.com",
             Phone = "+1(555)555-5555"
         };
         SqlQuery query = customerGenerator.UpdateById(entity);
@@ -27,8 +27,8 @@ public class UpdatesExamples
         Assert.Equal(4, query.Parameters.Count);
 
         Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "Id").Single().Value);
-        Assert.Equal("Hank Hill", (string)query.Parameters.Where(param => param.Key == "Name").Single().Value);
-        Assert.Equal("Hank.Hill@example.com", (string)query.Parameters.Where(param => param.Key == "Email").Single().Value);
+        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "Name").Single().Value);
+        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "Email").Single().Value);
         Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "Phone").Single().Value);
     }
 
