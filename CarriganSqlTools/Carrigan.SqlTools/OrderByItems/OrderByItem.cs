@@ -16,13 +16,14 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// </typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// OrderByItem&lt;Customer&gt; orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, orderBy, null);
+/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+/// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* FROM [Customer] 
-/// ORDER BY [Customer].[Name] ASC
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
 /// ]]></code>
 /// </example>
 public class OrderByItem<T> : OrderByItemBase

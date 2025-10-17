@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
+﻿using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
