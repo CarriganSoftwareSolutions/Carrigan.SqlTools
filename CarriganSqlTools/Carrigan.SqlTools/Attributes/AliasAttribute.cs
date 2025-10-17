@@ -8,9 +8,6 @@ namespace Carrigan.SqlTools.Attributes;
 /// Allows for setting a default <c>AS</c> alias on a property.
 /// </summary>
 /// <example>
-/// <para>
-/// 
-/// </para>
 /// <code language="csharp"><![CDATA[
 /// internal class AliasEntity
 /// {

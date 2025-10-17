@@ -26,7 +26,7 @@
 /// OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
-/// /// <example>
+/// <example>
 /// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
 /// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));

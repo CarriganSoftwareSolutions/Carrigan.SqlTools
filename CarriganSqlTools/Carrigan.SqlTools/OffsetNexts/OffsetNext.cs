@@ -23,6 +23,8 @@
 /// ORDER BY [Customer].[Id] ASC 
 /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
+/// </example>
+/// <example>
 /// <code language="csharp"><![CDATA[
 /// OffsetNext offsetNext = new(50, 25);
 /// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));

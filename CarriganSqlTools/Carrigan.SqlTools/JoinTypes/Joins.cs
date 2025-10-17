@@ -37,6 +37,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
+/// <example>
 /// <para>
 /// Note: <c><ColumnEqualsColumn<Customer, Order>/c> validates the names of the properties, and throws an error if the property isn't valid
 /// </para>
@@ -77,6 +78,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// INNER JOIN [PaymentMethod] 
 /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
+/// </example>
 public class Joins<leftT> : JoinsBase
 {
     /// <summary>
