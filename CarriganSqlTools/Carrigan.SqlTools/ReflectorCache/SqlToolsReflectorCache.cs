@@ -53,17 +53,20 @@ public class SqlToolsReflectorCache<T>
     internal static readonly IEnumerable<ColumnInfo> KeyColumnInfo;
 
     /// <summary>
+    /// Is true when the class has a specified key field.
+    /// </summary>
+    internal static readonly bool HasKeyField;
+
+    /// <summary>
     /// Gets all column <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
     /// </summary>
     internal static IEnumerable<ColumnInfo> ColumnInfo =>
         _ColumnInfoCache.Values;
 
     /// <summary>
-    /// <summary>
-    /// Gets all non-key <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
+    /// Contains all non-key <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
     /// </summary>
-    internal static IEnumerable<ColumnInfo> ColumnInfoLessKeys =>
-        ColumnInfo.Where(column => column.IsKeyPart is false); //TODO: cache? Probably b est.
+    internal static readonly IEnumerable<ColumnInfo> ColumnInfoLessKeys;
 
     /// <summary>
     /// Gets the <see cref="ProcedureName"/> for <typeparamref name="T"/>.
@@ -219,6 +222,11 @@ public class SqlToolsReflectorCache<T>
             _ColumnInfoCache
                 .Values
                 .Where(column => column.IsKeyPart);
+
+        ColumnInfoLessKeys =
+            ColumnInfo.Where(column => column.IsKeyPart is false); 
+
+        HasKeyField = KeyColumnInfo.Any();
 
         KeyVersionColumnsInfo =
             _ColumnInfoCache

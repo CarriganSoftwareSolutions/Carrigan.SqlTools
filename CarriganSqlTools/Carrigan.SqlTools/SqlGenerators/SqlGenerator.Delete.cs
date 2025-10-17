@@ -37,7 +37,6 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Delete(T entity)
     {
-        //TODO: Exception if no Id column?
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = KeyColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity));
         string whereClause = string.Join(" and ", KeyColumnInfo.Select(column => $"[{column.ColumnName}] = @{column.ParameterTag}"));
         return new SqlQuery()
@@ -102,8 +101,13 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)
     /// ]]></code>
     /// </example>
-    public SqlQuery DeleteById(params IEnumerable<T> entities) =>
-        Delete(null, new Or(entities.Select(entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
+    public SqlQuery DeleteById(params IEnumerable<T> entities)
+    {
+        if (HasKeyField is false)
+            throw new NoPrimaryKeyField<T>();
+        else
+            return Delete(null, new Or(entities.Select(entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
+    }
 
     /// <summary>
     /// Generates a SQL <c>DELETE</c> statement for the table represented by

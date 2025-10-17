@@ -4,18 +4,16 @@ using Carrigan.SqlTools.IdentifierTypes;
 namespace Carrigan.SqlTools.Exceptions;
 //TODO: Proof Read Documentation
 /// <summary>
-/// Thrown when an encrypter is not provided
+/// Thrown when an encrypter is required and a key version field has not been specified.
 /// </summary>
 public class NoKeyVersionField<T> : Exception
 {
     /// <summary>
-    /// Constructor for EncrypterNotProvided
-    /// Thrown when an encrypter is not provided
+    /// Constructor for NoKeyVersionField
+    /// Thrown when an encrypter is required and a key version field has not been specified.
     /// </summary>
-    /// <param name="propertyNames">Invalid property names to include in exception message.</param>
-    /// 
     internal NoKeyVersionField() :
-        base($"No Key Version field has been provided in class {nameof(T)}, and {nameof(T)} has encrypted properties.")   
+        base($"No Key Version field has been provided for the{nameof(T)} class, and {nameof(T)} has encrypted properties.")   
     {
     }
 }

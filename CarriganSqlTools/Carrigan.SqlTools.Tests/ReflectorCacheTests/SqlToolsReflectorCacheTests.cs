@@ -1,12 +1,9 @@
-﻿using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.IdentifierTypes;
+﻿using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestComparers;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
 
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;
 public class SqlToolsReflectorCacheTests
@@ -229,5 +226,17 @@ public class SqlToolsReflectorCacheTests
     [Fact]
     public void HasEncryptedColumns_False() =>
         Assert.False(SqlToolsReflectorCache<ColumnIdentifiers>.HasEncryptedColumns());
+
+    [Fact]
+    public void HasKeyField_False() => 
+        Assert.False(SqlToolsReflectorCache<Address>.HasKeyField);
+
+    [Fact]
+    public void HasKeyField_PrimaryKey_True() =>
+        Assert.True(SqlToolsReflectorCache<Order>.HasKeyField);
+
+    [Fact]
+    public void HasKeyField_Key_True() =>
+        Assert.True(SqlToolsReflectorCache<PhoneModel>.HasKeyField);
 
 }

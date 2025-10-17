@@ -259,6 +259,12 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Id] = @Parameter_Id)
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectById(params T[] entities) =>
-        Select(null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
+    public SqlQuery SelectById(params IEnumerable<T> entities)
+    {
+
+        if (HasKeyField is false)
+            throw new NoPrimaryKeyField<T>();
+        else
+            return Select(null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
+    }
 }

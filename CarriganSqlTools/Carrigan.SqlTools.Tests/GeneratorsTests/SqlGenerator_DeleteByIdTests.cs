@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -9,12 +10,14 @@ public class SqlGenerator_DeleteByIdTests
     private readonly MockEncryption _mockEncrypter;
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
     private readonly SqlGenerator<CompositePrimaryKeyTable> _sqlGeneratorForCompositeKeyTable;
+    private readonly SqlGenerator<Address> _sqlGeneratorForAddress;
 
     public SqlGenerator_DeleteByIdTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
-        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositePrimaryKeyTable>(_mockEncrypter);
+        _sqlGeneratorForEntityWithTableAttribute = new (_mockEncrypter);
+        _sqlGeneratorForCompositeKeyTable = new (_mockEncrypter);
+        _sqlGeneratorForAddress = new ();
     }
 
     [Fact]
@@ -61,5 +64,15 @@ public class SqlGenerator_DeleteByIdTests
         expectedValue = 2;
         actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Parameter_Id2").Single().Value;
         Assert.Equal(expectedValue, actualValue);
+    }
+
+    [Fact]
+    public void Throws_NoPrimaryKeyException()
+    {
+        IEnumerable<Address> entities =
+        [
+            new() { City = "Clarksville", PostalCode = "37043", Street = "Madison" }
+        ];
+        Assert.Throws<NoPrimaryKeyField<Address>>(() => _sqlGeneratorForAddress.DeleteById(entities));
     }
 }

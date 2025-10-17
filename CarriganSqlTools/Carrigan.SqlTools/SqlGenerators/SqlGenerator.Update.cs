@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -68,6 +69,9 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery UpdateById(T entity, SetColumns<T>? columns = null)
     {
+        if (HasKeyField is false)
+            throw new NoPrimaryKeyField<T>();
+
         IEnumerable<ColumnInfo> updateTheseColumns = 
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
 
@@ -152,18 +156,23 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery UpdateByIds(T valuesEntity, SetColumns<T>? columns, params IEnumerable<T> idEntities)
     {
-        Or or = new            (
-                idEntities.Select(entity => new And
-                (
-                    KeyColumnInfo.Select(column => new Equal
-                        (
-                            new Column<T>(column.PropertyName), 
-                            new Parameter(column.ParameterTag, column.PropertyInfo.GetValue(entity)))
-                        )
-                ))
-        );
+        if (HasKeyField is false)
+            throw new NoPrimaryKeyField<T>();
+        else
+        {
+            Or or = new(
+                    idEntities.Select(entity => new And
+                    (
+                        KeyColumnInfo.Select(column => new Equal
+                            (
+                                new Column<T>(column.PropertyName),
+                                new Parameter(column.ParameterTag, column.PropertyInfo.GetValue(entity)))
+                            )
+                    ))
+            );
 
-        return Update(valuesEntity, columns, null, or);
+            return Update(valuesEntity, columns, null, or);
+        }
     }
 
     /// <summary>
