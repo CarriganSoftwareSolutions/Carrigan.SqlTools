@@ -35,6 +35,10 @@ public abstract class JoinsBase
     internal string ToSql() =>
         string.Join(" ", Joints.Select(join => join.ToSql()));
 
+    /// <summary>
+    /// Determines if the Joins object is empty and contains no joins.
+    /// </summary>
+    /// <returns>True is empty, false it not empty.</returns>
     internal bool IsEmpty() =>
         Joints.None();
 }

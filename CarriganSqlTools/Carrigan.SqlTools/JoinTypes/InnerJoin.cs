@@ -3,18 +3,14 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
-//TODO: REDO Documentation
 namespace Carrigan.SqlTools.JoinTypes;
 
+//TODO: proof read Documentation
 /// <summary>
 /// Represents an SQL <c>INNER JOIN</c> operation.
 /// </summary>
-/// <typeparam name="T">
-/// The data model for the primary (left or base) table from which records are selected,
-/// updated, or deleted.
-/// </typeparam>
-/// <typeparam name="J">
-/// The data model for the secondary (right or joined) table that is joined to the primary table.
+/// <typeparam name="rightT">
+/// The data model for the table being inner joined on.
 /// </typeparam>
 /// <example>
 /// <para>
@@ -43,25 +39,43 @@ public class InnerJoin<rightT> : JoinBase
     /// <param name="predicates">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
     /// </param>
-    /// <exception cref="AmbiguousResultColumnException">
-    /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
-    /// that is not included in the <c>JOIN</c>.
-    /// </exception>
     public InnerJoin(Predicates predicates) : base(predicates) => 
         _sql = $"INNER JOIN {TableTag} ON {predicates.ToSql()}";
 
-    //TODO: Documentation
-    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
-        new(new InnerJoin<rightT>(predicate));
+    /// <summary>
+    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <param name="predicates">
+    /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// </returns>
+    public static Joins<leftT> Joins<leftT>(Predicates predicates) =>
+        new(new InnerJoin<rightT>(predicates));
 
-    //TODO: Documentation
+    /// <summary>
+    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that 
+    /// contains the current <see cref="InnerJoin{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <returns>
+    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that 
+    /// contains the current <see cref="InnerJoin{rightT}"/> object.
+    /// </returns>
     public Joins<leftT> AsJoins<leftT>() =>
         new(this);
 
+    /// <summary>
+    /// An enumeration of all Table Tags involved in the joins predicates.
+    /// </summary>
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<rightT>.Table;
 
-    /// Converts the current <see cref="InnerJoin{T,J}"/> instance to its SQL representation.
+    /// Converts the current <see cref="InnerJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
     /// <returns>A SQL string representing the <c>INNER JOIN</c> clause.</returns>
     internal override string ToSql() =>

@@ -4,18 +4,12 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: REDO Documentation
+//TODO: proof read Documentation
 /// <summary>
-/// Represents an SQL <c>JOIN</c> operation. This class functions as an alias
-/// for the <see cref="Join{rightT}"/> class.
+/// Represents an SQL <c>JOIN</c> operation.
 /// </summary>
-/// <typeparam name="T">
-/// The data model for the primary (left or base) table from which records are
-/// selected, updated, or deleted.
-/// </typeparam>
-/// <typeparam name="J">
-/// The data model for the secondary (right or joined) table that is joined to
-/// the primary table.
+/// <typeparam name="rightT">
+/// The data model for the table being joined on.
 /// </typeparam>
 /// <example>
 /// <para>
@@ -40,43 +34,54 @@ public class Join<rightT> : JoinBase
 {
     protected readonly string _sql;
 
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
-    /// <exception cref="AmbiguousColumnException">
-    /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
-    /// that is not included in the <c>JOIN</c>.
-    /// </exception>
 
     public Join(Predicates predicate) : base(predicate) =>
         _sql = $"JOIN {TableTag} ON {predicate.ToSql()}";
 
-    //TODO: Documentation
+    /// <summary>
+    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="Join{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <param name="predicates">
+    /// The condition that defines the <c>ON</c> clause of the SQL <c>JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="Join{rightT}"/> object.
+    /// </returns>
     public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new(new Join<rightT>(predicate));
 
-    //TODO: Documentation
+    /// <summary>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that 
+    /// contains the current <see cref="Join{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that 
+    /// contains the current <see cref="Join{rightT}"/> object.
+    /// </returns>
     public Joins<leftT> AsJoins<leftT>() =>
         new(this);
 
-    /// <summary>
-    /// Enumerates all possible columns included in <see cref="Joints"/>
-    /// providing a quick way to determine whether a given column
-    /// participates in a table that participates in any join operation.
-    /// </summary>
-    //public override IEnumerable<ColumnInfo> ColumnInfo =>
-    //    SqlToolsReflectorCache<T>.ColumnInfo.Concat(SqlToolsReflectorCache<rightT>.ColumnInfo);
 
+    /// <summary>
+    /// An enumeration of all Table Tags involved in the joins predicates.
+    /// </summary>
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<rightT>.Table;
 
-    /// <summary>
-    /// Generates the SQL representation of the <c>LEFT JOIN</c> clause.
+    /// Converts the current <see cref="Join{rightT}"/> instance to its SQL representation.
     /// </summary>
-    /// <returns>A SQL string representing the <c>LEFT JOIN</c> clause.</returns>
+    /// <returns>A SQL string representing the <c>JOIN</c> clause.</returns>
     internal override string ToSql() =>
         _sql;
 }

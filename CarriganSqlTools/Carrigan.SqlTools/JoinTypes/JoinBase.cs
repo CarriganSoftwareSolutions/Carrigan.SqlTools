@@ -4,7 +4,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
-/// Serves as the base class for all SQL <c>JOIN</c> operation classes.
+/// Serves as the base class for all SQL <c>(____) JOIN</c> operation classes.
 /// </summary>
 public abstract class JoinBase
 {

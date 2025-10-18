@@ -8,7 +8,7 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: REDO Documentation
+//TODO: proof read Documentation
 /// <summary>
 /// Defines a class that represent one or more SQL join operations.
 /// </summary>
@@ -112,15 +112,54 @@ public class Joins<leftT> : JoinsBase
         }
     }
 
+    /// <summary>
+    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="LeftJoin{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <param name="predicates">
+    /// The condition that defines the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="LeftJoin{rightT}"/> object.
+    /// </returns>
     public static Joins<leftT> LeftJoin<rightT>(Predicates predicates) =>
         JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates);
 
+    /// <summary>
+    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="Join{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <param name="predicates">
+    /// The condition that defines the <c>ON</c> clause of the SQL <c>JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="Join{rightT}"/> object.
+    /// </returns>
     public static Joins<leftT> Join<rightT>(Predicates predicates) =>
         JoinTypes.Join<rightT>.Joins<leftT>(predicates);
 
+    /// <summary>
+    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <param name="predicates">
+    /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// </returns>
     public static Joins<leftT> InnerJoin<rightT>(Predicates predicates) =>
         JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates);
 
+    /// <summary>
+    /// An enumeration of all Table Tags involved in each of the joins predicates.
+    /// </summary>
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<leftT>.Table;
 }

@@ -5,12 +5,13 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: REDO Documentation
+
+//TODO: proof read Documentation
 /// <summary>
-/// Represents an SQL <c>LEFT JOIN</c>.
+/// Represents an SQL <c>LFT JOIN</c> operation.
 /// </summary>
 /// <typeparam name="rightT">
-/// The data model for the secondary (right or joined) table that is joined to the primary table.
+/// The data model for the table being left joined on.
 /// </typeparam>
 /// <example>
 /// <para>
@@ -37,38 +38,47 @@ public class LeftJoin<rightT> : JoinBase
     /// <summary>
     /// Initializes a new instance of the <see cref="LeftJoin{rightT}"/> class.
     /// </summary>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The condition that defines the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
     /// </param>
-    /// <exception cref="AmbiguousResultColumnException">
-    /// Thrown when a <see cref="ColumnTag"/>  referenced in a <c>JOIN</c> clause belongs to a table
-    /// that is not included in the <c>JOIN</c>.
-    /// </exception>
 
     public LeftJoin(Predicates predicate) : base(predicate) => 
         _sql = $"LEFT JOIN {TableTag} ON {predicate.ToSql()}";
 
-    //TODO: Documentation, Examples
+    /// <summary>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="LeftJoin{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <param name="predicates">
+    /// The condition that defines the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
+    /// a newly created <see cref="LeftJoin{rightT}"/> object.
+    /// </returns>
     public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new (new LeftJoin<rightT>(predicate)) ;
 
-    //TODO: Documentation, Examples
+    /// <summary>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that 
+    /// contains the current <see cref="LeftJoin{rightT}"/> object.
+    /// </summary>
+    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <returns>
+    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that 
+    /// contains the current <see cref="LeftJoin{rightT}"/> object.
+    /// </returns>
     public Joins<leftT> AsJoins<leftT>() =>
         new (this);
 
     /// <summary>
-    /// Enumerates all possible columns included in <see cref="Joints"/>
-    /// providing a quick way to determine whether a given column
-    /// participates in a table that participates in any join operation.
+    /// An enumeration of all Table Tags involved in the joins predicates.
     /// </summary>
-    //public override IEnumerable<ColumnInfo> ColumnInfo =>
-    //    SqlToolsReflectorCache<T>.ColumnInfo.Concat(SqlToolsReflectorCache<rightT>.ColumnInfo);
-
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<rightT>.Table;
 
-    /// <summary>
-    /// Generates the SQL representation of the <c>LEFT JOIN</c> clause.
+    /// Converts the current <see cref="InnerJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
     /// <returns>A SQL string representing the <c>LEFT JOIN</c> clause.</returns>
     internal override string ToSql() =>
