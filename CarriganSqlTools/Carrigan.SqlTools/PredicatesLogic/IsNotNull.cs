@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

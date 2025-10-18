@@ -1,7 +1,4 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
