@@ -22,7 +22,7 @@ namespace Carrigan.SqlTools.Attributes;
 /// - This attribute does **not** override <see cref="TableAttribute"/> or <see cref="ColumnAttribute"/> 
 ///   within Entity Framework. However, it takes precedence for SQL generation performed by the SQL generator.
 /// - If you are already using <see cref="TableAttribute"/> and <see cref="ColumnAttribute"/> with
-///   Entity Framework, it is best to continue using those—SQL generation will honor them.
+///   Entity Framework, it is best to continue using those, SQL generation will honor them.
 /// - If you configure tables, columns, and schemas with fluent mappings, use <see cref="IdentifierAttribute"/> 
 ///   to ensure consistency with your fluent configuration.
 /// - If you are not using Entity Framework, you can still use <see cref="TableAttribute"/> and
@@ -99,7 +99,14 @@ public class IdentifierAttribute : Attribute
     }
 
 
-    //TODO: documentation
+    /// <summary>
+    /// Initializes the <see cref="MemberName"/> after the constructor runs.
+    /// </summary>
+    /// <remarks>
+    /// Member name cannot be set in the constructor, because certain elements MemberInfoExtensions.GetGetQualifiedName
+    /// can only be accessed after the class has been constructed, this is a limitation of C# and reflection.
+    /// </remarks>
+    /// <param name="member"></param>
     public void Initialize(MemberInfo member) => 
         MemberName = new(member.GetQualifiedName());
 }
