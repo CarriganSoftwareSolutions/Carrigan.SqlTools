@@ -84,7 +84,7 @@ public static class Commands
         }
     }
 
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecryptors decrypters) where T : class?, new()
+    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters decrypters) where T : class?, new()
     {
         List<T> results = [];
         PropertyInfo? keyVersionProperty = ClientReflectorCache<T>.KeyVersionProperty;
@@ -140,7 +140,7 @@ public static class Commands
                 decryptionVersion = (int?)keyVersionProperty.GetValue(record);
                 if (decryptionVersion is not null && decrypters.Keys.Contains(decryptionVersion.Value))
                 {
-                    decrypter = decryptionVersion is not null ? decrypters.Decryptor(decryptionVersion.Value) : null;
+                    decrypter = decryptionVersion is not null ? decrypters.Decrypter(decryptionVersion.Value) : null;
 
                     if (decrypter is not null)
                     {

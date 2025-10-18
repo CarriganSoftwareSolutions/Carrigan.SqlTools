@@ -84,7 +84,7 @@ public static class CommandsAsync
         }
     }
 
-    public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecryptors decrypters) where T : class?, new()
+    public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters decrypters) where T : class?, new()
     {
         Type type = typeof(T);
         List<T> results = [];
@@ -136,7 +136,7 @@ public static class CommandsAsync
                 decryptionVersion = (int?) ClientReflectorCache<T>.KeyVersionProperty.GetValue(record);
                 if (decryptionVersion is not null && decrypters.Keys.Contains(decryptionVersion.Value))
                 {
-                    IEncryption? decrypter = decryptionVersion is not null ? decrypters.Decryptor(decryptionVersion.Value) : null;
+                    IEncryption? decrypter = decryptionVersion is not null ? decrypters.Decrypter(decryptionVersion.Value) : null;
 
                     foreach (PropertyInfo property in ClientReflectorCache<T>.EncryptedProperties)
                     {
