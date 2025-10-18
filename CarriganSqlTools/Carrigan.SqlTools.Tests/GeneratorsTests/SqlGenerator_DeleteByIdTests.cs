@@ -73,6 +73,6 @@ public class SqlGenerator_DeleteByIdTests
         [
             new() { City = "Clarksville", PostalCode = "37043", Street = "Madison" }
         ];
-        Assert.Throws<NoPrimaryKeyField<Address>>(() => _sqlGeneratorForAddress.DeleteById(entities));
+        Assert.Throws<NoPrimaryKeyProperty<Address>>(() => _sqlGeneratorForAddress.DeleteById(entities));
     }
 }

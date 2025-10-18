@@ -33,7 +33,7 @@ public class InvocationReflectorCacheTests
 
     [Fact]
     public void TypeTest()
-    {   //make sure the Type field works.
+    {   //make sure the Type property works.
         Type expected = typeof(SelectsEntity);
         Type actual = InvocationReflectorCache<SelectsEntity>.Type;
         Assert.Equal(expected, actual);

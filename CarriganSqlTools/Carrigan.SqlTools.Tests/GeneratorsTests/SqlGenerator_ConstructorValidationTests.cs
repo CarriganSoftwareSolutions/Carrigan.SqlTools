@@ -17,17 +17,17 @@ public class SqlGenerator_ConstructorValidationTests
 {
     [Fact]
     public void MultiKeyVersionException() =>
-        Assert.Throws<MultipleKeyVersionFields<MultiKeyVersions>>(() => new SqlGenerator<MultiKeyVersions>(new MockEncryption("the")));
+        Assert.Throws<MultipleKeyVersionProperties<MultiKeyVersions>>(() => new SqlGenerator<MultiKeyVersions>(new MockEncryption("the")));
     [Fact]
     public void NoKeyVersionException() =>
-        Assert.Throws<NoKeyVersionField<NoKeyVersionField>>(() => new SqlGenerator<NoKeyVersionField>(new MockEncryption("the")));
+        Assert.Throws<NoKeyVersionProperty<NoKeyVersionPropertyEntity>>(() => new SqlGenerator<NoKeyVersionPropertyEntity>(new MockEncryption("the")));
     [Fact]
     public void NoEncrypterVersionException() =>
         Assert.Throws<EncrypterNotProvided<EntityWithEncryption>>(() => new SqlGenerator<EntityWithEncryption>());
 
     [Fact]
     public void NonIntKeyVersions() =>
-        Assert.Throws<InvalidKeyVersionFieldType<NonIntKeyVersions>>(() => new SqlGenerator<NonIntKeyVersions>(new MockEncryption("the")));
+        Assert.Throws<InvalidKeyVersionPropertyType<NonIntKeyVersions>>(() => new SqlGenerator<NonIntKeyVersions>(new MockEncryption("the")));
 
     [Fact]
     public void NullableIntKeyVersions() =>

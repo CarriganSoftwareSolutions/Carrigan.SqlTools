@@ -89,7 +89,7 @@ public static class Commands
         List<T> results = [];
         PropertyInfo? keyVersionProperty = ClientReflectorCache<T>.KeyVersionProperty;
         IEnumerable<PropertyInfo> encryptedProperties = ClientReflectorCache<T>.EncryptedProperties;
-        int? decryptionVersion = 1; //in later versions this will be read from a field marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
+        int? decryptionVersion = 1; //in later versions this will be read from a property marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
         IEncryption? decrypter;
 

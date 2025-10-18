@@ -10,7 +10,7 @@ public class SqlToolsReflectorCacheTests
 {
     [Fact]
     public void TypeTest()
-    {   //make sure the Type field works.
+    {   //make sure the Type property works.
         Type expected = typeof(ColumnIdentifiers);
         Type actual = SqlToolsReflectorCache<ColumnIdentifiers>.Type;
         Assert.Equal(expected, actual);
@@ -54,7 +54,7 @@ public class SqlToolsReflectorCacheTests
 
     [Fact]
     public void KeyColumnInfoColumnNames()
-    {   //Ensure all the different way to specify key fields, generate column names correctly with all the ways to specify column names.
+    {   //Ensure all the different way to specify key properties, generate column names correctly with all the ways to specify column names.
         //This ensures we get the columns we expect, KeyColumnInfoCompare ensures all the values are what we expect.
         IEnumerable<ColumnName> GetExpected(params IEnumerable<string> expectedNames) =>
             expectedNames.Select(name => new ColumnName(name));
@@ -87,19 +87,19 @@ public class SqlToolsReflectorCacheTests
         IEnumerable<ColumnInfo> GetActual<T>() =>
             SqlToolsReflectorCache<T>.KeyColumnInfo;
 
-        Assert.Equal(GetExpected<ColumnIdentifiers>("Id"), GetActual<ColumnIdentifiers>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<ColumnIdentifiers>("Id"), GetActual<ColumnIdentifiers>(), ColumnInfoAllPropertiesComparer.Instance);
 
-        Assert.Equal(GetExpected<Customer>("Id"), GetActual<Customer>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<Customer>("Id"), GetActual<Customer>(), ColumnInfoAllPropertiesComparer.Instance);
 
-        Assert.Equal(GetExpected<EntityWithSchema>("Id"), GetActual<EntityWithSchema>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<EntityWithSchema>("Id"), GetActual<EntityWithSchema>(), ColumnInfoAllPropertiesComparer.Instance);
 
-        Assert.Equal(GetExpected<CompositePrimaryKeyTable>("Id1", "Id2"), GetActual<CompositePrimaryKeyTable>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<CompositePrimaryKeyTable>("Id1", "Id2"), GetActual<CompositePrimaryKeyTable>(), ColumnInfoAllPropertiesComparer.Instance);
 
-        Assert.Equal(GetExpected<CompositeKeyTable>("Id1", "Id2"), GetActual<CompositeKeyTable>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<CompositeKeyTable>("Id1", "Id2"), GetActual<CompositeKeyTable>(), ColumnInfoAllPropertiesComparer.Instance);
 
-        Assert.Equal(GetExpected<KeysWithAttributes>("Id1", "Id2", "Id3"), GetActual<KeysWithAttributes>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<KeysWithAttributes>("Id1", "Id2", "Id3"), GetActual<KeysWithAttributes>(), ColumnInfoAllPropertiesComparer.Instance);
 
-        Assert.Equal(GetExpected<PrimaryKeysWithAttributes>("Id1", "Id2", "Id3"), GetActual<PrimaryKeysWithAttributes>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<PrimaryKeysWithAttributes>("Id1", "Id2", "Id3"), GetActual<PrimaryKeysWithAttributes>(), ColumnInfoAllPropertiesComparer.Instance);
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class SqlToolsReflectorCacheTests
         Assert.Null(column.SelectTag.AliasTag);
         Assert.True(column.IsKeyPart);
         Assert.False(column.IsEncrypted);
-        Assert.False(column.IsKeyVersionField);
+        Assert.False(column.IsKeyVersionProperty);
     }
 
     [Fact]
@@ -138,7 +138,7 @@ public class SqlToolsReflectorCacheTests
         IEnumerable<ColumnInfo> GetActual<T>() =>
             SqlToolsReflectorCache<T>.ColumnInfo;
 
-        Assert.Equal(GetExpected<ColumnIdentifiers>("Id", "Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"), GetActual<ColumnIdentifiers>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<ColumnIdentifiers>("Id", "Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"), GetActual<ColumnIdentifiers>(), ColumnInfoAllPropertiesComparer.Instance);
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class SqlToolsReflectorCacheTests
         IEnumerable<ColumnInfo> GetActual<T>() =>
             SqlToolsReflectorCache<T>.ColumnInfoLessKeys;
 
-        Assert.Equal(GetExpected<ColumnIdentifiers>("Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"), GetActual<ColumnIdentifiers>(), ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(GetExpected<ColumnIdentifiers>("Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"), GetActual<ColumnIdentifiers>(), ColumnInfoAllPropertiesComparer.Instance);
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class SqlToolsReflectorCacheTests
         ColumnInfo expected = SqlToolsReflectorCache<EntityWithEncryption>.GetColumnsFromProperties(new PropertyName("KeyVersion")).Single();
         ColumnInfo? actual = SqlToolsReflectorCache<EntityWithEncryption>.KeyVersionColumnInfo;
         Assert.NotNull(actual);
-        Assert.Equal(expected, actual, ColumnInfoAllFieldsComparer.Instance);
+        Assert.Equal(expected, actual, ColumnInfoAllPropertiesComparer.Instance);
     }
 
     [Fact]
@@ -228,15 +228,15 @@ public class SqlToolsReflectorCacheTests
         Assert.False(SqlToolsReflectorCache<ColumnIdentifiers>.HasEncryptedColumns());
 
     [Fact]
-    public void HasKeyField_False() => 
-        Assert.False(SqlToolsReflectorCache<Address>.HasKeyField);
+    public void HasKeyProperty_False() => 
+        Assert.False(SqlToolsReflectorCache<Address>.HasKeyProperty);
 
     [Fact]
-    public void HasKeyField_PrimaryKey_True() =>
-        Assert.True(SqlToolsReflectorCache<Order>.HasKeyField);
+    public void HasKeyProperty_PrimaryKey_True() =>
+        Assert.True(SqlToolsReflectorCache<Order>.HasKeyProperty);
 
     [Fact]
-    public void HasKeyField_Key_True() =>
-        Assert.True(SqlToolsReflectorCache<PhoneModel>.HasKeyField);
+    public void HasKeyProperty_Key_True() =>
+        Assert.True(SqlToolsReflectorCache<PhoneModel>.HasKeyProperty);
 
 }

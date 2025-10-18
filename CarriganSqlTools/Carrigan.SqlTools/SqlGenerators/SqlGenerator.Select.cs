@@ -232,10 +232,10 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key
-    /// fields of the specified entities.
+    /// properties of the specified entities.
     /// </summary>
     /// <param name="entities">
-    /// One or more data model instances used only as ID holders; their key field values
+    /// One or more data model instances used only as ID holders; their key property values
     /// are combined into a predicate that selects matching rows.
     /// </param>
     /// <returns>
@@ -262,8 +262,8 @@ public partial class SqlGenerator<T>
     public SqlQuery SelectById(params IEnumerable<T> entities)
     {
 
-        if (HasKeyField is false)
-            throw new NoPrimaryKeyField<T>();
+        if (HasKeyProperty is false)
+            throw new NoPrimaryKeyProperty<T>();
         else
             return Select(null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
     }

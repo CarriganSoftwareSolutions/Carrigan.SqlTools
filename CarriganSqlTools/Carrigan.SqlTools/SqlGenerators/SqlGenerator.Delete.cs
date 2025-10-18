@@ -12,10 +12,10 @@ public partial class SqlGenerator<T>
 {
     /// <summary>
     /// Generates a SQL <c>DELETE</c> statement for the specified entity,
-    /// using only its key fields to identify the record to remove.
+    /// using only its key properties to identify the record to remove.
     /// </summary>
     /// <param name="entity">
-    /// An instance of the data model that supplies the key field values
+    /// An instance of the data model that supplies the key property values
     /// used to locate the record to delete.
     /// </param>
     /// <returns>
@@ -76,11 +76,11 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Generates a SQL <c>DELETE</c> statement that removes the rows matching the key
-    /// fields of the specified entities.
+    /// properties of the specified entities.
     /// </summary>
     /// <param name="entities">
     /// A sequence of data model instances used only as ID holders;  
-    /// their key field values determine which rows to delete.
+    /// their key property values determine which rows to delete.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
@@ -89,7 +89,7 @@ public partial class SqlGenerator<T>
     /// The data model type must be <c>public</c>, and any properties intended for use as
     /// columns must be public instance properties with a public getter.
     /// </remarks>
-    /// <param name="entity">an IEnumerable use the data model as an id holder, uses only the key fields</param>
+    /// <param name="entity">an IEnumerable use the data model as an id holder, uses only the key properties</param>
     /// <returns>Returns an SqlQuery object</returns>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -103,8 +103,8 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery DeleteById(params IEnumerable<T> entities)
     {
-        if (HasKeyField is false)
-            throw new NoPrimaryKeyField<T>();
+        if (HasKeyProperty is false)
+            throw new NoPrimaryKeyProperty<T>();
         else
             return Delete(null, new Or(entities.Select(entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
     }

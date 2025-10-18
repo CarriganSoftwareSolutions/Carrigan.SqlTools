@@ -69,7 +69,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for the specified entity,
-    /// relying on database default values for key (identity, newid()) fields.
+    /// relying on database default values for key (identity, newid()) properties.
     /// </summary>
     /// <param name="entity">
     /// A data model instance representing the new record to insert.
@@ -78,7 +78,7 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>INSERT</c> statement.
     /// </returns>
     /// <remarks>
-    /// For this method to work correctly, all key fields must have database default values.  
+    /// For this method to work correctly, all key properties must have database default values.  
     /// The data model type must be <c>public</c>, and any properties intended for use as
     /// columns must be public instance properties with a public getter.
     /// </remarks>
@@ -130,7 +130,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities,
-    /// relying on database default values for key (identity) fields.
+    /// relying on database default values for key (identity) properties.
     /// </summary>
     /// <param name="entities">
     /// A collection of data model instances representing the new records to insert.
@@ -139,7 +139,7 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated multi-row <c>INSERT</c> statement.
     /// </returns>
     /// <remarks>
-    /// For this method to work correctly, all key fields must have database default values.  
+    /// For this method to work correctly, all key properties must have database default values.  
     /// The data model type must be <c>public</c>, and any properties intended to map to
     /// columns must be public instance properties with a public getter.
     /// </remarks>

@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.SqlGenerators;
 using Microsoft.Data.SqlClient;
@@ -88,7 +89,7 @@ public static class CommandsAsync
         Type type = typeof(T);
         List<T> results = [];
         List<Task<T>> invocationTasks = [];
-        int? decryptionVersion = 1; //in later versions this will be read from a field marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
+        int? decryptionVersion = 1; //in later versions this will be read from a property marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
         if (connection.State != ConnectionState.Open)
         {
@@ -129,7 +130,7 @@ public static class CommandsAsync
 
         if (ClientReflectorCache<T>.EncryptedProperties.Any())
         {
-            _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NullReferenceException($"The class, {type.Name}, has encrypted properties, but no key version field.");
+            _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NoKeyVersionProperty<T>();
             foreach (T record in results)
             {
                 decryptionVersion = (int?) ClientReflectorCache<T>.KeyVersionProperty.GetValue(record);

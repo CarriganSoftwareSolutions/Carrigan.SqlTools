@@ -53,9 +53,9 @@ public class SqlToolsReflectorCache<T>
     internal static readonly IEnumerable<ColumnInfo> KeyColumnInfo;
 
     /// <summary>
-    /// Is true when the class has a specified key field.
+    /// Is true when the class has a specified key property.
     /// </summary>
-    internal static readonly bool HasKeyField;
+    internal static readonly bool HasKeyProperty;
 
     /// <summary>
     /// Gets all column <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
@@ -226,12 +226,12 @@ public class SqlToolsReflectorCache<T>
         ColumnInfoLessKeys =
             ColumnInfo.Where(column => column.IsKeyPart is false); 
 
-        HasKeyField = KeyColumnInfo.Any();
+        HasKeyProperty = KeyColumnInfo.Any();
 
         KeyVersionColumnsInfo =
             _ColumnInfoCache
                 .Values
-                .Where(column => column.IsKeyVersionField);
+                .Where(column => column.IsKeyVersionProperty);
 
         _EncryptedColumnInfoHashSet =
             [.._ColumnInfoCache

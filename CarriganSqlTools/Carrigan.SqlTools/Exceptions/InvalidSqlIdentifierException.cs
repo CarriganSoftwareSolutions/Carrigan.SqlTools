@@ -5,7 +5,6 @@ using Carrigan.SqlTools.Tags;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
-//TODO: Redo documentation.
 //TODO: Proof Read Documentation. entire class
 /// <summary>
 /// The InvalidSqlIdentifierException is thrown when the identifier used for

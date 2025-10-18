@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// It was meant to serve as a cache for the corresponding values for Attributes related
 /// to <see cref="PropertyInfo"/>, such as <see cref="ColumnTag"/>, <see cref="TableTag"/>, <see cref="AliasTag"/>, etc, 
 /// however, currently it is only serving as a cache for <see cref="ColumnInfo"/> which 
-/// serves as a container for those fields.
+/// serves as a container for those properties.
 /// <typeparamref name="typeT"/>
 /// </summary>
 /// <typeparam name="typeT">The type from which the type is being looked up.</typeparam>

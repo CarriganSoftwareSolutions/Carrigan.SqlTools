@@ -14,10 +14,10 @@ public partial class SqlGenerator<T>
 {
     /// <summary>
     /// Generates a SQL <c>UPDATE</c> statement that modifies a single row identified
-    /// by the entity’s key fields.
+    /// by the entity’s key properties.
     /// </summary>
     /// <param name="entity">
-    /// The data model instance whose key fields identify the target row and whose
+    /// The data model instance whose key properties identify the target row and whose
     /// property values supply the column values to set.
     /// </param>
     /// <param name="columns">
@@ -69,8 +69,8 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery UpdateById(T entity, SetColumns<T>? columns = null)
     {
-        if (HasKeyField is false)
-            throw new NoPrimaryKeyField<T>();
+        if (HasKeyProperty is false)
+            throw new NoPrimaryKeyProperty<T>();
 
         IEnumerable<ColumnInfo> updateTheseColumns = 
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
@@ -103,7 +103,7 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Generates a SQL <c>UPDATE</c> statement that sets column values from
-    /// <paramref name="valuesEntity"/> for all rows whose key fields match any of the
+    /// <paramref name="valuesEntity"/> for all rows whose key properties match any of the
     /// specified <paramref name="idEntities"/>.
     /// </summary>
     /// <param name="valuesEntity">
@@ -114,7 +114,7 @@ public partial class SqlGenerator<T>
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
     /// <param name="idEntities">
-    /// One or more data model instances used only as ID holders; their key field values
+    /// One or more data model instances used only as ID holders; their key property values
     /// are combined into an <c>OR</c> of per-entity <c>AND</c> predicates to select rows to update.
     /// </param>
     /// <returns>
@@ -156,8 +156,8 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery UpdateByIds(T valuesEntity, SetColumns<T>? columns, params IEnumerable<T> idEntities)
     {
-        if (HasKeyField is false)
-            throw new NoPrimaryKeyField<T>();
+        if (HasKeyProperty is false)
+            throw new NoPrimaryKeyProperty<T>();
         else
         {
             Or or = new(

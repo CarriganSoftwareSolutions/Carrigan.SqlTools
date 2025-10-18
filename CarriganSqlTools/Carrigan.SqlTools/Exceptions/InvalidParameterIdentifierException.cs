@@ -28,7 +28,7 @@ public class InvalidParameterIdentifierException : Exception
     /// <param name="identifiers">The names of the invalid identifiers.</param>
     /// <returns>An <see cref="InvalidParameterIdentifierException"/> message.</returns>
     private static string CreateMessage(IEnumerable<string?> identifiers) =>
-        $"The following Parameters do not follow the SQL naming convention:" +
+        $"The following Parameters do not follow the SQL naming convention: " +
             identifiers
                 .Select(column => $"{column?.ToString() ?? "<null>"}")
                 .JoinAnd();

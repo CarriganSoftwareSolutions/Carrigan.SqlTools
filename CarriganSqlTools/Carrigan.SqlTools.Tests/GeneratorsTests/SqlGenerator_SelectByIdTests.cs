@@ -131,6 +131,6 @@ public class SqlGenerator_SelectByIdTests
         [
             new() { City = "Clarksville", PostalCode = "37043", Street = "Madison" }
         ];
-        Assert.Throws<NoPrimaryKeyField<Address>>(() => _sqlGeneratorForAddress.SelectById(entities));
+        Assert.Throws<NoPrimaryKeyProperty<Address>>(() => _sqlGeneratorForAddress.SelectById(entities));
     }
 }

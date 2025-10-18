@@ -8,7 +8,7 @@
 /// </summary>
 /// <remarks>
 /// When this paging option is used, an additional <c>ORDER BY</c> criterion for the key
-/// fields of the queried table is automatically appended at the end of the
+/// property of the queried table is automatically appended at the end of the
 /// <c>ORDER BY</c> clause. This ensures stable and consistent results without
 /// altering the intended sort order, compensating for quirks in SQL Server’s
 /// <c>OFFSET</c> and <c>FETCH NEXT</c> behavior.
@@ -49,7 +49,7 @@ public class DefinePage : OffsetNext
     /// </summary>
     /// <remarks>
     /// Using this constructor automatically appends an additional ORDER BY criterion
-    /// for the key fields of the queried table. This is placed at the end of the
+    /// for the key properties of the queried table. This is placed at the end of the
     /// <c>ORDER BY</c> clause to avoid altering the intended sort order, while ensuring
     /// stable and consistent results when using SQL Server’s <c>OFFSET</c> and <c>FETCH NEXT</c>.
     /// </remarks>

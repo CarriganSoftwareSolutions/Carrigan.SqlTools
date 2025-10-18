@@ -6,7 +6,7 @@
 /// </summary>
 /// <remarks>
 /// When this paging option is used, an additional <c>ORDER BY</c> criterion for the key
-/// fields of the queried table is automatically appended at the end of the
+/// properties of the queried table is automatically appended at the end of the
 /// <c>ORDER BY</c> clause. This ensures stable and consistent results without
 /// altering the intended sort order, compensating for quirks in SQL Server’s
 /// <c>OFFSET</c> and <c>FETCH NEXT</c> behavior.

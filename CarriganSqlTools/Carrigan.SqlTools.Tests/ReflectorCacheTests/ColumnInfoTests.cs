@@ -55,7 +55,7 @@ public class ColumnInfoTests
     public void New(string? schemaName, string tableName, Type type, string propertyName, string[] keyProperties,
         string expectedColumnTag, string  expectedColumnName, string expectedPropertyName, 
         string parameterTag, string? expectedAliasName, string expectedSelectTag,
-        bool expectedIsKeyPart, bool expectedIsEncrypted, bool expectedIsKeyVersionField,
+        bool expectedIsKeyPart, bool expectedIsEncrypted, bool expectedIsKeyVersionProperty,
         string expectedTableTag)
     {
         IEnumerable<PropertyInfo> keys = keyProperties.Select(property => type.GetProperty(property)).OfType<PropertyInfo>();
@@ -91,7 +91,7 @@ public class ColumnInfoTests
         Assert.Equal(expectedSelectTag, columnInfo.SelectTag);
         Assert.Equal(expectedIsKeyPart, columnInfo.IsKeyPart);
         Assert.Equal(expectedIsEncrypted, columnInfo.IsEncrypted);
-        Assert.Equal(expectedIsKeyVersionField, columnInfo.IsKeyVersionField);
+        Assert.Equal(expectedIsKeyVersionProperty, columnInfo.IsKeyVersionProperty);
 
         Assert.Equal(expectedColumnTag, implicitString);
         Assert.Equal(expectedColumnTag, explicitString);

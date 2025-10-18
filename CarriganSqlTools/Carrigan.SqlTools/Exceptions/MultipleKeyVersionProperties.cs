@@ -4,17 +4,17 @@ using Carrigan.SqlTools.IdentifierTypes;
 namespace Carrigan.SqlTools.Exceptions;
 //TODO: Proof Read Documentation
 /// <summary>
-/// Thrown when the column tag comes from a table that is not included in the clauses.
+/// Thrown when multiple key version properties exist
 /// </summary>
-public class InvalidKeyVersionFieldType<T> : Exception
+public class MultipleKeyVersionProperties<T> : Exception
 {
     /// <summary>
-    /// Constructor for InvalidKeyVersionFieldType
-    /// Thrown when a property marked as a key version field is not of type int.
+    /// Constructor for MultipleKeyVersionProperties
+    /// Thrown when multiple key version property exist
     /// </summary>
     /// <param name="propertyNames">Invalid property names to include in exception message.</param>
     /// 
-    internal InvalidKeyVersionFieldType(params IEnumerable<PropertyName> propertyNames) :
+    internal MultipleKeyVersionProperties(params IEnumerable<PropertyName> propertyNames) :
         base(CreateMessage(propertyNames))
     {
     }
@@ -25,7 +25,7 @@ public class InvalidKeyVersionFieldType<T> : Exception
     /// <param name="invalidPropertyNames">Invalid columns to include in exception message.</param>
     /// <returns>An exception message from a collection of invalid PropertyName values</returns>
     private static string CreateMessage(IEnumerable<PropertyName> invalidPropertyNames) =>
-        $"{nameof(T)} has encrypted columns and the key version property is not of type int."
+        $"The {typeof(T)} class has multiple key version properties, which is not allowed:"
             + invalidPropertyNames
                 .Select(property => $"{property.ToString() ?? "<null>"}")
                 .JoinAnd();

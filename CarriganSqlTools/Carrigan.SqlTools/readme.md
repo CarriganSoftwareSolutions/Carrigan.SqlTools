@@ -4,9 +4,9 @@
 
 Carrigan.SqlTools is a .NET library that simplifies SQL generation for **Microsoft SQL Server**, while still giving you control when you need it.  
 
-It automatically generates `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements using reflection. **Carrigan.Core** provides interfaces and property attributes to integrate your custom field-level encryption, and Carrigan.SqlTools adds a safe, object-oriented API for building more advanced queries.  
+It automatically generates `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements using reflection. **Carrigan.Core** provides interfaces and property attributes to integrate your custom property-level encryption, and Carrigan.SqlTools adds a safe, object-oriented API for building more advanced queries.  
 
-A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by wrapping ADO.NET to execute generated queries, map rows to objects, and handle decryption of encrypted fields.
+A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by wrapping ADO.NET to execute generated queries, map rows to objects, and handle decryption of encrypted properties.
 
 ---
 
@@ -47,7 +47,7 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
   Build `SELECT`, `INSERT`, `UPDATE`, and `DELETE` queries with reflection.
 
 - **Carrigan.Core integration**  
-  Interfaces and property-level attributes enable field-level encryption and decryption.
+  Interfaces and property-level attributes enable property-level encryption and decryption.
 
 - **Manual query builder**  
   Safely construct advanced SQL with `JOIN`, predicates (e.g., `Equal`, `GreaterThan`, `IsNull`, `Like`, `And`, `Or`, `Xor`, `Not`), `ORDER BY`, and pagination (`OFFSET/FETCH NEXT`).
@@ -725,7 +725,7 @@ public sealed class MyDecryptors : IDecryptors
 //I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.
 ```
 
-> Plug `MyDecryptors` into `ExecuteReaderAsync<T>` / `ExecuteReader<T>` to transparently decrypt fields annotated in your models.
+> Plug `MyDecryptors` into `ExecuteReaderAsync<T>` / `ExecuteReader<T>` to transparently decrypt properties annotated in your models.
 
 [Table of Contents](#table-of-contents)
 

@@ -21,7 +21,7 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <see cref="SelectTag"/>
 /// <c>IsKeyPart</c>
 /// <c>IsEncrypted</c>
-/// <c>IsKeyVersionField</c>
+/// <c>IsKeyVersionProperty</c>
 /// This class is intended for internal use only, but to due to accessibility errors, 
 /// I had to expose most of it as public.
 /// </summary>
@@ -62,7 +62,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
     internal readonly bool IsEncrypted;
 
-    internal readonly bool IsKeyVersionField;
+    internal readonly bool IsKeyVersionProperty;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnInfo"/> class,
@@ -76,7 +76,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <see cref="SelectTag"/>
     /// <see cref="IsKeyPart"/>
     /// <see cref="IsEncrypted"/>
-    /// <see cref="IsKeyVersionField"/>
+    /// <see cref="IsKeyVersionProperty"/>
     /// This class is intended for internal use only, but to due to accessibility errors, 
     /// I had to expose most of it as public.
     /// </summary>
@@ -95,8 +95,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="columnTag"/> fails to meet the SQL identifier naming rules.
     /// </exception>
-    /// <exception cref="InvalidKeyVersionFieldType">
-    /// Thrown when the  <see cref="KeyVersionAttribute"/> is set, and the key field is not of type <see cref="int"/>
+    /// <exception cref="InvalidKeyVersionPropertyType">
+    /// Thrown when the  <see cref="KeyVersionAttribute"/> is set, and the key property is not of type <see cref="int"/>
     /// </exception>
     internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
@@ -118,7 +118,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         IsKeyPart = keys.Contains(PropertyInfo);
         IsEncrypted = PropertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;
-        IsKeyVersionField = PropertyInfo.GetCustomAttribute<KeyVersionAttribute>() != null;
+        IsKeyVersionProperty = PropertyInfo.GetCustomAttribute<KeyVersionAttribute>() != null;
     }
 
     /// <summary>

@@ -6,14 +6,14 @@ namespace Carrigan.SqlTools.Exceptions;
 //TODO: Proof Read Documentation. entire class
 
 /// <summary>
-/// Thrown when ambiguous Result Column Name's are detects in generated SQL.
+/// Thrown when ambiguous Result Column Name's are detects in generated SQL request.
 /// </summary>
 public class AmbiguousResultColumnException : Exception
 {
     /// <summary>
     /// Constructor for <see cref="AmbiguousResultColumnException"/>.
     /// </summary>
-    /// <param name="resultColumns">The ambiguous result columns to include in the exception</param>
+    /// <param name="resultColumns">The ambiguous result columns to include in the exception message</param>
     /// 
     internal AmbiguousResultColumnException(params IEnumerable<ResultColumnName> resultColumns) :
         base(CreateMessage(resultColumns))

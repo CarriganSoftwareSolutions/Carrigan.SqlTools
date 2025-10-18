@@ -83,11 +83,11 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             if (_Encryption is null)
                 exceptions.Add(new EncrypterNotProvided<T>());
             if (KeyVersionColumnInfo is null)
-                exceptions.Add(new NoKeyVersionField<T>());
+                exceptions.Add(new NoKeyVersionProperty<T>());
             else if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
-                exceptions.Add(new InvalidKeyVersionFieldType<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
+                exceptions.Add(new InvalidKeyVersionPropertyType<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
             if (KeyVersionColumnsInfo.Count() > 1)
-                exceptions.Add(new MultipleKeyVersionFields<T>(KeyVersionColumnsInfo.Select(column => column.PropertyName)));
+                exceptions.Add(new MultipleKeyVersionProperties<T>(KeyVersionColumnsInfo.Select(column => column.PropertyName)));
         }
 
         if (exceptions.Count == 1)
@@ -147,7 +147,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// Builds an <see cref="And"/> predicate for selecting a record by its key columns.
     /// </summary>
     /// <param name="entity">
-    /// The entity instance containing the key field values used to construct the predicate.
+    /// The entity instance containing the key property values used to construct the predicate.
     /// </param>
     /// <returns>
     /// An <see cref="And"/> predicate that matches the entity’s key column values,
