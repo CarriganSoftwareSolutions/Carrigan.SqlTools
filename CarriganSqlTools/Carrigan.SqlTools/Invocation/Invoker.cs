@@ -47,7 +47,19 @@ public static class Invoker<T> where T : class?, new()
         }
         return invoked;
     }
-    public static object? ConvertValue(object? value, Type targetType)
+    /// <summary>
+    /// Take the <paramref name="value"/> provided and covert it to the <paramref name="targetType"/>.
+    /// Note: While returning the value as an object may make this method seem redundant,
+    /// for some types this first provides a conversion to a more consumable type.
+    /// </summary>
+    /// <param name="value">Value to be processed</param>
+    /// <param name="targetType">Target type</param>
+    /// <returns>
+    /// Take the <paramref name="value"/> provided and covert it to the <paramref name="targetType"/>.
+    /// Note: While returning the value as an object may make this method seem redundant,
+    /// for some types this first provides a conversion to a more consumable type.
+    /// </returns>
+    internal static object? ConvertValue(object? value, Type targetType)
     {
         // If the value is null or DBNull, return null
         if (value == null || value == DBNull.Value)
