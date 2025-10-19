@@ -7,25 +7,44 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
-//TODO: Update Documentation
-
 /// <summary>
-/// This class serves as a cache for reflection operations commonly used by this library.
+/// Provides a cache of reflection data used during invocation/materialization,
+/// on top of the broader <see cref="SqlToolsReflectorCache{T}"/>.
+/// <para>
+/// This cache maps result-set column names to writable properties so that
+/// ADO.NET result columns can be efficiently bound back to the model.
+/// </para>
 /// </summary>
-/// <typeparam name="T">The type that are using with reflection and want to cache.</typeparam>
+/// <typeparam name="T">
+/// The entity/data model type whose properties are being reflected and cached.
+/// </typeparam>
 internal static class InvocationReflectorCache<T>
 {
-    //This library is essentially a static means of accessing reflection operations.
+    /// <summary>
+    /// Gets the CLR <see cref="System.Type"/> for <typeparamref name="T"/>.
+    /// </summary>
     internal static Type Type =>
         SqlToolsReflectorCache<T>.Type;
 
+    /// <summary>
+    /// Reverse-lookup cache from <see cref="ResultColumnName"/> to <see cref="PropertyInfo"/>.
+    /// Populated with writable, public, instance properties that are not marked with <see cref="NotMappedAttribute"/>.
+    /// </summary>
     internal static readonly PropertyInfoCache<T> PropertyInfoCache;
+
+    /// <summary>
+    /// Static constructor initializes the reverse-lookup cache used when
+    /// mapping ADO.NET result columns back to model properties.
+    /// <para>
+    /// Note: This builds on lower-level reflection caches (<see cref="ReflectorCache{T}"/>)
+    /// to avoid recomputation across different layers of the library.
+    /// </para>
+    /// </summary>
     static InvocationReflectorCache() =>
         PropertyInfoCache = new
                 (
-                    //yes, we get this is caching from a lower level of caching
-                    //yes, this seems redundant, but I want to cache the reflection operations at various levels
-                    //I do this because the application I developed this library for was one of several libraries accessing the lower cache and doing different things with it.
+                    // Although this consumes a lower-level cache, we keep a dedicated layer here
+                    // to isolate invocation/materialization concerns and minimize repeated work.
                     ReflectorCache<T>
                         .WriteablePublicInstanceProperties
                         .Where(property => property.GetCustomAttribute<NotMappedAttribute>() == null)
@@ -33,11 +52,14 @@ internal static class InvocationReflectorCache<T>
                 );
 
     /// <summary>
-    /// Get the <see cref="ResultColumnName"/> for a given property.
+    /// Computes the <see cref="ResultColumnName"/> for a given property based on
+    /// attribute overrides, falling back to the property name.
     /// </summary>
-    /// <param name="propertyInfo">A <see cref="PropertyInfo"/> representing the property being looked up.</param>
+    /// <param name="propertyInfo">
+    /// The reflected <see cref="PropertyInfo"/> for the property being resolved.
+    /// </param>
     /// <returns>
-    /// the <see cref="ResultColumnName"/> for a given property.
+    /// The <see cref="ResultColumnName"/> that should be used to match result-set columns.
     /// </returns>
     private static ResultColumnName GetResultColumnName(PropertyInfo propertyInfo) =>
         new

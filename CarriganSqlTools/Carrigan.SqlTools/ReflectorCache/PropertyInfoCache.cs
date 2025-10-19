@@ -5,24 +5,33 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
-//TODO: proof read documentation for entire class
+//IGNORE SPELLING: materializers
 
-/// <summary>
-/// This class is a wrapper for a dictionary, where the key is a <see cref="ResultColumnName"/>.
-/// This class is used to reverse look up Property Information from a result column name.
+/// Provides a read-only, dictionary-backed cache keyed by <see cref="ResultColumnName"/>
+/// to perform reverse look ups from an ADO.NET result column name to the corresponding
+/// reflected <see cref="PropertyInfo"/> on the data model.
+/// <para>
+/// This enables materializers and invocation classes to map result sets back to properties
+/// without recomputing reflection each time.
+/// </para>
 /// </summary>
-/// <typeparam name="typeT">The data mode from which the property information is being looked up.</typeparam>
+/// <typeparam name="typeT">
+/// The model/entity type from which the property information is being looked up.
+/// </typeparam>
 internal class PropertyInfoCache<typeT> 
 {
     /// <summary>
-    /// Read only dictionary used as the core of the cache.
+    /// The read-only dictionary that serves as the core cache.
+    /// Keys are <see cref="ResultColumnName"/> values; values are <see cref="PropertyInfo"/>.
     /// </summary>
     private readonly IReadOnlyDictionary<ResultColumnName, PropertyInfo> _cache;
 
     /// <summary>
-    /// This is the class constructor for PropertyInfoCache.
+    /// Initializes a new instance of the <see cref="PropertyInfoCache{typeT}"/> class.
     /// </summary>
-    /// <param name="data">An enumeration of tuples consisting of a <see cref="ResultColumnName"/> and a <see cref="PropertyInfo"/> value</param>
+    /// <param name="data">
+    /// An enumeration of tuples mapping a <see cref="ResultColumnName"/> to a <see cref="PropertyInfo"/>.
+    /// </param>
     internal PropertyInfoCache(IEnumerable<Tuple<ResultColumnName, PropertyInfo>> data) =>
         _cache = new ReadOnlyDictionary<ResultColumnName, PropertyInfo>
         (
@@ -40,11 +49,16 @@ internal class PropertyInfoCache<typeT>
         );
 
     /// <summary>
-    /// Returns the <see cref="PropertyInfo"/> associated with <paramref name="resultColumnNameKey"/> if present; otherwise <c>null</c>.
-    /// Also returns <c>null</c> when the stored value is <c>null</c>.
+    /// Returns the <see cref="PropertyInfo"/> associated with
+    /// <paramref name="resultColumnNameKey"/> if present; otherwise throws.
     /// </summary>
-    /// <param name="resultColumnNameKey">the result column used to reverse look up the <see cref="PropertyInfo"/> from</param>
-    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that the <see cref="ResultColumnName"/> that was invalid</exception>
+    /// <param name="resultColumnNameKey">
+    /// The result column name used to reverse look up the <see cref="PropertyInfo"/>.
+    /// </param>
+    /// <returns>The associated <see cref="PropertyInfo"/>.</returns>
+    /// <exception cref="InvalidResultColumnNameException{typeT}">
+    /// Thrown when <paramref name="resultColumnNameKey"/> is not present in the cache.
+    /// </exception>
     internal PropertyInfo Get(ResultColumnName resultColumnNameKey)
     {
         if (_cache.TryGetValue(resultColumnNameKey, out PropertyInfo? value))
@@ -54,12 +68,17 @@ internal class PropertyInfoCache<typeT>
     }
 
     /// <summary>
-    /// Returns the <see cref="PropertyInfo"/> for <paramref name="resultColumnNameKeys"/> if present; 
-    /// otherwise if any one of them doesn't exists, throw a <see cref="InvalidPropertyException{typeT}"/>
+    /// Returns the <see cref="PropertyInfo"/> values for all provided result column names,
+    /// or throws if any name is not present in the cache.
     /// </summary>
-    /// <param name="resultColumnNameKeys">the ResultColumnName to look up from</param>
-    /// <returns></returns>
-    /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that one or more properties were invalid</exception>
+    /// <param name="resultColumnNameKeys">The result column names to look up.</param>
+    /// <returns>
+    /// An enumeration of <see cref="PropertyInfo"/> values corresponding
+    /// to <paramref name="resultColumnNameKeys"/>.
+    /// </returns>
+    /// <exception cref="InvalidResultColumnNameException{typeT}">
+    /// Thrown when one or more provided result column names are not present in the cache.
+    /// </exception>
     internal IEnumerable<PropertyInfo> GetMany(params IEnumerable<ResultColumnName> resultColumnNameKeys) 
     {
         IEnumerable<ResultColumnName> invalids = resultColumnNameKeys.Where(key => Exists(key) is false);
@@ -70,23 +89,30 @@ internal class PropertyInfoCache<typeT>
             return resultColumnNameKeys.Select(key => Get(key));
     }
 
-    /// <summary>All <see cref="PropertyInfo"/> values.</summary>
+    /// <summary>
+    /// Gets all cached <see cref="PropertyInfo"/> values.
+    /// </summary>
     internal IEnumerable<PropertyInfo> Values => 
         _cache.Values;
 
     /// <summary>
-    /// Determines if all of the <see cref="ResultColumnName"/> exist in the cache
+    /// Determines whether all specified <see cref="ResultColumnName"/> values exist in the cache.
     /// </summary>
-    /// <param name="resultColumnNames">The <see cref="ResultColumnName"/>s to test</param>
-    /// <returns>true if all items in the enumeration exist. Else false.</returns>
+    /// <param name="resultColumnNames">The result column names to test.</param>
+    /// <returns>
+    /// <c>true</c> if every name exists; otherwise, <c>false</c>.
+    /// </returns>
     internal bool Exists(params IEnumerable<ResultColumnName> resultColumnNames) =>
         resultColumnNames.All(ResultColumnName => _cache.ContainsKey(ResultColumnName));
 
     /// <summary>
-    /// Gets an <see cref="InvalidResultColumnNameException{typeT}"/> with the <see cref="ResultColumnName"/>s in the message, or <c>null</c>.
+    /// Creates an <see cref="InvalidResultColumnNameException{typeT}"/> that lists any
+    /// invalid result column names, or returns <c>null</c> if all names are valid.
     /// </summary>
-    /// <param name="resultColumnNames">The <see cref="ResultColumnName"/>s to test</param>
-    /// <returns>An <see cref="InvalidResultColumnNameException{typeT}"/> if any invalid result column names exist, else <c>null</c>.</returns>
+    /// <param name="resultColumnNames">The result column names to validate.</param>
+    /// <returns>
+    /// An <see cref="InvalidResultColumnNameException{typeT}"/> if any names are invalid; otherwise, <c>null</c>.
+    /// </returns>
     internal InvalidResultColumnNameException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<ResultColumnName> resultColumnNames)
     {
         IEnumerable<ResultColumnName> invalidResultColumnNames = resultColumnNames.Where(ResultColumnName => _cache.ContainsKey(ResultColumnName) is false);
