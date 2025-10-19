@@ -4,37 +4,49 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
-using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
+/// <summary>
+/// Represents a SELECT projection tag for a single column, consisting of a fully qualified
+/// column identifier (e.g., <c>[Schema].[Table].[Column]</c>) and an optional alias
+/// (e.g., <c>AS [Alias]</c>).
+/// </summary>
+/// <remarks>
+/// <para>
+/// Instances are typically created from reflection-derived <see cref="Tags.ColumnTag"/> values,
+/// optionally combined with an <see cref="Tags.AliasTag"/>. This tag is used by SQL generators to
+/// render the SELECT list for a query.
+/// </para>
+/// <para>
+/// Implements <see cref="IComparable{SelectTag}"/>, <see cref="IEquatable{SelectTag}"/>,
+/// and <see cref="IEqualityComparer{SelectTag}"/> for use in ordered and hashed collections.
+/// </para>
+/// </remarks>
 public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>
 {
     /// <summary>
-    /// A string that represent the alias, <c>AS</c> clause.
+    /// The SQL text of the select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c>.
     /// </summary>
     private readonly string _selectTag;
 
     /// <summary>
-    /// Represents the Column tag.
+    /// The fully qualified column identifier for this select item.
     /// </summary>
     internal readonly ColumnTag ColumnTag;
     /// <summary>
-    /// represents the optional Alias
+    /// The optional alias applied to this select item.
     /// </summary>
     internal readonly AliasTag? AliasTag;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTag"/> class,
-    /// which represents a fully qualified SQL column identifier
-    /// in the form <c>[Schema].[Table].[Column]</c> along with an option Alias <c>AS</c>
-    /// Used to allow specification of columns being selected in a generated select query
+    /// Initializes a new instance of the <see cref="SelectTag"/> class.
     /// </summary>
     /// <param name="columnTag">
-    /// The name of the column. Must not be <c>null</c>, empty, or white space.
+    /// The column identifier to select. Must represent a valid column.
     /// </param>
     /// <param name="aliasTag">
-    /// The <see cref="AliasTag"/> used to represent the Alias "AS" in a select.
+    /// The optional alias (i.e., <c>AS [Alias]</c>) to apply to the selected column.
     /// </param>
     internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null)
     {
@@ -47,33 +59,31 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
         AliasTag = aliasTag;
     }
 
+    /// <summary>
+    /// Gets the expected result set column name for this projection, choosing the alias
+    /// (when present) or the underlying column name.
+    /// </summary>
     internal ResultColumnName ResultColumnName =>
         new (AliasTag?.ToString() ?? ColumnTag.ColumnName);
 
-  
+
     /// <summary>
-    /// Get a new Select Tag based of the property and alias provided.
-    /// If no alias provided, default to alias attribute on property, if available.
+    /// Creates a new <see cref="SelectTag"/> for the specified property on <typeparamref name="T"/>,
+    /// using the provided alias if supplied; otherwise defaults to the property's alias attribute (if any).
     /// </summary>
-    /// <remarks>
-    /// <paramref name="aliasName"/> needs to be validated here, because it is how
-    /// library users are allowed to specify an alias name on a select, and that
-    /// isn't check by the SQL generator's constructor. Unlike the an alias specified
-    /// in with an attribute. <paramref name="property"/> also needs to be validated
-    /// here, as it is being provided by consumers of the library.
-    /// </remarks>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="property">Property provided</param>
-    /// <param name="aliasName">Alias provided</param>
+    /// <typeparam name="T">The entity/model type containing the property.</typeparam>
+    /// <param name="property">The name of the property to project.</param>
+    /// <param name="aliasName">
+    /// An optional alias name override. If provided, it must be a valid SQL identifier.
+    /// </param>
     /// <returns>
-    /// A new Select Tag based of the property and alias provided.
-    /// If no alias provided, default to alias attribute on property, if available.
+    /// A new <see cref="SelectTag"/> representing the requested property projection.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Throws in the property is invalid for class T, or ineligible to model a column.
+    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
-    /// Throws InvalidSqlIdentifierException, if the alias name doesn't follow the SQL naming convention.
+    /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
     public static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null)
     {
@@ -86,30 +96,23 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
         return new(columnInfo.ColumnTag, AliasTag.New(aliasName ?? columnInfo.AliasName));
     }
 
-
     /// <summary>
-    /// Get a new Select Tag based of the property and alias provided.
-    /// If no alias provided, default to alias attribute on property, if available.
+    /// Creates a new <see cref="SelectTag"/> for the specified property on <typeparamref name="T"/>,
+    /// using the provided alias if supplied; otherwise defaults to the property's alias attribute (if any).
     /// </summary>
-    /// <remarks>
-    /// <paramref name="aliasName"/> needs to be validated here, because it is how
-    /// library users are allowed to specify an alias name on a select, and that
-    /// isn't check by the SQL generator's constructor. Unlike the an alias specified
-    /// in with an attribute. <paramref name="property"/> also needs to be validated
-    /// here, as it is being provided by consumers of the library.
-    /// </remarks>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="property">Property provided</param>
-    /// <param name="aliasName">Alias provided</param>
+    /// <typeparam name="T">The entity/model type containing the property.</typeparam>
+    /// <param name="property">The property name to project.</param>
+    /// <param name="aliasName">
+    /// An optional alias name override. If provided, it must be a valid SQL identifier.
+    /// </param>
     /// <returns>
-    /// A new Select Tag based of the property and alias provided.
-    /// If no alias provided, default to alias attribute on property, if available.
+    /// A new <see cref="SelectTag"/> representing the requested property projection.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Throws in the property is invalid for class T, or ineligible to model a column.
+    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
-    /// Throws InvalidSqlIdentifierException, if the alias name doesn't follow the SQL naming convention.
+    /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
     [ExternalOnly]
     public static SelectTag Get<T>(string property, string? aliasName = null)
@@ -120,12 +123,12 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     }
 
     /// <summary>
-    /// Get a multiple existing Select Tags based of the properties provided.
+    /// Returns existing <see cref="SelectTag"/> instances for the provided property names on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="properties">Properties provided</param>
+    /// <typeparam name="T">The entity/model type that defines the properties.</typeparam>
+    /// <param name="properties">One or more property names to project.</param>
     /// <returns>
-    /// A multiple existing Select Tags based of the properties provided.
+    /// An enumeration of <see cref="SelectTag"/> objects corresponding to the specified properties.
     /// </returns>
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<PropertyName> properties) =>
         SqlToolsReflectorCache<T>
@@ -133,67 +136,56 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
             .Select(column => column.SelectTag);
 
     /// <summary>
-    /// Get a multiple existing Select Tags based of the properties provided.
+    /// Returns existing <see cref="SelectTag"/> instances for the provided property names on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="properties">Properties provided</param>
+    /// <typeparam name="T">The entity/model type that defines the properties.</typeparam>
+    /// <param name="properties">One or more property names to project.</param>
     /// <returns>
-    /// A multiple existing Select Tags based of the properties provided.
+    /// An enumeration of <see cref="SelectTag"/> objects corresponding to the specified properties.
     /// </returns>
-    //TODO: Documentation
     [ExternalOnly]
     public static IEnumerable<SelectTag> GetMany<T>(params IEnumerable<string> properties) =>
         GetMany<T>(properties.Select(name => new PropertyName(name)));
 
-    //TODO: Proof read Documentation
     /// <summary>
-    /// Get all Select Tags associated with T.
+    /// Returns all <see cref="SelectTag"/> projections for every mappable column on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns>
-    /// All Select Tags associated with T.
-    /// </returns>
+    /// <typeparam name="T">The entity/model type to project.</typeparam>
+    /// <returns>All <see cref="SelectTag"/> instances for <typeparamref name="T"/>.</returns>
     public static IEnumerable<SelectTag> GetAll<T>() =>
         SqlToolsReflectorCache<T>
             .ColumnInfo
             .Select(column => column.SelectTag);
 
     /// <summary>
-    /// Implicitly converts a <see cref="SelectTag"/> to its SQL string representation
-    /// in the form <c>[Schema].[Table].[Column]</c>.
+    /// Implicitly converts a <see cref="SelectTag"/> to its SQL string representation.
     /// </summary>
     /// <param name="value">The <see cref="SelectTag"/> to convert.</param>
     /// <returns>
-    /// A SQL string that fully qualifies the column name, including schema and table if defined.
+    /// The SQL text for this select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c> or <c>[Schema].[Table].[Column]</c>.
     /// </returns>
     public static implicit operator string(SelectTag value)
         => value._selectTag;
 
     /// <summary>
-    /// Returns the SQL string representation of this <see cref="SelectTag"/> instance,
-    /// equivalent to the result of the implicit conversion to <see cref="string"/>.
+    /// Returns the SQL string representation of this <see cref="SelectTag"/> instance.
     /// </summary>
     /// <returns>
+    /// The SQL text for this select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c>.
+    /// </returns>
     public override string ToString()
         => this;
 
+
     /// <summary>
-    /// Compares this <see cref="SelectTag"/> to another instance and returns a value
-    /// that indicates their relative sort order.
+    /// Compares this instance with another <see cref="SelectTag"/> to determine sort order.
     /// </summary>
-    /// <param name="other">
-    /// The <see cref="SelectTag"/> to compare with the current instance.
-    /// </param>
+    /// <param name="other">The other <see cref="SelectTag"/> to compare.</param>
     /// <returns>
-    /// A signed integer that indicates the relative order of the two objects:
-    /// <c>0</c> if they are equal, a negative value if this instance precedes
-    /// <paramref name="other"/>, and a positive value if this instance follows
-    /// <paramref name="other"/>.
+    /// A signed integer: <c>0</c> if equal; less than <c>0</c> if this instance precedes
+    /// <paramref name="other"/>; greater than <c>0</c> if it follows.
     /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
-    /// If <paramref name="other"/> is <c>null</c>, this instance is considered greater.
-    /// </remarks>
+    /// <remarks>Comparison is case-insensitive via <see cref="StringComparison.OrdinalIgnoreCase"/>.</remarks>
     public int CompareTo(SelectTag? other)
     {
         if (other is null) return 1;
@@ -201,20 +193,12 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     }
 
     /// <summary>
-    /// Determines whether the current <see cref="SelectTag"/> is equal to another
-    /// <see cref="SelectTag"/> instance.
+    /// Determines whether this instance is equal to another <see cref="SelectTag"/>.
     /// </summary>
-    /// <param name="other">
-    /// The <see cref="SelectTag"/> to compare with this instance.
-    /// </param>
+    /// <param name="other">The other <see cref="SelectTag"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if the two <see cref="SelectTag"/> instances represent the same column,
-    /// ignoring case; otherwise, <c>false</c>.
+    /// <c>true</c> if both represent the same SQL text (case-insensitive); otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and uses
-    /// <see cref="StringComparison.OrdinalIgnoreCase"/>.
-    /// </remarks>
     public bool Equals(SelectTag? other)
     {
         if (other is null) return false;
@@ -222,27 +206,20 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     }
 
     /// <summary>
-    /// Determines whether the specified object is equal to the current
-    /// <see cref="SelectTag"/> instance.
+    /// Determines whether the specified object is equal to this <see cref="SelectTag"/>.
     /// </summary>
-    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <param name="obj">The object to compare.</param>
     /// <returns>
-    /// <c>true</c> if <paramref name="obj"/> is a <see cref="SelectTag"/> and
-    /// represents the same column (case-insensitive); otherwise, <c>false</c>.
+    /// <c>true</c> if <paramref name="obj"/> is a <see cref="SelectTag"/> with equal SQL text (case-insensitive); otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and delegates to
-    /// <see cref="Equals(SelectTag?)"/>.
-    /// </remarks>
     public override bool Equals(object? obj) =>
         obj is SelectTag ct && Equals(ct);
 
     /// <summary>
-    /// Serves as the default hash function for the <see cref="SelectTag"/> class.
+    /// Returns a hash code for this <see cref="SelectTag"/> instance.
     /// </summary>
     /// <returns>
-    /// An integer hash code for this <see cref="SelectTag"/>, computed in a manner
-    /// consistent with the case-insensitive comparison used in <see cref="Equals(SelectTag?)"/>.
+    /// An integer hash code consistent with the case-insensitive equality semantics.
     /// </returns>
     public override int GetHashCode() =>
         _selectTag.GetHashCode();
@@ -253,13 +230,8 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// <param name="x">The first <see cref="SelectTag"/> to compare.</param>
     /// <param name="y">The second <see cref="SelectTag"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if <paramref name="x"/> and <paramref name="y"/> represent the same column;
-    /// otherwise, <c>false</c>.
+    /// <c>true</c> if both represent the same SQL text (case-insensitive); otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and uses
-    /// <see cref="SelectTag.Equals(SelectTag?)"/> for the actual comparison logic.
-    /// </remarks>
     public bool Equals(SelectTag? x, SelectTag? y)
     {
         if (ReferenceEquals(x, y)) return true;
@@ -271,20 +243,17 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// Returns a hash code for the specified <see cref="SelectTag"/> instance.
     /// </summary>
     /// <param name="obj">The <see cref="SelectTag"/> for which to compute a hash code.</param>
-    /// <returns>
-    /// An integer hash code for <paramref name="obj"/>, computed in a manner consistent
-    /// with the case-insensitive comparison defined in <see cref="Equals(SelectTag?, SelectTag?)"/>.
-    /// </returns>
+    /// <returns>An integer hash code for <paramref name="obj"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="obj"/> is <c>null</c>.</exception>
     public int GetHashCode(SelectTag obj) =>
         obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
 
-    //TODO: Proof read Documentation
     /// <summary>
-    /// == operator
+    /// Determines whether two <see cref="SelectTag"/> instances are equal.
     /// </summary>
     /// <param name="left">The first <see cref="SelectTag"/> to compare.</param>
     /// <param name="right">The second <see cref="SelectTag"/> to compare.</param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if both are equal; otherwise, <c>false</c>.</returns>
     public static bool operator ==(SelectTag? left, SelectTag? right)
     {
         if (ReferenceEquals(left, right)) return true;
@@ -292,78 +261,55 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
         return left.Equals(right);
     }
 
+
     /// <summary>
-    /// Determines whether two <see cref="SelectTag"/> instances are equal.
+    /// Determines whether two <see cref="SelectTag"/> instances are not equal.
     /// </summary>
     /// <param name="left">The first <see cref="SelectTag"/> to compare.</param>
     /// <param name="right">The second <see cref="SelectTag"/> to compare.</param>
-    /// <returns>
-    /// <c>true</c> if <paramref name="left"/> and <paramref name="right"/> represent the same column;
-    /// otherwise, <c>false</c>.
-    /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and equivalent to calling
-    /// <see cref="Equals(SelectTag?, SelectTag?)"/>.
-    /// </remarks>
+    /// <returns><c>true</c> if they differ; otherwise, <c>false</c>.</returns>
     public static bool operator !=(SelectTag? left, SelectTag? right)
     {
         return !(left == right);
     }
 
-    // TODO: proof Read Documentation
     /// <summary>
-    /// Get all SelectTags associated with the instance, as a string.
-    /// For SelectTag this will just be itself.
+    /// Returns the SQL text for all select tags represented by this instance.
+    /// For a single <see cref="SelectTag"/>, this is simply its own SQL text.
     /// </summary>
-    /// <returns>All SelectTags associated with the instance, as a string. For SelectTag this will just be itself.</returns>
+    /// <returns>The SQL text represented by this instance.</returns>
     public override string ToSql() =>
         this;
 
-    //Proof read documentation
     /// <summary>
-    /// Get all TableTags associated with the instance.
-    /// For SelectTag this will just it's TableTag as an Enumerable.
+    /// Gets all distinct <see cref="TableTag"/> values referenced by this select tag.
+    /// For a single <see cref="SelectTag"/>, this returns its table tag.
     /// </summary>
-    /// <returns>
-    /// All TableTags associated with the instance.
-    /// For SelectTag this will just it's TableTag as an Enumerable.
-    /// </returns>
+    /// <returns>An enumeration containing the single <see cref="TableTag"/> used by this instance.</returns>
     internal override IEnumerable<TableTag> GetTableTags() => 
         [ColumnTag.TableTag];
 
-    //Proof read documentation
     /// <summary>
-    /// Determines if this instance contains any actual SelectTags
-    /// For SelectTag, this should always be true.
+    /// Indicates whether this instance represents any select tags.
+    /// For a single <see cref="SelectTag"/>, this always returns <c>true</c>.
     /// </summary>
-    /// <returns>
-    /// True if this instance contains any actual SelectTags
-    /// For SelectTag, this should always be true.
-    /// </returns>
+    /// <returns><c>true</c>.</returns>
     public override bool Any() =>
         true;
 
-    //Proof read documentation
     /// <summary>
-    /// Determines if this instance contains no SelectTags
-    /// For SelectTag, this should always be false.
+    /// Indicates whether this instance represents no select tags.
+    /// For a single <see cref="SelectTag"/>, this always returns <c>false</c>.
     /// </summary>
-    /// <returns>
-    /// True if this instance contains no SelectTags
-    /// For SelectTag, this should always be false.
-    /// </returns>
+    /// <returns><c>false</c>.</returns>
     public override bool Empty() =>
         false;
 
-
     /// <summary>
-    /// Get all SelectTags associated with the instance, as an Enumeration.
-    /// For SelectTag this will just be itself as an IEnumerable.
+    /// Returns all select tags represented by this instance.
+    /// For a single <see cref="SelectTag"/>, this returns itself.
     /// </summary>
-    /// <returns>
-    /// All SelectTags associated with the instance, as an Enumeration. 
-    /// For SelectTag this will just be itself as an IEnumerable.
-    /// </returns>
+    /// <returns>An enumeration containing this <see cref="SelectTag"/>.</returns>
     public override IEnumerable<SelectTag> All() =>
         [this];
 }

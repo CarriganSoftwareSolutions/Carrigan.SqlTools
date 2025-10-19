@@ -4,12 +4,15 @@ using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tags;
 
-//TODO: Proof Read Documentation for class.
 /// <summary>
-/// Represents an SQL Select Alias identifier (“AS”). Implements
-/// comparison and equality for use in sorting and hashed collections.
+/// Represents an SQL alias tag (the <c>AS [Alias]</c> portion of a SELECT statement),
+/// providing a strongly typed and comparable identifier for alias handling in SQL generation.
 /// </summary>
-/// TODO: Example Documentation
+/// <remarks>
+/// Implements comparison and equality for use in sorting and hashed collections.
+/// This type is typically derived from an <see cref="AliasName"/> and used
+/// in conjunction with <see cref="SelectTag"/> and <see cref="ColumnTag"/>.
+/// </remarks>
 public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityComparer<AliasTag>
 {
     private readonly string _aliasName;
@@ -17,21 +20,24 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasTag"/> class.
     /// </summary>
-    /// <param name="aliasName">The alias name. If <c>null</c> or empty, only the procedure name is used.</param>
+    /// <param name="aliasName">
+    /// The alias name to associate with this tag. If <c>null</c> or empty, only the source
+    /// column or procedure name is used.
+    /// </param>
     /// <exception cref="InvalidSqlIdentifierException">
-    /// Thrown when <paramref name="aliasName"/>  fails SQL identifier validation.
+    /// Thrown when <paramref name="aliasName"/> fails SQL identifier validation.
     /// </exception>
     public AliasTag(AliasName aliasName) => 
         _aliasName = aliasName;
 
     /// <summary>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// Creates a new <see cref="AliasTag"/> instance if the specified alias name is not null or empty;
+    /// otherwise returns <c>null</c>.
     /// </summary>
-    /// <param name="name">Alias name</param>
+    /// <param name="name">The alias name to wrap.</param>
     /// <returns>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// A new <see cref="AliasTag"/> instance if <paramref name="name"/> contains a valid value;
+    /// otherwise, <c>null</c>.
     /// </returns>
     public static AliasTag? New(AliasName? name)
     {
@@ -42,11 +48,12 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     }
 
     /// <summary>
-    /// Implicitly converts a <see cref="AliasTag"/> to its SQL string representation,
-    /// e.g., <c>AS [Alias]</c>.
+    /// Implicitly converts an <see cref="AliasTag"/> to its SQL string representation.
     /// </summary>
     /// <param name="tag">The <see cref="AliasTag"/> to convert.</param>
-    /// <returns>The SQL-formatted as string.</returns>
+    /// <returns>
+    /// The SQL alias string, typically formatted as <c>[Alias]</c>.
+    /// </returns>
     public static implicit operator string(AliasTag tag) =>
         tag._aliasName;
 
@@ -59,24 +66,28 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
 
     /// <summary>
     /// Compares this instance to another <see cref="AliasTag"/> and returns a value
-    /// indicating the sort order.
+    /// indicating their relative sort order.
     /// </summary>
     /// <param name="other">The other <see cref="AliasTag"/> to compare.</param>
     /// <returns>
-    /// A signed integer indicating relative order: 0 if equal; less than 0 if this instance
-    /// precedes <paramref name="other"/>; greater than 0 if it follows.
+    /// A signed integer indicating relative order:
+    /// <c>0</c> if equal;
+    /// less than 0 if this instance precedes <paramref name="other"/>;
+    /// greater than 0 if it follows.
     /// </returns>
     /// <remarks>Comparison is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
+
     public int CompareTo(AliasTag? other)
     {
         if (other is null) return 1; 
         return string.Compare(_aliasName, other._aliasName, StringComparison.Ordinal);
     }
+
     /// <summary>
     /// Determines whether this <see cref="AliasTag"/> is equal to another instance.
     /// </summary>
     /// <param name="other">The other <see cref="AliasTag"/> to compare.</param>
-    /// <returns><c>true</c> if both represent the same AliasTag; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if both represent the same alias; otherwise, <c>false</c>.</returns>
     /// <remarks>Equality is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
     public bool Equals(AliasTag? other)
     {
@@ -85,11 +96,15 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
 
         return string.Equals(_aliasName, other._aliasName, StringComparison.Ordinal);
     }
+
     /// <summary>
     /// Determines whether the specified object is equal to the current instance.
     /// </summary>
     /// <param name="obj">The object to compare with this instance.</param>
-    /// <returns><c>true</c> if <paramref name="obj"/> is a <see cref="AliasTag"/> equal to this instance; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="obj"/> is an <see cref="AliasTag"/> equal to this instance;
+    /// otherwise, <c>false</c>.
+    /// </returns>
     public override bool Equals(object? obj) =>
         Equals(obj as AliasTag);
 
@@ -127,7 +142,7 @@ public class AliasTag : IComparable<AliasTag>, IEquatable<AliasTag>, IEqualityCo
     /// </summary>
     /// <param name="left">The first <see cref="AliasTag"/> to compare.</param>
     /// <param name="right">The second <see cref="AliasTag"/> to compare.</param>
-    /// <returns><c>true</c> if both represent the same identifier; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if both represent the same alias; otherwise, <c>false</c>.</returns>
     /// <remarks>Equivalent to <see cref="Equals(AliasTag?, AliasTag?)"/>.</remarks>
     public static bool operator ==(AliasTag? left, AliasTag? right)
     {

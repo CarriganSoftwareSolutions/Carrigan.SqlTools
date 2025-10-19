@@ -3,18 +3,14 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.RegularExpressions;
-using Carrigan.SqlTools.SqlGenerators;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
 /// Represents a table identifier (“tag”) in the form <c>[Schema].[Table]</c>.
-/// The <c>[Schema]</c> segment is included only if explicitly provided. Implements
-/// comparison and equality for use in sorting and hashed collections.
+/// The <c>[Schema]</c> segment is included only when explicitly provided.
+/// Implements comparison and equality for use in sorting and hashed collections.
 /// </summary>
 /// <example>
 /// <para>
@@ -91,11 +87,10 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>
-    /// <param name="schemaName">The optional schema name. If <c>null</c> or empty, only the table name is used.</param>
+    /// <param name="schemaName">
+    /// The optional schema name. If <c>null</c> or empty, only the table name is used.
+    /// </param>
     /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="tableName"/> is <c>null</c> or empty.
-    /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
@@ -106,14 +101,12 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>
     /// <remarks>
-    /// An external only marked as internal can still be used by the unit tests class.
-    /// This method is meant for unit tests only.
+    /// Marked <see cref="ExternalOnlyAttribute"/> so unit tests can access it while keeping the API internal.
     /// </remarks>
-    /// <param name="schemaName">The optional schema name. If <c>null</c> or empty, only the table name is used.</param>
+    /// <param name="schemaName">
+    /// The optional schema name. If <c>null</c> or empty, only the table name is used.
+    /// </param>
     /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="tableName"/> is <c>null</c> or empty.
-    /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
@@ -144,11 +137,12 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// </summary>
     /// <param name="other">The other <see cref="TableTag"/> to compare.</param>
     /// <returns>
-    /// A signed integer indicating relative order: 0 if equal; less than 0 if this instance
-    /// precedes <paramref name="other"/>; greater than 0 if it follows.
+    /// A signed integer indicating relative order:
+    /// <c>0</c> if equal; less than <c>0</c> if this instance precedes <paramref name="other"/>;
+    /// greater than <c>0</c> if it follows.
     /// </returns>
-    /// <remarks>Comparison is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
-   public int CompareTo(TableTag? other)
+    /// <remarks>Comparison is case-sensitive via <see cref="StringComparison.Ordinal"/>.</remarks>
+    public int CompareTo(TableTag? other)
     {
         if (other is null) return 1; 
         return string.Compare(_tableTag, other._tableTag, StringComparison.Ordinal);
@@ -159,7 +153,8 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// </summary>
     /// <param name="other">The other <see cref="TableTag"/> to compare.</param>
     /// <returns><c>true</c> if both represent the same identifier; otherwise, <c>false</c>.</returns>
-    /// <remarks>Equality is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
+    /// <remarks>Equality is case-sensitive via <see cref="StringComparison.Ordinal"/>.</remarks>
+
     public bool Equals(TableTag? other)
     {
         if (other is null) return false;
@@ -172,9 +167,11 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// Determines whether the specified object is equal to the current instance.
     /// </summary>
     /// <param name="obj">The object to compare with this instance.</param>
-    /// <returns><c>true</c> if <paramref name="obj"/> is a <see cref="TableTag"/> equal to this instance; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="obj"/> is a <see cref="TableTag"/> equal to this instance; otherwise, <c>false</c>.
+    /// </returns>
     public override bool Equals(object? obj) =>
-        Equals(obj as TableTag);
+    Equals(obj as TableTag);
 
     /// <summary>
     /// Returns a hash code for this <see cref="TableTag"/> instance.
@@ -189,7 +186,7 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// <param name="x">The first <see cref="TableTag"/> to compare.</param>
     /// <param name="y">The second <see cref="TableTag"/> to compare.</param>
     /// <returns><c>true</c> if both are equal; otherwise, <c>false</c>.</returns>
-    /// <remarks>Equality is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
+    /// <remarks>Equality is case-sensitive via <see cref="StringComparison.Ordinal"/>.</remarks>
     public bool Equals(TableTag? x, TableTag? y)
     {
         if (x is null && y is null) return true;
@@ -202,7 +199,6 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// </summary>
     /// <param name="obj">The <see cref="TableTag"/> for which to compute a hash code.</param>
     /// <returns>An integer hash code computed using <see cref="StringComparison.Ordinal"/>.</returns>
-    /// <remarks>Equivalent to <see cref="Equals(TableTag?, TableTag?)"/>.</remarks>
     public int GetHashCode(TableTag obj) =>
         obj._tableTag.GetHashCode(StringComparison.Ordinal);
 
@@ -236,12 +232,12 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     /// Retrieves the <see cref="TableTag"/> associated with the specified entity type by using
     /// the internal SQL tools reflection cache.
     /// </summary>
-    /// <param name="value">The entity type for which to retrieve the table tag.</param>
+    /// <param name="value">The entity CLR <see cref="System.Type"/> for which to retrieve the table tag.</param>
     /// <returns>The <see cref="TableTag"/> for the specified type.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <c>null</c>.</exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the reflection cache does not expose a non-public static <c>Table</c> property,
-    /// or when it returns <c>null</c>.
+    /// or when that property returns <c>null</c>.
     /// </exception>
     internal static TableTag Get(Type value)
     {

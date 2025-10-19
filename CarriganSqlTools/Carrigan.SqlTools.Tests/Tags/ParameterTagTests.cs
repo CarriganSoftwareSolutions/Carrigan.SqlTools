@@ -147,29 +147,6 @@ public class ParameterTagTests
     }
 
     [Fact]
-    public void PrefixAppend_WhenNoExistingPrefix_SetsPrefix()
-    {
-        ParameterTag original = new (null, "ParameterName", "FirstIndex");
-        ParameterTag updated = original.PrefixAppend("NewPrefix");
-
-        Assert.Equal("NewPrefix_ParameterName_FirstIndex", (string)updated);
-        Assert.Equal("ParameterName_FirstIndex", (string)original);
-        // Original remains unchanged
-        Assert.NotEqual(original, updated);
-    }
-
-    [Fact]
-    public void PrefixAppend_WhenExistingPrefix_AppendsWithUnderscore()
-    {
-        ParameterTag original = new ("FirstPrefix", "ParameterName", "FirstIndex");
-        ParameterTag updated = original.PrefixAppend("SecondPrefix");
-
-        Assert.Equal("FirstPrefix_SecondPrefix_ParameterName_FirstIndex", (string)updated);
-        // Original remains unchanged
-        Assert.NotEqual(original, updated);
-    }
-
-    [Fact]
     public void AddIndex_WhenNoExistingIndex_AddsIndex()
     {
         ParameterTag original = new ("FirstPrefix", "ParameterName", null);

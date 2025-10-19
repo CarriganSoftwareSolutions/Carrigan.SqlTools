@@ -7,10 +7,15 @@ namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
 /// Represents a SQL parameter identifier, or “tag,” used in query generation.
-/// A parameter tag can optionally include a prefix and/or an index,
-/// and is rendered as a single string with parts joined by underscores (e.g., <c>Prefix_Column_Index</c>).
+/// A parameter tag can optionally include a prefix and/or an index, and is rendered
+/// as a single string with parts joined by underscores (e.g., <c>Prefix_Column_Index</c>).
 /// </summary>
 /// <remarks>
+/// Implements <see cref="IComparable{T}"/>, <see cref="IEquatable{T}"/>, and
+/// <see cref="IEqualityComparer{T}"/> to support sorting, equality checks,
+/// and hashed collections. Parameter names may be provided explicitly (e.g., via
+/// <see cref="ParameterAttribute"/>) or derived from property/column names.
+/// </remarks>
 /// This class implements <see cref="IComparable{ParameterTag}"/>, <see cref="IEquatable{ParameterTag}"/>,
 /// and <see cref="IEqualityComparer{ParameterTag}"/> to support sorting, equality checks,
 /// and use in collections that rely on hashing.
@@ -45,32 +50,26 @@ namespace Carrigan.SqlTools.Tags;
 public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>, IEqualityComparer<ParameterTag>
 {
     /// <summary>
-    /// The base name of the parameter. Must not be <c>null</c>, empty, or white space.
+    /// The base (core) parameter name. Must not be <c>null</c>, empty, or whitespace.
     /// </summary>
     private readonly string _parameterBaseName;
     /// <summary>
-    /// An optional prefix to prepend to the parameter name.
+    /// Optional prefix to prepend to the parameter name.
     /// </summary>
     private readonly string? _prefix;
     /// <summary>
-    /// An optional index to append to the parameter name.
+    /// Optional index to append to the parameter name.
     /// </summary>
     private readonly string? _index;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterTag"/> class.
     /// </summary>
-    /// <param name="prefix">
-    /// An optional prefix to prepend to the parameter name.
-    /// </param>
-    /// <param name="parameterName">
-    /// The base name of the parameter. Must not be <c>null</c>, empty, or white space.
-    /// </param>
-    /// <param name="index">
-    /// An optional index to append to the parameter name.
-    /// </param>
+    /// <param name="prefix">An optional prefix to prepend to the parameter name.</param>
+    /// <param name="parameterName">The base parameter name. Must not be <c>null</c>, empty, or whitespace.</param>
+    /// <param name="index">An optional index to append to the parameter name.</param>
     /// <exception cref="InvalidParameterIdentifierException">
-    /// Thrown when <paramref name="parameterName"/> is <c>null</c>, empty, or white space.
+    /// Thrown when <paramref name="parameterName"/> or the combined result is invalid per SQL identifier rules.
     /// </exception>
     internal ParameterTag(string? prefix, string parameterName, string? index)
     {
@@ -88,11 +87,9 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterTag"/> class.
     /// </summary>
-    /// <param name="parameterName">
-    /// The base name of the parameter. Must not be <c>null</c>, empty, or white space.
-    /// </param>
+    /// <param name="parameterName">The base parameter name. Must not be <c>null</c>, empty, or whitespace.</param>
     /// <exception cref="InvalidParameterIdentifierException">
-    /// Thrown when <paramref name="parameterName"/> is <c>null</c>, empty, or white space.
+    /// Thrown when <paramref name="parameterName"/> or the combined result is invalid per SQL identifier rules.
     /// </exception>
     public ParameterTag(string parameterName)
     {
@@ -109,11 +106,11 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
 
     /// <summary>
     /// Implicitly converts a <see cref="ParameterTag"/> to its SQL string representation,
-    /// combining the prefix, base name, and index (if present) with underscores.
+    /// combining prefix, base name, and index (if present) with underscores.
     /// </summary>
     /// <param name="value">The <see cref="ParameterTag"/> to convert.</param>
     /// <returns>
-    /// A SQL parameter name as a string, for example <c>Prefix_Column_Index</c>.
+    /// The SQL parameter name string (e.g., <c>Prefix_Column_Index</c>; missing parts are omitted).
     /// </returns>
     public static implicit operator string(ParameterTag value)
     {
@@ -123,31 +120,24 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     }
 
     /// <summary>
-    /// Returns the SQL string representation of this <see cref="ParameterTag"/> instance,
-    /// which is equivalent to the result of the implicit conversion to <see cref="string"/>.
+    /// Returns the SQL string representation of this <see cref="ParameterTag"/> instance.
     /// </summary>
     /// <returns>
-    /// A SQL parameter name as a string, for example <c>Prefix_Column_Index</c>.
+    /// The SQL parameter name string (e.g., <c>Prefix_Column_Index</c>; missing parts are omitted).
     /// </returns>
     public override string ToString() =>
         (string)this;
 
     /// <summary>
-    /// Compares this <see cref="ParameterTag"/> instance with another
-    /// to determine their relative sort order.
+    /// Compares this <see cref="ParameterTag"/> with another instance to determine sort order.
     /// </summary>
-    /// <param name="other">
-    /// The <see cref="ParameterTag"/> to compare with the current instance.
-    /// </param>
+    /// <param name="other">The other <see cref="ParameterTag"/> to compare.</param>
     /// <returns>
-    /// A signed integer that indicates the relative order of the objects:
-    /// <c>0</c> if they are equal, a negative value if this instance precedes
-    /// <paramref name="other"/>, and a positive value if this instance follows
-    /// <paramref name="other"/>.
+    /// A signed integer: <c>0</c> if equal; less than <c>0</c> if this instance precedes
+    /// <paramref name="other"/>; greater than <c>0</c> if it follows.
     /// </returns>
     /// <remarks>
-    /// The comparison is case-insensitive and uses
-    /// <see cref="StringComparison.OrdinalIgnoreCase"/>.
+    /// Comparison is case-insensitive via <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// If <paramref name="other"/> is <c>null</c>, this instance is considered greater.
     /// </remarks>
     public int CompareTo(ParameterTag? other)
@@ -157,20 +147,13 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     }
 
     /// <summary>
-    /// Determines whether the current <see cref="ParameterTag"/> is equal to another
-    /// <see cref="ParameterTag"/> instance.
+    /// Determines whether this <see cref="ParameterTag"/> is equal to another instance.
     /// </summary>
-    /// <param name="other">
-    /// The <see cref="ParameterTag"/> to compare with this instance.
-    /// </param>
+    /// <param name="other">The other <see cref="ParameterTag"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if both instances represent the same parameter (case-insensitive);
-    /// otherwise, <c>false</c>.
+    /// <c>true</c> if both represent the same parameter (case-insensitive); otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and uses
-    /// <see cref="StringComparison.OrdinalIgnoreCase"/>.
-    /// </remarks>
+    /// <remarks>Equality uses <see cref="StringComparison.OrdinalIgnoreCase"/>.</remarks>
     public bool Equals(ParameterTag? other)
     {
         if (other is null) return false;
@@ -178,28 +161,22 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     }
 
     /// <summary>
-    /// Determines whether the specified object is equal to the current
-    /// <see cref="ParameterTag"/> instance.
+    /// Determines whether the specified object is equal to this <see cref="ParameterTag"/>.
     /// </summary>
-    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <param name="obj">The object to compare with this instance.</param>
     /// <returns>
-    /// <c>true</c> if <paramref name="obj"/> is a <see cref="ParameterTag"/> and
-    /// represents the same parameter (case-insensitive); otherwise, <c>false</c>.
+    /// <c>true</c> if <paramref name="obj"/> is a <see cref="ParameterTag"/> representing the same
+    /// parameter (case-insensitive); otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and delegates to
-    /// <see cref="Equals(ParameterTag?)"/>.
-    /// </remarks>
     public override bool Equals(object? obj) =>
         obj is ParameterTag ct && Equals(ct);
 
     /// <summary>
-    /// Returns a hash code for this <see cref="ParameterTag"/> instance,
-    /// consistent with the case-insensitive comparison used in <see cref="Equals(ParameterTag?)"/>.
+    /// Returns a hash code for this <see cref="ParameterTag"/>, consistent with case-insensitive equality.
     /// </summary>
     /// <returns>
-    /// An integer hash code based on the string representation of this parameter,
-    /// computed using <see cref="StringComparison.OrdinalIgnoreCase"/>.
+    /// An integer hash code computed from the string representation using
+    /// <see cref="StringComparison.OrdinalIgnoreCase"/>.
     /// </returns>
     public override int GetHashCode() =>
         ((string) this).GetHashCode(StringComparison.OrdinalIgnoreCase);
@@ -209,14 +186,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// </summary>
     /// <param name="x">The first <see cref="ParameterTag"/> to compare.</param>
     /// <param name="y">The second <see cref="ParameterTag"/> to compare.</param>
-    /// <returns>
-    /// <c>true</c> if both <paramref name="x"/> and <paramref name="y"/> represent the same
-    /// parameter (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and delegates to
-    /// <see cref="Equals(ParameterTag?)"/>.
-    /// </remarks>
+    /// <returns><c>true</c> if both represent the same parameter (case-insensitive); otherwise, <c>false</c>.</returns>
     public bool Equals(ParameterTag? x, ParameterTag? y)
     {
         if (ReferenceEquals(x, y)) return true;
@@ -226,15 +196,11 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
 
     /// <summary>
     /// Returns a hash code for the specified <see cref="ParameterTag"/> instance,
-    /// consistent with the case-insensitive comparison used in <see cref="Equals(ParameterTag?, ParameterTag?)"/>.
+    /// consistent with case-insensitive equality semantics.
     /// </summary>
     /// <param name="obj">The <see cref="ParameterTag"/> for which to compute a hash code.</param>
-    /// <returns>
-    /// An integer hash code for <paramref name="obj"/>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="obj"/> is <c>null</c>.
-    /// </exception>
+    /// <returns>An integer hash code for <paramref name="obj"/>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="obj"/> is <c>null</c>.</exception>
     public int GetHashCode(ParameterTag obj) =>
         obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
 
@@ -243,14 +209,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// </summary>
     /// <param name="left">The first <see cref="ParameterTag"/> to compare.</param>
     /// <param name="right">The second <see cref="ParameterTag"/> to compare.</param>
-    /// <returns>
-    /// <c>true</c> if both <paramref name="left"/> and <paramref name="right"/> represent
-    /// the same parameter (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and equivalent to calling
-    /// <see cref="Equals(ParameterTag?, ParameterTag?)"/>.
-    /// </remarks>
+    /// <returns><c>true</c> if both represent the same parameter (case-insensitive); otherwise, <c>false</c>.</returns>
     public static bool operator ==(ParameterTag? left, ParameterTag? right)
     {
         if (ReferenceEquals(left, right)) return true;
@@ -263,14 +222,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// </summary>
     /// <param name="left">The first <see cref="ParameterTag"/> to compare.</param>
     /// <param name="right">The second <see cref="ParameterTag"/> to compare.</param>
-    /// <returns>
-    /// <c>true</c> if <paramref name="left"/> and <paramref name="right"/> do not represent
-    /// the same parameter (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and is the logical negation of
-    /// <see cref="operator ==(ParameterTag?, ParameterTag?)"/>.
-    /// </remarks>
+    /// <returns><c>true</c> if the instances differ; otherwise, <c>false</c>.</returns>
     public static bool operator !=(ParameterTag? left, ParameterTag? right)
     {
         return !(left == right);
@@ -280,63 +232,32 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// Determines whether this <see cref="ParameterTag"/> is empty.
     /// </summary>
     /// <returns>
-    /// <c>true</c> if the parameter name is <c>null</c>, empty, or consists only of white space;
-    /// otherwise, <c>false</c>.
+    /// <c>true</c> if the parameter string is <c>null</c>, empty, or whitespace; otherwise, <c>false</c>.
     /// </returns>
     internal bool IsEmpty() =>
         ((string)this).IsNullOrWhiteSpace();
 
     /// <summary>
-    /// Creates a new <see cref="ParameterTag"/> with the specified text prepended
-    /// to the existing prefix (if any).
+    /// Creates a new <see cref="ParameterTag"/> with text prepended to the existing prefix (if any).
     /// </summary>
-    /// <param name="textToAppend">
-    /// The text to prepend to the prefix. If the current prefix is empty,
-    /// this value becomes the new prefix.
+    /// <param name="textToPrepend">
+    /// The text to prepend to the current prefix. If the prefix is empty, this becomes the new prefix.
     /// </param>
-    /// <returns>
-    /// A new <see cref="ParameterTag"/> with the updated prefix.
-    /// </returns>
-    internal ParameterTag PrefixPrepend(string? textToAppend)
+    /// <returns>A new <see cref="ParameterTag"/> with the updated prefix.</returns>
+    internal ParameterTag PrefixPrepend(string? textToPrepend)
     {
         if (_prefix.IsNullOrWhiteSpace())
-            return new(textToAppend, _parameterBaseName, _index);
+            return new(textToPrepend, _parameterBaseName, _index);
         else
-            return new($"{textToAppend}_{_prefix}", _parameterBaseName, _index);
+            return new($"{textToPrepend}_{_prefix}", _parameterBaseName, _index);
     }
 
     /// <summary>
-    /// Creates a new <see cref="ParameterTag"/> with the specified text appended
-    /// to the existing prefix (if any).
+    /// Creates a new <see cref="ParameterTag"/> with the specified index appended.
     /// </summary>
-    /// <param name="textToAppend">
-    /// The text to append to the prefix. If the current prefix is empty,
-    /// this value becomes the new prefix.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="ParameterTag"/> with the updated prefix.
-    /// </returns>
-    internal ParameterTag PrefixAppend(string? textToAppend)
-    {
-        if (_prefix.IsNullOrWhiteSpace())
-            return new(textToAppend, _parameterBaseName, _index);
-        else
-            return new($"{_prefix}_{textToAppend}", _parameterBaseName, _index);
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="ParameterTag"/> with the specified index appended
-    /// to the current parameter identifier.
-    /// </summary>
-    /// <param name="newIndex">
-    /// The index value to append. Must not be <c>null</c>, empty, or white space.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="ParameterTag"/> that includes the specified index.
-    /// </returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown if an index has already been defined on this <see cref="ParameterTag"/>.
-    /// </exception>
+    /// <param name="newIndex">The index value to append. Must not be <c>null</c>, empty, or whitespace.</param>
+    /// <returns>A new <see cref="ParameterTag"/> that includes the specified index.</returns>
+    /// <exception cref="ArgumentException">Thrown if an index has already been defined on this instance.</exception>
     internal ParameterTag AddIndex(string? newIndex)
     {
         if (_index.IsNullOrWhiteSpace())

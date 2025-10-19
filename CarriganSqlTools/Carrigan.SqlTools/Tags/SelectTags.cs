@@ -8,7 +8,8 @@ using Carrigan.SqlTools.RegularExpressions;
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
-/// Contains multiple <see cref="SelectTag"/>
+/// Represents a collection of <see cref="SelectTag"/> items, providing utilities to
+/// append, concatenate, and render them for a SELECT list.
 /// </summary>
 public class SelectTags : SelectTagsBase
 {
@@ -16,105 +17,80 @@ public class SelectTags : SelectTagsBase
     private readonly IEnumerable<SelectTag> _selectTags;
 
     /// <summary>
-    /// A constructor that builds the instance with an enumeration of <see cref="SelectTag"/>
+    /// Represents a collection of <see cref="SelectTag"/> items, providing utilities to
+    /// append, concatenate, and render them for a SELECT list.
     /// </summary>
-    /// <param name="selectTags"></param>
     public SelectTags(params IEnumerable<SelectTag> selectTags) =>
         _selectTags = selectTags;
 
-    //Proof read documentation, 
     /// <summary>
-    /// Determines if this instance contains any actual SelectTags
-    /// For SelectTags, this will be true if the underlying Enumeration is not empty.
+    /// Indicates whether this instance contains any select tags.
+    /// For <see cref="SelectTags"/>, this returns <c>true</c> when the underlying enumeration is not empty.
     /// </summary>
-    /// <returns>
-    /// True if this instance contains any actual SelectTags
-    /// For SelectTags, this will be true if the underlying Enumeration is not empty.
-    /// </returns>
+    /// <returns><c>true</c> if one or more items exist; otherwise, <c>false</c>.</returns>
     public override bool Any() =>
         _selectTags.Any();
 
     /// <summary>
-    /// Determines if this instance contains no SelectTags
-    /// For SelectTags, this will be true if the underlying Enumeration is empty.
+    /// Indicates whether this instance contains no select tags.
+    /// For <see cref="SelectTags"/>, this returns <c>true</c> when the underlying enumeration is empty.
     /// </summary>
-    /// <returns>
-    /// Determines if this instance contains no SelectTags
-    /// For SelectTags, this will be true if the underlying Enumeration is empty.
-    /// </returns>
+    /// <returns><c>true</c> if no items exist; otherwise, <c>false</c>.</returns>
     public override bool Empty() =>
         Any() is false;
 
     /// <summary>
-    /// Get all SelectTags associated with the instance, as a string.
-    /// For SelectTags this will be a comma separated list.
+    /// Returns the SQL text for all select tags represented by this instance as a comma-separated list.
     /// </summary>
-    /// <returns>
-    /// All SelectTags associated with the instance, as a string. 
-    /// For SelectTags this will be a comma separated list.
-    /// </returns>
+    /// <returns>A comma-separated list of the contained <see cref="SelectTag"/> SQL fragments.</returns>
     public override string ToSql() =>
         string.Join(", ", _selectTags);
 
     /// <summary>
-    /// Get all TableTags associated with the instance.
-    /// For SelectTags this will be multiple TableTags.
+    /// Gets all distinct <see cref="TableTag"/> values referenced by the contained select tags.
     /// </summary>
-    /// <returns>
-    /// All TableTags associated with the instance.
-    /// For SelectTags this will be multiple TableTags.
-    /// </returns>
+    /// <returns>An enumeration of unique <see cref="TableTag"/> values.</returns>
     internal override IEnumerable<TableTag> GetTableTags() =>
         _selectTags
             .SelectMany(select => select.GetTableTags())
             .Distinct();
 
     /// <summary>
-    /// Create a new <see cref="SelectTags"/> and append <paramref name="selectTag"/> to it.
+    /// Returns a new <see cref="SelectTags"/> containing the current items plus the specified <paramref name="selectTag"/>.
     /// </summary>
-    /// <typeparam name="T">T</typeparam>
-    /// <param name="selectTag">Provided <see cref="SelectTag"/></param>
-    /// <returns>
-    /// Create a new <see cref="SelectTags"/> and append <see cref="SelectTag"/> to it.
-    /// </returns>
-     public  SelectTags Append(SelectTag selectTag) =>
+    /// <param name="selectTag">The <see cref="SelectTag"/> to append.</param>
+    /// <returns>A new <see cref="SelectTags"/> with <paramref name="selectTag"/> appended.</returns>
+    public SelectTags Append(SelectTag selectTag) =>
         new(_selectTags.Append(selectTag));
 
     /// <summary>
-    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
-    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
-    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
+    /// Returns a new <see cref="SelectTags"/> containing the current items plus a new <see cref="SelectTag"/>
+    /// based on the provided <paramref name="property"/> and optional <paramref name="aliasName"/>.
     /// </summary>
-    /// <typeparam name="T">T</typeparam>
-    /// <param name="property">Provided property name</param>
-    /// <param name="aliasName">provided alias name</param>
-    /// <returns>
-    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
-    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
-    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
-    /// </returns>
+    /// <typeparam name="T">The entity/model type that defines <paramref name="property"/>.</typeparam>
+    /// <param name="property">The property to project.</param>
+    /// <param name="aliasName">An optional alias override; if provided, it must be a valid SQL identifier.</param>
+    /// <returns>A new <see cref="SelectTags"/> with the additional projection.</returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
+    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     public SelectTags Append<T>(PropertyName property, AliasName? aliasName = null) =>
         Append (SelectTag.Get<T>(property, aliasName));
 
 
     /// <summary>
-    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
-    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
-    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
+    /// Returns a new <see cref="SelectTags"/> containing the current items plus a new <see cref="SelectTag"/>
+    /// based on the provided <paramref name="property"/> and optional <paramref name="aliasName"/>.
     /// </summary>
-    /// <typeparam name="T">T</typeparam>
-    /// <param name="property">Provided property name</param>
-    /// <param name="aliasName">provided alias name</param>
-    /// <returns>
-    /// Create a new <see cref="SelectTags"/> and append a new <see cref="SelectTag"/> 
-    /// to it based on provided parameters, <paramref name="aliasName"/> and <paramref name="property"/>. 
-    /// Return the resulting <see cref="SelectTags"/> without modifying the original.
-    /// </returns>
+    /// <typeparam name="T">The entity/model type that defines <paramref name="property"/>.</typeparam>
+    /// <param name="property">The property name to project.</param>
+    /// <param name="aliasName">An optional alias override; if provided, it must be a valid SQL identifier.</param>
+    /// <returns>A new <see cref="SelectTags"/> with the additional projection.</returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
+    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
     [ExternalOnly]
     public SelectTags Append<T>(string property, string? aliasName = null)
@@ -142,17 +118,15 @@ public class SelectTags : SelectTagsBase
 
 
     /// <summary>
-    /// Return a new <see cref="SelectTags"/> by concatenating <see cref="SelectTag"/> that correspond
-    /// to the provided properties.
+    /// Returns a new <see cref="SelectTags"/> by concatenating projections for the specified <paramref name="properties"/> on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T">T</typeparam>
-    /// <param name="properties">Provided properties name</param>
+    /// <typeparam name="T">The entity/model type that defines the properties.</typeparam>
+    /// <param name="properties">One or more property names to project.</param>
     /// <returns>
-    /// Return a new <see cref="SelectTags"/> by concatenating <see cref="SelectTag"/> that correspond
-    /// to the provided properties.
+    /// A new <see cref="SelectTags"/> that contains all existing items plus the projections for <paramref name="properties"/>.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
+    /// Thrown when any provided property is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     public SelectTags Concat<T>(params IEnumerable<PropertyName> properties) =>
         new
@@ -166,23 +140,36 @@ public class SelectTags : SelectTagsBase
         );
 
     /// <summary>
-    /// Return a new <see cref="SelectTags"/> by concatenating <see cref="SelectTag"/> that correspond
-    /// to the provided properties.
+    /// Returns a new <see cref="SelectTags"/> by concatenating projections for the specified <paramref name="properties"/> on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T">T</typeparam>
-    /// <param name="properties">Provided properties name</param>
+    /// <typeparam name="T">The entity/model type that defines the properties.</typeparam>
+    /// <param name="properties">One or more property names to project.</param>
     /// <returns>
-    /// Return a new <see cref="SelectTags"/> by concatenating <see cref="SelectTag"/> that correspond
-    /// to the provided properties.
+    /// A new <see cref="SelectTags"/> that contains all existing items plus the projections for <paramref name="properties"/>.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
+    /// Thrown when any provided property is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
     public SelectTags Concat<T>(params IEnumerable<string> properties) =>
         Concat<T>(properties.Select(name => new PropertyName(name)));
 
-
+    /// <summary>
+    /// Creates a new <see cref="SelectTags"/> containing a single <see cref="SelectTag"/> built from
+    /// the specified <paramref name="properties"/> and optional <paramref name="aliasName"/>.
+    /// </summary>
+    /// <typeparam name="T">The entity/model type that defines <paramref name="properties"/>.</typeparam>
+    /// <param name="properties">The property to project.</param>
+    /// <param name="aliasName">An optional alias override; if provided, it must be a valid SQL identifier.</param>
+    /// <returns>
+    /// A new <see cref="SelectTags"/> containing a single projection for <paramref name="properties"/>.
+    /// </returns>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when <paramref name="properties"/> is not a valid, mappable column property for <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
+    /// </exception>
     public static SelectTags Get<T>(PropertyName properties, AliasName? aliasName = null)
     {
         if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
@@ -200,18 +187,21 @@ public class SelectTags : SelectTagsBase
         );
     }
 
-    //TODO: Proof read Documentation, 
     /// <summary>
-    /// Get a new Select Tags with a new Select Tag based of the property and alias provided.
+    /// Creates a new <see cref="SelectTags"/> containing a single <see cref="SelectTag"/> built from
+    /// the specified <paramref name="property"/> and optional <paramref name="aliasName"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="property">Property provided</param>
-    /// <param name="aliasName">Alias provided</param>
+    /// <typeparam name="T">The entity/model type that defines <paramref name="property"/>.</typeparam>
+    /// <param name="property">The property name to project.</param>
+    /// <param name="aliasName">An optional alias override; if provided, it must be a valid SQL identifier.</param>
     /// <returns>
-    /// A new Select Tags with a new Select Tag based of the property and alias provided.
+    /// A new <see cref="SelectTags"/> containing a single projection for <paramref name="property"/>.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Throws in the property is invalid for class T, or ineligible to model a column.
+    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
     [ExternalOnly]
     public static SelectTags Get<T>(string property, string? aliasName = null)
@@ -223,14 +213,14 @@ public class SelectTags : SelectTagsBase
         return Get<T>(new PropertyName(property), alias);
     }
 
-    //TODO: Proof read Documentation
     /// <summary>
-    /// Get new a <see cref="SelectTags"/> for multiple existing <see cref="SelectTag"/>s based of the properties provided.
+    /// Creates a new <see cref="SelectTags"/> containing the existing <see cref="SelectTag"/> values
+    /// that correspond to the specified <paramref name="properties"/> on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="properties">Properties provided</param>
+    /// <typeparam name="T">The entity/model type that defines the properties.</typeparam>
+    /// <param name="properties">One or more property names to project.</param>
     /// <returns>
-    /// A new  <see cref="SelectTags"/> for multiple existing <see cref="SelectTag"/>s based of the properties provided.
+    /// A new <see cref="SelectTags"/> for the projections of <paramref name="properties"/>.
     /// </returns>
     public static SelectTags GetMany<T>(params IEnumerable<PropertyName> properties) =>
         new
@@ -240,26 +230,23 @@ public class SelectTags : SelectTagsBase
                     .Select(column => column.SelectTag)
         );
 
-    //TODO: Proof read Documentation
     /// <summary>
-    /// Get new a <see cref="SelectTags"/> for multiple existing <see cref="SelectTag"/>s based of the properties provided.
+    /// Creates a new <see cref="SelectTags"/> containing the existing <see cref="SelectTag"/> values
+    /// that correspond to the specified <paramref name="properties"/> on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="properties">Properties provided</param>
+    /// <typeparam name="T">The entity/model type that defines the properties.</typeparam>
+    /// <param name="properties">One or more property names to project.</param>
     /// <returns>
-    /// A new  <see cref="SelectTags"/> for multiple existing <see cref="SelectTag"/>s based of the properties provided.
+    /// A new <see cref="SelectTags"/> for the projections of <paramref name="properties"/>.
     /// </returns>
     [ExternalOnly]
     public static SelectTags GetMany<T>(params IEnumerable<string> properties) =>
         GetMany<T>(properties.Select(name => new PropertyName(name)));
 
-
     /// <summary>
-    /// Get all SelectTags associated with the instance, as an Enumeration.
+    /// Returns all <see cref="SelectTag"/> items contained in this instance.
     /// </summary>
-    /// <returns>
-    /// All SelectTags associated with the instance, as an Enumeration.
-    /// </returns>
+    /// <returns>An enumeration of <see cref="SelectTag"/> values.</returns>
     public override IEnumerable<SelectTag> All() => 
         _selectTags;
 }

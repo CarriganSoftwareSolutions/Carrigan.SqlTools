@@ -1,38 +1,35 @@
 ﻿namespace Carrigan.SqlTools.Tags;
-//TODO: Proof read Documentation
+
+/// <summary>
+/// Base type for SELECT projection containers.
+/// Provides an abstraction over a single <see cref="SelectTag"/> or a collection of them.
+/// </summary>
+/// <remarks>
+/// Derived types must expose the contained projections, render them to SQL, surface the
+/// associated <see cref="TableTag"/> values, and report basic presence/emptiness semantics.
+/// </remarks>
 public abstract class SelectTagsBase
 {
     /// <summary>
-    /// Get all SelectTags associated with the instance, as an Enumeration.
-    /// For SelectTag this will just be itself as an IEnumerable.
+    /// Returns all <see cref="SelectTag"/> items represented by this instance.
     /// </summary>
-    /// <returns>
-    /// All SelectTags associated with the instance, as a string. 
-    /// For SelectTag this will just be itself.
-    /// </returns>
+    /// <returns>An enumeration of <see cref="SelectTag"/> values.</returns>
     public abstract IEnumerable<SelectTag> All();
 
     /// <summary>
-    /// Get all SelectTags associated with the instance, as a string.
-    /// For SelectTag this will just be itself.
-    /// For SelectTags this will be a comma separated list.
+    /// Returns the SQL text for all select tags represented by this instance.
     /// </summary>
-    /// <returns>
-    /// All SelectTags associated with the instance, as a string. 
-    /// For SelectTag this will just be itself.
-    /// For SelectTags this will be a comma separated list.
-    /// </returns>
+    /// <remarks>
+    /// For a single <see cref="SelectTag"/>, this is just that tag’s SQL.
+    /// For a collection, tags are typically joined by <c>", "</c>.
+    /// </remarks>
+    /// <returns>The SQL text represented by this instance.</returns>
     public abstract string ToSql();
+
     /// <summary>
-    /// Get all TableTags associated with the instance.
-    /// For SelectTag this will just it's TableTag as an Enumerable.
-    /// For SelectTags this will be multiple TableTags.
+    /// Gets all distinct <see cref="TableTag"/> values referenced by the select tags in this instance.
     /// </summary>
-    /// <returns>
-    /// All TableTags associated with the instance.
-    /// For SelectTag this will just it's TableTag as an Enumerable.
-    /// For SelectTags this will be multiple TableTags.
-    /// </returns>
+    /// <returns>An enumeration of unique <see cref="TableTag"/> values.</returns>
     internal abstract IEnumerable<TableTag> GetTableTags();
 
     /// <summary>
@@ -48,14 +45,12 @@ public abstract class SelectTagsBase
     public abstract bool Any();
 
     /// <summary>
-    /// Determines if this instance contains no SelectTags
-    /// For SelectTag, this should always be false.
-    /// For SelectTags, this will be true if the underlying Enumeration is empty.
+    /// Indicates whether this instance represents no select tags.
     /// </summary>
-    /// <returns>
-    /// Determines if this instance contains no SelectTags
-    /// For SelectTag, this should always be false.
-    /// For SelectTags, this will be true if the underlying Enumeration is empty.
-    /// </returns>
+    /// <remarks>
+    /// A single <see cref="SelectTag"/> should return <c>false</c>.
+    /// A collection returns <c>true</c> only if it is empty.
+    /// </remarks>
+    /// <returns><c>true</c> if no items exist; otherwise, <c>false</c>.</returns>
     public abstract bool Empty();
 }

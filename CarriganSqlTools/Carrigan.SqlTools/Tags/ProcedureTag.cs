@@ -9,8 +9,8 @@ namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
 /// Represents a stored procedure identifier (“tag”) in the form <c>[Schema].[Procedure]</c>.
-/// The <c>[Schema]</c> segment is included only if explicitly provided. Implements
-/// comparison and equality for use in sorting and hashed collections.
+/// The <c>[Schema]</c> segment is included only when explicitly provided.
+/// Implements comparison and equality for use in sorting and hashed collections.
 /// </summary>
 /// <example>
 /// <para>
@@ -46,8 +46,12 @@ internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag
     /// <summary>
     /// Initializes a new instance of the <see cref="ProcedureTag"/> class.
     /// </summary>
-    /// <param name="schemaName">The optional schema name. If <c>null</c> or empty, only the procedure name is used.</param>
-    /// <param name="procedureName">The procedure name. Must not be <c>null</c> or empty.</param>
+    /// <param name="schemaName">
+    /// The optional schema name. If <c>null</c> or empty, only the procedure name is used.
+    /// </param>
+    /// <param name="procedureName">
+    /// The procedure name. Must not be <c>null</c> or empty.
+    /// </param>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="procedureName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
@@ -55,15 +59,15 @@ internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag
         _procedureTag = schemaName.IsNullOrEmpty() ? $"[{procedureName}]" : $"[{schemaName}].[{procedureName}]";
 
 
-    //TODO: proof read documentation
     /// <summary>
     /// Initializes a new instance of the <see cref="ProcedureTag"/> class.
     /// </summary>
     /// <remarks>
-    /// Internal items marked ExternalOnly can still be used in the unit test project for this project.
-    /// This constructor is meant for unit testing only.
+    /// Marked <see cref="ExternalOnlyAttribute"/> so unit tests can access it while keeping the API internal.
     /// </remarks>
-    /// <param name="schemaName">The optional schema name. If <c>null</c> or empty, only the procedure name is used.</param>
+    /// <param name="schemaName">
+    /// The optional schema name. If <c>null</c> or empty, only the procedure name is used.
+    /// </param>
     /// <param name="procedureName">The procedure name. Must not be <c>null</c> or empty.</param>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="procedureName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
@@ -90,25 +94,26 @@ internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag
 
     /// <summary>
     /// Compares this instance to another <see cref="ProcedureTag"/> and returns a value
-    /// indicating the sort order.
+    /// indicating their relative sort order.
     /// </summary>
     /// <param name="other">The other <see cref="ProcedureTag"/> to compare.</param>
     /// <returns>
-    /// A signed integer indicating relative order: 0 if equal; less than 0 if this instance
-    /// precedes <paramref name="other"/>; greater than 0 if it follows.
+    /// A signed integer indicating relative order:
+    /// <c>0</c> if equal; &lt; 0 if this instance precedes <paramref name="other"/>; &gt; 0 if it follows.
     /// </returns>
-    /// <remarks>Comparison is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
+    /// <remarks>Comparison is case-sensitive via <see cref="StringComparison.Ordinal"/>.</remarks>
     public int CompareTo(ProcedureTag? other)
     {
         if (other is null) return 1; 
         return string.Compare(_procedureTag, other._procedureTag, StringComparison.Ordinal);
     }
+
     /// <summary>
     /// Determines whether this <see cref="ProcedureTag"/> is equal to another instance.
     /// </summary>
     /// <param name="other">The other <see cref="ProcedureTag"/> to compare.</param>
     /// <returns><c>true</c> if both represent the same identifier; otherwise, <c>false</c>.</returns>
-    /// <remarks>Equality is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
+    /// <remarks>Equality is case-sensitive via <see cref="StringComparison.Ordinal"/>.</remarks>
     public bool Equals(ProcedureTag? other)
     {
         if (other is null) return false;
@@ -116,11 +121,14 @@ internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag
 
         return string.Equals(_procedureTag, other._procedureTag, StringComparison.Ordinal);
     }
+
     /// <summary>
     /// Determines whether the specified object is equal to the current instance.
     /// </summary>
     /// <param name="obj">The object to compare with this instance.</param>
-    /// <returns><c>true</c> if <paramref name="obj"/> is a <see cref="ProcedureTag"/> equal to this instance; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="obj"/> is a <see cref="ProcedureTag"/> equal to this instance; otherwise, <c>false</c>.
+    /// </returns> 
     public override bool Equals(object? obj) =>
         Equals(obj as ProcedureTag);
 
@@ -137,7 +145,7 @@ internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag
     /// <param name="x">The first <see cref="ProcedureTag"/> to compare.</param>
     /// <param name="y">The second <see cref="ProcedureTag"/> to compare.</param>
     /// <returns><c>true</c> if both are equal; otherwise, <c>false</c>.</returns>
-    /// <remarks>Equality is case-sensitive and uses <see cref="StringComparison.Ordinal"/>.</remarks>
+    /// <remarks>Equality is case-sensitive via <see cref="StringComparison.Ordinal"/>.</remarks>
     public bool Equals(ProcedureTag? x, ProcedureTag? y)
     {
         if (x is null && y is null) return true;
@@ -152,6 +160,7 @@ internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag
     /// <returns>An integer hash code computed using <see cref="StringComparison.Ordinal"/>.</returns>
     public int GetHashCode(ProcedureTag obj) =>
         obj._procedureTag.GetHashCode(StringComparison.Ordinal);
+
 
     /// <summary>
     /// Determines whether two <see cref="ProcedureTag"/> instances are equal.
@@ -182,14 +191,14 @@ internal class ProcedureTag : IComparable<ProcedureTag>, IEquatable<ProcedureTag
 
     /// <summary>
     /// Retrieves the <see cref="ProcedureTag"/> associated with the specified entity type by using
-    /// the internal SQL tools reflection cache.
+    /// the internal SQL Tools reflection cache.
     /// </summary>
-    /// <param name="value">The entity type for which to retrieve the procedure tag.</param>
+    /// <param name="value">The entity CLR <see cref="Type"/> whose procedure tag should be retrieved.</param>
     /// <returns>The <see cref="ProcedureTag"/> for the specified type.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <c>null</c>.</exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the underlying reflection cache does not expose a non-public static
-    /// <c>ProcedureTag</c> property, or when it returns <c>null</c>.
+    /// <c>ProcedureTag</c> property, or when the property value is <c>null</c>.
     /// </exception>
     internal static ProcedureTag Get(Type value)
     {
