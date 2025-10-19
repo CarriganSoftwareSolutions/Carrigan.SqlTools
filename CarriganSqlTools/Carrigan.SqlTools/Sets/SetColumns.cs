@@ -56,13 +56,13 @@ namespace Carrigan.SqlTools.Sets;
 public class SetColumns<T>
 {
     /// <summary>
-    /// Gets the collection of <see cref="ColumnTag"/> objects representing
-    /// the columns used in this instance.
+    /// Getter for the collection of <see cref="ColumnTag"/> objects representing
+    /// the properties in the data model.
     /// </summary>
     internal IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SetColumns"/> class,
+    /// Initializes a new instance of the <see cref="SetColumns{T}"/> class,
     /// specifying the properties (columns) to include in the SQL <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyNames">
@@ -72,7 +72,7 @@ public class SetColumns<T>
         ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SetColumns"/> class,
+    /// Initializes a new instance of the <see cref="SetColumns{T}"/> class,
     /// specifying the properties (columns) to include in the SQL <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyNames">
@@ -88,8 +88,8 @@ public class SetColumns<T>
     /// <param name="propertyName">
     /// The name of the property that represents the column to add.
     /// </param>
-    /// <exception cref="ArgumentException">
-    /// Thrown if the specified column name is not found.
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown if the specified <paramref name="propertyName"/> is not found in the data model
     /// </exception>
     public void AddColumn(PropertyName propertyName)
     {
@@ -104,8 +104,8 @@ public class SetColumns<T>
     /// <param name="propertyName">
     /// The name of the property that represents the column to add.
     /// </param>
-    /// <exception cref="ArgumentException">
-    /// Thrown if the specified column name is not found.
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown if the specified <paramref name="propertyName"/> is not found in the data model
     /// </exception>
     [ExternalOnly]
     public void AddColumn(string propertyName) =>
