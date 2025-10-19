@@ -28,8 +28,7 @@ public partial class SqlGenerator<T>
     /// Thrown if the generated query references invalid or unrecognized table identifiers.
     /// </exception>
     /// <remarks>
-    /// The data model type must be <c>public</c>, and any properties intended to map
-    /// to columns must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -84,8 +83,7 @@ public partial class SqlGenerator<T>
     /// Thrown if there is an ambiguous select tag.
     /// </exception>
     /// <remarks>
-    /// The data model type <typeparamref name="T"/> must be <c>public</c>, and any properties
-    /// intended to map to columns must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
     /// <para>Select with join example:</para>
@@ -244,8 +242,8 @@ public partial class SqlGenerator<T>
     /// <remarks>
     /// The generated <c>WHERE</c> clause is composed as an <c>OR</c> of per-entity
     /// <c>AND</c> predicates over the key columns.
-    /// The data model type must be <c>public</c>, and any properties intended to map
-    /// to columns must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[

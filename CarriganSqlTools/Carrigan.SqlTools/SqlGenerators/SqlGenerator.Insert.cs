@@ -20,8 +20,7 @@ public partial class SqlGenerator<T>
     /// using an output table and a <c>SELECT</c> statement.
     /// </returns>
     /// <remarks>
-    /// The data model type must be <c>public</c>, and any properties intended to map to columns
-    /// must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
     /// </remarks>
     internal static string ModifyInsertQueryToReturnScalar(string queryText) =>
         // Build the final query using a temporary table to store the GUID
@@ -78,9 +77,7 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>INSERT</c> statement.
     /// </returns>
     /// <remarks>
-    /// For this method to work correctly, all key properties must have database default values.  
-    /// The data model type must be <c>public</c>, and any properties intended for use as
-    /// columns must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -129,8 +126,7 @@ public partial class SqlGenerator<T>
     }
 
     /// <summary>
-    /// Generates a SQL <c>INSERT</c> statement for one or more entities,
-    /// relying on database default values for key (identity) properties.
+    /// Generates a SQL <c>INSERT</c> statement for one or more entities.
     /// </summary>
     /// <param name="entities">
     /// A collection of data model instances representing the new records to insert.
@@ -139,9 +135,8 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated multi-row <c>INSERT</c> statement.
     /// </returns>
     /// <remarks>
-    /// For this method to work correctly, all key properties must have database default values.  
-    /// The data model type must be <c>public</c>, and any properties intended to map to
-    /// columns must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[

@@ -22,8 +22,7 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// The data model type must be <c>public</c>, and any properties that should map to
-    /// columns must be public instance properties with a public getter.
+    /// When building the SQL, only public properties with a getter are considered.
     /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -55,8 +54,7 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// The data model type must be <c>public</c>, and any properties that should map to
-    /// columns must be public instance properties with a public getter.
+    /// When building the SQL, only public properties with a getter are considered.
     /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -86,10 +84,9 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// The data model type must be <c>public</c>, and any properties intended for use as
-    /// columns must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
     /// </remarks>
-    /// <param name="entity">an IEnumerable use the data model as an id holder, uses only the key properties</param>
+    /// <param name="entity">an IEnumerable of the data model use only as an id holder, uses only the key properties</param>
     /// <returns>Returns an SqlQuery object</returns>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -124,8 +121,8 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// The data model type must be <c>public</c>, and any properties intended to map to columns
-    /// must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="InvalidTableException">
     /// Thrown when a <see cref="TableTag"/> referenced during SQL generation

@@ -122,8 +122,8 @@ public partial class SqlGenerator<T>
     /// including parameters for both the <c>SET</c> values and the key-based <c>WHERE</c> filter.
     /// </returns>
     /// <remarks>
-    /// The data model type must be <c>public</c>, and any properties intended to map to
-    /// columns must be public instance properties with a public getter.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
     /// <para>

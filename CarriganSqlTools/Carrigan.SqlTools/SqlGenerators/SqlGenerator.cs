@@ -18,8 +18,8 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// public metadata.
 /// </summary>
 /// <remarks>
-/// The data model type must be <c>public</c>, and any properties intended to be used
-/// as columns must be public instance properties with a public getter.
+/// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+/// Members not visible outside their defining assembly are ignored.
 /// </remarks>
 /// <typeparam name="T">
 /// The entity or data model type that defines the target table and columns.
@@ -179,7 +179,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </returns>
     /// <remarks>
     /// If encryption is configured and the column is marked as encrypted,
-    /// the column’s value is transparently encrypted before being stored in the parameter value.
+    /// the column’s value is encrypted before being stored in the parameter value.
     /// If the column represents a key version, the encryption version is used instead of the property value.
     /// </remarks>
     /// <exception cref="NullReferenceException">

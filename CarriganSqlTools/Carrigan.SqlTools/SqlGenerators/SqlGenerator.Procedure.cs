@@ -21,8 +21,9 @@ public partial class SqlGenerator<T>
     /// When creating a data model for a stored procedure, the key distinction from
     /// a table-based model is that you call <c>Procedure</c> instead of an
     /// insert, update, or delete method on the <see cref="SqlGenerator{T}"/>.  
-    /// The data model type must be <c>public</c>, and any properties intended
-    /// as parameters must be public instance properties with a public getter.
+    /// <remarks>
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
     /// <para>
