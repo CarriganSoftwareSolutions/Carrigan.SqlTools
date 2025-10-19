@@ -13,9 +13,12 @@ namespace Carrigan.SqlTools.RegularExpressions;
 /// Decomposed normalizations of Unicode will be failed, as I don't know
 /// what normalization method any given database may be using.
 /// So please provide pre-normalized identifier names.
-/// NOTE: This library adds the leading @, which is why parameter names
-/// are not required to have a leading @. However, this check isn't always
-/// performed before this check, so I strip the leading @s from parameter name.
+/// NOTE: This library adds the leading '@', which is why parameter names
+/// are not required to have a leading '@'. However, this check isn't always
+/// performed before the '@' is added, so I strip the leading @s from parameter name,
+/// when performing validation. This requires two additional checks, ensuring the 
+/// identifier does starts with two '@'s and that the identifier has at least one
+/// non '@' character.
 /// </summary>
 public static partial class SqlParameterPattern
 {
@@ -28,7 +31,10 @@ public static partial class SqlParameterPattern
     /// So please provide pre-normalized identifier names.
     /// NOTE: This library adds the leading @, which is why parameter names
     /// are not required to have a leading @. However, this check isn't always
-    /// performed before this check, so I strip the leading @s from parameter name.
+    /// performed before this check, so I strip the leading @s from parameter name,
+    /// when performing validation. This requires two additional checks, ensuring the 
+    /// identifier does starts with two '@'s and that the identifier has at least one
+    /// non '@' character.
     /// </summary>
     private static readonly Regex _regexPattern = SqlParameterRegex();
 
@@ -41,7 +47,10 @@ public static partial class SqlParameterPattern
     /// So please provide pre-normalized identifier names.
     /// NOTE: This library adds the leading @, which is why parameter names
     /// are not required to have a leading @. However, this check isn't always
-    /// performed before this check, so I strip the leading @s from parameter name.
+    /// performed before this check, so I strip the leading @s from parameter name,
+    /// when performing validation. This requires two additional checks, ensuring the 
+    /// identifier does starts with two '@'s and that the identifier has at least one
+    /// non '@' character.
     /// </summary>
     /// <param name="identifier">The identifier name to validate.</param>
     /// <returns>
@@ -64,7 +73,10 @@ public static partial class SqlParameterPattern
     /// So please provide pre-normalized identifier names.
     /// NOTE: This library adds the leading @, which is why parameter names
     /// are not required to have a leading @. However, this check isn't always
-    /// performed before this check, so I strip the leading @s from parameter name.
+    /// performed before this check, so I strip the leading @s from parameter name,
+    /// when performing validation. This requires two additional checks, ensuring the 
+    /// identifier does starts with two '@'s and that the identifier has at least one
+    /// non '@' character.
     /// </summary>
     /// <param name="identifier">The identifier name to validate.</param>
     /// <returns>
