@@ -10,8 +10,9 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
 
+//TODO: proof read all class documentation.
 /// <summary>
-/// Provides lazily initialized, reflection-based metadata for the data model
+/// Provides cached reflection-based metadata for the data model
 /// type <typeparamref name="T"/> used by the SQL tools library.
 /// </summary>
 /// <typeparam name="T">
@@ -24,14 +25,13 @@ public class SqlToolsReflectorCache<T>
     /// </summary>
     internal static readonly Type Type;
 
-    //TODO: proof read documentation
     /// <summary>
-    /// Represents the Schema name for the Class's corresponding Table and Columns
+    /// Represents the <see cref="IdentifierTypes.SchemaName"/> for the Class's corresponding Table and Columns
     /// </summary>
     internal static readonly SchemaName? SchemaName;
-    //TODO: proof read documentation
+
     /// <summary>
-    /// Represents the Table name for the Class's corresponding Table and Columns
+    /// Represents the  <see cref="IdentifierTypes.TableName"/> for the Class's corresponding Table and Columns
     /// </summary>
     internal static readonly TableName TableName;
 
@@ -42,13 +42,13 @@ public class SqlToolsReflectorCache<T>
         new (SchemaName, TableName);
 
     /// <summary>
-    /// Gets the <see cref="ProcedureTag"/> for <typeparamref name="T"/>.
+    /// Gets the <see cref="Tags.ProcedureTag"/> for <typeparamref name="T"/>.
     /// </summary>
     internal static ProcedureTag ProcedureTag =>
         new (SchemaName, ProcedureName);
 
     /// <summary>
-    /// Gets all key-column <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
+    /// Gets all key-column <see cref="ReflectorCache.ColumnInfo"/> instances for <typeparamref name="T"/>.
     /// </summary>
     internal static readonly IEnumerable<ColumnInfo> KeyColumnInfo;
 
@@ -58,23 +58,23 @@ public class SqlToolsReflectorCache<T>
     internal static readonly bool HasKeyProperty;
 
     /// <summary>
-    /// Gets all column <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
+    /// Gets all column <see cref="ReflectorCache.ColumnInfo"/> instances for <typeparamref name="T"/>.
     /// </summary>
     internal static IEnumerable<ColumnInfo> ColumnInfo =>
         _ColumnInfoCache.Values;
 
     /// <summary>
-    /// Contains all non-key <see cref="ColumnInfo"/> instances for <typeparamref name="T"/>.
+    /// Contains all non-key <see cref=".ColumnInfo"/> instances for <typeparamref name="T"/>.
     /// </summary>
     internal static readonly IEnumerable<ColumnInfo> ColumnInfoLessKeys;
 
     /// <summary>
-    /// Gets the <see cref="ProcedureName"/> for <typeparamref name="T"/>.
+    /// Gets the <see cref="IdentifierTypes.ProcedureName"/> for <typeparamref name="T"/>.
     /// </summary>
     internal readonly static ProcedureName ProcedureName;
 
     /// <summary>
-    /// Gets the <see cref="ColumnInfo"/> used to store the encryption key version,
+    /// Gets the <see cref="ReflectorCache.ColumnInfo"/> used to store the encryption key version,
     /// or <c>null</c> if the model has no encrypted columns.
     /// </summary>
     internal static ColumnInfo? KeyVersionColumnInfo =>
@@ -96,10 +96,10 @@ public class SqlToolsReflectorCache<T>
         _EncryptedColumnInfoHashSet.Count != 0;
 
     /// <summary>
-    /// Resolves an enumeration of <see cref="ColumnInfo"/> objects for the provided property names.
+    /// Resolves an enumeration of <see cref="ReflectorCache.ColumnInfo"/> objects for the provided property names.
     /// </summary>
     /// <param name="propertyNames">One or more property names on <typeparamref name="T"/>.</param>
-    /// <returns>All matching <see cref="ColumnInfo"/> instances.</returns>
+    /// <returns>All matching <see cref="ReflectorCache.ColumnInfo"/> instances.</returns>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when one or more property names do not match any qualifying
     /// column properties in <typeparamref name="T"/>.
@@ -114,20 +114,18 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Lazily resolves the <see cref="ColumnTag"/> representing the encryption key version,
+    /// the <see cref="ColumnTag"/> representing the encryption key version,
     /// if present on <typeparamref name="T"/>.
     /// </summary>;
     protected static readonly IEnumerable<ColumnInfo> KeyVersionColumnsInfo;
 
-    //TODO: proof read documentation.
     /// <summary>
-    /// Lazily a hash for Encrypted ColumnInfo
+    /// a hash for Encrypted ColumnInfo
     /// </summary>
     private static readonly HashSet<ColumnInfo> _EncryptedColumnInfoHashSet;
 
     /// <summary>
-    /// TODO: Proof Read Documentation
-    /// Lazily resolves a PropertyInfoCache for <see cref="ColumnInfo"/> instances
+    /// resolves a PropertyInfoCache for <see cref="ColumnInfo"/> instances
     /// for <typeparamref name="T"/>.
     /// </summary>
     private static readonly ColumnInfoCache<T, ColumnInfo> _ColumnInfoCache;

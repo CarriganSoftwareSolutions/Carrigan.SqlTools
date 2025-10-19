@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.ReflectorCache;
 
 //TODO: Rework all documentation
 /// <summary>
-/// THis represents a variety property information associate with a column.
+/// This class represents a variety property information associate with a column for a given property in the data model.
 /// This class caches various informational items about the column:
 /// <see cref="ColumnTag"/>
 /// <see cref="ColumnName"/>
@@ -19,49 +19,60 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <see cref="PropertyName"/>
 /// <see cref="ParameterTag"/>
 /// <see cref="SelectTag"/>
-/// <c>IsKeyPart</c>
-/// <c>IsEncrypted</c>
-/// <c>IsKeyVersionProperty</c>
-/// This class is intended for internal use only, but to due to accessibility errors, 
-/// I had to expose most of it as public.
+/// <see cref="IsKeyPart"/>
+/// <see cref="IsEncrypted"/>
+/// <see cref="IsKeyVersionProperty"/>
 /// </summary>
 public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqualityComparer<ColumnInfo>
 {
     /// <summary>
-    /// A string that represent the <see cref="Tags.ColumnTag"/> .
+    /// A string that represent the <see cref="Tags.ColumnTag"/> associated with the property.
     /// </summary>
     internal readonly ColumnTag ColumnTag;
 
     /// <summary>
-    /// The name of the column. Must not be <c>null</c>, empty, or white space.
+    /// <see cref="IdentifierTypes.ColumnName"/> associated with the property. Must not be <c>null</c>, empty, or white space.
     /// </summary>
     internal readonly ColumnName ColumnName;
 
     /// <summary>
-    /// <see cref="PropertyInfo"/> associated with the column in the data model.
+    /// <see cref="System.Reflection.PropertyInfo"/> for the associated property.
     /// </summary>
     internal readonly PropertyInfo PropertyInfo;
 
     /// <summary>
-    /// <see cref="PropertyName"/> associated with the column in the data model.
+    /// <see cref="IdentifierTypes.PropertyName"/> associated with the property in the data model.
     /// </summary>
     internal readonly PropertyName PropertyName;
 
     /// <summary>
-    /// The <see cref="Tags.ParameterTag"/> used to represent the column as a SQL parameter
+    /// The <see cref="Tags.ParameterTag"/> associated with the property in the data model.
     /// </summary>
     internal readonly ParameterTag ParameterTag;
 
-    //TODO: documentation, 
+    /// <summary>
+    /// The <see cref="IdentifierTypes.AliasName"/> associated with the property in the data model.
+    /// </summary>
     internal readonly AliasName? AliasName;
 
-    //TODO: documentation,
+    /// <summary>
+    /// The <see cref="Tags.SelectTag"/> associated with the property in the data model.
+    /// </summary>
     internal readonly SelectTag SelectTag;
 
+    /// <summary>
+    /// Is the property designated as part of the data model key?
+    /// </summary>
     internal readonly bool IsKeyPart;
 
+    /// <summary>
+    /// Is the property flagged for encryption?
+    /// </summary>
     internal readonly bool IsEncrypted;
 
+    /// <summary>
+    /// Is the property designated to represent the key version for the data model?
+    /// </summary>
     internal readonly bool IsKeyVersionProperty;
 
     /// <summary>
@@ -77,17 +88,15 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <see cref="IsKeyPart"/>
     /// <see cref="IsEncrypted"/>
     /// <see cref="IsKeyVersionProperty"/>
-    /// This class is intended for internal use only, but to due to accessibility errors, 
-    /// I had to expose most of it as public.
     /// </summary>
     /// <param name="schemaName">
-    /// The <see cref="SchemaName"/> that identifies the table containing the column.
+    /// The <see cref="SchemaName"/> that identifies the scheme for data model.
     /// </param>
     /// <param name="tableName">
-    /// The <see cref="TableName"/> that identifies the table containing the column.
+    /// The <see cref="TableName"/> that identifies the table name for the data model.
     /// </param>
     /// <param name="propertyInfo">
-    /// The <see cref="PropertyInfo"/> associated with the column in the data model.
+    /// The <see cref="System.Reflection.PropertyInfo"/> associated with the property in the data model.
     /// </param>
     /// <param name="keys">
     /// An Enumeration of properties that make up the Key for a record, used to determine value of IsKeyPart
@@ -95,7 +104,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="columnTag"/> fails to meet the SQL identifier naming rules.
     /// </exception>
-    /// <exception cref="InvalidKeyVersionPropertyType">
+    /// <exception cref="InvalidKeyVersionPropertyType{T}">
     /// Thrown when the  <see cref="KeyVersionAttribute"/> is set, and the key property is not of type <see cref="int"/>
     /// </exception>
     internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)

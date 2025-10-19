@@ -10,12 +10,12 @@ namespace Carrigan.SqlTools.ReflectorCache;
 //TODO: Update Documentation
 
 /// <summary>
-/// This class is serves as a cache for reflection operations commonly used by this library.
+/// This class serves as a cache for reflection operations commonly used by this library.
 /// </summary>
 /// <typeparam name="T">The type that are using with reflection and want to cache.</typeparam>
 internal static class InvocationReflectorCache<T>
 {
-    //This library is essentially a static means of accessing lazy loaded reflection operations.
+    //This library is essentially a static means of accessing reflection operations.
     internal static Type Type =>
         SqlToolsReflectorCache<T>.Type;
 
@@ -32,6 +32,13 @@ internal static class InvocationReflectorCache<T>
                         .Select(property => new Tuple<ResultColumnName, PropertyInfo>(GetResultColumnName(property), property))
                 );
 
+    /// <summary>
+    /// Get the <see cref="ResultColumnName"/> for a given property.
+    /// </summary>
+    /// <param name="propertyInfo">A <see cref="PropertyInfo"/> representing the property being looked up.</param>
+    /// <returns>
+    /// the <see cref="ResultColumnName"/> for a given property.
+    /// </returns>
     private static ResultColumnName GetResultColumnName(PropertyInfo propertyInfo) =>
         new
         (

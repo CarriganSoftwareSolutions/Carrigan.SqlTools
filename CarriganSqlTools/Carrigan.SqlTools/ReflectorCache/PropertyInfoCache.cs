@@ -8,11 +8,10 @@ namespace Carrigan.SqlTools.ReflectorCache;
 //TODO: proof read documentation for entire class
 
 /// <summary>
-/// This class is a wrapper for a dictionary, where the key is a <see cref="ResultColumnName"/>
-///  that corresponds to <see cref="ResultColumnName"/>'s .
-/// Note: the key for the wrapped dictionary is actually the <see cref="ResultColumnName"/>.
+/// This class is a wrapper for a dictionary, where the key is a <see cref="ResultColumnName"/>.
+/// This class is used to reverse look up Property Information from a result column name.
 /// </summary>
-/// <typeparam name="typeT">The type from which the type is being looked up.</typeparam>
+/// <typeparam name="typeT">The data mode from which the property information is being looked up.</typeparam>
 internal class PropertyInfoCache<typeT> 
 {
     /// <summary>
@@ -41,38 +40,37 @@ internal class PropertyInfoCache<typeT>
         );
 
     /// <summary>
-    /// Returns the value for <paramref name="key"/> if present; otherwise <c>null</c>.
+    /// Returns the <see cref="PropertyInfo"/> associated with <paramref name="resultColumnNameKey"/> if present; otherwise <c>null</c>.
     /// Also returns <c>null</c> when the stored value is <c>null</c>.
     /// </summary>
-    /// <param name="key">the select to look up from</param>
+    /// <param name="resultColumnNameKey">the result column used to reverse look up the <see cref="PropertyInfo"/> from</param>
     /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that the <see cref="ResultColumnName"/> that was invalid</exception>
-    internal PropertyInfo Get(ResultColumnName key)
+    internal PropertyInfo Get(ResultColumnName resultColumnNameKey)
     {
-        if (_cache.TryGetValue(key, out PropertyInfo? value))
+        if (_cache.TryGetValue(resultColumnNameKey, out PropertyInfo? value))
             return value;
         else
-            throw new InvalidResultColumnNameException<typeT>(key);
+            throw new InvalidResultColumnNameException<typeT>(resultColumnNameKey);
     }
 
     /// <summary>
-    /// Returns the values for <paramref name="keys"/> if present; 
+    /// Returns the <see cref="PropertyInfo"/> for <paramref name="resultColumnNameKeys"/> if present; 
     /// otherwise if any one of them doesn't exists, throw a <see cref="InvalidPropertyException{typeT}"/>
-    /// Also returns <c>null</c> when the stored value is <c>null</c>.
     /// </summary>
-    /// <param name="keys">the ResultColumnName to look up from</param>
+    /// <param name="resultColumnNameKeys">the ResultColumnName to look up from</param>
     /// <returns></returns>
     /// <exception cref="InvalidPropertyException{typeT}">This exception indicates that one or more properties were invalid</exception>
-    internal IEnumerable<PropertyInfo> GetMany(params IEnumerable<ResultColumnName> keys) 
+    internal IEnumerable<PropertyInfo> GetMany(params IEnumerable<ResultColumnName> resultColumnNameKeys) 
     {
-        IEnumerable<ResultColumnName> invalids = keys.Where(key => Exists(key) is false);
+        IEnumerable<ResultColumnName> invalids = resultColumnNameKeys.Where(key => Exists(key) is false);
 
         if (invalids.Any())
             throw new InvalidResultColumnNameException<typeT>(invalids);
         else
-            return keys.Select(key => Get(key));
+            return resultColumnNameKeys.Select(key => Get(key));
     }
 
-    /// <summary>All values (some entries may be <c>null</c> by design).</summary>
+    /// <summary>All <see cref="PropertyInfo"/> values.</summary>
     internal IEnumerable<PropertyInfo> Values => 
         _cache.Values;
 
