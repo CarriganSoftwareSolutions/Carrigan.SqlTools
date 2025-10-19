@@ -3,22 +3,27 @@ using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
-//TODO: Proof read documentation 
 /// <summary>
-/// Strongly typed string wrapper for Procedure names
+/// Represents a strongly typed wrapper for SQL stored procedure names,
+/// providing type safety and consistent comparison semantics
+/// through the <see cref="StringWrapper"/> base class.
 /// </summary>
 public class ProcedureName : StringWrapper
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProcedureName"/> class.
+    /// </summary>
+    /// <param name="name">The stored procedure name string value.</param>
     public ProcedureName(string? name) : base(name) { }
 
     /// <summary>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// Creates a new <see cref="ProcedureName"/> instance if the specified name is not null or empty;
+    /// otherwise returns <c>null</c>.
     /// </summary>
-    /// <param name="name">Procedure Name</param>
+    /// <param name="name">The stored procedure name to wrap.</param>
     /// <returns>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// A new <see cref="ProcedureName"/> instance if <paramref name="name"/> contains a valid value;
+    /// otherwise, <c>null</c>.
     /// </returns>
     public static ProcedureName? New(string? name)
     {

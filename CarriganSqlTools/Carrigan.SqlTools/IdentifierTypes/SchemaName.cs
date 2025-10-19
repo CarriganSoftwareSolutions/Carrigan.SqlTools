@@ -3,24 +3,27 @@ using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
-
-//TODO: Proof read documentation 
 /// <summary>
-/// Strongly typed string wrapper for Schema names
+/// Represents a strongly typed wrapper for SQL schema names,
+/// providing type safety and consistent comparison semantics
+/// through the <see cref="StringWrapper"/> base class.
 /// </summary>
-
 public class SchemaName : StringWrapper
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SchemaName"/> class.
+    /// </summary>
+    /// <param name="name">The schema name string value.</param>
     public SchemaName(string? name) : base(name) { }
 
     /// <summary>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// Creates a new <see cref="SchemaName"/> instance if the specified name is not null or empty;
+    /// otherwise returns <c>null</c>.
     /// </summary>
-    /// <param name="name">Schema Name</param>
+    /// <param name="name">The schema name to wrap.</param>
     /// <returns>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// A new <see cref="SchemaName"/> instance if <paramref name="name"/> contains a valid value;
+    /// otherwise, <c>null</c>.
     /// </returns>
     public static SchemaName? New(string? name)
     {

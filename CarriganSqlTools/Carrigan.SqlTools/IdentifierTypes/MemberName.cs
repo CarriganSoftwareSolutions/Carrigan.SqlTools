@@ -3,22 +3,26 @@ using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
-//TODO: Proof read documentation 
 /// <summary>
-/// Strongly typed string wrapper for Member names
+/// Initializes a new instance of the <see cref="ColumnName"/> class.
 /// </summary>
+/// <param name="name">The column name string value.</param>
 internal class MemberName : StringWrapper
-{
+{    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnName"/> class.
+    /// </summary>
+    /// <param name="name">The column name string value.</param>
     internal MemberName(string? name) : base(name) { }
 
     /// <summary>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// Creates a new <see cref="ColumnName"/> instance if the specified name is not null or empty;
+    /// otherwise returns <c>null</c>.
     /// </summary>
-    /// <param name="name">Member Name</param>
+    /// <param name="name">The column name to wrap.</param>
     /// <returns>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// A new <see cref="ColumnName"/> instance if <paramref name="name"/> contains a valid value;
+    /// otherwise, <c>null</c>.
     /// </returns>
     internal static MemberName? New(string? name)
     {

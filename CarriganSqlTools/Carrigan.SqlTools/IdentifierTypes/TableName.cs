@@ -3,22 +3,26 @@ using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
-//TODO: Proof read documentation
 /// <summary>
-/// Strongly typed string wrapper for Table names
+/// Represents a strongly typed wrapper for SQL table names,
+/// providing type safety and consistent comparison semantics
+/// through the <see cref="StringWrapper"/> base class.
 /// </summary>
 public class TableName : StringWrapper
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TableName"/> class.
+    /// </summary>
+    /// <param name="name">The table name string value.</param>
     public TableName(string? name) : base(name) { }
 
-    /// <summary>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// Creates a new <see cref="TableName"/> instance if the specified name is not null or empty;
+    /// otherwise returns <c>null</c>.
     /// </summary>
-    /// <param name="name">Table Name</param>
+    /// <param name="name">The table name to wrap.</param>
     /// <returns>
-    /// If <param name="name"> is not null or empty, it creates a new instance,
-    /// otherwise it returns a null object.
+    /// A new <see cref="TableName"/> instance if <paramref name="name"/> contains a valid value;
+    /// otherwise, <c>null</c>.
     /// </returns>
     public static TableName? New(string? name)
     {
