@@ -88,7 +88,6 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
 {
     private readonly string _tableTag;
 
-    //TODO: Redo documentation
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>
@@ -103,7 +102,6 @@ internal class TableTag : IComparable<TableTag>, IEquatable<TableTag>, IEquality
     internal TableTag(SchemaName? schemaName, TableName tableName) => 
         _tableTag = schemaName.IsNullOrEmpty() ? $"[{tableName}]" : $"[{schemaName}].[{tableName}]";
 
-    //TODO: proof read documentation
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>

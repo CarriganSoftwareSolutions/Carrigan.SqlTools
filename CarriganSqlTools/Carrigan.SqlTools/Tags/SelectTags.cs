@@ -6,7 +6,6 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Tags;
-//TODO: Proof read Documentation 
 
 /// <summary>
 /// Contains multiple <see cref="SelectTag"/>

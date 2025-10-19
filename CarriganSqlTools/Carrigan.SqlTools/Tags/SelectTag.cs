@@ -7,7 +7,7 @@ using Carrigan.SqlTools.RegularExpressions;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
-//TODO: proof read documentation
+
 public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>
 {
     /// <summary>
@@ -15,41 +15,42 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// </summary>
     private readonly string _selectTag;
 
+    /// <summary>
+    /// Represents the Column tag.
+    /// </summary>
     internal readonly ColumnTag ColumnTag;
+    /// <summary>
+    /// represents the optional Alias
+    /// </summary>
     internal readonly AliasTag? AliasTag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class,
     /// which represents a fully qualified SQL column identifier
-    /// in the form <c>[Schema].[Table].[Column]</c>.
+    /// in the form <c>[Schema].[Table].[Column]</c> along with an option Alias <c>AS</c>
+    /// Used to allow specification of columns being selected in a generated select query
     /// </summary>
-    /// <param name="tableTag">
-    /// The <see cref="TableTag"/> that identifies the table containing the column.
-    /// </param>
-    /// <param name="columnName">
+    /// <param name="columnTag">
     /// The name of the column. Must not be <c>null</c>, empty, or white space.
     /// </param>
-    /// <param name="propertyInfo">
-    /// The <see cref="PropertyInfo"/> associated with the column in the data model.
+    /// <param name="aliasTag">
+    /// The <see cref="AliasTag"/> used to represent the Alias "AS" in a select.
     /// </param>
-    /// <param name="parameterTag">
-    /// The <see cref="ParameterTag"/> used to represent the column as a SQL parameter.
-    /// </param>
-    internal SelectTag(ColumnTag column, AliasTag? aliasTag = null)
+    internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null)
     {
         if (aliasTag is null)
-            _selectTag = column;
+            _selectTag = columnTag;
         else
-            _selectTag = $"{column} AS {aliasTag}";
+            _selectTag = $"{columnTag} AS {aliasTag}";
 
-        ColumnTag = column;
+        ColumnTag = columnTag;
         AliasTag = aliasTag;
     }
 
     internal ResultColumnName ResultColumnName =>
         new (AliasTag?.ToString() ?? ColumnTag.ColumnName);
 
-    //TODO: Proof read Documentation
+  
     /// <summary>
     /// Get a new Select Tag based of the property and alias provided.
     /// If no alias provided, default to alias attribute on property, if available.
@@ -58,7 +59,8 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// <paramref name="aliasName"/> needs to be validated here, because it is how
     /// library users are allowed to specify an alias name on a select, and that
     /// isn't check by the SQL generator's constructor. Unlike the an alias specified
-    /// in with an attribute.
+    /// in with an attribute. <paramref name="property"/> also needs to be validated
+    /// here, as it is being provided by consumers of the library.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
     /// <param name="property">Property provided</param>
@@ -84,13 +86,17 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
         return new(columnInfo.ColumnTag, AliasTag.New(aliasName ?? columnInfo.AliasName));
     }
 
-    //TODO: Proof read Documentation
+
     /// <summary>
     /// Get a new Select Tag based of the property and alias provided.
     /// If no alias provided, default to alias attribute on property, if available.
     /// </summary>
-    /// <paramref name="aliasName"/> validation of parameters is down in the other
-    /// <see cref"Get{T}"/> method, which is called by this method. 
+    /// <remarks>
+    /// <paramref name="aliasName"/> needs to be validated here, because it is how
+    /// library users are allowed to specify an alias name on a select, and that
+    /// isn't check by the SQL generator's constructor. Unlike the an alias specified
+    /// in with an attribute. <paramref name="property"/> also needs to be validated
+    /// here, as it is being provided by consumers of the library.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
     /// <param name="property">Property provided</param>
@@ -113,7 +119,6 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
         return Get<T>(new PropertyName(property), alias);
     }
 
-    //TODO: Proof read Documentation
     /// <summary>
     /// Get a multiple existing Select Tags based of the properties provided.
     /// </summary>
@@ -127,7 +132,6 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
             .GetColumnsFromProperties(properties)
             .Select(column => column.SelectTag);
 
-    //TODO: Proof read Documentation
     /// <summary>
     /// Get a multiple existing Select Tags based of the properties provided.
     /// </summary>

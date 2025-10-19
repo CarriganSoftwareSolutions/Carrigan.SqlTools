@@ -9,8 +9,7 @@ namespace Carrigan.SqlTools.Tags;
 /// <summary>
 /// Represents a column identifier, or “tag,” in the form <c>[Schema].[Table].[Column]</c>.
 /// The <c>[Schema]</c> segment is included only if the table’s schema is explicitly defined.
-/// Aside from implementing various comparison and equality interfaces,
-/// this class is intended for internal use only.
+/// Implements various comparison and equality interfaces.
 /// </summary>
 /// <example>
 /// <para>
