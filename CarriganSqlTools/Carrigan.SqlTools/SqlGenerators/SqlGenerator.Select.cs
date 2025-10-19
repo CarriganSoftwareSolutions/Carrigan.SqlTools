@@ -83,6 +83,8 @@ public partial class SqlGenerator<T>
     /// Thrown if there is an ambiguous select tag.
     /// </exception>
     /// <remarks>
+    /// When providing <paramref name="selects"/>, you will almost certainly need to provide a different class model
+    /// to map the ADO results columns back to a materialized class, as the results columns will no longer map back to <typeparamref name="T"/> correctly.
     /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <example>
