@@ -3,32 +3,58 @@ using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Exceptions;
 
-//TODO: Proof Read Documentation. entire class
 /// <summary>
-/// The InvalidResultColumnNameException is thrown when a <see cref="ResultColumnName"/> is passed in that does exist
-/// in the target class <see cref="T"/>.
+/// Thrown when one or more <see cref="ResultColumnName"/> values returned from a SQL query
+/// cannot be matched to a corresponding property on the target class <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">Type T for which the <see cref="ResultColumnName"/> was to be used.</typeparam>
+/// <typeparam name="T">
+/// The entity or model type expected to receive the SQL query results.
+/// </typeparam>
+/// <remarks>
+/// This exception indicates that the SQL result set contains one or more column names
+/// that do not correspond to any mapped or recognized property names on the model type
+/// <typeparamref name="T"/>.
+///
+/// <para>
+/// This typically occurs when the database query returns columns that have been aliased,
+/// renamed, or otherwise do not match the expected property mapping as determined by
+/// the SQL generator or reflection cache.
+/// </para>
+/// </remarks>
 public class InvalidResultColumnNameException<T> : Exception
 {
     /// <summary>
-    /// This is the constructor for InvalidResultColumnNameException.
-    /// The InvalidResultColumnNameException is thrown when a <see cref="ResultColumnName"/> is passed in that does exist
-    /// in the target class <see cref="T"/>.
+    /// Initializes a new instance of the <see cref="InvalidResultColumnNameException{T}"/> class.
     /// </summary>
-    /// <param name="resultColumnNames">The names of the invalid <see cref="ResultColumnName"/>.</param>
+    /// <param name="resultColumnNames">
+    /// The <see cref="ResultColumnName"/> values that could not be matched
+    /// to properties on the target class <typeparamref name="T"/>.
+    /// </param>
+
     internal InvalidResultColumnNameException(params IEnumerable<ResultColumnName> resultColumnNames) :
         base(CreateMessage(resultColumnNames))
     {
     }
+
     /// <summary>
-    /// Create a message for the <see cref="InvalidResultColumnNameException{T}"/>
+    /// Builds a formatted exception message listing the result columns that failed to map
+    /// to properties on the target class <typeparamref name="T"/>.
     /// </summary>
-    /// <param name="ResultColumnNames">The names of the invalid <see cref="ResultColumnName"/>.</param>
-    /// <returns>An <see cref="InvalidResultColumnNameException{T}"/> message.</returns>
-    private static string CreateMessage(IEnumerable<ResultColumnName> ResultColumnNames) =>
+    /// <param name="resultColumnNames">
+    /// The <see cref="ResultColumnName"/> values that could not be matched
+    /// to properties on the target class <typeparamref name="T"/>.
+    /// </param>
+    /// <returns>
+    /// A formatted exception message describing which result column names did not have
+    /// corresponding property mappings.
+    /// </returns>
+    /// <remarks>
+    /// This method is typically invoked when the SQL generator or reflection cache
+    /// attempts to bind result columns to object properties and one or more names fail to match.
+    /// </remarks>
+    internal static string CreateMessage(IEnumerable<ResultColumnName> resultColumnNames) =>
         $"The ADO column name does not have corresponding property name that matches: " +
-            ResultColumnNames
+            resultColumnNames
                 .Select(ResultColumnName => (string)ResultColumnName) 
                 .JoinAnd();
 }
