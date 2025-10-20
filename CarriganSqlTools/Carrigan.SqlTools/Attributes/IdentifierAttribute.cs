@@ -9,30 +9,42 @@ using System.Reflection;
 namespace Carrigan.SqlTools.Attributes;
 
 /// <summary>
-/// Attribute for classes and properties that specifies the identifiers to use in generated SQL,
-/// including table <see cref="Name"/>, column <see cref="Name"/>, and <see cref="Schema"/> names.
-/// 
-/// Behavior:
-/// - If <see cref="IdentifierAttribute"/> is not defined, the SQL generator falls back to
-///   <see cref="TableAttribute"/> and <see cref="ColumnAttribute"/> annotations.
-/// - If those are also absent, it uses the class or property name.
-/// - If no schema is defined, no schema is applied.
-/// 
-/// Notes:
-/// - This attribute does **not** override <see cref="TableAttribute"/> or <see cref="ColumnAttribute"/> 
-///   within Entity Framework. However, it takes precedence for SQL generation performed by the SQL generator.
-/// - If you are already using <see cref="TableAttribute"/> and <see cref="ColumnAttribute"/> with
-///   Entity Framework, it is best to continue using those, SQL generation will honor them.
-/// - If you configure tables, columns, and schemas with fluent mappings, use <see cref="IdentifierAttribute"/> 
-///   to ensure consistency with your fluent configuration.
-/// - If you are not using Entity Framework, you can still use <see cref="TableAttribute"/> and
-///   <see cref="ColumnAttribute"/> if preferred; the SQL generator will respect them.
-/// 
-/// Important:
-/// The SQL generator does not create, modify, or delete database objects such as tables,
-/// columns, or stored procedures. It only generates SQL for SELECT, DELETE, INSERT, UPDATE,
-/// and stored procedure execution.
+/// Specifies SQL identifiers to use during SQL generation for an entity type or property,
+/// including the logical <see cref="Name"/> (table or column) and optional <see cref="Schema"/>.
 /// </summary>
+/// <remarks>
+/// <para><b>Resolution behavior</b></para>
+/// <list type="bullet">
+///   <item>
+///     <description>If <see cref="IdentifierAttribute"/> is present, the SQL generator uses its values.</description>
+///   </item>
+///   <item>
+///     <description>If absent, the generator falls back to <see cref="TableAttribute"/> (type) and
+///     <see cref="ColumnAttribute"/> (property).</description>
+///   </item>
+///   <item>
+///     <description>If those are also absent, the CLR type or property name is used.</description>
+///   </item>
+///   <item>
+///     <description>If <see cref="Schema"/> is not specified, no schema prefix is applied.</description>
+///   </item>
+/// </list>
+/// <para><b>Notes</b></para>
+/// <list type="bullet">
+///   <item>
+///     <description>This attribute does <b>not</b> override Entity Framework mappings; it only affects
+///     SQL emitted by this library’s generators (e.g., <see cref="SqlGenerator{T}"/>).</description>
+///   </item>
+///   <item>
+///     <description>If you already use <see cref="TableAttribute"/> / <see cref="ColumnAttribute"/>,
+///     the generator honors them. Use <see cref="IdentifierAttribute"/> to align with fluent mappings
+///     or to provide identifiers when EF isn’t used.</description>
+///   </item>
+/// </list>
+/// <para><b>Important</b></para>
+/// This library does not create/alter database objects. It generates SQL for SELECT/INSERT/UPDATE/DELETE
+/// and stored procedure execution only.
+/// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// [Identifier("Email", "schema")]
@@ -65,26 +77,34 @@ namespace Carrigan.SqlTools.Attributes;
 public class IdentifierAttribute : Attribute
 {
     /// <summary>
-    /// Public getter to indicate the table/column name.
+    /// Gets the logical identifier name (table or column).
     /// </summary>
     internal string Name { get; }
     /// <summary>
-    /// Public getter to indicate the schema name.
+    /// Gets the schema name, if specified; otherwise <c>null</c>.
     /// </summary>
     internal string? Schema { get; }
 
+    /// <summary>
+    /// Gets the fully qualified CLR member name (type or property) this attribute is attached to.
+    /// Set during <see cref="Initialize(MemberInfo)"/>.
+    /// </summary>
     internal MemberName MemberName { get; private set; }
 
-    //TODO: documentation
     /// <summary>
-    /// Public constructor
+    /// Initializes a new instance of the <see cref="IdentifierAttribute"/> class.
     /// </summary>
     /// <remarks>
-    /// MemberName is set in the Initialize method.
+    /// <see cref="MemberName"/> cannot be set in the constructor; it is populated later by
+    /// <see cref="Initialize(MemberInfo)"/>, which requires the constructed instance and reflection context.
     /// </remarks>
-    /// <param name="Name">Sql Table/Column Identifier name</param>
-    /// <param name="Schema">Sql Schema name</param>
-    /// <exception cref="InvalidSqlIdentifierException">If <see cref="Name"/> or <see cref="Name"/> have an invalid Sql Identifier</exception>
+    /// <param name="Name">The SQL table or column identifier to use.</param>
+    /// <param name="Schema">The optional SQL schema name.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="Name"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="Name"/> is an empty string, or when a non-<c>null</c>
+    /// <paramref name="Schema"/> is an empty string.
+    /// </exception>
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public IdentifierAttribute(string Name, string? Schema = null)
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -100,13 +120,15 @@ public class IdentifierAttribute : Attribute
 
 
     /// <summary>
-    /// Initializes the <see cref="MemberName"/> after the constructor runs.
+    /// Populates <see cref="MemberName"/> after construction using reflection metadata.
     /// </summary>
     /// <remarks>
-    /// Member name cannot be set in the constructor, because certain elements MemberInfoExtensions.GetGetQualifiedName
-    /// can only be accessed after the class has been constructed, this is a limitation of C# and reflection.
+    /// <para>
+    /// This cannot be performed inside the constructor because certain reflection data (e.g.,
+    /// the fully qualified member name from <c>MemberInfoExtensions.GetQualifiedName</c>) is only
+    /// reliably available after construction.
+    /// </para>
     /// </remarks>
-    /// <param name="member"></param>
     public void Initialize(MemberInfo member) => 
         MemberName = new(member.GetQualifiedName());
 }

@@ -2,11 +2,17 @@
 
 namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property)]
-//TODO: Proof read documentation for entire class
 
 /// <summary>
-/// Allows for setting a default <c>AS</c> alias on a property.
+/// Specifies a default SQL alias (the <c>AS</c> identifier) for a property when it is projected
+/// in a SELECT list. When present, SQL generation uses this alias unless an explicit override
+/// is provided at call time.
 /// </summary>
+/// <remarks>
+/// The value is stored as a strongly typed <see cref="AliasName"/> and is typically consumed by
+/// reflection-driven components (e.g., the column/selection caches) to derive a result set
+/// column name. Library consumers can still override the alias per query.
+/// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// internal class AliasEntity
@@ -35,14 +41,16 @@ namespace Carrigan.SqlTools.Attributes;
 public class AliasAttribute : Attribute
 {
     /// <summary>
-    /// Public getter to get the <c>Alias</c> for the <c>AS</c> clause for a given property.
+    /// Gets the alias name to apply in the <c>AS</c> clause for the decorated property.
     /// </summary>
     internal AliasName Name { get; set; }
 
     /// <summary>
-    /// Public constructor
+    /// Initializes a new instance of the <see cref="AliasAttribute"/> class.
     /// </summary>
-    /// <param name="aliasName">name of alias</param>
+    /// <param name="aliasName">The alias to use for the property’s <c>AS</c> clause.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="aliasName"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="aliasName"/> is an empty string.</exception>
     public AliasAttribute(string aliasName)
     {
         ArgumentNullException.ThrowIfNull(aliasName, nameof(aliasName));

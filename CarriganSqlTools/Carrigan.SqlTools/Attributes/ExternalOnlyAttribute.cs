@@ -2,16 +2,22 @@
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 
-//TODO: Proof Read
 /// <summary>
-/// Flag a method or constructor as being external only.
-/// The reason for this being necessary is that methods that require a property name
-/// are exposed for external users to provide the name as a string,
-/// and not require going through the property name class.
-/// However, internally, I want to enforce only using the string wrapper classes
-/// for internal type safety.
-/// THIS MUST BE PUBLIC, to be exposed to the Roslyn analyzer.
+/// Indicates that a method or constructor is intended for **external use only**.
 /// </summary>
+/// <remarks>
+/// This attribute differentiates externally accessible overloads (e.g., those accepting
+/// raw string identifiers) from their internal, strongly typed counterparts that use
+/// the library’s wrapper classes (such as <c>PropertyName</c> or <c>AliasName</c>).
+/// <para>
+/// It must be declared <see langword="public"/> so that Roslyn analyzers in other assemblies
+/// can detect and enforce its intended usage.
+/// </para>
+/// <para>
+/// This attribute should be defined at the assembly level containing both the analyzer
+/// and the target code to ensure accessibility.
+/// </para>
+/// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// [ExternalOnly]

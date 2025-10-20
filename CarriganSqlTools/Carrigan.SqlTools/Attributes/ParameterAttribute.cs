@@ -3,25 +3,42 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Attributes;
+
 /// <summary>
-/// Specifies a parameter identifier for use with the SQL generator.
-/// Enables mapping of class properties to custom parameter <see cref="Name"/> when
-/// generating SQL based on property information. If not provided,
-/// the parameter name defaults to the property name.
+/// Specifies a parameter identifier for SQL generation, allowing customization of
+/// the parameter <see cref="Name"/> that corresponds to a property.
 /// </summary>
+/// <remarks>
+/// When applied to a property, the SQL generator uses the specified parameter name instead
+/// of the property name when binding query parameters.  
+/// If the attribute is not applied, the property name is used as the default parameter name.
+///
+/// <para><b>Usage notes:</b></para>
+/// <list type="bullet">
+///   <item>
+///     <description>This attribute affects SQL parameter naming only; it does not modify database schema or metadata.</description>
+///   </item>
+///   <item>
+///     <description>The specified <see cref="Name"/> must be a valid SQL identifier; otherwise,
+///     an <see cref="InvalidSqlIdentifierException"/> is thrown at construction time.</description>
+///   </item>
+/// </list>
+/// </remarks>
 [AttributeUsage(AttributeTargets.Property)]
 public class ParameterAttribute : Attribute
 {
     /// <summary>
-    /// Public getter to indicate the name and schema.
+    /// Gets the SQL parameter name that corresponds to the decorated property.
     /// </summary>
     internal string Name { get; }
 
     /// <summary>
-    /// The constructor for <see cref="ParameterAttribute"/>
+    /// Initializes a new instance of the <see cref="ParameterAttribute"/> class.
     /// </summary>
-    /// <param name="Name">Parameter name</param>
-    /// <exception cref="InvalidSqlIdentifierException">Throws an  exception if the <see cref="Name"/> is an invalid SQL identifier.</exception>
+    /// <param name="Name">The SQL parameter name to use instead of the property name.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="Name"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="Name"/> is an empty string.</exception>
+    /// <exception cref="InvalidSqlIdentifierException">Thrown when <paramref name="Name"/> is not a valid SQL identifier.</exception>
     public ParameterAttribute(string Name)
     {
         ArgumentNullException.ThrowIfNull(Name, nameof(Name));

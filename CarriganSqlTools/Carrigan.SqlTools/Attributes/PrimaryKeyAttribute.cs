@@ -3,15 +3,21 @@
 namespace Carrigan.SqlTools.Attributes;
 
 /// <summary>
-/// Specifies which column or columns should be used when generating a query based on an Id property.
-/// The SQL generator respects properties marked with <see cref="KeyAttribute"/>; however, if any
-/// property is marked with the SQL generator's own <see cref="PrimaryKeyAttribute"/>, that
-/// designation takes precedence and overrides all <see cref="KeyAttribute"/> markings for SQL
-/// generation purposes.
-///
-/// This does not affect Entity Framework’s use of <see cref="KeyAttribute"/> and does not
-/// override its behavior at runtime.
+/// Identifies a property as the primary key used by the SQL generator when constructing
+/// SQL statements such as <c>UPDATE</c>, <c>DELETE</c>, or <c>SELECT ... WHERE [Id] = @Id</c>.
 /// </summary>
+/// <remarks>
+/// <para>
+/// The SQL generator recognizes properties marked with <see cref="KeyAttribute"/> from
+/// <see cref="System.ComponentModel.DataAnnotations"/>, but if any property is annotated
+/// with <see cref="PrimaryKeyAttribute"/>, that marking takes precedence and overrides all
+/// <see cref="KeyAttribute"/> definitions for SQL generation purposes.
+/// </para>
+/// <para>
+/// This attribute affects only SQL generation within <c>Carrigan.SqlTools</c> and does not
+/// influence Entity Framework Core or any other ORM behavior.
+/// </para>
+/// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// [Identifier("Email", "schema")]
