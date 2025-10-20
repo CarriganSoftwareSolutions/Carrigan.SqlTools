@@ -3,8 +3,9 @@
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class represents SQL's logical IS NULL operator.
+/// Represents SQL’s logical <c>IS NULL</c> operator,
+/// used to test whether a column or expression contains a <c>NULL</c> value
+/// within <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
 /// <para>
@@ -25,56 +26,61 @@ public class IsNull : Predicates
     private readonly Predicates _someValue;
 
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's IS NOT NULL operator
+    /// Initializes a new instance of the <see cref="IsNull"/> class,
+    /// representing a predicate that checks whether the specified value
+    /// or column is <c>NULL</c>.
     /// </summary>
-    /// <param name="someValue">should represent something that may or may not be a null value in SQL</param>
+    /// <param name="someValue">
+    /// The expression to test for null.
+    /// Typically a <see cref="Column{T}"/> instance representing a database column.
+    /// </param>
     public IsNull(Predicates someValue) => 
         _someValue = someValue;
 
     /// <summary>
-    ///  Recursively get all the parameters associated with the logic.
+    /// Recursively retrieves all parameters associated with this predicate.
     /// </summary>
     internal override IEnumerable<Parameter> Parameters =>
        _someValue.Parameters;
 
     /// <summary>
-    ///  Recursively get all the columns associated with the logic.
+    /// Recursively retrieves all columns associated with this predicate.
     /// </summary>
     internal override IEnumerable<ColumnBase> Columns =>
        _someValue.Columns;
 
 
-    //TODO: Proof read documentation
     /// <summary>
-    /// Produces the SQL represented by this class.
+    /// Produces the SQL fragment represented by this predicate.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix added to parameter names during recursive traversal of the logic tree,
+    /// ensuring that each parameter name remains unique.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// Tracks user-supplied parameter names that are duplicates, allowing this method
+    /// to determine when prefixes should be applied.
     /// </param>
-    /// <returns>Returns a SQL string represented by this class.</returns>
+    /// <returns>
+    /// A SQL string representing the <c>IS NULL</c> condition.
+    /// </returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         $"({_someValue.ToSql(prefix, duplicates)} IS NULL)";
 
-    //TODO: Proof read documentation
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively retrieves all parameters associated with this predicate as key–value pairs.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix added to parameter names during recursive traversal of the logic tree,
+    /// ensuring that each parameter name remains unique.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// Tracks user-supplied parameter names that are duplicates, allowing this method
+    /// to determine when prefixes should be applied.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// A collection of key–value pairs representing parameter tags and their corresponding values.
+    /// </returns>
     internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
         _someValue.GetParameters(prefix, duplicates);
 }

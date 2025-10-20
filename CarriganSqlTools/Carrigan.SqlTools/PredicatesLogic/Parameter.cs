@@ -5,8 +5,8 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class represents SQL's parameter and the corresponding value of that parameter.
+/// Represents a SQL parameter and its corresponding value for use in predicate expressions
+/// (e.g., <c>WHERE</c> or <c>JOIN</c> clauses).
 /// </summary>
 /// <example>
 /// <para>
@@ -28,20 +28,25 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 public class Parameter : Predicates
 {
     /// <summary>
-    /// Value of parameter
+    /// The value to bind to the parameter.
     /// </summary>
     internal readonly object? Value;
+
     /// <summary>
-    /// Name of the parameter
+    /// The parameter’s tag (name + metadata). A prefix may be added during SQL generation
+    /// to ensure uniqueness when duplicate user-supplied names occur.
     /// </summary>
     internal readonly ParameterTag Name;
 
     /// <summary>
-    /// Constructor for Parameter
-    /// Note: a prefix maybe added to the final parameter name
+    /// Initializes a new instance of <see cref="Parameter"/> with a validated <see cref="ParameterTag"/>.
     /// </summary>
-    /// <param name="parameter">The name you want the parameter to have</param>
-    /// <param name="value">The value of the parameter</param>
+    /// <remarks>
+    /// The parameter tag is used as the base name; a unique prefix may be added during SQL generation
+    /// when duplicate names are detected within a predicate tree.
+    /// </remarks>
+    /// <param name="parameter">The base parameter tag (name + metadata).</param>
+    /// <param name="value">The value to bind; <c>null</c> becomes <see cref="DBNull.Value"/> at materialization time.</param>
     public Parameter(ParameterTag parameter, object? value)
     {
         ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));
@@ -50,12 +55,16 @@ public class Parameter : Predicates
     }
 
     /// <summary>
-    /// Constructor for Parameter
-    /// Note: a prefix maybe added to the final parameter name
+    /// Initializes a new instance of <see cref="Parameter"/> with a raw name.
     /// </summary>
-    /// <param name="parameter">The name you want the parameter to have</param>
-    /// <param name="value">The value of the parameter</param>
-    /// <exception cref="InvalidSqlIdentifierException">The parameter name was empty or contained an invalid character</exception>
+    /// <remarks>
+    /// A unique prefix may be added during SQL generation when duplicate names are detected within a predicate tree.
+    /// </remarks>
+    /// <param name="parameter">The base parameter name (do not include the leading <c>@</c>).</param>
+    /// <param name="value">The value to bind; <c>null</c> becomes <see cref="DBNull.Value"/> at materialization time.</param>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown by <see cref="ParameterTag"/> if <paramref name="parameter"/> is empty or fails identifier validation.
+    /// </exception>
     [ExternalOnly]
     public Parameter(string parameter, object? value)
     {
@@ -64,48 +73,45 @@ public class Parameter : Predicates
     }
 
     /// <summary>
-    /// Leaf node in recursive logic to get all the parameters associated with the logic.
-    /// Note: In this case, it will be just this parameter name inserted into an enumeration.
+    /// Leaf node: returns this parameter instance as a single-item sequence for recursive enumeration.
     /// </summary>
     internal override IEnumerable<Parameter> Parameters =>
        [this];
 
     /// <summary>
-    /// Leaf node in recursive logic to get all the Columns associated within the logic.
-    /// Since this class doesn't have Column, just return an empty.
+    /// Leaf node: parameters do not contribute columns; returns an empty sequence.
     /// </summary>
     internal override IEnumerable<ColumnBase> Columns =>
        [];
 
     /// <summary>
-    /// Get the SQL recursively, while also renaming the parameters to ensure they are unique and match the names from GetParameters.
+    /// Produces the SQL fragment for this parameter (its final, possibly prefixed name).
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// The recursion-built prefix used to disambiguate duplicate user-supplied parameter names.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied parameter tags identified as duplicates within the predicate tree.
     /// </param>
-    /// <returns>partially completed sql string</returns>
+    /// <returns>
+    /// The SQL parameter name (e.g., <c>@Parameter_Name</c> or a prefixed variant).
+    /// </returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         GetFinalParameterName(prefix, duplicates);
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively returns this parameter as a key–value pair suitable for command binding.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// The recursion-built prefix used to disambiguate duplicate user-supplied parameter names.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied parameter tags identified as duplicates within the predicate tree.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// A single <see cref="KeyValuePair{TKey, TValue}"/> mapping the final parameter tag to its value
+    /// (with <c>null</c> normalized to <see cref="DBNull.Value"/>).
+    /// </returns>
     internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates)
     {
         ParameterTag key = GetFinalParameterName(prefix, duplicates);
@@ -113,19 +119,19 @@ public class Parameter : Predicates
         KeyValuePair<ParameterTag, object> keyValuePair = new(key, value);
         return (new KeyValuePair<ParameterTag, object>[] { keyValuePair }).AsEnumerable();
     }
+
     /// <summary>
-    /// Leaf node for Recursive logic to get all the parameters associated within clause, as key value pairs..
+    /// Computes the final parameter tag used in SQL, adding a disambiguating prefix when required.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// The recursion-built prefix used for disambiguation when the base name is a duplicate.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied parameter tags identified as duplicates within the predicate tree.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// The final <see cref="ParameterTag"/> to be emitted into SQL and used as the binding key.
+    /// </returns>
     private ParameterTag GetFinalParameterName(string prefix, IEnumerable<ParameterTag> duplicates) =>
         duplicates.Contains(Name) ? Name.PrefixPrepend($"@Parameter{prefix}") : Name.PrefixPrepend($"@Parameter");
 }

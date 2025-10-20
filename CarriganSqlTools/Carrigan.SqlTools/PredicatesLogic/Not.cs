@@ -4,8 +4,8 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class represents SQL's logical NOT operator for logical operations on one boolean predicate values.
+/// Represents SQL’s logical <c>NOT</c> operator, which inverts the result
+/// of a boolean predicate in <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
 /// <para>
@@ -29,53 +29,60 @@ public class Not : Predicates
 {
     private readonly Predicates _someValue;
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's NOT operators
+    /// Initializes a new instance of the <see cref="Not"/> class,
+    /// representing the SQL <c>NOT</c> operator.
     /// </summary>
-    /// <param name="someValue">should represent something that would be a boolean value in SQL</param>
+    /// <param name="predicate">
+    /// The boolean expression to negate. Typically another <see cref="Predicates"/> instance
+    /// such as <see cref="Equal"/>, <see cref="GreaterThan"/>, or <see cref="And"/>.
+    /// </param>
     public Not(Predicates someValue) => 
         _someValue = someValue;
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic.
+    /// Recursively retrieves all parameters associated with this predicate.
     /// </summary>
     internal override IEnumerable<Parameter> Parameters =>
        _someValue.Parameters;
 
     /// <summary>
-    ///  Recursively get all the columns associated with the logic.
+    /// Recursively retrieves all columns referenced by this predicate.
     /// </summary>
     internal override IEnumerable<ColumnBase> Columns =>
        _someValue.Columns;
 
     /// <summary>
-    /// Produces the SQL represented by this class.
+    /// Generates the SQL fragment represented by this <c>NOT</c> predicate.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix accumulated while traversing the predicate tree. This prefix
+    /// is appended to parameter names to maintain uniqueness when duplicates occur.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-specified parameter tags that are duplicates, used to decide
+    /// when a prefix must be applied.
     /// </param>
-    /// <returns>Returns a SQL string represented by this class.</returns>
+    /// <returns>
+    /// A SQL string representing the negated predicate.
+    /// </returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         $"(NOT {_someValue.ToSql(prefix, duplicates)})";
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively retrieves all parameters associated with this predicate
+    /// as key–value pairs.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix accumulated while traversing the predicate tree. This prefix
+    /// is appended to parameter names to maintain uniqueness when duplicates occur.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-specified parameter tags that are duplicates, used to decide
+    /// when a prefix must be applied.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// A sequence of parameter tag/value pairs for this predicate.
+    /// </returns>
     internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
         _someValue.GetParameters(prefix, duplicates);
 }

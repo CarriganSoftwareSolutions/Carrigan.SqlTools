@@ -295,7 +295,7 @@ public class JoinsTest
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "Full JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string expected1 = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         string expected2 = "FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
         string expected = $"{expected1} {expected2}";
         Assert.Equal(expected, relation.ToSql());

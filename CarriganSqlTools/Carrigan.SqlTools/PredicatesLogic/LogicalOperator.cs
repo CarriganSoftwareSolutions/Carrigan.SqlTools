@@ -4,8 +4,8 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class is a base class to represent SQL's logical AND and OR operator for logical operations on one more predicate values.
+/// Base class for SQL logical operators (e.g., <c>AND</c>, <c>OR</c>) used to combine
+/// one or more predicate expressions in <c>WHERE</c> and <c>JOIN</c> clauses.
 /// </summary>
 public abstract class LogicalOperator : Predicates
 {
@@ -13,14 +13,35 @@ public abstract class LogicalOperator : Predicates
     private readonly IEnumerable<Predicates> _predicates;
 
     /// <summary>
-    /// Base constructor for the logical boolean operator "AND" and "OR".
-    /// If no predicate values are passed in, then a <see cref="ArgumentNullException"/> is thrown.
-    /// If only one predicate value is provided, then this class is deigned to use just that predicate in place of the logical operator.
-    /// If two or more are provided then each predicate is chained together with the AND or OR logical operator.
+    /// Initializes a new instance of the <see cref="LogicalOperator"/> class for the specified
+    /// SQL logical operator (e.g., <c>AND</c>, <c>OR</c>) and predicates.
     /// </summary>
-    /// <param name="op">One or more boolean predicates.</param>
-    /// <param name="predicates">One or more boolean predicates.</param>
-    /// <exception cref="ArgumentNullException">thrown if no predicates are provided</exception>
+    /// <remarks>
+    /// Behavior:
+    /// <list type="bullet">
+    ///   <item>
+    ///     <description>
+    ///     If no predicates are provided, an <see cref="ArgumentNullException"/> is thrown.
+    ///     </description>
+    ///   </item>
+    ///   <item>
+    ///     <description>
+    ///     If exactly one predicate is provided, that predicate is emitted directly without
+    ///     adding the operator.
+    ///     </description>
+    ///   </item>
+    ///   <item>
+    ///     <description>
+    ///     If two or more predicates are provided, they are combined with the specified operator.
+    ///     </description>
+    ///   </item>
+    /// </list>
+    /// </remarks>
+    /// <param name="op">The SQL operator token to use (e.g., <c>"AND"</c>, <c>"OR"</c>).</param>
+    /// <param name="predicates">One or more boolean predicate expressions to combine.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicates"/> is <c>null</c> or contains no elements.
+    /// </exception>
     public LogicalOperator(string op, params IEnumerable<Predicates> predicates)
     {
         if (predicates.IsNullOrEmpty())
@@ -30,30 +51,33 @@ public abstract class LogicalOperator : Predicates
     }
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic.
+    /// Recursively retrieves all parameters used by the combined predicates.
     /// </summary>
     internal override IEnumerable<Parameter> Parameters =>
         _predicates.SelectMany(predicate => predicate.Parameters);
 
     /// <summary>
-    ///  Recursively get all the columns associated with the logic.
+    /// Recursively retrieves all columns referenced by the combined predicates.
     /// </summary>
     internal override IEnumerable<ColumnBase> Columns =>
         _predicates.SelectMany(predicate => predicate.Columns);
 
     /// <summary>
-    /// Produces the SQL represented by this class.
+    /// Generates the SQL fragment represented by this logical operator.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix accumulated while traversing the predicate tree. This is appended to parameter
+    /// names to keep them unique when duplicates occur.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-specified parameter tags that are duplicates, used to decide when a prefix
+    /// must be applied.
     /// </param>
-    /// <returns>Returns a SQL string represented by this class.</returns>
+    /// <returns>
+    /// A SQL string for the combined predicates. If a single predicate was provided, returns that
+    /// predicate’s SQL without adding the operator; otherwise returns the predicates joined by the
+    /// operator and wrapped in parentheses.
+    /// </returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates)
     {
         if (_predicates.Count() == 1)
@@ -62,20 +86,20 @@ public abstract class LogicalOperator : Predicates
             return $"({string.Join($" {_operator} ", _predicates.Select((predicate,index) => predicate.ToSql($"{prefix}_{index}", duplicates)))})";
     }
 
-
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively retrieves all parameters used by the combined predicates as key–value pairs.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix accumulated while traversing the predicate tree. This is appended to parameter
+    /// names to keep them unique when duplicates occur.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-specified parameter tags that are duplicates, used to decide when a prefix
+    /// must be applied.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// A sequence of parameter tag / value pairs for all combined predicates.
+    /// </returns>
     internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates)
     {
         if (_predicates.Count() == 1)

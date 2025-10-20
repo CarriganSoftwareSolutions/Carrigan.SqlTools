@@ -3,27 +3,27 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 /// <summary>
-/// Used to represent basic column and table data in each predicate.
-/// This is likely not longer needed now that <see cref="ColumnTag"/> has been expanded.
+/// Base class for predicate nodes that reference a single column.
+/// Carries the resolved <see cref="ReflectorCache.ColumnInfo"/> and exposes the owning <see cref="Tags.TableTag"/>.
 /// </summary>
 /// <remarks>
-/// I forget exactly why I made this interface, however, it appears to allow some shenanigans
-/// to take place to allow me to more generically use Columns T. For now it is not worth the 
-/// time and effort to attempt to replace it, it may not even be possible.
+/// This class exists to centralize column/table metadata for predicate nodes.
 /// </remarks>
 public abstract class ColumnBase : Predicates
 {
     /// <summary>
-    /// The Tag for the Column
+    /// Gets the resolved column metadata (name, tags, etc.) used by the predicate.
     /// </summary>
     internal ColumnInfo ColumnInfo { get; }
 
-
-    public ColumnBase(ColumnInfo columnInfo) =>
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnBase"/> class.
+    /// </summary>
+    protected ColumnBase(ColumnInfo columnInfo) =>
         ColumnInfo = columnInfo;
 
     /// <summary>
-    /// The Tag for the Table
+    /// Gets the table tag that owns this column.
     /// </summary>
     internal TableTag TableTag => 
         ColumnInfo.ColumnTag.TableTag;

@@ -1,16 +1,17 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class represents SQL's logical XOR operator for logical operations on two predicate values.
+/// Represents SQL’s logical <c>XOR</c> operator for combining two predicate expressions
+/// in <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </summary>
 public class Xor : ComparisonOperator
 {
     /// <summary>
-    /// Constructor for the logical boolean operator "XOR".
+    /// Initializes a new instance of the <see cref="Xor"/> class,
+    /// representing SQL’s logical <c>XOR</c> (exclusive OR) operator.
     /// </summary>
-    /// <param name="left">Left predicate</param>
-    /// <param name="right">Right predicate</param>
+    /// <param name="left">The left-hand predicate operand.</param>
+    /// <param name="right">The right-hand predicate operand.</param>
     public Xor(Predicates left, Predicates right) : base(left, right, "^")
     {
     }

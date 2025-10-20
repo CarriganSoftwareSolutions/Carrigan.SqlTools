@@ -8,10 +8,14 @@ using System.Data.Common;
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class is essentially an alias for Column = Value
-/// The intent is to reduce the amount of code needed to perform a routine task.
+/// Represents the predicate <c>Column = Value</c> for use in SQL <c>WHERE</c> or <c>JOIN</c> conditions.
+/// This class is a convenience wrapper that reduces the boilerplate required to compare a column
+/// against a constant value using the SQL equality operator (<c>=</c>).
 /// </summary>
+/// <remarks>
+/// Property name validation is performed during construction. If the provided property name does not
+/// map to a valid, eligible property on <typeparamref name="T"/>, an exception will be thrown.
+/// </remarks>
 /// <example>
 /// <para>
 /// <see cref="ColumnValue{T}"/> validates the names of the properties, and throws an error if the property isn't valid
@@ -29,13 +33,30 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </example>
 public class ColumnValue<T> : Predicates
 {
+    /// <summary>
+    /// The composed predicate (e.g., <c>[T].[Column] = @Parameter_Column</c>) that this class builds.
+    /// </summary>
     protected readonly Predicates value;
 
     /// <summary>
-    /// A public constructor. 
+    /// Initializes a new instance of the <see cref="ColumnValue{T}"/> class,
+    /// representing a predicate that compares a column to a constant value using
+    /// the SQL equality operator (<c>=</c>).
     /// </summary>
-    /// <param name="propertyName">Column</param>
-    /// <param name="parameterValue">Value</param>
+    /// <param name="propertyName">
+    /// The property name that identifies the column on the entity type <typeparamref name="T"/>.
+    /// </param>
+    /// <param name="parameterValue">
+    /// The constant value to compare against the column in the generated SQL.
+    /// </param>
+    /// <remarks>
+    /// This constructor validates that <paramref name="propertyName"/> maps to a valid property
+    /// on <typeparamref name="T"/>. If it does not, an exception is thrown.
+    /// </remarks>
+    /// <exception cref="Carrigan.SqlTools.Exceptions.InvalidPropertyException{T}">
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is not eligible
+    /// for column mapping.
+    /// </exception>
     public ColumnValue(PropertyName propertyName, object parameterValue)
     {
         _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); //called for validation.
@@ -49,57 +70,72 @@ public class ColumnValue<T> : Predicates
     }
 
     /// <summary>
-    /// A public constructor. 
+    /// Initializes a new instance of the <see cref="ColumnValue{T}"/> class,
+    /// representing a predicate that compares a column to a constant value using
+    /// the SQL equality operator (<c>=</c>).
     /// </summary>
-    /// <param name="propertyName">Column</param>
-    /// <param name="parameterValue">Value</param>
+    /// <param name="propertyName">
+    /// The property name that identifies the column on the entity type <typeparamref name="T"/>.
+    /// </param>
+    /// <param name="parameterValue">
+    /// The constant value to compare against the column in the generated SQL.
+    /// </param>
+    /// <remarks>
+    /// This constructor is intended for external callers and forwards to the
+    /// <see cref="ColumnValue(PropertyName, object)"/> constructor after wrapping the string in a
+    /// <see cref="PropertyName"/>.
+    /// </remarks>
+    /// <exception cref="Carrigan.SqlTools.Exceptions.InvalidPropertyException{T}">
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is not eligible
+    /// for column mapping.
+    /// </exception>
     [ExternalOnly]
     public ColumnValue(string propertyName, object parameterValue) 
         : this(new PropertyName(propertyName), parameterValue) { }
 
     /// <summary>
-    /// Leaf node in recursive logic to get all the parameters associated with the logic.
-    /// Since this class doesn't have parameters, just return an empty.
+    /// Leaf node: returns all parameters used by the composed predicate.
     /// </summary>
     internal override IEnumerable<Parameter> Parameters => 
         value.Parameters;
 
     /// <summary>
-    /// Leaf node in recursive logic to get all the Columns associated with the logic.
-    /// Since this there will be only this Column, return it as an enumerable.
+    /// Leaf node: returns all columns used by the composed predicate.
     /// </summary>
     internal override IEnumerable<ColumnBase> Columns => 
         value.Columns;
 
     /// <summary>
-    /// Produces the SQL represented by this class.
+    /// Produces the SQL fragment represented by this predicate.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix accumulated while traversing the predicate tree; used to disambiguate
+    /// duplicate parameter names when necessary.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
+    /// to decide when to apply the <paramref name="prefix"/>.
     /// </param>
-    /// <returns>Returns a SQL string represented by this class.</returns>
+    /// <returns>
+    /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
+    /// </returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         value.ToSql(prefix, duplicates);
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively retrieves all parameters associated with this predicate as key/value pairs.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A prefix accumulated while traversing the predicate tree; used to disambiguate
+    /// duplicate parameter names when necessary.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
+    /// to decide when to apply the <paramref name="prefix"/>.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// All parameters associated with this predicate, as key/value pairs of <see cref="ParameterTag"/> to value.
+    /// </returns>
     internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
         value.GetParameters(prefix, duplicates);
 }

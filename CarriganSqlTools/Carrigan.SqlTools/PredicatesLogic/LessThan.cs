@@ -1,8 +1,8 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This is the class that represents SQL's Less Than, <, comparison operator.
+/// Represents SQL’s less-than (<c>&lt;</c>) comparison operator,
+/// used to compare two expressions within <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
 /// <para>
@@ -24,10 +24,16 @@
 public class LessThan : ComparisonOperator
 {
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's Less Than, <, comparison operators
+    /// Initializes a new instance of the <see cref="LessThan"/> class,
+    /// representing a predicate that compares two values using the SQL
+    /// less-than (<c>&lt;</c>) operator.
     /// </summary>
-    /// <param name="left">left value</param>
-    /// <param name="right">right value</param>
+    /// <param name="left">
+    /// The left-hand operand of the comparison, typically a <see cref="Column{T}"/> instance.
+    /// </param>
+    /// <param name="right">
+    /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.
+    /// </param>
     public LessThan(Predicates left, Predicates right) : base (left, right, "<")
     {
     }

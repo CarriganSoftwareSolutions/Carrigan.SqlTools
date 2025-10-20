@@ -1,8 +1,7 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This is the class that represents SQL's Equality, =, comparison operator.
+/// Represents SQL’s equality (<c>=</c>) comparison operator, used in <c>WHERE</c> and <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
 /// <para>
@@ -24,10 +23,17 @@
 public class Equal : ComparisonOperator
 {
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's Equality, =, comparison operators
+    /// Initializes a new instance of the <see cref="Equal"/> class,
+    /// representing a predicate that compares two values for equality (<c>=</c>).
     /// </summary>
-    /// <param name="left">left value</param>
-    /// <param name="right">right value</param>
+    /// <param name="left">
+    /// The left-hand operand of the comparison.
+    /// Typically a <see cref="Column{T}"/> instance.
+    /// </param>
+    /// <param name="right">
+    /// The right-hand operand of the comparison.
+    /// Typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.
+    /// </param>
     public Equal(Predicates left, Predicates right) : base (left, right, "=")
     {
     }

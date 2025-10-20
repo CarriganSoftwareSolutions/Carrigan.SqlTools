@@ -1,9 +1,16 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class represents SQL's logical AND operator for logical operations on one more predicate values.
+/// Represents SQL’s logical <c>AND</c> operator, used to combine two or more boolean predicates.
 /// </summary>
+/// <remarks>
+/// The <see cref="And"/> operator intelligently handles any number of predicates:
+/// <list type="bullet">
+/// <item><description>Throws an <see cref="ArgumentNullException"/> if no predicates are provided.</description></item>
+/// <item><description>If a single predicate is provided, it is returned directly without additional parentheses or operators.</description></item>
+/// <item><description>If multiple predicates are provided, each is chained together using the SQL <c>AND</c> operator.</description></item>
+/// </list>
+/// </remarks>
 /// <example>
 /// <para>
 /// AND example, note it intelligently handles more than two predicates.
@@ -47,12 +54,18 @@
 public class And : LogicalOperator
 {
     /// <summary>
-    /// Constructor for the logical boolean operator "AND".
-    /// If no predicate values are passed in, then a <see cref="ArgumentNullException"/> is thrown.
-    /// If only one predicate value is provided, then this class is deigned to use just that predicate in place of the logical operator.
-    /// If two or more are provided then each predicate is chained together with the AND logical operator.
+    /// Initializes a new instance of the <see cref="And"/> class, representing
+    /// the SQL logical <c>AND</c> operator.
     /// </summary>
-    /// <param name="predicates">One or more boolean predicates.</param>
+    /// <param name="predicates">
+    /// One or more boolean predicates to combine using <c>AND</c>.
+    /// </param>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><description>Throws an <see cref="ArgumentNullException"/> if no predicates are provided.</description></item>
+    /// <item><description>If only one predicate is provided, that predicate is used directly.</description></item>
+    /// </list>
+    /// </remarks>
     public And(params IEnumerable<Predicates> predicates) : base("AND", predicates)
     {
     }

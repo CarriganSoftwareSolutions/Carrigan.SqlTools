@@ -1,8 +1,8 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This is the class that represents SQL's Greater Than Or Equal To, >=, comparison operator.
+/// Represents SQL’s greater-than-or-equal-to (<c>&gt;=</c>) comparison operator,
+/// used to compare two expressions within <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[
@@ -21,10 +21,16 @@
 public class GreaterThanEqual : ComparisonOperator
 {
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's Greater Than Or Equal To, >=, comparison operators
+    /// Initializes a new instance of the <see cref="GreaterThanEqual"/> class,
+    /// representing a predicate that compares two values using the SQL
+    /// greater-than-or-equal-to (<c>&gt;=</c>) operator.
     /// </summary>
-    /// <param name="left">left value</param>
-    /// <param name="right">right value</param>
+    /// <param name="left">
+    /// The left-hand operand of the comparison, typically a <see cref="Column{T}"/> instance.
+    /// </param>
+    /// <param name="right">
+    /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.
+    /// </param>
     public GreaterThanEqual(Predicates left, Predicates right) : base (left, right, ">=")
     {
     }

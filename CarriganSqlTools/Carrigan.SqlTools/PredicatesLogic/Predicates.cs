@@ -3,26 +3,31 @@
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This is the base class that represents SQL's predicates.
+/// Base type for all SQL predicate nodes used to compose <c>WHERE</c> and <c>JOIN</c> conditions.
+/// Supports recursive SQL generation and parameter collection (with automatic de-duplication/prefixing).
 /// </summary>
 public abstract class Predicates
 
 {
     /// <summary>
-    /// Recursively get all the parameters associated with the logic.
+    /// Recursively enumerates all <see cref="Parameter"/>s contained within this predicate tree.
     /// </summary>
     internal abstract IEnumerable<Parameter> Parameters { get; }
 
     /// <summary>
-    ///  Recursively get all the columns associated with the logic.
+    /// Recursively enumerates all <see cref="ColumnBase"/> nodes contained within this predicate tree.
     /// </summary>
     internal abstract IEnumerable<ColumnBase> Columns { get; }
 
     /// <summary>
-    /// Produces the SQL represented by this class.
+    /// Generates the SQL fragment for this predicate tree.
     /// </summary>
-    /// <returns>Returns a SQL string represented by this class.</returns>
+    /// <remarks>
+    /// Before rendering, this method computes duplicate user-supplied parameter names and
+    /// passes that set to the recursive <see cref="ToSql(string, IEnumerable{ParameterTag})"/> overload,
+    /// which may add disambiguating prefixes to produce unique parameter names.
+    /// </remarks>
+    /// <returns>The SQL fragment represented by this predicate tree.</returns>
     internal string ToSql()
     {
         //get an IEnumerable of all the duplicate parameter names
@@ -34,35 +39,32 @@ public abstract class Predicates
 
         return ToSql(string.Empty, duplicates);
     }
-    
+
     /// <summary>
-    /// Get the SQL recursively, while also renaming the parameters to ensure they are unique and match the names from GetParameters.
+    /// Recursively generates the SQL fragment for this predicate tree, applying a prefix to
+    /// duplicate parameter names to ensure uniqueness and alignment with <see cref="GetParameters()"/>.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A recursion-built prefix used to disambiguate duplicate parameter names. This is applied
+    /// only when the parameter’s base name appears in <paramref name="duplicates"/>.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of base <see cref="ParameterTag"/> names that occur more than once within the predicate tree.
     /// </param>
-    /// <returns>partially completed sql string</returns>
+    /// <returns>The SQL fragment for this node.</returns>
     internal abstract string ToSql(string prefix, IEnumerable<ParameterTag> duplicates);
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively collects all parameters as key–value pairs suitable for command binding.
     /// </summary>
-    /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
-    /// </param>
-    /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
-    /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <remarks>
+    /// This method computes duplicates in the same way as <see cref="ToSql()"/> and uses the recursive
+    /// <see cref="GetParameters(string, IEnumerable{ParameterTag})"/> overload to apply the same
+    /// disambiguating prefixes, ensuring parameter names in the emitted SQL match the binding keys.
+    /// </remarks>
+    /// <returns>
+    /// A dictionary mapping the final <see cref="ParameterTag"/> for each parameter to its value.
+    /// </returns>
     internal Dictionary<ParameterTag,object> GetParameters()
     {
         //get an IEnumerable of all the duplicate parameter names
@@ -77,17 +79,16 @@ public abstract class Predicates
     }
 
     /// <summary>
-    /// This method recursively adds prefixes to the parameter names to ensure unique parameter names
+    /// Recursively collects parameters as key–value pairs, applying a prefix to duplicate names
+    /// to ensure uniqueness and alignment with <see cref="ToSql(string, IEnumerable{ParameterTag})"/>.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A recursion-built prefix used to disambiguate duplicate parameter names. This is applied
+    /// only when the parameter’s base name appears in <paramref name="duplicates"/>.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of base <see cref="ParameterTag"/> names that occur more than once within the predicate tree.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>An enumeration of final parameter tags and their associated values.</returns>
     internal abstract IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates);
 }

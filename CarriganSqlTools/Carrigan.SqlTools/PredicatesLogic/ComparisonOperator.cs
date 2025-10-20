@@ -3,30 +3,33 @@
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This is the base class that represents SQL's comparison operators.
+/// Base class for SQL comparison predicates (e.g., <c>=</c>, <c>&lt;&gt;</c>, <c>&gt;</c>, <c>&lt;</c>, etc.).
+/// Combines two child <see cref="Predicates"/> nodes with a SQL comparison operator and
+/// participates in recursive SQL/parameter generation.
 /// </summary>
 public abstract class ComparisonOperator : Predicates
 {
     /// <summary>
-    /// Left value
+    /// The left-side predicate of the comparison.
     /// </summary>
     private Predicates _left;
     /// <summary>
-    /// Right value
+    /// The right-side predicate of the comparison.
     /// </summary>
     private Predicates _right;
+
     /// <summary>
-    /// string representing the comparison operator as the operator is represented in SQL.
+    /// The SQL text for the comparison operator (e.g., <c>=</c>, <c>&lt;&gt;</c>, <c>&gt;</c>, <c>&lt;</c>).
     /// </summary>
     private string _operator;
 
     /// <summary>
-    /// Reusable initialize helper method
+    /// Initializes the comparison with its left/right operands and SQL operator.
+    /// Intended for reuse by derived types’ constructors.
     /// </summary>
-    /// <param name="left">left value</param>
-    /// <param name="right">right value</param>
-    /// <param name="op">SQL string representation of the operator</param>
+    /// <param name="left">The left-side predicate.</param>
+    /// <param name="right">The right-side predicate.</param>
+    /// <param name="op">The SQL representation of the comparison operator.</param>
     protected void Initialize(Predicates left, Predicates right, string op)
     {
         _operator = op;
@@ -36,63 +39,67 @@ public abstract class ComparisonOperator : Predicates
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     /// <summary>
-    /// This is needed for an implied call from a derived class. This is intentionally protected.
+    /// Protected parameter less constructor for use by derived classes that call
+    /// <see cref="Initialize(Predicates, Predicates, string)"/> explicitly.
     /// </summary>
     protected ComparisonOperator()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     { }
 
     /// <summary>
-    /// This is the base constructor for the classes that represents SQL's comparison operators
+    /// Base constructor for comparison operators.
     /// </summary>
-    /// <param name="left">left value</param>
-    /// <param name="right">right value</param>
-    /// <param name="op">SQL string representation of the operator</param>
+    /// <param name="left">The left-side predicate.</param>
+    /// <param name="right">The right-side predicate.</param>
+    /// <param name="op">The SQL representation of the comparison o
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public ComparisonOperator(Predicates left, Predicates right, string op) => 
         Initialize(left, right, op);
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic.
+    /// Recursively retrieves all <see cref="Parameter"/> instances referenced by this comparison.
     /// </summary>
     internal override IEnumerable<Parameter> Parameters =>
         _left.Parameters.Concat(_right.Parameters);
 
     /// <summary>
-    ///  Recursively get all the columns associated with the logic.
+    /// Recursively retrieves all <see cref="ColumnBase"/> instances referenced by this comparison.
     /// </summary>
     internal override IEnumerable<ColumnBase> Columns =>
         _left.Columns.Concat(_right.Columns);
 
     /// <summary>
-    /// Produces the SQL represented by this class.
+    /// Produces the SQL fragment represented by this comparison operator and its operands.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A disambiguation prefix accumulated during predicate-tree traversal.
+    /// Used to ensure parameter names are unique when duplicates exist.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
+    /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
     /// </param>
-    /// <returns>Returns a SQL string represented by this class.</returns>
+    /// <returns>
+    /// A SQL fragment in the form <c>(&lt;left-sql&gt; OP &lt;right-sql&gt;)</c>, e.g.,
+    /// <c>([T].[Col] = @Parameter_Col)</c>.
+    /// </returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         $"({_left.ToSql($"{prefix}_L", duplicates)} {_operator} {_right.ToSql($"{prefix}_R", duplicates)})";
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively retrieves all parameters associated with this comparison as key/value pairs.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A disambiguation prefix accumulated during predicate-tree traversal.
+    /// Used to ensure parameter names are unique when duplicates exist.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
+    /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// A sequence of key/value pairs mapping <see cref="ParameterTag"/> to the corresponding value.
+    /// </returns>
     internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
         _left.GetParameters($"{prefix}_L", duplicates).Concat(_right.GetParameters($"{prefix}_R", duplicates));
 }

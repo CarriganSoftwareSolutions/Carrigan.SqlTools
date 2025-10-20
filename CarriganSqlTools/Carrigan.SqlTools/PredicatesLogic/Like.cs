@@ -25,10 +25,16 @@
 public class Like : ComparisonOperator
 {
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's LIKE, comparison operators
+    /// Initializes a new instance of the <see cref="Like"/> class,
+    /// representing a predicate that performs a pattern match using SQL’s
+    /// <c>LIKE</c> operator.
     /// </summary>
-    /// <param name="left">left value</param>
-    /// <param name="right">right value</param>
+    /// <param name="left">
+    /// The left-hand operand of the comparison, typically a <see cref="Column{T}"/> instance.
+    /// </param>
+    /// <param name="right">
+    /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.
+    /// </param>
     public Like(Predicates left, Predicates right) : base (left, right, "LIKE")
     {
     }

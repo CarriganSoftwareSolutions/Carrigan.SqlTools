@@ -1,8 +1,8 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This class represents SQL's logical OR operator for logical operations on one more predicate values.
+/// Represents SQL’s logical <c>OR</c> operator for combining one or more predicate expressions
+/// in <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
 /// <para>
@@ -49,12 +49,24 @@
 public class Or : LogicalOperator
 {
     /// <summary>
-    /// Constructor for the logical boolean operator "OR".
-    /// If no predicate values are passed in, then a <see cref="ArgumentNullException"/> is thrown.
-    /// If only one predicate value is provided, then this class is deigned to use just that predicate in place of the logical operator.
-    /// If two or more are provided then each predicate is chained together with the OR logical operator.
+    /// Initializes a new instance of the <see cref="Or"/> class,
+    /// representing SQL’s logical <c>OR</c> operator.
     /// </summary>
-    /// <param name="predicates">One or more boolean predicates.</param>
+    /// <remarks>
+    /// Behavior:
+    /// <list type="bullet">
+    ///   <item><description>
+    ///   If no predicates are provided, an <see cref="ArgumentNullException"/> is thrown.
+    ///   </description></item>
+    ///   <item><description>
+    ///   If exactly one predicate is provided, it is emitted directly without the <c>OR</c> operator.
+    ///   </description></item>
+    ///   <item><description>
+    ///   If multiple predicates are provided, they are joined with the <c>OR</c> operator and wrapped in parentheses.
+    ///   </description></item>
+    /// </list>
+    /// </remarks>
+    /// <param name="predicates">One or more boolean predicate expressions to combine.</param>
     public Or(params IEnumerable<Predicates> predicates) : base ("OR", predicates)
     {
     }

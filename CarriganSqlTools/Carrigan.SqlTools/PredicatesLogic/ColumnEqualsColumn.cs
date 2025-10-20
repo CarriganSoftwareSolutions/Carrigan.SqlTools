@@ -6,10 +6,18 @@ using Carrigan.SqlTools.SqlGenerators;
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This is the class is a combination of predicates.
-/// It allows you to generate SQL Column1 = Column2 with fewer lines of C#.
+/// Represents a predicate that compares two columns for equality (i.e., <c>Column1 = Column2</c>).
 /// </summary>
+/// <typeparam name="leftT">
+/// The data model representing the left-hand table in the comparison.
+/// </typeparam>
+/// <typeparam name="rightT">
+/// The data model representing the right-hand table in the comparison.
+/// </typeparam>
+/// <remarks>
+/// This class simplifies constructing SQL expressions such as
+/// <c>[Customer].[Id] = [Order].[CustomerId]</c>.
+/// </remarks>
 /// <example>
 /// <para>
 /// <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
@@ -30,10 +38,11 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator
 {
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's Equality, =, comparison operators
+    /// Initializes a new instance of the <see cref="ColumnEqualsColumn{leftT, rightT}"/> class,
+    /// representing an equality comparison (<c>=</c>) between two columns.
     /// </summary>
-    /// <param name="leftPropertyName">left value</param>
-    /// <param name="rightPropertyName">right value</param>
+    /// <param name="leftPropertyName">The property on the left-hand entity (<typeparamref name="leftT"/>).</param>
+    /// <param name="rightPropertyName">The property on the right-hand entity (<typeparamref name="rightT"/>).</param>
     public ColumnEqualsColumn(PropertyName leftPropertyName, PropertyName rightPropertyName)
     {
         Column<leftT> left = new (leftPropertyName);
@@ -43,10 +52,11 @@ public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator
     }
 
     /// <summary>
-    /// This is the constructor for the classes that represents SQL's Equality, =, comparison operators
+    /// Initializes a new instance of the <see cref="ColumnEqualsColumn{leftT, rightT}"/> class,
+    /// representing an equality comparison (<c>=</c>) between two columns.
     /// </summary>
-    /// <param name="leftPropertyName">left value</param>
-    /// <param name="rightPropertyName">right value</param>
+    /// <param name="leftPropertyName">The property name on the left-hand entity (<typeparamref name="leftT"/>).</param>
+    /// <param name="rightPropertyName">The property name on the right-hand entity (<typeparamref name="rightT"/>).</param>
     [ExternalOnly]
     public ColumnEqualsColumn(string leftPropertyName, string rightPropertyName) : 
         this (new PropertyName(leftPropertyName), new PropertyName(rightPropertyName))

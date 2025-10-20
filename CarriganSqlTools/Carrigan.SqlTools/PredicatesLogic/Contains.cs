@@ -3,9 +3,13 @@
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Predicates control the boolean logic for join and where clauses.
-/// This is the class that represents SQL's CONTAINS operator.
+/// Predicate for SQL Server’s full-text <c>CONTAINS</c> operator.
+/// Combines a single column and a single parameter (search term) into a
+/// <c>CONTAINS(column, parameter)</c> expression for use in <c>WHERE</c> or <c>JOIN</c> conditions.
 /// </summary>
+/// <typeparam name="T">
+/// The model type that maps to the table containing the target column.
+/// </typeparam>
 /// <example>
 /// <para>
 /// <see cref = "Column{T}" /> validates the names of the property, and throws an error if the property isn't valid
@@ -27,11 +31,18 @@ public class Contains<T> : Predicates
 {
     private readonly Column<T> _column;
     private readonly Parameter _parameter;
+
     /// <summary>
-    /// Constructor for the CONTAINS operator.
+    /// Initializes a new instance of the <see cref="Contains{T}"/> predicate.
     /// </summary>
-    /// <param name="column">The left hand side should be a <see cref="Column{T}"/></param>
-    /// <param name="parameter">The right hand side should be a <see cref="Predicates.Parameter"/></param>
+    /// <param name="column">
+    /// The left-hand operand, representing the full-text indexed column
+    /// (<see cref="Column{T}"/>).
+    /// </param>
+    /// <param name="parameter">
+    /// The right-hand operand, representing the search term parameter
+    /// (<see cref="Predicates.Parameter"/>).
+    /// </param>
     public Contains(Column<T> column, Parameter parameter)
     {
         _column = column;
@@ -39,8 +50,7 @@ public class Contains<T> : Predicates
     }
 
     /// <summary>
-    /// Leaf node in recursive logic to get all the parameters associated with the logic.
-    /// Since this class doesn't have parameters, just return an empty.
+    /// Recursively retrieves all <see cref="ColumnBase"/> instances referenced by this predicate.
     /// </summary>
     internal override IEnumerable<Parameter> Parameters =>
        [_parameter];
@@ -53,34 +63,36 @@ public class Contains<T> : Predicates
        [_column];
 
     /// <summary>
-    /// Produces the SQL represented by this class.
+    /// Produces the SQL fragment represented by this predicate.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A disambiguation prefix accumulated during predicate-tree traversal.
+    /// Used to ensure parameter names are unique when duplicates exist.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
+    /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
     /// </param>
-    /// <returns>Returns a SQL string represented by this class.</returns>
+    /// <returns>
+    /// A SQL fragment of the form <c>CONTAINS(&lt;column&gt;, &lt;parameter&gt;)</c>.
+    /// </returns>
     internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
         $"CONTAINS({_column.ToSql()}, {_parameter.ToSql()})";
 
     /// <summary>
-    /// Recursively get all the parameters associated with the logic, as key value pairs.
+    /// Recursively retrieves all parameters associated with this predicate as key/value pairs.
     /// </summary>
     /// <param name="prefix">
-    /// building a prefix as we drill down the logic tree, 
-    /// this prefix is added to the names of parameters to ensure that each parameter has a unique name
-    /// this is only used with parameters that have duplicate names
+    /// A disambiguation prefix accumulated during predicate-tree traversal.
+    /// Used to ensure parameter names are unique when duplicates exist.
     /// </param>
     /// <param name="duplicates">
-    /// keep track of all of the user supplied parameter names that are duplicates
-    /// this will be use in the leaf parameter node to determine if a prefix is needed or not.
+    /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
+    /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
     /// </param>
-    /// <returns>Returns all the parameters associated with the logic, as key value pairs.</returns>
+    /// <returns>
+    /// A sequence mapping each <see cref="ParameterTag"/> to its bound value.
+    /// </returns>
     internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
         _parameter.GetParameters(prefix, duplicates);
 }
