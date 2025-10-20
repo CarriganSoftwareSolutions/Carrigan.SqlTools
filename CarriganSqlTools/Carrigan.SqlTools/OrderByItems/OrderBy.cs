@@ -48,24 +48,22 @@ public class OrderBy: OrderByBase
         _orderByItems = orderByItems;
 
     /// <summary>
-    /// Determines whether the specified <paramref name="orderByItem"/> is represented
+    /// Determines whether the specified <paramref name="orderByItem"/> is present
     /// in the <c>ORDER BY</c> clause.
     /// </summary>
     /// <remarks>
-    /// The check compares only the table and column names and ignores the sort direction.
+    /// Equality is determined by the <see cref="OrderByItemBase"/> implementation’s
+    /// equality semantics.
     /// </remarks>
-    /// <param name="orderByItem">
-    /// The individual order-by item to check.
-    /// </param>
+    /// <param name="orderByItem">The individual order-by item to check.</param>
     /// <returns>
-    /// <c>true</c> if the column is represented in the <c>ORDER BY</c> clause; otherwise, <c>false</c>.
+    /// <c>true</c> if the item is contained in this <c>ORDER BY</c>; otherwise, <c>false</c>.
     /// </returns>
     public override bool Contains(OrderByItemBase orderByItem) =>
         _orderByItems.Contains(orderByItem);
 
     /// <summary>
-    /// Enumerates all <see cref="TableTag"/> objects referenced
-    /// in the <c>ORDER BY</c> clause.
+    /// Enumerates all <see cref="TableTag"/> objects referenced in the <c>ORDER BY</c> clause.
     /// </summary>
     internal override IEnumerable<TableTag>TableTags =>
         _orderByItems.Select(item => item.TableTag);
@@ -74,8 +72,8 @@ public class OrderBy: OrderByBase
     /// Generates the SQL <c>ORDER BY</c> clause represented by this instance.
     /// </summary>
     /// <remarks>
-    /// Unlike <see cref="OrderBy"/>, <see cref="OrderByItem{T}"/> does not include the
-    /// <c>ORDER BY</c> keyword itself; the <see cref="SqlGenerator{T}"/> must add it.
+    /// Unlike <see cref="OrderByItem{T}"/>, this class includes the <c>ORDER BY</c> keyword.
+    /// The <see cref="SqlGenerator{T}"/> calls this to append the clause to the final query.
     /// </remarks>
     /// <returns>
     /// A SQL string for the <c>ORDER BY</c> clause, or <see cref="string.Empty"/>
@@ -127,14 +125,13 @@ public class OrderBy: OrderByBase
     /// column, and sort direction—to append to the clause.
     /// </param>
     /// <returns>
-    /// A new <c>ORDER BY</c> clause that includes the concatenated
-    /// <see cref="IEnumerable{IOrderByItem}"/> items.
+    /// A new <c>ORDER BY</c> clause that includes the concatenated items.
     /// </returns>
     public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems) =>
         new (_orderByItems.Concat(orderByItems));
 
     /// <summary>
-    /// Returns this instance cast to its concrete implementation, <see cref="OrderBy"/>.
+    /// Returns this instance cast to the concrete implementation, <see cref="OrderBy"/>.
     /// </summary>
     /// <returns>
     /// This instance as an <see cref="OrderBy"/> object.
