@@ -3,26 +3,42 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using System.Reflection;
 
+//IGNORE SPELLING: datetime, Enums
 namespace Carrigan.SqlTools.Invocation;
 
-//IGNORE SPELLING: datetime
-
-//TODO: Update Documentation
-
 /// <summary>
-/// Invoke a class of type <see cref="T"/> using values defined <see cref="Dictionary{string, object?}"/> 
-/// where the key represents a property in <see cref="T"/> and the value the value of that property.
+/// Instantiates and populates an instance of <typeparamref name="T"/> from a set of
+/// ADO.NET result values, mapping result column names (including aliases) to the
+/// corresponding writable properties on <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">
+/// The entity or model type to instantiate. Must provide a parameter less constructor.
+/// </typeparam>
 public static class Invoker<T> where T : class?, new()
 {
     /// <summary>
-    /// Invoke a class of type <see cref="T"/> using values defined <see cref="Dictionary{string, object?}"/> 
-    /// where the key represents a property in <see cref="T"/> and the value the value of that property.
+    /// Creates a new instance of <typeparamref name="T"/> and assigns property values from
+    /// the supplied result set values using a reflection cache. The dictionary keys are
+    /// interpreted as SQL result column names (potentially including aliases) and are
+    /// resolved to properties on <typeparamref name="T"/> via
+    /// <see cref="InvocationReflectorCache{T}.PropertyInfoCache"/>.
     /// </summary>
-    /// <param name="invocation">a <see cref="Dictionary{string, object?}"/>  where the key represents a property in <see cref="T"/> and the value the value of that property</param>
-    /// <returns>A instance of the type <see cref="T"/></returns>
-    /// <exception cref="InvalidOperationException"></exception>
+    /// <param name="invocation">
+    /// A <see cref="Dictionary{TKey, TValue}"/> where each key is a result column name
+    /// (e.g., the column label returned by the query, potentially an alias) and each value
+    /// is the raw value to assign to the corresponding property on <typeparamref name="T"/>.
+    /// </param>
+    /// <returns>
+    /// A newly created instance of <typeparamref name="T"/> populated with the provided values.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if <see cref="Activator.CreateInstance(Type)"/> fails to create the instance
+    /// or the result cannot be cast to <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidResultColumnNameException{T}">
+    /// Thrown when one or more keys in <paramref name="invocation"/> do not resolve to properties
+    /// on <typeparamref name="T"/> via the <see cref="ResultColumnName"/> mapping.
+    /// </exception>
     public static T Invoke(Dictionary<string, object?> invocation)
     {
         InvalidResultColumnNameException<T>? exception = null;
@@ -48,18 +64,28 @@ public static class Invoker<T> where T : class?, new()
         return invoked;
     }
     /// <summary>
-    /// Take the <paramref name="value"/> provided and covert it to the <paramref name="targetType"/>.
-    /// Note: While returning the value as an object may make this method seem redundant,
-    /// for some types this first provides a conversion to a more consumable type.
+    /// Converts a raw ADO.NET value to the specified target property type, handling common
+    /// cases such as <see cref="DateTime"/> to <see cref="DateOnly"/>, <see cref="TimeOnly"/>,
+    /// and <see cref="DateTimeOffset"/>; <see cref="TimeSpan"/> to <see cref="TimeOnly"/>;
+    /// and enum conversions from either strings or underlying numeric values.
     /// </summary>
-    /// <param name="value">Value to be processed</param>
-    /// <param name="targetType">Target type</param>
+    /// <param name="value">The raw value to be converted (may be <c>null</c> or <see cref="DBNull.Value"/>).</param>
+    /// <param name="targetType">The property type to convert to (nullable types are supported).</param>
     /// <returns>
-    /// Take the <paramref name="value"/> provided and covert it to the <paramref name="targetType"/>.
-    /// Note: While returning the value as an object may make this method seem redundant,
-    /// for some types this first provides a conversion to a more consumable type.
+    /// The converted value suitable for assignment to a property of type <paramref name="targetType"/>,
+    /// or <c>null</c> if <paramref name="value"/> is <c>null</c> or <see cref="DBNull.Value"/>.
     /// </returns>
-    internal static object? ConvertValue(object? value, Type targetType)
+    /// <remarks>
+    /// Conversion rules:
+    /// <list type="bullet">
+    /// <item><description><c>null</c> or <see cref="DBNull.Value"/> → <c>null</c></description></item>
+    /// <item><description><see cref="DateTime"/> → <see cref="DateOnly"/>, <see cref="TimeOnly"/>, or <see cref="DateTimeOffset"/> (when requested)</description></item>
+    /// <item><description><see cref="TimeSpan"/> → <see cref="TimeOnly"/></description></item>
+    /// <item><description>Enums: string values parsed via <see cref="System.Enum.Parse(System.Type, string)"/>, otherwise constructed via <see cref="System.Enum.ToObject(System.Type, object)"/></description></item>
+    /// <item><description>All other types are returned as-is</description></item>
+    /// </list>
+    /// </remarks>
+    private static object? ConvertValue(object? value, Type targetType)
     {
         // If the value is null or DBNull, return null
         if (value == null || value == DBNull.Value)
