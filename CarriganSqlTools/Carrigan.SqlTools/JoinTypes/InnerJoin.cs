@@ -5,12 +5,13 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: proof read Documentation
+
 /// <summary>
-/// Represents an SQL <c>INNER JOIN</c> operation.
+/// Represents an SQL <c>INNER JOIN</c> operation against the table modeled by
+/// <typeparamref name="rightT"/>.
 /// </summary>
 /// <typeparam name="rightT">
-/// The data model for the table being inner joined on.
+/// The data model (right side of the join) for the table being joined.
 /// </typeparam>
 /// <example>
 /// <para>
@@ -33,51 +34,57 @@ namespace Carrigan.SqlTools.JoinTypes;
 public class InnerJoin<rightT> : JoinBase
 {
     private readonly string _sql;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="InnerJoin{rightT}"/> class.
     /// </summary>
     /// <param name="predicates">
-    /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
+    /// The predicate(s) that define the <c>ON</c> clause of the <c>INNER JOIN</c>.
     /// </param>
     public InnerJoin(Predicates predicates) : base(predicates) => 
         _sql = $"INNER JOIN {TableTag} ON {predicates.ToSql()}";
 
     /// <summary>
-    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// Creates a new <see cref="Joins{leftT}"/> that contains a newly created
+    /// <see cref="InnerJoin{rightT}"/> using the supplied <paramref name="predicates"/>.
     /// </summary>
-    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <typeparam name="leftT">
+    /// The data model representing the left (base) table being joined onto.
+    /// </typeparam>
     /// <param name="predicates">
-    /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
+    /// The predicate(s) that define the <c>ON</c> clause of the <c>INNER JOIN</c>.
     /// </param>
     /// <returns>
-    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="InnerJoin{rightT}"/>.
     /// </returns>
     public static Joins<leftT> Joins<leftT>(Predicates predicates) =>
         new(new InnerJoin<rightT>(predicates));
 
     /// <summary>
-    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that 
-    /// contains the current <see cref="InnerJoin{rightT}"/> object.
+    /// Wraps the current <see cref="InnerJoin{rightT}"/> in a new <see cref="Joins{leftT}"/>.
     /// </summary>
-    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <typeparam name="leftT">
+    /// The data model representing the left (base) table being joined onto.
+    /// </typeparam>
     /// <returns>
-    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that 
-    /// contains the current <see cref="InnerJoin{rightT}"/> object.
+    /// A new <see cref="Joins{leftT}"/> containing this <see cref="InnerJoin{rightT}"/>.
     /// </returns>
     public Joins<leftT> AsJoins<leftT>() =>
         new(this);
 
     /// <summary>
-    /// An enumeration of all Table Tags involved in the joins predicates.
+    /// Gets the <see cref="TableTag"/> associated with <typeparamref name="rightT"/>,
+    /// used as the right side of the <c>INNER JOIN</c>.
     /// </summary>
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<rightT>.Table;
 
-    /// Converts the current <see cref="InnerJoin{rightT}"/> instance to its SQL representation.
+    /// <summary>
+    /// Converts this <see cref="InnerJoin{rightT}"/> to its SQL representation.
     /// </summary>
-    /// <returns>A SQL string representing the <c>INNER JOIN</c> clause.</returns>
+    /// <returns>
+    /// A SQL string representing the <c>INNER JOIN</c> clause, including the <c>ON</c> predicate(s).
+    /// </returns>
     internal override string ToSql() =>
         _sql;
 }

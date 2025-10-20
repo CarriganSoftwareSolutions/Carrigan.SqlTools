@@ -8,10 +8,12 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: proof read Documentation
 /// <summary>
-/// Defines a class that represent one or more SQL join operations.
+/// Defines a class that represents one or more SQL <c>JOIN</c> operations.
 /// </summary>
+/// <typeparam name="leftT">
+/// The data model representing the left (base) table onto which joins are applied.
+/// </typeparam>
 /// <example>
 /// <para>
 /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates property names and throws an exception if a property name is invalid.
@@ -82,18 +84,23 @@ namespace Carrigan.SqlTools.JoinTypes;
 public class Joins<leftT> : JoinsBase
 {
     /// <summary>
-    /// Represents a collection of classes where each class defines a single SQL join operation.
-    /// The name differs from the preferred “Joins” to avoid a naming conflict (e.g., Joins.Joins),
-    /// which would result in a compiler error.
+    /// A collection of <see cref="JoinBase"/> instances, where each instance represents
+    /// a single SQL <c>JOIN</c> operation.
     /// </summary>
+    /// <remarks>
+    /// This property is named <c>Joints</c> to avoid a naming conflict with the enclosing class name.
+    /// </remarks>
     protected override IEnumerable<JoinBase> Joints { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Joins"/> class.
+    /// Initializes a new instance of the <see cref="Joins{leftT}"/> class.
     /// </summary>
     /// <param name="joins">
-    /// One or more sequences of <see cref="Joins"/> objects, where each object represents a single SQL join operation.
+    /// One or more <see cref="JoinBase"/> instances, where each instance defines a single SQL <c>JOIN</c> operation.
     /// </param>
+    /// <exception cref="InvalidTableException">
+    /// Thrown if any join references a table that is not part of the valid join sequence.
+    /// </exception>
     public Joins(params IEnumerable<JoinBase> joins)
     {
         Joints = [];
@@ -113,52 +120,56 @@ public class Joins<leftT> : JoinsBase
     }
 
     /// <summary>
-    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="LeftJoin{rightT}"/> object.
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
+    /// a newly created <see cref="LeftJoin{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <typeparam name="rightT">
+    /// The data model representing the right-side table being joined.
+    /// </typeparam>
     /// <param name="predicates">
-    /// The condition that defines the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
     /// </param>
     /// <returns>
-    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="LeftJoin{rightT}"/> object.
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="LeftJoin{rightT}"/>.
     /// </returns>
     public static Joins<leftT> LeftJoin<rightT>(Predicates predicates) =>
         JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates);
 
     /// <summary>
-    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="Join{rightT}"/> object.
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
+    /// a newly created generic <see cref="Join{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <typeparam name="rightT">
+    /// The data model representing the right-side table being joined.
+    /// </typeparam>
     /// <param name="predicates">
-    /// The condition that defines the <c>ON</c> clause of the SQL <c>JOIN</c>.
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
     /// <returns>
-    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="Join{rightT}"/> object.
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="Join{rightT}"/>.
+    /// </returns><see cref="Join{rightT}"/> object.
     /// </returns>
     public static Joins<leftT> Join<rightT>(Predicates predicates) =>
         JoinTypes.Join<rightT>.Joins<leftT>(predicates);
 
     /// <summary>
-    /// Creates and returns an new <see cref="Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
+    /// a newly created <see cref="InnerJoin{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="leftT">this is the class representing the table being joined onto.</typeparam>
+    /// <typeparam name="rightT">
+    /// The data model representing the right-side table being joined.
+    /// </typeparam>
     /// <param name="predicates">
-    /// The condition that defines the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
     /// </param>
     /// <returns>
-    /// Creates and returns an new <see cref="JoinTypes.Joins{leftT}"/>  object that contains
-    /// a newly created <see cref="InnerJoin{rightT}"/> object.
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="InnerJoin{rightT}"/>.
     /// </returns>
     public static Joins<leftT> InnerJoin<rightT>(Predicates predicates) =>
         JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates);
 
     /// <summary>
-    /// An enumeration of all Table Tags involved in each of the joins predicates.
+    /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.
     /// </summary>
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<leftT>.Table;

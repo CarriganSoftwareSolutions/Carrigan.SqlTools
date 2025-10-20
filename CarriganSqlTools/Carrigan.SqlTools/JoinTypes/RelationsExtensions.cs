@@ -2,29 +2,36 @@
 
 namespace Carrigan.SqlTools.JoinTypes;
 
-//TODO: proof read documentation
 /// <summary>
-/// Provides extension methods for the <see cref="JoinsBase"/> class.
+/// Provides extension methods for working with instances of the <see cref="JoinsBase"/> class.
 /// </summary>
+/// <remarks>
+/// These helper methods simplify common null and emptiness checks for join collections
+/// represented by <see cref="JoinsBase"/> and its derived types, such as <see cref="Joins{T}"/>.
+/// </remarks>
 internal static class RelationsExtensions
 {
     /// <summary>
-    /// Determines whether the specified <see cref="JoinsBase"/> instance is <c>null</c>
-    /// or contains no join elements.
+    /// Determines whether the specified <see cref="JoinsBase"/> instance is <see langword="null"/>
+    /// or contains no defined join operations.
     /// </summary>
-    /// <typeparam name="leftT"></typeparam>
     /// <param name="relation">The <see cref="JoinsBase"/> instance to evaluate.</param>
-    /// <returns><c>true</c> if <paramref name="relation"/> is <c>null</c> or empty; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="relation"/> is <see langword="null"/> or has no join elements;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
     internal static bool IsNullOrEmpty(this JoinsBase? relation) =>
         relation?.IsEmpty() ?? true;
 
     /// <summary>
-    /// Determines whether the specified <see cref="JoinsBase"/> instance is not null
-    /// and contains at least one join element.
+    /// Determines whether the specified <see cref="JoinsBase"/> instance is not <see langword="null"/>
+    /// and contains at least one join operation.
     /// </summary>
-    /// <typeparam name="leftT"></typeparam>
     /// <param name="relation">The <see cref="JoinsBase"/> instance to evaluate.</param>
-    /// <returns><c>true</c> if <paramref name="relation"/> is not <c>null</c> and contains at least one element; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="relation"/> is not <see langword="null"/> 
+    /// and contains one or more join elements; otherwise, <see langword="false"/>.
+    /// </returns>
     internal static bool IsNotNullOrEmpty([NotNullWhen(true)] this JoinsBase? relation) =>
         relation.IsNullOrEmpty() == false;
 }
