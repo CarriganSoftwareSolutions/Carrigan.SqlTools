@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
 
-public class InnerJoinsTest
+public class InnerJoinTest
 {
     [Fact]
     public void NewJoinsNewInnerJoin()

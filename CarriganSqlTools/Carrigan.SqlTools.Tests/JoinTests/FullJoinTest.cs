@@ -1,0 +1,54 @@
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Tests.TestEntities;
+
+namespace Carrigan.SqlTools.Tests.JoinTests;
+
+public class FullJoinTest
+{
+    [Fact]
+    public void NewJoinsNewFullJoin()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        FullJoin<JoinRightTable> join = new(id);
+
+        string actual = (new Joins<JoinLeftTable>(join)).ToSql();
+        string expected = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void NewFullJoinAsJoins()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        FullJoin<JoinRightTable> join = new(id);
+
+        string actual = join.AsJoins<JoinLeftTable>().ToSql();
+        string expected = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void JoinsFullJoin()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+
+        string actual = Joins<JoinLeftTable>.FullJoin<JoinRightTable>(id).ToSql();
+        string expected = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TableTag()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        FullJoin<JoinRightTable> join = new (id);
+        TableTag expected = new (null, "Right");
+        Assert.Equal(expected, join.TableTag);
+    }
+}

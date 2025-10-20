@@ -22,6 +22,19 @@ public class JoinExamples
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Empty(query.Parameters);
     }
+    [Fact]
+    public void SelectWithFullJoin()
+    {
+        //Note: ColumnEqualsColumn<lefT, rightT> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        JoinsBase join = Joins<Customer>.FullJoin<Order>(predicate);
+
+        SqlQuery query = customerGenerator.Select(null, join, null, null, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] FULL JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        Assert.Empty(query.Parameters);
+    }
 
     [Fact]
     public void SelectWithJoin()

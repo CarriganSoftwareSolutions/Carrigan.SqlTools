@@ -169,6 +169,22 @@ public class Joins<leftT> : JoinsBase
         JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates);
 
     /// <summary>
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
+    /// a newly created <see cref="FullJoin{rightT}"/> operation.
+    /// </summary>
+    /// <typeparam name="rightT">
+    /// The data model representing the right-side table being joined.
+    /// </typeparam>
+    /// <param name="predicates">
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>Full JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
+    /// </returns>
+    public static Joins<leftT> FullJoin<rightT>(Predicates predicates) =>
+        JoinTypes.FullJoin<rightT>.Joins<leftT>(predicates);
+
+    /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.
     /// </summary>
     internal override TableTag TableTag =>
