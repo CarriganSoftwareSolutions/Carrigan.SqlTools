@@ -78,8 +78,9 @@ public class SetColumns<T>
     /// Each name is validated via the reflection cache; invalid names throw.
     /// </param>
     [ExternalOnly]
-    public SetColumns(params IEnumerable<string> propertyNames) : 
-        this(propertyNames.Select(name => new PropertyName(name))) { }
+    public SetColumns(params IEnumerable<string> propertyNames) :
+        this(propertyNames.Select(name => new PropertyName(name)))
+    { }
 
     /// <summary>
     /// Adds an additional column to the <c>SET</c> clause.
@@ -91,7 +92,7 @@ public class SetColumns<T>
     public void AddColumn(PropertyName propertyName)
     {
         ColumnInfo? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
-        if(newTag is not null)
+        if (newTag is not null)
             ColumnInfo = ColumnInfo.Append(newTag);
     }
 
@@ -105,4 +106,60 @@ public class SetColumns<T>
     [ExternalOnly]
     public void AddColumn(string propertyName) =>
         AddColumn(new PropertyName(propertyName));
+
+
+    /// <summary>
+    /// Creates a new instance of SetColumns&lt;T&gt; with an additional column to the <c>SET</c> clause.
+    /// </summary>
+    /// <param name="propertyName">The property name mapping to the column to append.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// </exception>
+    public SetColumns<T> AppendColumn(PropertyName propertyName)
+    {
+        SetColumns<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
+        ColumnInfo? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
+        if (newTag is not null)
+            returnValue.ColumnInfo = returnValue.ColumnInfo.Append(newTag);
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Creates a new instance of SetColumns&lt;T&gt; with an additional column to the <c>SET</c> clause.
+    /// </summary>
+    /// <param name="propertyName">The property name mapping to the column to append.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// </exception>
+    [ExternalOnly]
+    public SetColumns<T> AppendColumn(string propertyName) =>
+        AppendColumn(new PropertyName(propertyName));
+
+
+    /// <summary>
+    /// Creates a new instance of SetColumns&lt;T&gt; with an additional columns to the <c>SET</c> clause.
+    /// </summary>
+    /// <param name="propertyName">The property name mappings to the column to concat.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// </exception>
+    public SetColumns<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames)
+    {
+        SetColumns<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
+        IEnumerable<ColumnInfo> newTags = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
+        if (newTags is not null)
+            returnValue.ColumnInfo = returnValue.ColumnInfo.Concat(newTags);
+        return returnValue;
+    }
+
+    /// <summary>
+    /// Creates a new instance of SetColumns&lt;T&gt; with an additional columns to the <c>SET</c> clause.
+    /// </summary>
+    /// <param name="propertyName">The property name mappings to the column to concat.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// </exception>
+    [ExternalOnly]
+    public SetColumns<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
+        ConcatColumn(propertyNames.Select(aString => new PropertyName(aString)));
 }

@@ -57,4 +57,28 @@ public class SetColumnsTests
         setColumns.AddColumn(nameof(ColumnTable.Col2));
         Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], setColumns.ColumnInfo.Select(columnTag => columnTag.ColumnName));
     }
+
+    [Fact]
+    public void Append()
+    {
+        SetColumns<ColumnTable> originalSet = new(nameof(ColumnTable.Col1), nameof(ColumnTable.Col2));
+        SetColumns<ColumnTable> newSet = originalSet.AppendColumn(nameof(ColumnTable.ColA));
+
+        //Original Unchanged
+        Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], originalSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+        //NewSet has new column
+        Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2"), new ColumnName("ColA")], newSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+    }
+
+    [Fact]
+    public void Concat()
+    {
+        SetColumns<ColumnTable> originalSet = new(nameof(ColumnTable.Col1), nameof(ColumnTable.Col2));
+        SetColumns<ColumnTable> newSet = originalSet.ConcatColumn(nameof(ColumnTable.ColA), nameof(ColumnTable.ColB));
+
+        //Original Unchanged
+        Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], originalSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+        //NewSet has new column
+        Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2"), new ColumnName("ColA"), new ColumnName("ColB")], newSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+    }
 }
