@@ -26,10 +26,6 @@ public partial class SqlGenerator<T>
     /// members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="NullReferenceException">
-    /// Thrown if a mapped column lacks a <see cref="ParameterTag"/> during parameter generation.
-    /// This can surface indirectly from the internal parameter projection.
-    /// </exception>
-    /// <exception cref="TargetException">
     /// Thrown if <paramref name="entity"/> is <c>null</c> (or otherwise invalid for reflection-based
     /// property reads) when extracting parameter values.
     /// </exception>
@@ -49,9 +45,9 @@ public partial class SqlGenerator<T>
     /// [schema].[UpdateThing]
     /// ]]></code>
     /// </example>
-    //TODO: AI review of documentation resulted in some anomalous exceptions being documented, investigate and review.
     public SqlQuery Procedure(T entity)
     {
+        ArgumentNullException.ThrowIfNull(entity);
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = ColumnInfo.Select(columns => GetSqlParameterKeyValue(columns, entity));
 
         return new SqlQuery()

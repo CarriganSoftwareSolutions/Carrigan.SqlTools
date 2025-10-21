@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
-//TODO: Redo, AI review striped information off of some of the documentation for comparibles 
+
 /// <summary>
 /// Represents reflection-based metadata describing a single property
 /// in a data model that maps to a SQL column.  

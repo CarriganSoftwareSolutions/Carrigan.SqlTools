@@ -132,7 +132,6 @@ public partial class SqlGenerator<T>
         }
     }
 
-    //TODO: empty sequence should throw a exception instead of the behavior noted by the AI proof read of the documentation.
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities.
     /// </summary>
@@ -145,13 +144,9 @@ public partial class SqlGenerator<T>
     /// <remarks>
     /// - When only one entity is provided, unindexed parameter names are emitted.
     /// - When multiple entities are provided, parameters are suffixed with the row index (e.g., <c>@Name_0</c>).
-    /// - Passing an empty sequence will produce an invalid SQL statement (no <c>VALUES</c> tuples).
-    ///   Callers should ensure at least one entity is supplied.
     /// </remarks>
-    /// <exception cref="NullReferenceException">
-    /// Thrown if a column lacks a <see cref="ParameterTag"/> during parameter generation.
-    /// This can surface indirectly from <see cref="GetSqlParameterKeyValuePairs(T, int?)"/> →
-    /// <see cref="GetSqlParameterKeyValue(ColumnInfo, T, int?, string?)"/>.
+    /// <exception cref="ArgumentException">
+    /// Thrown if <paramref name="entities"/> is empty.
     /// </exception>
     /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
     /// Members not visible outside their defining assembly are ignored.
@@ -185,6 +180,8 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Insert(params IEnumerable<T> entities)
     {
+        if (entities.IsNullOrEmpty())
+            throw new ArgumentException("No records provided.", nameof(entities));
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
         string values;
 
