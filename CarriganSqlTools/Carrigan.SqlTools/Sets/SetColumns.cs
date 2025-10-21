@@ -5,12 +5,12 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Sets;
 /// <summary>
-/// Represents a SQL <c>SET</c> clause used when generating <c>UPDATE</c> statements.
-/// Use this class to specify only certain columns to update instead of updating all columns
-/// by default. The name mirrors the SQL syntax <c>SET [Column] = @Parameter</c>.
+/// Represents the SQL <c>SET</c> clause used when generating <c>UPDATE</c> statements.
+/// Use this to specify only certain columns to update instead of updating all non-key columns.
+/// The name mirrors SQL syntax: <c>SET [Column] = @Parameter</c>.
 /// </summary>
 /// <typeparam name="T">
-/// The entity or data model type that defines the table being updated.
+/// The entity/data model type that maps to the target table.
 /// </typeparam>
 /// <para>Update example not using SetColumns</para>
 /// <example>
@@ -56,27 +56,26 @@ namespace Carrigan.SqlTools.Sets;
 public class SetColumns<T>
 {
     /// <summary>
-    /// Getter for the collection of <see cref="ColumnTag"/> objects representing
-    /// the properties in the data model.
+    /// The <see cref="ColumnInfo"/> entries corresponding to the columns included in the <c>SET</c> clause.
     /// </summary>
     internal IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SetColumns{T}"/> class,
-    /// specifying the properties (columns) to include in the SQL <c>SET</c> clause.
+    /// Initializes a new <see cref="SetColumns{T}"/> containing the specified properties (columns).
     /// </summary>
     /// <param name="propertyNames">
-    /// The names of the properties that represent the column names to be updated.
+    /// One or more property names that map to column names to be updated.
+    /// Each name is validated via the reflection cache; invalid names throw.
     /// </param>
     public SetColumns(params IEnumerable<PropertyName> propertyNames) =>
         ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SetColumns{T}"/> class,
-    /// specifying the properties (columns) to include in the SQL <c>SET</c> clause.
+    /// Initializes a new <see cref="SetColumns{T}"/> containing the specified properties (columns).
     /// </summary>
     /// <param name="propertyNames">
-    /// The names of the properties that represent the column names to be updated.
+    /// One or more property names that map to column names to be updated.
+    /// Each name is validated via the reflection cache; invalid names throw.
     /// </param>
     [ExternalOnly]
     public SetColumns(params IEnumerable<string> propertyNames) : 
@@ -85,11 +84,9 @@ public class SetColumns<T>
     /// <summary>
     /// Adds an additional column to the <c>SET</c> clause.
     /// </summary>
-    /// <param name="propertyName">
-    /// The name of the property that represents the column to add.
-    /// </param>
+    /// <param name="propertyName">The property name mapping to the column to add.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if the specified <paramref name="propertyName"/> is not found in the data model
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
     public void AddColumn(PropertyName propertyName)
     {
@@ -101,11 +98,9 @@ public class SetColumns<T>
     /// <summary>
     /// Adds an additional column to the <c>SET</c> clause.
     /// </summary>
-    /// <param name="propertyName">
-    /// The name of the property that represents the column to add.
-    /// </param>
+    /// <param name="propertyName">The property name mapping to the column to add.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if the specified <paramref name="propertyName"/> is not found in the data model
+    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
     [ExternalOnly]
     public void AddColumn(string propertyName) =>
