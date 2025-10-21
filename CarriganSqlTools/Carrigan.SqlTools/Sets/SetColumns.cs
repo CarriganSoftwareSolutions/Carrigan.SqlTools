@@ -107,9 +107,8 @@ public class SetColumns<T>
     public void AddColumn(string propertyName) =>
         AddColumn(new PropertyName(propertyName));
 
-
     /// <summary>
-    /// Creates a new instance of SetColumns&lt;T&gt; with an additional column to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="SetColumns{T}"/> with an additional column appended to the <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyName">The property name mapping to the column to append.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
@@ -125,7 +124,7 @@ public class SetColumns<T>
     }
 
     /// <summary>
-    /// Creates a new instance of SetColumns&lt;T&gt; with an additional column to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="SetColumns{T}"/> with an additional column appended to the <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyName">The property name mapping to the column to append.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
@@ -135,13 +134,12 @@ public class SetColumns<T>
     public SetColumns<T> AppendColumn(string propertyName) =>
         AppendColumn(new PropertyName(propertyName));
 
-
     /// <summary>
-    /// Creates a new instance of SetColumns&lt;T&gt; with an additional columns to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="SetColumns{T}"/> with additional columns concatenated to the <c>SET</c> clause.
     /// </summary>
-    /// <param name="propertyName">The property name mappings to the column to concat.</param>
+    /// <param name="propertyNames">The property names mapping to the columns to concatenate.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// Thrown if any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
     public SetColumns<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames)
     {
@@ -153,11 +151,11 @@ public class SetColumns<T>
     }
 
     /// <summary>
-    /// Creates a new instance of SetColumns&lt;T&gt; with an additional columns to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="SetColumns{T}"/> with additional columns concatenated to the <c>SET</c> clause.
     /// </summary>
-    /// <param name="propertyName">The property name mappings to the column to concat.</param>
+    /// <param name="propertyNames">The property names mapping to the columns to concatenate.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// Thrown if any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
     [ExternalOnly]
     public SetColumns<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
