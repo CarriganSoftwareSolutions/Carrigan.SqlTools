@@ -11,10 +11,14 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public partial class SqlGenerator<T>
 {
     /// <summary>
-    /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
-    /// <c>SELECT COUNT(*)</c> from the table represented by <typeparamref name="T"/>,
-    /// with optional <c>JOIN</c> and <c>WHERE</c> clauses.
+    /// Builds an <see cref="SqlQuery"/> containing a parameterized
+    /// <c>SELECT COUNT(...)</c> from the table represented by <typeparamref name="T"/>,
+    /// with optional <c>SELECT</c> projection, <c>JOIN</c>, and <c>WHERE</c> clauses.
     /// </summary>
+    /// <param name="selects">
+    /// Optional result projection to be counted. If omitted or empty, the generator
+    /// counts <c>{Table}.*</c>.
+    /// </param>
     /// <param name="joins">
     /// Optional joins to include in the count query. Omit to count only rows from the base table.
     /// </param>
@@ -23,10 +27,18 @@ public partial class SqlGenerator<T>
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated count SQL and whose
-    /// <c>Parameters</c> are derived from <paramref name="predicates"/>.
+    /// <c>Parameters</c> are derived from <paramref name="predicates"/> and any joins.
     /// </returns>
+    /// <remarks>
+    /// Only properties that can be publicly read from accessible types are considered.
+    /// Members not visible outside their defining assembly are ignored.
+    /// </remarks>
+    /// <exception cref="AmbiguousResultColumnException">
+    /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
+    /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown if the generated query references invalid or unrecognized table identifiers.
+    /// Thrown when any table referenced by <paramref name="predicates"/> (or by their columns)
+    /// is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     /// <param name="orderBy"></param>
     /// <example>

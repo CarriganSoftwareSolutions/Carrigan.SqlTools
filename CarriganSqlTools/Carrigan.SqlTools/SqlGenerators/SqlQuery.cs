@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION
 /// </summary>
 /// <remarks>
-/// Intentionally left public, to allow for manual sql.
+/// Intentionally left public to allow manual SQL.
 /// Use at your own risk, and DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION.
 /// </remarks>
 public class SqlQuery
@@ -29,7 +29,7 @@ public class SqlQuery
     /// DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION
     /// </summary>
     /// <remarks>
-    /// Intentionally left public, to allow for manual sql.
+    /// Intentionally left public to allow manual SQL.
     /// Use at your own risk, and DON'T FORGET TO PARAMETERIZE YOUR SQL TO MITIGATE SQL INJECTION.
     /// </remarks>
     /// <param name="query">The SQL command text.</param>
@@ -55,21 +55,22 @@ public class SqlQuery
     public Dictionary<ParameterTag, object> Parameters { get; set; }
 
     /// <summary>
-    /// Gets or sets the parameter values for this command,
-    /// keyed by <see cref="ParameterTag"/>.
+    /// Gets or sets the command type for this SQL query.
     /// </summary>
     public CommandType CommandType { get; set; }
 
     /// <summary>
-    /// Retrieves the value of a parameter by name (for unit testing).
+    /// Retrieves the value of a parameter by its <see cref="ParameterTag"/> (for unit testing).
     /// </summary>
     /// <typeparam name="T">The expected type of the parameter value.</typeparam>
-    /// <param name="parameterTestName">The parameter name to look up.</param>
+    /// <param name="parameter">The parameter tag to look up.</param>
     /// <returns>The parameter value cast to <typeparamref name="T"/>.</returns>
-    /// <remarks>
-    /// This method is intended for unit testing scenarios and assumes that
-    /// parameter names are comparable to <see cref="ParameterTag"/> via equality.
-    /// </remarks>
+    /// <exception cref="KeyNotFoundException">
+    /// Thrown when <paramref name="parameter"/> is not present in <see cref="Parameters"/>.
+    /// </exception>
+    /// <exception cref="InvalidCastException">
+    /// Thrown when the stored parameter value cannot be cast to <typeparamref name="T"/>.
+    /// </exception>
     internal T GetParameterValue<T>(string parameterTestName) =>
         (T)Parameters.Where(param => param.Key == parameterTestName).Single().Value;
 

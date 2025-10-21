@@ -24,12 +24,14 @@ public partial class SqlGenerator<T>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>SELECT</c> statement.
     /// </returns>
-    /// <exception cref="InvalidTableException">
-    /// Thrown if the generated query references invalid or unrecognized table identifiers.
-    /// </exception>
     /// <remarks>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
+    /// Only properties that can be publicly read from accessible types are considered.
+    /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
+    /// <exception cref="InvalidTableException">
+    /// Thrown if any table referenced by <paramref name="orderBy"/> does not participate
+    /// in the query (i.e., is not the base table and not included by joins).
+    /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = customerGenerator.SelectAll();
@@ -56,11 +58,13 @@ public partial class SqlGenerator<T>
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
-    /// <c>SELECT *</c> from the table represented by <typeparamref name="T"/>,
+    /// <c>SELECT</c> from the table represented by <typeparamref name="T"/>,
     /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
     /// <c>OFFSET … FETCH NEXT</c> clauses.
     /// </summary>
-    /// <param name="selects"></param>
+    /// <param name="selects">
+    /// Optional projected columns (and result aliases). If omitted or empty, <c>[T].*</c> is selected.
+    /// </param>
     /// <param name="joins">
     /// Optional joins to include in the query. Omit to select only from the base table.
     /// </param>
@@ -72,15 +76,26 @@ public partial class SqlGenerator<T>
     /// When <paramref name="offsetNext"/> is provided, key columns are appended to
     /// the ordering (if not already present) to ensure stable paging semantics.
     /// </param>
+    /// <param name="offsetNext">
+    /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
+    /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
-    /// <c>Parameters</c> contain values from <paramref name="predicates"/>.
+    /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
     /// </returns>
-    /// <exception cref="InvalidTableException">
-    /// Thrown if the generated query references invalid or unrecognized table identifiers.
-    /// </exception>
+    /// <remarks>
+    /// When providing <paramref name="selects"/>, you will almost certainly need a model
+    /// matching the projected columns to materialize results correctly (since they may no
+    /// longer map back to <typeparamref name="T"/>).
+    /// Only properties that can be publicly read from accessible types are considered.
+    /// Members not visible outside their defining assembly are ignored.
+    /// </remarks>
     /// <exception cref="AmbiguousResultColumnException">
-    /// Thrown if there is an ambiguous select tag.
+    /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
+    /// </exception>
+    /// <exception cref="InvalidTableException">
+    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
+    /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     /// <remarks>
     /// When providing <paramref name="selects"/>, you will almost certainly need to provide a different class model
@@ -244,9 +259,13 @@ public partial class SqlGenerator<T>
     /// <remarks>
     /// The generated <c>WHERE</c> clause is composed as an <c>OR</c> of per-entity
     /// <c>AND</c> predicates over the key columns.
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
+    /// <exception cref="NoPrimaryKeyProperty{T}">
+    /// Thrown when <typeparamref name="T"/> has no key annotations (neither the SQL generator’s
+    /// <c>PrimaryKey</c> nor <c>Key</c> attributes) and a “By Id” operation is invoked.
+    /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Id = 42 };

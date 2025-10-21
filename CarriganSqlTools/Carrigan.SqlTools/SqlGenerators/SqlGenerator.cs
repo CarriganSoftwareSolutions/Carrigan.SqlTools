@@ -33,14 +33,25 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     private readonly IEncryption? _Encryption;
 
     /// <summary>
-    /// Validates that encryption prerequisites are met for the current table.
-    /// Throws an exception if encrypted columns exist but no encryption service or key version attribute
-    /// has not been set.
+    /// Validates identifier formats and (if applicable) encryption prerequisites for the model.
     /// </summary>
-    /// <exception cref="NullReferenceException">
-    /// Thrown when encrypted columns are detected but either
-    /// the <c>_Encryption</c> service is <c>null</c> or the
-    /// <c>KeyVersionAttribute</c> has not been set on a property in <see cref="KeyVersionAttribute"/>.
+    /// <exception cref="AggregateException">
+    /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
+    /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
+    /// </exception>
+    /// <exception cref="EncrypterNotProvided{T}">
+    /// if encrypted columns exist but no encrypter was supplied
+    /// </exception>
+    /// <exception cref="NoKeyVersionProperty{T}">
+    /// if encrypted columns exist but no key-version property was designated.
+    /// </exception>
+    /// <exception cref="InvalidKeyVersionPropertyType{T}">
+    /// if the key-version property is not an <see cref="int"/> (nullable allowed).
+    /// </exception>
+    /// <exception cref="MultipleKeyVersionProperties{T}">
+    /// if more than one key-version property is present.
     /// </exception>
     private void ValidationChecks()
     {
@@ -96,19 +107,27 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             throw new AggregateException(exceptions);
     }
 
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="SqlGenerator{T}"/> class
-    /// with no encryption service configured.
+    /// Initializes a new instance of the <see cref="SqlGenerator{T}"/> class without an encrypter.
     /// </summary>
-    /// <remarks>
-    /// Sets <c>_Encryption</c> to <c>null</c> and immediately calls
-    /// <see cref="ValidationChecks"/> to validate <typeparamref name="T"/> attribute setups. 
-    /// requirements (if any) are satisfied.
-    /// </remarks>
-    /// <exception cref="NullReferenceException">
-    /// Thrown when encrypted columns are detected but either
-    /// the <c>_Encryption</c> service is <c>null</c> or the
-    /// <c>KeyVersionAttribute</c> has not been set on a property in <see cref="KeyVersionAttribute"/>.
+    /// <exception cref="AggregateException">
+    /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
+    /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
+    /// </exception>
+    /// <exception cref="EncrypterNotProvided{T}">
+    /// if encrypted columns exist but no encrypter was supplied
+    /// </exception>
+    /// <exception cref="NoKeyVersionProperty{T}">
+    /// if encrypted columns exist but no key-version property was designated.
+    /// </exception>
+    /// <exception cref="InvalidKeyVersionPropertyType{T}">
+    /// if the key-version property is not an <see cref="int"/> (nullable allowed).
+    /// </exception>
+    /// <exception cref="MultipleKeyVersionProperties{T}">
+    /// if more than one key-version property is present.
     /// </exception>
     public SqlGenerator()
     {
@@ -124,18 +143,23 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// The <see cref="IEncryption"/> implementation to use for encrypting
     /// and decrypting columns in SQL operations. Must not be <c>null</c>.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="encryption"/> is <c>null</c>.
+    /// <exception cref="AggregateException">
+    /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
     /// </exception>
-    /// <remarks>
-    /// Assigns the provided <paramref name="encryption"/> to <c>_Encryption</c>
-    /// and calls <see cref="ValidationChecks"/> to validate <typeparamref name="T"/> attribute setups. 
-    /// prerequisites are satisfied.
-    /// </remarks>
-    /// <exception cref="NullReferenceException">
-    /// Thrown when encrypted columns are detected but either
-    /// the <see <paramref name="encryption"/> is <c>null</c> or the
-    /// <c>KeyVersionAttribute</c> has not been set on a property in <see cref="KeyVersionAttribute"/>.
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
+    /// </exception>
+    /// <exception cref="EncrypterNotProvided{T}">
+    /// if encrypted columns exist but no encrypter was supplied
+    /// </exception>
+    /// <exception cref="NoKeyVersionProperty{T}">
+    /// if encrypted columns exist but no key-version property was designated.
+    /// </exception>
+    /// <exception cref="InvalidKeyVersionPropertyType{T}">
+    /// if the key-version property is not an <see cref="int"/> (nullable allowed).
+    /// </exception>
+    /// <exception cref="MultipleKeyVersionProperties{T}">
+    /// if more than one key-version property is present.
     /// </exception>
     public SqlGenerator(IEncryption encryption)
     {
@@ -157,33 +181,26 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         new (KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.ParameterTag, key.PropertyInfo.GetValue(entity)))));
 
     /// <summary>
-    /// Creates a SQL parameter as a key–value pair for the specified column and entity instance.
+    /// Creates a SQL parameter key–value pair for a specific column and entity instance.
     /// </summary>
-    /// <param name="column">
-    /// The <see cref="ColumnTag"/> that identifies the column for which to create a parameter.
-    /// </param>
-    /// <param name="entity">
-    /// The entity instance (corresponding to a database row) that provides the column’s value.
-    /// </param>
+    /// <param name="column">The <see cref="ColumnInfo"/> describing the target column.</param>
+    /// <param name="entity">The entity instance supplying the column value.</param>
     /// <param name="entityIndex">
-    /// Optional index of the entity in an enumerated collection.  
-    /// If supplied, it is appended to the parameter name to ensure uniqueness.
+    /// Optional zero-based index for the entity when batching; appended to the parameter name to keep it unique.
     /// </param>
     /// <param name="parameterPrepend">
-    /// Optional prefix to prepend to the parameter name.
+    /// Optional prefix to prepend to the parameter name (e.g., to namespace parameters).
     /// </param>
     /// <returns>
-    /// A <see cref="KeyValuePair{TKey,TValue}"/> where  
-    /// <typeparamref name="TKey"/> is <see cref="ParameterTag"/> (the SQL parameter name) and  
-    /// <typeparamref name="TValue"/> is <see cref="object"/> (the parameter value or <see cref="DBNull.Value"/> if null).
+    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose key is the final <see cref="ParameterTag"/> and whose value is the
+    /// (possibly encrypted) column value or <see cref="DBNull.Value"/> if <c>null</c>.
     /// </returns>
     /// <remarks>
-    /// If encryption is configured and the column is marked as encrypted,
-    /// the column’s value is encrypted before being stored in the parameter value.
-    /// If the column represents a key version, the encryption version is used instead of the property value.
+    /// If an encrypter is configured and the column is marked encrypted, the value is encrypted.
+    /// If the column is the key-version column, the encrypter’s <c>Version</c> is used instead of the entity value.
     /// </remarks>
     /// <exception cref="NullReferenceException">
-    /// Thrown when the <paramref name="column"/> has no associated <see cref="ParameterTag"/>.
+    /// Thrown if <paramref name="column"/> does not expose a <see cref="ParameterTag"/>.
     /// </exception>
     private KeyValuePair<ParameterTag, object> GetSqlParameterKeyValue(ColumnInfo column, T entity, int? entityIndex = null, string? parameterPrepend = null)
     {
@@ -199,39 +216,24 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     }
 
     /// <summary>
-    /// Generates a sequence of SQL parameters as key–value pairs for the specified entity.
+    /// Generates SQL parameter key–value pairs for all mapped columns of a single entity.
     /// </summary>
-    /// <param name="entity">
-    /// The entity instance (corresponding to a database row) that provides the parameter values.
-    /// </param>
+    /// <param name="entity">The entity instance.</param>
     /// <param name="entityIndex">
-    /// Optional index of the entity in an enumerated collection.  
-    /// If provided, it is appended to parameter names to ensure uniqueness.
+    /// Optional zero-based index for the entity when batching; appended to parameter names to keep them unique.
     /// </param>
     /// <returns>
-    /// An <see cref="IEnumerable{T}"/> of <see cref="KeyValuePair{TKey,TValue}"/> objects,
-    /// where each key is a <see cref="ParameterTag"/> (the parameter name)
-    /// and each value is the parameter value or <see cref="DBNull.Value"/> if null.
+    /// A sequence of parameter key–value pairs for the entity.
     /// </returns>
     private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(T entity, int? entityIndex = null) =>
         ColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity, entityIndex));
 
     /// <summary>
-    /// Generates a combined sequence of SQL parameters as key–value pairs
-    /// for a collection of entities.
+    /// Generates a flattened sequence of SQL parameter key–value pairs for a collection of entities,
+    /// automatically indexing parameter names per entity to ensure uniqueness.
     /// </summary>
-    /// <param name="entities">
-    /// The collection of entities (each corresponding to a database row) that provide parameter values.
-    /// </param>
-    /// <returns>
-    /// An <see cref="IEnumerable{T}"/> of <see cref="KeyValuePair{TKey,TValue}"/> objects
-    /// aggregated from all specified entities, where each key is a <see cref="ParameterTag"/>
-    /// and each value is the parameter value or <see cref="DBNull.Value"/> if null.
-    /// </returns>
-    /// <remarks>
-    /// Each entity’s position in the collection is used as an index and appended to its parameter names
-    /// to maintain uniqueness across multiple rows.
-    /// </remarks>
+    /// <param name="entities">The collection of entities to materialize as parameters.</param>
+    /// <returns>A combined sequence of parameter key–value pairs for all entities.</returns>
     private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(params IEnumerable<T> entities) =>
         entities.SelectMany((entity, index) => GetSqlParameterKeyValuePairs(entity, index));
 }

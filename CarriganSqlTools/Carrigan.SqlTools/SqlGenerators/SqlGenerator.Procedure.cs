@@ -19,12 +19,20 @@ public partial class SqlGenerator<T>
     /// </returns>
     /// <remarks>
     /// When creating a data model for a stored procedure, the key distinction from
-    /// a table-based model is that you call <c>Procedure</c> instead of an
-    /// insert, update, or delete method on the <see cref="SqlGenerator{T}"/>.  
-    /// <remarks>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
-    /// Members not visible outside their defining assembly are ignored.
+    /// a table-based model is that you call <c>Procedure</c> rather than an
+    /// insert, update, or delete method on the <see cref="SqlGenerator{T}"/>.
+    /// <br/><br/>
+    /// Only properties that can be publicly read from accessible types are considered;
+    /// members not visible outside their defining assembly are ignored.
     /// </remarks>
+    /// <exception cref="NullReferenceException">
+    /// Thrown if a mapped column lacks a <see cref="ParameterTag"/> during parameter generation.
+    /// This can surface indirectly from the internal parameter projection.
+    /// </exception>
+    /// <exception cref="TargetException">
+    /// Thrown if <paramref name="entity"/> is <c>null</c> (or otherwise invalid for reflection-based
+    /// property reads) when extracting parameter values.
+    /// </exception>
     /// <example>
     /// <para>
     /// 
@@ -41,6 +49,7 @@ public partial class SqlGenerator<T>
     /// [schema].[UpdateThing]
     /// ]]></code>
     /// </example>
+    //TODO: AI review of documentation resulted in some anomalous exceptions being documented, investigate and review.
     public SqlQuery Procedure(T entity)
     {
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = ColumnInfo.Select(columns => GetSqlParameterKeyValue(columns, entity));
@@ -49,7 +58,7 @@ public partial class SqlGenerator<T>
         {
             Parameters = new Dictionary<ParameterTag, object>([.. parameters]),
             QueryText = ProcedureTag,
-            CommandType = System.Data.CommandType.StoredProcedure
+            CommandType = CommandType.StoredProcedure
         };
     }
 }

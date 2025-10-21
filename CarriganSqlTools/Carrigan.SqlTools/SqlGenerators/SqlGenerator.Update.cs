@@ -28,6 +28,14 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
     /// including parameters for both the <c>SET</c> values and the key-based <c>WHERE</c> filter.
     /// </returns>
+    /// <remarks>
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered.
+    /// Members not visible outside their defining assembly are ignored.
+    /// </remarks>
+    /// <exception cref="NoPrimaryKeyProperty{T}">
+    /// Thrown when the entity type <typeparamref name="T"/> does not define a primary key property,
+    /// but an ID-based update is requested.
+    /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new()
@@ -122,9 +130,13 @@ public partial class SqlGenerator<T>
     /// including parameters for both the <c>SET</c> values and the key-based <c>WHERE</c> filter.
     /// </returns>
     /// <remarks>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
+    /// <exception cref="NoPrimaryKeyProperty{T}">
+    /// Thrown when the entity type <typeparamref name="T"/> does not define a primary key property,
+    /// but an ID-based update is requested.
+    /// </exception>
     /// <example>
     /// <para>
     /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
@@ -187,7 +199,7 @@ public partial class SqlGenerator<T>
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> describing tables to join for the update.
+    /// Optional <see cref="JoinsBase"/> describing tables to join for the update.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
@@ -197,9 +209,13 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
     /// including parameters for the <c>SET</c> values and any predicate values.
     /// </returns>
+    /// <remarks>
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered.
+    /// Members not visible outside their defining assembly are ignored.
+    /// </remarks>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="predicates"/> reference tables that are not present
-    /// in the base table or the specified <paramref name="joins"/>.
+    /// on the base table or in the specified <paramref name="joins"/>.
     /// </exception>
     /// <example>
     /// <para>

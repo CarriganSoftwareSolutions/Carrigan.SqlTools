@@ -22,6 +22,20 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Members not visible outside their defining assembly are ignored.
+    /// </remarks>
+    /// <exception cref="NullReferenceException">
+    /// Thrown if a key column lacks a <see cref="ParameterTag"/> during parameter generation.
+    /// </exception>
+    /// <param name="entity">
+    /// An instance of the data model that supplies the key property values
+    /// used to locate the record to delete.
+    /// </param>
+    /// <returns>
+    /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
+    /// </returns>
+    /// <remarks>
     /// When building the SQL, only public properties with a getter are considered.
     /// </remarks>
     /// <example>
@@ -73,18 +87,15 @@ public partial class SqlGenerator<T>
     };
 
     /// <summary>
-    /// Generates a SQL <c>DELETE</c> statement that removes the rows matching the key
-    /// properties of the specified entities.
+    /// Generates a SQL <c>DELETE</c> statement that removes all rows
+    /// from the table represented by the data model type <typeparamref name="T"/>.
     /// </summary>
-    /// <param name="entities">
-    /// A sequence of data model instances used only as ID holders;  
-    /// their key property values determine which rows to delete.
-    /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <param name="entity">an IEnumerable of the data model use only as an id holder, uses only the key properties</param>
     /// <returns>Returns an SqlQuery object</returns>
@@ -111,10 +122,10 @@ public partial class SqlGenerator<T>
     /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="JoinsBase"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
-    /// Optional <see cref="PredicatesLogic.Predicates"/> representing the <c>WHERE</c> conditions
+    /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
     /// </param>
     /// <returns>
@@ -125,9 +136,8 @@ public partial class SqlGenerator<T>
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="InvalidTableException">
-    /// Thrown when a <see cref="TableTag"/> referenced during SQL generation
-    /// belongs to a table that is not included in the <c>JOIN</c> clause or
-    /// specified as the primary table.
+    /// Thrown when a <see cref="TableTag"/> referenced by <paramref name="predicates"/> is not present
+    /// in the <paramref name="joins"/> set nor equal to the primary table.
     /// </exception>
     /// <example>
     /// <para>Example with null Joins and null predicates</para>
