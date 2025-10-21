@@ -3,6 +3,8 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
+using System;
+using System.Buffers.Text;
 using System.Data;
 using System.Text;
 
@@ -99,6 +101,9 @@ public partial class SqlGenerator<T>
     /// </remarks>
     /// <param name="entity">an IEnumerable of the data model use only as an id holder, uses only the key properties</param>
     /// <returns>Returns an SqlQuery object</returns>
+    /// <exception cref = "Carrigan.SqlTools.Exceptions.NoPrimaryKeyProperty{T}" >
+    /// Thrown when<typeparamref name = "T" /> has no key property metadata but a key-based delete was requested.
+    /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Id = 42 };

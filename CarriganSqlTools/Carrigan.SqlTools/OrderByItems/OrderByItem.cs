@@ -1,7 +1,9 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
+using System;
 
 namespace Carrigan.SqlTools.OrderByItems;
 
@@ -31,6 +33,9 @@ public class OrderByItem<T> : OrderByItemBase
     /// specifying the table type <typeparamref name="T"/>, the property name,
     /// and the desired sort direction.
     /// </summary>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when<paramref name="propertyName"/> does not map to a valid column on <typeparamref name = "T" />.
+    /// </exception>
     /// <param name="propertyName">The property representing the column to order by.</param>
     /// <param name="sortDirection">The sort direction to apply.</param>
     public OrderByItem(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
@@ -42,6 +47,9 @@ public class OrderByItem<T> : OrderByItemBase
     /// specifying the table type <typeparamref name="T"/>, the property name,
     /// and the desired sort direction.
     /// </summary>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when<paramref name="propertyName"/> does not map to a valid column on <typeparamref name = "T" />.
+    /// </exception>
     /// <param name="propertyName">The property representing the column to order by.</param>
     /// <param name="sortDirection">The sort direction to apply.</param>
     [ExternalOnly]

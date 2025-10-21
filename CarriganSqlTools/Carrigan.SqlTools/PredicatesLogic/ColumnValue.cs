@@ -53,7 +53,7 @@ public class ColumnValue<T> : Predicates
     /// This constructor validates that <paramref name="propertyName"/> maps to a valid property
     /// on <typeparamref name="T"/>. If it does not, an exception is thrown.
     /// </remarks>
-    /// <exception cref="Carrigan.SqlTools.Exceptions.InvalidPropertyException{T}">
+    /// <exception cref="InvalidPropertyException{T}">
     /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is not eligible
     /// for column mapping.
     /// </exception>
@@ -85,7 +85,7 @@ public class ColumnValue<T> : Predicates
     /// <see cref="ColumnValue(PropertyName, object)"/> constructor after wrapping the string in a
     /// <see cref="PropertyName"/>.
     /// </remarks>
-    /// <exception cref="Carrigan.SqlTools.Exceptions.InvalidPropertyException{T}">
+    /// <exception cref="InvalidPropertyException{T}">
     /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is not eligible
     /// for column mapping.
     /// </exception>

@@ -6,6 +6,8 @@ using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
+using System;
+using System.Buffers.Text;
 using System.Data;
 using System.Text;
 
@@ -242,7 +244,7 @@ public partial class SqlGenerator<T>
             QueryText = queryBuilder.ToString(),
             Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.GetParameters() ?? [])],
             CommandType = CommandType.Text
-        };        
+        };
     }
 
     /// <summary>
@@ -263,6 +265,9 @@ public partial class SqlGenerator<T>
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="NoPrimaryKeyProperty{T}">
+    /// <exception cref = "NoPrimaryKeyProperty{T}" >
+    /// Thrown when<typeparamref name = "T" /> has no key property metadata but a key-based select was requested.
+    /// </exception>
     /// Thrown when <typeparamref name="T"/> has no key annotations (neither the SQL generator’s
     /// <c>PrimaryKey</c> nor <c>Key</c> attributes) and a “By Id” operation is invoked.
     /// </exception>
