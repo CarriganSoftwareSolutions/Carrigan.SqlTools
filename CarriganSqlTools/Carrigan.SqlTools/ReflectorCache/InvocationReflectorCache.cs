@@ -18,6 +18,15 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <typeparam name="T">
 /// The entity/data model type whose properties are being reflected and cached.
 /// </typeparam>
+/// <remarks>
+/// <see cref="InvocationReflectorCache{T}"/> does not filter properties based on type,
+/// unlike <see cref="SqlToolsReflectorCache{T}"/>.  
+/// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.  
+/// In contrast, <see cref="InvocationReflectorCache{T}"/> optimistically attempts to map any data returned.
+/// Since a query should never return unwanted or non-mappable data, this approach is safe.
+/// By comparison, C# classes often contain properties that cannot be mapped to SQL data.
+/// </remarks>
+
 internal static class InvocationReflectorCache<T>
 {
     /// <summary>
@@ -30,6 +39,14 @@ internal static class InvocationReflectorCache<T>
     /// Reverse-lookup cache from <see cref="ResultColumnName"/> to <see cref="PropertyInfo"/>.
     /// Populated with writable, public, instance properties that are not marked with <see cref="NotMappedAttribute"/>.
     /// </summary>
+    /// <remarks>
+    /// <see cref="InvocationReflectorCache{T}"/> does not filter properties based on type,
+    /// unlike <see cref="SqlToolsReflectorCache{T}"/>.  
+    /// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.  
+    /// In contrast, <see cref="InvocationReflectorCache{T}"/> optimistically attempts to map any data returned.
+    /// Since a query should never return unwanted or non-mappable data, this approach is safe.
+    /// By comparison, C# classes often contain properties that cannot be mapped to SQL data.
+    /// </remarks>
     internal static readonly PropertyInfoCache<T> PropertyInfoCache;
 
     /// <summary>
@@ -40,6 +57,14 @@ internal static class InvocationReflectorCache<T>
     /// to avoid recomputation across different layers of the library.
     /// </para>
     /// </summary>
+    /// <remarks>
+    /// <see cref="InvocationReflectorCache{T}"/> does not filter properties based on type,
+    /// unlike <see cref="SqlToolsReflectorCache{T}"/>.  
+    /// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.  
+    /// In contrast, <see cref="InvocationReflectorCache{T}"/> optimistically attempts to map any data returned.
+    /// Since a query should never return unwanted or non-mappable data, this approach is safe.
+    /// By comparison, C# classes often contain properties that cannot be mapped to SQL data.
+    /// </remarks>
     static InvocationReflectorCache() =>
         PropertyInfoCache = new
                 (

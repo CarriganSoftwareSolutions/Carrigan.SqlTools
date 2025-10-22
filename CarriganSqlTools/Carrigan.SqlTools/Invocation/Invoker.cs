@@ -57,7 +57,7 @@ public static class Invoker<T> where T : class?, new()
             ResultColumnName columnName = new(key);
             PropertyInfo property = InvocationReflectorCache<T>.PropertyInfoCache.Get(columnName);
             object? rawValue = invocation[key];
-            object? valueToSet = Invoker<T>.ConvertValue(rawValue, property.PropertyType);
+            object? valueToSet = Invoker<T>.ConvertValue(rawValue, InvocationReflectorCache<T>.PropertyInfoCache.Get(columnName));
 
             property.SetValue(invoked, valueToSet);
         }
@@ -81,16 +81,25 @@ public static class Invoker<T> where T : class?, new()
     /// <item><description><c>null</c> or <see cref="DBNull.Value"/> → <c>null</c></description></item>
     /// <item><description><see cref="DateTime"/> → <see cref="DateOnly"/>, <see cref="TimeOnly"/>, or <see cref="DateTimeOffset"/> (when requested)</description></item>
     /// <item><description><see cref="TimeSpan"/> → <see cref="TimeOnly"/></description></item>
-    /// <item><description>Enums: string values parsed via <see cref="System.Enum.Parse(System.Type, string)"/>, otherwise constructed via <see cref="System.Enum.ToObject(System.Type, object)"/></description></item>
+    /// <item><description>Enums: string values parsed via <see cref="Enum.Parse(Type, string)"/>, otherwise constructed via <see cref="Enum.ToObject(Type, object)"/></description></item>
     /// <item><description>All other types are returned as-is</description></item>
     /// </list>
     /// </remarks>
-    private static object? ConvertValue(object? value, Type targetType)
+    private static object? ConvertValue(object? value, PropertyInfo propertyInfo)
     {
+        //TODO: Revisit
+        Type targetType = propertyInfo.PropertyType;
         // If the value is null or DBNull, return null
         if (value == null || value == DBNull.Value)
-            return null;
-        else 
+        {
+            if (targetType == typeof(string))
+                return IsNullable(propertyInfo) ? null : string.Empty;
+            if (targetType == typeof(byte[]))
+                return IsNullable(propertyInfo) ? null : Array.Empty<byte>();
+            else
+                return null;
+        }
+        else
         {
             // Handle nullable types by getting the underlying type.
             Type underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
@@ -129,5 +138,18 @@ public static class Invoker<T> where T : class?, new()
             else
                 return value;
         }
+    }
+
+    private static bool IsNullable(PropertyInfo propertyInfo)
+    {
+        Type type = propertyInfo.PropertyType;
+
+        if (type.IsValueType)
+            return Nullable.GetUnderlyingType(type) != null;
+
+        NullabilityInfoContext context = new ();
+        NullabilityInfo nullable = context.Create(propertyInfo);
+
+        return nullable.WriteState == NullabilityState.Nullable;
     }
 }
