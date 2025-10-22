@@ -1,3 +1,4 @@
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.Tests.TestEntities.NarrowTypes;
 
@@ -57,6 +58,90 @@ public class SqlDateTimeTests
     {
         Dictionary<string, object?> data = GetTestData(null);
         NullableDateTimeTest actual = Invoker<NullableDateTimeTest>.Invoke(data);
+        Assert.Null(actual.Value);
+    }
+
+    [Fact]
+    public void ToDateOnly()
+    {
+        DateTime value = new(1971, 11, 15, 11, 35, 12);
+        Dictionary<string, object?> data = GetTestData(value);
+        DateOnlyTest actual = Invoker<DateOnlyTest>.Invoke(data);
+        Assert.Equal(value.ToDateOnly(), actual.Value);
+    }
+
+    [Fact]
+    public void ToTimeOnly()
+    {
+        DateTime value = new(1971, 11, 15, 11, 35, 12);
+        Dictionary<string, object?> data = GetTestData(value);
+        TimeOnlyTest actual = Invoker<TimeOnlyTest>.Invoke(data);
+        Assert.Equal(value.ToTimeOnly(), actual.Value);
+    }
+
+    [Fact]
+    public void ToDateTimeOffSet()
+    {
+        DateTime value = new(1971, 11, 15, 11, 35, 12);
+        DateTimeOffset expected = new(value);
+        Dictionary<string, object?> data = GetTestData(value);
+        DateTimeOffsetTest actual = Invoker<DateTimeOffsetTest>.Invoke(data);
+        Assert.Equal(expected, actual.Value);
+    }
+
+    [Fact]
+    public void NullableToDateOnly()
+    {
+        DateTime value = new(1971, 11, 15, 11, 35, 12);
+        Dictionary<string, object?> data = GetTestData(value);
+        NullableDateOnlyTest actual = Invoker<NullableDateOnlyTest>.Invoke(data);
+        Assert.Equal(value.ToDateOnly(), actual.Value);
+    }
+
+    [Fact]
+    public void NullableToTimeOnly()
+    {
+        DateTime value = new(1971, 11, 15, 11, 35, 12);
+        Dictionary<string, object?> data = GetTestData(value);
+        NullableTimeOnlyTest actual = Invoker<NullableTimeOnlyTest>.Invoke(data);
+        Assert.Equal(value.ToTimeOnly(), actual.Value);
+    }
+
+    [Fact]
+    public void NullableToDateTimeOffSet()
+    {
+        DateTime value = new(1971, 11, 15, 11, 35, 12);
+        DateTimeOffset expected = new(value);
+        Dictionary<string, object?> data = GetTestData(value);
+        NullableDateTimeOffsetTest actual = Invoker<NullableDateTimeOffsetTest>.Invoke(data);
+        Assert.Equal(expected, actual.Value);
+    }
+
+
+    [Fact]
+    public void NullToDateOnly()
+    {
+        DateTime? value = null;
+        Dictionary<string, object?> data = GetTestData(value);
+        NullableDateOnlyTest actual = Invoker<NullableDateOnlyTest>.Invoke(data);
+        Assert.Null(actual.Value);
+    }
+
+    [Fact]
+    public void NullTimeOnly()
+    {
+        DateTime? value = null;
+        Dictionary<string, object?> data = GetTestData(value);
+        NullableTimeOnlyTest actual = Invoker<NullableTimeOnlyTest>.Invoke(data);
+        Assert.Null(actual.Value);
+    }
+
+    [Fact]
+    public void NullToDateTimeOffSet()
+    {
+        DateTime? value = null;
+        Dictionary<string, object?> data = GetTestData(value);
+        NullableDateTimeOffsetTest actual = Invoker<NullableDateTimeOffsetTest>.Invoke(data);
         Assert.Null(actual.Value);
     }
 }

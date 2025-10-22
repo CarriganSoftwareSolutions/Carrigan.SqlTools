@@ -188,36 +188,48 @@ public class SqlToolsReflectorCache<T>
                 .ReadablePublicInstanceProperties
                 .Where
                 (property => property.GetCustomAttribute<NotMappedAttribute>() == null
-                        && (property.PropertyType == typeof(int) ||              // SQL INT
-                            property.PropertyType == typeof(int?) ||             // SQL INT (nullable)
-                            property.PropertyType == typeof(long) ||             // SQL BIGINT
-                            property.PropertyType == typeof(long?) ||            // SQL BIGINT (nullable)
-                            property.PropertyType == typeof(short) ||            // SQL SMALLINT
-                            property.PropertyType == typeof(short?) ||           // SQL SMALLINT (nullable)
-                            property.PropertyType == typeof(byte) ||             // SQL TINYINT
-                            property.PropertyType == typeof(byte?) ||            // SQL TINYINT (nullable)
-                            property.PropertyType == typeof(bool) ||             // SQL BIT
-                            property.PropertyType == typeof(bool?) ||            // SQL BIT (nullable)
-                            property.PropertyType == typeof(decimal) ||          // SQL DECIMAL
-                            property.PropertyType == typeof(decimal?) ||         // SQL DECIMAL (nullable)
-                            property.PropertyType == typeof(float) ||            // SQL FLOAT
-                            property.PropertyType == typeof(float?) ||           // SQL FLOAT (nullable)
-                            property.PropertyType == typeof(double) ||           // SQL REAL
-                            property.PropertyType == typeof(double?) ||          // SQL REAL (nullable)
-                            property.PropertyType == typeof(string) ||           // SQL NVARCHAR, VARCHAR, TEXT
-                            property.PropertyType == typeof(DateTime) ||         // SQL DATETIME, DATETIME2, SMALLDATETIME
-                            property.PropertyType == typeof(DateTime?) ||        // SQL DATETIME, DATETIME2, SMALLDATETIME (nullable)
-                            property.PropertyType == typeof(Guid) ||             // SQL UNIQUEIDENTIFIER
-                            property.PropertyType == typeof(Guid?) ||            // SQL UNIQUEIDENTIFIER (nullable)
-                            property.PropertyType == typeof(byte[]) ||           // SQL VARBINARY
-                            property.PropertyType == typeof(char) ||             // SQL CHAR
-                            property.PropertyType == typeof(char?) ||            // SQL CHAR (nullable)
-                            property.PropertyType == typeof(TimeOnly) ||         // SQL Time
-                            property.PropertyType == typeof(TimeOnly?) ||        // SQL Time (nullable)
-                            property.PropertyType == typeof(DateOnly) ||         // SQL Date
-                            property.PropertyType == typeof(DateOnly?) ||        // SQL Date (nullable)
-                            property.PropertyType == typeof(DateTimeOffset) ||   // SQL DateTimeOffset
-                            property.PropertyType == typeof(DateTimeOffset?))    // SQL DateTimeOffset (nullable)
+                        && 
+                        (
+                            property.PropertyType == typeof(int) ||                         // SQL INT
+                            property.PropertyType == typeof(int?) ||                        // SQL INT (nullable)
+                            property.PropertyType == typeof(long) ||                        // SQL BIGINT
+                            property.PropertyType == typeof(long?) ||                       // SQL BIGINT (nullable)
+                            property.PropertyType == typeof(short) ||                       // SQL SMALLINT
+                            property.PropertyType == typeof(short?) ||                      // SQL SMALLINT (nullable)
+                            property.PropertyType == typeof(byte) ||                        // SQL TINYINT
+                            property.PropertyType == typeof(byte?) ||                       // SQL TINYINT (nullable)
+                            property.PropertyType == typeof(bool) ||                        // SQL BIT
+                            property.PropertyType == typeof(bool?) ||                       // SQL BIT (nullable)
+                            property.PropertyType == typeof(decimal) ||                     // SQL DECIMAL
+                            property.PropertyType == typeof(decimal?) ||                    // SQL DECIMAL (nullable)
+                            property.PropertyType == typeof(float) ||                       // SQL REAL 
+                            property.PropertyType == typeof(float?) ||                      // SQL REAL (nullable)
+                            property.PropertyType == typeof(double) ||                      // SQL FLOAT
+                            property.PropertyType == typeof(double?) ||                     // SQL FLOAT (nullable)
+                            property.PropertyType == typeof(string) ||                      // SQL NVARCHAR, VARCHAR, TEXT
+                            property.PropertyType == typeof(DateTime) ||                    // SQL DATETIME, DATETIME2, SMALLDATETIME
+                            property.PropertyType == typeof(DateTime?) ||                   // SQL DATETIME, DATETIME2, SMALLDATETIME (nullable)
+                            property.PropertyType == typeof(Guid) ||                        // SQL UNIQUEIDENTIFIER
+                            property.PropertyType == typeof(Guid?) ||                       // SQL UNIQUEIDENTIFIER (nullable)
+                            property.PropertyType == typeof(byte[]) ||                      // SQL VARBINARY
+                            property.PropertyType == typeof(char) ||                        // SQL CHAR
+                            property.PropertyType == typeof(char?) ||                       // SQL CHAR (nullable)
+                            property.PropertyType == typeof(TimeOnly) ||                    // SQL Time
+                            property.PropertyType == typeof(TimeOnly?) ||                   // SQL Time (nullable)
+                            property.PropertyType == typeof(DateOnly) ||                    // SQL Date
+                            property.PropertyType == typeof(DateOnly?) ||                   // SQL Date (nullable)
+                            property.PropertyType == typeof(DateTimeOffset) ||              // SQL DateTimeOffset
+                            property.PropertyType == typeof(DateTimeOffset?) ||             // SQL DateTimeOffset (nullable)
+                            //TODO: Below are new types, these need to be accounted for in unit tests.
+                            property.PropertyType == typeof(TimeSpan) ||                    // SQL TIME
+                            property.PropertyType == typeof(TimeSpan?) ||                   // SQL TIME
+                            //XML
+                            property.PropertyType == typeof(System.Xml.Linq.XDocument) ||   // SQL XML
+                            property.PropertyType == typeof(System.Xml.XmlDocument) ||      // SQL XML
+
+                            false //this will never be true, duh, but it allows me to comment out the last item without issue
+                            //TODO: remove the false before checkin
+                        )
                 );
 
         IEnumerable<PropertyInfo> keys =

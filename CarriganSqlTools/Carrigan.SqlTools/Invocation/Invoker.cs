@@ -123,6 +123,13 @@ public static class Invoker<T> where T : class?, new()
                 return TimeOnly.FromTimeSpan(timeSpan);
             }
 
+            // Special case: SQL datetime to TimeOnly conversion.
+            else if (underlyingType == typeof(TimeSpan) && value is TimeOnly timeOnly)
+            {
+                return timeOnly.ToTimeSpan();
+            }
+
+
             // Special case: Enum conversion.
             else if (underlyingType.IsEnum)
             {
