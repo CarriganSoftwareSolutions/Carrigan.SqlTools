@@ -1,5 +1,5 @@
 ﻿# Carrigan.SqlTools  
-<!--Ignore Spelling: executenonqueryasync executescalarasync executereaderasynct executenonquery executescalar executereadert adonet sqlquery exampleencryptor aesgcm idecryptors dotnet csharp nameof foreach readonly const gcm decryptor decryptors encryptor encryptors-->
+<!--Ignore Spelling: executenonqueryasync executescalarasync executereaderasynct executenonquery executescalar executereadert adonet sqlquery exampleencryptor aesgcm idecrypters dotnet csharp nameof foreach readonly const gcm decryptor decrypters encryptor encrypters-->
 
 
 Carrigan.SqlTools is a .NET library that simplifies SQL generation for **Microsoft SQL Server**, while still giving you control when you need it.  
@@ -36,7 +36,7 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
 - [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
-- [ExampleEncryptor (AesGcm-based) and IDecryptors](#exampleencryptor-aesgcm-based-and-idecryptors)
+- [ExampleEncryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 - [License](#license)
 
 ---
@@ -525,12 +525,12 @@ SqlQuery query = customerGenerator.SelectAll();
 SqlConnection connection = new SqlConnection(<your connection string>);
 DbTransaction transaction = null;
 
-// Implement IDecryptors (see ExampleEncryptor section)
-IDecryptors decryptors = new MyDecryptors();
+// Implement IDecrypters (see ExampleEncryptor section)
+IDecrypters decrypters = new MyDecrypters();
 
 // Execute (async)
 IEnumerable<Customer> rows =
-    await CommandsAsync.ExecuteReaderAsync<Customer>(query, transaction, connection, decryptors);
+    await CommandsAsync.ExecuteReaderAsync<Customer>(query, transaction, connection, decrypters);
 
 // Write/update (async)
 int affected =
@@ -540,7 +540,7 @@ int affected =
 object result =
     await CommandsAsync.ExecuteScalarAsync(query, transaction, connection);
 ```
-[Example Encryptor (AesGcm-based) and IDecryptors](#exampleencryptor-aesgcm-based-and-idecryptors)
+[Example Encryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 
 [Table of Contents](#table-of-contents)
 
@@ -554,14 +554,14 @@ SqlQuery query = customerGenerator.DeleteById(toDelete);
 SqlConnection connection = new SqlConnection("Server=.;Database=AppDb;Integrated Security=true;");
 DbTransaction transaction = null;
 
-// IDecryptors (same interface as async)
-IDecryptors decryptors = new MyDecryptors();
+// IDecrypters (same interface as async)
+IDecrypters decrypters = new MyDecrypters();
 
 // Execute (sync)
 int affected = Commands.ExecuteNonQuery(query, transaction, connection);
 object scalar = Commands.ExecuteScalar(query, transaction, connection);
 IEnumerable<Customer> customers =
-    Commands.ExecuteReader<Customer>(query, transaction, connection, decryptors);
+    Commands.ExecuteReader<Customer>(query, transaction, connection, decrypters);
 ```
 
 [Table of Contents](#table-of-contents)
@@ -610,7 +610,7 @@ connection.Close();
 
 ---
 
-## ExampleEncryptor (AesGcm-based) and `IDecryptors`
+## ExampleEncryptor (AesGcm-based) and `IDecrypters`
 
 Below is an example encryptor that uses an AesGcm-style API. Replace key handling with your own secure storage.
 
@@ -698,13 +698,13 @@ public sealed class ExampleEncryptor : IEncryption
     }
 }
 
-// Minimal IDecryptors imply mapping versions → encryptors
+// Minimal IDecrypters imply mapping versions → encrypters
 
 //THIS IS JUST A SIMPLE EXAMPLE OF A ENCRYPTION CLASS
 //I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.
 
 
-public sealed class MyDecryptors : IDecryptors
+public sealed class MyDecrypters : IDecrypters
 {
     private readonly System.Collections.Generic.Dictionary<int, IEncryption> _map =
         new System.Collections.Generic.Dictionary<int, IEncryption>()
@@ -725,7 +725,7 @@ public sealed class MyDecryptors : IDecryptors
 //I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.
 ```
 
-> Plug `MyDecryptors` into `ExecuteReaderAsync<T>` / `ExecuteReader<T>` to transparently decrypt properties annotated in your models.
+> Plug `MyDecrypters` into `ExecuteReaderAsync<T>` / `ExecuteReader<T>` to transparently decrypt properties annotated in your models.
 
 [Table of Contents](#table-of-contents)
 
