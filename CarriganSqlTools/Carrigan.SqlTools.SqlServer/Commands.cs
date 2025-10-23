@@ -84,7 +84,10 @@ public static class Commands
         }
     }
 
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters decrypters) where T : class?, new()
+    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection) where T : class?, new() => 
+        ExecuteReader<T>(query, transaction, connection, null);
+
+    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters) where T : class?, new()
     {
         List<T> results = [];
         PropertyInfo? keyVersionProperty = ClientReflectorCache<T>.KeyVersionProperty;
@@ -92,6 +95,11 @@ public static class Commands
         int? decryptionVersion = 1; //in later versions this will be read from a property marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
         IEncryption? decrypter;
+
+        if (ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)
+        {
+            throw new DecrypterNotProvided<T>();
+        }
 
         if (connection.State != ConnectionState.Open)
         {
@@ -129,6 +137,9 @@ public static class Commands
         }
         if (encryptedProperties.Any())
         {
+            if (decrypters is null)
+                throw new DecrypterNotProvided<T>();
+
             if (keyVersionProperty is null)
                 throw new NullReferenceException($"KeyVersion attribute not set on data model, {ClientReflectorCache<T>.Type.Name}, with encrypted properties.");
             else if((Nullable.GetUnderlyingType(keyVersionProperty.PropertyType) ?? keyVersionProperty.PropertyType) != typeof(int))

@@ -1,13 +1,10 @@
-﻿using Carrigan.Core.Attributes;
-using Carrigan.Core.Interfaces;
+﻿using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
-using System.Data.Common;
-using System.Linq;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -210,9 +207,9 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             return new (key, ((object?)_Encryption?.Version) ?? DBNull.Value);
         if (_Encryption is not null && IsEncrypted(column))
             //the explicit conversion of _Encryption?.Encrypt(property.GetValue(entity)?.ToString()) to an object is required to avoid a compiler error.
-            return new (key, ((object?)_Encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString())) ?? DBNull.Value);
+            return new(key, ((object?)_Encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString())) ?? DBNull.Value);
         else
-            return new (key, column.PropertyInfo.GetValue(entity) ?? DBNull.Value);
+            return new(key, column.PropertyInfo.GetValue(entity) ?? DBNull.Value);
     }
 
     /// <summary>

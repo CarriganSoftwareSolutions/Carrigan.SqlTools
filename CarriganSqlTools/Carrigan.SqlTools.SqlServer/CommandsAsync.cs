@@ -83,14 +83,22 @@ public static class CommandsAsync
                 connection.Close();
         }
     }
+    public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection) where T : class?, new() =>
+        await ExecuteReaderAsync<T>(query, transaction, connection, null);
 
-    public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters decrypters) where T : class?, new()
+    public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters) where T : class?, new()
     {
         Type type = typeof(T);
         List<T> results = [];
         List<Task<T>> invocationTasks = [];
         int? decryptionVersion = 1; //in later versions this will be read from a property marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
+
+        if(ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)
+        {
+            throw new DecrypterNotProvided<T>();
+        }
+
         if (connection.State != ConnectionState.Open)
         {
             wasClosed = true;
@@ -130,6 +138,9 @@ public static class CommandsAsync
 
         if (ClientReflectorCache<T>.EncryptedProperties.Any())
         {
+            if (decrypters is null)
+                throw new DecrypterNotProvided<T>();
+
             _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NoKeyVersionProperty<T>();
             foreach (T record in results)
             {

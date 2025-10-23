@@ -221,8 +221,8 @@ public class SqlToolsReflectorCache<T>
                             property.PropertyType == typeof(DateTimeOffset) ||              // SQL DateTimeOffset
                             property.PropertyType == typeof(DateTimeOffset?) ||             // SQL DateTimeOffset (nullable)
                             //TODO: Below are new types, these need to be accounted for in unit tests.
-                            property.PropertyType == typeof(TimeSpan) ||                    // SQL TIME
-                            property.PropertyType == typeof(TimeSpan?) ||                   // SQL TIME
+                            //property.PropertyType == typeof(TimeSpan) ||                    // SQL BIGINT
+                            //property.PropertyType == typeof(TimeSpan?) ||                   // SQL BIGINT (nullable)
                             //XML
                             property.PropertyType == typeof(System.Xml.Linq.XDocument) ||   // SQL XML
                             property.PropertyType == typeof(System.Xml.XmlDocument) ||      // SQL XML

@@ -1,6 +1,7 @@
 ﻿Carrigan.SqlTools
 Carrigan.SqlTools.SqlServer
 Carrigan.SqlTools.Tests
+Carrigan.SqlTools.IntegrationTests
 and related projects
 
 Copyright 2025 Carrigan Software Solutions LLC
@@ -52,6 +53,11 @@ Those packages are licensed separately as follows:
     © xUnit contributors  
     Licensed under the Apache License, Version 2.0  
     https://github.com/xunit/visualstudio.xunit/blob/main/License.txt
+
+- Respawn
+    @ Jimmy Bogard
+    Licensed under the Apache License, Version 2.0  
+    https://github.com/jbogard/Respawn/blob/master/LICENSE
 
 ---------------------------------------------------------------------
 

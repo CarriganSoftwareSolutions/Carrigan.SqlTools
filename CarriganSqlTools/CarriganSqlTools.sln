@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.IntegrationTests", "Carrigan.SqlTools.IntegrationTests\Carrigan.SqlTools.IntegrationTests.csproj", "{615D61CB-B58C-49C3-8F31-8EBC4419836D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{31A66230-7525-4650-85AA-471ACFD05D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31A66230-7525-4650-85AA-471ACFD05D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31A66230-7525-4650-85AA-471ACFD05D5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{615D61CB-B58C-49C3-8F31-8EBC4419836D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{615D61CB-B58C-49C3-8F31-8EBC4419836D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{615D61CB-B58C-49C3-8F31-8EBC4419836D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{615D61CB-B58C-49C3-8F31-8EBC4419836D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

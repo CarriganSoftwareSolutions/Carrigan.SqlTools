@@ -124,9 +124,13 @@ public static class Invoker<T> where T : class?, new()
             }
 
             // Special case: SQL datetime to TimeOnly conversion.
-            else if (underlyingType == typeof(TimeSpan) && value is TimeOnly timeOnly)
+            else if (underlyingType == typeof(TimeSpan) && value is long timeSpanAsLong)
             {
-                return timeOnly.ToTimeSpan();
+                return new TimeSpan(timeSpanAsLong);
+            }
+            else if(underlyingType == typeof(char) && value is string charAsString)
+            {
+                return charAsString[0];
             }
 
 
