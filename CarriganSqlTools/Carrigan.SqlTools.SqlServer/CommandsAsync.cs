@@ -2,10 +2,13 @@
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Invocation;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Reflection;
 
 
@@ -13,6 +16,28 @@ namespace Carrigan.SqlTools.SqlServer;
 
 public static class CommandsAsync
 {
+    private static IEnumerable<SqlParameter> GetParameterCollection(SqlQuery query)
+    {
+        static SqlParameter GetSqlParameter(ParameterTag parameter, object value)
+        {
+            SqlParameter sqlParameter = new(parameter, value)
+            {
+                SqlDbType = parameter.SqlDbType ?? SqlTypeCache.GetSqlDbTypeFromValue(value)
+            };
+            if (sqlParameter.SqlDbType == SqlDbType.Decimal)
+            {
+                sqlParameter.Precision = 18;
+                sqlParameter.Scale = 4;
+            }
+
+            return sqlParameter;
+        }
+        //TODO: add the ability to specify precision and scale to values.
+        return query
+                    .Parameters
+                    .AsEnumerable()
+                    .Select(parameter => GetSqlParameter(parameter.Key, parameter.Value ));
+    }
     public async static Task TestConnectionStringAsync(string connectionString, string friendlyName)
     {
         try
@@ -45,7 +70,7 @@ public static class CommandsAsync
 
             command.CommandText = query.QueryText;
             command.CommandType = query.CommandType;
-            command.Parameters.AddRange(query.Parameters.AsEnumerable().Select(parameter => new SqlParameter(parameter.Key, parameter.Value)).ToArray());
+            command.Parameters.AddRange(GetParameterCollection(query).ToArray());
 
             return await command.ExecuteNonQueryAsync();
         }
@@ -73,7 +98,7 @@ public static class CommandsAsync
             }
             command.CommandText = query.QueryText;
             command.CommandType = query.CommandType;
-            command.Parameters.AddRange(query.Parameters.AsEnumerable().Select(parameter => new SqlParameter(parameter.Key, parameter.Value)).ToArray());
+            command.Parameters.AddRange(GetParameterCollection(query).ToArray());
 
             return await command.ExecuteScalarAsync();
         }
@@ -114,7 +139,7 @@ public static class CommandsAsync
             }
             command.CommandText = query.QueryText;
             command.CommandType = query.CommandType;
-            command.Parameters.AddRange(query.Parameters.AsEnumerable().Select(parameter => new SqlParameter(parameter.Key, parameter.Value)).ToArray());
+            command.Parameters.AddRange(GetParameterCollection(query).ToArray());
 
             using DbDataReader dataReader = await command.ExecuteReaderAsync();
 

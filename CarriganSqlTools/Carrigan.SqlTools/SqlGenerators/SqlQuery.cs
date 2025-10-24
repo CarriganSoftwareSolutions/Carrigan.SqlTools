@@ -1,6 +1,8 @@
 ﻿using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
+using System.Data.Common;
+using System.Reflection.Metadata;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 

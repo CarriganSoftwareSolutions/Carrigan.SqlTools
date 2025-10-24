@@ -61,55 +61,55 @@ public class SqlTimeTests
         Assert.Null(actual.Value);
     }
 
-    [Fact]
-    public void TimeSpan_Min()
-    {
-        Dictionary<string, object?> data = GetTestData(TimeSpan.MinValue);
-        TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
-        Assert.Equal(TimeSpan.MinValue, actual.Value);
-    }
+    //TODO: Remove or replace TimeSpan code
+    //[Fact]
+    //public void TimeSpan_Min()
+    //{
+    //    Dictionary<string, object?> data = GetTestData(TimeSpan.MinValue);
+    //    TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
+    //    Assert.Equal(TimeSpan.MinValue, actual.Value);
+    //}
 
-    [Fact]
-    public void TimeSpan_Max()
-    {
-        Dictionary<string, object?> data = GetTestData(TimeSpan.MaxValue);
-        TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
-        Assert.Equal(TimeSpan.MaxValue, actual.Value);
-    }
+    //[Fact]
+    //public void TimeSpan_Max()
+    //{
+    //    Dictionary<string, object?> data = GetTestData(TimeSpan.MaxValue);
+    //    TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
+    //    Assert.Equal(TimeSpan.MaxValue, actual.Value);
+    //}
 
-    [Fact]
-    public void TimeSpan_Reasonable()
-    {
-        TimeSpan time = new(1, 2, 3, 4, 500);
-        Dictionary<string, object?> data = GetTestData(time);
-        TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
-        Assert.Equal(time, actual.Value);
-    }
+    //[Fact]
+    //public void TimeSpan_Reasonable()
+    //{
+    //    TimeSpan time = new(1, 2, 3, 4, 500);
+    //    Dictionary<string, object?> data = GetTestData(time);
+    //    TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
+    //    Assert.Equal(time, actual.Value);
+    //}
 
-    [Fact]
-    public void NullableTimeSpan_Min()
-    {
-        Dictionary<string, object?> data = GetTestData(TimeSpan.MinValue);
-        NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
-        Assert.Equal(TimeSpan.MinValue, actual.Value);
-    }
+    //[Fact]
+    //public void NullableTimeSpan_Min()
+    //{
+    //    Dictionary<string, object?> data = GetTestData(TimeSpan.MinValue);
+    //    NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
+    //    Assert.Equal(TimeSpan.MinValue, actual.Value);
+    //}
 
-    [Fact]
-    public void NullableTimeSpan_Max()
-    {
-        Dictionary<string, object?> data = GetTestData(TimeSpan.MaxValue);
-        NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
-        Assert.Equal(TimeSpan.MaxValue, actual.Value);
-    }
+    //[Fact]
+    //public void NullableTimeSpan_Max()
+    //{
+    //    Dictionary<string, object?> data = GetTestData(TimeSpan.MaxValue);
+    //    NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
+    //    Assert.Equal(TimeSpan.MaxValue, actual.Value);
+    //}
 
-    [Fact]
-    public void NullableTimeSpan_Null()
-    {
-        Dictionary<string, object?> data = GetTestData(null);
-        NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
-        Assert.Null(actual.Value);
-    }
-
+    //[Fact]
+    //public void NullableTimeSpan_Null()
+    //{
+    //    Dictionary<string, object?> data = GetTestData(null);
+    //    NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
+    //    Assert.Null(actual.Value);
+    //}
 
     [Fact]
     public void TimeOnly_TimeSpanMin()
@@ -152,48 +152,49 @@ public class SqlTimeTests
         Assert.Null(actual.Value);
     }
 
-    [Fact]
-    public void TimeSpan_TimeMin()
-    {
-        TimeOnly value = TimeOnly.MinValue;
-        Dictionary<string, object?> data = GetTestData(value);
-        TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
-        Assert.Equal(value.ToTimeSpan(), actual.Value);
-    }
+    //TODO: Remove or replace TimeSpan code
+    //[Fact]
+    //public void TimeSpan_TimeMin()
+    //{
+    //    TimeOnly value = TimeOnly.MinValue;
+    //    Dictionary<string, object?> data = GetTestData(value);
+    //    TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
+    //    Assert.Equal(value.ToTimeSpan(), actual.Value);
+    //}
 
-    [Fact]
-    public void TimeSpan_TimeMax()
-    {
-        TimeOnly value = TimeOnly.MaxValue;
-        Dictionary<string, object?> data = GetTestData(value);
-        TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
-        Assert.Equal(value.ToTimeSpan(), actual.Value);
-    }
+    //[Fact]
+    //public void TimeSpan_TimeMax()
+    //{
+    //    TimeOnly value = TimeOnly.MaxValue;
+    //    Dictionary<string, object?> data = GetTestData(value);
+    //    TimeSpanTest actual = Invoker<TimeSpanTest>.Invoke(data);
+    //    Assert.Equal(value.ToTimeSpan(), actual.Value);
+    //}
 
-    [Fact]
-    public void NullableTimeSpan_TimeMin()
-    {
-        TimeOnly value = TimeOnly.MinValue;
-        Dictionary<string, object?> data = GetTestData(value);
-        NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
-        Assert.Equal(value.ToTimeSpan(), actual.Value);
-    }
+    //[Fact]
+    //public void NullableTimeSpan_TimeMin()
+    //{
+    //    TimeOnly? value = TimeOnly.MinValue;
+    //    Dictionary<string, object?> data = GetTestData(value);
+    //    NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
+    //    Assert.Equal(value?.ToTimeSpan(), actual.Value);
+    //}
 
-    [Fact]
-    public void NullableTimeSpan_TimeMax()
-    {
-        TimeOnly value = TimeOnly.MaxValue;
-        Dictionary<string, object?> data = GetTestData(value);
-        NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
-        Assert.Equal(value.ToTimeSpan(), actual.Value);
-    }
+    //[Fact]
+    //public void NullableTimeSpan_TimeMax()
+    //{
+    //    TimeOnly? value = TimeOnly.MaxValue;
+    //    Dictionary<string, object?> data = GetTestData(value);
+    //    NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
+    //    Assert.Equal(value?.ToTimeSpan(), actual.Value);
+    //}
 
-    [Fact]
-    public void NullableTimeSpan_TimeNull()
-    {
-        TimeOnly? value = null;
-        Dictionary<string, object?> data = GetTestData(value);
-        NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
-        Assert.Null(actual.Value);
-    }
+    //[Fact]
+    //public void NullableTimeSpan_TimeNull()
+    //{
+    //    TimeOnly? value = null;
+    //    Dictionary<string, object?> data = GetTestData(value);
+    //    NullableTimeSpanTest actual = Invoker<NullableTimeSpanTest>.Invoke(data);
+    //    Assert.Null(actual.Value);
+    //}
 }

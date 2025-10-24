@@ -1,8 +1,14 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
+using System.Data;
 
+//TODO: we need the ability to add precision / scale defaults and values from parameter predicate and a new custom attribute read into column info
+//TODO: The above is going to require other classes to be changed, but I am to tired to think of what those might be. This sounds like a problem future Jonathan, that guy hates me.
+//TODO: update documentation, unit test around SqlDbType
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
@@ -62,6 +68,8 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// </summary>
     private readonly string? _index;
 
+    public SqlDbType? SqlDbType { get; private set; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterTag"/> class.
     /// </summary>
@@ -71,7 +79,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <exception cref="InvalidParameterIdentifierException">
     /// Thrown when <paramref name="parameterName"/> or the combined result is invalid per SQL identifier rules.
     /// </exception>
-    internal ParameterTag(string? prefix, string parameterName, string? index)
+    internal ParameterTag(string? prefix, string parameterName, string? index, SqlDbType? sqlType)
     {
         if (SqlParameterPattern.Fails(parameterName))
             throw new InvalidParameterIdentifierException(ToString()); 
@@ -79,6 +87,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
         _parameterBaseName = parameterName;
         _prefix = prefix;
         _index = index;
+        SqlDbType = sqlType;
 
         if (SqlParameterPattern.Fails(ToString()))
             throw new InvalidParameterIdentifierException(ToString()); 
@@ -91,18 +100,47 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <exception cref="InvalidParameterIdentifierException">
     /// Thrown when <paramref name="parameterName"/> or the combined result is invalid per SQL identifier rules.
     /// </exception>
-    public ParameterTag(string parameterName)
+    public ParameterTag(string parameterName, SqlDbType? sqlType)
     {
         if (SqlParameterPattern.Fails(parameterName))
-            throw new InvalidParameterIdentifierException(ToString()); 
-
+            throw new InvalidParameterIdentifierException(ToString());
+        
         _parameterBaseName = parameterName;
         _prefix = null;
         _index = null;
+        SqlDbType = sqlType;
 
         if (SqlParameterPattern.Fails(ToString()))
-            throw new InvalidParameterIdentifierException(ToString()); 
+            throw new InvalidParameterIdentifierException(ToString());
     }
+
+    public ParameterTag(ParameterTag parameter)
+    {
+        _parameterBaseName = parameter._parameterBaseName;
+        _prefix = parameter._prefix;
+        _index = parameter._index;
+        SqlDbType = parameter.SqlDbType;
+    }
+
+    internal KeyValuePair<ParameterTag, object> GetParameter(object? value)
+    {
+        ParameterTag parameterTag = new(this);
+        parameterTag.SqlDbType ??= SqlTypeCache.GetSqlDbTypeFromValue(value);
+        return new(this, value ?? DBNull.Value);
+
+    }
+
+    internal KeyValuePair<ParameterTag, object> GetParameter<T>(ColumnInfo column, T entity)
+    {
+        ParameterTag parameterTag = new(this);
+        object? value = column.PropertyInfo.GetValue(entity);
+
+        parameterTag.SqlDbType ??= column?.SqlType ?? (value is null ? System.Data.SqlDbType.Variant : SqlTypeCache.GetSqlDbType(value.GetType()));
+        return new(this, value ?? DBNull.Value);
+    }
+
+    internal KeyValuePair<ParameterTag, object> GetParameter<T>(IEncryption? encryption, ColumnInfo column, T entity) =>
+        GetParameter(encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
 
     /// <summary>
     /// Implicitly converts a <see cref="ParameterTag"/> to its SQL string representation,
@@ -247,9 +285,9 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     internal ParameterTag PrefixPrepend(string? textToPrepend)
     {
         if (_prefix.IsNullOrWhiteSpace())
-            return new(textToPrepend, _parameterBaseName, _index);
+            return new(textToPrepend, _parameterBaseName, _index, SqlDbType);
         else
-            return new($"{textToPrepend}_{_prefix}", _parameterBaseName, _index);
+            return new($"{textToPrepend}_{_prefix}", _parameterBaseName, _index, SqlDbType);
     }
 
     /// <summary>
@@ -261,7 +299,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     internal ParameterTag AddIndex(string? newIndex)
     {
         if (_index.IsNullOrWhiteSpace())
-            return new(_prefix, _parameterBaseName, newIndex);
+            return new(_prefix, _parameterBaseName, newIndex, SqlDbType);
         else
             throw new ArgumentException("Index was already defined on the Parameter");
     }

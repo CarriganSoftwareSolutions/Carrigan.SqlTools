@@ -201,15 +201,16 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </exception>
     private KeyValuePair<ParameterTag, object> GetSqlParameterKeyValue(ColumnInfo column, T entity, int? entityIndex = null, string? parameterPrepend = null)
     {
-        ParameterTag? key = (column.ParameterTag ?? throw new NullReferenceException()).PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
+        if (column.ParameterTag is null)
+            throw new NullReferenceException();
+        ParameterTag? parameter = column.ParameterTag.PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
 
         if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
-            return new (key, ((object?)_Encryption?.Version) ?? DBNull.Value);
-        if (_Encryption is not null && IsEncrypted(column))
-            //the explicit conversion of _Encryption?.Encrypt(property.GetValue(entity)?.ToString()) to an object is required to avoid a compiler error.
-            return new(key, ((object?)_Encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString())) ?? DBNull.Value);
+            return parameter.GetParameter(_Encryption?.Version);
+        else if (_Encryption is not null && IsEncrypted(column))
+            return parameter.GetParameter(_Encryption, column, entity);
         else
-            return new(key, column.PropertyInfo.GetValue(entity) ?? DBNull.Value);
+            return parameter.GetParameter(column, entity);
     }
 
     /// <summary>

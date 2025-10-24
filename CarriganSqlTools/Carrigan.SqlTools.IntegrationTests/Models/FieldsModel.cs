@@ -49,6 +49,7 @@ public class FieldsModel
     public TimeOnly? TimeOnlyNullableValue { get; set; }
     public DateTime DateTimeValue { get; set; }
     public DateTime? DateTimeNullableValue { get; set; }
+    //TODO: Remove or replace TimeSpan code
     //public TimeSpan TimeSpanValue { get; set; }
     //public TimeSpan? TimeSpanNullableValue { get; set; }
     public DateTimeOffset DateTimeOffsetValue { get; set; }
@@ -62,6 +63,8 @@ public class FieldsModel
     public System.Xml.XmlDocument? XmlDocumentValue { get; set; }
 
     // SQL table DDL (used by the fixture)
+    //TODO: Remove or replace TimeSpan code
+    //TODO: revist decimal precision
     internal static string CreateTableSql =>
         """
         CREATE TABLE dbo.Fields

@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
@@ -38,6 +39,9 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// This name must not be <c>null</c>, empty, or whitespace.
     /// </summary>
     internal readonly ColumnName ColumnName;
+
+    //TODO: Unit Test, Documentation
+    internal readonly SqlDbType SqlType;
 
     /// <summary>
     /// The <see cref="System.Reflection.PropertyInfo"/> instance
@@ -118,7 +122,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         ColumnTag = new(new(schemaName, tableName), ColumnName);
         PropertyInfo = propertyInfo;
         PropertyName = new(PropertyInfo.Name);
-        ParameterTag = new ParameterTag(null, parameterName, null);
+        SqlType = SqlTypeCache.GetSqlDbType(PropertyInfo.PropertyType);
+        ParameterTag = new ParameterTag(null, parameterName, null, SqlType);
         AliasName = aliasName;
         SelectTag = new(ColumnTag, AliasTag.New(aliasName));
 

@@ -1,6 +1,8 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
+using System.Data;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -68,7 +70,8 @@ public class Parameter : Predicates
     [ExternalOnly]
     public Parameter(string parameter, object? value)
     {
-        Name = new ParameterTag(null, parameter, null);
+        SqlDbType sqlType = SqlTypeCache.GetSqlDbTypeFromValue(value);
+        Name = new ParameterTag(null, parameter, null, sqlType);
         Value = value;
     }
 

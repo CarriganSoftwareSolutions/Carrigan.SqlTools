@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -69,7 +70,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_ParameterCount(string parameter, object value)
     {
-        Parameter parameterValue = new(new ParameterTag(null, parameter, null), value);
+        Parameter parameterValue = new(new ParameterTag(null, parameter, null, SqlTypeCache.GetSqlDbTypeFromValue(value)), value);
         int expected = 1;
         int actual = parameterValue.Parameters.Count();
 
@@ -99,7 +100,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_Parameter_Name(string parameter, object value)
     {
-        Parameter parameterValue = new(new ParameterTag(null, parameter, null), value);
+        Parameter parameterValue = new(new ParameterTag(null, parameter, null, SqlTypeCache.GetSqlDbTypeFromValue(value)), value);
         string expected = $"{parameter}";
         string actual = parameterValue.Name;
 
