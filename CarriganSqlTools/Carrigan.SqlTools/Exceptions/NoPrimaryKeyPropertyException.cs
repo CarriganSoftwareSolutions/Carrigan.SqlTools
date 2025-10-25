@@ -16,16 +16,16 @@ namespace Carrigan.SqlTools.Exceptions;
 /// <see cref="Carrigan.SqlTools.Attributes.PrimaryKeyAttribute"/> or the standard
 /// <see cref="System.ComponentModel.DataAnnotations.KeyAttribute"/>.
 /// </remarks>
-public class NoPrimaryKeyProperty<T> : Exception
+public class NoPrimaryKeyPropertyException<T> : Exception
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="NoPrimaryKeyProperty{T}"/> class.
+    /// Initializes a new instance of the <see cref="NoPrimaryKeyPropertyException{T}"/> class.
     /// </summary>
     /// <remarks>
     /// This exception is raised when a “By Id” SQL operation is executed on a model
     /// class that lacks a defined primary key property.
     /// </remarks>
-    internal NoPrimaryKeyProperty() :
+    internal NoPrimaryKeyPropertyException() :
         base($"No Primary Key property has been specified for the {nameof(T)} class.")
     {
     }

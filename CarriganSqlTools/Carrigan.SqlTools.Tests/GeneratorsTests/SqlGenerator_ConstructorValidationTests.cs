@@ -20,14 +20,14 @@ public class SqlGenerator_ConstructorValidationTests
         Assert.Throws<MultipleKeyVersionProperties<MultiKeyVersions>>(() => new SqlGenerator<MultiKeyVersions>(new MockEncryption("the")));
     [Fact]
     public void NoKeyVersionException() =>
-        Assert.Throws<NoKeyVersionProperty<NoKeyVersionPropertyEntity>>(() => new SqlGenerator<NoKeyVersionPropertyEntity>(new MockEncryption("the")));
+        Assert.Throws<NoKeyVersionPropertyException<NoKeyVersionPropertyEntity>>(() => new SqlGenerator<NoKeyVersionPropertyEntity>(new MockEncryption("the")));
     [Fact]
     public void NoEncrypterVersionException() =>
-        Assert.Throws<EncrypterNotProvided<EntityWithEncryption>>(() => new SqlGenerator<EntityWithEncryption>());
+        Assert.Throws<EncrypterNotProvidedException<EntityWithEncryption>>(() => new SqlGenerator<EntityWithEncryption>());
 
     [Fact]
     public void NonIntKeyVersions() =>
-        Assert.Throws<InvalidKeyVersionPropertyType<NonIntKeyVersions>>(() => new SqlGenerator<NonIntKeyVersions>(new MockEncryption("the")));
+        Assert.Throws<InvalidKeyVersionPropertyTypeException<NonIntKeyVersions>>(() => new SqlGenerator<NonIntKeyVersions>(new MockEncryption("the")));
 
     [Fact]
     public void NullableIntKeyVersions() =>
@@ -157,7 +157,7 @@ public class SqlGenerator_ConstructorValidationTests
 
     [Fact]
     public void EncrypterNotProvided() =>
-        Assert.Throws<EncrypterNotProvided<EntityWithEncryption>>(() => _ = new SqlGenerator<EntityWithEncryption>());
+        Assert.Throws<EncrypterNotProvidedException<EntityWithEncryption>>(() => _ = new SqlGenerator<EntityWithEncryption>());
 
     [Fact]
     public void EntityWithEncryptionNull() =>

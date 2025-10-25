@@ -32,7 +32,7 @@ public partial class SqlGenerator<T>
     /// When generating SQL, only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
-    /// <exception cref="NoPrimaryKeyProperty{T}">
+    /// <exception cref="NoPrimaryKeyPropertyException{T}">
     /// Thrown when the entity type <typeparamref name="T"/> does not define a primary key property,
     /// but an ID-based update is requested.
     /// </exception>
@@ -78,7 +78,7 @@ public partial class SqlGenerator<T>
     public SqlQuery UpdateById(T entity, SetColumns<T>? columns = null)
     {
         if (HasKeyProperty is false)
-            throw new NoPrimaryKeyProperty<T>();
+            throw new NoPrimaryKeyPropertyException<T>();
 
         IEnumerable<ColumnInfo> updateTheseColumns = 
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
@@ -133,7 +133,7 @@ public partial class SqlGenerator<T>
     /// When generating SQL, only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
-    /// <exception cref="NoPrimaryKeyProperty{T}">
+    /// <exception cref="NoPrimaryKeyPropertyException{T}">
     /// Thrown when the entity type <typeparamref name="T"/> does not define a primary key property,
     /// but an ID-based update is requested.
     /// </exception>
@@ -169,7 +169,7 @@ public partial class SqlGenerator<T>
     public SqlQuery UpdateByIds(T valuesEntity, SetColumns<T>? columns, params IEnumerable<T> idEntities)
     {
         if (HasKeyProperty is false)
-            throw new NoPrimaryKeyProperty<T>();
+            throw new NoPrimaryKeyPropertyException<T>();
         else
         {
             Or or = new(

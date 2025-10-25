@@ -18,14 +18,14 @@ namespace Carrigan.SqlTools.Exceptions;
 /// encrypted properties. If no properties are marked for encryption,
 /// this validation is skipped.
 /// </remarks>
-public class NoKeyVersionProperty<T> : Exception
+public class NoKeyVersionPropertyException<T> : Exception
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="NoKeyVersionProperty{T}"/> class.
+    /// Initializes a new instance of the <see cref="NoKeyVersionPropertyException{T}"/> class.
     /// Thrown when an encrypter is required but the target model lacks a
     /// key version property.
     /// </summary>
-    public NoKeyVersionProperty() :
+    public NoKeyVersionPropertyException() :
         base($"No Key Version property has been provided for the{nameof(T)} class, and {nameof(T)} has encrypted properties.")   
     {
     }

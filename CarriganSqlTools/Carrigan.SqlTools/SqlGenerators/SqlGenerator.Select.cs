@@ -264,8 +264,8 @@ public partial class SqlGenerator<T>
     /// Only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
-    /// <exception cref="NoPrimaryKeyProperty{T}">
-    /// <exception cref = "NoPrimaryKeyProperty{T}" >
+    /// <exception cref="NoPrimaryKeyPropertyException{T}">
+    /// <exception cref = "NoPrimaryKeyPropertyException{T}" >
     /// Thrown when<typeparamref name = "T" /> has no key property metadata but a key-based select was requested.
     /// </exception>
     /// Thrown when <typeparamref name="T"/> has no key annotations (neither the SQL generator’s
@@ -287,7 +287,7 @@ public partial class SqlGenerator<T>
     {
 
         if (HasKeyProperty is false)
-            throw new NoPrimaryKeyProperty<T>();
+            throw new NoPrimaryKeyPropertyException<T>();
         else
             return Select(null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
     }

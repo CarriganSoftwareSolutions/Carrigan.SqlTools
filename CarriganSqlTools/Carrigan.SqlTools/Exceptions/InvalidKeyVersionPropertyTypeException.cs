@@ -17,10 +17,10 @@ namespace Carrigan.SqlTools.Exceptions;
 /// it must be declared as an <see cref="int"/>. If the property type differs
 /// (for example, <see cref="string"/> or <see cref="short"/>), this exception is thrown.
 /// </remarks>
-public class InvalidKeyVersionPropertyType<T> : Exception
+public class InvalidKeyVersionPropertyTypeException<T> : Exception
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="InvalidKeyVersionPropertyType{T}"/> class.
+    /// Initializes a new instance of the <see cref="InvalidKeyVersionPropertyTypeException{T}"/> class.
     /// </summary>
     /// <param name="propertyNames">
     /// The property or properties that were marked as key version fields but are not of type <see cref="int"/>.
@@ -29,7 +29,7 @@ public class InvalidKeyVersionPropertyType<T> : Exception
     /// This exception is thrown when the SQL generator detects one or more properties
     /// associated with encryption key versioning that do not use the required <see cref="int"/> type.
     /// </remarks>
-    internal InvalidKeyVersionPropertyType(params IEnumerable<PropertyName> propertyNames) :
+    internal InvalidKeyVersionPropertyTypeException(params IEnumerable<PropertyName> propertyNames) :
         base(CreateMessage(propertyNames))
     {
     }

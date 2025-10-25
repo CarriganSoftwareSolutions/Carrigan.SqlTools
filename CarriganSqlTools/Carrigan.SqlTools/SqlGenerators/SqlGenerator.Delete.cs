@@ -101,7 +101,7 @@ public partial class SqlGenerator<T>
     /// </remarks>
     /// <param name="entity">an IEnumerable of the data model use only as an id holder, uses only the key properties</param>
     /// <returns>Returns an SqlQuery object</returns>
-    /// <exception cref = "Carrigan.SqlTools.Exceptions.NoPrimaryKeyProperty{T}" >
+    /// <exception cref = "Carrigan.SqlTools.Exceptions.NoPrimaryKeyPropertyException{T}" >
     /// Thrown when<typeparamref name = "T" /> has no key property metadata but a key-based delete was requested.
     /// </exception>
     /// <example>
@@ -117,7 +117,7 @@ public partial class SqlGenerator<T>
     public SqlQuery DeleteById(params IEnumerable<T> entities)
     {
         if (HasKeyProperty is false)
-            throw new NoPrimaryKeyProperty<T>();
+            throw new NoPrimaryKeyPropertyException<T>();
         else
             return Delete(null, new Or(entities.Select(entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
     }

@@ -412,7 +412,7 @@ public class SqlGenerator_UpdateByIdTests
         [
             new() { City = "Clarksville", PostalCode = "37043", Street = "Madison" }
         ];
-        Assert.Throws<NoPrimaryKeyProperty<Address>>(() => _sqlGeneratorAddress.UpdateById(entities.Single()));
-        Assert.Throws<NoPrimaryKeyProperty<Address>>(() => _sqlGeneratorAddress.UpdateByIds(value, null, entities));
+        Assert.Throws<NoPrimaryKeyPropertyException<Address>>(() => _sqlGeneratorAddress.UpdateById(entities.Single()));
+        Assert.Throws<NoPrimaryKeyPropertyException<Address>>(() => _sqlGeneratorAddress.UpdateByIds(value, null, entities));
     }
 }
