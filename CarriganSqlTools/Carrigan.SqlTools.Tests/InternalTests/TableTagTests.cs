@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
-namespace Carrigan.SqlTools.Tests.InteralTests;
+namespace Carrigan.SqlTools.Tests.InternalTests;
 //IGNORE SPELLING: myschema
 public class TableTagTests
 {
