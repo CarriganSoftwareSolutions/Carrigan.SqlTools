@@ -41,7 +41,7 @@ public class ParameterValuesTests
     [InlineData("")]
     [InlineData("hello world")]
     public void ParameterValues_Theory_InvalidParameterChars(string param) => 
-        Assert.Throws<InvalidParameterIdentifierException>(() => new Parameter(param, 1));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new Parameter(param, 1, new(System.Data.SqlDbType.Int)));
 
     [Fact]
     public void ParameterValues_Fact_NullParameter() => 
@@ -70,7 +70,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_ParameterCount(string parameter, object value)
     {
-        Parameter parameterValue = new(new ParameterTag(null, parameter, null, SqlTypeCache.GetSqlDbTypeFromValue(value)), value);
+        Parameter parameterValue = new(new ParameterTag(null, parameter, null, new(SqlTypeCache.GetSqlDbTypeFromValue(value))), value);
         int expected = 1;
         int actual = parameterValue.Parameters.Count();
 
@@ -100,7 +100,7 @@ public class ParameterValuesTests
     [InlineData("_1", 1)]
     public void ParameterValues_Parameter_Name(string parameter, object value)
     {
-        Parameter parameterValue = new(new ParameterTag(null, parameter, null, SqlTypeCache.GetSqlDbTypeFromValue(value)), value);
+        Parameter parameterValue = new(new ParameterTag(null, parameter, null, new(SqlTypeCache.GetSqlDbTypeFromValue(value))), value);
         string expected = $"{parameter}";
         string actual = parameterValue.Name;
 

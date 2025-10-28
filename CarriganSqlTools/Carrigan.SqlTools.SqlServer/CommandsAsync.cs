@@ -22,17 +22,27 @@ public static class CommandsAsync
         {
             SqlParameter sqlParameter = new(parameter, value)
             {
-                SqlDbType = parameter.SqlDbType ?? SqlTypeCache.GetSqlDbTypeFromValue(value)
+                SqlDbType = parameter.SqlType?.Type ?? SqlTypeCache.GetSqlDbTypeFromValue(value)
             };
-            if (sqlParameter.SqlDbType == SqlDbType.Decimal)
+
+            if(parameter.SqlType?.UseMax is not null)
             {
-                sqlParameter.Precision = 18;
-                sqlParameter.Scale = 4;
+                if (parameter.SqlType.UseMax)
+                    sqlParameter.Size = -1;
+            }
+            else
+            {
+                if (parameter.SqlType?.Size is not null)
+                    sqlParameter.Size = parameter.SqlType.Size.Value;
+                if (parameter.SqlType?.Precision is not null)
+                    sqlParameter.Precision = parameter.SqlType.Precision.Value;
+                if (parameter.SqlType?.Scale is not null)
+                    sqlParameter.Scale = parameter.SqlType.Scale.Value;
             }
 
             return sqlParameter;
         }
-        //TODO: add the ability to specify precision and scale to values.
+
         return query
                     .Parameters
                     .AsEnumerable()
@@ -166,7 +176,7 @@ public static class CommandsAsync
             if (decrypters is null)
                 throw new DecrypterNotProvided<T>();
 
-            _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NoKeyVersionProperty<T>();
+            _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NoKeyVersionPropertyException<T>();
             foreach (T record in results)
             {
                 decryptionVersion = (int?) ClientReflectorCache<T>.KeyVersionProperty.GetValue(record);

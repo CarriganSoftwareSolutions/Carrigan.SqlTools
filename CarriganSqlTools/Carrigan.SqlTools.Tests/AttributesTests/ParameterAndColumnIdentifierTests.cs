@@ -7,6 +7,7 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using Newtonsoft.Json.Linq;
+using System.Data;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 public class ParameterAndColumnIdentifierTests
@@ -200,9 +201,9 @@ public class ParameterAndColumnIdentifierTests
     public void AndTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new(new ParameterTag(null, "p1", null, SqlTypeCache.GetSqlDbType(typeof(int))), 1);
+        Parameter parameter1 = new(new ParameterTag(null, "p1", null, new(SqlDbType.Int)), 1);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new(new ParameterTag(null, "p2", null, SqlTypeCache.GetSqlDbType(typeof(int))), 2);
+        Parameter parameter2 = new(new ParameterTag(null, "p2", null, new(SqlDbType.Int)), 2);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         And and = new (equal1, equal2);
@@ -236,7 +237,7 @@ public class ParameterAndColumnIdentifierTests
     public void ColumnTest()
     {
         Column<ColumnIdentifiers> identifierOverrideColumn = new(nameof(ColumnIdentifiers.IdentifierOverrideName));
-        Parameter parameter =new(new ParameterTag(null, "p1", null, SqlTypeCache.GetSqlDbType(typeof(int))), 1);
+        Parameter parameter =new(new ParameterTag(null, "p1", null, new(SqlDbType.Int)), 1);
         Equal equal = new(identifierOverrideColumn, parameter);
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);
@@ -266,7 +267,7 @@ public class ParameterAndColumnIdentifierTests
     public void ContainsTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1);
+        Parameter parameter = new("p1", 1, null);
         Contains<ColumnIdentifiers> contains = new (column, parameter);
 
         SqlQuery query = _generator.Select(null, null, contains, null, null);
@@ -282,7 +283,7 @@ public class ParameterAndColumnIdentifierTests
     public void EqualTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1);
+        Parameter parameter = new("p1", 1, null);
         Equal equal = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);
@@ -299,7 +300,7 @@ public class ParameterAndColumnIdentifierTests
     public void GreaterThanEqualsTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1);
+        Parameter parameter = new("p1", 1, null);
         GreaterThanEqual op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -316,7 +317,7 @@ public class ParameterAndColumnIdentifierTests
     public void GreaterThanTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1);
+        Parameter parameter = new("p1", 1, null);
         GreaterThan op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -365,7 +366,7 @@ public class ParameterAndColumnIdentifierTests
     public void LessThanEqualsTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1);
+        Parameter parameter = new("p1", 1, null);
         LessThanEqual op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -382,7 +383,7 @@ public class ParameterAndColumnIdentifierTests
     public void LessThanTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1);
+        Parameter parameter = new("p1", 1, null);
         LessThan op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -399,7 +400,7 @@ public class ParameterAndColumnIdentifierTests
     public void NotEqualTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1);
+        Parameter parameter = new("p1", 1, null);
         NotEqual op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -431,9 +432,9 @@ public class ParameterAndColumnIdentifierTests
     public void OrTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new("p1", 1);
+        Parameter parameter1 = new("p1", 1, null);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new("p2", 2);
+        Parameter parameter2 = new("p2", 2, null);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         Or or = new(equal1, equal2);
@@ -453,9 +454,9 @@ public class ParameterAndColumnIdentifierTests
     public void XOrTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new("p1", 1);
+        Parameter parameter1 = new("p1", 1, null);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new("p2", 2);
+        Parameter parameter2 = new("p2", 2, null);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         Xor xor = new(equal1, equal2);

@@ -14,13 +14,13 @@ public class NotEqualsTests
     private readonly PredicatesLogic.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f);
+    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337);
+    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337, null);
     private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
+    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!", new(System.Data.SqlDbType.NVarChar, true));
     private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 

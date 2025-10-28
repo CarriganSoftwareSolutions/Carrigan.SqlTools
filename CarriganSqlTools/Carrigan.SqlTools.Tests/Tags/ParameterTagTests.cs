@@ -1,11 +1,14 @@
 ﻿
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
+using System.Data;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Tests.Tags;
 
 public class ParameterTagTests
 {
+
     [Fact]
     public void ImplicitString_CreatesExpectedTag_AllPartsPresent()
     {
@@ -196,5 +199,139 @@ public class ParameterTagTests
         bool equalsResult = parameterTag.Equals(parameterTag, parameterTag);
 
         Assert.True(equalsResult);
+    }
+
+
+    [Fact]
+    public void ToString_OnlyParameterName()
+    {
+        ParameterTag tag = new(null, "ParameterName", null, null);
+        string actual = tag.ToString();
+
+        Assert.Equal("ParameterName", actual);
+    }
+
+
+    [Theory]
+    [InlineData("A", "B")]
+    [InlineData("alpha", "beta")]
+    public void Equals_DifferentParameterNames_False(string leftName, string rightName)
+    {
+        ParameterTag left = new("P", leftName, "I", null);
+        ParameterTag right = new("P", rightName, "I", null);
+
+        Assert.False(left.Equals(right));
+        Assert.False(left == right);
+        Assert.True(left != right);
+    }
+
+
+    [Fact]
+    public void CompareTo_DifferentValues_RespectsCaseInsensitiveOrdering()
+    {
+        ParameterTag a = new("Prefix", "Alpha", "01", null);
+        ParameterTag b = new("Prefix", "Beta", "01", null);
+
+        int comparison = a.CompareTo(b);
+        int reversed = b.CompareTo(a);
+
+        Assert.True(comparison < 0);
+        Assert.True(reversed > 0);
+    }
+
+    [Fact]
+    public void PrefixPrepend_Chaining()
+    {
+        ParameterTag original = new("FirstPrefix", "ParameterName", "Idx", null);
+        ParameterTag withOne = original.PrefixPrepend("New1");
+        ParameterTag withTwo = withOne.PrefixPrepend("New2");
+
+        Assert.Equal("New1_FirstPrefix_ParameterName_Idx", (string)withOne);
+        Assert.Equal("New2_New1_FirstPrefix_ParameterName_Idx", (string)withTwo);
+        Assert.NotEqual(original, withOne);
+        Assert.NotEqual(withOne, withTwo);
+        Assert.NotSame(original, withOne);
+        Assert.NotSame(withOne, withTwo);
+    }
+
+    [Fact]
+    public void Equals_ObjectOverride_NonTagObject()
+    {
+        ParameterTag tag = new("1", "2", "3", null);
+        object notATag = "1_2_3";
+
+        Assert.False(tag.Equals(notATag));
+    }
+
+    [Fact]
+    public void GetHashCode_DifferentLogicalValues()
+    {
+        ParameterTag first = new("A", "B", "C", null);
+        ParameterTag second = new("A", "B2", "C", null);
+
+        int hashFirst = first.GetHashCode();
+        int hashSecond = second.GetHashCode();
+
+        Assert.NotEqual(hashFirst, hashSecond);
+    }
+
+    [Fact]
+    public void EqualityOperators_NullOnLeft()
+    {
+        ParameterTag? left = null;
+        ParameterTag right = new("1", "2", "3", null);
+
+        Assert.False(left == right);
+        Assert.True(left != right);
+    }
+
+    [Fact]
+    public void AddIndex_Then_PrefixPrepend()
+    {
+        ParameterTag original = new(null, "Name", null, null);
+        ParameterTag withIndex = original.AddIndex("01");
+        ParameterTag withPrefix = withIndex.PrefixPrepend("P");
+
+        Assert.Equal("Name_01", (string)withIndex);
+        Assert.Equal("P_Name_01", (string)withPrefix);
+        Assert.NotSame(original, withIndex);
+        Assert.NotSame(withIndex, withPrefix);
+    }
+
+    [Fact]
+    public void Constructor_NullPrefix_AndIndex_OnlyName()
+    {
+        ParameterTag tag = new(null, "OnlyName", null, null);
+        string actual = (string)tag;
+
+        Assert.Equal("OnlyName", actual);
+    }
+
+    [Fact]
+    public void Constructor_AllPartsPresent()
+    {
+        ParameterTag tag = new("P1", "Name", "I1", null);
+        string actual = (string)tag;
+
+        Assert.Equal("P1_Name_I1", actual);
+    }
+
+    [Fact]
+    public void Equals_NullObject()
+    {
+        ParameterTag tag = new("1", "2", "3", null);
+
+        Assert.False(tag.Equals((object?)null));
+    }
+
+    [Fact]
+    public void CompareTo_EqualValues_ReturnsZero()
+    {
+        ParameterTag a = new("P", "N", "I", null);
+        ParameterTag b = new("p", "n", "i", null);
+
+        int compare = a.CompareTo(b);
+
+        Assert.Equal(0, compare);
     }
 }

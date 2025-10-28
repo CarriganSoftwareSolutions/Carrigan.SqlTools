@@ -16,17 +16,17 @@
 /// values during query generation. Failing to supply one at construction time
 /// results in this exception.
 /// </remarks>
-public class EncrypterNotProvided<T> : Exception
+public class EncrypterNotProvidedException<T> : Exception
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="EncrypterNotProvided{T}"/> class.
+    /// Initializes a new instance of the <see cref="EncrypterNotProvidedException{T}"/> class.
     /// </summary>
     /// <remarks>
     /// This exception is raised when <c>SqlGenerator&lt;T&gt;</c> is instantiated
     /// without providing an encrypter, and <typeparamref name="T"/> defines one or
     /// more encrypted properties.
     /// </remarks>
-    internal EncrypterNotProvided() :
+    internal EncrypterNotProvidedException() :
         base($"No encrypter provided for Sql Generator<{nameof(T)}>, and {nameof(T)} has encrypted properties.")   
     {
     }

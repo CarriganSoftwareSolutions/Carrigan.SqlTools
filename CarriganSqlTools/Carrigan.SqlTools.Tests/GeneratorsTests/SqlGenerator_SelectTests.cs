@@ -66,7 +66,7 @@ public class SqlGenerator_SelectTests
     [Fact]
     public void SqlSelect_NoJoins_WithPredicates_WithTableAttribute()
     {
-        PredicatesLogic.Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3));
+        PredicatesLogic.Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3, new(System.Data.SqlDbType.Int)));
         SqlQuery query = _sqlGeneratorForColumnTable.Select(null, null, id, null, null);
 
         string expectedSql = "SELECT [ColumnTable].* FROM [ColumnTable] WHERE ([ColumnTable].[Col1] = @Parameter_Col1)";
@@ -92,7 +92,7 @@ public class SqlGenerator_SelectTests
     public void SqlSelect_WithInnerJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3, new(System.Data.SqlDbType.Int)));
         JoinsBase relation = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relation, predicateId, null, null);
 
@@ -119,7 +119,7 @@ public class SqlGenerator_SelectTests
     public void SqlSelect_WithLeftJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3, new(System.Data.SqlDbType.Int)));
         JoinsBase relations = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relations, predicateId, null, null);
 
@@ -147,7 +147,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3, new(System.Data.SqlDbType.Int)));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
         Joins<JoinLeftTable> joins = new(join1, join2);
@@ -177,7 +177,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3, new(System.Data.SqlDbType.Int)));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
         JoinsBase joins = new Joins<JoinLeftTable>(join1, join2);
@@ -213,7 +213,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3, new(System.Data.SqlDbType.Int)));
         InnerJoin<JoinRightTable> join1 = new (joinId1);
         LeftJoin<JoinLastTable> join2 = new (joinId2);
         JoinsBase relation = new Joins<JoinLeftTable>(join1, join2);

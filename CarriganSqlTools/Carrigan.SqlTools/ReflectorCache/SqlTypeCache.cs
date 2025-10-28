@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Data;
 
+//TODO: added type mappings documentation to the readme.md file.
+
 //WHEN ADDING NEW TYPES TO THIS SELECTION,
 //be sure to add them to add types to the following places as well:
 // - Carrigan.SqlTools.ReflectorCache SqlTypeNameCache's SqlTypeNameCache Constructor
@@ -10,7 +12,7 @@ using System.Data;
 // - Carrigan.SqlTools.Tests.InvocationTests.TypeTests Classes
 
 namespace Carrigan.SqlTools.ReflectorCache;
-//TODO: Proof read, unit test
+//TODO: Proof read documentation
 /// <summary>
 /// Provides a fast, centralized mapping from CLR <see cref="Type"/> to the corresponding
 /// ADO.NET <see cref="SqlDbType"/> used by <see cref="SqlParameter.SqlDbType"/>.
@@ -40,17 +42,34 @@ public static class SqlTypeCache
     /// <summary>
     /// Tries to retrieve the <see cref="SqlDbType"/> for the specified CLR type.
     /// </summary>
-    public static bool TryGetSqlDbType(Type type, out SqlDbType sqlDbType) =>
-        _cache.TryGetValue(type, out sqlDbType);
+    public static bool TryGetSqlDbType(Type type, out SqlDbType sqlDbType)
+    {
+        if (_cache.TryGetValue(type, out sqlDbType))
+            return true;
+        else if (type.IsEnum)
+            return _cache.TryGetValue(typeof(Enum), out sqlDbType);
+        else
+        {
+            Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
+            if (underlyingType.IsEnum)
+            {
+                return _cache.TryGetValue(typeof(Enum), out sqlDbType);
+            }
+            return false;
+        }
+    }
 
     /// <summary>
     /// Retrieves the <see cref="SqlDbType"/> for the specified CLR type.
     /// Throws <see cref="NotSupportedException"/> if no mapping exists.
     /// </summary>
-    public static SqlDbType GetSqlDbType(Type type) =>
-        _cache.TryGetValue(type, out SqlDbType t)
-            ? t
-            : throw new NotSupportedException($"No SqlDbType mapping registered for CLR type '{type.FullName}'.");
+    public static SqlDbType GetSqlDbType(Type type)
+    {
+        if(TryGetSqlDbType(type, out SqlDbType sqlDbType))
+            return sqlDbType;
+        else
+            throw new NotSupportedException($"No SqlDbType mapping registered for CLR type '{type.FullName}'.");
+    }
 
     public static SqlDbType GetSqlDbTypeFromValue(object? value) =>
         value is null ? SqlDbType.Variant : SqlTypeCache.GetSqlDbType(value.GetType());
@@ -63,74 +82,67 @@ public static class SqlTypeCache
         IEnumerable<KeyValuePair<Type, SqlDbType>> keyValuePairs =
         [
             // Guid
-            new(typeof(Guid),           SqlDbType.UniqueIdentifier),
-            new(typeof(Guid?),          SqlDbType.UniqueIdentifier),
+            new(typeof(Guid),               SqlDbType.UniqueIdentifier),
+            new(typeof(Guid?),              SqlDbType.UniqueIdentifier),
 
             // Text
-            new(typeof(string),         SqlDbType.NVarChar),
-            new(typeof(char),           SqlDbType.NChar),
-            new(typeof(char?),          SqlDbType.NChar),
+            new(typeof(string),             SqlDbType.NVarChar),
+            new(typeof(char),               SqlDbType.NChar),
+            new(typeof(char?),              SqlDbType.NChar),
 
             //Binary
-            new(typeof(byte[]),         SqlDbType.VarBinary),
+            new(typeof(byte[]),             SqlDbType.VarBinary),
 
             // Boolean
-            new(typeof(bool),           SqlDbType.Bit),
-            new(typeof(bool?),          SqlDbType.Bit),
+            new(typeof(bool),               SqlDbType.Bit),
+            new(typeof(bool?),              SqlDbType.Bit),
 
             // Integers
-            new(typeof(byte),           SqlDbType.TinyInt),
-            new(typeof(byte?),          SqlDbType.TinyInt),
-            new(typeof(sbyte),          SqlDbType.SmallInt),
-            new(typeof(sbyte?),         SqlDbType.SmallInt),
-            new(typeof(short),          SqlDbType.SmallInt),
-            new(typeof(short?),         SqlDbType.SmallInt),
-            new(typeof(int),            SqlDbType.Int),
-            new(typeof(int?),           SqlDbType.Int),
-            new(typeof(long),           SqlDbType.BigInt),
-            new(typeof(long?),          SqlDbType.BigInt),
-
-            //TODO: Unsigned integers. Not supported yet. Add in the future after issues mapping resolved, or remove.
-            //new(typeof(ushort),         SqlDbType.Int),
-            //new(typeof(ushort?),        SqlDbType.Int),
-            //new(typeof(uint),           SqlDbType.BigInt),
-            //new(typeof(uint?),          SqlDbType.BigInt),
-            //new(typeof(ulong),          SqlDbType.Decimal),   
-            //new(typeof(ulong?),         SqlDbType.Decimal),
+            new(typeof(byte),               SqlDbType.TinyInt),
+            new(typeof(byte?),              SqlDbType.TinyInt),
+            new(typeof(sbyte),              SqlDbType.SmallInt),
+            new(typeof(sbyte?),             SqlDbType.SmallInt),
+            new(typeof(short),              SqlDbType.SmallInt),
+            new(typeof(short?),             SqlDbType.SmallInt),
+            new(typeof(int),                SqlDbType.Int),
+            new(typeof(int?),               SqlDbType.Int),
+            new(typeof(long),               SqlDbType.BigInt),
+            new(typeof(long?),              SqlDbType.BigInt),
 
             // Decimal and floating-point
-            new(typeof(decimal),        SqlDbType.Decimal),
-            new(typeof(decimal?),       SqlDbType.Decimal),
-            new(typeof(float),          SqlDbType.Real),
-            new(typeof(float?),         SqlDbType.Real),
-            new(typeof(double),         SqlDbType.Float),
-            new(typeof(double?),        SqlDbType.Float),
+            new(typeof(float),              SqlDbType.Real),
+            new(typeof(float?),             SqlDbType.Real),
+            new(typeof(double),             SqlDbType.Float),
+            new(typeof(double?),            SqlDbType.Float),
+            new(typeof(decimal),            SqlDbType.Decimal),
+            new(typeof(decimal?),           SqlDbType.Decimal),
 
             // Date/Time
-            new(typeof(DateTime),       SqlDbType.DateTime2),
-            new(typeof(DateTime?),      SqlDbType.DateTime2),
-            new(typeof(DateOnly),       SqlDbType.Date),
-            new(typeof(DateOnly?),      SqlDbType.Date),
-            new(typeof(TimeOnly),       SqlDbType.Time),
-            new(typeof(TimeOnly?),      SqlDbType.Time),
-            new(typeof(DateTimeOffset), SqlDbType.DateTimeOffset),
-            new(typeof(DateTimeOffset?),SqlDbType.DateTimeOffset),
+            new(typeof(DateTime),           SqlDbType.DateTime2),
+            new(typeof(DateTime?),          SqlDbType.DateTime2),
+            new(typeof(DateOnly),           SqlDbType.Date),
+            new(typeof(DateOnly?),          SqlDbType.Date),
+            new(typeof(TimeOnly),           SqlDbType.Time),
+            new(typeof(TimeOnly?),          SqlDbType.Time),
+            new(typeof(DateTimeOffset),     SqlDbType.DateTimeOffset),
+            new(typeof(DateTimeOffset?),    SqlDbType.DateTimeOffset),
 
-            //TODO: TimeSpan: Not supported yet. Add in the future after issues mapping resolved, or remove.
-            //property.PropertyType == typeof(TimeSpan) ||                    // SQL BIGINT
-            //property.PropertyType == typeof(TimeSpan?) ||                   // SQL BIGINT (nullable)
+            new(typeof(Enum),               SqlDbType.Int),
 
             //TODO: XML:Not supported yet. Add in the future after issues mapping resolved, or remove.
-            new(typeof(System.Xml.Linq.XDocument), SqlDbType.Xml),
-            new(typeof(System.Xml.XmlDocument),    SqlDbType.Xml),
+            //new(typeof(System.Xml.Linq.XDocument), SqlDbType.Xml),
+            //new(typeof(System.Xml.XmlDocument),    SqlDbType.Xml),
+            //new(typeof(JSON???), SqlDbType.Json),
 
             // Fallback
-            new(typeof(object),         SqlDbType.Variant)
+            new(typeof(object),             SqlDbType.Variant)
         ];
 
         _cache = new ReadOnlyDictionary<Type, SqlDbType>(new Dictionary<Type, SqlDbType>(keyValuePairs));
     }
 
-    internal static IEnumerable<Type> GetAll() => 
+    internal static IEnumerable<Type> GetAllCSharpTypes() => 
         _cache.Keys;
+    internal static IEnumerable<SqlDbType> GetAllSqlTypes() =>
+        _cache.Values;
 }

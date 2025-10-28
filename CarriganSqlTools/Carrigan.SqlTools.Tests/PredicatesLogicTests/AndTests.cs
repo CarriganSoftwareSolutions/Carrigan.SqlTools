@@ -18,7 +18,7 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1),
+            new Parameter("P1", 1, null),
         ]);
 
         string expected = $"@Parameter_P1";
@@ -32,15 +32,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1),
-            new Parameter("P2", 2),
+            new Parameter("P1", 1, null),
+            new Parameter("P2", 2, null),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new Or (
             [
                 new Column < ColumnTable >("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 2)
+                new Parameter("PA", 2, null)
             ])
         ]);
 
@@ -56,15 +56,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1),
-            new Parameter("P2", 2),
+            new Parameter("P1", 1, null),
+            new Parameter("P2", 2, null),
             new Column < ColumnTable >("Col1"),
             new Column < ColumnTable >("Col2"),
             new Or (
             [
                 new Column < ColumnTable >("ColA"),
                 new Column <ColumnTable>("ColB"),
-                new Parameter("PA", 2)
+                new Parameter("PA", 2, null)
             ])
         ]);
 
@@ -79,15 +79,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1),
-            new Parameter("P2", 2),
+            new Parameter("P1", 1, null),
+            new Parameter("P2", 2, null),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new Or (
             [
                 new Column<ColumnTable>("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 2)
+                new Parameter("PA", 2, null)
             ])
         ]);
 
@@ -102,15 +102,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1),
-            new Parameter("P2", 2),
+            new Parameter("P1", 1, new(System.Data.SqlDbType.Int)),
+            new Parameter("P2", 2, new(System.Data.SqlDbType.Int)),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new Or (
             [
                 new Column<ColumnTable>("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 3)
+                new Parameter("PA", 3, new(System.Data.SqlDbType.Int))
             ])
         ]);
 

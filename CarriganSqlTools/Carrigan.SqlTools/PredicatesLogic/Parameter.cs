@@ -1,6 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
@@ -49,7 +50,7 @@ public class Parameter : Predicates
     /// </remarks>
     /// <param name="parameter">The base parameter tag (name + metadata).</param>
     /// <param name="value">The value to bind; <c>null</c> becomes <see cref="DBNull.Value"/> at materialization time.</param>
-    public Parameter(ParameterTag parameter, object? value)
+    internal Parameter(ParameterTag parameter, object? value)
     {
         ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));
         Name = parameter;
@@ -68,10 +69,10 @@ public class Parameter : Predicates
     /// Thrown by <see cref="ParameterTag"/> if <paramref name="parameter"/> is empty or fails identifier validation.
     /// </exception>
     [ExternalOnly]
-    public Parameter(string parameter, object? value)
+    public Parameter(string parameter, object? value, SqlTypeDefinition? sqlType = null)
     {
-        SqlDbType sqlType = SqlTypeCache.GetSqlDbTypeFromValue(value);
-        Name = new ParameterTag(null, parameter, null, sqlType);
+        //TODO: write logic to ensure custom sql db types are not incompatible with the actual property info type.
+        Name = new ParameterTag(null, parameter, null, sqlType ?? new(SqlTypeCache.GetSqlDbTypeFromValue(value)));
         Value = value;
     }
 

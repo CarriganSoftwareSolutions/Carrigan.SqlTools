@@ -24,7 +24,7 @@ public class NullableTestEntity
     public char? CharValue { get; set; }            // Nullable char
     public TimeOnly? TimeOnlyValue { get; set; }    // Nullable Time
     public DateOnly? DateOnlyValue { get; set; }    // Nullable Date
-    public byte[]? ByteArrayValue { get; set; }    // Nullable Byte Array
+    public byte[]? ByteArrayValue { get; set; }     // Nullable Byte Array
     public DateTimeOffset? DateTimeOffsetValue { get; set; }    // Nullable DateTimeOffset
 
     public static NullableTestEntity GetStandardTestSet() => new()

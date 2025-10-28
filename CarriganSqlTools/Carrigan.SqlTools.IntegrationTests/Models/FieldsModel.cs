@@ -64,7 +64,7 @@ public class FieldsModel
 
     // SQL table DDL (used by the fixture)
     //TODO: Remove or replace TimeSpan code
-    //TODO: revist decimal precision
+    //TODO: revisit decimal precision
     internal static string CreateTableSql =>
         """
         CREATE TABLE dbo.Fields

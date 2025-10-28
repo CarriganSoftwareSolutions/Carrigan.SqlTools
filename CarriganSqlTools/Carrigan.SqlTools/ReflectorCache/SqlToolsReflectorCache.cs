@@ -188,8 +188,8 @@ public class SqlToolsReflectorCache<T>
                 .ReadablePublicInstanceProperties
                 .Where
                 (property => property.GetCustomAttribute<NotMappedAttribute>() == null
-                        && property.PropertyType != typeof(object)
-                        && SqlTypeCache.GetAll().Contains(property.PropertyType)
+                        && property.PropertyType != typeof(object) //to filter out properties with types that map to SqlDbType.Variant
+                        && SqlTypeCache.GetAllCSharpTypes().Contains(property.PropertyType)
                 );
 
         IEnumerable<PropertyInfo> keys =

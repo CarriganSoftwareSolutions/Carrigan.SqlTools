@@ -1,11 +1,9 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;
 public class PropertyInfoCacheTests

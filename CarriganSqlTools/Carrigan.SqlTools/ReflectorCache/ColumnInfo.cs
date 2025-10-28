@@ -1,11 +1,10 @@
 ﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
@@ -22,7 +21,7 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <remarks>
 /// Cached values include schema, table, and column identifiers as well as
 /// metadata derived from custom attributes such as
-/// <see cref="ColumnAttribute"/>, <see cref="IdentifierAttribute"/>,
+/// <see cref="ColumnAttribute"/>, <see cref="IdentifierAttribute"/>, <see cref="SqlTypeAttribute"/>
 /// <see cref="AliasAttribute"/>, <see cref="EncryptedAttribute"/>,
 /// and <see cref="KeyVersionAttribute"/>.
 /// </remarks>
@@ -40,8 +39,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly ColumnName ColumnName;
 
-    //TODO: Unit Test, Documentation
-    internal readonly SqlDbType SqlType;
+    //TODO: Documentation
+    internal readonly SqlTypeDefinition SqlType;
 
     /// <summary>
     /// The <see cref="System.Reflection.PropertyInfo"/> instance
@@ -118,11 +117,14 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         AliasName? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
 
+        SqlTypeAttribute? sqlTypeAttribute = propertyInfo.GetCustomAttribute<SqlTypeAttribute>();
+
         ColumnName = new ColumnName(columnName);
         ColumnTag = new(new(schemaName, tableName), ColumnName);
         PropertyInfo = propertyInfo;
         PropertyName = new(PropertyInfo.Name);
-        SqlType = SqlTypeCache.GetSqlDbType(PropertyInfo.PropertyType);
+        SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new (SqlTypeCache.GetSqlDbType(PropertyInfo.PropertyType));
+
         ParameterTag = new ParameterTag(null, parameterName, null, SqlType);
         AliasName = aliasName;
         SelectTag = new(ColumnTag, AliasTag.New(aliasName));

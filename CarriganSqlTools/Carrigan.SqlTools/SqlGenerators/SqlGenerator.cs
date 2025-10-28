@@ -1,10 +1,13 @@
-﻿using Carrigan.Core.Interfaces;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
+using System.Data;
+using System.Data.Common;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -38,13 +41,13 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="InvalidSqlIdentifierException">
     /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
     /// </exception>
-    /// <exception cref="EncrypterNotProvided{T}">
+    /// <exception cref="EncrypterNotProvidedException{T}">
     /// if encrypted columns exist but no encrypter was supplied
     /// </exception>
-    /// <exception cref="NoKeyVersionProperty{T}">
+    /// <exception cref="NoKeyVersionPropertyException{T}">
     /// if encrypted columns exist but no key-version property was designated.
     /// </exception>
-    /// <exception cref="InvalidKeyVersionPropertyType{T}">
+    /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
     /// if the key-version property is not an <see cref="int"/> (nullable allowed).
     /// </exception>
     /// <exception cref="MultipleKeyVersionProperties{T}">
@@ -54,6 +57,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     {
         List<Exception> exceptions = [];
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
+        IEnumerable<Tuple<PropertyInfo, SqlDbType>> invalidColumnTypes = [];
         IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
         IEnumerable<Tuple<PropertyInfo, ParameterTag>> invalidParameters = [];
 
@@ -70,6 +74,16 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
                 .Select(column => new Tuple<PropertyInfo, ColumnName>(column.PropertyInfo, column.ColumnName));
         if (invalidColumns.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
+
+        //TODO: write logic to ensure custom sql db types are no incompatible with the actual property info type.
+
+        //TODO: rewrite this block to check against all allowed types, not just the default assigned types.
+        //invalidColumnTypes =
+        //    ColumnInfo
+        //        .Where(column => column.SqlType.Type != SqlDbType.Variant && SqlTypeCache.GetAllSqlTypes().DoesNotContain(column.SqlType.Type))
+        //        .Select(column => new Tuple<PropertyInfo, SqlDbType>(column.PropertyInfo, column.SqlType.Type));
+        //if (invalidColumnTypes.Any())
+        //    exceptions.Add(new SqlTypeNotSupported(invalidColumnTypes));
 
         invalidAliases =
             ColumnInfo
@@ -89,11 +103,11 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         if (HasEncryptedColumns())
         {
             if (_Encryption is null)
-                exceptions.Add(new EncrypterNotProvided<T>());
+                exceptions.Add(new EncrypterNotProvidedException<T>());
             if (KeyVersionColumnInfo is null)
-                exceptions.Add(new NoKeyVersionProperty<T>());
+                exceptions.Add(new NoKeyVersionPropertyException<T>());
             else if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
-                exceptions.Add(new InvalidKeyVersionPropertyType<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
+                exceptions.Add(new InvalidKeyVersionPropertyTypeException<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
             if (KeyVersionColumnsInfo.Count() > 1)
                 exceptions.Add(new MultipleKeyVersionProperties<T>(KeyVersionColumnsInfo.Select(column => column.PropertyName)));
         }
@@ -114,13 +128,13 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="InvalidSqlIdentifierException">
     /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
     /// </exception>
-    /// <exception cref="EncrypterNotProvided{T}">
+    /// <exception cref="EncrypterNotProvidedException{T}">
     /// if encrypted columns exist but no encrypter was supplied
     /// </exception>
-    /// <exception cref="NoKeyVersionProperty{T}">
+    /// <exception cref="NoKeyVersionPropertyException{T}">
     /// if encrypted columns exist but no key-version property was designated.
     /// </exception>
-    /// <exception cref="InvalidKeyVersionPropertyType{T}">
+    /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
     /// if the key-version property is not an <see cref="int"/> (nullable allowed).
     /// </exception>
     /// <exception cref="MultipleKeyVersionProperties{T}">
@@ -146,13 +160,13 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="InvalidSqlIdentifierException">
     /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
     /// </exception>
-    /// <exception cref="EncrypterNotProvided{T}">
+    /// <exception cref="EncrypterNotProvidedException{T}">
     /// if encrypted columns exist but no encrypter was supplied
     /// </exception>
-    /// <exception cref="NoKeyVersionProperty{T}">
+    /// <exception cref="NoKeyVersionPropertyException{T}">
     /// if encrypted columns exist but no key-version property was designated.
     /// </exception>
-    /// <exception cref="InvalidKeyVersionPropertyType{T}">
+    /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
     /// if the key-version property is not an <see cref="int"/> (nullable allowed).
     /// </exception>
     /// <exception cref="MultipleKeyVersionProperties{T}">
