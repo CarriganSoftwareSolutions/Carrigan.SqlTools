@@ -2,8 +2,8 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 

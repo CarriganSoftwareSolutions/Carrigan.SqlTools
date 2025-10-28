@@ -1,6 +1,6 @@
 ﻿using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Types;
 using System.Data;
 
 //Ignore Spelling: enums

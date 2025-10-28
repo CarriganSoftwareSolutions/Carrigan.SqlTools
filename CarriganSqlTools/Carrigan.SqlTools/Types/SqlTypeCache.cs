@@ -11,7 +11,7 @@ using System.Data;
 // - Carrigan.SqlTools.IntegrationTests.Models FieldsModel's CreateTableSql property.
 // - Carrigan.SqlTools.Tests.InvocationTests.TypeTests Classes
 
-namespace Carrigan.SqlTools.ReflectorCache;
+namespace Carrigan.SqlTools.Types;
 //TODO: Proof read documentation
 /// <summary>
 /// Provides a fast, centralized mapping from CLR <see cref="Type"/> to the corresponding
@@ -72,7 +72,7 @@ public static class SqlTypeCache
     }
 
     public static SqlDbType GetSqlDbTypeFromValue(object? value) =>
-        value is null ? SqlDbType.Variant : SqlTypeCache.GetSqlDbType(value.GetType());
+        value is null ? SqlDbType.Variant : GetSqlDbType(value.GetType());
 
     private static readonly ReadOnlyDictionary<Type, SqlDbType> _cache;
 

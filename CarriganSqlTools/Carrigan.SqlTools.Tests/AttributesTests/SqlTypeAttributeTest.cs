@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 

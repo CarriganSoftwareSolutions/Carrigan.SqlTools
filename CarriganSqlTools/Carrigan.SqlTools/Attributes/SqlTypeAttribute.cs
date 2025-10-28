@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Types;
 using System.Data;
 using System.Drawing;
 

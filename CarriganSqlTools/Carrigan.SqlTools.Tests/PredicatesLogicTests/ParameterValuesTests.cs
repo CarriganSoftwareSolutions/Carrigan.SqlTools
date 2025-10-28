@@ -1,8 +1,8 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 

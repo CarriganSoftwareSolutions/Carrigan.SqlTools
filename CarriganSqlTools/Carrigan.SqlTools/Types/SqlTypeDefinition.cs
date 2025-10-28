@@ -5,7 +5,7 @@ using System.Text;
 
 //IGNORE SPELLING: xml, unicode
 //TODO: proof read  documentation 
-namespace Carrigan.SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.Types;
 
 /// <summary>
 /// Extensions that map <see cref="SqlDbType"/> to SQL Server type keywords,
