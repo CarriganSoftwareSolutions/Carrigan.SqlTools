@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Text;
 
 //IGNORE SPELLING: xml, unicode
-//TODO: proof read  documentation 
+//TODO:  documentation , unit tests
 namespace Carrigan.SqlTools.Types;
 
 /// <summary>
@@ -16,35 +16,400 @@ public class SqlTypeDefinition
     /// <summary>
     /// The Sql Server ADO.Net Type
     /// </summary>
-    public SqlDbType Type { get; }
+    public SqlDbType Type { get; init; }
 
     //TODO: Documentation, 
-    public int? Size { get; } = null;
+    public int? Size { get; init; } = null;
 
     //TODO: Documentation,
-    public byte? Precision { get; } = null;
+    public byte? Precision { get; init; } = null;
 
     //TODO: Documentation, 
-    public byte? Scale { get; } = null;
+    public byte? Scale { get; init; } = null;
 
-    public bool UseMax { get; } = false;
+    public bool UseMax { get; init; } = false;
 
     /// <summary>
     /// This represents the text to declare the indicated type in SQL with the supplied sizing arguments.
     /// </summary>
-    public readonly string TypeDeclaration;
+    public string TypeDeclaration { get; init; } = string.Empty;
 
+
+    private SqlTypeDefinition()
+    {
+    }
 
     /// <summary>
     /// Constructor to use when the type has no sizing arguments, or the default size is acceptable.
     /// </summary>
     /// <param name="type">The Sql Server ADO.Net Type</param>
-    public SqlTypeDefinition(SqlDbType type)
+    //public SqlTypeDefinition SqlTypeDefinition(SqlDbType type)
+    //{
+    //    SqlTypeNotSupportedException.ValidateTypeIsSupported(type);
+    //    Type = type;
+    //    TypeDeclaration = ToSql(type);
+    //}
+    #region UniqueIdentifier
+    public static SqlTypeDefinition AsUniqueIdentifier()
     {
-        SqlTypeNotSupportedException.ValidateTypeIsSupported(type);
-        Type = type;
-        TypeDeclaration = ToSql(type);
+        SqlDbType type = SqlDbType.UniqueIdentifier;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
     }
+    #endregion
+
+    #region Chars
+
+    public static SqlTypeDefinition AsChar(int? size = null)
+    {
+        SqlDbType type = SqlDbType.Char;
+        if (size is not null && (size < 1 || size > 8000))
+            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = size,
+            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsNChar(int? size = null)
+    {
+        SqlDbType type = SqlDbType.NChar;
+        if (size is not null && (size < 1 || size > 4000))
+            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 4000);
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = size,
+            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsVarChar(int? size = null)
+    {
+        SqlDbType type = SqlDbType.VarChar;
+        if (size is not null && (size < 1 || size > 8000))
+            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = size,
+            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsNVarChar(int? size = null)
+    {
+        SqlDbType type = SqlDbType.NVarChar;
+        if (size is not null && (size < 1 || size > 4000))
+            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 4000);
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = size,
+            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsVarCharMax()
+    {
+        SqlDbType type = SqlDbType.VarChar;
+        return new()
+        {
+            Type = type,
+            UseMax = true,
+            TypeDeclaration = $"{ToSql(type)}(MAX)"
+        };
+    }
+
+    public static SqlTypeDefinition AsNVarCharMax()
+    {
+        SqlDbType type = SqlDbType.NVarChar;
+        return new()
+        {
+            Type = type,
+            UseMax = true,
+            TypeDeclaration = $"{ToSql(type)}(MAX)"
+        };
+    }
+
+    public static SqlTypeDefinition AsText()
+    {
+        SqlDbType type = SqlDbType.Text;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsNText()
+    {
+        SqlDbType type = SqlDbType.NText;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    #endregion
+
+    #region Binary
+
+    public static SqlTypeDefinition AsBinary(int? size = null)
+    {
+        SqlDbType type = SqlDbType.Binary;
+        if (size is not null && (size < 1 || size > 8000))
+            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = size,
+            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsVarBinary(int? size = null)
+    {
+        SqlDbType type = SqlDbType.Binary;
+        if (size is not null && (size < 1 || size > 8000))
+            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = size,
+            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
+        };
+    }
+    public static SqlTypeDefinition AsVarBinaryMax()
+    {
+        SqlDbType type = SqlDbType.VarBinary;
+        return new()
+        {
+            Type = type,
+            UseMax = true,
+            TypeDeclaration = $"{ToSql(type)}(MAX)"
+        };
+    }
+
+    public static SqlTypeDefinition AsImage()
+    {
+        SqlDbType type = SqlDbType.Image;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+    #endregion
+
+    #region Bit
+
+    public static SqlTypeDefinition AsBit()
+    {
+        SqlDbType type = SqlDbType.Bit;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+    #endregion
+
+    #region Integers
+    public static SqlTypeDefinition AsTinyInt()
+    {
+        SqlDbType type = SqlDbType.TinyInt;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsSmallInt()
+    {
+        SqlDbType type = SqlDbType.SmallInt;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+    public static SqlTypeDefinition AsInt()
+    {
+        SqlDbType type = SqlDbType.Int;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsBigInt()
+    {
+        SqlDbType type = SqlDbType.BigInt;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+    #endregion
+
+    #region Floating Point
+    public static SqlTypeDefinition AsReal()
+    {
+        SqlDbType type = SqlDbType.Real;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsFloat(int? precision)
+    {
+        SqlDbType type = SqlDbType.Float;
+        if (precision is not null && (precision < 1 || precision > 53))
+            throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 53);
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = precision,
+            TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
+        };
+    }
+    #endregion
+
+    #region decimal point
+
+    public static SqlTypeDefinition AsDecimal(int? precision, int? scale)
+    {
+        SqlDbType type = SqlDbType.Float;
+        StringBuilder stringBuilder = new (ToSql(type));
+        if (precision is not null)
+        {
+            if (precision < 1 || precision > 38)
+                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 38);
+            stringBuilder.Append(precision.Value);
+        }
+        if (scale is not null)
+        {
+            if ((scale + precision ?? 0) > 38)
+                throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale.Value, 1, 38 - (precision ?? 0));
+            stringBuilder.Append(scale.Value);
+        }
+
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Size = precision,
+            TypeDeclaration = stringBuilder.ToString()
+        };
+    }
+    public static SqlTypeDefinition AsMoney()
+    {
+        SqlDbType type = SqlDbType.Money;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+    public static SqlTypeDefinition AsSmallMoney()
+    {
+        SqlDbType type = SqlDbType.SmallMoney;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+    #endregion
+
+    #region DateTime
+
+    public static SqlTypeDefinition AsDateTime2(int? precision)
+    {
+        SqlDbType type = SqlDbType.DateTime2;
+        if (precision is not null)
+        {
+            if (precision < 0 || precision > 7)
+                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
+        }
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsDateTimeOffset(int? precision)
+    {
+        SqlDbType type = SqlDbType.DateTimeOffset;
+        if (precision is not null)
+        {
+            if (precision < 0 || precision > 7)
+                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
+        }
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsDateTime()
+    {
+        SqlDbType type = SqlDbType.DateTime;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsSmallDateTime()
+    {
+        SqlDbType type = SqlDbType.SmallDateTime;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsDate()
+    {
+        SqlDbType type = SqlDbType.Date;
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = ToSql(type)
+        };
+    }
+
+    public static SqlTypeDefinition AsTime(int? precision)
+    {
+        SqlDbType type = SqlDbType.Time;
+        if (precision is not null)
+        {
+            if (precision < 0 || precision > 7)
+                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
+        }
+        return new()
+        {
+            Type = type,
+            TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
+        };
+    }
+    #endregion
 
     /// <summary>
     /// Constructor to use when specifying Size, Precision or Scale.
