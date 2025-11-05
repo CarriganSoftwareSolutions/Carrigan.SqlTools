@@ -273,7 +273,7 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsFloat(int? precision)
+    public static SqlTypeDefinition AsFloat(byte? precision)
     {
         SqlDbType type = SqlDbType.Float;
         if (precision is not null && (precision < 1 || precision > 53))
@@ -281,38 +281,58 @@ public class SqlTypeDefinition
         return new SqlTypeDefinition()
         {
             Type = type,
-            Size = precision,
+            Precision = precision,
             TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
         };
     }
     #endregion
 
     #region decimal point
-
-    public static SqlTypeDefinition AsDecimal(int? precision, int? scale)
+    public static SqlTypeDefinition AsDecimal()
     {
-        SqlDbType type = SqlDbType.Float;
-        StringBuilder stringBuilder = new (ToSql(type));
-        if (precision is not null)
-        {
-            if (precision < 1 || precision > 38)
-                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 38);
-            stringBuilder.Append(precision.Value);
-        }
-        if (scale is not null)
-        {
-            if ((scale + precision ?? 0) > 38)
-                throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale.Value, 1, 38 - (precision ?? 0));
-            stringBuilder.Append(scale.Value);
-        }
+        SqlDbType type = SqlDbType.Decimal;
 
         return new SqlTypeDefinition()
         {
             Type = type,
-            Size = precision,
-            TypeDeclaration = stringBuilder.ToString()
+            TypeDeclaration = $"{ToSql(type)}"
         };
     }
+
+    public static SqlTypeDefinition AsDecimal(byte precision)
+    {
+        SqlDbType type = SqlDbType.Decimal;
+
+        if (precision < 1 || precision > 38)
+            throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision, 1, 38);
+
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Precision = precision,
+            TypeDeclaration = $"{ToSql(type)}({precision})"
+        };
+    }
+
+    public static SqlTypeDefinition AsDecimal(byte precision, byte scale)
+    {
+        SqlDbType type = SqlDbType.Decimal;
+
+        if (precision < 1 || precision > 38)
+            throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision, 1, 38);
+
+        if (scale > precision)
+            throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale, 0, precision);
+
+        return new SqlTypeDefinition()
+        {
+            Type = type,
+            Precision = precision,
+            Scale = scale,
+            TypeDeclaration = $"{ToSql(type)}({precision})({scale})"
+        };
+    }
+
     public static SqlTypeDefinition AsMoney()
     {
         SqlDbType type = SqlDbType.Money;
@@ -335,7 +355,7 @@ public class SqlTypeDefinition
 
     #region DateTime
 
-    public static SqlTypeDefinition AsDateTime2(int? precision)
+    public static SqlTypeDefinition AsDateTime2(byte? precision)
     {
         SqlDbType type = SqlDbType.DateTime2;
         if (precision is not null)
@@ -346,11 +366,12 @@ public class SqlTypeDefinition
         return new()
         {
             Type = type,
+            Scale = precision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
             TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
         };
     }
 
-    public static SqlTypeDefinition AsDateTimeOffset(int? precision)
+    public static SqlTypeDefinition AsDateTimeOffset(byte? precision)
     {
         SqlDbType type = SqlDbType.DateTimeOffset;
         if (precision is not null)
@@ -361,6 +382,7 @@ public class SqlTypeDefinition
         return new()
         {
             Type = type,
+            Scale = precision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
             TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
         };
     }
@@ -395,7 +417,7 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsTime(int? precision)
+    public static SqlTypeDefinition AsTime(byte? precision)
     {
         SqlDbType type = SqlDbType.Time;
         if (precision is not null)
@@ -406,6 +428,7 @@ public class SqlTypeDefinition
         return new()
         {
             Type = type,
+            Scale = precision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
             TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
         };
     }
