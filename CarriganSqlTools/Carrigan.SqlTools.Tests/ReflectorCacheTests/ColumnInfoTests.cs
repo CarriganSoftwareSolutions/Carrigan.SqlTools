@@ -310,6 +310,7 @@ public class ColumnInfoTests
     }
 
 
+    [Theory]
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "NChar", new string[] { },
         SqlDbType.NChar, "NCHAR", 4000, null, null, false)]
 
