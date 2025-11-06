@@ -355,7 +355,7 @@ public class SqlTypeDefinition
 
     #region DateTime
 
-    public static SqlTypeDefinition AsDateTime2(byte? precision)
+    public static SqlTypeDefinition AsDateTime2(byte? precision = null)
     {
         SqlDbType type = SqlDbType.DateTime2;
         if (precision is not null)
@@ -371,7 +371,7 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsDateTimeOffset(byte? precision)
+    public static SqlTypeDefinition AsDateTimeOffset(byte? precision = null)
     {
         SqlDbType type = SqlDbType.DateTimeOffset;
         if (precision is not null)
@@ -417,7 +417,7 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsTime(byte? precision)
+    public static SqlTypeDefinition AsTime(byte? precision = null)
     {
         SqlDbType type = SqlDbType.Time;
         if (precision is not null)
