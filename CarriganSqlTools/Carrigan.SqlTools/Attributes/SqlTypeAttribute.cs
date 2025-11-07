@@ -1,13 +1,12 @@
 ﻿using Carrigan.SqlTools.Types;
 using System.Data;
-using System.Drawing;
 
-//TODO: Proof read Documentation
+//TODO: Read Documentation after shifting to base class, Proof read Documentation
 namespace Carrigan.SqlTools.Attributes;
-[AttributeUsage(AttributeTargets.Property)]
 /// <summary>
 /// This attribute allows overriding the database type for the column associated with the property.
 /// </summary>
+[AttributeUsage(AttributeTargets.Property, Inherited = true)]
 public class SqlTypeAttribute : Attribute
 {
     /// <summary>
@@ -16,11 +15,15 @@ public class SqlTypeAttribute : Attribute
     internal readonly SqlTypeDefinition SqlTypeDefinition;
     //TODO: bullet proofing.
 
+
+    internal SqlTypeAttribute(SqlTypeDefinition sqlTypeDefinition) =>
+        SqlTypeDefinition = sqlTypeDefinition;
+
     /// <summary>
     /// Attribute constructor to use when the type has no sizing arguments, or the default size is acceptable.
     /// </summary>
     /// <param name="type">The Sql Server ADO.Net Type</param>
-    public SqlTypeAttribute(SqlDbType type) =>
+    internal SqlTypeAttribute(SqlDbType type) =>
         SqlTypeDefinition = new SqlTypeDefinition(type);
 
     /// <summary>
@@ -53,7 +56,7 @@ public class SqlTypeAttribute : Attribute
     /// Decimal (0 to 38)
     /// Note: For Decimal the precision + scale  cannot be greater than 38
     /// </param>
-    public SqlTypeAttribute(SqlDbType type, int size = -1, byte precision = byte.MaxValue, byte scale = byte.MaxValue) =>
+    internal SqlTypeAttribute(SqlDbType type, int size = -1, byte precision = byte.MaxValue, byte scale = byte.MaxValue) =>
         SqlTypeDefinition = new SqlTypeDefinition(type, (size == -1 ? null : size), (precision == byte.MaxValue ? null : precision), (scale == byte.MaxValue ? null : scale));
 
     /// <summary>
@@ -67,6 +70,6 @@ public class SqlTypeAttribute : Attribute
     /// For use with VARCHAR, NVARCHAR and VARBINARY.
     /// Though if you set max to false, you can safely use it with other types.
     /// </param>
-    public SqlTypeAttribute(SqlDbType type, bool useMax) =>
+    internal SqlTypeAttribute(SqlDbType type, bool useMax) =>
         SqlTypeDefinition = new SqlTypeDefinition(type, useMax);
 }

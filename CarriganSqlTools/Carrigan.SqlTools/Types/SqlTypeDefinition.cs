@@ -273,7 +273,7 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsFloat(byte? precision)
+    public static SqlTypeDefinition AsFloat(byte? precision = null)
     {
         SqlDbType type = SqlDbType.Float;
         if (precision is not null && (precision < 1 || precision > 53))

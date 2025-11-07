@@ -1,6 +1,9 @@
 ﻿namespace Carrigan.SqlTools.Types;
+
+//TODO: Unit test for int values, documentation
+
 public enum EncodingEnum
 {
-    Ascii,
-    Unicode
+    Ascii = 0,
+    Unicode = 1
 }

@@ -1,5 +1,5 @@
 ﻿namespace Carrigan.SqlTools.OrderByItems;
-
+//TODO: Unit test for int values
 /// <summary>
 /// Specifies the sort direction for an <c>ORDER BY</c> clause.
 /// </summary>
@@ -8,9 +8,9 @@ public enum SortDirectionEnum
     /// <summary>
     /// Sorts the results in ascending order.
     /// </summary>
-    Ascending,
+    Ascending = 0,
     /// <summary>
     /// Sorts the results in descending order.
     /// </summary>
-    Descending
+    Descending = 1
 }
