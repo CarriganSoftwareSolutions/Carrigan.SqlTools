@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>true</IsPackable>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
@@ -27,7 +28,7 @@
       query-builder;object-mapper;encryption;attributes;pagination;joins;where;order-by
     </PackageTags>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <InternalsVisibleTo Include="Carrigan.SqlTools.Tests" />
   </ItemGroup>
@@ -35,6 +36,37 @@
   <ItemGroup>
     <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202510180433" />
     <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.0-alpha.202511071517" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Target Name="EnsureAnalyzerBuilt" BeforeTargets="ResolveAnalyzerReference">
+    <MSBuild Projects="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj"
+             Targets="Build"
+             Properties="Configuration=$(Configuration)" />
+  </Target>
+  <Target Name="WireAnalyzerFromProject" BeforeTargets="ResolveAnalyzerReference">
+    <MSBuild Projects="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj"
+             Targets="GetTargetPath"
+             Properties="Configuration=$(Configuration)">
+      <Output TaskParameter="TargetOutputs" ItemName="AnalyzerFromProject" />
+    </MSBuild>
+
+    <ItemGroup>
+      <Analyzer Include="@(AnalyzerFromProject)" />
+    </ItemGroup>
+  </Target>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\bin\$(Configuration)\netstandard2.0\Carrigan.SqlTools.Analyzers.dll"
+          Pack="true"
+          PackagePath="analyzers/dotnet/cs"
+          Visible="false" />
   </ItemGroup>
 
 </Project>
