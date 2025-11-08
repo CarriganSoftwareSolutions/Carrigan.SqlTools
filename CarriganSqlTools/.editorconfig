@@ -1,6 +1,6 @@
 # Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
-dotnet_diagnostic.EXTO001.severity = error
+dotnet_diagnostic.CARRIGAN0001.severity = error
 
 # C# files
 [*.cs]

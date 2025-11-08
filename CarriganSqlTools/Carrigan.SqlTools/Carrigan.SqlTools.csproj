@@ -34,7 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202510180433" />
-    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.0-alpha.202510180433" PrivateAssets="all" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.0-alpha.202511071517" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
