@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -8,12 +10,17 @@ namespace Carrigan.SqlTools.Analyzers;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 {
+    private static readonly Dictionary<string, Type[]> attributeTypes =
+        new KeyValuePair<string, Type[]>[]
+        {
+            new ("SqlBinaryAttribute", [typeof(byte[])]),
+            new ("SqlCharAttribute", [typeof(char), typeof(string)])
+        }.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value);
     public const string DiagnosticId = "CARRIGANSQL0001";
-    private const string MessageFormat = "Member '{0}' is marked with 'SqlBinaryAttribute' and should not be applied to type '{1}'";
     private static readonly DiagnosticDescriptor Rule = new(
         id: DiagnosticId,
-        title: "Invalid SqlBinaryAttribute Application",
-        messageFormat: MessageFormat,
+        title: $"Invalid Use Of Attribute Derived From SqlTypeAttribute",
+        messageFormat: "Member '{0}' is marked with '{1}' and should not be applied to type '{2}'",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
@@ -33,37 +40,73 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 
         context.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
     }
+    public static ITypeSymbol? GetTypeSymbol(Compilation compilation, Type runtimeType)
+    {
+        if (runtimeType.IsArray)
+        {
+            ITypeSymbol? elementTypeSymbol = GetTypeSymbol(compilation, runtimeType.GetElementType()!);
+            return elementTypeSymbol is null
+                ? null
+                : compilation.CreateArrayTypeSymbol(elementTypeSymbol);
+        }
+        else if (runtimeType.IsGenericType && runtimeType.IsGenericTypeDefinition is false)
+        {
+            Type genericDefinition = runtimeType.GetGenericTypeDefinition();
+            INamedTypeSymbol? genericDefinitionSymbol = compilation.GetTypeByMetadataName(genericDefinition.FullName!);
+
+            if (genericDefinitionSymbol is INamedTypeSymbol namedTypeSymbol)
+            {
+                ITypeSymbol[] typeArguments = 
+                [.. runtimeType
+                        .GetGenericArguments()
+                        .Select(genericArgument => GetTypeSymbol(compilation, genericArgument))
+                        .OfType<ITypeSymbol>()
+                ];
+
+                return namedTypeSymbol.Construct(typeArguments);
+            }
+
+            return null;
+        }
+        else
+        {
+            string metadataName = runtimeType.FullName ??
+                                  (runtimeType.Namespace is null
+                                      ? runtimeType.Name
+                                      : $"{runtimeType.Namespace}.{runtimeType.Name}");
+
+            return compilation.GetTypeByMetadataName(metadataName);
+        }
+    }
     private static void AnalyzeProperty(SymbolAnalysisContext context)
     {
         IPropertySymbol property = (IPropertySymbol)context.Symbol;
-        IArrayTypeSymbol byteArrayType = context.Compilation.CreateArrayTypeSymbol(
-                context.Compilation.GetSpecialType(SpecialType.System_Byte));
-        INamedTypeSymbol? sqlBinaryAttrSymbol =
-            context.Compilation.GetTypeByMetadataName("Carrigan.SqlTools.Attributes.SqlBinaryAttribute");
-
+        INamedTypeSymbol? attributeClass;
         Location attributeLocation;
+        bool isInvalid;
 
-        if (sqlBinaryAttrSymbol is not null)
+        foreach (AttributeData attribute in property.GetAttributes())
         {
-            foreach (AttributeData attr in property.GetAttributes())
+            attributeClass = attribute.AttributeClass;
+            if (attributeClass is not null && attributeTypes.ContainsKey(attributeClass.Name))
             {
-                INamedTypeSymbol? attributeClass = attr.AttributeClass;
-                if (attributeClass is not null)
+                isInvalid = attributeTypes[attributeClass.Name]
+                    .Select(type => GetTypeSymbol(context.Compilation, type))
+                    .OfType<ITypeSymbol>()
+                    .Where(validSymbol => SymbolEqualityComparer.Default.Equals(property.Type, validSymbol))
+                    .Count() == 0;
+                if (isInvalid)
                 {
-                    if (SymbolEqualityComparer.Default.Equals(attributeClass, sqlBinaryAttrSymbol))
-                    {
-                        if (SymbolEqualityComparer.Default.Equals(property.Type, byteArrayType) is false)
-                        {
-                            attributeLocation = attr.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
-                                   ?? property.Locations.FirstOrDefault()
-                                   ?? Location.None;
-                            context.ReportDiagnostic(Diagnostic.Create(
-                                Rule,
-                                attributeLocation,
-                                property.Name, property.Type.Name));
-                        }
-                    }
-                }
+                    attributeLocation = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
+                            ?? property.Locations.FirstOrDefault()
+                            ?? Location.None;
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        Rule,
+                        attributeLocation,
+                        property.Name, 
+                        attributeClass.Name, 
+                        property.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                }                   
             }
         }
     }
