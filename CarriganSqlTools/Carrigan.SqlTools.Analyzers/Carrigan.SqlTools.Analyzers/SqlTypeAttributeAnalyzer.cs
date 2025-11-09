@@ -7,14 +7,25 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Carrigan.SqlTools.Analyzers;
 
+#pragma warning disable RS1041 // Compiler extensions should be implemented in assemblies targeting netstandard2.0
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
+#pragma warning restore RS1041 // Compiler extensions should be implemented in assemblies targeting netstandard2.0
 public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 {
     private static readonly Dictionary<string, Type[]> attributeTypes =
         new KeyValuePair<string, Type[]>[]
         {
             new ("SqlBinaryAttribute", [typeof(byte[])]),
-            new ("SqlCharAttribute", [typeof(char), typeof(string)])
+            new ("SqlCharAttribute", [typeof(char), typeof(string)]),
+            new ("SqlDateTime2Attribute", [typeof(DateTime), typeof(DateOnly)]),
+            new ("SqlDateTimeAttribute", [typeof(DateTime), typeof(DateOnly)]),
+            new ("SqlDateTimeOffsetAttribute", [typeof(DateTimeOffset)]),
+            new ("SqlDecimalAttribute", [typeof(decimal)]),
+            new ("SqlFloatAttribute", [typeof(float)]),
+            new ("SqlMoneyAttribute", [typeof(decimal)]),
+            new ("SqlTimeAttribute", [typeof(TimeOnly)]),
+            new ("SqlVarBinaryMaxAttribute", [typeof(byte[])]),
+            new ("SqlVarCharMaxAttribute", [typeof(char), typeof(string)])
         }.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value);
     public const string DiagnosticId = "CARRIGANSQL0001";
     private static readonly DiagnosticDescriptor Rule = new(
@@ -83,19 +94,17 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
         IPropertySymbol property = (IPropertySymbol)context.Symbol;
         INamedTypeSymbol? attributeClass;
         Location attributeLocation;
-        bool isInvalid;
+        bool isValid;
 
         foreach (AttributeData attribute in property.GetAttributes())
         {
             attributeClass = attribute.AttributeClass;
-            if (attributeClass is not null && attributeTypes.ContainsKey(attributeClass.Name))
+            if (attributeClass is not null && attributeTypes.TryGetValue(attributeClass.Name, out Type[]? value))
             {
-                isInvalid = attributeTypes[attributeClass.Name]
-                    .Select(type => GetTypeSymbol(context.Compilation, type))
+                isValid = value.Select(type => GetTypeSymbol(context.Compilation, type))
                     .OfType<ITypeSymbol>()
-                    .Where(validSymbol => SymbolEqualityComparer.Default.Equals(property.Type, validSymbol))
-                    .Count() == 0;
-                if (isInvalid)
+                    .Any(validSymbol => SymbolEqualityComparer.Default.Equals(property.Type, validSymbol));
+                if (isValid == false)
                 {
                     attributeLocation = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
                             ?? property.Locations.FirstOrDefault()
