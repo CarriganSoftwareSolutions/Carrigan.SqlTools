@@ -21,10 +21,8 @@ public class SqlCharAttribute : SqlTypeAttribute
         {
             (EncodingEnum.Ascii, StorageTypeEnum.Fixed) => SqlTypeDefinition.AsChar(size),
             (EncodingEnum.Ascii, StorageTypeEnum.Var) => SqlTypeDefinition.AsVarChar(size),
-            (EncodingEnum.Ascii, StorageTypeEnum.LargeObject) => SqlTypeDefinition.AsText(),
             (EncodingEnum.Unicode, StorageTypeEnum.Fixed) => SqlTypeDefinition.AsNChar(size),
             (EncodingEnum.Unicode, StorageTypeEnum.Var) => SqlTypeDefinition.AsNVarChar(size),
-            (EncodingEnum.Unicode, StorageTypeEnum.LargeObject) => SqlTypeDefinition.AsNText(),
             _ => throw new NotImplementedException(),
         };
 }

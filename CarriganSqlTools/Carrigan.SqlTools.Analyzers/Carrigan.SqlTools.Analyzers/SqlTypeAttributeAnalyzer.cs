@@ -12,37 +12,73 @@ namespace Carrigan.SqlTools.Analyzers;
 #pragma warning restore RS1041 // Compiler extensions should be implemented in assemblies targeting netstandard2.0
 public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 {
-    private static readonly Dictionary<string, Type[]> attributeTypes =
-        new KeyValuePair<string, Type[]>[]
+    private static readonly Dictionary<string, string[]> attributesMetaData =
+        new()
         {
-            new ("SqlBinaryAttribute", [typeof(byte[])]),
-            new ("SqlCharAttribute", [typeof(char), typeof(string)]),
-            new ("SqlDateTime2Attribute", [typeof(DateTime), typeof(DateOnly)]),
-            new ("SqlDateTimeAttribute", [typeof(DateTime), typeof(DateOnly)]),
-            new ("SqlDateTimeOffsetAttribute", [typeof(DateTimeOffset)]),
-            new ("SqlDecimalAttribute", [typeof(decimal)]),
-            new ("SqlFloatAttribute", [typeof(float)]),
-            new ("SqlMoneyAttribute", [typeof(decimal)]),
-            new ("SqlTimeAttribute", [typeof(TimeOnly)]),
-            new ("SqlVarBinaryMaxAttribute", [typeof(byte[])]),
-            new ("SqlVarCharMaxAttribute", [typeof(char), typeof(string)])
-        }.ToDictionary(keyValuePair => keyValuePair.Key, keyValuePair => keyValuePair.Value);
-    public const string DiagnosticId = "CARRIGANSQL0001";
-    private static readonly DiagnosticDescriptor Rule = new(
-        id: DiagnosticId,
-        title: $"Invalid Use Of Attribute Derived From SqlTypeAttribute",
+            ["SqlBinaryAttribute"] = ["System.Byte[]"],
+            ["SqlCharAttribute"] = ["System.Char", "System.String"],
+            ["SqlDateTime2Attribute"] = ["System.DateTime", "System.DateOnly"],
+            ["SqlDateTimeAttribute"] = ["System.DateTime", "System.DateOnly"],
+            ["SqlDateTimeOffsetAttribute"] = ["System.DateTimeOffset"],
+            ["SqlDecimalAttribute"] = ["System.Decimal"],
+            ["SqlFloatAttribute"] = ["System.Single"],
+            ["SqlImageAttribute"] = ["System.Byte[]"],
+            ["SqlMoneyAttribute"] = ["System.Decimal"],
+            ["SqlTextAttribute"] = ["System.Char", "System.String"],
+            ["SqlTimeAttribute"] = ["System.TimeOnly"],
+            ["SqlVarBinaryMaxAttribute"] = ["System.Byte[]"],
+            ["SqlVarCharMaxAttribute"] = ["System.Char", "System.String"]
+        };
+
+    private static readonly HashSet<string> obsoletes =
+        new(["SqlTextAttribute", "SqlImageAttribute"]);
+
+    public const string TypeDiagnosticId = "CARRIGANSQL0001";
+    private static readonly DiagnosticDescriptor TypeRule = new(
+        id: TypeDiagnosticId,
+        title: "Invalid Use Of Attribute Derived From SqlTypeAttribute",
         messageFormat: "Member '{0}' is marked with '{1}' and should not be applied to type '{2}'",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
         description: "Enforces type safety with the use of the various attributes that inherit from SqlTypeAttribute.");
 
+    //public const string PrecisionDiagnosticId = "CARRIGANSQL0002";
+    //private static readonly DiagnosticDescriptor PrecisionRule = new(
+    //    id: PrecisionDiagnosticId,
+    //    title: "Invalid Use Of Attribute Derived From SqlTypeAttribute",
+    //    messageFormat: "Member '{0}' is marked with '{1}' and should not be applied to type '{2}'",
+    //    category: "Usage",
+    //    defaultSeverity: DiagnosticSeverity.Warning,
+    //    isEnabledByDefault: true,
+    //    description: "Enforces type safety with the use of the various attributes that inherit from SqlTypeAttribute.");
+
+    public const string ObsoleteDiagnosticId = "CARRIGANSQL0003";
+    private static readonly DiagnosticDescriptor ObsoleteRule = new(
+        id: ObsoleteDiagnosticId,
+        title: "Use Of Attribute Associated With Obsolete SQL Types",
+        messageFormat: "Member '{0}' is marked with '{1}' with is associated with an obsolete SQL Types",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Checks and warns for the use of an Attribute associate with obsolete SQL types.");
+
+    //public const string NotRecommendedDiagnosticId = "CARRIGANSQL0004";
+    //private static readonly DiagnosticDescriptor NotRecommendedRule = new(
+    //    id: NotRecommendedDiagnosticId,
+    //    title: "Invalid Use Of Attribute Derived From SqlTypeAttribute",
+    //    messageFormat: "Member '{0}' is marked with '{1}' and should not be applied to type '{2}'",
+    //    category: "Usage",
+    //    defaultSeverity: DiagnosticSeverity.Warning,
+    //    isEnabledByDefault: true,
+    //    description: "Enforces type safety with the use of the various attributes that inherit from SqlTypeAttribute.");
+
     public SqlTypeAttributeAnalyzer()
     {
     }
 
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => 
-        [Rule];
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
+        [TypeRule, ObsoleteRule];
 
     public override void Initialize(AnalysisContext context)
     {
@@ -67,7 +103,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 
             if (genericDefinitionSymbol is INamedTypeSymbol namedTypeSymbol)
             {
-                ITypeSymbol[] typeArguments = 
+                ITypeSymbol[] typeArguments =
                 [.. runtimeType
                         .GetGenericArguments()
                         .Select(genericArgument => GetTypeSymbol(compilation, genericArgument))
@@ -89,33 +125,68 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
             return compilation.GetTypeByMetadataName(metadataName);
         }
     }
+    private static ITypeSymbol? ResolveTypeByMetadataName(Compilation compilation, string metadataName)
+    {
+        if (metadataName.EndsWith("[]", StringComparison.Ordinal))
+        {
+            string elementName = metadataName.Substring(0, metadataName.Length - 2);
+            INamedTypeSymbol? element = compilation.GetTypeByMetadataName(elementName);
+            return element is null ? null : compilation.CreateArrayTypeSymbol(element);
+        }
+
+        return compilation.GetTypeByMetadataName(metadataName);
+    }
     private static void AnalyzeProperty(SymbolAnalysisContext context)
     {
-        IPropertySymbol property = (IPropertySymbol)context.Symbol;
+        IPropertySymbol propertySymbol = (IPropertySymbol)context.Symbol;
         INamedTypeSymbol? attributeClass;
         Location attributeLocation;
         bool isValid;
 
-        foreach (AttributeData attribute in property.GetAttributes())
+        foreach (AttributeData attribute in propertySymbol.GetAttributes())
         {
             attributeClass = attribute.AttributeClass;
-            if (attributeClass is not null && attributeTypes.TryGetValue(attributeClass.Name, out Type[]? value))
+            if (attributeClass is not null)
             {
-                isValid = value.Select(type => GetTypeSymbol(context.Compilation, type))
-                    .OfType<ITypeSymbol>()
-                    .Any(validSymbol => SymbolEqualityComparer.Default.Equals(property.Type, validSymbol));
-                if (isValid == false)
+                if (attributesMetaData.TryGetValue(attributeClass.Name, out string[]? allowedTypeMetaData))
+                {
+                    ITypeSymbol[] allowedSymbols =
+                    [
+                        .. allowedTypeMetaData
+                            .Select(name => ResolveTypeByMetadataName(context.Compilation, name))
+                            .OfType<ITypeSymbol>()
+                    ];
+
+                    //Check for type mismatches
+                    isValid = allowedSymbols.Any(
+                        allowed => SymbolEqualityComparer.Default.Equals(propertySymbol.Type, allowed));
+
+                    if (isValid == false)
+                    {
+                        attributeLocation = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
+                                ?? propertySymbol.Locations.FirstOrDefault()
+                                ?? Location.None;
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            TypeRule,
+                            attributeLocation,
+                            propertySymbol.Name,
+                            attributeClass.Name,
+                            propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                    }
+                }
+
+                //check for obsolete SQL Types
+                if (obsoletes.Contains(attributeClass.Name))
                 {
                     attributeLocation = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
-                            ?? property.Locations.FirstOrDefault()
+                            ?? propertySymbol.Locations.FirstOrDefault()
                             ?? Location.None;
                     context.ReportDiagnostic(Diagnostic.Create(
-                        Rule,
+                        ObsoleteRule,
                         attributeLocation,
-                        property.Name, 
-                        attributeClass.Name, 
-                        property.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
-                }                   
+                        propertySymbol.Name,
+                        attributeClass.Name));
+                }
             }
         }
     }

@@ -21,7 +21,6 @@ public class SqlBinaryAttribute : SqlTypeAttribute
         {
             (StorageTypeEnum.Fixed) => SqlTypeDefinition.AsBinary(size),
             (StorageTypeEnum.Var) => SqlTypeDefinition.AsVarBinary(size),
-            (StorageTypeEnum.LargeObject) => SqlTypeDefinition.AsImage(),
             _ => throw new NotImplementedException(),
         };
 }

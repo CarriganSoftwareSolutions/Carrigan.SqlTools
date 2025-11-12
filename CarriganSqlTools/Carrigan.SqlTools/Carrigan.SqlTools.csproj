@@ -62,11 +62,11 @@
                       PrivateAssets="all" />
   </ItemGroup>
   
-  <ItemGroup>
+  <!--<ItemGroup>
     <None Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\bin\$(Configuration)\netstandard2.0\Carrigan.SqlTools.Analyzers.dll"
           Pack="true"
           PackagePath="analyzers/dotnet/cs"
           Visible="false" />
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>
