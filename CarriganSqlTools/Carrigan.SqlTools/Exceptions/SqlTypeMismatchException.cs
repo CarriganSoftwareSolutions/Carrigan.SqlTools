@@ -15,15 +15,16 @@ public class SqlTypeMismatchException : Exception
         Dictionary<Type, IEnumerable<Type>> types = new
         (
             [
-                new (typeof(char), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute)]),
-                new (typeof(string), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute)]),
-                new (typeof(byte[]), [typeof(SqlBinaryAttribute), typeof(SqlVarBinaryMaxAttribute)]),
-                new (typeof(decimal), [typeof(SqlMoneyAttribute), typeof(SqlDecimalAttribute)]),
-                new (typeof(DateTime), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute)]),
+                new (typeof(char), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute), typeof(SqlTextAttribute)]),
+                new (typeof(string), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute), typeof(SqlTextAttribute)]),
+                new (typeof(byte[]), [typeof(SqlBinaryAttribute), typeof(SqlVarBinaryMaxAttribute), typeof(SqlImageAttribute)]),
+                new (typeof(decimal), [typeof(SqlMoneyAttribute), typeof(SqlDecimalAttribute), typeof(SqlFloatAttribute)]),
+                new (typeof(DateTime), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute), typeof(SqlTimeAttribute)]),
                 new (typeof(DateTimeOffset), [typeof(SqlDateTimeOffsetAttribute)]),
-                new (typeof(DateOnly), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute)]),
-                new (typeof(TimeOnly), [typeof(SqlTimeAttribute)]),
-                new (typeof(float), [typeof(SqlFloatAttribute)])
+                new (typeof(DateOnly), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute), typeof(SqlTimeAttribute)]),
+                new (typeof(TimeOnly), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute), typeof(SqlTimeAttribute)]),
+                new (typeof(float), [typeof(SqlFloatAttribute), typeof(SqlMoneyAttribute)]),
+                new (typeof(double), [typeof(SqlFloatAttribute), typeof(SqlMoneyAttribute)])
             ]
         );
         Allowed = new (types);

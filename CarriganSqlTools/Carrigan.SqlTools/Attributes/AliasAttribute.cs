@@ -40,8 +40,6 @@ namespace Carrigan.SqlTools.Attributes;
 /// </example>
 public class AliasAttribute : Attribute
 {
-    [SqlDateTime2()]
-    public byte[] Test { get; set; }
     /// <summary>
     /// Gets the alias name to apply in the <c>AS</c> clause for the decorated property.
     /// </summary>
