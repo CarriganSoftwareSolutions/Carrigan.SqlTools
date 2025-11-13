@@ -1,7 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using System.Data;
-using System.Drawing;
-using System.Text;
 
 //IGNORE SPELLING: xml, unicode
 //TODO:  documentation , unit tests
@@ -24,7 +22,10 @@ public class SqlTypeDefinition
     //TODO: Documentation,
     public byte? Precision { get; init; } = null;
 
-    //TODO: Documentation, 
+    /// <summary>
+    /// For DECIMAL/NUMERIC: scale (digits to right of the decimal).
+    /// For TIME/DATETIME2/DATETIMEOFFSET: fractional seconds precision (0–7), as per ADO.NET SqlParameter.Scale.
+    /// </summary>
     public byte? Scale { get; init; } = null;
 
     public bool UseMax { get; init; } = false;
@@ -39,16 +40,20 @@ public class SqlTypeDefinition
     {
     }
 
-    /// <summary>
-    /// Constructor to use when the type has no sizing arguments, or the default size is acceptable.
-    /// </summary>
-    /// <param name="type">The Sql Server ADO.Net Type</param>
-    //public SqlTypeDefinition SqlTypeDefinition(SqlDbType type)
-    //{
-    //    SqlTypeNotSupportedException.ValidateTypeIsSupported(type);
-    //    Type = type;
-    //    TypeDeclaration = ToSql(type);
-    //}
+    #region helper methods
+    private static void EnsureRange(SqlDbType type, string name, int value, int min, int max)
+    {
+        if (value < min || value > max)
+            throw new SqlTypeArgumentOutOfRangeException(type, name, value, min, max);
+    }
+
+    private static SqlTypeDefinition WithSize(SqlDbType type, int? size, int min, int max)
+    {
+        if (size is not null) EnsureRange(type, "size", size.Value, min, max);
+        return new() { Type = type, Size = size, TypeDeclaration = size is null ? ToSql(type) : $"{ToSql(type)}({size})" };
+    }
+    #endregion
+
     #region UniqueIdentifier
     public static SqlTypeDefinition AsUniqueIdentifier()
     {
@@ -63,57 +68,17 @@ public class SqlTypeDefinition
 
     #region Chars
 
-    public static SqlTypeDefinition AsChar(int? size = null)
-    {
-        SqlDbType type = SqlDbType.Char;
-        if (size is not null && (size < 1 || size > 8000))
-            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
-        return new SqlTypeDefinition()
-        {
-            Type = type,
-            Size = size,
-            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsChar(int? size = null) =>
+        WithSize(SqlDbType.Char, size, 1, 8000);
 
-    public static SqlTypeDefinition AsNChar(int? size = null)
-    {
-        SqlDbType type = SqlDbType.NChar;
-        if (size is not null && (size < 1 || size > 4000))
-            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 4000);
-        return new SqlTypeDefinition()
-        {
-            Type = type,
-            Size = size,
-            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsNChar(int? size = null) =>
+        WithSize(SqlDbType.NChar, size, 1, 4000);
 
-    public static SqlTypeDefinition AsVarChar(int? size = null)
-    {
-        SqlDbType type = SqlDbType.VarChar;
-        if (size is not null && (size < 1 || size > 8000))
-            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
-        return new SqlTypeDefinition()
-        {
-            Type = type,
-            Size = size,
-            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsVarChar(int? size = null) =>
+        WithSize(SqlDbType.VarChar, size, 1, 8000);
 
-    public static SqlTypeDefinition AsNVarChar(int? size = null)
-    {
-        SqlDbType type = SqlDbType.NVarChar;
-        if (size is not null && (size < 1 || size > 4000))
-            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 4000);
-        return new SqlTypeDefinition()
-        {
-            Type = type,
-            Size = size,
-            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsNVarChar(int? size = null) =>
+        WithSize(SqlDbType.NVarChar, size, 1, 4000);
 
     public static SqlTypeDefinition AsVarCharMax()
     {
@@ -161,31 +126,12 @@ public class SqlTypeDefinition
 
     #region Binary
 
-    public static SqlTypeDefinition AsBinary(int? size = null)
-    {
-        SqlDbType type = SqlDbType.Binary;
-        if (size is not null && (size < 1 || size > 8000))
-            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
-        return new SqlTypeDefinition()
-        {
-            Type = type,
-            Size = size,
-            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsBinary(int? size = null) =>
+        WithSize(SqlDbType.Binary, size, 1, 8000);
 
-    public static SqlTypeDefinition AsVarBinary(int? size = null)
-    {
-        SqlDbType type = SqlDbType.Binary;
-        if (size is not null && (size < 1 || size > 8000))
-            throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
-        return new SqlTypeDefinition()
-        {
-            Type = type,
-            Size = size,
-            TypeDeclaration = size is not null ? $"{ToSql(type)}({size})" : ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsVarBinary(int? size = null) =>
+        WithSize(SqlDbType.VarBinary, size, 1, 8000);
+
     public static SqlTypeDefinition AsVarBinaryMax()
     {
         SqlDbType type = SqlDbType.VarBinary;
@@ -329,7 +275,7 @@ public class SqlTypeDefinition
             Type = type,
             Precision = precision,
             Scale = scale,
-            TypeDeclaration = $"{ToSql(type)}({precision})({scale})"
+            TypeDeclaration = $"{ToSql(type)}({precision}, {scale})"
         };
     }
 
@@ -355,19 +301,19 @@ public class SqlTypeDefinition
 
     #region DateTime
 
-    public static SqlTypeDefinition AsDateTime2(byte? precision = null)
+    public static SqlTypeDefinition AsDateTime2(byte? fractionalSecondPrecision = null)
     {
         SqlDbType type = SqlDbType.DateTime2;
-        if (precision is not null)
+        if (fractionalSecondPrecision is not null)
         {
-            if (precision < 0 || precision > 7)
-                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
+            if (fractionalSecondPrecision < 0 || fractionalSecondPrecision > 7)
+                throw new SqlTypeArgumentOutOfRangeException(type, "precision", fractionalSecondPrecision.Value, 0, 7);
         }
         return new()
         {
             Type = type,
-            Scale = precision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
-            TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
+            Scale = fractionalSecondPrecision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
+            TypeDeclaration = fractionalSecondPrecision is not null ? $"{ToSql(type)}({fractionalSecondPrecision})" : ToSql(type)
         };
     }
 
@@ -435,112 +381,13 @@ public class SqlTypeDefinition
     #endregion
 
     /// <summary>
-    /// Constructor to use when specifying Size, Precision or Scale.
-    /// </summary>
-    /// <param name="type">The Sql Server ADO.Net Type</param>
-    /// <param name="size">
-    /// Parameter to use to specify a size argument.
-    /// SQL Types with Size:
-    /// Binary (1 to 8000)
-    /// Char (1 to 8000)
-    /// NChar (1 to 4000)
-    /// NVarChar (1 to 4000)
-    /// VarBinary (1 to 8000)
-    /// VarChar (1 to 8000)
-    /// </param>
-    /// <param name="precision">
-    /// Parameter to use to specify a precision argument.
-    /// SQL Types with Precision:
-    /// Float (1 to 53)
-    /// Decimal (1 to 38)
-    /// </param>
-    /// <param name="scale">
-    /// Parameter to use to specify a scale argument.
-    /// SQL Types with Scale:
-    /// Time (0 to 7)
-    /// DateTime2 (0 to 7)
-    /// DateTimeOffset (0 to 7)
-    /// </param>
-    public SqlTypeDefinition(SqlDbType type, int? size = null, byte? precision = null, byte? scale = null)
-    {
-        SqlTypeNotSupportedException.ValidateTypeIsSupported(type);
-        Type = type;
-        StringBuilder typeDeclarationBuilder = new(ToSql(type));
-
-        if (size is not null)
-        {
-            switch (type)
-            {
-                case SqlDbType.Binary: //Length
-                case SqlDbType.Char: //Length
-                case SqlDbType.VarBinary: //Length
-                case SqlDbType.VarChar: //Length
-                    if (size < 1 || size > 8000)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
-                    Size = size;
-                    break;
-                case SqlDbType.NChar: //Length
-                case SqlDbType.NVarChar: //Length
-                    if (size < 1 || size > 4000)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 4000);
-                    Size = size;
-                    break;
-                default:
-                    throw new SqlTypeDoesNotSupportSizeException(type);
-            }
-            typeDeclarationBuilder.Append($"({size})");
-        }
-        if(precision is not null)
-        {
-            if (type == SqlDbType.Float)
-            {
-                if (precision < 1 || precision > 53)
-                    throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 53);
-                Precision = precision;
-            }
-            else if (type == SqlDbType.Decimal)
-            {
-                if (precision < 1 || precision > 38)
-                    throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 38);
-                Precision = precision;
-            }
-            else
-                throw new SqlTypeDoesNotSupportPrecisionException(type);
-
-            typeDeclarationBuilder.Append($"({precision})");
-        }
-        if (scale is not null)
-        {
-            switch (type)
-            {
-                case SqlDbType.Decimal: //Precision & Scale
-                    if (scale < 0 || scale > 38)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale.Value, 0, 38);
-                    Scale = scale;
-                    break;
-                case SqlDbType.Time: //Scale
-                case SqlDbType.DateTime2: //Scale
-                case SqlDbType.DateTimeOffset: //Scale
-                    if (scale < 0 || scale > 7)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale.Value, 0, 7);
-                    Scale = scale;
-                    break;
-                default:
-                    throw new SqlTypeDoesNotSupportScaleException(type);
-            }
-            typeDeclarationBuilder.Append($"({scale})");
-        }
-        TypeDeclaration = typeDeclarationBuilder.ToString();
-    }
-
-    /// <summary>
-    /// Attribute constructor to use of Max has been specified in place of sizing arguments.
+    /// Constructor for using MAX has been specified in place of sizing arguments.
     /// For use with VARCHAR, NVARCHAR and VARBINARY.
     /// Though if you set max to false, you can safely use it with other types.
     /// </summary>
     /// <param name="type">The Sql Server ADO.Net Type</param>
     /// <param name="useMax">
-    /// Attribute constructor to use of Max has been specified in place of sizing arguments.
+    /// Constructor for using MAX has been specified in place of sizing arguments.
     /// For use with VARCHAR, NVARCHAR and VARBINARY.
     /// Though if you set max to false, you can safely use it with other types.
     /// </param>
