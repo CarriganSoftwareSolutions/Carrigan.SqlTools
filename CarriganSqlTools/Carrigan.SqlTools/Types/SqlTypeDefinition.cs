@@ -52,18 +52,22 @@ public class SqlTypeDefinition
         if (size is not null) EnsureRange(type, "size", size.Value, min, max);
         return new() { Type = type, Size = size, TypeDeclaration = size is null ? ToSql(type) : $"{ToSql(type)}({size})" };
     }
+
+    private static SqlTypeDefinition ByType(SqlDbType type) => new ()
+    {
+        Type = type,
+        TypeDeclaration = ToSql(type)
+    };
+    private static SqlTypeDefinition AsMax(SqlDbType type) => new()
+    {
+        Type = type,
+        TypeDeclaration = $"{ToSql(type)}(MAX)"
+    };
     #endregion
 
     #region UniqueIdentifier
-    public static SqlTypeDefinition AsUniqueIdentifier()
-    {
-        SqlDbType type = SqlDbType.UniqueIdentifier;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsUniqueIdentifier() =>
+        ByType(SqlDbType.UniqueIdentifier);
     #endregion
 
     #region Chars
@@ -80,47 +84,17 @@ public class SqlTypeDefinition
     public static SqlTypeDefinition AsNVarChar(int? size = null) =>
         WithSize(SqlDbType.NVarChar, size, 1, 4000);
 
-    public static SqlTypeDefinition AsVarCharMax()
-    {
-        SqlDbType type = SqlDbType.VarChar;
-        return new()
-        {
-            Type = type,
-            UseMax = true,
-            TypeDeclaration = $"{ToSql(type)}(MAX)"
-        };
-    }
+    public static SqlTypeDefinition AsVarCharMax() =>
+        AsMax(SqlDbType.VarChar);
 
-    public static SqlTypeDefinition AsNVarCharMax()
-    {
-        SqlDbType type = SqlDbType.NVarChar;
-        return new()
-        {
-            Type = type,
-            UseMax = true,
-            TypeDeclaration = $"{ToSql(type)}(MAX)"
-        };
-    }
+    public static SqlTypeDefinition AsNVarCharMax() =>
+        AsMax(SqlDbType.NVarChar);
 
-    public static SqlTypeDefinition AsText()
-    {
-        SqlDbType type = SqlDbType.Text;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsText() =>
+        ByType(SqlDbType.Text);
 
-    public static SqlTypeDefinition AsNText()
-    {
-        SqlDbType type = SqlDbType.NText;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsNText() =>
+        ByType(SqlDbType.NText);
 
     #endregion
 
@@ -132,92 +106,36 @@ public class SqlTypeDefinition
     public static SqlTypeDefinition AsVarBinary(int? size = null) =>
         WithSize(SqlDbType.VarBinary, size, 1, 8000);
 
-    public static SqlTypeDefinition AsVarBinaryMax()
-    {
-        SqlDbType type = SqlDbType.VarBinary;
-        return new()
-        {
-            Type = type,
-            UseMax = true,
-            TypeDeclaration = $"{ToSql(type)}(MAX)"
-        };
-    }
+    public static SqlTypeDefinition AsVarBinaryMax() =>
+        AsMax(SqlDbType.VarBinary);
 
-    public static SqlTypeDefinition AsImage()
-    {
-        SqlDbType type = SqlDbType.Image;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsImage() =>
+        ByType(SqlDbType.Image);
     #endregion
 
     #region Bit
 
-    public static SqlTypeDefinition AsBit()
-    {
-        SqlDbType type = SqlDbType.Bit;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsBit() =>
+        ByType(SqlDbType.Bit);
     #endregion
 
     #region Integers
-    public static SqlTypeDefinition AsTinyInt()
-    {
-        SqlDbType type = SqlDbType.TinyInt;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsTinyInt() =>
+        ByType(SqlDbType.TinyInt);
 
-    public static SqlTypeDefinition AsSmallInt()
-    {
-        SqlDbType type = SqlDbType.SmallInt;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
-    public static SqlTypeDefinition AsInt()
-    {
-        SqlDbType type = SqlDbType.Int;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsSmallInt() =>
+        ByType(SqlDbType.SmallInt);
 
-    public static SqlTypeDefinition AsBigInt()
-    {
-        SqlDbType type = SqlDbType.BigInt;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsInt() =>
+        ByType(SqlDbType.Int);
+
+    public static SqlTypeDefinition AsBigInt() =>
+        ByType(SqlDbType.BigInt);
     #endregion
 
     #region Floating Point
-    public static SqlTypeDefinition AsReal()
-    {
-        SqlDbType type = SqlDbType.Real;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsReal() =>
+        ByType(SqlDbType.Real);
 
     public static SqlTypeDefinition AsFloat(byte? precision = null)
     {
@@ -234,16 +152,8 @@ public class SqlTypeDefinition
     #endregion
 
     #region decimal point
-    public static SqlTypeDefinition AsDecimal()
-    {
-        SqlDbType type = SqlDbType.Decimal;
-
-        return new SqlTypeDefinition()
-        {
-            Type = type,
-            TypeDeclaration = $"{ToSql(type)}"
-        };
-    }
+    public static SqlTypeDefinition AsDecimal() =>
+        ByType(SqlDbType.Decimal);
 
     public static SqlTypeDefinition AsDecimal(byte precision)
     {
@@ -276,24 +186,10 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsMoney()
-    {
-        SqlDbType type = SqlDbType.Money;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
-    public static SqlTypeDefinition AsSmallMoney()
-    {
-        SqlDbType type = SqlDbType.SmallMoney;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsMoney() =>
+        ByType(SqlDbType.Money);
+    public static SqlTypeDefinition AsSmallMoney() =>
+        ByType(SqlDbType.SmallMoney);
     #endregion
 
     #region DateTime
@@ -330,35 +226,14 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsDateTime()
-    {
-        SqlDbType type = SqlDbType.DateTime;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsDateTime() =>
+        ByType(SqlDbType.DateTime);
 
-    public static SqlTypeDefinition AsSmallDateTime()
-    {
-        SqlDbType type = SqlDbType.SmallDateTime;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsSmallDateTime() =>
+        ByType(SqlDbType.SmallDateTime);
 
-    public static SqlTypeDefinition AsDate()
-    {
-        SqlDbType type = SqlDbType.Date;
-        return new()
-        {
-            Type = type,
-            TypeDeclaration = ToSql(type)
-        };
-    }
+    public static SqlTypeDefinition AsDate() =>
+        ByType(SqlDbType.Date);
 
     public static SqlTypeDefinition AsTime(byte? precision = null)
     {
