@@ -249,8 +249,7 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Decimal;
 
-        if (precision < 1 || precision > 38)
-            throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision, 1, 38);
+        EnsureRange(SqlDbType.Decimal, "precision", precision, 1, 38);
 
         return new SqlTypeDefinition()
         {
@@ -264,11 +263,9 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Decimal;
 
-        if (precision < 1 || precision > 38)
-            throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision, 1, 38);
+        EnsureRange(SqlDbType.Decimal, "precision", precision, 1, 38);
 
-        if (scale > precision)
-            throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale, 0, precision);
+        EnsureRange(SqlDbType.Decimal, "precision", scale, 0, precision);
 
         return new SqlTypeDefinition()
         {
@@ -307,7 +304,7 @@ public class SqlTypeDefinition
         if (fractionalSecondPrecision is not null)
         {
             if (fractionalSecondPrecision < 0 || fractionalSecondPrecision > 7)
-                throw new SqlTypeArgumentOutOfRangeException(type, "precision", fractionalSecondPrecision.Value, 0, 7);
+                throw new SqlTypeArgumentOutOfRangeException(type, "fractionalSecondPrecision", fractionalSecondPrecision.Value, 0, 7);
         }
         return new()
         {
