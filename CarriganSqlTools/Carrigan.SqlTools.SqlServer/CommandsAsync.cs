@@ -18,6 +18,7 @@ public static class CommandsAsync
 {
     private static IEnumerable<SqlParameter> GetParameterCollection(SqlQuery query)
     {
+        //TODO: Consolidate this with its companion
         static SqlParameter GetSqlParameter(ParameterTag parameter, object value)
         {
             SqlParameter sqlParameter = new(parameter, value)
