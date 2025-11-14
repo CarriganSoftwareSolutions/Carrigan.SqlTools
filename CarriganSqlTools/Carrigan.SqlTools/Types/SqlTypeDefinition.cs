@@ -61,6 +61,7 @@ public class SqlTypeDefinition
     private static SqlTypeDefinition AsMax(SqlDbType type) => new()
     {
         Type = type,
+        UseMax = true,
         TypeDeclaration = $"{ToSql(type)}(MAX)"
     };
     #endregion
@@ -175,7 +176,7 @@ public class SqlTypeDefinition
 
         EnsureRange(SqlDbType.Decimal, "precision", precision, 1, 38);
 
-        EnsureRange(SqlDbType.Decimal, "precision", scale, 0, precision);
+        EnsureRange(SqlDbType.Decimal, "scale", scale, 0, precision);
 
         return new SqlTypeDefinition()
         {
@@ -339,11 +340,11 @@ public class SqlTypeDefinition
         //.Net byte[]
         SqlDbType.Timestamp => "ROWVERSION",
 
-        SqlDbType.Structured => "TABLE TYPE",
-
         SqlDbType.Variant => "SQL_VARIANT", //.Net return type varies.
 
-        SqlDbType.Udt => "UDT", 
+        SqlDbType.Udt => throw new SqlTypeNotSupportedException([type]),
+
+        SqlDbType.Structured => throw new SqlTypeNotSupportedException([type]),
         _ => throw new SqlTypeNotSupportedException([type])
     };
 }
