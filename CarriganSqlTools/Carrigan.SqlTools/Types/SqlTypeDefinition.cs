@@ -218,18 +218,18 @@ public class SqlTypeDefinition
         };
     }
 
-    public static SqlTypeDefinition AsDateTimeOffset(byte? precision = null)
+    public static SqlTypeDefinition AsDateTimeOffset(byte? fractionalSecondPrecision = null)
     {
         SqlDbType type = SqlDbType.DateTimeOffset;
-        if (precision is not null)
+        if (fractionalSecondPrecision is not null)
         {
-            EnsureRange(type, nameof(precision), precision.Value, 7);
+            EnsureRange(type, nameof(fractionalSecondPrecision), fractionalSecondPrecision.Value, 7);
         }
         return new()
         {
             Type = type,
-            Scale = precision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
-            TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
+            Scale = fractionalSecondPrecision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
+            TypeDeclaration = fractionalSecondPrecision is not null ? $"{ToSql(type)}({fractionalSecondPrecision})" : ToSql(type)
         };
     }
 
@@ -242,18 +242,18 @@ public class SqlTypeDefinition
     public static SqlTypeDefinition AsDate() =>
         ByType(SqlDbType.Date);
 
-    public static SqlTypeDefinition AsTime(byte? precision = null)
+    public static SqlTypeDefinition AsTime(byte? fractionalSecondPrecision = null)
     {
         SqlDbType type = SqlDbType.Time;
-        if (precision is not null)
+        if (fractionalSecondPrecision is not null)
         {
-            EnsureRange(type, nameof(precision), precision.Value, 7);
+            EnsureRange(type, nameof(fractionalSecondPrecision), fractionalSecondPrecision.Value, 7);
         }
         return new()
         {
             Type = type,
-            Scale = precision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
-            TypeDeclaration = precision is not null ? $"{ToSql(type)}({precision})" : ToSql(type)
+            Scale = fractionalSecondPrecision, //From what I can tell, in sql server it is called precision, but in ADO.Net you set scale.
+            TypeDeclaration = fractionalSecondPrecision is not null ? $"{ToSql(type)}({fractionalSecondPrecision})" : ToSql(type)
         };
     }
     #endregion
