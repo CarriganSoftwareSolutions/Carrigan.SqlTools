@@ -48,7 +48,7 @@ public static class SqlTypeCache
         Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
         if (underlyingType.IsEnum)
             return MapEnum(underlyingType);
-        else if (_cache.TryGetValue(underlyingType, out SqlDbType sqlDbType))
+        else if (_cache.TryGetValue(type, out SqlDbType sqlDbType))
             return sqlDbType;
         else
             return SqlDbType.Variant;
@@ -75,34 +75,49 @@ public static class SqlTypeCache
         [
             // Guid
             new(typeof(Guid),               SqlDbType.UniqueIdentifier),
+            new(typeof(Guid?),              SqlDbType.UniqueIdentifier),
 
             // Text
             new(typeof(string),             SqlDbType.NVarChar),
             new(typeof(char),               SqlDbType.NChar),
+            new(typeof(char?),              SqlDbType.NChar),
 
             //Binary
             new(typeof(byte[]),             SqlDbType.VarBinary),
 
             // Boolean
             new(typeof(bool),               SqlDbType.Bit),
+            new(typeof(bool?),              SqlDbType.Bit),
 
             // Integers
             new(typeof(byte),               SqlDbType.TinyInt),
+            new(typeof(byte?),              SqlDbType.TinyInt),
             new(typeof(sbyte),              SqlDbType.SmallInt),
+            new(typeof(sbyte?),             SqlDbType.SmallInt),
             new(typeof(short),              SqlDbType.SmallInt),
+            new(typeof(short?),             SqlDbType.SmallInt),
             new(typeof(int),                SqlDbType.Int),
+            new(typeof(int?),               SqlDbType.Int),
             new(typeof(long),               SqlDbType.BigInt),
+            new(typeof(long?),              SqlDbType.BigInt),
 
             // Decimal and floating-point
             new(typeof(float),              SqlDbType.Real),
+            new(typeof(float?),             SqlDbType.Real),
             new(typeof(double),             SqlDbType.Float),
+            new(typeof(double?),            SqlDbType.Float),
             new(typeof(decimal),            SqlDbType.Decimal),
+            new(typeof(decimal?),           SqlDbType.Decimal),
 
             // Date/Time
             new(typeof(DateTime),           SqlDbType.DateTime2),
+            new(typeof(DateTime?),          SqlDbType.DateTime2),
             new(typeof(DateOnly),           SqlDbType.Date),
+            new(typeof(DateOnly?),          SqlDbType.Date),
             new(typeof(TimeOnly),           SqlDbType.Time),
+            new(typeof(TimeOnly?),          SqlDbType.Time),
             new(typeof(DateTimeOffset),     SqlDbType.DateTimeOffset),
+            new(typeof(DateTimeOffset?),    SqlDbType.DateTimeOffset),
 
             //Note: Is Enum is not directly handled by the cache, but rather the underlying type of the enum is handled by the cache.
 
