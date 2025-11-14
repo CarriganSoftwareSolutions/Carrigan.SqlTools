@@ -91,9 +91,11 @@ public class SqlTypeDefinition
     public static SqlTypeDefinition AsNVarCharMax() =>
         AsMax(SqlDbType.NVarChar);
 
+    //Note:Text is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
     public static SqlTypeDefinition AsText() =>
         ByType(SqlDbType.Text);
 
+    //Note:NText is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
     public static SqlTypeDefinition AsNText() =>
         ByType(SqlDbType.NText);
 
@@ -110,6 +112,7 @@ public class SqlTypeDefinition
     public static SqlTypeDefinition AsVarBinaryMax() =>
         AsMax(SqlDbType.VarBinary);
 
+    //Note:Image is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
     public static SqlTypeDefinition AsImage() =>
         ByType(SqlDbType.Image);
     #endregion
@@ -160,7 +163,7 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Decimal;
 
-        EnsureRange(SqlDbType.Decimal, "precision", precision, 1, 38);
+        EnsureRange(type, "precision", precision, 1, 38);
 
         return new SqlTypeDefinition()
         {
@@ -174,9 +177,9 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Decimal;
 
-        EnsureRange(SqlDbType.Decimal, "precision", precision, 1, 38);
+        EnsureRange(type, "precision", precision, 1, 38);
 
-        EnsureRange(SqlDbType.Decimal, "scale", scale, 0, precision);
+        EnsureRange(type, "scale", scale, 0, precision);
 
         return new SqlTypeDefinition()
         {
@@ -200,7 +203,7 @@ public class SqlTypeDefinition
         SqlDbType type = SqlDbType.DateTime2;
         if (fractionalSecondPrecision is not null)
         {
-            if (fractionalSecondPrecision < 0 || fractionalSecondPrecision > 7)
+            if (fractionalSecondPrecision > 7) //note: byte is unsigned and cannot be less than 0
                 throw new SqlTypeArgumentOutOfRangeException(type, "fractionalSecondPrecision", fractionalSecondPrecision.Value, 0, 7);
         }
         return new()
@@ -216,7 +219,7 @@ public class SqlTypeDefinition
         SqlDbType type = SqlDbType.DateTimeOffset;
         if (precision is not null)
         {
-            if (precision < 0 || precision > 7)
+            if (precision > 7)//note: byte is unsigned and cannot be less than 0
                 throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
         }
         return new()
@@ -241,7 +244,7 @@ public class SqlTypeDefinition
         SqlDbType type = SqlDbType.Time;
         if (precision is not null)
         {
-            if (precision < 0 || precision > 7)
+            if (precision > 7) //note: byte is unsigned and cannot be less than 0
                 throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
         }
         return new()
