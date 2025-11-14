@@ -46,10 +46,15 @@ public class SqlTypeDefinition
         if (value < min || value > max)
             throw new SqlTypeArgumentOutOfRangeException(type, name, value, min, max);
     }
+    private static void EnsureRange(SqlDbType type, string name, byte value, byte max)
+    {
+        if (value > max)
+            throw new SqlTypeArgumentOutOfRangeException(type, name, value, 0, max);
+    }
 
     private static SqlTypeDefinition WithSize(SqlDbType type, int? size, int min, int max)
     {
-        if (size is not null) EnsureRange(type, "size", size.Value, min, max);
+        if (size is not null) EnsureRange(type, nameof(size), size.Value, min, max);
         return new() { Type = type, Size = size, TypeDeclaration = size is null ? ToSql(type) : $"{ToSql(type)}({size})" };
     }
 
@@ -145,7 +150,7 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Float;
         if (precision is not null && (precision < 1 || precision > 53))
-            throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 53);
+            throw new SqlTypeArgumentOutOfRangeException(type, nameof(precision), precision.Value, 1, 53);
         return new SqlTypeDefinition()
         {
             Type = type,
@@ -163,7 +168,7 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Decimal;
 
-        EnsureRange(type, "precision", precision, 1, 38);
+        EnsureRange(type, nameof(precision), precision, 1, 38);
 
         return new SqlTypeDefinition()
         {
@@ -177,9 +182,9 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Decimal;
 
-        EnsureRange(type, "precision", precision, 1, 38);
+        EnsureRange(type, nameof(precision), precision, 1, 38);
 
-        EnsureRange(type, "scale", scale, 0, precision);
+        EnsureRange(type, nameof(scale), scale, precision);
 
         return new SqlTypeDefinition()
         {
@@ -203,8 +208,7 @@ public class SqlTypeDefinition
         SqlDbType type = SqlDbType.DateTime2;
         if (fractionalSecondPrecision is not null)
         {
-            if (fractionalSecondPrecision > 7) //note: byte is unsigned and cannot be less than 0
-                throw new SqlTypeArgumentOutOfRangeException(type, "fractionalSecondPrecision", fractionalSecondPrecision.Value, 0, 7);
+            EnsureRange(type, nameof(fractionalSecondPrecision), fractionalSecondPrecision.Value, 7);
         }
         return new()
         {
@@ -219,8 +223,7 @@ public class SqlTypeDefinition
         SqlDbType type = SqlDbType.DateTimeOffset;
         if (precision is not null)
         {
-            if (precision > 7)//note: byte is unsigned and cannot be less than 0
-                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
+            EnsureRange(type, nameof(precision), precision.Value, 7);
         }
         return new()
         {
@@ -244,8 +247,7 @@ public class SqlTypeDefinition
         SqlDbType type = SqlDbType.Time;
         if (precision is not null)
         {
-            if (precision > 7) //note: byte is unsigned and cannot be less than 0
-                throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 0, 7);
+            EnsureRange(type, nameof(precision), precision.Value, 7);
         }
         return new()
         {
