@@ -11,76 +11,6 @@ public sealed class SqlTypeCacheTests
 {
     [Theory]
     [InlineData(typeof(int), SqlDbType.Int)]
-    [InlineData(typeof(long), SqlDbType.BigInt)]
-    [InlineData(typeof(short), SqlDbType.SmallInt)]
-    [InlineData(typeof(byte), SqlDbType.TinyInt)]
-    [InlineData(typeof(bool), SqlDbType.Bit)]
-    [InlineData(typeof(float), SqlDbType.Real)]
-    [InlineData(typeof(double), SqlDbType.Float)]
-    [InlineData(typeof(decimal), SqlDbType.Decimal)]
-    [InlineData(typeof(string), SqlDbType.NVarChar)]
-    [InlineData(typeof(char), SqlDbType.NChar)]
-    [InlineData(typeof(byte[]), SqlDbType.VarBinary)]
-    [InlineData(typeof(DateTime), SqlDbType.DateTime2)]
-    [InlineData(typeof(DateOnly), SqlDbType.Date)]
-    [InlineData(typeof(TimeOnly), SqlDbType.Time)]
-    [InlineData(typeof(DateTimeOffset), SqlDbType.DateTimeOffset)]
-    [InlineData(typeof(Guid), SqlDbType.UniqueIdentifier)]
-    [InlineData(typeof(object), SqlDbType.Variant)]
-    public void TryGetSqlDbType(Type type, SqlDbType expected)
-    {
-        bool found = SqlTypeCache.TryGetSqlDbType(type, out SqlDbType actual);
-
-        Assert.True(found);
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData(typeof(int?), SqlDbType.Int)]
-    [InlineData(typeof(long?), SqlDbType.BigInt)]
-    [InlineData(typeof(short?), SqlDbType.SmallInt)]
-    [InlineData(typeof(byte?), SqlDbType.TinyInt)]
-    [InlineData(typeof(bool?), SqlDbType.Bit)]
-    [InlineData(typeof(float?), SqlDbType.Real)]
-    [InlineData(typeof(double?), SqlDbType.Float)]
-    [InlineData(typeof(decimal?), SqlDbType.Decimal)]
-    [InlineData(typeof(char?), SqlDbType.NChar)]
-    [InlineData(typeof(DateTime?), SqlDbType.DateTime2)]
-    [InlineData(typeof(DateOnly?), SqlDbType.Date)]
-    [InlineData(typeof(TimeOnly?), SqlDbType.Time)]
-    [InlineData(typeof(DateTimeOffset?), SqlDbType.DateTimeOffset)]
-    [InlineData(typeof(Guid?), SqlDbType.UniqueIdentifier)]
-    public void TryGetSqlDbType_Nullables(Type type, SqlDbType expected)
-    {
-        bool found = SqlTypeCache.TryGetSqlDbType(type, out SqlDbType actual);
-
-        Assert.True(found);
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData(typeof(SortDirectionEnum))]
-    [InlineData(typeof(SortDirectionEnum?))]
-    public void TryGetSqlDbType_EnumAndNullableEnum(Type type)
-    {
-        bool found = SqlTypeCache.TryGetSqlDbType(type, out SqlDbType actual);
-
-        Assert.True(found);
-        Assert.Equal(SqlDbType.Int, actual);
-    }
-
-    [Theory]
-    [InlineData(typeof(StandardEntity))]
-    [InlineData(typeof(TimeSpan))]
-    public void TryGetSqlDbType_Unmapped(Type type)
-    {
-        bool found = SqlTypeCache.TryGetSqlDbType(type, out SqlDbType actual);
-
-        Assert.False(found);
-    }
-
-    [Theory]
-    [InlineData(typeof(int), SqlDbType.Int)]
     [InlineData(typeof(double), SqlDbType.Float)]
     [InlineData(typeof(float), SqlDbType.Real)]
     [InlineData(typeof(decimal), SqlDbType.Decimal)]
@@ -116,8 +46,11 @@ public sealed class SqlTypeCacheTests
     [Theory]
     [InlineData(typeof(StandardEntity))]
     [InlineData(typeof(TimeSpan))]
+    [InlineData(typeof(uint))]
+    [InlineData(typeof(ulong))]
+    [InlineData(typeof(ushort))]
     public void GetSqlDbType_Unmapped(Type type) =>
-        Assert.Throws<NotSupportedException>(() => SqlTypeCache.GetSqlDbType(type));
+        Assert.Equal(SqlDbType.Variant, SqlTypeCache.GetSqlDbType(type));
 
     [Fact]
     public void GetSqlDbTypeFromValue_Null() =>

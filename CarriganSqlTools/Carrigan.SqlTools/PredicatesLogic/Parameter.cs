@@ -71,7 +71,7 @@ public class Parameter : Predicates
     public Parameter(string parameter, object? value, SqlTypeDefinition? sqlType = null)
     {
         //TODO: write logic to ensure custom sql db types are not incompatible with the actual property info type.
-        Name = new ParameterTag(null, parameter, null, sqlType ?? new(SqlTypeCache.GetSqlDbTypeFromValue(value)));
+        Name = new ParameterTag(null, parameter, null, sqlType ?? new(value));
         Value = value;
     }
 

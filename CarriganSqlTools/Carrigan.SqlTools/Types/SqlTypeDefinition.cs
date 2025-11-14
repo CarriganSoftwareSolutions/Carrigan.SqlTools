@@ -280,7 +280,7 @@ public class SqlTypeDefinition
                     UseMax = useMax;
                     break;
                 default:
-                    throw new SqlTypeDoesNotSupportSizeException(type);
+                    throw new SqlTypeDoesNotSupportMaxSizeException(type);
             }
         else //if useMax is false, fall back to default values.
             TypeDeclaration = ToSql(type);
@@ -351,76 +351,15 @@ public class SqlTypeDefinition
     };
 
 
-    [Obsolete("", error: true)]
-    public SqlTypeDefinition(SqlDbType type, int? size = null, byte? precision = null, byte? scale = null)
+    public SqlTypeDefinition(object? value)
     {
-        SqlTypeNotSupportedException.ValidateTypeIsSupported(type);
-        Type = type;
-        StringBuilder typeDeclarationBuilder = new(ToSql(type));
+        Type = SqlTypeCache.GetSqlDbTypeFromValue(value);
+        TypeDeclaration = ToSql(Type);
+    }
 
-        if (size is not null)
-        {
-            switch (type)
-            {
-                case SqlDbType.Binary: //Length
-                case SqlDbType.Char: //Length
-                case SqlDbType.VarBinary: //Length
-                case SqlDbType.VarChar: //Length
-                    if (size < 1 || size > 8000)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 8000);
-                    Size = size;
-                    break;
-                case SqlDbType.NChar: //Length
-                case SqlDbType.NVarChar: //Length
-                    if (size < 1 || size > 4000)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "size", size.Value, 1, 4000);
-                    Size = size;
-                    break;
-                default:
-                    throw new SqlTypeDoesNotSupportSizeException(type);
-            }
-            typeDeclarationBuilder.Append($"({size})");
-        }
-        if (precision is not null)
-        {
-            if (type == SqlDbType.Float)
-            {
-                if (precision < 1 || precision > 53)
-                    throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 53);
-                Precision = precision;
-            }
-            else if (type == SqlDbType.Decimal)
-            {
-                if (precision < 1 || precision > 38)
-                    throw new SqlTypeArgumentOutOfRangeException(type, "precision", precision.Value, 1, 38);
-                Precision = precision;
-            }
-            else
-                throw new SqlTypeDoesNotSupportPrecisionException(type);
-
-            typeDeclarationBuilder.Append($"({precision})");
-        }
-        if (scale is not null)
-        {
-            switch (type)
-            {
-                case SqlDbType.Decimal: //Precision & Scale
-                    if (scale < 0 || scale > 38)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale.Value, 0, 38);
-                    Scale = scale;
-                    break;
-                case SqlDbType.Time: //Scale
-                case SqlDbType.DateTime2: //Scale
-                case SqlDbType.DateTimeOffset: //Scale
-                    if (scale < 0 || scale > 7)
-                        throw new SqlTypeArgumentOutOfRangeException(type, "scale", scale.Value, 0, 7);
-                    Scale = scale;
-                    break;
-                default:
-                    throw new SqlTypeDoesNotSupportScaleException(type);
-            }
-            typeDeclarationBuilder.Append($"({scale})");
-        }
-        TypeDeclaration = typeDeclarationBuilder.ToString();
+    public SqlTypeDefinition(Type type)
+    {
+        Type = SqlTypeCache.GetSqlDbType(type);
+        TypeDeclaration = ToSql(Type);
     }
 }

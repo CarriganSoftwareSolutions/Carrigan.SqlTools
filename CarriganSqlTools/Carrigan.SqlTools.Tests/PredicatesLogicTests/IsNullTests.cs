@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
@@ -20,7 +21,7 @@ public class IsNullTests
     private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337);
     private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!", new(System.Data.SqlDbType.NVarChar));
+    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!", SqlTypeDefinition.AsNVarCharMax());
     private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 

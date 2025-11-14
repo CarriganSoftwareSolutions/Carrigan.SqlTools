@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
@@ -102,15 +103,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1, new(System.Data.SqlDbType.Int)),
-            new Parameter("P2", 2, new(System.Data.SqlDbType.Int)),
+            new Parameter("P1", 1, SqlTypeDefinition.AsInt()),
+            new Parameter("P2", 2, SqlTypeDefinition.AsInt()),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new Or (
             [
                 new Column<ColumnTable>("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 3, new(System.Data.SqlDbType.Int))
+                new Parameter("PA", 3, SqlTypeDefinition.AsInt())
             ])
         ]);
 

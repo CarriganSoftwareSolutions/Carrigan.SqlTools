@@ -22,7 +22,7 @@ public static class CommandsAsync
         {
             SqlParameter sqlParameter = new(parameter, value)
             {
-                SqlDbType = parameter.SqlType?.Type ?? SqlTypeCache.GetSqlDbTypeFromValue(value)
+                SqlDbType = parameter.SqlType?.Type ?? (new SqlTypeDefinition(value)).Type
             };
 
             if(parameter.SqlType?.UseMax is not null)

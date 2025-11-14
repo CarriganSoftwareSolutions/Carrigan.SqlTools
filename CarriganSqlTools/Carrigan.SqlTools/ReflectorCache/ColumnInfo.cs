@@ -123,7 +123,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         ColumnTag = new(new(schemaName, tableName), ColumnName);
         PropertyInfo = propertyInfo;
         PropertyName = new(PropertyInfo.Name);
-        SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new (SqlTypeCache.GetSqlDbType(PropertyInfo.PropertyType));
+        SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new (PropertyInfo.PropertyType);
 
         ParameterTag = new ParameterTag(null, parameterName, null, SqlType);
         AliasName = aliasName;

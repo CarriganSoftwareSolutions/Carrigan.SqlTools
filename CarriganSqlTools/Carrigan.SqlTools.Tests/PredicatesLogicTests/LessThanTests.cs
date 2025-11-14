@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
@@ -17,10 +18,10 @@ public class LessThanTests
     private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
-    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337, new(System.Data.SqlDbType.Int));
+    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337, SqlTypeDefinition.AsInt());
     private readonly string ParameterEliteSql = "@Parameter_Elite";
 
-    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!", new(System.Data.SqlDbType.NVarChar, 15));
+    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!", SqlTypeDefinition.AsNVarChar(15));
     private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 

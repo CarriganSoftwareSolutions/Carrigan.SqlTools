@@ -6,6 +6,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Types;
 using Newtonsoft.Json.Linq;
 using System.Data;
 
@@ -201,9 +202,9 @@ public class ParameterAndColumnIdentifierTests
     public void AndTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new(new ParameterTag(null, "p1", null, new(SqlDbType.Int)), 1);
+        Parameter parameter1 = new(new ParameterTag(null, "p1", null, SqlTypeDefinition.AsInt()), 1);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new(new ParameterTag(null, "p2", null, new(SqlDbType.Int)), 2);
+        Parameter parameter2 = new(new ParameterTag(null, "p2", null, SqlTypeDefinition.AsInt()), 2);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         And and = new (equal1, equal2);
@@ -237,7 +238,7 @@ public class ParameterAndColumnIdentifierTests
     public void ColumnTest()
     {
         Column<ColumnIdentifiers> identifierOverrideColumn = new(nameof(ColumnIdentifiers.IdentifierOverrideName));
-        Parameter parameter =new(new ParameterTag(null, "p1", null, new(SqlDbType.Int)), 1);
+        Parameter parameter =new(new ParameterTag(null, "p1", null, SqlTypeDefinition.AsInt()), 1);
         Equal equal = new(identifierOverrideColumn, parameter);
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);

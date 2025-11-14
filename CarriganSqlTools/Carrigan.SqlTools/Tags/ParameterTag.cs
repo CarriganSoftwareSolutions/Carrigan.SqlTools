@@ -104,7 +104,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     internal KeyValuePair<ParameterTag, object> GetParameter(object? value)
     {
         ParameterTag parameterTag = new(this);
-        parameterTag.SqlType ??= new(SqlTypeCache.GetSqlDbTypeFromValue(value));
+        parameterTag.SqlType ??= new(value);
         return new(this, value ?? DBNull.Value);
     }
 
