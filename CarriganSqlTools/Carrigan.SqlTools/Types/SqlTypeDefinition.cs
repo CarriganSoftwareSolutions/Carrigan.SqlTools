@@ -351,7 +351,7 @@ public class SqlTypeDefinition
     };
 
 
-    [Obsolete]
+    [Obsolete("", error: true)]
     public SqlTypeDefinition(SqlDbType type, int? size = null, byte? precision = null, byte? scale = null)
     {
         SqlTypeNotSupportedException.ValidateTypeIsSupported(type);
