@@ -3,7 +3,7 @@ using System.Data;
 using System.Text;
 
 //IGNORE SPELLING: xml, unicode
-//TODO:  documentation , unit tests
+//TODO:  documentation 
 namespace Carrigan.SqlTools.Types;
 
 public class SqlTypeDefinition
