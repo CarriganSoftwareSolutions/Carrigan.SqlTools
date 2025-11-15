@@ -37,6 +37,18 @@ public class SqlTypeDefinition
     {
     }
 
+    public SqlTypeDefinition(object? value)
+    {
+        Type = SqlTypeCache.GetSqlDbTypeFromValue(value);
+        TypeDeclaration = ToSql(Type);
+    }
+
+    public SqlTypeDefinition(Type type)
+    {
+        Type = SqlTypeCache.GetSqlDbType(type);
+        TypeDeclaration = ToSql(Type);
+    }
+
     #region helper methods
     private static void EnsureRange(SqlDbType type, string name, int value, int min, int max)
     {
@@ -256,37 +268,6 @@ public class SqlTypeDefinition
     #endregion
 
     /// <summary>
-    /// Constructor for using MAX has been specified in place of sizing arguments.
-    /// For use with VARCHAR, NVARCHAR and VARBINARY.
-    /// Though if you set max to false, you can safely use it with other types.
-    /// </summary>
-    /// <param name="type">The Sql Server ADO.Net Type</param>
-    /// <param name="useMax">
-    /// Constructor for using MAX has been specified in place of sizing arguments.
-    /// For use with VARCHAR, NVARCHAR and VARBINARY.
-    /// Though if you set max to false, you can safely use it with other types.
-    /// </param>
-    public SqlTypeDefinition(SqlDbType type, bool useMax)
-    {
-        SqlTypeNotSupportedException.ValidateTypeIsSupported(type);
-        Type = type;
-        if (useMax)
-            switch (type)
-            {
-                case SqlDbType.NVarChar: //Length
-                case SqlDbType.VarBinary: //Length
-                case SqlDbType.VarChar: //Length
-                    TypeDeclaration = $"{ToSql(type)}(MAX)";
-                    UseMax = useMax;
-                    break;
-                default:
-                    throw new SqlTypeDoesNotSupportMaxSizeException(type);
-            }
-        else //if useMax is false, fall back to default values.
-            TypeDeclaration = ToSql(type);
-    }
-
-    /// <summary>
     /// Returns the default SQL Server type keyword for the provided <see cref="SqlDbType"/>,
     /// without any precision/scale/length suffix.
     /// </summary>
@@ -349,17 +330,4 @@ public class SqlTypeDefinition
         SqlDbType.Structured => throw new SqlTypeNotSupportedException([type]),
         _ => throw new SqlTypeNotSupportedException([type])
     };
-
-
-    public SqlTypeDefinition(object? value)
-    {
-        Type = SqlTypeCache.GetSqlDbTypeFromValue(value);
-        TypeDeclaration = ToSql(Type);
-    }
-
-    public SqlTypeDefinition(Type type)
-    {
-        Type = SqlTypeCache.GetSqlDbType(type);
-        TypeDeclaration = ToSql(Type);
-    }
 }
