@@ -1,6 +1,7 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Types;
+using System.Data;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 
@@ -55,4 +56,14 @@ public sealed class SqlBinaryAttributeTests
 
         Assert.Throws<NotSupportedException>(() => new SqlBinaryAttribute(unsupportedValue));
     }
+
+    [Theory]
+    // BINARY: valid range 1–8000
+    [InlineData(StorageTypeEnum.Fixed, 0)]
+    [InlineData(StorageTypeEnum.Fixed, 8001)]
+    // VARBINARY: valid range 1–8000
+    [InlineData(StorageTypeEnum.Var, 0)]
+    [InlineData(StorageTypeEnum.Var, 8001)]
+    public void Constructor_WithSize_OutOfRange_Exception(StorageTypeEnum storageTypeEnum, int size) => 
+        Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlBinaryAttribute(storageTypeEnum, size));
 }
