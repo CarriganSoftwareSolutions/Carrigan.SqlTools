@@ -7,14 +7,13 @@ namespace Carrigan.SqlTools.Attributes;
 /// This attribute allows overriding the database type for the column associated with the property.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = true)]
-public class SqlTypeAttribute : Attribute
+public abstract class SqlTypeAttribute : Attribute
 {
     /// <summary>
     /// This the Sql Server ADO.Net Type, as well as the text to declare the indicated type in SQL with the supplied sizing arguments.
     /// </summary>
     internal readonly SqlTypeDefinition SqlTypeDefinition;
-    //TODO: bullet proofing.
 
-    internal SqlTypeAttribute(SqlTypeDefinition sqlTypeDefinition) =>
+    protected SqlTypeAttribute(SqlTypeDefinition sqlTypeDefinition) =>
         SqlTypeDefinition = sqlTypeDefinition;
 }
