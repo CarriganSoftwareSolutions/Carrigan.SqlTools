@@ -1,8 +1,6 @@
 ﻿using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Attributes;
-//TODO: Proofread Documentation and Unit Tests
-
 /// <summary>
 /// Specifies that a property represents a binary column (fixed-length <c>BINARY</c> or variable-length <c>VARBINARY</c>)
 /// and overrides the default SQL type mapping for that column in the data model.
