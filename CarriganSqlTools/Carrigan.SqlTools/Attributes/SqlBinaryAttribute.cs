@@ -22,7 +22,7 @@ public sealed class SqlBinaryAttribute : SqlTypeAttribute
     /// <param name="storageTypeEnum">
     /// Indicates whether the column uses fixed-length <c>BINARY</c> storage or variable-length <c>VARBINARY</c> storage.
     /// </param>
-    public SqlBinaryAttribute(StorageTypeEnum storageTypeEnum) : base (GetSqlTypeDefinition(storageTypeEnum))
+    public SqlBinaryAttribute(StorageTypeEnum storageTypeEnum) : base(GetSqlTypeDefinition(storageTypeEnum))
     {
 
     }
@@ -66,6 +66,6 @@ public sealed class SqlBinaryAttribute : SqlTypeAttribute
         {
             StorageTypeEnum.Fixed => SqlTypeDefinition.AsBinary(size),
             StorageTypeEnum.Var => SqlTypeDefinition.AsVarBinary(size),
-            _ => throw new NotSupportedException()
+            _ => throw new NotSupportedException($"Unsupported storage type '{storageTypeEnum}'.")
         };
 }
