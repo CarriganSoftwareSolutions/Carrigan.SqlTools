@@ -1,5 +1,4 @@
 ﻿using Carrigan.SqlTools.Types;
-using System.Data;
 
 //TODO: Read Documentation after shifting to base class, Proof read Documentation
 namespace Carrigan.SqlTools.Attributes;
