@@ -1,6 +1,5 @@
 ﻿using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
-using System.Reflection.Emit;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 public  class TableIdentifierTests

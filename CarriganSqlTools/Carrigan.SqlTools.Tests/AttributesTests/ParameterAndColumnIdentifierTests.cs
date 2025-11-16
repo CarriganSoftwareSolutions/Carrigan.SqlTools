@@ -1,14 +1,11 @@
 ﻿using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Types;
-using Newtonsoft.Json.Linq;
-using System.Data;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 public class ParameterAndColumnIdentifierTests
