@@ -1,4 +1,4 @@
-# Carrigan.SqlTools Coding & Documentation Standards
+ï»¿# Carrigan.SqlTools Coding & Documentation Standards
 
 ## General Coding Standards
 
@@ -6,7 +6,7 @@
 - Use **expression-bodied members** when possible.
 - **Never use `var`** unless absolutely necessary.
 - Use **file-scoped namespaces**.
-- Never use **block (“flower boxing”) comments**.
+- Never use **block (â€œflower boxingâ€) comments**.
 - Use **variables with full, unambiguous names**.
   - **Exception:** Data types may be used as variable names when referencing the datatype itself  
     *Example: `GetInt`*.
@@ -101,7 +101,7 @@ Documentation must communicate these roles clearly so the relationship between t
 
 For example:
 
-When an attribute is applied to a property, **the attribute does not merely define “a column name.”**  
+When an attribute is applied to a property, **the attribute does not merely define â€œa column name.â€**  
 Instead, documentation must explicitly state that:
 
 > The attribute defines metadata for the *property*, and that property represents an SQL column in the data model.  
@@ -114,4 +114,4 @@ This distinction is essential for ensuring that users of Carrigan.SqlTools under
 - Attributes shape the resulting SQL definitions  
 - Validation and SQL-generation logic interpret the model  
 
-All documentation should help reinforce this **C# ? SQL mapping architecture**, making the design intent clear throughout the library.
+All documentation should help reinforce this **C# â†’ SQL mapping architecture**, making the design intent clear throughout the library.
