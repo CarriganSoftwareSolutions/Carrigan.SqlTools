@@ -1,11 +1,10 @@
 ﻿using Carrigan.SqlTools.Types;
-using System.Data;
 
 namespace Carrigan.SqlTools.Attributes;
 //TODO: Documentation and Unit Tests
 
-[AttributeUsage(AttributeTargets.Property)]
-public class SqlTextAttribute : SqlTypeAttribute
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+public sealed class SqlTextAttribute : SqlTypeAttribute
 {
     public SqlTextAttribute(EncodingEnum encoding) : base (GetSqlSbType(encoding))
     {

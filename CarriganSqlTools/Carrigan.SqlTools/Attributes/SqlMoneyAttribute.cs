@@ -1,11 +1,10 @@
 ﻿using Carrigan.SqlTools.Types;
-using System.Data;
 
 namespace Carrigan.SqlTools.Attributes;
 //TODO: Documentation and Unit Tests
 
 [AttributeUsage(AttributeTargets.Property)]
-public class SqlMoneyAttribute : SqlTypeAttribute
+public sealed class SqlMoneyAttribute : SqlTypeAttribute
 {
     public SqlMoneyAttribute(SizeableEnum moneySize) :
         base

@@ -5,7 +5,7 @@ namespace Carrigan.SqlTools.Attributes;
 /// <summary>
 /// This attribute allows overriding the database type for the column associated with the property.
 /// </summary>
-[AttributeUsage(AttributeTargets.Property, Inherited = true)]
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public abstract class SqlTypeAttribute : Attribute
 {
     /// <summary>
