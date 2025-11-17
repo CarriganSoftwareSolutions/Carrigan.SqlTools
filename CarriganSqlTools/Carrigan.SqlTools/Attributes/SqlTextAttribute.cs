@@ -12,10 +12,10 @@ public sealed class SqlTextAttribute : SqlTypeAttribute
     }
 
     private static SqlTypeDefinition GetSqlSbType(EncodingEnum encoding) => 
-        (encoding) switch
+        encoding switch
         {
-            (EncodingEnum.Ascii) => SqlTypeDefinition.AsText(),
-            (EncodingEnum.Unicode) => SqlTypeDefinition.AsNText(),
+            EncodingEnum.Ascii => SqlTypeDefinition.AsText(),
+            EncodingEnum.Unicode => SqlTypeDefinition.AsNText(),
             _ => throw new NotSupportedException(),
         };
 }

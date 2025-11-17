@@ -9,10 +9,10 @@ public sealed class SqlVarCharMaxAttribute : SqlTypeAttribute
     public SqlVarCharMaxAttribute(EncodingEnum encoding) :
         base
         (
-            (encoding) switch
+            encoding switch
             {
-                (EncodingEnum.Ascii) => SqlTypeDefinition.AsVarCharMax(),
-                (EncodingEnum.Unicode) => SqlTypeDefinition.AsNVarCharMax(),
+                EncodingEnum.Ascii => SqlTypeDefinition.AsVarCharMax(),
+                EncodingEnum.Unicode => SqlTypeDefinition.AsNVarCharMax(),
                 _ => throw new NotSupportedException(),
             }
         )
