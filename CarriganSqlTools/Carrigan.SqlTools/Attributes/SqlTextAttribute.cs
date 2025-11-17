@@ -16,6 +16,6 @@ public sealed class SqlTextAttribute : SqlTypeAttribute
         {
             (EncodingEnum.Ascii) => SqlTypeDefinition.AsText(),
             (EncodingEnum.Unicode) => SqlTypeDefinition.AsNText(),
-            _ => throw new NotImplementedException(),
+            _ => throw new NotSupportedException(),
         };
 }

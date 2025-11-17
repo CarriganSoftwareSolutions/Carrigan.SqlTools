@@ -13,7 +13,7 @@ public sealed class SqlVarCharMaxAttribute : SqlTypeAttribute
             {
                 (EncodingEnum.Ascii) => SqlTypeDefinition.AsVarCharMax(),
                 (EncodingEnum.Unicode) => SqlTypeDefinition.AsNVarCharMax(),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             }
         )
     {

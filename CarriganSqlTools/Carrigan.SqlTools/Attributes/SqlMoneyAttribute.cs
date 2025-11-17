@@ -13,7 +13,7 @@ public sealed class SqlMoneyAttribute : SqlTypeAttribute
             {
                 (SizeableEnum.Regular) => SqlTypeDefinition.AsMoney(),
                 (SizeableEnum.Smaller) => SqlTypeDefinition.AsSmallMoney(),
-                _ => throw new NotImplementedException(),
+                _ => throw new NotSupportedException(),
             }
         )
     {
