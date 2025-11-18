@@ -1,8 +1,6 @@
 ﻿using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Attributes;
-//TODO: Documentation and Unit Tests
-
 /// <summary>
 /// Specifies that a property represents a <c>FLOAT</c> column
 /// and overrides the default SQL type mapping for that column in the data model.

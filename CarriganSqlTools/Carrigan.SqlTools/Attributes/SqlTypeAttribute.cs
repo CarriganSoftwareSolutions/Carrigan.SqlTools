@@ -1,15 +1,16 @@
 ﻿using Carrigan.SqlTools.Types;
 
-//TODO: Read Documentation after shifting to base class, Proof read Documentation
 namespace Carrigan.SqlTools.Attributes;
 /// <summary>
-/// This attribute allows overriding the database type for the column associated with the property.
+/// A base class attribute that allows overriding the database type for the column
+/// associated with the applied property.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public abstract class SqlTypeAttribute : Attribute
 {
     /// <summary>
-    /// This the Sql Server ADO.Net Type, as well as the text to declare the indicated type in SQL with the supplied sizing arguments.
+    /// The SQL Server ADO.NET type, as well as the text required to declare the
+    /// indicated type in SQL using the supplied sizing arguments.
     /// </summary>
     internal readonly SqlTypeDefinition SqlTypeDefinition;
 
