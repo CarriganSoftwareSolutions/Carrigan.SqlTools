@@ -14,40 +14,6 @@ namespace Carrigan.SqlTools.SqlServer;
 
 public static class Commands
 {
-    private static IEnumerable<SqlParameter> GetParameterCollection(SqlQuery query)
-    {
-        //TODO: Consolidate this with its companion in async
-        static SqlParameter GetSqlParameter(ParameterTag parameter, object value)
-        {
-            SqlParameter sqlParameter = new(parameter, value)
-            {
-                SqlDbType = parameter.SqlType?.Type ?? (new SqlTypeDefinition(value)).Type
-            };
-
-            if (parameter.SqlType?.UseMax is not null)
-            {
-                if (parameter.SqlType.UseMax)
-                    sqlParameter.Size = -1;
-            }
-            else
-            {
-                if (parameter.SqlType?.Size is not null)
-                    sqlParameter.Size = parameter.SqlType.Size.Value;
-                if (parameter.SqlType?.Precision is not null)
-                    sqlParameter.Precision = parameter.SqlType.Precision.Value;
-                if (parameter.SqlType?.Scale is not null)
-                    sqlParameter.Scale = parameter.SqlType.Scale.Value;
-            }
-
-            return sqlParameter;
-        }
-
-        return query
-                    .Parameters
-                    .AsEnumerable()
-                    .Select(parameter => GetSqlParameter(parameter.Key, parameter.Value));
-    }
-
     public static void TestConnectionString(string connectionString, string friendlyName)
     {
         try
@@ -80,7 +46,7 @@ public static class Commands
 
             command.CommandText = query.QueryText;
             command.CommandType = query.CommandType;
-            command.Parameters.AddRange(GetParameterCollection(query).ToArray());
+            command.Parameters.AddRange(query.GetParameterCollection().ToArray());
 
             return command.ExecuteNonQuery();
         }
@@ -108,7 +74,7 @@ public static class Commands
             }
             command.CommandText = query.QueryText;
             command.CommandType = query.CommandType;
-            command.Parameters.AddRange(GetParameterCollection(query).ToArray());
+            command.Parameters.AddRange(query.GetParameterCollection().ToArray());
 
             return command.ExecuteScalar();
         }
@@ -151,7 +117,7 @@ public static class Commands
             }
             command.CommandText = query.QueryText;
             command.CommandType = query.CommandType;
-            command.Parameters.AddRange(GetParameterCollection(query).ToArray());
+            command.Parameters.AddRange(query.GetParameterCollection().ToArray());
 
             using DbDataReader dataReader = command.ExecuteReader();
             while (dataReader.Read())
