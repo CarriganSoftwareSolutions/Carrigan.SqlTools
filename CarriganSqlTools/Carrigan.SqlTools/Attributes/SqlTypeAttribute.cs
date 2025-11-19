@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Types;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Attributes;
 /// <summary>
@@ -16,4 +17,11 @@ public abstract class SqlTypeAttribute : Attribute
 
     protected SqlTypeAttribute(SqlTypeDefinition sqlTypeDefinition) =>
         SqlTypeDefinition = sqlTypeDefinition;
+
+    //TODO: Documentation, unit tests
+    internal static SqlTypeAttribute? GetSqlTypeAttribute(PropertyInfo propertyInfo) =>
+       propertyInfo
+        .GetCustomAttributes(inherit: true)
+        .OfType<SqlTypeAttribute>()
+        .FirstOrDefault();
 }

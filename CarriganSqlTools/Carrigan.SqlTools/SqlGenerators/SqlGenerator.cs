@@ -1,11 +1,13 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;
@@ -57,13 +59,13 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     {
         List<Exception> exceptions = [];
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
-        IEnumerable<Tuple<PropertyInfo, SqlDbType>> invalidColumnTypes = [];
+        IEnumerable<Tuple<PropertyInfo, SqlTypeAttribute?>> sqlTypeAttributes = [];
         IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
         IEnumerable<Tuple<PropertyInfo, ParameterTag>> invalidParameters = [];
 
         if (SqlIdentifierPattern.Fails(TableName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, TableName));
-        if(SchemaName is not null && SqlIdentifierPattern.Fails(TableName))
+        if (SchemaName is not null && SqlIdentifierPattern.Fails(TableName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, SchemaName));
         if (SqlIdentifierPattern.Fails(ProcedureName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, ProcedureName));
@@ -75,15 +77,15 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         if (invalidColumns.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
 
-        //TODO: write logic to ensure custom sql db types are no incompatible with the actual property info type.
-
-        //TODO: rewrite this block to check against all allowed types, not just the default assigned types.
-        //invalidColumnTypes =
-        //    ColumnInfo
-        //        .Where(column => column.SqlType.Type != SqlDbType.Variant && SqlTypeCache.GetAllSqlTypes().DoesNotContain(column.SqlType.Type))
-        //        .Select(column => new Tuple<PropertyInfo, SqlDbType>(column.PropertyInfo, column.SqlType.Type));
-        //if (invalidColumnTypes.Any())
-        //    exceptions.Add(new SqlTypeNotSupported(invalidColumnTypes));
+        //TODO: unit tests
+        ColumnInfo
+            .Select(column => new Tuple<PropertyInfo, SqlTypeAttribute?>(column.PropertyInfo, SqlTypeAttribute.GetSqlTypeAttribute(column.PropertyInfo)))
+            .Select(tuple => SqlTypeMismatchException.Validate(tuple.Item1, tuple.Item2))
+            .ForEach(sqlTypeMismatchException =>
+            {
+                if (sqlTypeMismatchException is not null)
+                    exceptions.Add(sqlTypeMismatchException);
+            });
 
         invalidAliases =
             ColumnInfo
