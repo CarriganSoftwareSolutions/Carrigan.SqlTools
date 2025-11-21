@@ -27,6 +27,8 @@
       sql;sqlserver;ado.net;reflection;orm;database;crud;select;insert;update;delete;
       query-builder;object-mapper;encryption;attributes;pagination;joins;where;order-by
     </PackageTags>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
   </PropertyGroup>
   
   <ItemGroup>

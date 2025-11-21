@@ -1,5 +1,5 @@
 ﻿namespace Carrigan.SqlTools.OrderByItems;
-//TODO: Unit test for int values
+
 /// <summary>
 /// Specifies the sort direction for an <c>ORDER BY</c> clause.
 /// </summary>
