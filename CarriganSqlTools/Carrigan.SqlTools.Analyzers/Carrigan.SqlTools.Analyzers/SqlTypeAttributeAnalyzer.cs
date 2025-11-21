@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Carrigan.SqlTools.Analyzers;
-
+//TODO: Code Review.
 #pragma warning disable RS1041 // Compiler extensions should be implemented in assemblies targeting netstandard2.0
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 #pragma warning restore RS1041 // Compiler extensions should be implemented in assemblies targeting netstandard2.0
@@ -15,27 +15,32 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     private static readonly Dictionary<string, string[]> mappingsForAllowedTypes = new()
     {
         ["SqlBinaryAttribute"] = ["System.Byte[]"],
-        ["SqlCharAttribute"] = ["System.Char", "System.String"],
-        ["SqlDateTime2Attribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
-        ["SqlDateTimeAttribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
-        ["SqlDateTimeOffsetAttribute"] = ["System.DateTimeOffset"],
-        ["SqlDecimalAttribute"] = ["System.Decimal"],
-        ["SqlFloatAttribute"] = ["System.Double", "System.Single", "System.Decimal"],
-        ["SqlImageAttribute"] = ["System.Byte[]"],
-        ["SqlMoneyAttribute"] = ["System.Double", "System.Single", "System.Decimal"],
-        ["SqlTextAttribute"] = ["System.Char", "System.String"],
-        ["SqlTimeAttribute"] = ["System.TimeOnly"],
         ["SqlVarBinaryMaxAttribute"] = ["System.Byte[]"],
-        ["SqlVarCharMaxAttribute"] = ["System.Char", "System.String"]
+        ["SqlImageAttribute"] = ["System.Byte[]"],
+
+        ["SqlCharAttribute"] = ["System.Char", "System.String"],
+        ["SqlVarCharMaxAttribute"] = ["System.Char", "System.String"],
+        ["SqlTextAttribute"] = ["System.Char", "System.String"],
+
+        ["SqlDateTimeAttribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
+        ["SqlDateTime2Attribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
+
+        ["SqlDateTimeOffsetAttribute"] = ["System.DateTimeOffset"],
+        ["SqlTimeAttribute"] = ["System.TimeOnly"],
+
+        ["SqlFloatAttribute"] = ["System.Single", "System.Double", "System.Decimal"],
+        ["SqlMoneyAttribute"] = ["System.Single", "System.Double", "System.Decimal"],
+        ["SqlDecimalAttribute"] = ["System.Single", "System.Double", "System.Decimal"]
     };
 
     private static readonly Dictionary<string, string[]> mappingsForPrecisionWarnings = new()
     {
-        ["SqlMoneyAttribute"] = ["System.Double", "System.Single", "System.Decimal"],
-        ["SqlFloatAttribute"] = ["System.Double", "System.Decimal"],
-        ["SqlDecimalAttribute"] = ["System.Double", "System.Single"],
-        ["SqlDateTimeAttribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly",],
-        ["SqlDateTime2Attribute"] = ["System.TimeOnly",]
+        ["SqlMoneyAttribute"] = ["System.Single", "System.Double", "System.Decimal"],
+        ["SqlFloatAttribute"] = ["System.Single", "System.Decimal"],
+        ["SqlDecimalAttribute"] = [ "System.Single", "System.Double"],
+
+        ["SqlDateTimeAttribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
+        ["SqlDateTime2Attribute"] = ["System.TimeOnly"]
 
     };
 
