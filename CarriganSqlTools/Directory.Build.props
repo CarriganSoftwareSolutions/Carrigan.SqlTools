@@ -1,6 +1,7 @@
 <!--IGNORE SPELLING: snupkg-->
 <Project>
   <PropertyGroup>
+    <RunAnalyzers>true</RunAnalyzers>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
   </PropertyGroup>
