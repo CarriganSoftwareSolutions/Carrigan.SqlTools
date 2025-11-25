@@ -6,46 +6,81 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Carrigan.SqlTools.Analyzers;
-//TODO: Code Review.
-#pragma warning disable RS1041 // Compiler extensions should be implemented in assemblies targeting netstandard2.0
+
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-#pragma warning restore RS1041 // Compiler extensions should be implemented in assemblies targeting netstandard2.0
 public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 {
-    private static readonly Dictionary<string, string[]> mappingsForAllowedTypes = new()
-    {
-        ["SqlBinaryAttribute"] = ["System.Byte[]"],
-        ["SqlVarBinaryMaxAttribute"] = ["System.Byte[]"],
-        ["SqlImageAttribute"] = ["System.Byte[]"],
+    private static readonly IReadOnlyDictionary<string, string[]> AllowedTypeMetadata =
+        new Dictionary<string, string[]>
+        {
+            ["Carrigan.SqlTools.Attributes.SqlBinaryAttribute"] =
+                ["System.Byte[]"],
+            ["Carrigan.SqlTools.Attributes.SqlVarBinaryMaxAttribute"] =
+                ["System.Byte[]"],
+            ["Carrigan.SqlTools.Attributes.SqlImageAttribute"] =
+                ["System.Byte[]"],
 
-        ["SqlCharAttribute"] = ["System.Char", "System.String"],
-        ["SqlVarCharMaxAttribute"] = ["System.Char", "System.String"],
-        ["SqlTextAttribute"] = ["System.Char", "System.String"],
+            ["Carrigan.SqlTools.Attributes.SqlCharAttribute"] =
+                ["System.Char", "System.String"],
+            ["Carrigan.SqlTools.Attributes.SqlVarCharMaxAttribute"] =
+                ["System.Char", "System.String"],
+            ["Carrigan.SqlTools.Attributes.SqlTextAttribute"] =
+                ["System.Char", "System.String"],
 
-        ["SqlDateTimeAttribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
-        ["SqlDateTime2Attribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
+            ["Carrigan.SqlTools.Attributes.SqlDateTimeAttribute"] =
+                ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
+            ["Carrigan.SqlTools.Attributes.SqlDateTime2Attribute"] =
+                ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
 
-        ["SqlDateTimeOffsetAttribute"] = ["System.DateTimeOffset"],
-        ["SqlTimeAttribute"] = ["System.TimeOnly"],
+            ["Carrigan.SqlTools.Attributes.SqlDateAttribute"] =
+                ["System.DateTime", "System.DateOnly"],
+            ["Carrigan.SqlTools.Attributes.SqlTimeAttribute"] =
+                ["System.DateTime", "System.TimeOnly"],
 
-        ["SqlFloatAttribute"] = ["System.Single", "System.Double", "System.Decimal"],
-        ["SqlMoneyAttribute"] = ["System.Single", "System.Double", "System.Decimal"],
-        ["SqlDecimalAttribute"] = ["System.Single", "System.Double", "System.Decimal"]
-    };
+            ["Carrigan.SqlTools.Attributes.SqlDateTimeOffsetAttribute"] =
+                ["System.DateTimeOffset"],
 
-    private static readonly Dictionary<string, string[]> mappingsForPrecisionWarnings = new()
-    {
-        ["SqlMoneyAttribute"] = ["System.Single", "System.Double", "System.Decimal"],
-        ["SqlFloatAttribute"] = ["System.Single", "System.Decimal"],
-        ["SqlDecimalAttribute"] = [ "System.Single", "System.Double"],
+            ["Carrigan.SqlTools.Attributes.SqlFloatAttribute"] =
+                ["System.Single", "System.Double", "System.Decimal"],
+            ["Carrigan.SqlTools.Attributes.SqlMoneyAttribute"] =
+                ["System.Single", "System.Double", "System.Decimal"],
+            ["Carrigan.SqlTools.Attributes.SqlDecimalAttribute"] =
+                ["System.Single", "System.Double", "System.Decimal"]
+        };
 
-        ["SqlDateTimeAttribute"] = ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
-        ["SqlDateTime2Attribute"] = ["System.TimeOnly"]
+    private static readonly IReadOnlyDictionary<string, string[]> PrecisionWarningTypeMetadata =
+        new Dictionary<string, string[]>
+        {
+            ["Carrigan.SqlTools.Attributes.SqlFloatAttribute"] =
+                ["System.Single", "System.Decimal"],
+            ["Carrigan.SqlTools.Attributes.SqlDecimalAttribute"] =
+                ["System.Single", "System.Double"]
+        };
 
-    };
+    private static readonly IReadOnlyDictionary<string, string[]> SemanticWarningTypeMetadata =
+        new Dictionary<string, string[]>
+        {
+            ["Carrigan.SqlTools.Attributes.SqlDateTimeAttribute"] =
+                ["System.DateOnly", "System.TimeOnly"],
+            ["Carrigan.SqlTools.Attributes.SqlDateTime2Attribute"] =
+                ["System.DateOnly", "System.TimeOnly"],
+            ["Carrigan.SqlTools.Attributes.SqlDateAttribute"] =
+                ["System.DateTime"],
+            ["Carrigan.SqlTools.Attributes.SqlTimeAttribute"] =
+                ["System.DateTime"]
+        };
 
-    private static readonly HashSet<string> mappingsForObsoletes =
-        new(["SqlTextAttribute", "SqlImageAttribute"]);
+    private static readonly string[] ObsoleteAttributeMetadataNames =
+    [
+        "Carrigan.SqlTools.Attributes.SqlTextAttribute",
+        "Carrigan.SqlTools.Attributes.SqlImageAttribute"
+    ];
+
+    private static readonly string[] LegacyAttributeMetadataNames =
+    [
+        "Carrigan.SqlTools.Attributes.SqlMoneyAttribute",
+        "Carrigan.SqlTools.Attributes.SqlDateTimeAttribute"
+    ];
 
     public const string TypeDiagnosticId = "CARRIGANSQL0001";
     private static readonly DiagnosticDescriptor TypeRule = new(
@@ -67,7 +102,27 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Warns when a type combination may cause precision or scale mismatches between SQL and .NET representations.");
 
-    public const string ObsoleteDiagnosticId = "CARRIGANSQL0003";
+    public const string SemanticDiagnosticId = "CARRIGANSQL0003";
+    private static readonly DiagnosticDescriptor SemanticRule = new(
+        id: SemanticDiagnosticId,
+        title: "Possible Semantic Mismatch for SQL Type Attribute",
+        messageFormat: "Member '{0}' is marked with '{1}' and may represent a semantic mismatch to type '{2}'",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Warns when a type combination may cause semantic mismatches between SQL and .NET representations.");
+
+    public const string LegacyDiagnosticId = "CARRIGANSQL0004";
+    private static readonly DiagnosticDescriptor LegacyRule = new(
+        id: LegacyDiagnosticId,
+        title: "Use of Attribute Associated with Legacy SQL Types DateTime and Money",
+        messageFormat: "Member '{0}' is marked with '{1}', which is associated with a legacy SQL type",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Checks and warns when an attribute associated with legacy SQL types is used.");
+
+    public const string ObsoleteDiagnosticId = "CARRIGANSQL0005";
     private static readonly DiagnosticDescriptor ObsoleteRule = new(
         id: ObsoleteDiagnosticId,
         title: "Use of Attribute Associated with Obsolete SQL Types",
@@ -82,148 +137,254 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     }
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TypeRule, PrecisionRule, ObsoleteRule];
+        [TypeRule, PrecisionRule, SemanticRule, ObsoleteRule, LegacyRule];
 
     public override void Initialize(AnalysisContext context)
     {
         context.EnableConcurrentExecution();
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-        context.RegisterSymbolAction(AnalyzeProperty, SymbolKind.Property);
+        context.RegisterCompilationStartAction(static compilationStartContext =>
+        {
+            ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>> allowedTypeSymbolMappings =
+                BuildTypeMappings(compilationStartContext.Compilation, AllowedTypeMetadata);
+
+            ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>> precisionWarningSymbolMappings =
+                BuildTypeMappings(compilationStartContext.Compilation, PrecisionWarningTypeMetadata);
+
+            ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>> semanticWarningSymbolMappings =
+                BuildTypeMappings(compilationStartContext.Compilation, SemanticWarningTypeMetadata);
+
+            ImmutableHashSet<INamedTypeSymbol> legacyWarningSymbolMappings =
+                BuildAttributeSet(compilationStartContext.Compilation, LegacyAttributeMetadataNames);
+
+            ImmutableHashSet<INamedTypeSymbol> obsoleteAttributeSymbols =
+                BuildAttributeSet(compilationStartContext.Compilation, ObsoleteAttributeMetadataNames);
+
+            compilationStartContext.RegisterSymbolAction
+            (
+                symbolContext =>
+                    AnalyzeProperty
+                    (
+                        symbolContext,
+                        allowedTypeSymbolMappings,
+                        precisionWarningSymbolMappings,
+                        semanticWarningSymbolMappings,
+                        legacyWarningSymbolMappings,
+                        obsoleteAttributeSymbols
+                    ),
+                    SymbolKind.Property
+            );
+        });
     }
-    public static ITypeSymbol? GetTypeSymbol(Compilation compilation, Type runtimeType)
+
+    private static ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>> BuildTypeMappings
+    (
+        Compilation compilation, 
+        IReadOnlyDictionary<string, string[]> metadataNameMappings
+    )
     {
-        if (runtimeType.IsArray)
-        {
-            ITypeSymbol? elementTypeSymbol = GetTypeSymbol(compilation, runtimeType.GetElementType()!);
-            return elementTypeSymbol is null
-                ? null
-                : compilation.CreateArrayTypeSymbol(elementTypeSymbol);
-        }
-        else if (runtimeType.IsGenericType && runtimeType.IsGenericTypeDefinition is false)
-        {
-            Type genericDefinition = runtimeType.GetGenericTypeDefinition();
-            INamedTypeSymbol? genericDefinitionSymbol = compilation.GetTypeByMetadataName(genericDefinition.FullName!);
+        ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>>.Builder builder =
+            ImmutableDictionary.CreateBuilder<INamedTypeSymbol, ImmutableArray<ITypeSymbol>>(SymbolEqualityComparer.Default);
 
-            if (genericDefinitionSymbol is INamedTypeSymbol namedTypeSymbol)
+        foreach (KeyValuePair<string, string[]> mapping in metadataNameMappings)
+        {
+            INamedTypeSymbol? attributeSymbol = compilation.GetTypeByMetadataName(mapping.Key);
+            if (attributeSymbol is not null)
             {
-                ITypeSymbol[] typeArguments =
-                [.. runtimeType
-                        .GetGenericArguments()
-                        .Select(genericArgument => GetTypeSymbol(compilation, genericArgument))
-                        .OfType<ITypeSymbol>()
-                ];
+                IEnumerable<ITypeSymbol> resolvedTypes =
+                    mapping.Value
+                        .Select(typeMetadata => ResolveTypeByMetadataName(compilation, typeMetadata))
+                        .OfType<ITypeSymbol>();
 
-                return namedTypeSymbol.Construct(typeArguments);
+                ImmutableArray<ITypeSymbol> resolvedArray = [.. resolvedTypes];
+
+                if (resolvedArray.Length > 0)
+                {
+                    builder[attributeSymbol] = resolvedArray;
+                }
             }
-
-            return null;
         }
-        else
-        {
-            string metadataName = runtimeType.FullName ??
-                                  (runtimeType.Namespace is null
-                                      ? runtimeType.Name
-                                      : $"{runtimeType.Namespace}.{runtimeType.Name}");
 
-            return compilation.GetTypeByMetadataName(metadataName);
-        }
+        return builder.ToImmutable();
     }
+
+    private static ImmutableHashSet<INamedTypeSymbol> BuildAttributeSet(Compilation compilation, IEnumerable<string> metadataNames)
+    {
+        ImmutableHashSet<INamedTypeSymbol>.Builder builder =
+            ImmutableHashSet.CreateBuilder<INamedTypeSymbol>(SymbolEqualityComparer.Default);
+
+        foreach (string metadataName in metadataNames)
+        {
+            INamedTypeSymbol? attributeSymbol = compilation.GetTypeByMetadataName(metadataName);
+            if (attributeSymbol is not null)
+            {
+                builder.Add(attributeSymbol);
+            }
+        }
+
+        return builder.ToImmutable();
+    }
+
     private static ITypeSymbol? ResolveTypeByMetadataName(Compilation compilation, string metadataName)
     {
         if (metadataName.EndsWith("[]", StringComparison.Ordinal))
         {
             string elementName = metadataName.Substring(0, metadataName.Length - 2);
             INamedTypeSymbol? element = compilation.GetTypeByMetadataName(elementName);
-            return element is null ? null : compilation.CreateArrayTypeSymbol(element);
+            if (element is null)
+            {
+                return null;
+            }
+
+            return compilation.CreateArrayTypeSymbol(element);
         }
 
         return compilation.GetTypeByMetadataName(metadataName);
     }
-    private static void AnalyzeProperty(SymbolAnalysisContext context)
+
+    private static void AnalyzeProperty
+    (
+        SymbolAnalysisContext context,
+        ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>> allowedTypeMappings,
+        ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>> precisionWarningMappings,
+        ImmutableDictionary<INamedTypeSymbol, ImmutableArray<ITypeSymbol>> semanticWarningMappings,
+        ImmutableHashSet<INamedTypeSymbol> legacyAttributeMappings,
+        ImmutableHashSet<INamedTypeSymbol> obsoleteAttributeMappings
+    )
     {
         IPropertySymbol propertySymbol = (IPropertySymbol)context.Symbol;
-        INamedTypeSymbol? attributeClass;
-        Location attributeLocation;
-        bool isValid;
-        bool isWarning;
-        ITypeSymbol[] allowedSymbols;
-        ITypeSymbol[] warningSymbols;
+        ITypeSymbol propertyType = GetUnderlyingPropertyType(propertySymbol.Type);
 
         foreach (AttributeData attribute in propertySymbol.GetAttributes())
         {
-            attributeClass = attribute.AttributeClass;
+            INamedTypeSymbol? attributeClass = attribute.AttributeClass;
             if (attributeClass is not null)
             {
-                //check for obsolete SQL Types
-                if (mappingsForAllowedTypes.TryGetValue(attributeClass.Name, out string[]? allowedTypeMetaData))
-                {
-                    allowedSymbols =
-                    [
-                        .. allowedTypeMetaData
-                            .Select(name => ResolveTypeByMetadataName(context.Compilation, name))
-                            .OfType<ITypeSymbol>()
-                    ];
+                Location attributeLocation = GetAttributeLocation(attribute, propertySymbol, context);
 
-                    //Check for type mismatches
-                    isValid = allowedSymbols.Any(
-                        allowed => SymbolEqualityComparer.Default.Equals(propertySymbol.Type, allowed));
+                // Enforce allowed type mappings (hard error)
+                if (allowedTypeMappings.TryGetValue(attributeClass, out ImmutableArray<ITypeSymbol> allowedSymbols))
+                {
+                    bool isValid = allowedSymbols.Any(allowed => SymbolEqualityComparer.Default.Equals(propertyType, allowed));
 
                     if (isValid == false)
                     {
-                        attributeLocation = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
-                                ?? propertySymbol.Locations.FirstOrDefault()
-                                ?? Location.None;
-                        context.ReportDiagnostic(Diagnostic.Create(
-                            TypeRule,
-                            attributeLocation,
-                            propertySymbol.Name,
-                            attributeClass.Name,
-                            propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                        context.ReportDiagnostic
+                        (
+                            Diagnostic.Create
+                            (
+                                TypeRule,
+                                attributeLocation,
+                                propertySymbol.Name,
+                                attributeClass.Name,
+                                propertyType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                            )
+                        );
                     }
                 }
 
-                //check for obsolete SQL Types
-                if (mappingsForPrecisionWarnings.TryGetValue(attributeClass.Name, out string[]? precisionTypeWarningsMetaData))
+                // Precision warning mappings
+                if (precisionWarningMappings.TryGetValue(attributeClass, out ImmutableArray<ITypeSymbol> warningSymbols))
                 {
-                    warningSymbols =
-                    [
-                        .. precisionTypeWarningsMetaData
-                            .Select(name => ResolveTypeByMetadataName(context.Compilation, name))
-                            .OfType<ITypeSymbol>()
-                    ];
-
-                    //Check for type mismatches
-                    isWarning = warningSymbols.Any(
-                        allowed => SymbolEqualityComparer.Default.Equals(propertySymbol.Type, allowed));
+                    bool isWarning = warningSymbols.Any(allowed => SymbolEqualityComparer.Default.Equals(propertyType, allowed));
 
                     if (isWarning)
                     {
-                        attributeLocation = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
-                                ?? propertySymbol.Locations.FirstOrDefault()
-                                ?? Location.None;
-                        context.ReportDiagnostic(Diagnostic.Create(
-                            PrecisionRule,
-                            attributeLocation,
-                            propertySymbol.Name,
-                            attributeClass.Name,
-                            propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                        context.ReportDiagnostic
+                        (Diagnostic.Create
+                            (
+                                PrecisionRule,
+                                attributeLocation,
+                                propertySymbol.Name,
+                                attributeClass.Name,
+                                propertyType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                            )
+                        );
                     }
                 }
 
-                //check for obsolete SQL Types
-                if (mappingsForObsoletes.Contains(attributeClass.Name))
+                // semantic warning mappings
+                if (semanticWarningMappings.TryGetValue(attributeClass, out ImmutableArray<ITypeSymbol> semanticSymbols))
                 {
-                    attributeLocation = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken).GetLocation()
-                            ?? propertySymbol.Locations.FirstOrDefault()
-                            ?? Location.None;
-                    context.ReportDiagnostic(Diagnostic.Create(
-                        ObsoleteRule,
-                        attributeLocation,
-                        propertySymbol.Name,
-                        attributeClass.Name));
+                    bool isWarning = semanticSymbols.Any(allowed => SymbolEqualityComparer.Default.Equals(propertyType, allowed));
+
+                    if (isWarning)
+                    {
+                        context.ReportDiagnostic
+                        (Diagnostic.Create
+                            (
+                                SemanticRule,
+                                attributeLocation,
+                                propertySymbol.Name,
+                                attributeClass.Name,
+                                propertyType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                            )
+                        );
+                    }
+                }
+
+                // Obsolete attribute usage
+                if (legacyAttributeMappings.Contains(attributeClass))
+                {
+                    context.ReportDiagnostic
+                    (
+                        Diagnostic.Create
+                        (
+                            LegacyRule,
+                            attributeLocation,
+                            propertySymbol.Name,
+                            attributeClass.Name
+                        )
+                    );
+                }
+
+                // Obsolete attribute usage
+                if (obsoleteAttributeMappings.Contains(attributeClass))
+                {
+                    context.ReportDiagnostic
+                    (
+                        Diagnostic.Create
+                        (
+                            ObsoleteRule,
+                            attributeLocation,
+                            propertySymbol.Name,
+                            attributeClass.Name
+                        )
+                    );
                 }
             }
         }
+    }
+
+    private static ITypeSymbol GetUnderlyingPropertyType(ITypeSymbol typeSymbol)
+    {
+        if (typeSymbol is INamedTypeSymbol namedTypeSymbol &&
+            namedTypeSymbol.IsGenericType &&
+            namedTypeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+        {
+            return namedTypeSymbol.TypeArguments[0];
+        }
+
+        return typeSymbol;
+    }
+
+    private static Location GetAttributeLocation(
+        AttributeData attribute,
+        IPropertySymbol propertySymbol,
+        SymbolAnalysisContext context)
+    {
+        SyntaxNode? attributeSyntax = attribute.ApplicationSyntaxReference?.GetSyntax(context.CancellationToken);
+        if (attributeSyntax is not null)
+        {
+            return attributeSyntax.GetLocation();
+        }
+
+        if (propertySymbol.Locations.Length > 0)
+        {
+            return propertySymbol.Locations[0];
+        }
+
+        return Location.None;
     }
 }

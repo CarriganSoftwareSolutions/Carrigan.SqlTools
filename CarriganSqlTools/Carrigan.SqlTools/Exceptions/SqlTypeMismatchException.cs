@@ -27,8 +27,8 @@ public class SqlTypeMismatchException : Exception
                 new (typeof(float), [typeof(SqlFloatAttribute), typeof(SqlDecimalAttribute), typeof(SqlMoneyAttribute)]),
                 new (typeof(double), [typeof(SqlFloatAttribute), typeof(SqlDecimalAttribute), typeof(SqlMoneyAttribute)]),
 
-                new (typeof(DateTime), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute)]),
-                new (typeof(DateOnly), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute)]),
+                new (typeof(DateTime), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute), typeof(SqlDateAttribute), typeof(SqlTimeAttribute)]),
+                new (typeof(DateOnly), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute), typeof(SqlDateAttribute)]),
                 new (typeof(TimeOnly), [typeof(SqlDateTimeAttribute), typeof(SqlDateTime2Attribute), typeof(SqlTimeAttribute)]),
 
                 new (typeof(DateTimeOffset), [typeof(SqlDateTimeOffsetAttribute)]),
