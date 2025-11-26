@@ -18,12 +18,18 @@ public abstract class SqlTypeAttribute : Attribute
     protected SqlTypeAttribute(SqlTypeDefinition sqlTypeDefinition) =>
         SqlTypeDefinition = sqlTypeDefinition;
 
-    //TODO: Proof read Documentation, unit tests
+    //TODO: unit tests
     /// <summary>
-    /// Static method to get a Attribute that inherits from <see cref="SqlTypeAttribute"/>
+    /// Retrieves the first attribute applied to the specified property that
+    /// inherits from <see cref="SqlTypeAttribute"/>.
     /// </summary>
-    /// <param name="propertyInfo">property info</param>
-    /// <returns>SqlTypeAttribute</returns>
+    /// <param name="propertyInfo">
+    /// The <see cref="PropertyInfo"/> instance representing the property.
+    /// </param>
+    /// <returns>
+    /// The first <see cref="SqlTypeAttribute"/> instance applied to the property,
+    /// or <c>null</c> if no such attribute exists.
+    /// </returns>
     internal static SqlTypeAttribute? GetSqlTypeAttribute(PropertyInfo propertyInfo) =>
        propertyInfo
         .GetCustomAttributes(inherit: true)
