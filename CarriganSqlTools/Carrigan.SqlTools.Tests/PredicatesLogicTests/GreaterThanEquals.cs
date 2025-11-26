@@ -15,7 +15,7 @@ public class GreaterThanEqualsTests
     private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f, SqlTypeDefinition.AsInt());
+    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f, SqlTypeDefinition.AsFloat());
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
     private readonly Predicates ParameterElite = new Parameter("Elite", 1337, SqlTypeDefinition.AsInt());

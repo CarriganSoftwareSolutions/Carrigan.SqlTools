@@ -15,7 +15,7 @@ public class LessThanEqualsTests
     private readonly PredicatesLogic.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f, SqlTypeDefinition.AsInt());
+    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f, SqlTypeDefinition.AsFloat());
     private readonly string ParameterPiSql = "@Parameter_Pi";
 
     private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337, null);
