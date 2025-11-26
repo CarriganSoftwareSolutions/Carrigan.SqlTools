@@ -1,5 +1,5 @@
 ﻿using Carrigan.SqlTools.Types;
-//TODO: proof read documentation. Unit tests.
+
 namespace Carrigan.SqlTools.Attributes;
 /// <summary>
 /// Specifies that a property represents a SQL <c>DATE</c> column and overrides the
