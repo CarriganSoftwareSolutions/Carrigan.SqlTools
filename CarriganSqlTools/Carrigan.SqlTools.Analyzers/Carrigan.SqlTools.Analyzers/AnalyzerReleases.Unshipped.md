@@ -5,5 +5,3 @@ CARRIGANSQL0002 | Usage | Warning | Possible precision mismatch when a SQL type 
 CARRIGANSQL0003 | Usage | Warning | Possible semantic mismatch between the SQL type attribute (e.g., date vs. time vs. datetime) and the code type.
 CARRIGANSQL0004 | Usage | Warning | Use of attributes associated with legacy SQL types (e.g., DATETIME, MONEY) that have reduced range or scale compared to modern equivalents.
 CARRIGANSQL0005 | Usage | Warning | Use of attributes associated with obsolete SQL types (e.g., TEXT, IMAGE) that should be avoided in new development.
-
-
