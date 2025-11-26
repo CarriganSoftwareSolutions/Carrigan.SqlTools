@@ -1,21 +1,19 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Data.SqlTypes;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
 //TODO: Documentation and unit tests, code review
 public class SqlTypeMismatchException : Exception
 {
-    private static readonly ReadOnlyDictionary<Type, IEnumerable<Type>> AllowedAttributes;
-    private static readonly ReadOnlyDictionary<Type, IEnumerable<SqlDbType>> AllowedSqlDbTypes;
+    private static readonly ReadOnlyDictionary<Type, ImmutableArray<Type>> AllowedAttributes;
+    private static readonly ReadOnlyDictionary<Type, ImmutableArray<SqlDbType>> AllowedSqlDbTypes;
 
     static SqlTypeMismatchException()
     {
-        Dictionary<Type, IEnumerable<Type>> attributeTypes = new
+        Dictionary<Type, ImmutableArray<Type>> attributeTypes = new
         (
             [
                 new (typeof(char), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute), typeof(SqlTextAttribute)]),
@@ -35,7 +33,7 @@ public class SqlTypeMismatchException : Exception
             ]
         );
 
-        Dictionary<Type, IEnumerable<SqlDbType>> sqlDbTypes = new
+        Dictionary<Type, ImmutableArray<SqlDbType>> sqlDbTypes = new
         (
             [   new (typeof(Guid), [SqlDbType.UniqueIdentifier]),
 
@@ -66,29 +64,30 @@ public class SqlTypeMismatchException : Exception
     }
 
     private SqlTypeMismatchException(PropertyInfo propertyInfo, Type attributeMappingType) : base
-        ($"Sql Type Attribute Mismatch: C# type, {propertyInfo.GetType().Name}, is inherently incompatible with {attributeMappingType.Name}.")
+        ($"Sql Type Attribute Mismatch: Property '{propertyInfo.Name}' with C# type '{propertyInfo.PropertyType.Name}' is inherently incompatible with attribute '{attributeMappingType.Name}'.")
     { }
+
     private SqlTypeMismatchException(Type propertyType, SqlDbType sqlDbType) : base
-        ($"Sql Type Attribute Mismatch: C# type, {propertyType.Name}, is inherently incompatible with {sqlDbType}.")
+        ($"Sql Type Attribute Mismatch: C# type '{propertyType.Name}' is inherently incompatible with SQL type '{sqlDbType}'.")
+
     { }
 
     public static SqlTypeMismatchException? Validate(PropertyInfo propertyInfo, SqlTypeAttribute? sqlTypeAttribute)
     {
         static bool TestTheType(Type propertyType, Type attributeMappingType)
         {
-            if (AllowedAttributes.ContainsKey(propertyType) is false)
-                return false;
+            if (AllowedAttributes.TryGetValue(propertyType, out ImmutableArray<Type> allowedAttributes))
+                return allowedAttributes.Contains(attributeMappingType);
             else
-                return AllowedAttributes[propertyType].Contains(attributeMappingType);
+                return false;
         }
         Type? attributeMappingType = sqlTypeAttribute?.GetType();
         Type propertyType = propertyInfo.PropertyType;
-        if (attributeMappingType == null)
+        if (attributeMappingType is null)
             return null;
         else
         {
             propertyType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
-            attributeMappingType = Nullable.GetUnderlyingType(attributeMappingType) ?? attributeMappingType;
             if(TestTheType(propertyType, attributeMappingType))
                 return null;
             else
@@ -96,27 +95,27 @@ public class SqlTypeMismatchException : Exception
         }
     }
 
-    public static SqlTypeMismatchException? Validate(object value, SqlDbType sqlTypeAttribute)
+    public static SqlTypeMismatchException? Validate(object value, SqlDbType sqlDbType)
     {
-        static bool TestTheType(Type propertyType, SqlDbType attributeMappingType)
+        static bool TestTheType(Type propertyType, SqlDbType sqlDbType)
         {
             if (AllowedSqlDbTypes.ContainsKey(propertyType) is false)
                 return false;
             else
-                return AllowedSqlDbTypes[propertyType].Contains(attributeMappingType);
+                return AllowedSqlDbTypes[propertyType].Contains(sqlDbType);
         }
 
         Type propertyType;
-        if (sqlTypeAttribute == SqlDbType.Variant)
+        if (sqlDbType == SqlDbType.Variant)
             return null;
         else
         {
             propertyType = value.GetType();
             propertyType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
-            if (TestTheType(propertyType, sqlTypeAttribute))
+            if (TestTheType(propertyType, sqlDbType))
                 return null;
             else
-                return new SqlTypeMismatchException(propertyType, sqlTypeAttribute);
+                return new SqlTypeMismatchException(propertyType, sqlDbType);
         }
     }
 }
