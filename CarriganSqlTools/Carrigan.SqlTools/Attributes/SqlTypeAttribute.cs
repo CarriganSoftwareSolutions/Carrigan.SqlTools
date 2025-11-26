@@ -18,7 +18,12 @@ public abstract class SqlTypeAttribute : Attribute
     protected SqlTypeAttribute(SqlTypeDefinition sqlTypeDefinition) =>
         SqlTypeDefinition = sqlTypeDefinition;
 
-    //TODO: Documentation, unit tests
+    //TODO: Proof read Documentation, unit tests
+    /// <summary>
+    /// Static method to get a Attribute that inherits from <see cref="SqlTypeAttribute"/>
+    /// </summary>
+    /// <param name="propertyInfo">property info</param>
+    /// <returns>SqlTypeAttribute</returns>
     internal static SqlTypeAttribute? GetSqlTypeAttribute(PropertyInfo propertyInfo) =>
        propertyInfo
         .GetCustomAttributes(inherit: true)
