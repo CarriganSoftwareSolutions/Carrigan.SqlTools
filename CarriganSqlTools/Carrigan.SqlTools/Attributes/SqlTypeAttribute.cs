@@ -18,7 +18,6 @@ public abstract class SqlTypeAttribute : Attribute
     protected SqlTypeAttribute(SqlTypeDefinition sqlTypeDefinition) =>
         SqlTypeDefinition = sqlTypeDefinition;
 
-    //TODO: unit tests
     /// <summary>
     /// Retrieves the first attribute applied to the specified property that
     /// inherits from <see cref="SqlTypeAttribute"/>.
