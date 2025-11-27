@@ -5,8 +5,8 @@ using System.Data;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
-//TODO: Documentation and unit tests, code review
-public class SqlTypeMismatchException : Exception
+//TODO: Documentation and unit tests
+public sealed class SqlTypeMismatchException : Exception
 {
     private static readonly ReadOnlyDictionary<Type, ImmutableArray<Type>> AllowedAttributes;
     private static readonly ReadOnlyDictionary<Type, ImmutableArray<SqlDbType>> AllowedSqlDbTypes;
@@ -99,14 +99,14 @@ public class SqlTypeMismatchException : Exception
     {
         static bool TestTheType(Type propertyType, SqlDbType sqlDbType)
         {
-            if (AllowedSqlDbTypes.ContainsKey(propertyType) is false)
-                return false;
+            if (AllowedSqlDbTypes.TryGetValue(propertyType, out ImmutableArray<SqlDbType> allowedSqlDbTypes))
+                return allowedSqlDbTypes.Contains(sqlDbType);
             else
-                return AllowedSqlDbTypes[propertyType].Contains(sqlDbType);
+                return false;
         }
 
         Type propertyType;
-        if (sqlDbType == SqlDbType.Variant)
+        if (sqlDbType == SqlDbType.Variant || value is null)
             return null;
         else
         {
