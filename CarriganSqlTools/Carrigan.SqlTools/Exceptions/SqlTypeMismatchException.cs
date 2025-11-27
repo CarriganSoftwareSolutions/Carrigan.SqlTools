@@ -5,12 +5,26 @@ using System.Data;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
-//TODO: Documentation and unit tests
+
+/// <summary>
+/// This exception is thrown when the SQL  Type associated with a property uses an inherently incompatible type for the model.
+/// </summary>
 public sealed class SqlTypeMismatchException : Exception
 {
+    /// <summary>
+    /// Represents the allowed attributes for a a given code type.
+    /// </summary>
     private static readonly ReadOnlyDictionary<Type, ImmutableArray<Type>> AllowedAttributes;
+
+    /// <summary>
+    /// Represents the SQL types allowed to be associated with a given code type.
+    /// </summary>
     private static readonly ReadOnlyDictionary<Type, ImmutableArray<SqlDbType>> AllowedSqlDbTypes;
 
+
+    /// <summary>
+    /// Static constructor for assigning the values to <see cref="AllowedAttributes"/> and <see cref="AllowedSqlDbTypes"/>
+    /// </summary>
     static SqlTypeMismatchException()
     {
         Dictionary<Type, ImmutableArray<Type>> attributeTypes = new
@@ -63,15 +77,31 @@ public sealed class SqlTypeMismatchException : Exception
         AllowedSqlDbTypes = new(sqlDbTypes);
     }
 
+    /// <summary>
+    /// Private constructor that sets the error message for a sql type attribute mismatch.
+    /// </summary>
+    /// <param name="propertyInfo">Property Info</param>
+    /// <param name="attributeMappingType"> the mismatched attribute mapped to the property</param>
     private SqlTypeMismatchException(PropertyInfo propertyInfo, Type attributeMappingType) : base
         ($"Sql Type Attribute Mismatch: Property '{propertyInfo.Name}' with C# type '{propertyInfo.PropertyType.Name}' is inherently incompatible with attribute '{attributeMappingType.Name}'.")
     { }
 
-    private SqlTypeMismatchException(Type propertyType, SqlDbType sqlDbType) : base
-        ($"Sql Type Attribute Mismatch: C# type '{propertyType.Name}' is inherently incompatible with SQL type '{sqlDbType}'.")
+    /// <summary>
+    /// Private constructor that sets the error message for a <see cref="SqlDbType"/> mismatch.
+    /// </summary>
+    /// <param name="type">the code Type</param>
+    /// <param name="attributeMappingType"> the mismatched <see cref="SqlDbType"/></param>
+    private SqlTypeMismatchException(Type type, SqlDbType sqlDbType) : base
+        ($"Sql Type Attribute Mismatch: C# type '{type.Name}' is inherently incompatible with SQL type '{sqlDbType}'.")
 
     { }
 
+    /// <summary>
+    /// static method uses to test a property and its associated attribute that inherits from <see cref="SqlTypeAttribute"/>
+    /// </summary>
+    /// <param name="propertyInfo">Property Info</param>
+    /// <param name="attributeMappingType"> the attribute mapped to the property</param>
+    /// <returns>returns null if there is no mismatch, returns an exception if there is a type mismatch.</returns>
     public static SqlTypeMismatchException? Validate(PropertyInfo propertyInfo, SqlTypeAttribute? sqlTypeAttribute)
     {
         static bool TestTheType(Type propertyType, Type attributeMappingType)
@@ -95,6 +125,15 @@ public sealed class SqlTypeMismatchException : Exception
         }
     }
 
+    /// <summary>
+    /// static method uses to test a a value and its associated <see cref="SqlDbType"/>.
+    /// </summary>
+    /// <remarks>
+    ///This is used for validating parameter values with an <see cref="SqlDbType"/>.
+    /// </remarks>
+    /// <param name="value">a value</param>
+    /// <param name="sqlDbType">a <see cref="SqlDbType"/></param>
+    /// <returns></returns>
     public static SqlTypeMismatchException? Validate(object value, SqlDbType sqlDbType)
     {
         static bool TestTheType(Type propertyType, SqlDbType sqlDbType)
