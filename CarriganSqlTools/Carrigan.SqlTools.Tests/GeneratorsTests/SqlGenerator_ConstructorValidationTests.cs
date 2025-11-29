@@ -9,6 +9,7 @@ using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Aliases;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Ambiguous;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Columns;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Parameters;
+using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.SqlTypes;
 using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Table;
 using Carrigan.SqlTools.Tests.TestEntities.NotExceptional;
 
@@ -178,4 +179,25 @@ public class SqlGenerator_ConstructorValidationTests
                 .Append<AmbiguousRight>(nameof(AmbiguousRight.Id));
         Assert.Throws<AmbiguousResultColumnException> (() => _ = sqlGenerator.Select(selects, joins, null, null, null));
     }
+
+    [Fact]
+    public void SqlTypeMismatch_SingleInvalidAttribute_Exception() =>
+        Assert.Throws<SqlTypeMismatchException>(() => _ = new SqlGenerator<SqlTypeMismatchAttributeEntity>());
+
+    [Fact]
+    public void SqlTypeMismatch_MultipleInvalidAttributes_Exception()
+    {
+        AggregateException ex =
+            Assert.Throws<AggregateException>
+            (
+                () => _ = new SqlGenerator<SqlTypeMismatchMultipleAttributesEntity>()
+            );
+
+        IEnumerable<SqlTypeMismatchException> mismatches =
+            ex.InnerExceptions.OfType<SqlTypeMismatchException>();
+
+        Assert.NotEmpty(mismatches);
+        Assert.True(mismatches.Count() >= 2);
+    }
+
 }

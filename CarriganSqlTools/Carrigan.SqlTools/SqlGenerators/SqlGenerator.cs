@@ -35,37 +35,27 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     private readonly IEncryption? _Encryption;
 
     /// <summary>
-    /// Validates identifier formats and (if applicable) encryption prerequisites for the model.
+    /// Validates identifier formats, SQL type compatibility, and encryption prerequisites for the model.
     /// </summary>
     /// <exception cref="AggregateException">
-    /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
-    /// </exception>
-    /// <exception cref="InvalidSqlIdentifierException">
-    /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
-    /// </exception>
-    /// <exception cref="EncrypterNotProvidedException{T}">
-    /// if encrypted columns exist but no encrypter was supplied
-    /// </exception>
-    /// <exception cref="NoKeyVersionPropertyException{T}">
-    /// if encrypted columns exist but no key-version property was designated.
-    /// </exception>
-    /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
-    /// if the key-version property is not an <see cref="int"/> (nullable allowed).
-    /// </exception>
-    /// <exception cref="MultipleKeyVersionProperties{T}">
-    /// if more than one key-version property is present.
+    /// Contains multiple exceptions when more than one validation error is detected. Possible inner exceptions include
+    /// <see cref="InvalidSqlIdentifierException"/>, 
+    /// <see cref="SqlTypeMismatchException"/>,
+    /// <see cref="EncrypterNotProvidedException{T}"/>, 
+    /// <see cref="NoKeyVersionPropertyException{T}"/>,
+    /// <see cref="InvalidKeyVersionPropertyTypeException{T}"/>, and 
+    /// <see cref="MultipleKeyVersionProperties{T}"/>.
     /// </exception>
     private void ValidationChecks()
     {
         List<Exception> exceptions = [];
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
-        IEnumerable<Tuple<PropertyInfo, SqlTypeAttribute?>> sqlTypeAttributes = [];
         IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
         IEnumerable<Tuple<PropertyInfo, ParameterTag>> invalidParameters = [];
 
         if (SqlIdentifierPattern.Fails(TableName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, TableName));
-        if (SchemaName is not null && SqlIdentifierPattern.Fails(TableName))
+        if (SchemaName is not null && SqlIdentifierPattern.Fails(SchemaName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, SchemaName));
         if (SqlIdentifierPattern.Fails(ProcedureName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, ProcedureName));
