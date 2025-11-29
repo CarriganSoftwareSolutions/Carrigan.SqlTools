@@ -67,7 +67,6 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         if (invalidColumns.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
 
-        //TODO: unit tests
         ColumnInfo
             .Select(column => new Tuple<PropertyInfo, SqlTypeAttribute?>(column.PropertyInfo, SqlTypeAttribute.GetSqlTypeAttribute(column.PropertyInfo)))
             .Select(tuple => SqlTypeMismatchException.Validate(tuple.Item1, tuple.Item2))
