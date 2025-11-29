@@ -39,7 +39,15 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly ColumnName ColumnName;
 
-    //TODO: Documentation
+    //TODO: Proof read documentation, Unit tests
+    /// <summary>
+    /// The <see cref="SqlTypeDefinition"/> derived from the property. 
+    /// If a <see cref="SqlTypeDefinition"/> was not overridden with 
+    /// one of the attributes derived from <see cref="SqlTypeAttribute"/> 
+    /// then a default value will be used based on the type of the property.
+    /// This defines the <see cref="SqlTypeDefinition"/> to use for Parameters
+    /// and returning a table of values back from <see cref="SqlGenerators.SqlGenerator{T}.InsertAutoId(T)"/>
+    /// </summary>
     internal readonly SqlTypeDefinition SqlType;
 
     /// <summary>
