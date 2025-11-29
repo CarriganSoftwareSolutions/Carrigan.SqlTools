@@ -93,7 +93,6 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
             throw new InvalidParameterIdentifierException(ToString());
     }
 
-    //TODO: Proof read documentation, unit test
     /// <summary>
     /// Deeper copy constructor for the parameter tag.
     /// </summary>
