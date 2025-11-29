@@ -39,7 +39,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly ColumnName ColumnName;
 
-    //TODO: Unit tests
     /// <summary>
     /// Represents the <see cref="SqlTypeDefinition"/> associated with this property.
     /// </summary>
