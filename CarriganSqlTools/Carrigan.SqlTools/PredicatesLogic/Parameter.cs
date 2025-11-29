@@ -71,7 +71,6 @@ public class Parameter : Predicates
     public Parameter(string parameter, object? value, SqlTypeDefinition? sqlType = null)
     {
         SqlTypeDefinition sqlTypeDefinition = sqlType ?? new(value);
-        //TODO: unit test logic to ensure custom sql db types are not incompatible with the actual property info type.
         SqlTypeMismatchException? exception = null;
         if(value is not null)
         {

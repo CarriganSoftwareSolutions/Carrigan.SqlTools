@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
-public class ParameterValuesTests
+public class ParameterTests
 {
     [Theory]
     [InlineData("@")]
@@ -193,5 +193,75 @@ public class ParameterValuesTests
         actualChar = (char)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_1_1_L_Test").Single().Value!;
         expectedChar = 'B';
         Assert.Equal(actualChar, expectedChar);
+    }
+
+    [Fact]
+    public void Constructor_ExplicitSqlType_Compatible()
+    {
+        string parameterName = "IntValue";
+        int value = 1;
+        SqlTypeDefinition sqlTypeDefinition = SqlTypeDefinition.AsInt();
+
+        Parameter parameter = new(parameterName, value, sqlTypeDefinition);
+
+        Assert.Equal(parameterName, parameter.Name);
+        Assert.Equal(value, parameter.Value);
+    }
+
+    [Fact]
+    public void Constructor_ExplicitSqlType_Incompatible_Exception()
+    {
+        string parameterName = "IntValue";
+        string value = "NotAnInt";
+        SqlTypeDefinition sqlTypeDefinition = SqlTypeDefinition.AsInt();
+
+        Assert.Throws<SqlTypeMismatchException>
+        (
+            () => new Parameter(parameterName, value, sqlTypeDefinition)
+        );
+    }
+
+    [Fact]
+    public void Constructor_ExplicitSqlType_DoubleNotInt_Exception()
+    {
+        string parameterName = "IntValue";
+        double value = double.Pi;
+        SqlTypeDefinition sqlTypeDefinition = SqlTypeDefinition.AsInt();
+
+        Assert.Throws<SqlTypeMismatchException>
+        (
+            () => new Parameter(parameterName, value, sqlTypeDefinition)
+        );
+    }
+
+    [Fact]
+    public void Constructor_ExplicitSqlType_NullValue()
+    {
+        string parameterName = "IntValue";
+        object? value = null;
+        SqlTypeDefinition sqlTypeDefinition = SqlTypeDefinition.AsInt();
+
+        Parameter parameter = new(parameterName, value, sqlTypeDefinition);
+
+        Assert.Equal(parameterName, parameter.Name);
+        Assert.Null(parameter.Value);
+    }
+
+    [Fact]
+    public void GetParameters_NullValue()
+    {
+        string parameterName = "Name";
+        object? value = null;
+
+        Parameter parameter = new(parameterName, value);
+
+        KeyValuePair<ParameterTag, object> singleParameter =
+            parameter.GetParameters().Single();
+
+        string expectedKey = "@Parameter_Name";
+        object expectedValue = DBNull.Value;
+
+        Assert.Equal(expectedKey, singleParameter.Key);
+        Assert.Equal(expectedValue, singleParameter.Value);
     }
 }
