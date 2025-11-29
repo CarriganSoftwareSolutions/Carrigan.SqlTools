@@ -5,7 +5,7 @@ using System.Data;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Exceptions;
-//TODO: Unit Tests
+
 /// <summary>
 /// Represents an error that occurs when the SQL type associated with a property/value
 /// is inherently incompatible with the corresponding CLR type.
