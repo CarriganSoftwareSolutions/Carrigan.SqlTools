@@ -6,7 +6,7 @@
 - Use **expression-bodied members** when possible.
 - **Never use `var`** unless absolutely necessary.
 - Use **file-scoped namespaces**.
-- Never use **block (“flower boxing”) comments**.
+- Never use **block (“flower boxing”) comments**. If you must, use regions instead.
 - Use **variables with full, unambiguous names**.
   - **Exception:** Data types may be used as variable names when referencing the datatype itself  
     *Example: `GetInt`*.
