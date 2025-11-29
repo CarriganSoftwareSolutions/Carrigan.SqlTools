@@ -1,6 +1,7 @@
 ﻿
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 using System.Data;
 using System.Reflection;
 
@@ -333,5 +334,57 @@ public class ParameterTagTests
         int compare = a.CompareTo(b);
 
         Assert.Equal(0, compare);
+    }
+
+
+    [Fact]
+    public void GetParameter_Value_SetsSqlTypeOnClone()
+    {
+        ParameterTag original = new(null, "IntParameter", null, null);
+
+        KeyValuePair<ParameterTag, object> result = original.GetParameter(42);
+
+        // Original should remain without a SqlType
+        Assert.Null(original.SqlType);
+
+        // Returned key should be a different instance with a non-null SqlType
+        Assert.NotSame(original, result.Key);
+        Assert.NotNull(result.Key.SqlType);
+        Assert.Equal(SqlDbType.Int, result.Key.SqlType.Type);
+        Assert.Equal(42, result.Value);
+    }
+
+    [Fact]
+    public void GetParameter_ValueNullUsesDBNullAndKeepsSqlTypeNull()
+    {
+        ParameterTag tag = new(null, "ParameterName", null, null);
+
+        KeyValuePair<ParameterTag, object> result = tag.GetParameter(null);
+
+        // Uses DBNull.Value for the parameter value
+        Assert.Same(DBNull.Value, result.Value);
+
+        Assert.Equal(tag, result.Key);
+
+        Assert.NotNull(result.Key.SqlType);
+        Assert.Equal(SqlDbType.Variant, result.Key.SqlType.Type);
+    }
+
+    [Fact]
+    public void GetParameter_Value_DoesNotChangeExistingSqlTypeOnOriginal()
+    {
+        SqlTypeDefinition presetType = SqlTypeDefinition.AsInt();
+        ParameterTag original = new(null, "IntParameter", null, presetType);
+
+        KeyValuePair<ParameterTag, object> result = original.GetParameter(123);
+
+        // Original should keep its preset type
+        Assert.Same(presetType, original.SqlType);
+
+        // Clone should also carry the same SqlTypeDefinition instance
+        Assert.Same(presetType, result.Key.SqlType);
+        Assert.Equal(123, result.Value);
+        Assert.NotNull(result.Key.SqlType);
+        Assert.Equal(SqlDbType.Int, result.Key.SqlType.Type);
     }
 }

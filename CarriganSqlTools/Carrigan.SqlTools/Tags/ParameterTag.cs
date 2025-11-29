@@ -7,28 +7,22 @@ using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Types;
 using System.Data;
 
-//TODO: update documentation around SQL DB Type
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
 /// Represents a SQL parameter identifier, or “tag,” used in query generation.
 /// A parameter tag can optionally include a prefix and/or an index, and is rendered
-/// as a single string with parts joined by underscores (e.g., <c>Prefix_Column_Index</c>).
+/// as a single string with parts joined by underscores (for example, <c>Prefix_Column_Index</c>).
 /// </summary>
 /// <remarks>
-/// Implements <see cref="IComparable{T}"/>, <see cref="IEquatable{T}"/>, and
-/// <see cref="IEqualityComparer{T}"/> to support sorting, equality checks,
-/// and hashed collections. Parameter names may be provided explicitly (e.g., via
-/// <see cref="ParameterAttribute"/>) or derived from property/column names.
-/// </remarks>
-/// This class implements <see cref="IComparable{ParameterTag}"/>, <see cref="IEquatable{ParameterTag}"/>,
-/// and <see cref="IEqualityComparer{ParameterTag}"/> to support sorting, equality checks,
-/// and use in collections that rely on hashing.
+/// This class implements <see cref="IComparable{T}"/>, <see cref="IEquatable{T}"/>,
+/// and <see cref="IEqualityComparer{T}"/> to support sorting, equality checks,
+/// and use in collections that rely on hashing. Parameter names may be provided
+/// explicitly (for example, via <see cref="ParameterAttribute"/>), or derived from
+/// property and column names.
 /// </remarks>
 /// <example>
-/// <para>
-///  Using Parameter Example
-/// </para>
+/// <para>Example usage with a parameter attribute:</para>
 /// <code language="csharp"><![CDATA[
 /// using Carrigan.SqlTools.SqlGenerators;
 /// 
@@ -45,28 +39,35 @@ namespace Carrigan.SqlTools.Tags;
 /// {
 ///     ValueColumn = "DangIt"
 /// };
+/// 
 /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// [schema].[UpdateThing]
 /// ]]></code>
 /// </example>
 public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>, IEqualityComparer<ParameterTag>
 {
     /// <summary>
-    /// The base (core) parameter name. Must not be <c>null</c>, empty, or whitespace.
+    /// The base (core) parameter name. This value must not be <c>null</c>, empty, or whitespace.
     /// </summary>
     private readonly string _parameterBaseName;
+
     /// <summary>
     /// Optional prefix to prepend to the parameter name.
     /// </summary>
     private readonly string? _prefix;
+
     /// <summary>
-    /// Optional index to append to the parameter name.
+    /// Optional prefix to prepend to the parameter name.
     /// </summary>
     private readonly string? _index;
 
+    /// <summary>
+    /// Represents the SQL type definition associated with this parameter, when known.
+    /// </summary>
+    /// <remarks>
+    /// This value may be inferred from a runtime value or copied from the owning
+    /// <see cref="ColumnInfo"/>. It is used when materializing <see cref="IDbDataParameter"/>
+    /// instances for the generated SQL.
+    /// </remarks>
     public SqlTypeDefinition? SqlType { get; private set; }
 
     /// <summary>
@@ -81,7 +82,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     internal ParameterTag(string? prefix, string parameterName, string? index, SqlTypeDefinition? sqlType)
     {
         if (SqlParameterPattern.Fails(parameterName))
-            throw new InvalidParameterIdentifierException(ToString()); 
+            throw new InvalidParameterIdentifierException(parameterName);
 
         _parameterBaseName = parameterName;
         _prefix = prefix;
@@ -89,11 +90,15 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
         SqlType = sqlType;
 
         if (SqlParameterPattern.Fails(ToString()))
-            throw new InvalidParameterIdentifierException(ToString()); 
+            throw new InvalidParameterIdentifierException(ToString());
     }
 
-
-    internal ParameterTag(ParameterTag parameter)
+    //TODO: Proof read documentation, unit test
+    /// <summary>
+    /// Deeper copy constructor for the parameter tag.
+    /// </summary>
+    /// <param name="parameter"></param>
+    private ParameterTag(ParameterTag parameter)
     {
         _parameterBaseName = parameter._parameterBaseName;
         _prefix = parameter._prefix;
@@ -101,22 +106,57 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
         SqlType = parameter.SqlType;
     }
 
+    /// <summary>
+    /// Creates a parameter key–value pair for the supplied value.
+    /// </summary>
+    /// <param name="value">The runtime value to bind to this parameter.</param>
+    /// <returns>
+    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose key is a cloned
+    /// <see cref="ParameterTag"/> with an inferred <see cref="SqlType"/> (when
+    /// <paramref name="value"/> is not <c>null</c>), and whose value is the
+    /// supplied value or <see cref="DBNull.Value"/>.
+    /// </returns>
     internal KeyValuePair<ParameterTag, object> GetParameter(object? value)
     {
         ParameterTag parameterTag = new(this);
         parameterTag.SqlType ??= new(value);
-        return new(this, value ?? DBNull.Value);
+        return new(parameterTag, value ?? DBNull.Value);
     }
 
+    /// <summary>
+    /// Creates a parameter key–value pair for the supplied entity and column.
+    /// </summary>
+    /// <typeparam name="T">The entity type.</typeparam>
+    /// <param name="column">
+    /// The <see cref="ColumnInfo"/> used to locate the property and supply its <see cref="SqlTypeDefinition"/>.
+    /// </param>
+    /// <param name="entity">The entity instance to read the value from.</param>
+    /// <returns>
+    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose key is a cloned
+    /// <see cref="ParameterTag"/> configured with <paramref name="column"/>'s
+    /// <see cref="ColumnInfo.SqlType"/>, and whose value is the property value
+    /// or <see cref="DBNull.Value"/>.
+    /// </returns>
     internal KeyValuePair<ParameterTag, object> GetParameter<T>(ColumnInfo column, T entity)
     {
         ParameterTag parameterTag = new(this);
         object? value = column.PropertyInfo.GetValue(entity);
 
         parameterTag.SqlType ??= column?.SqlType;
-        return new(this, value ?? DBNull.Value);
+        return new(parameterTag, value ?? DBNull.Value);
     }
 
+    /// <summary>
+    /// Creates a parameter key–value pair using an encrypted value for the given entity and column.
+    /// </summary>
+    /// <typeparam name="T">The entity type.</typeparam>
+    /// <param name="encryption">The encryption service, or <c>null</c> to skip encryption.</param>
+    /// <param name="column">Column metadata used to locate the property and SQL type.</param>
+    /// <param name="entity">The entity instance providing the value.</param>
+    /// <returns>
+    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose value is the encrypted string
+    /// (or <c>null</c>/<see cref="DBNull.Value"/> when no encryption or value is available).
+    /// </returns>
     internal KeyValuePair<ParameterTag, object> GetParameter<T>(IEncryption? encryption, ColumnInfo column, T entity) =>
         GetParameter(encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
 
