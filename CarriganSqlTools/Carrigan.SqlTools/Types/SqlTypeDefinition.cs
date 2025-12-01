@@ -25,6 +25,9 @@ public class SqlTypeDefinition
     /// </summary>
     public byte? Scale { get; init; } = null;
 
+    /// <summary>
+    /// For VarChar, NVarChar and VarBinary: sets the item to MAX
+    /// </summary>
     public bool UseMax { get; init; } = false;
 
     /// <summary>
@@ -32,17 +35,27 @@ public class SqlTypeDefinition
     /// </summary>
     public string TypeDeclaration { get; init; } = string.Empty;
 
-
+    /// <summary>
+    /// Defualt constructor
+    /// </summary>
     private SqlTypeDefinition()
     {
     }
 
+    /// <summary>
+    /// Constructor gets SQL DB Type from an object's value's type.
+    /// </summary>
+    /// <param name="value">the value to use to determine the type</param>
     public SqlTypeDefinition(object? value)
     {
         Type = SqlTypeCache.GetSqlDbTypeFromValue(value);
         TypeDeclaration = ToSql(Type);
     }
 
+    /// <summary>
+    /// Constructor gets default SQL Type for a CLR type.
+    /// </summary>
+    /// <param name="value">the clr type to use to determine the sql type</param>
     public SqlTypeDefinition(Type type)
     {
         Type = SqlTypeCache.GetSqlDbType(type);
@@ -50,28 +63,67 @@ public class SqlTypeDefinition
     }
 
     #region helper methods
+    /// <summary>
+    /// Test's a range and throw an exception if needed. 
+    /// </summary>
+    /// <param name="type">The SqlDbType is used to create the exception message only.</param>
+    /// <param name="name">The parameter name is used to create the exception message only.</param>
+    /// <param name="value">the value to test</param>
+    /// <param name="min">the min range</param>
+    /// <param name="max">the max range</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException"></exception>
     private static void EnsureRange(SqlDbType type, string name, int value, int min, int max)
     {
         if (value < min || value > max)
             throw new SqlTypeArgumentOutOfRangeException(type, name, value, min, max);
     }
+    /// <summary>
+    /// Test's a range and throw an exception if needed. 
+    /// </summary>
+    /// <remarks>
+    /// Min is assumed to be 0
+    /// </remarks>
+    /// <param name="type">The SqlDbType is used to create the exception message only.</param>
+    /// <param name="name">The parameter name is used to create the exception message only.</param>
+    /// <param name="value">the value to test</param>
+    /// <param name="max">the max range</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException"></exception>
     private static void EnsureRange(SqlDbType type, string name, byte value, byte max)
     {
         if (value > max)
             throw new SqlTypeArgumentOutOfRangeException(type, name, value, 0, max);
     }
 
+    /// <summary>
+    /// Helper method to uniformly set SQL types that have a size.
+    /// </summary>
+    /// <param name="type">The SqlDbType</param>
+    /// <param name="size">the size</param>
+    /// <param name="min">the min range</param>
+    /// <param name="max">the max range</param>
+    /// <returns>SqlTypeDefinition</returns>
     private static SqlTypeDefinition WithSize(SqlDbType type, int? size, int min, int max)
     {
         if (size is not null) EnsureRange(type, nameof(size), size.Value, min, max);
         return new() { Type = type, Size = size, TypeDeclaration = size is null ? ToSql(type) : $"{ToSql(type)}({size})" };
     }
 
+    /// <summary>
+    /// Helper method to uniformly set SQL types with no arguments.
+    /// </summary>
+    /// <param name="type">The SqlDbType</param>
+    /// <returns>SqlTypeDefinition</returns>
     private static SqlTypeDefinition ByType(SqlDbType type) => new ()
     {
         Type = type,
         TypeDeclaration = ToSql(type)
     };
+
+    /// <summary>
+    /// Helper method to uniformly set SQL types as Max.
+    /// </summary>
+    /// <param name="type">The SqlDbType</param>
+    /// <returns>SqlTypeDefinition</returns>
     private static SqlTypeDefinition AsMax(SqlDbType type) => new()
     {
         Type = type,
@@ -81,35 +133,80 @@ public class SqlTypeDefinition
     #endregion
 
     #region UniqueIdentifier
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.UniqueIdentifier">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsUniqueIdentifier() =>
         ByType(SqlDbType.UniqueIdentifier);
     #endregion
 
     #region Chars
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Char">
+    /// </summary>
+    /// <param name="size">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsChar(int? size = null) =>
         WithSize(SqlDbType.Char, size, 1, 8000);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.NChar">
+    /// </summary>
+    /// <param name="size">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsNChar(int? size = null) =>
         WithSize(SqlDbType.NChar, size, 1, 4000);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.VarChar">
+    /// </summary>
+    /// <param name="size">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsVarChar(int? size = null) =>
         WithSize(SqlDbType.VarChar, size, 1, 8000);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.NVarChar">
+    /// </summary>
+    /// <param name="size">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsNVarChar(int? size = null) =>
         WithSize(SqlDbType.NVarChar, size, 1, 4000);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.AsVarChar"> with <c>MAX</c>
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsVarCharMax() =>
         AsMax(SqlDbType.VarChar);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.NVarChar"> with  <c>MAX</c>
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsNVarCharMax() =>
         AsMax(SqlDbType.NVarChar);
 
-    //Note:Text is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
+
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Text">
+    /// </summary>
+    /// <remarks>
+    /// Text is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
+    /// </remarks>
+    /// <returns></returns>
     public static SqlTypeDefinition AsText() =>
         ByType(SqlDbType.Text);
 
-    //Note:NText is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.NText">
+    /// </summary>
+    /// <remarks>
+    /// NText is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
+    /// </remarks>
+    /// <returns></returns>
     public static SqlTypeDefinition AsNText() =>
         ByType(SqlDbType.NText);
 
@@ -117,44 +214,93 @@ public class SqlTypeDefinition
 
     #region Binary
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Binary">
+    /// </summary>
+    /// <param name="size">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsBinary(int? size = null) =>
         WithSize(SqlDbType.Binary, size, 1, 8000);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.VarBinary">
+    /// </summary>
+    /// <param name="size">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsVarBinary(int? size = null) =>
         WithSize(SqlDbType.VarBinary, size, 1, 8000);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.VarBinary"> with  <c>MAX</c>
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsVarBinaryMax() =>
         AsMax(SqlDbType.VarBinary);
 
-    //Note:Image is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.NText">
+    /// </summary>
+    /// <remarks>
+    /// Image is obsolete, but preserved for legacy databases. ObsoleteAttribute is intentionally not used here.
+    /// </remarks>
+    /// <returns></returns>
     public static SqlTypeDefinition AsImage() =>
         ByType(SqlDbType.Image);
     #endregion
 
     #region Bit
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Bit">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsBit() =>
         ByType(SqlDbType.Bit);
     #endregion
 
     #region Integers
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.TinyInt">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsTinyInt() =>
         ByType(SqlDbType.TinyInt);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.SmallInt">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsSmallInt() =>
         ByType(SqlDbType.SmallInt);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Int">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsInt() =>
         ByType(SqlDbType.Int);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.BigInt">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsBigInt() =>
         ByType(SqlDbType.BigInt);
     #endregion
 
     #region Floating Point
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Real">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsReal() =>
         ByType(SqlDbType.Real);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Float">
+    /// </summary>
+    /// <param name="precision">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsFloat(byte? precision = null)
     {
         SqlDbType type = SqlDbType.Float;
@@ -170,9 +316,18 @@ public class SqlTypeDefinition
     #endregion
 
     #region decimal point
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Decimal">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsDecimal() =>
         ByType(SqlDbType.Decimal);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Decimal">
+    /// </summary>
+    /// <param name="precision">size</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsDecimal(byte precision)
     {
         SqlDbType type = SqlDbType.Decimal;
@@ -187,6 +342,12 @@ public class SqlTypeDefinition
         };
     }
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Decimal">
+    /// </summary>
+    /// <param name="precision">size</param>
+    /// <param name="scale">scale</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsDecimal(byte precision, byte scale)
     {
         SqlDbType type = SqlDbType.Decimal;
@@ -204,14 +365,27 @@ public class SqlTypeDefinition
         };
     }
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Money">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsMoney() =>
         ByType(SqlDbType.Money);
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.SmallMoney">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsSmallMoney() =>
         ByType(SqlDbType.SmallMoney);
     #endregion
 
     #region DateTime
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.DateTime2">
+    /// </summary>
+    /// <param name="scale">fractionalSecondPrecision</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsDateTime2(byte? fractionalSecondPrecision = null)
     {
         SqlDbType type = SqlDbType.DateTime2;
@@ -227,6 +401,11 @@ public class SqlTypeDefinition
         };
     }
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.DateTimeOffset">
+    /// </summary>
+    /// <param name="scale">fractionalSecondPrecision</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsDateTimeOffset(byte? fractionalSecondPrecision = null)
     {
         SqlDbType type = SqlDbType.DateTimeOffset;
@@ -242,15 +421,32 @@ public class SqlTypeDefinition
         };
     }
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.DateTime">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsDateTime() =>
         ByType(SqlDbType.DateTime);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.SmallDateTime">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsSmallDateTime() =>
         ByType(SqlDbType.SmallDateTime);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Date">
+    /// </summary>
+    /// <returns></returns>
     public static SqlTypeDefinition AsDate() =>
         ByType(SqlDbType.Date);
 
+    /// <summary>
+    /// Creates and returns SqlTypeDefinition to represent <see cref="SqlDbType.Time">
+    /// </summary>
+    /// <param name="scale">fractionalSecondPrecision</param>
+    /// <returns></returns>
     public static SqlTypeDefinition AsTime(byte? fractionalSecondPrecision = null)
     {
         SqlDbType type = SqlDbType.Time;
