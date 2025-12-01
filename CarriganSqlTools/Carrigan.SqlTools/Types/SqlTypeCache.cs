@@ -138,8 +138,21 @@ public static class SqlTypeCache
         _cache = new ReadOnlyDictionary<Type, SqlDbType>(new Dictionary<Type, SqlDbType>(keyValuePairs));
     }
 
+    /// <summary>
+    /// Returns all supported C# Types.
+    /// </summary>
+    /// <returns>
+    /// all supported C# Types.
+    /// </returns>
     internal static IEnumerable<Type> GetAllCSharpTypes() => 
         _cache.Keys;
+
+    /// <summary>
+    /// Returns all supported SqlDbTypes
+    /// </summary>
+    /// <returns>
+    /// Returns all supported SqlDbTypes
+    /// </returns>
     internal static IEnumerable<SqlDbType> GetAllSqlTypes() =>
         _cache.Values;
 }
