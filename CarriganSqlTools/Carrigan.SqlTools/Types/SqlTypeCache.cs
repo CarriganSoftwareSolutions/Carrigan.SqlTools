@@ -3,7 +3,6 @@ using System.Data;
 using System.Data.SqlClient;
 
 //TODO: added type mappings documentation to the readme.md file.
-//TODO: unit tests
 
 // WHEN ADDING NEW TYPES TO THIS SELECTION,
 // be sure to add them to the following places as well:
