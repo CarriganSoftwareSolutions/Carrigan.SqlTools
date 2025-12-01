@@ -6,11 +6,16 @@ using System.Data.SqlClient;
 
 //WHEN ADDING NEW TYPES TO THIS SELECTION,
 //be sure to add them to the following places as well:
+// - Carrigan.SqlTools.Exceptions SqlTypeMismatchException
 // - Carrigan.SqlTools.ReflectorCache SqlTypeNameCache's SqlTypeNameCache Constructor
 // - Carrigan.SqlTools.IntegrationTests FieldsRoundTripTests datasets
 // - Carrigan.SqlTools.IntegrationTests.Models FieldsModel's properties.
 // - Carrigan.SqlTools.IntegrationTests.Models FieldsModel's CreateTableSql property.
 // - Carrigan.SqlTools.Tests.InvocationTests.TypeTests Classes
+//Also consider if the type should require additions or edits to the derived classes for
+// -Carrigan.SqlTools.Attributes.SqlTypeAttribute
+//As well as the corresponding locations in 
+// - Carrigan.SqlTools.Analyzers
 
 namespace Carrigan.SqlTools.Types;
 //TODO: Proof read documentation, unit tests
