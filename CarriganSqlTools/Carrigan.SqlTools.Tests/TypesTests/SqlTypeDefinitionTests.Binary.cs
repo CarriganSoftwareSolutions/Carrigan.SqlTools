@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Types;
-using Xunit;
 
 namespace Carrigan.SqlTools.Tests.TypesTests;
 
