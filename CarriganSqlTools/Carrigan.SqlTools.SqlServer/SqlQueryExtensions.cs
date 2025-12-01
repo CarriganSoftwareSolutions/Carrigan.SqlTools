@@ -6,7 +6,11 @@ using Microsoft.Data.SqlClient;
 namespace Carrigan.SqlTools.SqlServer;
 internal static class SqlQueryExtensions
 {
-    //TODO: Documentation
+    /// <summary>
+    /// Converts parameters in an <see cref="SqlQuery"/> to <see cref="IEnumerable{T}"/> of <see cref="SqlParameter"/>
+    /// </summary>
+    /// <param name="query">an SqlQuery</param>
+    /// <returns><see cref="IEnumerable{T}"/> of <see cref="SqlParameter"/> for easy consumption by <see cref="Commands"/> or  <see cref="CommandsAsync"/> </returns>
     internal static IEnumerable<SqlParameter> GetParameterCollection(this SqlQuery query)
     {
         static SqlParameter GetSqlParameter(ParameterTag parameter, object value)
