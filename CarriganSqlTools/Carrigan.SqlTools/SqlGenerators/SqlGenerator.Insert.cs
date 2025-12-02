@@ -142,42 +142,47 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated multi-row <c>INSERT</c> statement.
     /// </returns>
     /// <remarks>
-    /// - When only one entity is provided, unindexed parameter names are emitted.
-    /// - When multiple entities are provided, parameters are suffixed with the row index (e.g., <c>@Name_0</c>).
+    /// - When only one entity is provided, unindexed parameter names are generated.  
+    /// - When multiple entities are provided, parameter names are suffixed with the row index  
+    ///   (e.g., <c>@Name_0</c>).  
+    /// - When generating SQL, only properties that are publicly readable and belong to accessible  
+    ///   types are considered. Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="ArgumentException">
-    /// Thrown if <paramref name="entities"/> is empty.
+    /// Thrown when <paramref name="entities"/> is empty.
     /// </exception>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
-    /// Members not visible outside their defining assembly are ignored.
-    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// IEnumerable<Customer> customers =
-    ///     [
-    ///         new()
-    ///             {
-    ///                 Id = 42,
-    ///                 Name = "Hank",
-    ///                 Email = "Hank@example.com",
-    ///                 Phone = "+1(555)555-5555"
-    ///             },
-    ///             new()
-    ///             {
-    ///                 Id = 732,
-    ///                 Name = "Homer",
-    ///                 Email = "Homer@example.com",
-    ///                 Phone = "+1(555)555-1234"
-    ///             },
-    ///         ];
+    /// [
+    ///     new()
+    ///     {
+    ///         Id = 42,
+    ///         Name = "Hank",
+    ///         Email = "Hank@example.com",
+    ///         Phone = "+1(555)555-5555"
+    ///     },
+    ///     new()
+    ///     {
+    ///         Id = 732,
+    ///         Name = "Homer",
+    ///         Email = "Homer@example.com",
+    ///         Phone = "+1(555)555-1234"
+    ///     },
+    /// ];
+    ///
     /// SqlQuery query = customerGenerator.Insert(customers);
     /// ]]></code>
+    ///
     /// <para>Resulting SQL:</para>
+    ///
     /// <code><![CDATA[
-    /// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) 
-    /// VALUES (@Id_0, @Name_0, @Email_0, @Phone_0), (@Id_1, @Name_1, @Email_1, @Phone_1);
+    /// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone])
+    /// VALUES (@Id_0, @Name_0, @Email_0, @Phone_0),
+    ///        (@Id_1, @Name_1, @Email_1, @Phone_1);
     /// ]]></code>
     /// </example>
+
     public SqlQuery Insert(params IEnumerable<T> entities)
     {
         if (entities.IsNullOrEmpty())
