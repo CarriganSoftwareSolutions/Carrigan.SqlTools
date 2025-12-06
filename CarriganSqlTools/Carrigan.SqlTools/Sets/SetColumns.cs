@@ -3,8 +3,6 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
-//TODO: Missing Documentation
-
 namespace Carrigan.SqlTools.Sets;
 /// <summary>
 /// Represents the SQL <c>SET</c> clause used when generating <c>UPDATE</c> statements.
