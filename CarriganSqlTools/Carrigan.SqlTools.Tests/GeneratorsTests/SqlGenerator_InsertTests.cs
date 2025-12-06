@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using System.Text;
@@ -48,7 +49,7 @@ public class SqlGenerator_InsertTests
             DateOf = new DateTime(2023, 10, 1)
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -66,7 +67,7 @@ public class SqlGenerator_InsertTests
             DateOf = new DateTime(2023, 10, 1)
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -134,7 +135,7 @@ public class SqlGenerator_InsertTests
         };
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -164,7 +165,7 @@ public class SqlGenerator_InsertTests
         };
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
 
         Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "Name").Single().Value); // Name
         Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "When").Single().Value); // When
@@ -179,7 +180,7 @@ public class SqlGenerator_InsertTests
             Description = "Test Description"
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert(entityWithoutTableAttribute);
+        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert(null, entityWithoutTableAttribute);
 
         string expectedSql = "INSERT INTO [EntityWithoutTableAttribute] ([Id], [Description]) VALUES (@Id, @Description);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -199,7 +200,7 @@ public class SqlGenerator_InsertTests
             Description = "2b"
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert([entity1, entity2]);
+        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert(null, [entity1, entity2]);
         string expectedSql = "INSERT INTO [EntityWithoutTableAttribute] ([Id], [Description]) VALUES (@Id_0, @Description_0), (@Id_1, @Description_1);";
         Assert.Equal(expectedSql, query.QueryText);
 
@@ -229,7 +230,7 @@ public class SqlGenerator_InsertTests
             Description = "Test Description"
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithSchema.Insert(entityWithSchema);
+        SqlQuery query = _sqlGeneratorForEntityWithSchema.Insert(null, entityWithSchema);
 
         string expectedSql = "INSERT INTO [myschema].[EntityWithSchema] ([Id], [Description]) VALUES (@Id, @Description);";
 
@@ -249,7 +250,7 @@ public class SqlGenerator_InsertTests
         };
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -268,7 +269,7 @@ public class SqlGenerator_InsertTests
         DateTimeOffset dateTimeOffsetTestValue = SqlTypeEntity.DateTimeOffsetTestValue;
         SqlTypeEntity entity = SqlTypeEntity.GetStandardTestSet();
 
-        SqlQuery query = _sqlGeneratorForSqlTypeEntity.Insert(entity);
+        SqlQuery query = _sqlGeneratorForSqlTypeEntity.Insert(null, entity);
 
         string expectedSql = "INSERT INTO [TestSqlTypes] ([IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [StringValue], [DateTimeValue], [GuidValue], [ByteArrayValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [DateTimeOffsetValue]) VALUES (@IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @StringValue, @DateTimeValue, @GuidValue, @ByteArrayValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -299,7 +300,7 @@ public class SqlGenerator_InsertTests
         DateTimeOffset dateTimeOffsetTestValue = NullableTestEntity.DateTimeOffsetTestValue;
         NullableTestEntity entity = NullableTestEntity.GetStandardTestSet();
 
-        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(entity);
+        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(null, entity);
 
         string expectedSql = "INSERT INTO [NullableTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -330,7 +331,7 @@ public class SqlGenerator_InsertTests
     {
         NullableTestEntity entity = NullableTestEntity.GetNullTestSet();
 
-        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(entity);
+        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(null, entity);
 
         string expectedSql = "INSERT INTO [NullableTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -398,5 +399,86 @@ public class SqlGenerator_InsertTests
         Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
         Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
         Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
+    }
+
+    [Fact]
+    public void Insert_SetColumns()
+    {
+        EntityWithTableAttribute testEntity = new()
+        {
+            Name = "Test Name",
+            DateOf = new DateTime(2023, 10, 1), // Should be ignored
+            When = "Now",
+            Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" } // Should be ignored
+        };
+
+        SetColumns<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
+
+
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, testEntity);
+
+        string expectedSql = "INSERT INTO [Test] ([Id], [Name], [When]) VALUES (@Id, @Name, @When);";
+
+        Assert.Equal(expectedSql, query.QueryText);
+
+        Assert.Equal(3, query.Parameters.Count);
+
+
+        Assert.DoesNotContain("Address", query.QueryText);
+        Assert.DoesNotContain("DateOf", query.QueryText);
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Address");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf");
+    }
+
+    [Fact]
+    public void Insert_MultipleSetColumns()
+    {
+        EntityWithTableAttribute testEntity = new()
+        {
+            Name = "Test Name",
+            DateOf = new DateTime(2023, 10, 1), // Should be ignored
+            When = "Now",
+            Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" } // Should be ignored
+        };
+        EntityWithTableAttribute testEntity2 = new()
+        {
+            Name = "Test Name2",
+            DateOf = new DateTime(2025, 12, 6), // Should be ignored
+            When = "Now",
+            Address = new Address { Street = "123 Fake St", City = "Test City", PostalCode = "37067" } // Should be ignored
+        };
+
+        SetColumns<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
+
+
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, testEntity, testEntity2);
+
+        string expectedSql = "INSERT INTO [Test] ([Id], [Name], [When]) VALUES (@Id_0, @Name_0, @When_0), (@Id_1, @Name_1, @When_1);";
+
+        Assert.Equal(expectedSql, query.QueryText);
+
+        Assert.Equal(6, query.Parameters.Count);
+
+
+        Assert.DoesNotContain("Address_0", query.QueryText);
+        Assert.DoesNotContain("DateOf_0", query.QueryText);
+        Assert.Contains("Id_0", query.QueryText);
+        Assert.Contains("Name_0", query.QueryText);
+        Assert.Contains("When_0", query.QueryText);
+        Assert.DoesNotContain("Address_1", query.QueryText);
+        Assert.DoesNotContain("DateOf_1", query.QueryText);
+        Assert.Contains("Id_1", query.QueryText);
+        Assert.Contains("Name_1", query.QueryText);
+        Assert.Contains("When_1", query.QueryText);
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Address_0");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf_0");
+        Assert.Contains(query.Parameters, param => param.Key == "Id_0");
+        Assert.Contains(query.Parameters, param => param.Key == "When_0");
+        Assert.Contains(query.Parameters, param => param.Key == "Name_0");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Address_1");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf_1");
+        Assert.Contains(query.Parameters, param => param.Key == "Id_1");
+        Assert.Contains(query.Parameters, param => param.Key == "When_1");
+        Assert.Contains(query.Parameters, param => param.Key == "Name_1");
     }
 }

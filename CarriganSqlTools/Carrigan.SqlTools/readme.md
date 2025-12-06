@@ -156,7 +156,7 @@ Customer entity = new()
     Email = "Hank@example.com", 
     Phone = "+1(555)555-5555" 
 };
-SqlQuery query = customerGenerator.Insert(entity);
+SqlQuery query = customerGenerator.Insert(null, entity);
 
 // INSERT INTO [Customer] ([Id], [Name], [Email], [Phone])
 // VALUES (@Id, @Name, @Email, @Phone);

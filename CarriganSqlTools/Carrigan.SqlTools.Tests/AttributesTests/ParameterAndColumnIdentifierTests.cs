@@ -98,7 +98,7 @@ public class ParameterAndColumnIdentifierTests
     [Fact]
     public void InsertTest()
     {
-        SqlQuery query = _tacGenerator.Insert(_tacEntity);
+        SqlQuery query = _tacGenerator.Insert(null, _tacEntity);
         string actual = query.QueryText;
         string expected = "INSERT INTO [SomeSchema].[SomeTable] ([SomeId], [SomeColumn]) VALUES (@SomeIdParameter, @SomeColumnParameter);";
         Assert.Equal(expected, actual);

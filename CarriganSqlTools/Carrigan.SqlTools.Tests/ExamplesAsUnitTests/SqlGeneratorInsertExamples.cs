@@ -61,7 +61,7 @@ public class SqlGeneratorInsertExamples
                     Phone = "+1(555)555-1234"
                 },
             ];
-        SqlQuery query = customerGenerator.Insert(customers);
+        SqlQuery query = customerGenerator.Insert(null, customers);
 
         Assert.Equal("INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) VALUES (@Id_0, @Name_0, @Email_0, @Phone_0), (@Id_1, @Name_1, @Email_1, @Phone_1);", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

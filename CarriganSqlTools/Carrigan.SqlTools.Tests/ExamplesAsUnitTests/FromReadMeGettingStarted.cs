@@ -54,7 +54,7 @@ public class FromReadMeGettingStarted
             Email = "Hank@example.com", 
             Phone = "+1(555)555-5555" 
         };
-        SqlQuery query = customerGenerator.Insert(entity);
+        SqlQuery query = customerGenerator.Insert(null, entity);
 
         Assert.Equal("INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) VALUES (@Id, @Name, @Email, @Phone);", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

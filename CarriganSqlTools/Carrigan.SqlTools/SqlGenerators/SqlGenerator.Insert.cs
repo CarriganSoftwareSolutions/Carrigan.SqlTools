@@ -1,9 +1,10 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Text;
 //IGNORE SPELLING: newid, unindexed
-
+//TODO: Update documentation: add parameters SetColumns<T>? insertColumns and examples
 namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
@@ -46,7 +47,7 @@ public partial class SqlGenerator<T>
     /// <returns>
     /// A SQL string representing the <c>VALUES</c> clause for one row,
     /// for example <c>(@Column1, @Column2)</c>.
-    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, int? i = null) =>
+    private static string EnumeratedInsertValues(SetColumns<T>? insertColumns, IEnumerable<ColumnInfo> columns, int? i = null) =>
         i == null
             ? $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag}"))})"
             : $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag.AddIndex(i.Value.ToString())}"))})";
@@ -65,8 +66,8 @@ public partial class SqlGenerator<T>
     /// A SQL string representing the <c>VALUES</c> clause for all entities,
     /// for example <c>(@Column1_0, @Column2_0), (@Column1_1, @Column2_1)</c>.
     /// </returns>
-    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, params IEnumerable<T> entities) =>
-        $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
+    private static string EnumeratedInsertValues(SetColumns<T>? insertColumns, IEnumerable<ColumnInfo> columns, params IEnumerable<T> entities) =>
+        $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(insertColumns, columns, index)))}";
 
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for the specified entity,
@@ -121,7 +122,7 @@ public partial class SqlGenerator<T>
 
 
             string columns = string.Join(", ", ColumnInfoLessKeys.Select(column => $"[{column.ColumnName}]"));
-            string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfoLessKeys);
+            string values = SqlGenerator<T>.EnumeratedInsertValues(null, ColumnInfoLessKeys);
 
             return new SqlQuery()
             {
@@ -171,7 +172,7 @@ public partial class SqlGenerator<T>
     ///     },
     /// ];
     ///
-    /// SqlQuery query = customerGenerator.Insert(customers);
+    /// SqlQuery query = customerGenerator.Insert(null, customers);
     /// ]]></code>
     ///
     /// <para>Resulting SQL:</para>
@@ -182,8 +183,7 @@ public partial class SqlGenerator<T>
     ///        (@Id_1, @Name_1, @Email_1, @Phone_1);
     /// ]]></code>
     /// </example>
-
-    public SqlQuery Insert(params IEnumerable<T> entities)
+    public SqlQuery Insert(SetColumns<T>? insertColumns, params IEnumerable<T> entities)
     {
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
@@ -197,9 +197,9 @@ public partial class SqlGenerator<T>
 
         string columns = string.Join(", ", ColumnInfo.Select(column => $"[{column.ColumnName}]"));
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfo);
+            values = SqlGenerator<T>.EnumeratedInsertValues(insertColumns, ColumnInfo);
         else
-            values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfo, entities);
+            values = SqlGenerator<T>.EnumeratedInsertValues(insertColumns, ColumnInfo, entities);
 
 
         return new SqlQuery()
