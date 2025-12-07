@@ -86,7 +86,7 @@ internal static class InvocationReflectorCache<T>
     /// <returns>
     /// The <see cref="ResultColumnName"/> that should be used to match result-set columns.
     /// </returns>
-    private static ResultColumnName GetResultColumnName(PropertyInfo propertyInfo) =>
+    internal static ResultColumnName GetResultColumnName(PropertyInfo propertyInfo) =>
         new
         (
             propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name?.ToString().GetValueOrNull()

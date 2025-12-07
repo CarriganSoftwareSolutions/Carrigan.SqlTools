@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
@@ -32,6 +33,30 @@ public partial class SqlGenerator<T>
             .AppendLine(queryText.Replace("VALUES", "OUTPUT INSERTED.Id INTO @OutputTable VALUES"))
             .AppendLine("SELECT InsertedId FROM @OutputTable;")
             .ToString();
+
+    //TODO: DOcumentation, Code Review, Unit Tests
+    internal static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
+        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});";
+
+    //TODO: DOcumentation, Code Review, Unit Tests
+    internal static string ReturnOutputColumns(IEnumerable<ColumnInfo> columnInfo) =>
+       $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable";
+
+
+    //TODO: DOcumentation, Code Review, Unit Tests
+    //TODO: make sure this name matches when invoking, with round trip test
+    internal static string ReturnSelectName(ColumnInfo columnInfo)
+    {
+        string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo);
+        if (resultColumnName != columnInfo.ColumnName)
+            return $"{columnInfo.ColumnName} AS {resultColumnName}";
+        else
+            return columnInfo.ColumnName;
+    }
+
+    //TODO: DOcumentation, Code Review, Unit Tests
+    internal static string ReturnSelectOutput(IEnumerable<ColumnInfo> columnInfo) =>
+        $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName(column)))} FROM @OutputTable;";
 
     /// <summary>
     /// Builds the <c>VALUES</c> clause for a single SQL <c>INSERT</c> row,
@@ -103,37 +128,43 @@ public partial class SqlGenerator<T>
     /// VALUES (@Name, @Email, @Phone);
     /// ]]></code>
     /// </example>
-    public SqlQuery InsertAutoId(T entity)
-    {
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
+    public SqlQuery InsertAutoId(T entity) =>
+        Insert
+        (
+            new ColumnCollection<T>(ColumnInfoLessKeys.Select(column => column.PropertyName)),
+            new ColumnCollection<T>(KeyColumnInfo.Select(column => column.PropertyName)),
+            entity
+        );
+    //{
+    //    IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
 
-        if (ColumnInfoLessKeys.None())
-        {
-            return new SqlQuery()
-            {
-                Parameters = [],
-                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} DEFAULT VALUES;"),
-                CommandType = System.Data.CommandType.Text
-            };
-        }
-        else
-        {
-            parameters = ColumnInfoLessKeys.Select(key => GetSqlParameterKeyValue(key, entity));
+    //    if (ColumnInfoLessKeys.None())
+    //    {
+    //        return new SqlQuery()
+    //        {
+    //            Parameters = [],
+    //            QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} DEFAULT VALUES;"),
+    //            CommandType = System.Data.CommandType.Text
+    //        };
+    //    }
+    //    else
+    //    {
+    //        parameters = ColumnInfoLessKeys.Select(key => GetSqlParameterKeyValue(key, entity));
 
 
-            string columns = string.Join(", ", ColumnInfoLessKeys.Select(column => $"[{column.ColumnName}]"));
-            string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfoLessKeys);
+    //        string columns = string.Join(", ", ColumnInfoLessKeys.Select(column => $"[{column.ColumnName}]"));
+    //        string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfoLessKeys);
 
-            return new SqlQuery()
-            {
-                Parameters = [.. parameters],
-                QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} ({columns}) VALUES {values};"),
-                CommandType = System.Data.CommandType.Text
-            };
-        }
-    }
+    //        return new SqlQuery()
+    //        {
+    //            Parameters = [.. parameters],
+    //            QueryText = SqlGenerator<T>.ModifyInsertQueryToReturnScalar($"INSERT INTO {Table} ({columns}) VALUES {values};"),
+    //            CommandType = System.Data.CommandType.Text
+    //        };
+    //    }
+    //}
 
-    //TODO: Update documentation for new parameter ColumnCollection<T>? insertColumnCollection
+    //TODO: Update documentation for new parameter ColumnCollection<T>? insertColumnCollection, code review
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities.
     /// </summary>
@@ -173,7 +204,7 @@ public partial class SqlGenerator<T>
     ///     },
     /// ];
     ///
-    /// SqlQuery query = customerGenerator.Insert(null, customers);
+    /// SqlQuery query = customerGenerator.Insert(null, null, customers);
     /// ]]></code>
     ///
     /// <para>Resulting SQL:</para>
@@ -184,9 +215,12 @@ public partial class SqlGenerator<T>
     ///        (@Id_1, @Name_1, @Email_1, @Phone_1);
     /// ]]></code>
     /// </example>
-    public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, params IEnumerable<T> entities)
+    public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, ColumnCollection<T>? returnColumns, params IEnumerable<T> entities)
     {
         IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? ColumnInfo;
+        string queryPart1;
+        string queryPart2;
+        StringBuilder queryBuilder = new();
 
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
@@ -204,11 +238,33 @@ public partial class SqlGenerator<T>
         else
             values = SqlGenerator<T>.EnumeratedInsertValues(insertTheseColumns, entities);
 
-        return new SqlQuery()
+        queryPart1 = $"INSERT INTO {Table} ({columns})";
+        queryPart2 = $"VALUES {values};";
+
+        if (returnColumns is null)
         {
-            Parameters = [.. parameters],
-            QueryText = $"INSERT INTO {Table} ({columns}) VALUES {values};",
-            CommandType = System.Data.CommandType.Text
-        };
+            return new SqlQuery()
+            {
+                Parameters = [.. parameters],
+                QueryText = $"{queryPart1} {queryPart2}",
+                CommandType = System.Data.CommandType.Text
+            };
+        }
+        else 
+        {
+            //TODO: Add unit test to make sure we get the expected results when doing multiples.
+            queryBuilder.AppendLine(ReturnTableDefinition(returnColumns.ColumnInfo));
+            queryBuilder.AppendLine(queryPart1);
+            queryBuilder.AppendLine(ReturnOutputColumns(returnColumns.ColumnInfo));
+            queryBuilder.AppendLine(queryPart2);
+            queryBuilder.AppendLine(ReturnSelectOutput(returnColumns.ColumnInfo));
+            return new SqlQuery()
+            {
+                Parameters = [.. parameters],
+                QueryText = queryBuilder.ToString(),
+                CommandType = System.Data.CommandType.Text
+            };
+        }
+
     }
 }

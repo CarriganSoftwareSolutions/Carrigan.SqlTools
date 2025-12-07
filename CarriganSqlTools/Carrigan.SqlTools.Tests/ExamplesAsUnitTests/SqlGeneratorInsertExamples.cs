@@ -8,15 +8,15 @@ public class SqlGeneratorInsertExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
 
-    private static string ModifyInsertQueryToReturnScalar(string queryText)
+    private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
     {
-        // This method mirrors the logic used to transform an insert query to return the id.
-        // Build the final query using a temporary table to store the GUID
-        StringBuilder sqlQuery = new();
-        sqlQuery.AppendLine("DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);");
-        sqlQuery.AppendLine(queryText.Replace("VALUES", "OUTPUT INSERTED.Id INTO @OutputTable VALUES"));
-        sqlQuery.AppendLine("SELECT InsertedId FROM @OutputTable;");
-        return sqlQuery.ToString();
+        StringBuilder queryBuilder = new();
+        queryBuilder.AppendLine($"DECLARE @OutputTable TABLE (Id {type});");
+        queryBuilder.AppendLine(queryPart1);
+        queryBuilder.AppendLine("OUTPUT INSERTED.Id INTO @OutputTable");
+        queryBuilder.AppendLine(queryPart2);
+        queryBuilder.AppendLine("SELECT Id FROM @OutputTable;");
+        return queryBuilder.ToString();
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class SqlGeneratorInsertExamples
         };
         SqlQuery query = customerGenerator.InsertAutoId(entity);
 
-        string expectedQueryText = ModifyInsertQueryToReturnScalar("INSERT INTO [Customer] ([Name], [Email], [Phone]) VALUES (@Name, @Email, @Phone);");
+        string expectedQueryText = ModifyInsertQueryWithReturn("INSERT INTO [Customer] ([Name], [Email], [Phone])", "VALUES (@Name, @Email, @Phone);", "INT");
 
         Assert.Equal(expectedQueryText, query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -61,7 +61,7 @@ public class SqlGeneratorInsertExamples
                     Phone = "+1(555)555-1234"
                 },
             ];
-        SqlQuery query = customerGenerator.Insert(null, customers);
+        SqlQuery query = customerGenerator.Insert(null, null, customers);
 
         Assert.Equal("INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) VALUES (@Id_0, @Name_0, @Email_0, @Phone_0), (@Id_1, @Name_1, @Email_1, @Phone_1);", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

@@ -28,14 +28,15 @@ public class SqlGenerator_InsertTests
         _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
     }
 
-    private static string ModifyInsertQueryToReturnScalar(string queryText)
+    private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
     {
-        // Build the final query using a temporary table to store the GUID
-        StringBuilder sqlQuery = new();
-        sqlQuery.AppendLine("DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);");
-        sqlQuery.AppendLine(queryText.Replace("VALUES", "OUTPUT INSERTED.Id INTO @OutputTable VALUES"));
-        sqlQuery.AppendLine("SELECT InsertedId FROM @OutputTable;");
-        return sqlQuery.ToString();
+        StringBuilder queryBuilder = new();
+        queryBuilder.AppendLine($"DECLARE @OutputTable TABLE (Id {type});");
+        queryBuilder.AppendLine(queryPart1);
+        queryBuilder.AppendLine("OUTPUT INSERTED.Id INTO @OutputTable");
+        queryBuilder.AppendLine(queryPart2);
+        queryBuilder.AppendLine("SELECT Id FROM @OutputTable;");
+        return queryBuilder.ToString();
     }
 
     [Fact]
@@ -49,7 +50,7 @@ public class SqlGenerator_InsertTests
             DateOf = new DateTime(2023, 10, 1)
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -67,7 +68,7 @@ public class SqlGenerator_InsertTests
             DateOf = new DateTime(2023, 10, 1)
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -93,7 +94,7 @@ public class SqlGenerator_InsertTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.InsertAutoId(testEntity);
 
-        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([Name], [DateOf], [When]) VALUES (@Name, @DateOf, @When);");
+        string expectedSql = ModifyInsertQueryWithReturn("INSERT INTO [Test] ([Name], [DateOf], [When])", "VALUES (@Name, @DateOf, @When);", "UNIQUEIDENTIFIER");
 
         Assert.Equal(expectedSql, query.QueryText);
     }
@@ -111,7 +112,7 @@ public class SqlGenerator_InsertTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.InsertAutoId(testEntity);
 
-        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([Name], [DateOf], [When]) VALUES (@Name, @DateOf, @When);");
+        string expectedSql = ModifyInsertQueryWithReturn("INSERT INTO [Test] ([Name], [DateOf], [When])", "VALUES (@Name, @DateOf, @When);", "UNIQUEIDENTIFIER");
 
         Assert.Equal(expectedSql, query.QueryText);
 
@@ -135,7 +136,7 @@ public class SqlGenerator_InsertTests
         };
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -165,7 +166,7 @@ public class SqlGenerator_InsertTests
         };
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, null, testEntity);
 
         Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "Name").Single().Value); // Name
         Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "When").Single().Value); // When
@@ -180,7 +181,7 @@ public class SqlGenerator_InsertTests
             Description = "Test Description"
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert(null, entityWithoutTableAttribute);
+        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert(null, null, entityWithoutTableAttribute);
 
         string expectedSql = "INSERT INTO [EntityWithoutTableAttribute] ([Id], [Description]) VALUES (@Id, @Description);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -200,7 +201,7 @@ public class SqlGenerator_InsertTests
             Description = "2b"
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert(null, [entity1, entity2]);
+        SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Insert(null, null, [entity1, entity2]);
         string expectedSql = "INSERT INTO [EntityWithoutTableAttribute] ([Id], [Description]) VALUES (@Id_0, @Description_0), (@Id_1, @Description_1);";
         Assert.Equal(expectedSql, query.QueryText);
 
@@ -230,7 +231,7 @@ public class SqlGenerator_InsertTests
             Description = "Test Description"
         };
 
-        SqlQuery query = _sqlGeneratorForEntityWithSchema.Insert(null, entityWithSchema);
+        SqlQuery query = _sqlGeneratorForEntityWithSchema.Insert(null, null, entityWithSchema);
 
         string expectedSql = "INSERT INTO [myschema].[EntityWithSchema] ([Id], [Description]) VALUES (@Id, @Description);";
 
@@ -250,7 +251,7 @@ public class SqlGenerator_InsertTests
         };
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(null, null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [DateOf], [When]) VALUES (@Id, @Name, @DateOf, @When);";
 
@@ -269,7 +270,7 @@ public class SqlGenerator_InsertTests
         DateTimeOffset dateTimeOffsetTestValue = SqlTypeEntity.DateTimeOffsetTestValue;
         SqlTypeEntity entity = SqlTypeEntity.GetStandardTestSet();
 
-        SqlQuery query = _sqlGeneratorForSqlTypeEntity.Insert(null, entity);
+        SqlQuery query = _sqlGeneratorForSqlTypeEntity.Insert(null, null, entity);
 
         string expectedSql = "INSERT INTO [TestSqlTypes] ([IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [StringValue], [DateTimeValue], [GuidValue], [ByteArrayValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [DateTimeOffsetValue]) VALUES (@IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @StringValue, @DateTimeValue, @GuidValue, @ByteArrayValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -300,7 +301,7 @@ public class SqlGenerator_InsertTests
         DateTimeOffset dateTimeOffsetTestValue = NullableTestEntity.DateTimeOffsetTestValue;
         NullableTestEntity entity = NullableTestEntity.GetStandardTestSet();
 
-        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(null, entity);
+        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(null, null, entity);
 
         string expectedSql = "INSERT INTO [NullableTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -331,7 +332,7 @@ public class SqlGenerator_InsertTests
     {
         NullableTestEntity entity = NullableTestEntity.GetNullTestSet();
 
-        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(null, entity);
+        SqlQuery query = _sqlGeneratorForNullableTestEntity.Insert(null, null, entity);
 
         string expectedSql = "INSERT INTO [NullableTestEntity] ([Key], [IntValue], [LongValue], [ShortValue], [ByteValue], [BoolValue], [DecimalValue], [FloatValue], [DoubleValue], [DateTimeValue], [GuidValue], [CharValue], [TimeOnlyValue], [DateOnlyValue], [ByteArrayValue], [DateTimeOffsetValue]) VALUES (@Key, @IntValue, @LongValue, @ShortValue, @ByteValue, @BoolValue, @DecimalValue, @FloatValue, @DoubleValue, @DateTimeValue, @GuidValue, @CharValue, @TimeOnlyValue, @DateOnlyValue, @ByteArrayValue, @DateTimeOffsetValue);";
         Assert.Equal(expectedSql, query.QueryText);
@@ -368,7 +369,7 @@ public class SqlGenerator_InsertTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.InsertAutoId(entity);
 
-        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData], [KeyVersion]) VALUES (@NotSensitiveData, @SensitiveData, @KeyVersion);");
+        string expectedSql = ModifyInsertQueryWithReturn("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData], [KeyVersion])", "VALUES (@NotSensitiveData, @SensitiveData, @KeyVersion);", "INT");
 
         Assert.Equal(expectedSql, query.QueryText);
 
@@ -391,7 +392,7 @@ public class SqlGenerator_InsertTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.InsertAutoId(entity);
 
-        string expectedSql = ModifyInsertQueryToReturnScalar("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData], [KeyVersion]) VALUES (@NotSensitiveData, @SensitiveData, @KeyVersion);");
+        string expectedSql = ModifyInsertQueryWithReturn("INSERT INTO [Test] ([NotSensitiveData], [SensitiveData], [KeyVersion])","VALUES (@NotSensitiveData, @SensitiveData, @KeyVersion);", "INT");
 
         Assert.Equal(expectedSql, query.QueryText);
 
@@ -415,7 +416,7 @@ public class SqlGenerator_InsertTests
         ColumnCollection<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, testEntity);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, null, testEntity);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [When]) VALUES (@Id, @Name, @When);";
 
@@ -451,7 +452,7 @@ public class SqlGenerator_InsertTests
         ColumnCollection<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
 
 
-        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, testEntity, testEntity2);
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, null, testEntity, testEntity2);
 
         string expectedSql = "INSERT INTO [Test] ([Id], [Name], [When]) VALUES (@Id_0, @Name_0, @When_0), (@Id_1, @Name_1, @When_1);";
 

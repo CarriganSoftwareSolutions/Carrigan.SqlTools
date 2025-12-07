@@ -156,7 +156,7 @@ Customer entity = new()
     Email = "Hank@example.com", 
     Phone = "+1(555)555-5555" 
 };
-SqlQuery query = customerGenerator.Insert(null, entity);
+SqlQuery query = customerGenerator.Insert(null, null, entity);
 
 // INSERT INTO [Customer] ([Id], [Name], [Email], [Phone])
 // VALUES (@Id, @Name, @Email, @Phone);
@@ -176,12 +176,12 @@ Customer entity = new()
 };
 SqlQuery query = customerGenerator.InsertAutoId(entity);
 
-// DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);
+// DECLARE @OutputTable TABLE (InsertedId INT);
 // INSERT INTO [Customer] ([Name], [Email], [Phone]) 
 // VALUES (@Name, @Email, @Phone);
-// OUTPUT INSERTED.Id INTO @OutputTable 
+// OUTPUT INSERTED.Id INTO @OutputTable
 // VALUES (@Name, @Email, @Phone);
-// SELECT InsertedId FROM @OutputTable;
+// SELECT Id FROM @OutputTable;
 ```
 
 [Table of Contents](#table-of-contents)
