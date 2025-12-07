@@ -213,7 +213,7 @@ public partial class SqlGenerator<T>
     /// When generating SQL, only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
-    /// <exception cref="ArgumentException">
+    /// <exception cref="InvalidTableException">
     /// Thrown when <paramref name="predicates"/> reference tables that are not present
     /// on the base table or in the specified <paramref name="joins"/>.
     /// </exception>
@@ -285,8 +285,8 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
         if (invalidTags.Any())
-        {
-            throw new ArgumentException($"{nameof(predicates)} contains the following invalid table identifiers: {invalidTags.Select(it => it.ToString()).JoinAnd()}", nameof(predicates));
+        {   //TODO: Unit test
+            throw new InvalidTableException(invalidTags);
         }
 
         Dictionary<ParameterTag, object> parametersDictionary = [.. updateTheseColumns.Select(column => GetSqlParameterKeyValue(column, entity, null, "@ParameterSet"))];
