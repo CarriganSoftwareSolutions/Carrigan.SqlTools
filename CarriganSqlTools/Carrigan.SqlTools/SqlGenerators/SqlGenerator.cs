@@ -217,7 +217,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         else
             return parameter.GetParameter(column, entity);
     }
-
+    //TODO: Update documentation for new parameter IEnumerable<ColumnInfo> columns
     /// <summary>
     /// Generates SQL parameter key–value pairs for all mapped columns of a single entity.
     /// </summary>
@@ -231,6 +231,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(IEnumerable<ColumnInfo> columns, T entity, int? entityIndex = null) =>
         columns.Select(column => GetSqlParameterKeyValue(column, entity, entityIndex));
 
+    //TODO: Update documentation for new parameter IEnumerable<ColumnInfo> columns
     /// <summary>
     /// Generates a flattened sequence of SQL parameter key–value pairs for a collection of entities,
     /// automatically indexing parameter names per entity to ensure uniqueness.

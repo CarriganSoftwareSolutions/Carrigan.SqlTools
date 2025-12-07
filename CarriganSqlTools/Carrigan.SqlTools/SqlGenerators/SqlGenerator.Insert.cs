@@ -4,7 +4,7 @@ using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Text;
 //IGNORE SPELLING: newid, unindexed
-//TODO: Update documentation: add parameters SetColumns<T>? insertColumns and examples
+
 namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
@@ -133,6 +133,7 @@ public partial class SqlGenerator<T>
         }
     }
 
+    //TODO: Update documentation for new parameter SetColumns<T>? insertSetColumns
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities.
     /// </summary>
@@ -186,7 +187,7 @@ public partial class SqlGenerator<T>
     public SqlQuery Insert(SetColumns<T>? insertSetColumns, params IEnumerable<T> entities)
     {
         IEnumerable<ColumnInfo> insertTheseColumns = insertSetColumns?.ColumnInfo ?? ColumnInfo;
-        //TODO: Validate inserted Columns are valid for entity <T>
+
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
