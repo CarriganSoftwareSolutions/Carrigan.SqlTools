@@ -56,10 +56,10 @@ public partial class SqlGenerator<T>
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
-    /// SetColumns<Customer> columns = new(nameof(Customer.Email));
+    /// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
     /// Customer entity = new()
     /// {
     ///     Id = 42,
@@ -75,7 +75,7 @@ public partial class SqlGenerator<T>
     /// WHERE [Id] = @Id;
     /// ]]></code>
     /// </example>
-    public SqlQuery UpdateById(T entity, SetColumns<T>? columns = null)
+    public SqlQuery UpdateById(T entity, ColumnCollection<T>? columns = null)
     {
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
@@ -139,7 +139,7 @@ public partial class SqlGenerator<T>
     /// </exception>
     /// <example>
     /// <para>
-    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Customer updateValues = new()
@@ -154,7 +154,7 @@ public partial class SqlGenerator<T>
     ///             new() { Id = 732 }
     ///     ];
     /// 
-    /// SetColumns<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
+    /// ColumnCollection<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
     /// 
     /// SqlQuery query = customerGenerator.UpdateByIds(updateValues, updateColumns, customerIds);
     /// ]]></code>
@@ -166,7 +166,7 @@ public partial class SqlGenerator<T>
     /// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
     /// ]]></code>
     /// </example>
-    public SqlQuery UpdateByIds(T valuesEntity, SetColumns<T>? columns, params IEnumerable<T> idEntities)
+    public SqlQuery UpdateByIds(T valuesEntity, ColumnCollection<T>? columns, params IEnumerable<T> idEntities)
     {
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
@@ -220,7 +220,7 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <para>
     /// Create Update SQL query with a Where clause.
-    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
@@ -231,7 +231,7 @@ public partial class SqlGenerator<T>
     ///     Total = 123.45m
     /// };
     /// 
-    /// SetColumns<Order> setColumns = new(nameof(Order.Total));
+    /// ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
     /// 
     /// Column<Customer> customerId = new(nameof(Customer.Id));
     /// Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
@@ -240,7 +240,7 @@ public partial class SqlGenerator<T>
     /// 
     /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
     /// 
-    /// SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
+    /// SqlQuery query = orderGenerator.Update(entity, columnCollection, joinOnCustomerId, customerEmailEquals);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -254,7 +254,7 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <para>
     /// Create Update SQL query with Joins and a Where clause.
-    /// <see cref="SetColumns{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
@@ -262,10 +262,10 @@ public partial class SqlGenerator<T>
     /// {
     ///     Email = "spam@example.com"
     /// };
-    /// SetColumns<Customer> setColumns = new(nameof(Customer.Email));
+    /// ColumnCollection<Customer> columnCollection = new(nameof(Customer.Email));
     /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
     /// 
-    /// SqlQuery query = customerGenerator.Update(entity, setColumns, null, customerEmailEquals);
+    /// SqlQuery query = customerGenerator.Update(entity, columnCollection, null, customerEmailEquals);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -275,7 +275,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, SetColumns<T>? columns, JoinsBase? joins, Predicates? predicates)
+    public SqlQuery Update(T entity, ColumnCollection<T>? columns, JoinsBase? joins, Predicates? predicates)
     {
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;

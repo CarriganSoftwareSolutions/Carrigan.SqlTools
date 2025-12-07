@@ -20,7 +20,7 @@ public class SqlGenerator_UpdateByIdTests
     private readonly SqlGenerator<NullableTestEntity> _sqlGeneratorForNullablesTestEntity;
     private readonly SqlGenerator<EntityWithEncryption> _sqlGeneratorForEntityWithEncryption;
     private readonly SqlGenerator<CompositePrimaryKeyTable> _sqlGeneratorCompositeKeyTable;
-    private readonly SetColumns<CompositePrimaryKeyTable> _leftCompositeKeyTable = new("NotKey1", "NotKey2");
+    private readonly ColumnCollection<CompositePrimaryKeyTable> _leftCompositeKeyTable = new("NotKey1", "NotKey2");
     private readonly SqlGenerator<Address> _sqlGeneratorAddress;
 
     public SqlGenerator_UpdateByIdTests()

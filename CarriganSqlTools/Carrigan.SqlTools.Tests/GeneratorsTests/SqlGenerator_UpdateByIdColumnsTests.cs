@@ -38,7 +38,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             When = "Now",
             DateOf = new DateTime(2023, 10, 1)
         };
-        SetColumns<EntityWithTableAttribute> columns = new(["Name"]);
+        ColumnCollection<EntityWithTableAttribute> columns = new(["Name"]);
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, columns);
 
@@ -56,7 +56,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             When = "Now",
             DateOf = new DateTime(2023, 10, 1)
         };
-        SetColumns<EntityWithTableAttribute> columns = new(["Name"]);
+        ColumnCollection<EntityWithTableAttribute> columns = new(["Name"]);
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, columns);
 
@@ -79,7 +79,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             When = "Now",
             DateOf = new DateTime(2023, 10, 1)
         };
-        SetColumns<EntityWithTableAttribute> columns = new(["Name", "DateOf"]);
+        ColumnCollection<EntityWithTableAttribute> columns = new(["Name", "DateOf"]);
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, columns);
 
@@ -105,7 +105,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             When = "Now",
             DateOf = DateTime.UtcNow
         };
-        Assert.Throws<InvalidPropertyException<EntityWithTableAttribute>>(() => new  SetColumns<EntityWithTableAttribute>(["Name", "HideTimeFlag"]));
+        Assert.Throws<InvalidPropertyException<EntityWithTableAttribute>>(() => new  ColumnCollection<EntityWithTableAttribute>(["Name", "HideTimeFlag"]));
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             When = null, // Nullable property
             DateOf = DateTime.UtcNow
         };
-        SetColumns<EntityWithTableAttribute> columns = new(["Name", "When", "DateOf"]);
+        ColumnCollection<EntityWithTableAttribute> columns = new(["Name", "When", "DateOf"]);
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, columns);
 
@@ -133,7 +133,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             Id = 1,
             Description = "Test Description"
         };
-        SetColumns<EntityWithoutTableAttribute> columns = new(["Description"]);
+        ColumnCollection<EntityWithoutTableAttribute> columns = new(["Description"]);
 
         SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.UpdateById(entityWithoutTableAttribute, columns);
 
@@ -149,7 +149,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             Id = 1,
             Description = "Test Description"
         };
-        SetColumns<EntityWithSchema> columns = new(["Description"]);
+        ColumnCollection<EntityWithSchema> columns = new(["Description"]);
 
         SqlQuery query = _sqlGeneratorForEntityWithSchema.UpdateById(entityWithSchema, columns);
 
@@ -168,7 +168,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
             When = "Now",
             Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" } // Should be ignored
         };
-        SetColumns<EntityWithTableAttribute> columns = new(["Name"]);
+        ColumnCollection<EntityWithTableAttribute> columns = new(["Name"]);
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, columns);
 
@@ -191,7 +191,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
         DateTimeOffset dateTimeOffsetTestValue = SqlTypeEntity.DateTimeOffsetTestValue;
         SqlTypeEntity entity = SqlTypeEntity.GetStandardTestSet();
 
-        SetColumns<SqlTypeEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "StringValue", "DateTimeValue", "GuidValue", "ByteArrayValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "DateTimeOffsetValue"]);
+        ColumnCollection<SqlTypeEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "StringValue", "DateTimeValue", "GuidValue", "ByteArrayValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "DateTimeOffsetValue"]);
 
         SqlQuery query = _sqlGeneratorForSqlTypeEntity.UpdateById(entity, columns);
 
@@ -222,7 +222,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
         DateTimeOffset dateTimeOffsetTestValue = NullableTestEntity.DateTimeOffsetTestValue;
         NullableTestEntity entity = NullableTestEntity.GetStandardTestSet();
 
-        SetColumns<NullableTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
+        ColumnCollection<NullableTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
 
         SqlQuery query = _sqlGeneratorForNullablesTestEntity.UpdateById(entity, columns);
 
@@ -252,7 +252,7 @@ public class SqlGenerator_UpdateByIdColumnsTests
     public void TestSqlUpdateStringForNullableTypes_WithNullValues()
     {
         NullableTestEntity entity = NullableTestEntity.GetNullTestSet();
-        SetColumns<NullableTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
+        ColumnCollection<NullableTestEntity> columns = new(["LongValue", "ShortValue", "ByteValue", "BoolValue", "DecimalValue", "FloatValue", "DoubleValue", "DateTimeValue", "GuidValue", "CharValue", "TimeOnlyValue", "DateOnlyValue", "ByteArrayValue", "DateTimeOffsetValue"]);
 
         SqlQuery query = _sqlGeneratorForNullablesTestEntity.UpdateById(entity, columns);
 

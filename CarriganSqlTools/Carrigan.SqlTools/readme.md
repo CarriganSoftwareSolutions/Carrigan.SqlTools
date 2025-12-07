@@ -210,9 +210,9 @@ SqlQuery query = customerGenerator.UpdateById(entity);
 ### Update by Id (selected columns)
 Key attribute required, and composite keys are supported by specifying multiple Keys. 
 
-`SetColumns<T>` validates the names of the properties, and throws an error if the property isn't valid
+`ColumnCollection<T>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
-SetColumns<Customer> columns = new(nameof(Customer.Email));
+ColumnCollection<Customer> columns = new(nameof(Customer.Email));
 Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
 SqlQuery query = customerGenerator.UpdateById(entity, columns);
 // UPDATE [Customer] SET [Email] = @Email WHERE [Id] = @Id;
@@ -371,7 +371,7 @@ SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
 
 
 ### Update with Joins and Where
-`SetColumns<T>` validates the names of the properties, and throws an error if the property isn't valid
+`ColumnCollection<T>` validates the names of the properties, and throws an error if the property isn't valid
 
 `ColumnEqualsColumn<LeftT, RightT>` validates the names of the properties, and throws an error if the property isn't valid
 
@@ -380,7 +380,7 @@ SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
 ```csharp
 Order entity = new () { Id = 10, Total = 123.45m };
 
-SetColumns<Order> setColumns = new(nameof(Order.Total));
+ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
 
 ColumnEqualsColumn<Order, Customer> predicate = new(nameof(Order.CustomerId), nameof(Customer.Id));
 
@@ -388,7 +388,7 @@ Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
 
 ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
-SqlQuery query = orderGenerator.Update(entity, setColumns, join, customerEmailEquals);
+SqlQuery query = orderGenerator.Update(entity, columnCollection, join, customerEmailEquals);
 
 // UPDATE [Order]
 // SET [Order].[Total] = @ParameterSet_Total

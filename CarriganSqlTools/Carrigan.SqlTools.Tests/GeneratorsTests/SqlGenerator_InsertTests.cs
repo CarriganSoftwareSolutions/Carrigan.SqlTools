@@ -402,7 +402,7 @@ public class SqlGenerator_InsertTests
     }
 
     [Fact]
-    public void Insert_SetColumns()
+    public void Insert_ColumnCollection()
     {
         EntityWithTableAttribute testEntity = new()
         {
@@ -412,7 +412,7 @@ public class SqlGenerator_InsertTests
             Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" } // Should be ignored
         };
 
-        SetColumns<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
+        ColumnCollection<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
 
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, testEntity);
@@ -431,7 +431,7 @@ public class SqlGenerator_InsertTests
     }
 
     [Fact]
-    public void Insert_MultipleSetColumns()
+    public void Insert_Multiple_ColumnCollection()
     {
         EntityWithTableAttribute testEntity = new()
         {
@@ -448,7 +448,7 @@ public class SqlGenerator_InsertTests
             Address = new Address { Street = "123 Fake St", City = "Test City", PostalCode = "37067" } // Should be ignored
         };
 
-        SetColumns<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
+        ColumnCollection<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
 
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, testEntity, testEntity2);

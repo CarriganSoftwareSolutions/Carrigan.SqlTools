@@ -3,16 +3,16 @@ using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.ExtensionTests;
 
-public class SetColumnsExtensionsTests
+public class ColumnCollectionExtensionsTests
 {
     [Fact]
-    public void IsNullOrEmpty_NullSetColumns_ReturnsTrue()
+    public void IsNullOrEmpty_NullColumnCollection_ReturnsTrue()
     {
         // Arrange
-        SetColumns<ColumnTable>? setColumns = null;
+        ColumnCollection<ColumnTable>? columnCollection = null;
 
         // Act
-        bool result = setColumns.IsNullOrEmpty();
+        bool result = columnCollection.IsNullOrEmpty();
 
         // Assert
         Assert.True(result);
@@ -22,10 +22,10 @@ public class SetColumnsExtensionsTests
     public void IsNullOrEmpty_EmptyColumnNames_ReturnsTrue()
     {
         // Arrange: pass an empty IEnumerable<string>.
-        SetColumns<ColumnTable> setColumns = new(Enumerable.Empty<string>());
+        ColumnCollection<ColumnTable> columnCollection = new(Enumerable.Empty<string>());
 
         // Act
-        bool result = setColumns.IsNullOrEmpty();
+        bool result = columnCollection.IsNullOrEmpty();
 
         // Assert
         Assert.True(result);
@@ -39,23 +39,23 @@ public class SetColumnsExtensionsTests
         [
             "Col1", "Col2", "ColA", "ColB", "Pizza", "D000destruct0", "Express"
         ];
-        SetColumns<ColumnTable> setColumns = new(propertyNames);
+        ColumnCollection<ColumnTable> columnCollection = new(propertyNames);
 
         // Act
-        bool result = setColumns.IsNullOrEmpty();
+        bool result = columnCollection.IsNullOrEmpty();
 
         // Assert
         Assert.False(result);
     }
 
     [Fact]
-    public void IsNotNullOrEmpty_NullSetColumns_ReturnsFalse()
+    public void IsNotNullOrEmpty_NullColumnCollection_ReturnsFalse()
     {
         // Arrange
-        SetColumns<ColumnTable>? setColumns = null;
+        ColumnCollection<ColumnTable>? columnCollection = null;
 
         // Act
-        bool result = setColumns.IsNotNullOrEmpty();
+        bool result = columnCollection.IsNotNullOrEmpty();
 
         // Assert
         Assert.False(result);
@@ -65,10 +65,10 @@ public class SetColumnsExtensionsTests
     public void IsNotNullOrEmpty_EmptyColumnNames_ReturnsFalse()
     {
         // Arrange: pass an empty IEnumerable<string>.
-        SetColumns<ColumnTable> setColumns = new(Enumerable.Empty<string>());
+        ColumnCollection<ColumnTable> columnCollection = new(Enumerable.Empty<string>());
 
         // Act
-        bool result = setColumns.IsNotNullOrEmpty();
+        bool result = columnCollection.IsNotNullOrEmpty();
 
         // Assert
         Assert.False(result);
@@ -82,10 +82,10 @@ public class SetColumnsExtensionsTests
         [
             "Col1", "Col2", "ColA", "ColB", "Pizza", "D000destruct0", "Express"
         ];
-        SetColumns<ColumnTable> setColumns = new(propertyNames);
+        ColumnCollection<ColumnTable> columnCollection = new(propertyNames);
 
         // Act
-        bool result = setColumns.IsNotNullOrEmpty();
+        bool result = columnCollection.IsNotNullOrEmpty();
 
         // Assert
         Assert.True(result);
@@ -98,10 +98,10 @@ public class SetColumnsExtensionsTests
         IEnumerable<string> propertyNames = typeof(ColumnTable)
             .GetProperties()
             .Select(p => p.Name);
-        SetColumns<ColumnTable> setColumns = new(propertyNames);
+        ColumnCollection<ColumnTable> columnCollection = new(propertyNames);
 
         // Act
-        bool result = setColumns.IsNotNullOrEmpty();
+        bool result = columnCollection.IsNotNullOrEmpty();
 
         // Assert
         Assert.True(result);

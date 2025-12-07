@@ -35,8 +35,8 @@ public class SqlGeneratorUpdatesExamples
     [Fact]
     public void UpdateByIdSelectColumns()
     {
-        //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
-        SetColumns<Customer> columns = new(nameof(Customer.Email));
+        //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnCollection<Customer> columns = new(nameof(Customer.Email));
         Customer entity = new() 
         { 
             Id = 42, 
@@ -68,7 +68,7 @@ public class SqlGeneratorUpdatesExamples
                 new() { Id = 732 }
             ];
 
-        SetColumns<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
+        ColumnCollection<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
 
         SqlQuery query = customerGenerator.UpdateByIds(updateValues, updateColumns, customerIds);
 
@@ -85,7 +85,7 @@ public class SqlGeneratorUpdatesExamples
     [Fact]
     public void UpdateWithSetColumnJoinsAndWhere()
     {
-        //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
@@ -95,7 +95,7 @@ public class SqlGeneratorUpdatesExamples
             Total = 123.45m 
         };
 
-        SetColumns<Order> setColumns = new(nameof(Order.Total));
+        ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
 
         Column<Customer> customerId = new(nameof(Customer.Id));
         Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
@@ -104,7 +104,7 @@ public class SqlGeneratorUpdatesExamples
 
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
-        SqlQuery query = orderGenerator.Update(entity, setColumns, joinOnCustomerId, customerEmailEquals);
+        SqlQuery query = orderGenerator.Update(entity, columnCollection, joinOnCustomerId, customerEmailEquals);
 
 
         Assert.Equal("UPDATE [Order] SET [Order].[Total] = @ParameterSet_Total FROM [Order] INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);
@@ -118,17 +118,17 @@ public class SqlGeneratorUpdatesExamples
     [Fact]
     public void UpdateWithSetColumnWhere()
     {
-        //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Customer entity = new() 
         { 
             Email = "spam@example.com" 
         };
-        SetColumns<Customer> setColumns = new(nameof(Customer.Email));
+        ColumnCollection<Customer> columnCollection = new(nameof(Customer.Email));
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
 
-        SqlQuery query = customerGenerator.Update(entity, setColumns, null, customerEmailEquals);
+        SqlQuery query = customerGenerator.Update(entity, columnCollection, null, customerEmailEquals);
 
         Assert.Equal("UPDATE [Customer] SET [Customer].[Email] = @ParameterSet_Email FROM [Customer] WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

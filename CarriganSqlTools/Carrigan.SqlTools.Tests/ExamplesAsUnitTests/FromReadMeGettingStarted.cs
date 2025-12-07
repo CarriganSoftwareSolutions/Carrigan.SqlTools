@@ -113,8 +113,8 @@ public class FromReadMeGettingStarted
     [Fact]
     public void UpdateByIdSelectColumns()
     {
-        //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
-        SetColumns<Customer> columns = new(nameof(Customer.Email));
+        //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnCollection<Customer> columns = new(nameof(Customer.Email));
         Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
         SqlQuery query = customerGenerator.UpdateById(entity, columns);
 

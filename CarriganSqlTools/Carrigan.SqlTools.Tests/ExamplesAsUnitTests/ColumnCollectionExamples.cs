@@ -1,13 +1,10 @@
-﻿using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.Sets;
+﻿using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
-public class SetColumnsExamples
+public class ColumnCollectionExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
 
@@ -36,8 +33,8 @@ public class SetColumnsExamples
     [Fact]
     public void UsesSetsColumns()
     {
-        //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
-        SetColumns<Customer> columns = new(nameof(Customer.Email));
+        //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+        ColumnCollection<Customer> columns = new(nameof(Customer.Email));
         Customer entity = new() 
         { 
             Id = 42, 

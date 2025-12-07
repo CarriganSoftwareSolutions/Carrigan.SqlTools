@@ -12,7 +12,7 @@ namespace Carrigan.SqlTools.Sets;
 /// <typeparam name="T">
 /// The entity/data model type that maps to the target table.
 /// </typeparam>
-/// <para>Update example not using SetColumns</para>
+/// <para>Update example not using ColumnCollection</para>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// Customer entity = new()
@@ -33,11 +33,11 @@ namespace Carrigan.SqlTools.Sets;
 /// </example>
 /// <example>
 /// <para>
-/// Update example using SetColumns
-/// Note: <see cref="SetColumns{T}"/> validates the names of the properties, and throws an error if the property isn't valid
+/// Update example using ColumnCollection
+/// Note: <see cref="ColumnCollection{T}"/> validates the names of the properties, and throws an error if the property isn't valid
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// SetColumns<Customer> columns = new(nameof(Customer.Email));
+/// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
 /// Customer entity = new()
 /// {
 ///     Id = 42,
@@ -53,7 +53,7 @@ namespace Carrigan.SqlTools.Sets;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class SetColumns<T>
+public class ColumnCollection<T>
 {
     /// <summary>
     /// The <see cref="ColumnInfo"/> entries corresponding to the columns included in the <c>SET</c> clause.
@@ -61,24 +61,24 @@ public class SetColumns<T>
     internal IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
 
     /// <summary>
-    /// Initializes a new <see cref="SetColumns{T}"/> containing the specified properties (columns).
+    /// Initializes a new <see cref="ColumnCollection{T}"/> containing the specified properties (columns).
     /// </summary>
     /// <param name="propertyNames">
     /// One or more property names that map to column names to be updated.
     /// Each name is validated via the reflection cache; invalid names throw.
     /// </param>
-    public SetColumns(params IEnumerable<PropertyName> propertyNames) =>
+    public ColumnCollection(params IEnumerable<PropertyName> propertyNames) =>
         ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
 
     /// <summary>
-    /// Initializes a new <see cref="SetColumns{T}"/> containing the specified properties (columns).
+    /// Initializes a new <see cref="ColumnCollection{T}"/> containing the specified properties (columns).
     /// </summary>
     /// <param name="propertyNames">
     /// One or more property names that map to column names to be updated.
     /// Each name is validated via the reflection cache; invalid names throw.
     /// </param>
     [ExternalOnly]
-    public SetColumns(params IEnumerable<string> propertyNames) :
+    public ColumnCollection(params IEnumerable<string> propertyNames) :
         this(propertyNames.Select(name => new PropertyName(name)))
     { }
 
@@ -108,15 +108,15 @@ public class SetColumns<T>
         AddColumn(new PropertyName(propertyName));
 
     /// <summary>
-    /// Creates a new instance of <see cref="SetColumns{T}"/> with an additional column appended to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with an additional column appended to the <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyName">The property name mapping to the column to append.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
     /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
-    public SetColumns<T> AppendColumn(PropertyName propertyName)
+    public ColumnCollection<T> AppendColumn(PropertyName propertyName)
     {
-        SetColumns<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
+        ColumnCollection<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
         ColumnInfo? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
         if (newTag is not null)
             returnValue.ColumnInfo = returnValue.ColumnInfo.Append(newTag);
@@ -124,26 +124,26 @@ public class SetColumns<T>
     }
 
     /// <summary>
-    /// Creates a new instance of <see cref="SetColumns{T}"/> with an additional column appended to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with an additional column appended to the <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyName">The property name mapping to the column to append.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
     /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
     [ExternalOnly]
-    public SetColumns<T> AppendColumn(string propertyName) =>
+    public ColumnCollection<T> AppendColumn(string propertyName) =>
         AppendColumn(new PropertyName(propertyName));
 
     /// <summary>
-    /// Creates a new instance of <see cref="SetColumns{T}"/> with additional columns concatenated to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with additional columns concatenated to the <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyNames">The property names mapping to the columns to concatenate.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
     /// Thrown if any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
-    public SetColumns<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames)
+    public ColumnCollection<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames)
     {
-        SetColumns<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
+        ColumnCollection<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
         IEnumerable<ColumnInfo> newTags = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
         if (newTags is not null)
             returnValue.ColumnInfo = returnValue.ColumnInfo.Concat(newTags);
@@ -151,13 +151,13 @@ public class SetColumns<T>
     }
 
     /// <summary>
-    /// Creates a new instance of <see cref="SetColumns{T}"/> with additional columns concatenated to the <c>SET</c> clause.
+    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with additional columns concatenated to the <c>SET</c> clause.
     /// </summary>
     /// <param name="propertyNames">The property names mapping to the columns to concatenate.</param>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
     /// Thrown if any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/> or is ineligible.
     /// </exception>
     [ExternalOnly]
-    public SetColumns<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
+    public ColumnCollection<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
         ConcatColumn(propertyNames.Select(aString => new PropertyName(aString)));
 }

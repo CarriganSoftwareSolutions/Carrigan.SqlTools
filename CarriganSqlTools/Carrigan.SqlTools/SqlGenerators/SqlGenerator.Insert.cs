@@ -133,7 +133,7 @@ public partial class SqlGenerator<T>
         }
     }
 
-    //TODO: Update documentation for new parameter SetColumns<T>? insertSetColumns
+    //TODO: Update documentation for new parameter ColumnCollection<T>? insertColumnCollection
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities.
     /// </summary>
@@ -184,9 +184,9 @@ public partial class SqlGenerator<T>
     ///        (@Id_1, @Name_1, @Email_1, @Phone_1);
     /// ]]></code>
     /// </example>
-    public SqlQuery Insert(SetColumns<T>? insertSetColumns, params IEnumerable<T> entities)
+    public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, params IEnumerable<T> entities)
     {
-        IEnumerable<ColumnInfo> insertTheseColumns = insertSetColumns?.ColumnInfo ?? ColumnInfo;
+        IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? ColumnInfo;
 
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));

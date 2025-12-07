@@ -89,13 +89,13 @@ public class FromReadMeMoreComplexExamples
     [Fact]
     public void UpdateWithJoinsAndWhere()
     {
-        //Note: SetColumns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Order entity = new () { Id = 10, Total = 123.45m };
 
-        SetColumns<Order> setColumns = new(nameof(Order.Total));
+        ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
 
         ColumnEqualsColumn<Order, Customer> predicate = new(nameof(Order.CustomerId), nameof(Customer.Id));
 
@@ -103,7 +103,7 @@ public class FromReadMeMoreComplexExamples
 
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
-        SqlQuery query = orderGenerator.Update(entity, setColumns, join, customerEmailEquals);
+        SqlQuery query = orderGenerator.Update(entity, columnCollection, join, customerEmailEquals);
 
 
         Assert.Equal("UPDATE [Order] SET [Order].[Total] = @ParameterSet_Total FROM [Order] INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);

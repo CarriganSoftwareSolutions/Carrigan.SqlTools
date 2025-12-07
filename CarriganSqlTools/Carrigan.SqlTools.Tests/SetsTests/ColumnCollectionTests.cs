@@ -5,16 +5,16 @@ using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.SetsTests;
 
-public class SetColumnsTests
+public class ColumnCollectionTests
 {
     [Fact]
     public void Constructor_WithValidColumn_ShouldSetColumnName()
     {
         string propertyName = "Col1";
 
-        SetColumns<ColumnTable> setColumns = new(propertyName);
+        ColumnCollection<ColumnTable> columnCollection = new(propertyName);
 
-        Assert.Equal([new ColumnName("Col1")], setColumns.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+        Assert.Equal([new ColumnName("Col1")], columnCollection.ColumnInfo.Select(columnTag => columnTag.ColumnName));
     }
 
     [Fact]
@@ -22,9 +22,9 @@ public class SetColumnsTests
     {
         string[]  validColumns = ["Col1", "Col2", "Express"];
 
-        SetColumns<ColumnTable> setColumns = new(validColumns);
+        ColumnCollection<ColumnTable> columnCollection = new(validColumns);
 
-        Assert.Equal(validColumns.Select(item => new ColumnName(item)), setColumns.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+        Assert.Equal(validColumns.Select(item => new ColumnName(item)), columnCollection.ColumnInfo.Select(columnTag => columnTag.ColumnName));
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class SetColumnsTests
     {
         string[] columns = ["Col1", "NotAColumn"];
 
-        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new SetColumns<ColumnTable>(columns));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new ColumnCollection<ColumnTable>(columns));
     }
 
     [Fact]
@@ -42,27 +42,27 @@ public class SetColumnsTests
         string[] columns = [];
 
         // Act
-        SetColumns<ColumnTable> setColumns = new(columns);
+        ColumnCollection<ColumnTable> columnCollection = new(columns);
 
         // Assert
-        Assert.Empty(setColumns.ColumnInfo);
+        Assert.Empty(columnCollection.ColumnInfo);
     }
 
     [Fact]
     public void AddColumnToEmpty()
     {
-        SetColumns<ColumnTable> setColumns = new(Enumerable.Empty<string>());
+        ColumnCollection<ColumnTable> columnCollection = new(Enumerable.Empty<string>());
 
-        setColumns.AddColumn(nameof(ColumnTable.Col1));
-        setColumns.AddColumn(nameof(ColumnTable.Col2));
-        Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], setColumns.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+        columnCollection.AddColumn(nameof(ColumnTable.Col1));
+        columnCollection.AddColumn(nameof(ColumnTable.Col2));
+        Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], columnCollection.ColumnInfo.Select(columnTag => columnTag.ColumnName));
     }
 
     [Fact]
     public void Append()
     {
-        SetColumns<ColumnTable> originalSet = new(nameof(ColumnTable.Col1), nameof(ColumnTable.Col2));
-        SetColumns<ColumnTable> newSet = originalSet.AppendColumn(nameof(ColumnTable.ColA));
+        ColumnCollection<ColumnTable> originalSet = new(nameof(ColumnTable.Col1), nameof(ColumnTable.Col2));
+        ColumnCollection<ColumnTable> newSet = originalSet.AppendColumn(nameof(ColumnTable.ColA));
 
         //Original Unchanged
         Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], originalSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));
@@ -73,8 +73,8 @@ public class SetColumnsTests
     [Fact]
     public void Concat()
     {
-        SetColumns<ColumnTable> originalSet = new(nameof(ColumnTable.Col1), nameof(ColumnTable.Col2));
-        SetColumns<ColumnTable> newSet = originalSet.ConcatColumn(nameof(ColumnTable.ColA), nameof(ColumnTable.ColB));
+        ColumnCollection<ColumnTable> originalSet = new(nameof(ColumnTable.Col1), nameof(ColumnTable.Col2));
+        ColumnCollection<ColumnTable> newSet = originalSet.ConcatColumn(nameof(ColumnTable.ColA), nameof(ColumnTable.ColB));
 
         //Original Unchanged
         Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], originalSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));

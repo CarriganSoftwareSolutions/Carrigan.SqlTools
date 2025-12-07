@@ -7,9 +7,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.SqlGenerators;
