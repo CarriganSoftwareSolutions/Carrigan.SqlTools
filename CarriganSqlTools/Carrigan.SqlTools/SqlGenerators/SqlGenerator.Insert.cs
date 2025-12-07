@@ -47,7 +47,7 @@ public partial class SqlGenerator<T>
     /// <returns>
     /// A SQL string representing the <c>VALUES</c> clause for one row,
     /// for example <c>(@Column1, @Column2)</c>.
-    private static string EnumeratedInsertValues(SetColumns<T>? insertColumns, IEnumerable<ColumnInfo> columns, int? i = null) =>
+    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, int? i = null) =>
         i == null
             ? $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag}"))})"
             : $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag.AddIndex(i.Value.ToString())}"))})";
@@ -66,8 +66,8 @@ public partial class SqlGenerator<T>
     /// A SQL string representing the <c>VALUES</c> clause for all entities,
     /// for example <c>(@Column1_0, @Column2_0), (@Column1_1, @Column2_1)</c>.
     /// </returns>
-    private static string EnumeratedInsertValues(SetColumns<T>? insertColumns, IEnumerable<ColumnInfo> columns, params IEnumerable<T> entities) =>
-        $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(insertColumns, columns, index)))}";
+    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, IEnumerable<T> entities) =>
+        $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
 
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for the specified entity,
@@ -122,7 +122,7 @@ public partial class SqlGenerator<T>
 
 
             string columns = string.Join(", ", ColumnInfoLessKeys.Select(column => $"[{column.ColumnName}]"));
-            string values = SqlGenerator<T>.EnumeratedInsertValues(null, ColumnInfoLessKeys);
+            string values = SqlGenerator<T>.EnumeratedInsertValues(ColumnInfoLessKeys);
 
             return new SqlQuery()
             {
@@ -183,24 +183,25 @@ public partial class SqlGenerator<T>
     ///        (@Id_1, @Name_1, @Email_1, @Phone_1);
     /// ]]></code>
     /// </example>
-    public SqlQuery Insert(SetColumns<T>? insertColumns, params IEnumerable<T> entities)
+    public SqlQuery Insert(SetColumns<T>? insertSetColumns, params IEnumerable<T> entities)
     {
+        IEnumerable<ColumnInfo> insertTheseColumns = insertSetColumns?.ColumnInfo ?? ColumnInfo;
+        //TODO: Validate inserted Columns are valid for entity <T>
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
         string values;
 
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            parameters = [.. GetSqlParameterKeyValuePairs(entities.Single())];
+            parameters = [.. GetSqlParameterKeyValuePairs(insertTheseColumns, entities.Single())];
         else
-            parameters = [.. GetSqlParameterKeyValuePairs(entities)];
+            parameters = [.. GetSqlParameterKeyValuePairs(insertTheseColumns, entities)];
 
-        string columns = string.Join(", ", ColumnInfo.Select(column => $"[{column.ColumnName}]"));
+        string columns = string.Join(", ", insertTheseColumns.Select(column => $"[{column.ColumnName}]"));
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            values = SqlGenerator<T>.EnumeratedInsertValues(insertColumns, ColumnInfo);
+            values = SqlGenerator<T>.EnumeratedInsertValues(insertTheseColumns);
         else
-            values = SqlGenerator<T>.EnumeratedInsertValues(insertColumns, ColumnInfo, entities);
-
+            values = SqlGenerator<T>.EnumeratedInsertValues(insertTheseColumns, entities);
 
         return new SqlQuery()
         {

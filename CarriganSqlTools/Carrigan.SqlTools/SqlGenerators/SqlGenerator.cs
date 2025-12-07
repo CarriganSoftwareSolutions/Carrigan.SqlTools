@@ -228,8 +228,8 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <returns>
     /// A sequence of parameter key–value pairs for the entity.
     /// </returns>
-    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(T entity, int? entityIndex = null) =>
-        ColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity, entityIndex));
+    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(IEnumerable<ColumnInfo> columns, T entity, int? entityIndex = null) =>
+        columns.Select(column => GetSqlParameterKeyValue(column, entity, entityIndex));
 
     /// <summary>
     /// Generates a flattened sequence of SQL parameter key–value pairs for a collection of entities,
@@ -237,6 +237,6 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </summary>
     /// <param name="entities">The collection of entities to materialize as parameters.</param>
     /// <returns>A combined sequence of parameter key–value pairs for all entities.</returns>
-    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(params IEnumerable<T> entities) =>
-        entities.SelectMany((entity, index) => GetSqlParameterKeyValuePairs(entity, index));
+    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(IEnumerable<ColumnInfo> columns, params IEnumerable<T> entities) =>
+        entities.SelectMany((entity, index) => GetSqlParameterKeyValuePairs(columns, entity, index));
 }

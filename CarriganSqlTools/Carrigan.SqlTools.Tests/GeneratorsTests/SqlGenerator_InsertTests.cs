@@ -481,4 +481,5 @@ public class SqlGenerator_InsertTests
         Assert.Contains(query.Parameters, param => param.Key == "When_1");
         Assert.Contains(query.Parameters, param => param.Key == "Name_1");
     }
+
 }
