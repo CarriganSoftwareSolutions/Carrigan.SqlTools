@@ -16,16 +16,18 @@ public class SqlGenerator_InsertTests
     private readonly SqlGenerator<SqlTypeEntity> _sqlGeneratorForSqlTypeEntity;
     private readonly SqlGenerator<NullableTestEntity> _sqlGeneratorForNullableTestEntity;
     private readonly SqlGenerator<EntityWithEncryption> _sqlGeneratorForEntityWithEncryption;
+    private readonly SqlGenerator<CompositePrimaryKeyTable> _sqlGeneratorForCompositePrimaryKeyTable;
 
     public SqlGenerator_InsertTests()
     {
-        _mockEncrypter = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>();
-        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>();
-        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>();
-        _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>();
-        _sqlGeneratorForNullableTestEntity = new SqlGenerator<NullableTestEntity>();
-        _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
+        _mockEncrypter = new("+Encrypted+");
+        _sqlGeneratorForEntityWithTableAttribute = new();
+        _sqlGeneratorForEntityWithoutTableAttribute = new();
+        _sqlGeneratorForEntityWithSchema = new();
+        _sqlGeneratorForSqlTypeEntity = new();
+        _sqlGeneratorForNullableTestEntity = new();
+        _sqlGeneratorForEntityWithEncryption = new(_mockEncrypter);
+        _sqlGeneratorForCompositePrimaryKeyTable = new();
     }
 
     private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
@@ -432,7 +434,7 @@ public class SqlGenerator_InsertTests
     }
 
     [Fact]
-    public void Insert_Multiple_ColumnCollection()
+    public void Insert_ColumnCollection_Multiple()
     {
         EntityWithTableAttribute testEntity = new()
         {
@@ -466,16 +468,19 @@ public class SqlGenerator_InsertTests
         Assert.Contains("Id_0", query.QueryText);
         Assert.Contains("Name_0", query.QueryText);
         Assert.Contains("When_0", query.QueryText);
+
         Assert.DoesNotContain("Address_1", query.QueryText);
         Assert.DoesNotContain("DateOf_1", query.QueryText);
         Assert.Contains("Id_1", query.QueryText);
         Assert.Contains("Name_1", query.QueryText);
         Assert.Contains("When_1", query.QueryText);
+
         Assert.DoesNotContain(query.Parameters, param => param.Key == "Address_0");
         Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf_0");
         Assert.Contains(query.Parameters, param => param.Key == "Id_0");
         Assert.Contains(query.Parameters, param => param.Key == "When_0");
         Assert.Contains(query.Parameters, param => param.Key == "Name_0");
+
         Assert.DoesNotContain(query.Parameters, param => param.Key == "Address_1");
         Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf_1");
         Assert.Contains(query.Parameters, param => param.Key == "Id_1");
@@ -483,4 +488,116 @@ public class SqlGenerator_InsertTests
         Assert.Contains(query.Parameters, param => param.Key == "Name_1");
     }
 
+    [Fact]
+    public void Insert_ColumnCollection_Multiple_Return_Multiple()
+    {
+        EntityWithTableAttribute testEntity = new()
+        {
+            Name = "Test Name",
+            DateOf = new DateTime(2023, 10, 1), // Should be ignored
+            When = "Now",
+            Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" } // Should be ignored
+        };
+        EntityWithTableAttribute testEntity2 = new()
+        {
+            Name = "Test Name2",
+            DateOf = new DateTime(2025, 12, 6), // Should be ignored
+            When = "Now",
+            Address = new Address { Street = "123 Fake St", City = "Test City", PostalCode = "37067" } // Should be ignored
+        };
+
+        ColumnCollection<EntityWithTableAttribute> insertColumns = new("Name", "When");
+        ColumnCollection<EntityWithTableAttribute> returnColumns = new("Id", "DateOf");
+
+        SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, returnColumns, testEntity, testEntity2);
+
+        StringBuilder queryBuilder = new();
+        queryBuilder.AppendLine($"DECLARE @OutputTable TABLE (Id UNIQUEIDENTIFIER, DateOf DATETIME2);");
+        queryBuilder.AppendLine("INSERT INTO [Test] ([Name], [When])");
+        queryBuilder.AppendLine("OUTPUT INSERTED.Id, INSERTED.DateOf INTO @OutputTable");
+        queryBuilder.AppendLine("VALUES (@Name_0, @When_0), (@Name_1, @When_1);");
+        queryBuilder.AppendLine("SELECT Id, DateOf FROM @OutputTable;");
+
+        Assert.Equal(queryBuilder.ToString(), query.QueryText);
+
+        Assert.Equal(4, query.Parameters.Count);
+
+
+        Assert.DoesNotContain("Address_0", query.QueryText);
+        Assert.DoesNotContain("DateOf_0", query.QueryText);
+        Assert.DoesNotContain("Id_0", query.QueryText);
+        Assert.Contains("Name_0", query.QueryText);
+        Assert.Contains("When_0", query.QueryText);
+
+        Assert.DoesNotContain("Address_1", query.QueryText);
+        Assert.DoesNotContain("DateOf_1", query.QueryText);
+        Assert.DoesNotContain("Id_1", query.QueryText);
+        Assert.Contains("Name_1", query.QueryText);
+        Assert.Contains("When_1", query.QueryText);
+
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Address_0");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf_0");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Id_0");
+        Assert.Contains(query.Parameters, param => param.Key == "When_0");
+        Assert.Contains(query.Parameters, param => param.Key == "Name_0");
+
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Address_1");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf_1");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Id_1");
+        Assert.Contains(query.Parameters, param => param.Key == "When_1");
+        Assert.Contains(query.Parameters, param => param.Key == "Name_1");
+    }
+    [Fact]
+    public void Insert_AutoId_CompositePrimaryKeyTable()
+    {
+        CompositePrimaryKeyTable testEntity = new()
+        {
+            NotKey1 = 1,
+            NotKey2 = 2,
+            NotKey3 = 3
+        };
+        CompositePrimaryKeyTable testEntity2 = new()
+        {
+            NotKey1 = 1,
+            NotKey2 = 2,
+            NotKey3 = 3
+        };
+
+        SqlQuery query = _sqlGeneratorForCompositePrimaryKeyTable.InsertAutoId(testEntity, testEntity2);
+
+        StringBuilder queryBuilder = new();
+        queryBuilder.AppendLine($"DECLARE @OutputTable TABLE (Id1 INT, Id2 INT);");
+        queryBuilder.AppendLine("INSERT INTO [Ck] ([NotKey1], [NotKey2], [NotKey3])");
+        queryBuilder.AppendLine("OUTPUT INSERTED.Id1, INSERTED.Id2 INTO @OutputTable");
+        queryBuilder.AppendLine("VALUES (@NotKey1_0, @NotKey2_0, @NotKey3_0), (@NotKey1_1, @NotKey2_1, @NotKey3_1);");
+        queryBuilder.AppendLine("SELECT Id1, Id2 FROM @OutputTable;");
+
+        Assert.Equal(queryBuilder.ToString(), query.QueryText);
+
+        Assert.Equal(6, query.Parameters.Count);
+
+        Assert.DoesNotContain("Id1_0", query.QueryText);
+        Assert.DoesNotContain("Id2_0", query.QueryText);
+        Assert.Contains("NotKey1_0", query.QueryText);
+        Assert.Contains("NotKey2_0", query.QueryText);
+        Assert.Contains("NotKey3_0", query.QueryText);
+
+        Assert.DoesNotContain("Id1_1", query.QueryText);
+        Assert.DoesNotContain("Id2_1", query.QueryText);
+        Assert.Contains("NotKey1_1", query.QueryText);
+        Assert.Contains("NotKey2_1", query.QueryText);
+        Assert.Contains("NotKey3_1", query.QueryText);
+
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Id1_0");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Id2_0");
+        Assert.Contains(query.Parameters, param => param.Key == "NotKey1_0");
+        Assert.Contains(query.Parameters, param => param.Key == "NotKey2_0");
+        Assert.Contains(query.Parameters, param => param.Key == "NotKey3_0");
+
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Id1_1");
+        Assert.DoesNotContain(query.Parameters, param => param.Key == "Id2_1");
+        Assert.Contains(query.Parameters, param => param.Key == "NotKey1_1");
+        Assert.Contains(query.Parameters, param => param.Key == "NotKey2_1");
+        Assert.Contains(query.Parameters, param => param.Key == "NotKey3_1");
+    }
 }
