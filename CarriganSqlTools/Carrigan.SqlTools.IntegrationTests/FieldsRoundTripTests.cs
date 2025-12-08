@@ -38,8 +38,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         FieldsModel keyEntity = new() { Id = insertedId.Value };
         SqlQuery selectById = _generator.SelectById(keyEntity);
 
-        IEnumerable<FieldsModel> rows =
-            await CommandsAsync.ExecuteReaderAsync<FieldsModel>(selectById, transaction: null, connection);
+        IEnumerable<FieldsModel> rows = await CommandsAsync.ExecuteReaderAsync<FieldsModel>(selectById, transaction: null, connection);
 
         FieldsModel loaded = rows.First();
 

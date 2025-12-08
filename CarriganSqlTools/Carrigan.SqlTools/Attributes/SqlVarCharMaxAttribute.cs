@@ -41,6 +41,8 @@ public sealed class SqlVarCharMaxAttribute : SqlTypeAttribute
     /// This typically indicates that the enumeration was extended without updating the
     /// <see cref="SqlVarCharMaxAttribute"/> logic.
     /// </exception>
+    //TODO: I wrote this assuming  default Char length should be the default, for parameters, since parameters do some stuff for you when you leave the length null, however that creates an overflow when returning on insert for a string field. THis needs to be re-evaluated.
+    //TODO: the above also impacts the default setting, which is likely more critical as it is the most likely to be left null by a developer.
     public SqlVarCharMaxAttribute(EncodingEnum encoding) :
         base
         (
