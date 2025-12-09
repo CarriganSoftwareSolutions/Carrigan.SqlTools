@@ -9,11 +9,11 @@ public sealed partial class SqlTypeDefinitionTests
     [InlineData(typeof(Guid), SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
     [InlineData(typeof(Guid?), SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
 
-    [InlineData(typeof(string), SqlDbType.NVarChar, "NVARCHAR")]
-    [InlineData(typeof(char), SqlDbType.NChar, "NCHAR")]
-    [InlineData(typeof(char?), SqlDbType.NChar, "NCHAR")]
+    [InlineData(typeof(string), SqlDbType.NVarChar, "NVARCHAR(MAX)")]
+    [InlineData(typeof(char), SqlDbType.NChar, "NCHAR(1)")]
+    [InlineData(typeof(char?), SqlDbType.NChar, "NCHAR(1)")]
 
-    [InlineData(typeof(byte[]), SqlDbType.VarBinary, "VARBINARY")]
+    [InlineData(typeof(byte[]), SqlDbType.VarBinary, "VARBINARY(MAX)")]
 
     [InlineData(typeof(bool), SqlDbType.Bit, "BIT")]
 
@@ -61,24 +61,8 @@ public sealed partial class SqlTypeDefinitionTests
     //xUnite doesn't support a Guid values as an argument for InlineData, because a Guid doesn't have constant expressions.
     //See ValueConstructor_Guid for Guid value test.
 
-    [InlineData("Hello World!", SqlDbType.NVarChar, "NVARCHAR")]
-    [InlineData('X', SqlDbType.NChar, "NCHAR")]
-
-    [InlineData(new byte[] { 0x32 }, SqlDbType.VarBinary, "VARBINARY")]
-
-    [InlineData(true, SqlDbType.Bit, "BIT")]
-
-    [InlineData(byte.MaxValue, SqlDbType.TinyInt, "TINYINT")]
-    [InlineData((sbyte)42, SqlDbType.SmallInt, "SMALLINT")]
-    [InlineData((short)1337, SqlDbType.SmallInt, "SMALLINT")]
-    [InlineData(1701, SqlDbType.Int, "INT")]
-    [InlineData(32423423324456894L, SqlDbType.BigInt, "BIGINT")]
-
-    [InlineData(float.Pi, SqlDbType.Real, "REAL")]
-    [InlineData(double.E, SqlDbType.Float, "FLOAT")]
     //xUnite doesn't support a decimal value as an argument for InlineData, because a decimal literal isn't a constant expression?
     //See ValueConstructor_Decimal for decimal value test.
-
 
     //xUnite doesn't support a DateTime value as an argument for InlineData, because a DateTime doesn't have constant expressions.
     //See ValueConstructor_DateTime for DateTime value test.
@@ -91,6 +75,22 @@ public sealed partial class SqlTypeDefinitionTests
 
     //xUnite doesn't support a DateTimeOffset value as an argument for InlineData, because a DateTimeOffset doesn't have constant expressions.
     //See ValueConstructor_DateTimeOffset for DateTimeOffset value test.
+
+    [InlineData("Hello World!", SqlDbType.NVarChar, "NVARCHAR(MAX)")]
+    [InlineData('X', SqlDbType.NChar, "NCHAR(1)")]
+
+    [InlineData(new byte[] { 0x32 }, SqlDbType.VarBinary, "VARBINARY(MAX)")]
+
+    [InlineData(true, SqlDbType.Bit, "BIT")]
+
+    [InlineData(byte.MaxValue, SqlDbType.TinyInt, "TINYINT")]
+    [InlineData((sbyte)42, SqlDbType.SmallInt, "SMALLINT")]
+    [InlineData((short)1337, SqlDbType.SmallInt, "SMALLINT")]
+    [InlineData(1701, SqlDbType.Int, "INT")]
+    [InlineData(32423423324456894L, SqlDbType.BigInt, "BIGINT")]
+
+    [InlineData(float.Pi, SqlDbType.Real, "REAL")]
+    [InlineData(double.E, SqlDbType.Float, "FLOAT")]
 
     [InlineData(EncodingEnum.Ascii, SqlDbType.Int, "INT")]
 

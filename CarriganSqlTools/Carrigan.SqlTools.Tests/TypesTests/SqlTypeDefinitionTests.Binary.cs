@@ -33,7 +33,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => SqlTypeDefinition.AsNVarChar(size));
 
     [Theory]
-    [InlineData(null, "VARBINARY")]
+    [InlineData(null, "VARBINARY(MAX)")]
     [InlineData(1, "VARBINARY(1)")]
     [InlineData(8000, "VARBINARY(8000)")]
     public void AsVarBinary(int? size, string expectedDeclaration)

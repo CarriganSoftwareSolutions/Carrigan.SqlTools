@@ -48,7 +48,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => SqlTypeDefinition.AsNChar(size));
 
     [Theory]
-    [InlineData(null, "VARCHAR")]
+    [InlineData(null, "VARCHAR(MAX)")]
     [InlineData(1, "VARCHAR(1)")]
     [InlineData(8000, "VARCHAR(8000)")]
     public void AsVarChar(int? size, string expectedDeclaration)
@@ -67,7 +67,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => SqlTypeDefinition.AsVarChar(size));
 
     [Theory]
-    [InlineData(null, "NVARCHAR")]
+    [InlineData(null, "NVARCHAR(MAX)")]
     [InlineData(1, "NVARCHAR(1)")]
     [InlineData(4000, "NVARCHAR(4000)")]
     public void AsNVarChar(int? size, string expectedDeclaration)

@@ -22,7 +22,6 @@ internal class ReturnModel
     public DateTime DateTime { get; set; }
 
     //Should default to "Pending"
-    [SqlVarCharMax(Types.EncodingEnum.Unicode)]
     public string? Status { get; set; } = null;
 
     //Should default to true

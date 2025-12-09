@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using System.Data;
+using Carrigan.Core.Extensions;
 
 //IGNORE SPELLING: xml, unicode
 namespace Carrigan.SqlTools.Types;
@@ -45,6 +46,10 @@ namespace Carrigan.SqlTools.Types;
 /// </remarks>
 public class SqlTypeDefinition
 {
+    //TODO: Document
+    private const int LIMIT_FOR_ASCII = 8000;
+    private const int LIMIT_FOR_UNICODE = 4000;
+    private const int LIMIT_FOR_BYTE_ARRAY = 8000;
     /// <summary>
     /// Gets the SQL Server ADO.NET type associated with this definition.
     /// </summary>
@@ -103,6 +108,7 @@ public class SqlTypeDefinition
     {
     }
 
+    //TODO: Update documentation, unit test and code review for when the underlying type is char, string or byte[]
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlTypeDefinition"/> class
     /// using the default <see cref="SqlDbType"/> mapping for the runtime type of the specified value.
@@ -113,9 +119,25 @@ public class SqlTypeDefinition
     public SqlTypeDefinition(object? value)
     {
         Type = SqlTypeCache.GetSqlDbTypeFromValue(value);
-        TypeDeclaration = ToSql(Type);
+        if (value is not null && value.GetUnderlyingType() == typeof(char))
+        {
+            TypeDeclaration = $"{ToSql(Type)}(1)";
+        }
+        else if (value is not null && value.GetUnderlyingType() == typeof(string))
+        {
+            TypeDeclaration = $"{ToSql(Type)}(MAX)";
+        }
+        else if (value is not null && value.GetUnderlyingType() == typeof(byte[]))
+        {
+            TypeDeclaration = $"{ToSql(Type)}(MAX)";
+        }
+        else
+        {
+            TypeDeclaration = ToSql(Type);
+        }
     }
 
+    //TODO: Update documentation, unit test and code review for when the underlying type is char or string
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlTypeDefinition"/> class
     /// using the default <see cref="SqlDbType"/> mapping for the specified CLR <paramref name="type"/>.
@@ -126,7 +148,22 @@ public class SqlTypeDefinition
     public SqlTypeDefinition(Type type)
     {
         Type = SqlTypeCache.GetSqlDbType(type);
-        TypeDeclaration = ToSql(Type);
+        if (type.GetUnderlyingType() == typeof(char))
+        {
+            TypeDeclaration = $"{ToSql(Type)}(1)";
+        }
+        else if (type.GetUnderlyingType() == typeof(string))
+        {
+            TypeDeclaration = $"{ToSql(Type)}(MAX)";
+        }
+        else if (type.GetUnderlyingType() == typeof(byte[]))
+        {
+            TypeDeclaration = $"{ToSql(Type)}(MAX)";
+        }
+        else
+        {
+            TypeDeclaration = ToSql(Type);
+        }
     }
 
     #region helper methods
@@ -188,8 +225,32 @@ public class SqlTypeDefinition
     /// <returns>A new <see cref="SqlTypeDefinition"/> instance.</returns>
     private static SqlTypeDefinition WithSize(SqlDbType type, int? size, int min, int max)
     {
-        if (size is not null) EnsureRange(type, nameof(size), size.Value, min, max);
-        return new() { Type = type, Size = size, TypeDeclaration = size is null ? ToSql(type) : $"{ToSql(type)}({size})" };
+        string sizeAsString;
+        if (size is not null)
+        {
+            sizeAsString = size.ToString() ?? string.Empty; //the compiler seems to think the preferred code: size.ToString() could return null. This is not the case.
+            EnsureRange(type, nameof(size), size.Value, min, max);
+        }
+        else
+        {
+            sizeAsString = type switch
+            {
+                SqlDbType.VarBinary => "MAX",
+                SqlDbType.NVarChar => "MAX",
+                SqlDbType.VarChar => "MAX",
+                SqlDbType.NChar => LIMIT_FOR_UNICODE.ToString(),
+                SqlDbType.Char => LIMIT_FOR_ASCII.ToString(),
+                SqlDbType.Binary => LIMIT_FOR_BYTE_ARRAY.ToString(),
+                _ => string.Empty
+            };
+        }
+
+        return new()
+        {
+            Type = type,
+            Size = size,
+            TypeDeclaration = $"{ToSql(type)}({sizeAsString})"
+        };
     }
 
     /// <summary>
@@ -233,14 +294,14 @@ public class SqlTypeDefinition
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
     public static SqlTypeDefinition AsChar(int? size = null) =>
-        WithSize(SqlDbType.Char, size, 1, 8000);
+        WithSize(SqlDbType.Char, size, 1, LIMIT_FOR_ASCII);
 
     /// <summary>
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <see cref="SqlDbType.NChar"/>.
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
     public static SqlTypeDefinition AsNChar(int? size = null) =>
-        WithSize(SqlDbType.NChar, size, 1, 4000);
+        WithSize(SqlDbType.NChar, size, 1, LIMIT_FOR_UNICODE);
 
     /// <summary>
     /// <summary>
@@ -248,7 +309,7 @@ public class SqlTypeDefinition
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
     public static SqlTypeDefinition AsVarChar(int? size = null) =>
-        WithSize(SqlDbType.VarChar, size, 1, 8000);
+        WithSize(SqlDbType.VarChar, size, 1, LIMIT_FOR_ASCII);
 
 
     /// <summary>
@@ -256,7 +317,7 @@ public class SqlTypeDefinition
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
     public static SqlTypeDefinition AsNVarChar(int? size = null) =>
-        WithSize(SqlDbType.NVarChar, size, 1, 4000);
+        WithSize(SqlDbType.NVarChar, size, 1, LIMIT_FOR_UNICODE);
 
     /// <summary>
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <c>VARCHAR(MAX)</c>.
@@ -290,6 +351,14 @@ public class SqlTypeDefinition
     public static SqlTypeDefinition AsNText() =>
         ByType(SqlDbType.NText);
 
+    //TODO: Document, unit test, code review
+    public static SqlTypeDefinition AsCharOne() =>
+        WithSize(SqlDbType.Char, 1, 1, LIMIT_FOR_ASCII);
+
+    //TODO: Document, unit test, code review
+    public static SqlTypeDefinition AsNCharOne() =>
+        WithSize(SqlDbType.NChar, 1, 1, LIMIT_FOR_UNICODE);
+
     #endregion
 
     #region Binary
@@ -299,7 +368,7 @@ public class SqlTypeDefinition
     /// </summary>
     /// <param name="size">The length in bytes, or <c>null</c> for no explicit size.</param>
     public static SqlTypeDefinition AsBinary(int? size = null) =>
-        WithSize(SqlDbType.Binary, size, 1, 8000);
+        WithSize(SqlDbType.Binary, size, 1, LIMIT_FOR_BYTE_ARRAY);
 
 
     /// <summary>
@@ -307,7 +376,7 @@ public class SqlTypeDefinition
     /// </summary>
     /// <param name="size">The length in bytes, or <c>null</c> for no explicit size.</param>
     public static SqlTypeDefinition AsVarBinary(int? size = null) =>
-        WithSize(SqlDbType.VarBinary, size, 1, 8000);
+        WithSize(SqlDbType.VarBinary, size, 1, LIMIT_FOR_BYTE_ARRAY);
 
     /// <summary>
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <c>VARBINARY(MAX)</c>.

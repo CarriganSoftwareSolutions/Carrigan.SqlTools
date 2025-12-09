@@ -9,10 +9,10 @@ public sealed class SqlCharAttributeTests
 {
 
     [Theory]
-    [InlineData(EncodingEnum.Ascii, StorageTypeEnum.Fixed, SqlDbType.Char, "CHAR")]
-    [InlineData(EncodingEnum.Ascii, StorageTypeEnum.Var, SqlDbType.VarChar, "VARCHAR")]
-    [InlineData(EncodingEnum.Unicode, StorageTypeEnum.Fixed, SqlDbType.NChar, "NCHAR")]
-    [InlineData(EncodingEnum.Unicode, StorageTypeEnum.Var, SqlDbType.NVarChar, "NVARCHAR")]
+    [InlineData(EncodingEnum.Ascii, StorageTypeEnum.Fixed, SqlDbType.Char, "CHAR(8000)")]
+    [InlineData(EncodingEnum.Ascii, StorageTypeEnum.Var, SqlDbType.VarChar, "VARCHAR(MAX)")]
+    [InlineData(EncodingEnum.Unicode, StorageTypeEnum.Fixed, SqlDbType.NChar, "NCHAR(4000)")]
+    [InlineData(EncodingEnum.Unicode, StorageTypeEnum.Var, SqlDbType.NVarChar, "NVARCHAR(MAX)")]
     public void Constructor_EncodingAndStorageType(
         EncodingEnum encoding,
         StorageTypeEnum storageTypeEnum,

@@ -32,7 +32,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Null(definition.Precision);
         Assert.Null(definition.Scale);
         Assert.False(definition.UseMax);
-        Assert.Equal("CHAR", definition.TypeDeclaration);
+        Assert.Equal("CHAR(8000)", definition.TypeDeclaration);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Null(definition.Precision);
         Assert.Null(definition.Scale);
         Assert.False(definition.UseMax);
-        Assert.Equal("NCHAR", definition.TypeDeclaration);
+        Assert.Equal("NCHAR(4000)", definition.TypeDeclaration);
     }
 
     [Fact]
@@ -56,7 +56,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Null(definition.Precision);
         Assert.Null(definition.Scale);
         Assert.False(definition.UseMax);
-        Assert.Equal("VARCHAR", definition.TypeDeclaration);
+        Assert.Equal("VARCHAR(MAX)", definition.TypeDeclaration);
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Null(definition.Precision);
         Assert.Null(definition.Scale);
         Assert.False(definition.UseMax);
-        Assert.Equal("NVARCHAR", definition.TypeDeclaration);
+        Assert.Equal("NVARCHAR(MAX)", definition.TypeDeclaration);
     }
 
     [Fact]
@@ -132,7 +132,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Null(definition.Precision);
         Assert.Null(definition.Scale);
         Assert.False(definition.UseMax);
-        Assert.Equal("BINARY", definition.TypeDeclaration);
+        Assert.Equal("BINARY(8000)", definition.TypeDeclaration);
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Null(definition.Precision);
         Assert.Null(definition.Scale);
         Assert.False(definition.UseMax);
-        Assert.Equal("VARBINARY", definition.TypeDeclaration);
+        Assert.Equal("VARBINARY(MAX)", definition.TypeDeclaration);
     }
 
     [Fact]

@@ -47,12 +47,12 @@ public class ColumnInfoTests
     [InlineData("dbo", "Test", typeof(EntityWithEncryption), "NotSensitiveData", new[] { "Id" },
         "[dbo].[Test].[NotSensitiveData]", "NotSensitiveData", "NotSensitiveData",
         "NotSensitiveData", null, "[dbo].[Test].[NotSensitiveData]",
-        false, false, false, "[dbo].[Test]", SqlDbType.NVarChar, "NVARCHAR")]
+        false, false, false, "[dbo].[Test]", SqlDbType.NVarChar, "NVARCHAR(MAX)")]
 
     [InlineData("dbo", "Test", typeof(EntityWithEncryption), "SensitiveData", new[] { "Id" },
         "[dbo].[Test].[SensitiveData]", "SensitiveData", "SensitiveData",
         "SensitiveData", null, "[dbo].[Test].[SensitiveData]",
-        false, true, false, "[dbo].[Test]", SqlDbType.NVarChar, "NVARCHAR")]
+        false, true, false, "[dbo].[Test]", SqlDbType.NVarChar, "NVARCHAR(MAX)")]
 
     [InlineData("dbo", "Test", typeof(EntityWithEncryption), "KeyVersion", new[] { "Id" },
         "[dbo].[Test].[KeyVersion]", "KeyVersion", "KeyVersion",
@@ -226,7 +226,7 @@ public class ColumnInfoTests
         SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
 
     [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "CharValue", new[] { "Key" },
-        SqlDbType.NChar, "NCHAR")]
+        SqlDbType.NChar, "NCHAR(1)")]
 
     [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "TimeOnlyValue", new[] { "Key" },
         SqlDbType.Time, "TIME")]
@@ -235,7 +235,7 @@ public class ColumnInfoTests
         SqlDbType.Date, "DATE")]
 
     [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "ByteArrayValue", new[] { "Key" },
-        SqlDbType.VarBinary, "VARBINARY")]
+        SqlDbType.VarBinary, "VARBINARY(MAX)")]
 
     [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DateTimeOffsetValue", new[] { "Key" },
         SqlDbType.DateTimeOffset, "DATETIMEOFFSET")]
@@ -266,7 +266,7 @@ public class ColumnInfoTests
         SqlDbType.Float, "FLOAT")]
 
     [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "StringValue", new[] { "Key" },
-        SqlDbType.NVarChar, "NVARCHAR")]
+        SqlDbType.NVarChar, "NVARCHAR(MAX)")]
 
     [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DateTimeValue", new[] { "Key" },
         SqlDbType.DateTime2, "DATETIME2")]
@@ -275,10 +275,10 @@ public class ColumnInfoTests
         SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
 
     [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "CharValue", new[] { "Key" },
-        SqlDbType.NChar, "NCHAR")]
+        SqlDbType.NChar, "NCHAR(1)")]
 
     [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "ByteArrayValue", new[] { "Key" },
-        SqlDbType.VarBinary, "VARBINARY")]
+        SqlDbType.VarBinary, "VARBINARY(MAX)")]
 
     [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "TimeOnlyValue", new[] { "Key" },
         SqlDbType.Time, "TIME")]

@@ -8,8 +8,8 @@ namespace Carrigan.SqlTools.Tests.AttributesTests;
 public sealed class SqlBinaryAttributeTests
 {
     [Theory]
-    [InlineData(StorageTypeEnum.Fixed, SqlDbType.Binary, "BINARY")]
-    [InlineData(StorageTypeEnum.Var, SqlDbType.VarBinary, "VARBINARY")]
+    [InlineData(StorageTypeEnum.Fixed, SqlDbType.Binary, "BINARY(8000)")]
+    [InlineData(StorageTypeEnum.Var, SqlDbType.VarBinary, "VARBINARY(MAX)")]
     public void Constructor_StorageType(StorageTypeEnum storageTypeEnum, SqlDbType expectedSqlDbType, string expectedTypeDeclaration)
     {
         SqlBinaryAttribute sqlBinaryAttribute = new(storageTypeEnum);
