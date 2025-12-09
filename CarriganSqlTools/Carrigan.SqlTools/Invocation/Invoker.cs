@@ -87,7 +87,6 @@ public static class Invoker<T> where T : class?, new()
     /// </remarks>
     private static object? ConvertValue(object? value, PropertyInfo propertyInfo)
     {
-        //TODO: Revisit
         Type targetType = propertyInfo.PropertyType;
         // If the value is null or DBNull, return null
         if (value == null || value == DBNull.Value)
