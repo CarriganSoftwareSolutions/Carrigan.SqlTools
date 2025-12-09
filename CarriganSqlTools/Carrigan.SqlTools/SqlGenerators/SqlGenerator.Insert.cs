@@ -27,13 +27,6 @@ public partial class SqlGenerator<T>
     /// - Leaves the input untouched except for replacing the first <c>VALUES</c> token with
     ///   <c>OUTPUT INSERTED.Id INTO @OutputTable VALUES</c>.
     /// </remarks>
-    //TODO: The output id should be more generically determined.
-    internal static string ModifyInsertQueryToReturnScalar(string queryText) =>
-        // Build the final query using a temporary table to store the GUID
-        new StringBuilder().AppendLine("DECLARE @OutputTable TABLE (InsertedId UNIQUEIDENTIFIER);")
-            .AppendLine(queryText.Replace("VALUES", "OUTPUT INSERTED.Id INTO @OutputTable VALUES"))
-            .AppendLine("SELECT InsertedId FROM @OutputTable;")
-            .ToString();
 
     //TODO: DOcumentation, Code Review, Unit Tests
     internal static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
@@ -95,7 +88,7 @@ public partial class SqlGenerator<T>
     private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, IEnumerable<T> entities) =>
         $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
 
-    //TODO: Proof read documentation.
+    //TODO: Proof read documentation. remove reference to ModifyInsertQueryToReturnScalar
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for the specified entity,
     /// relying on database default values for key (identity, <c>NEWID()</c>) properties.
@@ -108,7 +101,7 @@ public partial class SqlGenerator<T>
     /// </returns>
     /// <remarks>
     /// - If the model has no non-key columns, <c>DEFAULT VALUES</c> is used.
-    /// - The statement is wrapped via <see cref="ModifyInsertQueryToReturnScalar(string)"/> to return the inserted key.
+    /// - The statement is wrapped via ModifyInsertQueryToReturnScalar(string) to return the inserted key.
     /// </remarks>
     /// <exception cref="NullReferenceException">
     /// Thrown if a column lacks a <see cref="ParameterTag"/> during parameter generation.

@@ -6,10 +6,21 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Types;
+using System.Text;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 public class ParameterAndColumnIdentifierTests
-{
+{    private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
+    {
+        StringBuilder queryBuilder = new();
+        queryBuilder.AppendLine($"DECLARE @OutputTable TABLE (Id {type});");
+        queryBuilder.AppendLine(queryPart1);
+        queryBuilder.AppendLine("OUTPUT INSERTED.Id INTO @OutputTable");
+        queryBuilder.AppendLine(queryPart2);
+        queryBuilder.AppendLine("SELECT Id FROM @OutputTable;");
+        return queryBuilder.ToString();
+    }
+
     //IGNORE SPELLING: tac
     private static readonly SqlGenerator<ColumnIdentifiers> _generator = new();
     private static readonly ColumnIdentifiers _entity = new ()
@@ -113,7 +124,7 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.InsertAutoId(_tacEntity);
         string actual = query.QueryText;
-        string expected = SqlGenerator<TableAndColumnIdentifiers>.ModifyInsertQueryToReturnScalar("INSERT INTO [SomeSchema].[SomeTable] ([SomeColumn]) VALUES (SomeColumnParameter)");
+        string expected = ModifyInsertQueryWithReturn("INSERT INTO [SomeSchema].[SomeTable] ([SomeColumn])", "VALUES (SomeColumnParameter)", "UNIQUEIDENTIFIER");
 
         Assert.Equal(1, query.GetParameterCount());
         Assert.Equal(3, query.GetParameterValue<int>("SomeColumnParameter"));
