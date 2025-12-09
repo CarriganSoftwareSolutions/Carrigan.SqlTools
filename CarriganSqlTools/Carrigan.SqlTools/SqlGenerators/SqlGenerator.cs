@@ -215,10 +215,11 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         else
             return parameter.GetParameter(column, entity);
     }
-    //TODO: Update documentation for new parameter IEnumerable<ColumnInfo> columns
+
     /// <summary>
     /// Generates SQL parameter key–value pairs for all mapped columns of a single entity.
     /// </summary>
+    /// <param name="columns">Indicates the columns that are being inserted/updated and require a parameter</param>
     /// <param name="entity">The entity instance.</param>
     /// <param name="entityIndex">
     /// Optional zero-based index for the entity when batching; appended to parameter names to keep them unique.
@@ -229,11 +230,11 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(IEnumerable<ColumnInfo> columns, T entity, int? entityIndex = null) =>
         columns.Select(column => GetSqlParameterKeyValue(column, entity, entityIndex));
 
-    //TODO: Update documentation for new parameter IEnumerable<ColumnInfo> columns
     /// <summary>
     /// Generates a flattened sequence of SQL parameter key–value pairs for a collection of entities,
     /// automatically indexing parameter names per entity to ensure uniqueness.
-    /// </summary>
+    /// </summary> 
+    /// <param name="columns">Indicates the columns that are being inserted/updated and require a parameter</param>
     /// <param name="entities">The collection of entities to materialize as parameters.</param>
     /// <returns>A combined sequence of parameter key–value pairs for all entities.</returns>
     private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(IEnumerable<ColumnInfo> columns, params IEnumerable<T> entities) =>
