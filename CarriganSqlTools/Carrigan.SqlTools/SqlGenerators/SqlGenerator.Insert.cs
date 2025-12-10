@@ -14,33 +14,46 @@ public partial class SqlGenerator<T>
     //TODO: Unit test returned column names both as inserted into the output table and the return name
 
     /// <summary>
-    /// Generates SQL to declare an OutputTable. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// Generates SQL to declare an output table used to capture inserted values
+    /// for the columns specified by <paramref name="columnInfo"/>.
     /// </summary>
-    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
-    /// <returns>SQL to declare an OutputTable. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/></returns>
+    /// <param name="columnInfo">
+    /// Columns for which the inserted values should be captured.
+    /// </param>
+    /// <returns>
+    /// A SQL statement that declares <c>@OutputTable</c> with one column per entry in <paramref name="columnInfo"/>.
+    /// </returns>
     internal static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
         $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});";
 
+
     /// <summary>
-    /// Generates SQL output the columns into the output table. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// Generates SQL to output the inserted column values into <c>@OutputTable</c>.
     /// </summary>
-    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
+    /// <param name="columnInfo">
+    /// Columns for which the inserted values should be captured.
+    /// </param>
     /// <returns>
-    /// Generates SQL output the columns into the output table. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// A SQL <c>OUTPUT</c> clause that writes the specified inserted columns into <c>@OutputTable</c>.
     /// </returns>
     internal static string ReturnOutputColumns(IEnumerable<ColumnInfo> columnInfo) =>
        $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable";
 
 
     /// <summary>
-    /// Gets the name of the column to use for returning the values inserted for the designated columns in <paramref name="columnInfo"/>
+    /// Gets the column expression to use when returning values inserted for the column
+    /// described by <paramref name="columnInfo"/>.
     /// </summary>
     /// <remarks>
-    /// Because the invoker will be expecting the names as would be done with a select, we need to do the select from the output table to match the name the invoker is expecting.
+    /// Because the caller will expect column names as they would appear in a <c>SELECT</c>,
+    /// this method ensures that the final projection from <c>@OutputTable</c> uses the
+    /// invoker’s expected column name, applying an alias when necessary.
     /// </remarks>
-    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
+    /// <param name="columnInfo">
+    /// The column for which the returned column name should be resolved.
+    /// </param>
     /// <returns>
-    /// Returns the name of the column to use for returning the values inserted for the designated columns in <paramref name="columnInfo"/>
+    /// A string containing either the raw column name or a <c>ColumnName AS ResultName</c> expression.
     /// </returns>
     internal static string ReturnSelectName(ColumnInfo columnInfo)
     {
@@ -52,14 +65,17 @@ public partial class SqlGenerator<T>
     }
 
     /// <summary>
-    /// Generates SQL to select from the output column. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// Generates a <c>SELECT</c> statement that reads the captured values from <c>@OutputTable</c>.
     /// </summary>
-    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
+    /// <param name="columnInfo">
+    /// Columns for which the inserted values were captured.
+    /// </param>
     /// <returns>
-    /// Generates SQL to select from the output column. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// A SQL <c>SELECT</c> statement projecting the requested columns from <c>@OutputTable</c>.
     /// </returns>
     internal static string ReturnSelectOutput(IEnumerable<ColumnInfo> columnInfo) =>
         $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName(column)))} FROM @OutputTable;";
+
 
     /// <summary>
     /// Builds the <c>VALUES</c> clause for a single SQL <c>INSERT</c> row,
@@ -69,12 +85,13 @@ public partial class SqlGenerator<T>
     /// The collection of <see cref="ColumnInfo"/> objects that identify the columns to insert.
     /// </param>
     /// <param name="i">
-    /// Optional zero-based index used to append a unique index to each parameter name.  
-    /// If <c>null</c>, no index is appended.
+    /// Optional zero-based index used to append a unique index to each parameter name.
+    /// If <c>null</c>, no index is appended and unindexed parameter names are used.
     /// </param>
     /// <returns>
-    /// A SQL string representing the <c>VALUES</c> clause for one row,
-    /// for example <c>(@Column1, @Column2)</c>.
+    /// A SQL string representing the <c>VALUES</c> list for one row,
+    /// for example <c>(@Column1, @Column2)</c> or <c>(@Column1_0, @Column2_0)</c>.
+    /// </returns>
     private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, int? i = null) =>
         i == null
             ? $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag}"))})"
@@ -96,23 +113,24 @@ public partial class SqlGenerator<T>
     /// </returns>
     private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, IEnumerable<T> entities) =>
         $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
-
+    
     /// <summary>
-    /// Generates a SQL <c>INSERT</c> statement for the specified entity,
+    /// Generates a SQL <c>INSERT</c> statement for one or more entities,
     /// relying on database default values for key (identity, <c>NEWID()</c>) properties.
     /// </summary>
     /// <param name="entities">
-    /// A data model instance(s) representing the new record to insert.
+    /// One or more data model instances representing the new records to insert.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>INSERT</c> statement.
     /// </returns>
     /// <remarks>
-    /// - If the model has no non-key columns, <c>DEFAULT VALUES</c> is used.
+    /// If the model has no non-key columns, <c>DEFAULT VALUES</c> is used.
     /// </remarks>
     /// <exception cref="NullReferenceException">
     /// Thrown if a column lacks a <see cref="ParameterTag"/> during parameter generation.
-    /// This can surface indirectly from <see cref="GetSqlParameterKeyValue(ColumnInfo, T, int?, string?)"/>.
+    /// This can surface indirectly from
+    /// <see cref="GetSqlParameterKeyValue(ColumnInfo, T, int?, string?)"/>.
     /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -164,22 +182,43 @@ public partial class SqlGenerator<T>
             entities
         );
 
-    //TODO: Update documentation for new parameter ColumnCollection<T>? insertColumnCollection, code review
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities.
     /// </summary>
+    /// <param name="insertColumnCollection">
+    /// An optional collection specifying which columns to insert. If <c>null</c>,
+    /// all mapped columns are included.
+    /// </param>
+    /// <param name="returnColumns">
+    /// An optional collection specifying which columns’ inserted values should be returned.
+    /// If <c>null</c>, no values are returned.
+    /// </param>
     /// <param name="entities">
-    /// A collection of data model instances representing the new records to insert.
+    /// One or more data model instances representing the new records to insert.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated multi-row <c>INSERT</c> statement.
     /// </returns>
     /// <remarks>
-    /// - When only one entity is provided, unindexed parameter names are generated.  
-    /// - When multiple entities are provided, parameter names are suffixed with the row index  
-    ///   (e.g., <c>@Name_0</c>).  
-    /// - When generating SQL, only properties that are publicly readable and belong to accessible  
-    ///   types are considered. Members not visible outside their defining assembly are ignored.
+    /// <list type="bullet">
+    /// <item>
+    /// <description>
+    /// When only one entity is provided, unindexed parameter names are generated.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// When multiple entities are provided, parameter names are suffixed with the row index
+    /// (for example, <c>@Name_0</c>).
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <description>
+    /// Only properties that are publicly readable and belong to accessible types
+    /// are considered. Members not visible outside their defining assembly are ignored.
+    /// </description>
+    /// </item>
+    /// </list>
     /// </remarks>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="entities"/> is empty.
@@ -317,7 +356,6 @@ public partial class SqlGenerator<T>
         }
         else 
         {
-            //TODO: Add unit test to make sure we get the expected results when doing multiples.
             queryBuilder.AppendLine(ReturnTableDefinition(returnColumns.ColumnInfo));
             queryBuilder.AppendLine(queryPart1);
             queryBuilder.AppendLine(ReturnOutputColumns(returnColumns.ColumnInfo));
