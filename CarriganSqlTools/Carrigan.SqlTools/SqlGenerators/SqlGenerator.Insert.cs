@@ -11,34 +11,37 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
-    /// <summary>
-    /// Modifies a SQL <c>INSERT</c> statement so that it returns the generated key value
-    /// (for example, a <c>UNIQUEIDENTIFIER</c> primary key) after insertion.
-    /// </summary>
-    /// <param name="queryText">
-    /// The original SQL <c>INSERT</c> statement to modify.
-    /// </param>
-    /// <returns>
-    /// A SQL string that inserts the row and returns the generated key value
-    /// using an output table and a <c>SELECT</c> statement.
-    /// </returns>
-    /// <remarks>
-    /// - Assumes the inserted key column is named <c>Id</c> and that <c>OUTPUT INSERTED.Id</c> is valid.
-    /// - Leaves the input untouched except for replacing the first <c>VALUES</c> token with
-    ///   <c>OUTPUT INSERTED.Id INTO @OutputTable VALUES</c>.
-    /// </remarks>
+    //TODO: Unit test returned column names both as inserted into the output table and the return name
 
-    //TODO: DOcumentation, Code Review, Unit Tests
+    /// <summary>
+    /// Generates SQL to declare an OutputTable. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// </summary>
+    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
+    /// <returns>SQL to declare an OutputTable. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/></returns>
     internal static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
         $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});";
 
-    //TODO: DOcumentation, Code Review, Unit Tests
+    /// <summary>
+    /// Generates SQL output the columns into the output table. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// </summary>
+    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
+    /// <returns>
+    /// Generates SQL output the columns into the output table. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// </returns>
     internal static string ReturnOutputColumns(IEnumerable<ColumnInfo> columnInfo) =>
        $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable";
 
 
-    //TODO: DOcumentation, Code Review, Unit Tests
-    //TODO: make sure this name matches when invoking, with round trip test
+    /// <summary>
+    /// Gets the name of the column to use for returning the values inserted for the designated columns in <paramref name="columnInfo"/>
+    /// </summary>
+    /// <remarks>
+    /// Because the invoker will be expecting the names as would be done with a select, we need to do the select from the output table to match the name the invoker is expecting.
+    /// </remarks>
+    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
+    /// <returns>
+    /// Returns the name of the column to use for returning the values inserted for the designated columns in <paramref name="columnInfo"/>
+    /// </returns>
     internal static string ReturnSelectName(ColumnInfo columnInfo)
     {
         string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo);
@@ -48,7 +51,13 @@ public partial class SqlGenerator<T>
             return columnInfo.ColumnName;
     }
 
-    //TODO: DOcumentation, Code Review, Unit Tests
+    /// <summary>
+    /// Generates SQL to select from the output column. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// </summary>
+    /// <param name="columnInfo">Designates columns for which the inserted values should be returned.</param>
+    /// <returns>
+    /// Generates SQL to select from the output column. This is used as part of the query to the inserted values for columns determined by <paramref name="columnInfo"/>
+    /// </returns>
     internal static string ReturnSelectOutput(IEnumerable<ColumnInfo> columnInfo) =>
         $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName(column)))} FROM @OutputTable;";
 
@@ -88,7 +97,6 @@ public partial class SqlGenerator<T>
     private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, IEnumerable<T> entities) =>
         $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
 
-    //TODO: Proof read documentation. remove reference to ModifyInsertQueryToReturnScalar
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for the specified entity,
     /// relying on database default values for key (identity, <c>NEWID()</c>) properties.
@@ -101,7 +109,6 @@ public partial class SqlGenerator<T>
     /// </returns>
     /// <remarks>
     /// - If the model has no non-key columns, <c>DEFAULT VALUES</c> is used.
-    /// - The statement is wrapped via ModifyInsertQueryToReturnScalar(string) to return the inserted key.
     /// </remarks>
     /// <exception cref="NullReferenceException">
     /// Thrown if a column lacks a <see cref="ParameterTag"/> during parameter generation.
