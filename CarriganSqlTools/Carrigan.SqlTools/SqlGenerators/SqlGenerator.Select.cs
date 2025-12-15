@@ -220,6 +220,8 @@ public partial class SqlGenerator<T>
 
         if(selects is not null &&  selects.Any())
             queryBuilder = new($"SELECT {selects.ToSql()} FROM {Table}");
+        else if(HasAliasedColumns)
+            queryBuilder = new($"SELECT {SelectTags.ToSql()} FROM {Table}");
         else
             queryBuilder = new($"SELECT {Table}.* FROM {Table}");
 

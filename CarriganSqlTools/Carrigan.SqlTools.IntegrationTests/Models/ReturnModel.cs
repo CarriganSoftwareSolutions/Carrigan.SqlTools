@@ -16,6 +16,7 @@ internal class ReturnModel
 
     public int NotKey1 { get; set; }
     public int NotKey2 { get; set; }
+    [Alias("NotKey3Alias")]
     public int NotKey3 { get; set; }
 
     //Should Default to the sql system date/time
