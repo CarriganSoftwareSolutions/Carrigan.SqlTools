@@ -116,18 +116,19 @@ public class SqlToolsReflectorCache<T>
     internal static bool HasEncryptedColumns() =>
         _EncryptedColumnInfoHashSet.Count != 0;
 
-    //TODO: Proof read documentation, unit test
+    //TODO: unit test
     /// <summary>
-    /// Determines whether <typeparamref name="T"/> defines any columns with a alias name.
+    /// Indicates whether <typeparamref name="T"/> defines one or more columns with an alias name.
     /// </summary>
     /// <returns>
-    /// <c>true</c> if one or more columns have an alias name; otherwise, <c>false</c>.
+    /// <c>true</c> if at least one column has an alias name; otherwise, <c>false</c>.
     /// </returns>
     internal static readonly bool HasAliasedColumns;
 
-    //TODO: Proof read documentation, unit test
+    //TODO: unit test
     /// <summary>
-    /// Returns aSelectTags collection that represents each defined column for a given a class.
+    /// Gets a <see cref="Tags.SelectTags"/> collection representing the <see cref="SelectTag"/>
+    /// for each mapped column on <typeparamref name="T"/>.
     /// </summary>
     internal static SelectTags SelectTags =>
         new(ColumnInfo.Select(column => column.SelectTag));
