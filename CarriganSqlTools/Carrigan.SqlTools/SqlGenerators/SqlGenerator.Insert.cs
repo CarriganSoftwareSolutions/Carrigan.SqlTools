@@ -11,8 +11,6 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public partial class SqlGenerator<T>
 {
-    //TODO: Unit test returned column names both as inserted into the output table and the return name
-
     /// <summary>
     /// Generates SQL to declare an output table used to capture inserted values
     /// for the columns specified by <paramref name="columnInfo"/>.

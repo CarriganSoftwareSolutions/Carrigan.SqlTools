@@ -116,7 +116,6 @@ public class SqlToolsReflectorCache<T>
     internal static bool HasEncryptedColumns() =>
         _EncryptedColumnInfoHashSet.Count != 0;
 
-    //TODO: unit test
     /// <summary>
     /// Indicates whether <typeparamref name="T"/> defines one or more columns with an alias name.
     /// </summary>
@@ -125,7 +124,6 @@ public class SqlToolsReflectorCache<T>
     /// </returns>
     internal static readonly bool HasAliasedColumns;
 
-    //TODO: unit test
     /// <summary>
     /// Gets a <see cref="Tags.SelectTags"/> collection representing the <see cref="SelectTag"/>
     /// for each mapped column on <typeparamref name="T"/>.

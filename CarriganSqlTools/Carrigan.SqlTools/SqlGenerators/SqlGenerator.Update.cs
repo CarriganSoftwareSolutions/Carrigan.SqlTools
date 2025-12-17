@@ -285,7 +285,7 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
         if (invalidTags.Any())
-        {   //TODO: Unit test
+        { 
             throw new InvalidTableException(invalidTags);
         }
 

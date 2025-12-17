@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
@@ -95,5 +96,38 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
         actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@ParameterSet_Col2").Single().Value;
 
         Assert.Equal(expectedStringValue, actualStringValue);
+    }
+
+
+    [Fact]
+    public void InvalidPredicateTable_WithJoins()
+    {
+        JoinLeftTable entity = new()
+        {
+            Col1 = "Hello",
+            Col2 = "World"
+        };
+
+        Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+        Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
+        Predicates predicateId = new Equal(new Column<Customer>("Id"), new Parameter("Id", 3));
+
+        InnerJoin<JoinRightTable> join1 = new(joinId1);
+        LeftJoin<JoinLastTable> join2 = new(joinId2);
+        Joins<JoinLeftTable> joins = new(join1, join2);
+        Assert.Throws<InvalidTableException>(() => _ = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelColumnCollection, joins, predicateId));
+    }
+    [Fact]
+    public void InvalidPredicateTable_WithoutJoins()
+    {
+        JoinLeftTable entity = new()
+        {
+            Col1 = "Hello",
+            Col2 = "World"
+        };
+
+        Predicates predicateId = new Equal(new Column<Customer>("Id"), new Parameter("Id", 3));
+
+        Assert.Throws<InvalidTableException>(() => _ = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelColumnCollection, null, predicateId));
     }
 }
