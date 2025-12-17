@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestComparers;
@@ -8,6 +9,24 @@ using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;
 public class SqlToolsReflectorCacheTests
 {
+    #region test models
+
+    private sealed class NoAliasModel
+    {
+        public int Id { get; init; }
+
+        public string Name { get; init; } = string.Empty;
+    }
+
+    private sealed class AliasedModel
+    {
+        public int Id { get; init; }
+
+        [Alias("FullName")]
+        public string Name { get; init; } = string.Empty;
+    }
+    #endregion
+
     [Fact]
     public void TypeTest()
     {   //make sure the Type property works.
@@ -239,4 +258,35 @@ public class SqlToolsReflectorCacheTests
     public void HasKeyProperty_Key_True() =>
         Assert.True(SqlToolsReflectorCache<PhoneModel>.HasKeyProperty);
 
+    [Fact]
+    public void HasAliasedColumns_False()
+    {
+        bool value = SqlToolsReflectorCache<NoAliasModel>.HasAliasedColumns;
+        Assert.False(value);
+    }
+
+    [Fact]
+    public void HasAliasedColumns_True()
+    {
+        bool value = SqlToolsReflectorCache<AliasedModel>.HasAliasedColumns;
+        Assert.True(value);
+    }
+
+    [Fact]
+    public void SelectTags_AliasModel()
+    {
+        SelectTags selectTags = SqlToolsReflectorCache<AliasedModel>.SelectTags;
+
+        Assert.Equal(2, selectTags.All().Count());
+        Assert.Equal("[AliasedModel].[Id], [AliasedModel].[Name] AS FullName", selectTags.ToSql());
+    }
+
+    [Fact]
+    public void SelectTags_NoAliasModel()
+    {
+        SelectTags selectTags = SqlToolsReflectorCache<NoAliasModel>.SelectTags;
+
+        Assert.Equal(2, selectTags.All().Count());
+        Assert.Equal("[NoAliasModel].[Id], [NoAliasModel].[Name]", selectTags.ToSql());
+    }
 }
