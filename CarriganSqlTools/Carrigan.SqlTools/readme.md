@@ -42,6 +42,10 @@ A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by w
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
 - [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
+- [Data Type Mappings](#data-type-mappings)
+  - [Default Parameter / Return Types](#default-parameter-return-types)
+  - [Allowed Override Types](#allowed-override-types)
+  - [Allowed Override Types With Warnings](#allowed-override-types-with-warnings)
 - [ExampleEncryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 - [License](#license)
 
@@ -613,6 +617,65 @@ connection.Close();
 
 [Table of Contents](#table-of-contents)
 
+
+---
+## Data Type Mappings
+
+### Default Parameter Return Types
+
+| C# CLR Type      | Default SqlDbType      |
+|------------------|------------------------|
+| Guid             | UniqueIdentifier       |
+| string           | NVarChar               |
+| char             | NChar                  |
+| byte[]           | VarBinary              |
+| bool             | Bit                    |
+| byte             | TinyInt                |
+| sbyte            | SmallInt               |
+| short            | SmallInt               |
+| int              | Int                    |
+| long             | BigInt                 |
+| float            | Real                   |
+| double           | Float                  |
+| decimal          | Decimal                |
+| DateTime         | DateTime2              |
+| DateOnly         | Date                   |
+| TimeOnly         | Time                   |
+| DateTimeOffset   | DateTimeOffset         |
+
+[Table of Contents](#table-of-contents)
+
+### Allowed Override Types
+| C# CLR Type     | Allowed SqlTypeAttribute-derived attributes | SqlDbTypes allowed by those attributes |
+|-----------------|---------------------------------------------------------------------|---------------------------------------------|
+| byte[]          | SqlBinaryAttribute<br>SqlVarBinaryMaxAttribute                       | SqlDbType.Binary<br>SqlDbType.VarBinary      |
+| char            | SqlCharAttribute                           | SqlDbType.Char<br>SqlDbType.NChar<br>SqlDbType.NVarChar<br>SqlDbType.VarChar |
+| string          | SqlCharAttribute<br>SqlVarCharMaxAttribute                           | SqlDbType.Char<br>SqlDbType.NChar<br>SqlDbType.NVarChar<br>SqlDbType.VarChar |
+| DateTime        | SqlDateTime2Attribute                                                | SqlDbType.DateTime2                          |
+| DateOnly        | SqlDateAttribute                                                     | SqlDbType.Date                               |
+| TimeOnly        | SqlTimeAttribute                                                     | SqlDbType.Time                               |
+| DateTimeOffset  | SqlDateTimeOffsetAttribute                                           | SqlDbType.DateTimeOffset                     |
+| double          | SqlFloatAttribute                                                    | SqlDbType.Float                              |
+| decimal         | SqlDecimalAttribute                                                  | SqlDbType.Decimal                            |
+
+
+[Table of Contents](#table-of-contents)
+
+### Allowed Override Types With Warnings
+| C# CLR Type     | Allowed SqlTypeAttribute-derived attributes | SqlDbTypes allowed by those attributes |
+|-----------------|-----------------------------------------------------------|---------------------------------------------|
+| byte[]          | SqlBinaryAttribute<br>SqlVarBinaryMaxAttribute<br>SqlImageAttribute | SqlDbType.Binary<br>SqlDbType.VarBinary<br>SqlDbType.Image |
+| char            | SqlCharAttribute<br>SqlVarCharMaxAttribute<br>SqlTextAttribute | SqlDbType.Char<br>SqlDbType.NChar<br>SqlDbType.VarChar<br>SqlDbType.NVarChar<br>SqlDbType.Text<br>SqlDbType.NText |
+| string          | SqlCharAttribute<br>SqlVarCharMaxAttribute<br>SqlTextAttribute | SqlDbType.Char<br>SqlDbType.NChar<br>SqlDbType.VarChar<br>SqlDbType.NVarChar<br>SqlDbType.Text<br>SqlDbType.NText |
+| DateTime        | SqlDateTimeAttribute<br>SqlDateTime2Attribute<br>SqlDateAttribute<br>SqlTimeAttribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2<br>SqlDbType.Date<br>SqlDbType.Time |
+| DateOnly        | SqlDateTimeAttribute<br>SqlDateTime2Attribute<br>SqlDateAttribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2<br>SqlDbType.Date |
+| TimeOnly        | SqlDateTimeAttribute<br>SqlDateTime2Attribute<br>SqlTimeAttribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2<br>SqlDbType.Time |
+| DateTimeOffset  | SqlDateTimeOffsetAttribute                                | SqlDbType.DateTimeOffset                     |
+| float           | SqlFloatAttribute<br>SqlDecimalAttribute<br>SqlMoneyAttribute | SqlDbType.Float<br>SqlDbType.Decimal<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
+| double          | SqlFloatAttribute<br>SqlDecimalAttribute<br>SqlMoneyAttribute | SqlDbType.Float<br>SqlDbType.Decimal<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
+| decimal         | SqlFloatAttribute<br>SqlDecimalAttribute<br>SqlMoneyAttribute | SqlDbType.Float<br>SqlDbType.Decimal<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
+
+[Table of Contents](#table-of-contents)
 
 ---
 
