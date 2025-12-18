@@ -151,7 +151,10 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
             ["Carrigan.SqlTools.Attributes.SqlDateAttribute"] =
                 ["System.DateTime"],
             ["Carrigan.SqlTools.Attributes.SqlTimeAttribute"] =
-                ["System.DateTime"]
+                ["System.DateTime"],
+
+            ["Carrigan.SqlTools.Attributes.SqlVarCharMaxAttribute"] = ["System.Char"],
+            ["Carrigan.SqlTools.Attributes.SqlTextAttribute"] = ["System.Char"]
         };
 
     /// <summary>
