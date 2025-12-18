@@ -46,10 +46,19 @@ namespace Carrigan.SqlTools.Types;
 /// </remarks>
 public class SqlTypeDefinition
 {
-    //TODO: Document
-    private const int LIMIT_FOR_ASCII = 8000;
-    private const int LIMIT_FOR_UNICODE = 4000;
+    /// <summary>
+    /// Represents the max integer value for the Binary and VarBinary
+    /// </summary>
     private const int LIMIT_FOR_BYTE_ARRAY = 8000;
+    /// <summary>
+    /// Represents the max integer value for the Char and VarChar
+    /// </summary>
+    private const int LIMIT_FOR_ASCII = 8000;
+    /// <summary>
+    /// Represents the max integer value for the NChar and NVarChar
+    /// </summary>
+    private const int LIMIT_FOR_UNICODE = 4000;
+
     /// <summary>
     /// Gets the SQL Server ADO.NET type associated with this definition.
     /// </summary>

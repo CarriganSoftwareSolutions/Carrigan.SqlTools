@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Data;
+
 // WHEN ADDING NEW TYPES TO THIS SELECTION,
 // be sure to add them to the following places as well:
 // - Carrigan.SqlTools.Exceptions SqlTypeMismatchException
