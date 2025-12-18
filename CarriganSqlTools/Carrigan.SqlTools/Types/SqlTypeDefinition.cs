@@ -360,14 +360,6 @@ public class SqlTypeDefinition
     public static SqlTypeDefinition AsNText() =>
         ByType(SqlDbType.NText);
 
-    //TODO: Document, unit test, code review
-    public static SqlTypeDefinition AsCharOne() =>
-        WithSize(SqlDbType.Char, 1, 1, LIMIT_FOR_ASCII);
-
-    //TODO: Document, unit test, code review
-    public static SqlTypeDefinition AsNCharOne() =>
-        WithSize(SqlDbType.NChar, 1, 1, LIMIT_FOR_UNICODE);
-
     #endregion
 
     #region Binary
