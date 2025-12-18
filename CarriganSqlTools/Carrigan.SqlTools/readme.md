@@ -1,4 +1,7 @@
-﻿# Carrigan.SqlTools  
+﻿> ⚠️ This repository is not ready for public consumption.
+It is shared for review and collaboration purposes only.
+
+# Carrigan.SqlTools  
 <!--Ignore Spelling: executenonqueryasync executescalarasync executereaderasynct executenonquery executescalar executereadert adonet sqlquery exampleencryptor aesgcm idecrypters dotnet csharp nameof foreach readonly const gcm decryptor decrypters encryptor encrypters-->
 
 
