@@ -107,7 +107,11 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
         SqlType = parameter.SqlType;
     }
 
-    //TODO: Document
+    /// <summary>
+    /// does necessary conversions of the object value. 
+    /// </summary>
+    /// <param name="value">the value</param>
+    /// <returns>the converted value</returns>
     private static object ConvertValue(object? value)
     {
         if (value == null)
