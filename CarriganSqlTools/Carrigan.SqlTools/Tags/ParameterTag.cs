@@ -115,7 +115,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
         else if (value is XDocument xDocument)
             return xDocument.ToString();
         else if (value is XmlDocument xmlDocument)
-            return ((object?)xmlDocument.ToString()) ?? DBNull.Value; //the compiler didn't like xmlDocument.ToString() ?? DBNull.Value, so I had to get creative.
+            return ((object?)xmlDocument.OuterXml) ?? DBNull.Value; //the compiler didn't like xmlDocument.ToString() ?? DBNull.Value, so I had to get creative.
         else return value;
     }
 
