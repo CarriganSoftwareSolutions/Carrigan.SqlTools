@@ -652,9 +652,8 @@ public class SqlTypeDefinition
         SqlDbType.NVarChar => "NVARCHAR",
         SqlDbType.NChar => "NCHAR",
 
-        //TODO: JSON? / XML:Not supported yet. Add in the future after issues mapping resolved, or remove.
-        //SqlDbType.Json => "NVARCHAR(MAX)", //NOTE: JSON is not currently a column type, it is most closely NVARCHAR(MAX)
-        SqlDbType.Xml => "XML", //currently uses .Net NVARCHAR(MAX)
+        //XML
+        SqlDbType.Xml => "XML",
 
         //byte[]
         SqlDbType.Binary => "BINARY",

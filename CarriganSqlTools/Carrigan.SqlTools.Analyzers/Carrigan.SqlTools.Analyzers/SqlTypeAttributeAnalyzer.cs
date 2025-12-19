@@ -84,11 +84,11 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
                 ["System.Byte[]"],
 
             ["Carrigan.SqlTools.Attributes.SqlCharAttribute"] =
-                ["System.Char", "System.String"],
+                ["System.Char", "System.String", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
             ["Carrigan.SqlTools.Attributes.SqlVarCharMaxAttribute"] =
-                ["System.Char", "System.String"],
+                ["System.Char", "System.String", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
             ["Carrigan.SqlTools.Attributes.SqlTextAttribute"] =
-                ["System.Char", "System.String"],
+                ["System.Char", "System.String", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
 
             ["Carrigan.SqlTools.Attributes.SqlDateTimeAttribute"] =
                 ["System.DateTime", "System.DateOnly", "System.TimeOnly"],

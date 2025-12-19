@@ -3,6 +3,8 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Exceptions;
 
@@ -46,6 +48,9 @@ public sealed class SqlTypeMismatchException : Exception
                 new (typeof(char), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute), typeof(SqlTextAttribute)]),
                 new (typeof(string), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute), typeof(SqlTextAttribute)]),
 
+                new (typeof(XmlDocument), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute), typeof(SqlTextAttribute)]),
+                new (typeof(XDocument), [typeof(SqlCharAttribute), typeof(SqlVarCharMaxAttribute), typeof(SqlTextAttribute)]),
+
                 new (typeof(byte[]), [typeof(SqlBinaryAttribute), typeof(SqlVarBinaryMaxAttribute), typeof(SqlImageAttribute)]),
 
                 new (typeof(decimal), [typeof(SqlFloatAttribute), typeof(SqlDecimalAttribute), typeof(SqlMoneyAttribute)]),
@@ -66,6 +71,8 @@ public sealed class SqlTypeMismatchException : Exception
 
                 new (typeof(char), [SqlDbType.Char, SqlDbType.NChar, SqlDbType.VarChar, SqlDbType.NVarChar, SqlDbType.Text, SqlDbType.NText]),
                 new (typeof(string), [SqlDbType.Char, SqlDbType.NChar, SqlDbType.VarChar, SqlDbType.NVarChar, SqlDbType.Text, SqlDbType.NText]),
+                new (typeof(XmlDocument), [SqlDbType.Char, SqlDbType.NChar, SqlDbType.VarChar, SqlDbType.NVarChar, SqlDbType.Text, SqlDbType.NText]),
+                new (typeof(XDocument), [SqlDbType.Char, SqlDbType.NChar, SqlDbType.VarChar, SqlDbType.NVarChar, SqlDbType.Text, SqlDbType.NText]),
                 new (typeof(byte[]), [SqlDbType.Binary, SqlDbType.VarBinary, SqlDbType.Image]),
 
                 new (typeof(bool), [SqlDbType.Bit]),
