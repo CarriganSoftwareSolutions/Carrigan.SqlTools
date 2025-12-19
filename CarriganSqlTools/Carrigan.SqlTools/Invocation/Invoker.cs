@@ -126,13 +126,6 @@ public static class Invoker<T> where T : class?, new()
                 return TimeOnly.FromTimeSpan(timeSpan);
             }
 
-            // Special case: SQL datetime to TimeSpan conversion from long.
-            //TODO: Remove or replace TimeSpan code
-            //else if (underlyingType == typeof(TimeSpan) && value is long timeSpanAsLong)
-            //{
-            //    return new TimeSpan(timeSpanAsLong);
-            //}
-
             else if(underlyingTargetType == typeof(char) && databaseValue is string charAsString)
             {
                 return charAsString[0];

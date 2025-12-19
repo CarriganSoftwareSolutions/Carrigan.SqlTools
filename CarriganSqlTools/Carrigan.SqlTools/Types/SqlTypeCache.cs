@@ -143,10 +143,8 @@ public static class SqlTypeCache
 
             //Note: Is Enum is not directly handled by the cache, but rather the underlying type of the enum is handled by the cache.
 
-            //TODO: XML:Not supported yet. Add in the future after issues mapping resolved, or remove.
             new(typeof(System.Xml.Linq.XDocument), SqlDbType.Xml),
             new(typeof(System.Xml.XmlDocument),    SqlDbType.Xml),
-            //new(typeof(JSON???), SqlDbType.Json),
 
             // Fallback
             new(typeof(object),             SqlDbType.Variant)

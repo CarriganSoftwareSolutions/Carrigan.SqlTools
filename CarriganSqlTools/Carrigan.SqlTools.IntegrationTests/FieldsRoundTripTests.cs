@@ -125,9 +125,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                     TimeOnlyNullableValue = null,
                     DateTimeValue = new DateTime(2025, 01, 02, 03, 04, 05, 0, DateTimeKind.Utc), //Note: not testing milliseconds because of precision errors
                     DateTimeNullableValue = null,
-                    //TODO: Remove or replace TimeSpan code
-                    //TimeSpanValue = new TimeSpan(0, 2, 3, 4, 567),
-                    //TimeSpanNullableValue = null,
+
                     DateTimeOffsetValue = new DateTimeOffset(1969, 7, 20, 16, 17, 0, new TimeSpan(-4, 0, 0)),
                     DateTimeOffsetNullableValue = null,
 
@@ -180,9 +178,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                     TimeOnlyNullableValue = null,
                     DateTimeValue = DateTime.MinValue,
                     DateTimeNullableValue = null,
-                    //TODO: Remove or replace TimeSpan code
-                    //TimeSpanValue = new TimeSpan(0, 2, 3, 4, 567),
-                    //TimeSpanNullableValue = null,
+
                     DateTimeOffsetValue = DateTimeOffset.MinValue,
                     DateTimeOffsetNullableValue = null,
 
