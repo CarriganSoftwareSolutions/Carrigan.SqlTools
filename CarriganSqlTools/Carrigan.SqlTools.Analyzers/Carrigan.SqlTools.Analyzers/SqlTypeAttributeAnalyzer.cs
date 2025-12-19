@@ -153,8 +153,9 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
             ["Carrigan.SqlTools.Attributes.SqlTimeAttribute"] =
                 ["System.DateTime"],
 
-            ["Carrigan.SqlTools.Attributes.SqlVarCharMaxAttribute"] = ["System.Char"],
-            ["Carrigan.SqlTools.Attributes.SqlTextAttribute"] = ["System.Char"]
+            ["Carrigan.SqlTools.Attributes.SqlVarCharAttribute"] = ["System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
+            ["Carrigan.SqlTools.Attributes.SqlVarCharMaxAttribute"] = ["System.Char", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
+            ["Carrigan.SqlTools.Attributes.SqlTextAttribute"] = ["System.Char", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"]
         };
 
     /// <summary>
