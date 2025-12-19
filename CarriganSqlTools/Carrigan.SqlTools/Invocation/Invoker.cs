@@ -1,7 +1,11 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using System.Data.SqlTypes;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 
 //IGNORE SPELLING: datetime, Enums
 namespace Carrigan.SqlTools.Invocation;
@@ -69,11 +73,11 @@ public static class Invoker<T> where T : class?, new()
     /// and <see cref="DateTimeOffset"/>; <see cref="TimeSpan"/> to <see cref="TimeOnly"/>;
     /// and enum conversions from either strings or underlying numeric values.
     /// </summary>
-    /// <param name="value">The raw value to be converted (may be <c>null</c> or <see cref="DBNull.Value"/>).</param>
+    /// <param name="databaseValue">The raw value to be converted (may be <c>null</c> or <see cref="DBNull.Value"/>).</param>
     /// <param name="targetType">The property type to convert to (nullable types are supported).</param>
     /// <returns>
     /// The converted value suitable for assignment to a property of type <paramref name="targetType"/>,
-    /// or <c>null</c> if <paramref name="value"/> is <c>null</c> or <see cref="DBNull.Value"/>.
+    /// or <c>null</c> if <paramref name="databaseValue"/> is <c>null</c> or <see cref="DBNull.Value"/>.
     /// </returns>
     /// <remarks>
     /// Conversion rules:
@@ -85,11 +89,11 @@ public static class Invoker<T> where T : class?, new()
     /// <item><description>All other types are returned as-is</description></item>
     /// </list>
     /// </remarks>
-    private static object? ConvertValue(object? value, PropertyInfo propertyInfo)
+    private static object? ConvertValue(object? databaseValue, PropertyInfo propertyInfo)
     {
         Type targetType = propertyInfo.PropertyType;
         // If the value is null or DBNull, return null
-        if (value == null || value == DBNull.Value)
+        if (databaseValue == null || databaseValue == DBNull.Value)
         {
             if (targetType == typeof(string))
                 return IsNullable(propertyInfo) ? null : string.Empty;
@@ -101,23 +105,23 @@ public static class Invoker<T> where T : class?, new()
         else
         {
             // Handle nullable types by getting the underlying type.
-            Type underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+            Type underlyingTargetType = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
             // Special case: SQL date (returned as DateTime) to DateOnly conversion.
-            if (value is DateTime dateTime)
+            if (databaseValue is DateTime dateTime)
             {
-                if (underlyingType == typeof(DateOnly))
+                if (underlyingTargetType == typeof(DateOnly))
                     return DateOnly.FromDateTime(dateTime);
-                else if (underlyingType == typeof(TimeOnly))
+                else if (underlyingTargetType == typeof(TimeOnly))
                     return TimeOnly.FromDateTime(dateTime);
-                else if (underlyingType == typeof(DateTimeOffset))
+                else if (underlyingTargetType == typeof(DateTimeOffset))
                     return new DateTimeOffset(dateTime);
                 else
-                    return value;
+                    return databaseValue;
             }
 
             // Special case: SQL datetime to TimeOnly conversion.
-            else if (underlyingType == typeof(TimeOnly) && value is TimeSpan timeSpan)
+            else if (underlyingTargetType == typeof(TimeOnly) && databaseValue is TimeSpan timeSpan)
             {
                 return TimeOnly.FromTimeSpan(timeSpan);
             }
@@ -128,25 +132,41 @@ public static class Invoker<T> where T : class?, new()
             //{
             //    return new TimeSpan(timeSpanAsLong);
             //}
-            else if(underlyingType == typeof(char) && value is string charAsString)
+
+            else if(underlyingTargetType == typeof(char) && databaseValue is string charAsString)
             {
                 return charAsString[0];
             }
 
-            // Special case: Enum conversion.
-            else if (underlyingType.IsEnum)
+            // Special case: SQL XML
+            else if (databaseValue is SqlXml sqlXmlValue)
             {
-                if (value is string s)
+                if (underlyingTargetType == typeof(XDocument))
+                    return XDocument.Parse(sqlXmlValue.Value);
+                else if (underlyingTargetType == typeof(XmlDocument))
                 {
-                    return Enum.Parse(underlyingType, s);
+                    XmlDocument xmlDocument = new ();
+                    xmlDocument.LoadXml(sqlXmlValue.Value);
+                    return xmlDocument;
+                }
+                else
+                    return sqlXmlValue;
+            }
+
+            // Special case: Enum conversion.
+            else if (underlyingTargetType.IsEnum)
+            {
+                if (databaseValue is string s)
+                {
+                    return Enum.Parse(underlyingTargetType, s);
                 }
                 else
                 {
-                    return Enum.ToObject(underlyingType, value);
+                    return Enum.ToObject(underlyingTargetType, databaseValue);
                 }
             }
             else
-                return value;
+                return databaseValue;
         }
     }
 

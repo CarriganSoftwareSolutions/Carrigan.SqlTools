@@ -642,6 +642,8 @@ connection.Close();
 | DateOnly         | Date                   |
 | TimeOnly         | Time                   |
 | DateTimeOffset   | DateTimeOffset         |
+| XDocument        | XML                    |
+| XmlDocument      | XML                    |
 
 [Table of Contents](#table-of-contents)
 

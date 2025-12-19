@@ -1,10 +1,11 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer, DateOnly, TimeOnly, XDocument, XmlDocument, lorem ipsum
 
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Microsoft.Data.SqlClient;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.IntegrationTests;
 
@@ -62,6 +63,8 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         Assert.Equal(toInsert.DateTimeOffsetValue, loaded.DateTimeOffsetValue);
         Assert.NotNull(loaded.BytesValue);
         Assert.Equal(toInsert.BytesValue!.Length, loaded.BytesValue!.Length);
+        Assert.Equal(toInsert.XDocumentValue, loaded.XDocumentValue);
+        Assert.Equal(toInsert.XmlDocumentValue, loaded.XmlDocumentValue);
 
         // Nullable value assertions
         Assert.Null(loaded.GuidNullableValue);
@@ -130,8 +133,8 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
 
                     BytesValue = [ 0x01, 0x02, 0x03 ],
 
-                    XDocumentValue = null,   // set to a value if your mapper handles XDocument
-                    XmlDocumentValue = null  // set to a value if your mapper handles XmlDocument
+                    XDocumentValue = null,
+                    XmlDocumentValue = null
                 }
             ]
         );
@@ -183,66 +186,83 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
 
                     BytesValue = [],
 
-                    XDocumentValue = null,   // set to a value if your mapper handles XDocument
-                    XmlDocumentValue = null  // set to a value if your mapper handles XmlDocument
+                    XDocumentValue = null,
+                    XmlDocumentValue = null
                 }
             ]
         );
-    public static TheoryData<FieldsModel> MaxTestData =>
-        new
-        (
-            [
-                new FieldsModel()
-                {
-                    // PK omitted for InsertAutoId
-                    GuidValue = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"),
-                    GuidNullableValue = null,
-                    //             0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
-                    //             0000000001111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990 
-                    StringValue = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
-                    // 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111112
-                    // 0000000001111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990 
-                    + "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
-                    ,
-                    CharValue = char.MaxValue,
-                    CharNullableValue = null,
 
-                    IntValue = int.MaxValue,
-                    IntNullableValue = null,
-                    LongValue = long.MaxValue,
-                    LongNullableValue = null,
-                    ShortValue = short.MaxValue,
-                    ShortNullableValue = null,
-                    ByteValue = byte.MaxValue,
-                    ByteNullableValue = null,
+    public static TheoryData<FieldsModel> MaxTestData
+    {
+        get
+        {
+            FieldsModel fieldsModel = new ()
+            {
+                // PK omitted for InsertAutoId
+                GuidValue = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"),
+                GuidNullableValue = null,
+                //             0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001
+                //             0000000001111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990 
+                StringValue = "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890"
+                // 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111112
+                // 0000000001111111111222222222233333333334444444444555555555566666666667777777777888888888899999999990 
+                + "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
 
-                    BoolValue = true,
-                    BoolNullableValue = null,
+                CharValue = char.MaxValue,
+                CharNullableValue = null,
 
-                    DecimalValue = 99999999999999.9999m, //TODO: these values where recommended, revisit
-                    DecimalNullableValue = null,
-                    DoubleValue = double.MaxValue,
-                    DoubleNullableValue = null,
-                    FloatValue = float.MaxValue,
-                    FloatNullableValue = null,
+                IntValue = int.MaxValue,
+                IntNullableValue = null,
+                LongValue = long.MaxValue,
+                LongNullableValue = null,
+                ShortValue = short.MaxValue,
+                ShortNullableValue = null,
+                ByteValue = byte.MaxValue,
+                ByteNullableValue = null,
 
-                    DateOnlyValue = DateOnly.MaxValue,
-                    DateOnlyNullableValue = null,
-                    TimeOnlyValue = TimeOnly.MaxValue,
-                    TimeOnlyNullableValue = null,
-                    DateTimeValue = DateTime.MaxValue,
-                    DateTimeNullableValue = null,
-                    //TODO: Remove comments or restore
-                    //TimeSpanValue = new TimeSpan(0, 2, 3, 4, 567),
-                    //TimeSpanNullableValue = null,
-                    DateTimeOffsetValue = DateTimeOffset.MaxValue,
-                    DateTimeOffsetNullableValue = null,
+                BoolValue = true,
+                BoolNullableValue = null,
 
-                    BytesValue = [],
+                DecimalValue = 99999999999999.9999m, //TODO: these values where recommended, revisit
+                DecimalNullableValue = null,
+                DoubleValue = double.MaxValue,
+                DoubleNullableValue = null,
+                FloatValue = float.MaxValue,
+                FloatNullableValue = null,
 
-                    XDocumentValue = null,   // set to a value if your mapper handles XDocument
-                    XmlDocumentValue = null  // set to a value if your mapper handles XmlDocument
-                }
-            ]
-        );
+                DateOnlyValue = DateOnly.MaxValue,
+                DateOnlyNullableValue = null,
+                TimeOnlyValue = TimeOnly.MaxValue,
+                TimeOnlyNullableValue = null,
+                DateTimeValue = DateTime.MaxValue,
+                DateTimeNullableValue = null,
+                //TODO: Remove comments or restore
+                //TimeSpanValue = new TimeSpan(0, 2, 3, 4, 567),
+                //TimeSpanNullableValue = null,
+                DateTimeOffsetValue = DateTimeOffset.MaxValue,
+                DateTimeOffsetNullableValue = null,
+
+                BytesValue = [],
+
+                //Testing max is no really feasible for this value
+                XDocumentValue = new
+                (
+                    new XElement
+                    (
+                        "root",
+                        new XElement("value", "Hello World")
+                    )
+                ),
+
+                //Testing max is no really feasible for this value
+                XmlDocumentValue = new() 
+            };
+
+            fieldsModel.XmlDocumentValue.LoadXml
+            (
+                "<root><value>Hello World</value></root>"
+            );
+            return new ([fieldsModel]);
+        }
+    }
 }
