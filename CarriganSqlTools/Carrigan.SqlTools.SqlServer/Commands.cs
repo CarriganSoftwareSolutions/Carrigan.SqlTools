@@ -7,7 +7,9 @@ using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlTypes;
 using System.Reflection;
+using System.Xml;
 
 
 namespace Carrigan.SqlTools.SqlServer;
@@ -96,6 +98,7 @@ public static class Commands
         int? decryptionVersion = 1; //in later versions this will be read from a property marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
         IEncryption? decrypter;
+        string dataTypeName;
 
         if (ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)
         {
@@ -125,7 +128,13 @@ public static class Commands
                 Dictionary<string, object?> rowData = [];
                 for (int i = 0; i < dataReader.FieldCount; i++)
                 {
-                    rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
+                    dataTypeName = dataReader.GetDataTypeName(i);
+                    if (dataReader.IsDBNull(i))
+                        rowData.Add(dataReader.GetName(i), DBNull.Value);
+                    else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
+                        rowData.Add(dataReader.GetName(i), new SqlXml(XmlReader.Create(new StringReader(dataReader.GetString(i)))));
+                    else
+                        rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
                     string columnName = dataReader.GetName(i);
                 }
                 results.Add(Invoker<T>.Invoke(rowData));

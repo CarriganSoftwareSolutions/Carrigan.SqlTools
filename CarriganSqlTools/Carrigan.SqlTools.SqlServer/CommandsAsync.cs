@@ -8,8 +8,10 @@ using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
 
 
 namespace Carrigan.SqlTools.SqlServer;
@@ -96,8 +98,9 @@ public static class CommandsAsync
         List<Task<T>> invocationTasks = [];
         int? decryptionVersion = 1; //in later versions this will be read from a property marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
+        string dataTypeName;
 
-        if(ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)
+        if (ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)
         {
             throw new DecrypterNotProvided<T>();
         }
@@ -126,7 +129,13 @@ public static class CommandsAsync
                 Dictionary<string, object?> rowData = [];
                 for (int i = 0; i < dataReader.FieldCount; i++)
                 {
-                    rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
+                    dataTypeName = dataReader.GetDataTypeName(i);
+                    if(dataReader.IsDBNull(i))
+                        rowData.Add(dataReader.GetName(i), DBNull.Value);
+                    else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
+                        rowData.Add(dataReader.GetName(i), new SqlXml(XmlReader.Create(new StringReader(dataReader.GetString(i)))));
+                    else
+                        rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
                 }
 
                 invocationTasks.Add(Task.Run(() => Invoker<T>.Invoke(rowData)));

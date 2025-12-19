@@ -61,6 +61,8 @@ public class FieldsModel
     // XML
     public System.Xml.Linq.XDocument? XDocumentValue { get; set; }
     public System.Xml.XmlDocument? XmlDocumentValue { get; set; }
+    public System.Xml.Linq.XDocument? XDocumentNullableValue { get; set; }
+    public System.Xml.XmlDocument? XmlDocumentNullableValue { get; set; }
 
     // SQL table DDL (used by the fixture)
     //TODO: Remove or replace TimeSpan code
@@ -123,7 +125,10 @@ public class FieldsModel
             BytesValue VARBINARY(MAX) NULL,
 
             XDocumentValue XML NULL,
-            XmlDocumentValue XML NULL
+            XmlDocumentValue XML NULL,
+
+            XDocumentNullableValue XML NULL,
+            XmlDocumentNullableValue XML NULL
         );
         """;
 }

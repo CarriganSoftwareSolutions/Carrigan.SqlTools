@@ -63,8 +63,8 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         Assert.Equal(toInsert.DateTimeOffsetValue, loaded.DateTimeOffsetValue);
         Assert.NotNull(loaded.BytesValue);
         Assert.Equal(toInsert.BytesValue!.Length, loaded.BytesValue!.Length);
-        Assert.Equal(toInsert.XDocumentValue, loaded.XDocumentValue);
-        Assert.Equal(toInsert.XmlDocumentValue, loaded.XmlDocumentValue);
+        Assert.Equal(toInsert.XDocumentValue?.ToString(), loaded.XDocumentValue?.ToString());
+        Assert.Equal(toInsert.XmlDocumentValue?.OuterXml, loaded.XmlDocumentValue?.OuterXml);
 
         // Nullable value assertions
         Assert.Null(loaded.GuidNullableValue);
@@ -82,8 +82,8 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         Assert.Null(loaded.DateTimeNullableValue);
         //Assert.Null(loaded.TimeSpanNullableValue);
         Assert.Null(loaded.DecimalNullableValue);
-        Assert.Null(loaded.XDocumentValue);
-        Assert.Null(loaded.XmlDocumentValue);
+        Assert.Null(loaded.XDocumentNullableValue);
+        Assert.Null(loaded.XmlDocumentNullableValue);
     }
 
     public static TheoryData<FieldsModel> BasicTestData =>
@@ -134,7 +134,9 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                     BytesValue = [ 0x01, 0x02, 0x03 ],
 
                     XDocumentValue = null,
-                    XmlDocumentValue = null
+                    XmlDocumentValue = null,
+                    XDocumentNullableValue = null,
+                    XmlDocumentNullableValue = null
                 }
             ]
         );
@@ -187,7 +189,9 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                     BytesValue = [],
 
                     XDocumentValue = null,
-                    XmlDocumentValue = null
+                    XmlDocumentValue = null,
+                    XDocumentNullableValue = null,
+                    XmlDocumentNullableValue = null
                 }
             ]
         );
@@ -255,7 +259,9 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                 ),
 
                 //Testing max is no really feasible for this value
-                XmlDocumentValue = new() 
+                XmlDocumentValue = new(),
+                XDocumentNullableValue = null,
+                XmlDocumentNullableValue = null
             };
 
             fieldsModel.XmlDocumentValue.LoadXml
