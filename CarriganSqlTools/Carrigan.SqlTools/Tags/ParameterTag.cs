@@ -108,10 +108,16 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     }
 
     /// <summary>
-    /// does necessary conversions of the object value. 
+    /// Performs the necessary conversions for a parameter value
+    /// before it is passed to the database.
     /// </summary>
-    /// <param name="value">the value</param>
-    /// <returns>the converted value</returns>
+    /// <param name="value">
+    /// The value to convert. A <c>null</c> value is converted to
+    /// <see cref="DBNull.Value"/>.
+    /// </param>
+    /// <returns>
+    /// The converted value suitable for database operations.
+    /// </returns>
     private static object ConvertValue(object? value)
     {
         if (value == null)
