@@ -43,7 +43,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <see cref="EncrypterNotProvidedException{T}"/>,
     /// <see cref="NoKeyVersionPropertyException{T}"/>,
     /// <see cref="InvalidKeyVersionPropertyTypeException{T}"/>, and
-    /// <see cref="MultipleKeyVersionProperties{T}"/>.
+    /// <see cref="MultipleKeyVersionsException{T}"/>.
     /// </exception>
     private void ValidationChecks()
     {
@@ -99,7 +99,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             else if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
                 exceptions.Add(new InvalidKeyVersionPropertyTypeException<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
             if (KeyVersionColumnsInfo.Count() > 1)
-                exceptions.Add(new MultipleKeyVersionProperties<T>(KeyVersionColumnsInfo.Select(column => column.PropertyName)));
+                exceptions.Add(new MultipleKeyVersionsException<T>(KeyVersionColumnsInfo.Select(column => column.PropertyName)));
         }
 
         if (exceptions.Count == 1)
@@ -127,7 +127,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
     /// if the key-version property is not an <see cref="int"/> (nullable allowed).
     /// </exception>
-    /// <exception cref="MultipleKeyVersionProperties{T}">
+    /// <exception cref="MultipleKeyVersionsException{T}">
     /// if more than one key-version property is present.
     /// </exception>
     public SqlGenerator()
@@ -159,7 +159,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
     /// if the key-version property is not an <see cref="int"/> (nullable allowed).
     /// </exception>
-    /// <exception cref="MultipleKeyVersionProperties{T}">
+    /// <exception cref="MultipleKeyVersionsException{T}">
     /// if more than one key-version property is present.
     /// </exception>
     public SqlGenerator(IEncryption encryption)

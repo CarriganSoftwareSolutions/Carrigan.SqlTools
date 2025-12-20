@@ -17,10 +17,10 @@ namespace Carrigan.SqlTools.Exceptions;
 /// flagged for encryption. If the model has no encrypted properties, this constraint
 /// is not enforced and the exception will not be thrown.
 /// </remarks>
-public class MultipleKeyVersionProperties<T> : Exception
+public class MultipleKeyVersionsException<T> : Exception
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MultipleKeyVersionProperties{T}"/> class.
+    /// Initializes a new instance of the <see cref="MultipleKeyVersionsException{T}"/> class.
     /// Raised during <c>SqlGenerator&lt;T&gt;</c> construction when more than one key version
     /// property is detected and the model contains encrypted properties.
     /// </summary>
@@ -28,7 +28,7 @@ public class MultipleKeyVersionProperties<T> : Exception
     /// The <see cref="PropertyName"/> instances representing the conflicting key version properties.
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyNames"/> is <c>null</c>.</exception>
-    internal MultipleKeyVersionProperties(params IEnumerable<PropertyName> propertyNames)
+    internal MultipleKeyVersionsException(params IEnumerable<PropertyName> propertyNames)
         : base(CreateMessage(propertyNames))
     {
     }

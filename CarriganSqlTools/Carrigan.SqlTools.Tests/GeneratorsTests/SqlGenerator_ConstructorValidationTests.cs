@@ -18,7 +18,7 @@ public class SqlGenerator_ConstructorValidationTests
 {
     [Fact]
     public void MultiKeyVersionException() =>
-        Assert.Throws<MultipleKeyVersionProperties<MultiKeyVersions>>(() => new SqlGenerator<MultiKeyVersions>(new MockEncryption("the")));
+        Assert.Throws<MultipleKeyVersionsException<MultiKeyVersions>>(() => new SqlGenerator<MultiKeyVersions>(new MockEncryption("the")));
     [Fact]
     public void NoKeyVersionException() =>
         Assert.Throws<NoKeyVersionPropertyException<NoKeyVersionPropertyEntity>>(() => new SqlGenerator<NoKeyVersionPropertyEntity>(new MockEncryption("the")));
