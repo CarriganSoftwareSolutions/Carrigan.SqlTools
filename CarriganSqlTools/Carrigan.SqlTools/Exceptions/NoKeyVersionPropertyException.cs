@@ -1,7 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.IdentifierTypes;
-
-namespace Carrigan.SqlTools.Exceptions;
+﻿namespace Carrigan.SqlTools.Exceptions;
 
 /// <summary>
 /// Thrown when an encrypter is required but no key version property
@@ -13,7 +10,7 @@ namespace Carrigan.SqlTools.Exceptions;
 /// </typeparam>
 /// <remarks>
 /// This exception is evaluated and may be thrown when a
-/// <c>SqlGenerator&lt;T&gt;</c> is constructed.  
+/// <c>SqlGenerator&lt;T&gt;</c> is constructed.
 /// It is only enforced if <typeparamref name="T"/> declares one or more
 /// encrypted properties. If no properties are marked for encryption,
 /// this validation is skipped.
@@ -22,11 +19,13 @@ public class NoKeyVersionPropertyException<T> : Exception
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="NoKeyVersionPropertyException{T}"/> class.
-    /// Thrown when an encrypter is required but the target model lacks a
-    /// key version property.
+    /// Thrown when an encrypter is required but the target model lacks a key version property.
     /// </summary>
-    public NoKeyVersionPropertyException() :
-        base($"No Key Version property has been provided for the{nameof(T)} class, and {nameof(T)} has encrypted properties.")   
+    internal NoKeyVersionPropertyException()
+        : base(CreateMessage())
     {
     }
+
+    private static string CreateMessage() =>
+        $"{typeof(T).Name} has encrypted properties but no key version property was found.";
 }
