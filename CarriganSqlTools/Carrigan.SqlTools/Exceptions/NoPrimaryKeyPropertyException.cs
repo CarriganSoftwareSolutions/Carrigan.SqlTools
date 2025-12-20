@@ -1,32 +1,23 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.IdentifierTypes;
+﻿namespace Carrigan.SqlTools.Exceptions;
 
-namespace Carrigan.SqlTools.Exceptions;
 /// <summary>
-/// Thrown when no property in the model class <typeparamref name="T"/> is marked with
-/// either a <c>[PrimaryKey]</c> or <c>[Key]</c> attribute and a “By Id” operation is invoked.
+/// Thrown when a model type <typeparamref name="T"/> does not define a primary key property.
 /// </summary>
 /// <typeparam name="T">
-/// The model type for which no primary key property was found.
+/// The model type that requires a primary key property.
 /// </typeparam>
 /// <remarks>
-/// This exception is typically thrown during SQL generation when methods such as
-/// <c>UpdateById()</c>, <c>DeleteById()</c>, or similar "By Id" operations are invoked,
-/// but the target entity type does not define a primary key through either the
-/// <see cref="Carrigan.SqlTools.Attributes.PrimaryKeyAttribute"/> or the standard
-/// <see cref="System.ComponentModel.DataAnnotations.KeyAttribute"/>.
+/// This exception is evaluated and may be thrown when a <c>SqlGenerator&lt;T&gt;</c> is constructed.
+/// A primary key property is required when SQL generation needs to uniquely identify a row (for example,
+/// for <c>SelectById</c>, <c>Update</c>, or <c>Delete</c> operations).
 /// </remarks>
 public class NoPrimaryKeyPropertyException<T> : Exception
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="NoPrimaryKeyPropertyException{T}"/> class.
     /// </summary>
-    /// <remarks>
-    /// This exception is raised when a “By Id” SQL operation is executed on a model
-    /// class that lacks a defined primary key property.
-    /// </remarks>
-    internal NoPrimaryKeyPropertyException() :
-        base($"No Primary Key property has been specified for the {nameof(T)} class.")
+    internal NoPrimaryKeyPropertyException()
+        : base($"{typeof(T).Name} has no primary key property.")
     {
     }
 }
