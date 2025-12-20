@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carrigan.SqlTools.Attributes;
 
@@ -9,16 +8,21 @@ namespace Carrigan.SqlTools.Attributes;
 /// <remarks>
 /// In Carrigan.SqlTools, a <b>class</b> represents an SQL <b>table</b> (or stored procedure),
 /// and a <b>property</b> represents an SQL <b>column</b> (or stored procedure parameter).
+/// <para>
 /// When applied:
+/// </para>
 /// <list type="bullet">
 ///   <item>
 ///     <description>
-///     On a class: provides the identifier metadata used as the SQL table (or procedure) name, and optional schema.
+///     On a class: provides the identifier metadata used as the SQL table name (for CRUD generation) and
+///     the stored procedure name (for procedure execution), plus an optional schema.
 ///     </description>
 ///   </item>
 ///   <item>
 ///     <description>
-///     On a property: provides the identifier metadata used as the SQL column (or parameter) name.
+///     On a property: provides the identifier metadata used as the SQL column name. If no
+///     <see cref="ParameterAttribute"/> is present, the resolved column name is also used as the default
+///     SQL parameter name.
 ///     </description>
 ///   </item>
 /// </list>
@@ -44,7 +48,8 @@ namespace Carrigan.SqlTools.Attributes;
 ///   </item>
 ///   <item>
 ///     <description>
-///     If <see cref="Schema"/> is <c>null</c>, no schema prefix is emitted in the generated SQL.
+///     The <see cref="Schema"/> value is used only when this attribute is applied to a class.
+///     When applied to a property, <see cref="Schema"/> is ignored by the current reflection cache.
 ///     </description>
 ///   </item>
 /// </list>
@@ -53,8 +58,14 @@ namespace Carrigan.SqlTools.Attributes;
 ///   <item>
 ///     <description>
 ///     This attribute does <b>not</b> modify or override Entity Framework mappings. It affects only SQL
-///     emitted by this library’s generators (for example,
-///     <see cref="Carrigan.SqlTools.SqlGenerators.SqlGenerator{T}"/>).
+///     emitted by this library’s generators.
+///     </description>
+///   </item>
+///   <item>
+///     <description>
+///     This attribute enforces only null and empty-string validation. SQL identifier rules
+///     (e.g., whitespace rules, invalid characters, reserved words, and length constraints)
+///     are validated by the SQL generator.
 ///     </description>
 ///   </item>
 /// </list>
@@ -64,12 +75,18 @@ namespace Carrigan.SqlTools.Attributes;
 /// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.Attributes;
+/// using Carrigan.SqlTools.SqlGenerators;
+/// using Carrigan.SqlTools.SqlQueries;
+///
 /// [Identifier("Email", "schema")]
 /// internal class EmailModel
 /// {
 ///     [PrimaryKey]
 ///     public int Id { get; set; }
+///
 ///     public int CustomerId { get; set; }
+///
 ///     [Identifier("Email")]
 ///     public string? EmailAddress { get; set; }
 /// }
@@ -91,23 +108,27 @@ namespace Carrigan.SqlTools.Attributes;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
 public sealed class IdentifierAttribute : Attribute
 {
     /// <summary>
-    /// Gets the logical identifier name (table or column).
+    /// Gets the identifier name applied to the decorated type or property.
     /// </summary>
     internal string Name { get; }
+
     /// <summary>
     /// Gets the schema name, if specified; otherwise <c>null</c>.
     /// </summary>
+    /// <remarks>
+    /// This value is used only when the attribute is applied to a class.
+    /// </remarks>
     internal string? Schema { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IdentifierAttribute"/> class.
     /// </summary>
-    /// <param name="Name">The SQL table or column identifier to use.</param>
-    /// <param name="Schema">The optional SQL schema name.</param>
+    /// <param name="Name">The SQL identifier to use for the decorated type or property.</param>
+    /// <param name="Schema">The optional SQL schema name (type-level only).</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="Name"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="Name"/> is an empty string, or when a non-<c>null</c>
@@ -117,9 +138,11 @@ public sealed class IdentifierAttribute : Attribute
     {
         ArgumentNullException.ThrowIfNull(Name, nameof(Name));
         if (Name == string.Empty)
-            throw new ArgumentException("Name cannot be an empty string", nameof(Name));
+            throw new ArgumentException("name is an empty string.", nameof(Name));
+
         if (Schema is not null && Schema == string.Empty)
-            throw new ArgumentException("Schema cannot be an empty string", nameof(Schema));
+            throw new ArgumentException("schema is an empty string.", nameof(Schema));
+
         this.Name = Name;
         this.Schema = Schema;
     }
