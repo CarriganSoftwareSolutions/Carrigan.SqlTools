@@ -2,32 +2,27 @@
 
 /// <summary>
 /// Thrown when a <c>SqlGenerator&lt;T&gt;</c> is constructed for a model type
-/// that contains encrypted properties, but no encrypter instance is provided.
+/// that contains encrypted properties, but no encryption service is provided.
 /// </summary>
+/// <typeparam name="T">
+/// The model type that defines one or more encrypted properties.
+/// </typeparam>
 /// <remarks>
-/// This exception is triggered during construction of <c>SqlGenerator&lt;T&gt;</c>
-/// (or any similar generator class) when the target model type <typeparamref name="T"/>
-/// declares one or more properties marked for encryption, but the generator
-/// is initialized without a valid encrypter.
-///
-/// <para><b>Example scenario:</b></para>
-/// If a model class includes properties decorated with an <c>[Encrypted]</c> attribute
-/// (or equivalent flag), the SQL generator requires an encrypter to handle those
-/// values during query generation. Failing to supply one at construction time
-/// results in this exception.
+/// This exception is evaluated during construction of <c>SqlGenerator&lt;T&gt;</c> when the target model type
+/// declares one or more encrypted properties (for example, via <c>[Encrypted]</c>) but the generator is
+/// initialized without an encryption service (for example, without providing <c>IEncryption</c>).
+/// <para>
+/// Depending on what other validation failures are detected, this exception may be thrown directly or wrapped
+/// as an inner exception of an <see cref="AggregateException"/>.
+/// </para>
 /// </remarks>
-public class EncrypterNotProvidedException<T> : Exception
+public sealed class EncrypterNotProvidedException<T> : Exception
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="EncrypterNotProvidedException{T}"/> class.
     /// </summary>
-    /// <remarks>
-    /// This exception is raised when <c>SqlGenerator&lt;T&gt;</c> is instantiated
-    /// without providing an encrypter, and <typeparamref name="T"/> defines one or
-    /// more encrypted properties.
-    /// </remarks>
-    internal EncrypterNotProvidedException() :
-        base($"No encrypter provided for Sql Generator<{nameof(T)}>, and {nameof(T)} has encrypted properties.")   
+    internal EncrypterNotProvidedException()
+        : base($"No encrypter was provided to SqlGenerator<{typeof(T).Name}>, but {typeof(T).Name} contains encrypted properties.")
     {
     }
 }
