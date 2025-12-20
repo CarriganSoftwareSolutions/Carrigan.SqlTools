@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
+using System.Diagnostics.Metrics;
 
 namespace Carrigan.SqlTools.Exceptions;
 
@@ -20,6 +21,8 @@ public class AmbiguousResultColumnException : Exception
     /// Initializes a new instance of the <see cref="AmbiguousResultColumnException"/> class
     /// with a message describing the ambiguous column names.
     /// </summary>
+    /// <param name="resultColumns">The ambiguous result column names.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="resultColumns"/> is <c>null</c>.</exception>
     internal AmbiguousResultColumnException(params IEnumerable<ResultColumnName> resultColumns) :
         base(CreateMessage(resultColumns))
     {
@@ -32,19 +35,23 @@ public class AmbiguousResultColumnException : Exception
     /// <returns>
     /// A human-readable message listing all ambiguous SQL column identifiers.
     /// </returns>
-    private static string CreateMessage(IEnumerable<ResultColumnName> ambiguousResultColumns) =>
-        "Ambiguous SQL result column identifier(s): " 
-            + ambiguousResultColumns
-                .Select(column => $"{column?.ToString() ?? "<null>"}")
-                .JoinAnd();
+    private static string CreateMessage(IEnumerable<ResultColumnName> ambiguousResultColumns)
+    {
+        IReadOnlyCollection<string> ambiguousNames =
+            [..
+                ambiguousResultColumns
+                    .Select(column => column?.ToString() ?? "<null>")
+                    .Distinct()
+            ];
+
+        return $"Ambiguous SQL result column identifier(s): {ambiguousNames.JoinAnd()}";
+    }
 
     /// <summary>
     /// Checks a given <see cref="SelectTagsBase"/> instance for duplicate
     /// <see cref="ResultColumnName"/> values and returns an exception if any are found.
     /// </summary>
-    /// <param name="selects">
-    /// The <see cref="SelectTagsBase"/> instance to analyze for ambiguous result columns.
-    /// </param>
+    /// <param name="selects">The <see cref="SelectTagsBase"/> instance to analyze for ambiguous result columns.</param>
     /// <returns>
     /// A new <see cref="AmbiguousResultColumnException"/> if duplicate column names are detected;
     /// otherwise, <c>null</c>.
@@ -59,12 +66,22 @@ public class AmbiguousResultColumnException : Exception
             return null;
         else
         {
-            IEnumerable<ResultColumnName> names = selects.All().Select(tag => tag.ResultColumnName);
-            IEnumerable<ResultColumnName> invalids = 
-                selects.All()
-                    .Select(tag => tag.ResultColumnName)
-                    .Where(outerName => names.Count(innerTag => innerTag == outerName) > 1);
-            return invalids.Any() ? new (invalids) : null;
+            IReadOnlyCollection<ResultColumnName> names =
+                [.. selects.All().Select(tag => tag.ResultColumnName)];
+            Dictionary<ResultColumnName, int> namesCounter = [];
+
+            foreach (ResultColumnName name in names)
+            {
+                if (namesCounter.TryGetValue(name, out int value))
+                    namesCounter[name] = value + 1;
+                else
+                    namesCounter.Add(name, 1);
+            }
+
+            IReadOnlyCollection<ResultColumnName> invalids =
+                [.. namesCounter.Where(pair => pair.Value > 1).Select(pair => pair.Key)];
+
+            return invalids.Count == 0 ?  null : new(invalids);
         }
     }
 }

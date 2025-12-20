@@ -7,18 +7,14 @@ namespace Carrigan.SqlTools.Attributes;
 /// and overrides the default SQL type mapping for that column in the data model.
 /// </summary>
 /// <remarks>
-/// This attribute defines SQL metadata for a property that represents a SQL Server
-/// <c>VARBINARY(MAX)</c> column on a table model.
-///
+/// This attribute defines SQL metadata for a property, and that property represents an SQL column in the data model.
+/// The attribute supplies the <see cref="SqlTypeDefinition"/> consumed by the SQL generator when emitting SQL.
 /// <para>
 /// <c>VARBINARY(MAX)</c> is the recommended modern replacement for the legacy <c>IMAGE</c>
 /// type when modeling large binary data, such as files or blobs.
 /// </para>
-///
-/// <para><strong>Suggested C# Data Type:</strong><br/>
-/// Properties mapped to <c>VARBINARY(MAX)</c> columns should use the .NET <see cref="byte"/>[]
-/// type. ADO.NET exposes <c>VARBINARY</c> and <c>VARBINARY(MAX)</c> values as <see cref="byte"/>[]
-/// instances, making <see cref="byte"/>[] the natural representation in the data model.
+/// <para>
+/// Suggested CLR type: <see cref="byte"/>[].
 /// </para>
 /// </remarks>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
