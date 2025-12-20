@@ -41,9 +41,6 @@ public class InvalidParameterIdentifierException : Exception
                     .Distinct()
             ];
 
-        if (invalidIdentifiers.Count == 0)
-            return "One or more parameter identifiers do not follow the SQL naming convention.";
-
         return $"The following parameter identifier(s) do not follow the SQL naming convention: {invalidIdentifiers.JoinAnd()}";
     }
 }

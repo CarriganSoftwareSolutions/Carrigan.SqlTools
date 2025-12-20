@@ -58,9 +58,6 @@ public sealed class InvalidPropertyException<T> : Exception
                     .Distinct()
             ];
 
-        if (invalidNames.Count == 0)
-            return $"One or more properties on {typeof(T).Name} are invalid or do not meet the required criteria.";
-
         return $"The following properties on {typeof(T).Name} are invalid or do not meet the required criteria: {invalidNames.JoinAnd()}";
     }
 }

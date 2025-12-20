@@ -5,21 +5,16 @@ namespace Carrigan.SqlTools.Exceptions;
 
 /// <summary>
 /// Thrown when one or more <see cref="ResultColumnName"/> values returned from a SQL query
-/// cannot be matched to a corresponding property on the target class <typeparamref name="T"/>.
+/// cannot be matched to a corresponding property on the target model type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">
 /// The entity or model type expected to receive the SQL query results.
 /// </typeparam>
 /// <remarks>
-/// This exception indicates that the SQL result set contains one or more column names
-/// that do not correspond to any mapped or recognized property names on the model type
-/// <typeparamref name="T"/>.
-///
-/// <para>
-/// This typically occurs when the database query returns columns that have been aliased,
-/// renamed, or otherwise do not match the expected property mapping as determined by
-/// the SQL generator or reflection cache.
-/// </para>
+/// This exception indicates that the SQL result set contains one or more column names that do not correspond to any
+/// mapped or recognized property names on the model type <typeparamref name="T"/>. This typically occurs when the
+/// query returns columns that have been aliased or otherwise renamed such that they no longer match the resolved
+/// property mapping used by the SQL generator or reflector cache.
 /// </remarks>
 public class InvalidResultColumnNameException<T> : Exception
 {
@@ -27,34 +22,34 @@ public class InvalidResultColumnNameException<T> : Exception
     /// Initializes a new instance of the <see cref="InvalidResultColumnNameException{T}"/> class.
     /// </summary>
     /// <param name="resultColumnNames">
-    /// The <see cref="ResultColumnName"/> values that could not be matched
-    /// to properties on the target class <typeparamref name="T"/>.
+    /// The <see cref="ResultColumnName"/> values that could not be matched to properties on <typeparamref name="T"/>.
     /// </param>
-
-    internal InvalidResultColumnNameException(params IEnumerable<ResultColumnName> resultColumnNames) :
-        base(CreateMessage(resultColumnNames))
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="resultColumnNames"/> is <c>null</c>.</exception>
+    internal InvalidResultColumnNameException(params IEnumerable<ResultColumnName> resultColumnNames)
+        : base(CreateMessage(resultColumnNames))
     {
     }
 
     /// <summary>
-    /// Builds a formatted exception message listing the result columns that failed to map
-    /// to properties on the target class <typeparamref name="T"/>.
+    /// Builds a formatted exception message listing the result columns that failed to map to properties on
+    /// <typeparamref name="T"/>.
     /// </summary>
     /// <param name="resultColumnNames">
-    /// The <see cref="ResultColumnName"/> values that could not be matched
-    /// to properties on the target class <typeparamref name="T"/>.
+    /// The <see cref="ResultColumnName"/> values that could not be matched to properties on <typeparamref name="T"/>.
     /// </param>
-    /// <returns>
-    /// A formatted exception message describing which result column names did not have
-    /// corresponding property mappings.
-    /// </returns>
-    /// <remarks>
-    /// This method is typically invoked when the SQL generator or reflection cache
-    /// attempts to bind result columns to object properties and one or more names fail to match.
-    /// </remarks>
-    internal static string CreateMessage(IEnumerable<ResultColumnName> resultColumnNames) =>
-        $"The ADO column name does not have corresponding property name that matches: " +
-            resultColumnNames
-                .Select(ResultColumnName => (string)ResultColumnName) 
-                .JoinAnd();
+    /// <returns>A formatted exception message describing which result column names did not have corresponding mappings.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="resultColumnNames"/> is <c>null</c>.</exception>
+    internal static string CreateMessage(IEnumerable<ResultColumnName> resultColumnNames)
+    {
+        ArgumentNullException.ThrowIfNull(resultColumnNames, nameof(resultColumnNames));
+
+        IReadOnlyCollection<string> invalidNames =
+            [..
+                resultColumnNames
+                    .Select(name => name?.ToString() ?? "<null>")
+                    .Distinct()
+            ];
+
+        return $"The following result column name(s) could not be mapped to properties on {typeof(T).Name}: {invalidNames.JoinAnd()}";
+    }
 }

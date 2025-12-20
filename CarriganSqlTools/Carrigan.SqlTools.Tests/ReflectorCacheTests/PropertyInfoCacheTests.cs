@@ -120,4 +120,27 @@ public class PropertyInfoCacheTests
     [Fact]
     public void GetExceptionForInvalidProperties_NotNull() =>
         Assert.NotNull(_cache.GetExceptionForInvalidProperties(new ResultColumnName(_invalid)));
+
+    [Fact]
+    public void GetMany_MultipleInvalidException()
+    {
+        string invalid1 = "INVALID_PROPERTY_1";
+        string invalid2 = "INVALID_PROPERTY_2";
+
+        InvalidResultColumnNameException<Address> exception =
+            Assert.Throws<InvalidResultColumnNameException<Address>>
+            (
+                () => _cache.GetMany
+                (
+                    [
+                        new ResultColumnName(invalid1),
+                    new ResultColumnName(invalid2)
+                    ]
+                )
+            );
+
+        Assert.Contains(invalid1, exception.Message);
+        Assert.Contains(invalid2, exception.Message);
+    }
+
 }
