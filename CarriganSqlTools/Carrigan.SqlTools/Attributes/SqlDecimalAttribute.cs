@@ -17,8 +17,8 @@ namespace Carrigan.SqlTools.Attributes;
 /// When explicitly specified:
 /// </para>
 /// <list type="bullet">
-/// <item><description><paramref name="precision"/> must be in the range <c>1</c>–<c>38</c>.</description></item>
-/// <item><description><paramref name="scale"/> must be in the range <c>0</c>–<c>precision</c>.</description></item>
+/// <item><description><paramref name="Precision"/> must be in the range <c>1</c>–<c>38</c>.</description></item>
+/// <item><description><paramref name="Scale"/> must be in the range <c>0</c>–<c>precision</c>.</description></item>
 /// </list>
 /// </remarks>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
