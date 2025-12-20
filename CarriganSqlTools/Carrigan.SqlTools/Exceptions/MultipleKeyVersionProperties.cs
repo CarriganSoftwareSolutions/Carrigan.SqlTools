@@ -27,8 +27,9 @@ public class MultipleKeyVersionProperties<T> : Exception
     /// <param name="propertyNames">
     /// The <see cref="PropertyName"/> instances representing the conflicting key version properties.
     /// </param>
-    internal MultipleKeyVersionProperties(params IEnumerable<PropertyName> propertyNames) :
-        base(CreateMessage(propertyNames))
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyNames"/> is <c>null</c>.</exception>
+    internal MultipleKeyVersionProperties(params IEnumerable<PropertyName> propertyNames)
+        : base(CreateMessage(propertyNames))
     {
     }
 
@@ -41,9 +42,18 @@ public class MultipleKeyVersionProperties<T> : Exception
     /// <returns>
     /// A formatted exception message describing the duplicate key version properties.
     /// </returns>
-    private static string CreateMessage(IEnumerable<PropertyName> invalidPropertyNames) =>
-        $"The {typeof(T)} class has multiple key version properties, which is not allowed:"
-            + invalidPropertyNames
-                .Select(property => $"{property.ToString() ?? "<null>"}")
-                .JoinAnd();
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="invalidPropertyNames"/> is <c>null</c>.</exception>
+    private static string CreateMessage(IEnumerable<PropertyName> invalidPropertyNames)
+    {
+        ArgumentNullException.ThrowIfNull(invalidPropertyNames, nameof(invalidPropertyNames));
+
+        IReadOnlyCollection<string> names =
+            [..
+                invalidPropertyNames
+                    .Select(property => property?.ToString() ?? "<null>")
+                    .Distinct()
+            ];
+
+        return $"{typeof(T).Name} has multiple key version properties, which is not allowed: {names.JoinAnd()}.";
+    }
 }
