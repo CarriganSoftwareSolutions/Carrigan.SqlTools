@@ -117,7 +117,6 @@ public class SqlTypeDefinition
     {
     }
 
-    //TODO: Update documentation, unit test and code review for when the underlying type is char, string or byte[]
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlTypeDefinition"/> class
     /// using the default <see cref="SqlDbType"/> mapping for the runtime type of the specified value.
@@ -146,7 +145,6 @@ public class SqlTypeDefinition
         }
     }
 
-    //TODO: Update documentation, unit test and code review for when the underlying type is char or string
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlTypeDefinition"/> class
     /// using the default <see cref="SqlDbType"/> mapping for the specified CLR <paramref name="type"/>.

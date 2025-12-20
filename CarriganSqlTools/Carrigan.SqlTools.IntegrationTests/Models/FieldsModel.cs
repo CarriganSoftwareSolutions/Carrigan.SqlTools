@@ -63,7 +63,6 @@ public class FieldsModel
     public System.Xml.XmlDocument? XmlDocumentNullableValue { get; set; }
 
     // SQL table DDL (used by the fixture)
-        //TODO: revisit decimal precision
     internal static string CreateTableSql =>
         """
         CREATE TABLE dbo.Fields

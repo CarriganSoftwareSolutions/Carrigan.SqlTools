@@ -165,7 +165,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                     BoolValue = true,
                     BoolNullableValue = null,
 
-                    DecimalValue = -99999999999999.9999m, //TODO: these values where recommended, revisit
+                    DecimalValue = -99999999999999.9999m,
                     DecimalNullableValue = null,
                     DoubleValue = double.MinValue,
                     DoubleNullableValue = null,
@@ -223,7 +223,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                 BoolValue = true,
                 BoolNullableValue = null,
 
-                DecimalValue = 99999999999999.9999m, //TODO: these values where recommended, revisit
+                DecimalValue = 99999999999999.9999m, 
                 DecimalNullableValue = null,
                 DoubleValue = double.MaxValue,
                 DoubleNullableValue = null,
@@ -236,9 +236,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                 TimeOnlyNullableValue = null,
                 DateTimeValue = DateTime.MaxValue,
                 DateTimeNullableValue = null,
-                //TODO: Remove comments or restore
-                //TimeSpanValue = new TimeSpan(0, 2, 3, 4, 567),
-                //TimeSpanNullableValue = null,
+
                 DateTimeOffsetValue = DateTimeOffset.MaxValue,
                 DateTimeOffsetNullableValue = null,
 
