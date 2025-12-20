@@ -202,4 +202,10 @@ public class SqlGenerator_ConstructorValidationTests
         Assert.True(mismatches.Count() >= 2);
     }
 
+    [Fact]
+    public void NoPrimaryKeyProperty_Exception() => 
+        Assert.Throws<NoPrimaryKeyPropertyException<NoPrimaryKeyPropertyEntity>>
+        (
+            () => _ = new SqlGenerator<NoPrimaryKeyPropertyEntity>()
+        );
 }
