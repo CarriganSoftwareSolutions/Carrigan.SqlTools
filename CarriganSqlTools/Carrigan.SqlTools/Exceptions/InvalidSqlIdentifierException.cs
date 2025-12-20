@@ -22,39 +22,6 @@ namespace Carrigan.SqlTools.Exceptions;
 /// </remarks>
 public class InvalidSqlIdentifierException: Exception
 {
-    #region IdentifierAttribute
-    /// <summary>
-    /// Initializes a new instance of the <see cref="InvalidSqlIdentifierException"/> class
-    /// for an invalid <see cref="IdentifierAttribute"/>.
-    /// </summary>
-    /// <param name="identifierAttribute">
-    /// The <see cref="IdentifierAttribute"/> instance that supplied the invalid identifier.
-    /// </param>
-    internal InvalidSqlIdentifierException(IdentifierAttribute identifierAttribute) :
-        base(CreateMessage(identifierAttribute))
-    {
-    }
-
-    /// <summary>
-    /// Builds an error message describing an invalid identifier provided via an
-    /// <see cref="IdentifierAttribute"/>.
-    /// </summary>
-    /// <param name="id">The attribute instance that supplied the invalid identifier.</param>
-    /// <returns>A formatted error message.</returns>
-    private static string CreateMessage(IdentifierAttribute id)
-    {
-        static string GetName(string? schema, string table)
-        {
-            if (schema == null)
-                return table;
-            else
-                return $"{schema}.{table}";
-        }
-
-        return $"SQL Identifier, \"{GetName(id.Schema, id.Name)}\", is invalid. Identifier comes from {id.MemberName}";
-    }
-    #endregion
-
     #region TabelName
     /// <summary>
     /// Initializes a new instance of the <see cref="InvalidSqlIdentifierException"/> class

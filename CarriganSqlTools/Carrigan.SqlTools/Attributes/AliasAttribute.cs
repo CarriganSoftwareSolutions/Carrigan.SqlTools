@@ -1,7 +1,6 @@
 ﻿using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Attributes;
-[AttributeUsage(AttributeTargets.Property)]
 
 /// <summary>
 /// Specifies a default SQL alias (the <c>AS</c> identifier) for a property when it is projected
@@ -38,12 +37,13 @@ namespace Carrigan.SqlTools.Attributes;
 /// FROM [AliasEntity]
 /// ]]></code>
 /// </example>
-public class AliasAttribute : Attribute
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+public sealed class AliasAttribute : Attribute
 {
     /// <summary>
     /// Gets the alias name to apply in the <c>AS</c> clause for the decorated property.
     /// </summary>
-    internal AliasName Name { get; set; }
+    internal AliasName Name { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasAttribute"/> class.

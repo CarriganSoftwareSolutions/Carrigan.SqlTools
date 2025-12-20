@@ -1,21 +1,24 @@
 ﻿namespace Carrigan.SqlTools.Attributes;
 
-[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
 
 /// <summary>
-/// Indicates that a method or constructor is intended for **external use only**.
+/// Indicates that a method or constructor is intended for external-facing use only.
 /// </summary>
 /// <remarks>
-/// This attribute differentiates externally accessible overloads (e.g., those accepting
-/// raw string identifiers) from their internal, strongly typed counterparts that use
-/// the library’s wrapper classes (such as <c>PropertyName</c> or <c>AliasName</c>).
+/// This attribute is used to distinguish externally consumable overloads (for example,
+/// those accepting raw string identifiers) from internal or strongly typed counterparts
+/// that rely on the library’s identifier wrapper types (such as <c>PropertyName</c> or
+/// <c>AliasName</c>).
 /// <para>
-/// It must be declared <see langword="public"/> so that Roslyn analyzers in other assemblies
-/// can detect and enforce its intended usage.
+/// It is primarily intended to be consumed by Roslyn analyzers, which may enforce rules
+/// such as restricting call sites, discouraging internal usage, or validating API
+/// surface design.
 /// </para>
 /// <para>
-/// This attribute should be defined at the assembly level containing both the analyzer
-/// and the target code to ensure accessibility.
+/// When this attribute is defined in a referenced assembly and applied by external
+/// consumers, it must be declared <see langword="public"/> to allow those assemblies to
+/// reference and apply it. Roslyn analyzers can detect the attribute regardless of its
+/// accessibility within the analyzed compilation.
 /// </para>
 /// </remarks>
 /// <example>
@@ -26,5 +29,5 @@
 /// }
 /// ]]></code>
 /// </example>
-//Note: THIS MUST BE PUBLIC, to be exposed to the Roslyn analyzer.
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor, AllowMultiple = false)]
 public sealed class ExternalOnlyAttribute : Attribute { }

@@ -1,31 +1,35 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.RegularExpressions;
+﻿using Carrigan.SqlTools.Exceptions;
 
 namespace Carrigan.SqlTools.Attributes;
-
 /// <summary>
-/// Specifies a parameter identifier for SQL generation, allowing customization of
-/// the parameter <see cref="Name"/> that corresponds to a property.
+/// Specifies the SQL parameter identifier used by this library’s SQL generators for a property.
 /// </summary>
 /// <remarks>
-/// When applied to a property, the SQL generator uses the specified parameter name instead
-/// of the property name when binding query parameters.  
-/// If the attribute is not applied, the property name is used as the default parameter name.
-///
-/// <para><b>Usage notes:</b></para>
+/// In Carrigan.SqlTools, a <b>property</b> represents an SQL <b>parameter</b> when values are
+/// bound to generated SQL statements. When this attribute is applied, the SQL generator
+/// uses the specified parameter name instead of the CLR property name.
+/// <para>
+/// If this attribute is not applied, the property name is used as the default SQL parameter
+/// identifier.
+/// </para>
+/// <para><b>Usage notes</b></para>
 /// <list type="bullet">
 ///   <item>
-///     <description>This attribute affects SQL parameter naming only; it does not modify database schema or metadata.</description>
+///     <description>
+///     This attribute affects SQL parameter naming only; it does not modify database schema,
+///     column metadata, or stored procedure definitions.
+///     </description>
 ///   </item>
 ///   <item>
-///     <description>The specified <see cref="Name"/> must be a valid SQL identifier; otherwise,
-///     an <see cref="InvalidSqlIdentifierException"/> is thrown at construction time.</description>
+///     <description>
+///     The parameter name must be a non-null, non-empty string. Validation of SQL identifier
+///     syntax is performed by the SQL generation pipeline, not by this attribute.
+///     </description>
 ///   </item>
 /// </list>
 /// </remarks>
-[AttributeUsage(AttributeTargets.Property)]
-public class ParameterAttribute : Attribute
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+public sealed class ParameterAttribute : Attribute
 {
     /// <summary>
     /// Gets the SQL parameter name that corresponds to the decorated property.
