@@ -153,7 +153,7 @@ public static class CommandsAsync
             if (decrypters is null)
                 throw new DecrypterNotProvided<T>();
 
-            _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NoKeyVersionPropertyException<T>();
+            _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NoKeyVersionException<T>();
             foreach (T record in results)
             {
                 decryptionVersion = (int?) ClientReflectorCache<T>.KeyVersionProperty.GetValue(record);

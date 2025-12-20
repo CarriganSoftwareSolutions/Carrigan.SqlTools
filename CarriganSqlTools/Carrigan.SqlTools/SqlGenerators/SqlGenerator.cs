@@ -41,7 +41,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <see cref="InvalidSqlIdentifierException"/>,
     /// <see cref="SqlTypeMismatchException"/>,
     /// <see cref="EncrypterNotProvidedException{T}"/>,
-    /// <see cref="NoKeyVersionPropertyException{T}"/>,
+    /// <see cref="NoKeyVersionException{T}"/>,
     /// <see cref="InvalidKeyVersionPropertyTypeException{T}"/>, and
     /// <see cref="MultipleKeyVersionsException{T}"/>.
     /// </exception>
@@ -95,7 +95,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             if (_Encryption is null)
                 exceptions.Add(new EncrypterNotProvidedException<T>());
             if (KeyVersionColumnInfo is null)
-                exceptions.Add(new NoKeyVersionPropertyException<T>());
+                exceptions.Add(new NoKeyVersionException<T>());
             else if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
                 exceptions.Add(new InvalidKeyVersionPropertyTypeException<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
             if (KeyVersionColumnsInfo.Count() > 1)
@@ -121,7 +121,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="EncrypterNotProvidedException{T}">
     /// if encrypted columns exist but no encrypter was supplied
     /// </exception>
-    /// <exception cref="NoKeyVersionPropertyException{T}">
+    /// <exception cref="NoKeyVersionException{T}">
     /// if encrypted columns exist but no key-version property was designated.
     /// </exception>
     /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
@@ -153,7 +153,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="EncrypterNotProvidedException{T}">
     /// if encrypted columns exist but no encrypter was supplied
     /// </exception>
-    /// <exception cref="NoKeyVersionPropertyException{T}">
+    /// <exception cref="NoKeyVersionException{T}">
     /// if encrypted columns exist but no key-version property was designated.
     /// </exception>
     /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">

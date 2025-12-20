@@ -15,13 +15,13 @@
 /// encrypted properties. If no properties are marked for encryption,
 /// this validation is skipped.
 /// </remarks>
-public class NoKeyVersionPropertyException<T> : Exception
+public class NoKeyVersionException<T> : Exception
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="NoKeyVersionPropertyException{T}"/> class.
+    /// Initializes a new instance of the <see cref="NoKeyVersionException{T}"/> class.
     /// Thrown when an encrypter is required but the target model lacks a key version property.
     /// </summary>
-    internal NoKeyVersionPropertyException()
+    internal NoKeyVersionException()
         : base(CreateMessage())
     {
     }
