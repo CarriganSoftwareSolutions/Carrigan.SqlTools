@@ -54,7 +54,7 @@ public sealed class SqlBinaryAttribute : SqlTypeAttribute
     /// <param name="size">
     /// The size of the binary column in bytes. The valid range is <c>1</c>–<c>8000</c> inclusive.
     /// </param>
-    /// <exception cref="Carrigan.SqlTools.Exceptions.SqlTypeArgumentOutOfRangeException">
+    /// <exception cref="Exceptions.SqlTypeArgumentOutOfRangeException">
     /// Thrown when <paramref name="size"/> is outside the valid range for the selected SQL type.
     /// </exception>
     /// <exception cref="NotSupportedException">
