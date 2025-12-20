@@ -1,6 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿namespace Carrigan.SqlTools.Attributes;
 
-namespace Carrigan.SqlTools.Attributes;
 /// <summary>
 /// Specifies the SQL parameter identifier used by this library’s SQL generators for a property.
 /// </summary>
@@ -22,13 +21,14 @@ namespace Carrigan.SqlTools.Attributes;
 ///   </item>
 ///   <item>
 ///     <description>
-///     The parameter name must be a non-null, non-empty string. Validation of SQL identifier
-///     syntax is performed by the SQL generation pipeline, not by this attribute.
+///     This attribute enforces only null and empty-string validation. SQL identifier rules
+///     (e.g., whitespace rules, invalid characters, reserved words, and length constraints)
+///     are validated by the SQL generator's validation method.
 ///     </description>
 ///   </item>
 /// </list>
 /// </remarks>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class ParameterAttribute : Attribute
 {
     /// <summary>
@@ -42,12 +42,12 @@ public sealed class ParameterAttribute : Attribute
     /// <param name="Name">The SQL parameter name to use instead of the property name.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="Name"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="Name"/> is an empty string.</exception>
-    /// <exception cref="InvalidSqlIdentifierException">Thrown when <paramref name="Name"/> is not a valid SQL identifier.</exception>
     public ParameterAttribute(string Name)
     {
         ArgumentNullException.ThrowIfNull(Name, nameof(Name));
         if (Name == string.Empty)
-            throw new ArgumentException("name is an empty string", nameof(Name));
+            throw new ArgumentException("name is empty.", nameof(Name));
+
         this.Name = Name;
     }
 }
