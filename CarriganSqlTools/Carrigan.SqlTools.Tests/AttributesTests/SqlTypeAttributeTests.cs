@@ -39,4 +39,8 @@ public sealed class SqlTypeAttributeTests
 
         Assert.Null(attribute);
     }
+
+    [Fact]
+    public void GetSqlTypeAttribute_WhenPropertyInfoIsNull_Exception() =>
+    Assert.Throws<ArgumentNullException>(() => SqlTypeAttribute.GetSqlTypeAttribute(null!));
 }
