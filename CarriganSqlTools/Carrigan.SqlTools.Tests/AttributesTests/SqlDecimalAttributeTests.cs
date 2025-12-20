@@ -81,4 +81,21 @@ public sealed class SqlDecimalAttributeTests
     [InlineData((byte)10, (byte)11)]
     public void Constructor_WithPrecisionAndScale_Exception(byte precision, byte scale) => 
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlDecimalAttribute(precision, scale));
+
+    [Theory]
+    [InlineData((byte)5, (byte)5, "DECIMAL(5, 5)")]
+    [InlineData((byte)38, (byte)38, "DECIMAL(38, 38)")]
+    public void Constructor_WithPrecisionAndScale_ScaleEqualsPrecision(byte precision, byte scale, string expectedTypeDeclaration)
+    {
+        SqlDecimalAttribute sqlDecimalAttribute = new(precision, scale);
+
+        SqlTypeDefinition sqlTypeDefinition = sqlDecimalAttribute.SqlTypeDefinition;
+
+        Assert.Equal(expectedTypeDeclaration, sqlTypeDefinition.TypeDeclaration);
+    }
+
+    [Fact]
+    public void Constructor_WithPrecisionAndScale_ScaleOutOfRange_Exception() =>
+        Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlDecimalAttribute(38, 39));
+
 }
