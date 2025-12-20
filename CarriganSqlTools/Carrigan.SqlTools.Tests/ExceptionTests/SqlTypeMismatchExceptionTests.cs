@@ -1,8 +1,10 @@
-﻿using System.Data;
-using System.Reflection;
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.SqlTypes;
 using Carrigan.SqlTools.Types;
+using System.Data;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Tests.ExceptionTests;
 
@@ -301,4 +303,9 @@ public sealed class SqlTypeMismatchExceptionTests
     }
 
     #endregion
+
+    [Fact]
+    public void SqlTypeMismatch_ImageAttribute_Exception() =>
+    Assert.Throws<SqlTypeMismatchException>(() => _ = new SqlGenerator<SqlTypeMismatchImageAttributeEntity>());
+
 }
