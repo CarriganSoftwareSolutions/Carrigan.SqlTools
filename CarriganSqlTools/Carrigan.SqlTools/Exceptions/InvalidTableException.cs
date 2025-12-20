@@ -13,6 +13,20 @@ namespace Carrigan.SqlTools.Exceptions;
 /// when attempting to generate a join or filter condition against an undefined table).
 /// </remarks>
 /// <example>
+/// <code language="csharp"><![CDATA[
+/// Predicates invalidPredicate =
+///     new ColumnEqualsColumn<ColumnIdentifiers, PhoneModel>(nameof(ColumnIdentifiers.Id), nameof(PhoneModel.Id));
+///
+/// // ColumnIdentifiers is not part of the join chain for Joins<JoinLeftTable>,
+/// // so the join construction will throw InvalidTableException.
+/// _ = new Joins<JoinLeftTable>
+/// (
+///     new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
+///     new InnerJoin<JoinLastTable>(LastOnRightPredicate),
+///     new InnerJoin<ColumnIdentifiers>(invalidPredicate)
+/// );
+/// ]]></code>
+/// </example>
 public class InvalidTableException : Exception
 {
     /// <summary>
@@ -21,8 +35,9 @@ public class InvalidTableException : Exception
     /// in the generated SQL statement.
     /// </summary>
     /// <param name="tableTags">The <see cref="TableTag"/> instances representing the invalid tables.</param>
-    internal InvalidTableException(params IEnumerable<TableTag> tableTags) :
-        base(CreateMessage(tableTags))
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableTags"/> is <c>null</c>.</exception>
+    internal InvalidTableException(params IEnumerable<TableTag> tableTags)
+        : base(CreateMessage(tableTags))
     {
     }
 
@@ -31,10 +46,20 @@ public class InvalidTableException : Exception
     /// </summary>
     /// <param name="tableTags">The <see cref="TableTag"/> instances representing the invalid tables.</param>
     /// <returns>A formatted error message describing the missing or invalid tables.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableTags"/> is <c>null</c>.</exception>
+    private static string CreateMessage(params IEnumerable<TableTag> tableTags)
+    {
+        ArgumentNullException.ThrowIfNull(tableTags, nameof(tableTags));
 
-    private static string CreateMessage(IEnumerable<TableTag> tableTags) =>
-        $"The following tables where not included in the query and are invalid" +
-            tableTags
-                .Select(column => $"{column?.ToString() ?? "<null>"}")
-                .JoinAnd();
+        IReadOnlyCollection<string> invalidTables =
+            [..
+                tableTags
+                    .Select(tag => tag?.ToString() ?? "<null>")
+                    .Distinct()
+            ];
+
+        return "The following tables were not included in the query and are invalid: "
+            + invalidTables.JoinAnd()
+            + ".";
+    }
 }
