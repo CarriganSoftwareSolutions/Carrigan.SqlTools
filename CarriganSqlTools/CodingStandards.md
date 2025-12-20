@@ -14,6 +14,7 @@
     *Valid Example: EncodingEnum encodingEnum;*
 - **Never use `continue`** statements.
 - Use **collection expressions** when possible.
+- Attribute's will validate null and empty values for arguments, but all other correctness checks will be performed by the SqlGenerator's validation method.
 
 ---
 
