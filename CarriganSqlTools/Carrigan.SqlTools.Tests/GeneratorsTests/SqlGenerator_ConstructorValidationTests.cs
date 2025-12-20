@@ -145,6 +145,7 @@ public class SqlGenerator_ConstructorValidationTests
             Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameNull>());
         Assert.IsType<ArgumentNullException>(ex.InnerException);
     }
+
     [Fact]
     public void AliasNameEmpty()
     {
@@ -152,6 +153,7 @@ public class SqlGenerator_ConstructorValidationTests
             Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameEmpty>());
         Assert.IsType<ArgumentException>(ex.InnerException);
     }
+
     [Fact]
     public void AliasNameInvalid() =>
         Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<AliasNameInvalid>());

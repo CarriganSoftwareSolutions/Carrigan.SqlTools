@@ -2,42 +2,58 @@
 
 namespace Carrigan.SqlTools.Attributes;
 
+
 /// <summary>
 /// Specifies a default SQL alias (the <c>AS</c> identifier) for a property when it is projected
 /// in a SELECT list. When present, SQL generation uses this alias unless an explicit override
 /// is provided at call time.
 /// </summary>
 /// <remarks>
+/// <para>
 /// The value is stored as a strongly typed <see cref="AliasName"/> and is typically consumed by
 /// reflection-driven components (e.g., the column/selection caches) to derive a result set
 /// column name. Library consumers can still override the alias per query.
+/// </para>
+/// <para>
+/// This attribute enforces only null and empty-string validation. SQL identifier rules
+/// (e.g., whitespace rules, invalid characters, reserved words, and length constraints)
+/// are validated by the SQL generator.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.Attributes;
+/// using Carrigan.SqlTools.SqlGenerators;
+/// using Carrigan.SqlTools.Tags;
+/// using Carrigan.SqlTools.SqlQueries;
+///
 /// internal class AliasEntity
 /// {
-///      public int Id { get; set; }
-///      [Alias("AnAlias")]
-///      public string? TestColumn { get; set; }
-///      public string? NoAlias { get; set; }
+///     public int Id { get; set; }
+///
+///     [Alias("AnAlias")]
+///     public string? TestColumn { get; set; }
+///
+///     public string? NoAlias { get; set; }
 /// }
+///
 /// SelectTags tags = SelectTags.GetMany<AliasEntity>
 /// (
 ///     nameof(AliasEntity.Id),
 ///     nameof(AliasEntity.TestColumn),
 ///     nameof(AliasEntity.NoAlias)
 /// );
-/// 
+///
 /// SqlGenerator<AliasEntity> generator = new();
-/// SqlQuery query = generator.Select(tags, null, null, null, null)
+/// SqlQuery query = generator.Select(tags, null, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias] 
+/// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias]
 /// FROM [AliasEntity]
 /// ]]></code>
 /// </example>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class AliasAttribute : Attribute
 {
     /// <summary>
@@ -50,12 +66,12 @@ public sealed class AliasAttribute : Attribute
     /// </summary>
     /// <param name="aliasName">The alias to use for the property’s <c>AS</c> clause.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="aliasName"/> is <c>null</c>.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="aliasName"/> is an empty string.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="aliasName"/> is empty.</exception>
     public AliasAttribute(string aliasName)
     {
         ArgumentNullException.ThrowIfNull(aliasName, nameof(aliasName));
         if (aliasName == string.Empty)
-            throw new ArgumentException("aliasName is an empty string", nameof(aliasName));
+            throw new ArgumentException("aliasName is empty", nameof(aliasName));
         Name = new(aliasName);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
@@ -59,4 +60,9 @@ public class AliasAttributeTests
 
         Assert.Equal(expected, query.QueryText);
     }
+
+    [Fact]
+    public void Constructor_Null_Exception() =>
+    Assert.Throws<ArgumentNullException>(() => new AliasAttribute(null!));
+
 }
