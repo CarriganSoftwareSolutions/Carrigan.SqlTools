@@ -21,7 +21,7 @@ public class NoKeyVersionException<T> : Exception
     /// Initializes a new instance of the <see cref="NoKeyVersionException{T}"/> class.
     /// Thrown when an encrypter is required but the target model lacks a key version property.
     /// </summary>
-    internal NoKeyVersionException()
+    public NoKeyVersionException()
         : base(CreateMessage())
     {
     }
