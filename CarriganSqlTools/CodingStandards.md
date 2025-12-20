@@ -15,6 +15,7 @@
 - **Never use `continue`** statements.
 - Use **collection expressions** when possible.
 - Attribute's will validate null and empty values for arguments, but all other correctness checks will be performed by the SqlGenerator's validation method.
+- Prefer params IEnumerable<T> over params T[], and yes,params as an IEnumerable is supported in the version of c# used by the SqlTools project.
 
 ---
 
