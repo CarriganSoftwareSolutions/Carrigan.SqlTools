@@ -13,15 +13,15 @@ namespace Carrigan.SqlTools.Exceptions;
 /// is inherently incompatible with the corresponding CLR type.
 /// </summary>
 /// <remarks>
-/// This exception is used to enforce SQL type validation with typed 
+/// This exception is used to enforce SQL type validation with typed
 /// compatibility rules between CLR model types and their associated SQL metadata.
-/// It is thrown only in cases of fundamental incompatibility.
-/// These Property type attributes are also enforced by a code analyzer provided with the library.
+/// It is produced only in cases of fundamental incompatibility.
+/// Property type attributes are also enforced by a code analyzer provided with the library.
 /// </remarks>
 public sealed class SqlTypeMismatchException : Exception
 {
     /// <summary>
-    /// Contains the allowed <see cref="SqlTypeAttribute"/> types for a given CLR type.
+    /// Contains the allowed <see cref="SqlTypeAttribute"/> subclasses for a given CLR type.
     /// </summary>
     private static readonly ReadOnlyDictionary<Type, ImmutableArray<Type>> AllowedAttributes;
 
@@ -97,6 +97,7 @@ public sealed class SqlTypeMismatchException : Exception
         AllowedSqlDbTypes = new(sqlDbTypes);
     }
 
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlTypeMismatchException"/> class
     /// for a mismatch between a CLR property type and a <see cref="SqlTypeAttribute"/>.
@@ -107,18 +108,15 @@ public sealed class SqlTypeMismatchException : Exception
         ($"Sql Type Attribute Mismatch: Property '{propertyInfo.Name}' with C# type '{propertyInfo.PropertyType.Name}' is inherently incompatible with attribute '{attributeMappingType.Name}'.")
     { }
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlTypeMismatchException"/> class
-    /// for a mismatch between a CLR value type and a <see cref="SqlDbType"/>.
+    /// for a mismatch between a CLR runtime type and a SQL type.
     /// </summary>
     /// <param name="type">The CLR type that is incompatible.</param>
     /// <param name="sqlDbType">The corresponding SQL type that caused the mismatch.</param>
     private SqlTypeMismatchException(Type type, SqlDbType sqlDbType) : base
         ($"Sql Type Attribute Mismatch: C# type '{type.Name}' is inherently incompatible with SQL type '{sqlDbType}'.")
-
     { }
-
 
     /// <summary>
     /// Validates whether a CLR property and its associated <see cref="SqlTypeAttribute"/>
@@ -130,6 +128,7 @@ public sealed class SqlTypeMismatchException : Exception
     /// <c>null</c> if the types are compatible, or an instance of
     /// <see cref="SqlTypeMismatchException"/> if the types are inherently incompatible.
     /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyInfo"/> is <c>null</c>.</exception>
     public static SqlTypeMismatchException? Validate(PropertyInfo propertyInfo, SqlTypeAttribute? sqlTypeAttribute)
     {
         static bool TestTheType(Type propertyType, Type attributeMappingType)
@@ -139,8 +138,11 @@ public sealed class SqlTypeMismatchException : Exception
             else
                 return false;
         }
+        ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
+
         Type? attributeMappingType = sqlTypeAttribute?.GetType();
         Type propertyType = propertyInfo.PropertyType;
+
         if (attributeMappingType is null)
             return null;
         else
@@ -177,7 +179,7 @@ public sealed class SqlTypeMismatchException : Exception
         }
 
         Type propertyType;
-        if (sqlDbType == SqlDbType.Variant || value is null)
+        if (sqlDbType == SqlDbType.Variant || value is null || value is DBNull)
             return null;
         else
         {

@@ -308,4 +308,24 @@ public sealed class SqlTypeMismatchExceptionTests
     public void SqlTypeMismatch_ImageAttribute_Exception() =>
     Assert.Throws<SqlTypeMismatchException>(() => _ = new SqlGenerator<SqlTypeMismatchImageAttributeEntity>());
 
+    [Fact]
+    public void Validate_ValueAndSqlDbType_DbNullValue()
+    {
+        object value = DBNull.Value;
+        SqlDbType sqlDbType = SqlDbType.NVarChar;
+
+        SqlTypeMismatchException? exception = SqlTypeMismatchException.Validate(value, sqlDbType);
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void Validate_PropertyAndAttribute_NullPropertyInfo_Throws()
+    {
+        PropertyInfo? propertyInfo = null;
+        SqlCharAttribute sqlCharAttribute = new(EncodingEnum.Ascii, StorageTypeEnum.Fixed);
+
+        Assert.Throws<ArgumentNullException>(() =>
+            SqlTypeMismatchException.Validate(propertyInfo!, sqlCharAttribute));
+    }
 }
