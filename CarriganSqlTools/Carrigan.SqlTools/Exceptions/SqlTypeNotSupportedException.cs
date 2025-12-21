@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.PredicatesLogic;
 using System.Data;
 using System.Reflection;
 
@@ -21,8 +22,7 @@ public class SqlTypeNotSupportedException : Exception
             SqlDbType.Timestamp,
             SqlDbType.Structured,
             SqlDbType.Variant,
-            SqlDbType.Udt,
-            SqlDbType.Xml
+            SqlDbType.Udt
         ];
 
     /// <summary>
@@ -36,6 +36,7 @@ public class SqlTypeNotSupportedException : Exception
     /// Tuples pairing the unsupported <see cref="SqlDbType"/> values with the
     /// <see cref="PropertyInfo"/> each originated from.
     /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="sqlTypes"/> is <c>null</c>.</exception>
     internal SqlTypeNotSupportedException(params IEnumerable<(PropertyInfo Property, SqlDbType SqlType)> sqlTypes) :
         base(CreateMessage(sqlTypes))
     {
@@ -49,15 +50,32 @@ public class SqlTypeNotSupportedException : Exception
     /// the unsupported <see cref="SqlDbType"/> value.
     /// </param>
     /// <returns>A formatted error message.</returns>
-    private static string CreateMessage(params IEnumerable<(PropertyInfo Property, SqlDbType SqlType)> sqlTypes) =>
-        $"The following SQL types are not supported by the SQL Builder: "
-            + sqlTypes
-                .Select(name => $"\"{name.Item2}\"")
-                .JoinAnd()
+    private static string CreateMessage(params IEnumerable<(PropertyInfo Property, SqlDbType SqlType)> sqlTypes)
+    {
+        ArgumentNullException.ThrowIfNull(sqlTypes, nameof(sqlTypes));
+
+        IReadOnlyCollection<string> types =
+            [..
+                sqlTypes
+                    .Select(pair => pair.SqlType.ToString())
+                    .Distinct()
+                    .Select(type => $"\"{type}\"")
+            ];
+
+        IReadOnlyCollection<string> properties =
+            [..
+                sqlTypes
+                    .Select(pair => FormatProperty(pair.Property))
+                    .Distinct()
+                    .Select(property => $"\"{property}\"")
+            ];
+
+        return "The following SQL types are not supported by the SQL Builder: "
+            + types.JoinAnd()
             + " Columns are associated with the following properties: "
-            + sqlTypes
-                .Select(name => $"\"{name.Item1}\"")
-                .JoinAnd();
+            + properties.JoinAnd()
+            + ".";
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlTypeNotSupportedException"/> class
@@ -82,11 +100,22 @@ public class SqlTypeNotSupportedException : Exception
     /// One or more unsupported <see cref="SqlDbType"/> values.
     /// </param>
     /// <returns>A formatted error message.</returns>
-    private static string CreateMessage(params IEnumerable<SqlDbType> sqlTypes) =>
-        $"The following SQL types are not supported by the SQL Builder in parameters: "
-            + sqlTypes
-                .Select(name => $"\"{name}\"")
-                .JoinAnd();
+    private static string CreateMessage(params IEnumerable<SqlDbType> sqlTypes)
+    {
+        ArgumentNullException.ThrowIfNull(sqlTypes, nameof(sqlTypes));
+
+        IReadOnlyCollection<string> types =
+            [..
+                sqlTypes
+                    .Select(type => type.ToString())
+                    .Distinct()
+                    .Select(type => $"\"{type}\"")
+            ];
+
+        return "The following SQL type(s) are not supported by the SQL generator in parameters: "
+            + types.JoinAnd()
+            + ".";
+    }
 
     /// <summary>
     /// Throws an exception if the specified <paramref name="type"/> exists in <see cref="TypesNotSupported"/>.
@@ -99,5 +128,14 @@ public class SqlTypeNotSupportedException : Exception
     {
         if (TypesNotSupported.Contains(type))
             throw new SqlTypeNotSupportedException(type);
+    }
+
+    private static string FormatProperty(PropertyInfo? propertyInfo)
+    {
+        if (propertyInfo is null)
+            return "<null>";
+
+        else
+            return propertyInfo.Name;
     }
 }
