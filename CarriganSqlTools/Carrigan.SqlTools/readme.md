@@ -666,16 +666,15 @@ connection.Close();
 ### Allowed Override Types With Warnings
 | C# CLR Type     | Allowed SqlTypeAttribute-derived attributes | SqlDbTypes allowed by those attributes |
 |-----------------|-----------------------------------------------------------|---------------------------------------------|
-| byte[]          | SqlBinaryAttribute<br>SqlVarBinaryMaxAttribute<br>SqlImageAttribute | SqlDbType.Binary<br>SqlDbType.VarBinary<br>SqlDbType.Image |
-| char            | SqlCharAttribute<br>SqlVarCharMaxAttribute<br>SqlTextAttribute | SqlDbType.Char<br>SqlDbType.NChar<br>SqlDbType.VarChar<br>SqlDbType.NVarChar<br>SqlDbType.Text<br>SqlDbType.NText |
-| string          | SqlCharAttribute<br>SqlVarCharMaxAttribute<br>SqlTextAttribute | SqlDbType.Char<br>SqlDbType.NChar<br>SqlDbType.VarChar<br>SqlDbType.NVarChar<br>SqlDbType.Text<br>SqlDbType.NText |
-| DateTime        | SqlDateTimeAttribute<br>SqlDateTime2Attribute<br>SqlDateAttribute<br>SqlTimeAttribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2<br>SqlDbType.Date<br>SqlDbType.Time |
-| DateOnly        | SqlDateTimeAttribute<br>SqlDateTime2Attribute<br>SqlDateAttribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2<br>SqlDbType.Date |
-| TimeOnly        | SqlDateTimeAttribute<br>SqlDateTime2Attribute<br>SqlTimeAttribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2<br>SqlDbType.Time |
-| DateTimeOffset  | SqlDateTimeOffsetAttribute                                | SqlDbType.DateTimeOffset                     |
+| byte[]          | SqlImageAttribute | SqlDbType.Image |
+| char            | SqlVarCharMaxAttribute<br>SqlTextAttribute | SqlDbType.VarChar<br>SqlDbType.NVarChar<br>SqlDbType.Text<br>SqlDbType.NText |
+| string          | SqlTextAttribute | SqlDbType.Text<br>SqlDbType.NText |
+| DateTime        | SqlDateTimeAttribute<br>SqlDateAttribute<br>SqlTimeAttribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.Date<br>SqlDbType.Time |
+| DateOnly        | SqlDateTimeAttribute<br>SqlDateTime2Attribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2 |
+| TimeOnly        | SqlDateTimeAttribute<br>SqlDateTime2Attribute | SqlDbType.DateTime<br>SqlDbType.SmallDateTime<br>SqlDbType.DateTime2 |
 | float           | SqlFloatAttribute<br>SqlDecimalAttribute<br>SqlMoneyAttribute | SqlDbType.Float<br>SqlDbType.Decimal<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
-| double          | SqlFloatAttribute<br>SqlDecimalAttribute<br>SqlMoneyAttribute | SqlDbType.Float<br>SqlDbType.Decimal<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
-| decimal         | SqlFloatAttribute<br>SqlDecimalAttribute<br>SqlMoneyAttribute | SqlDbType.Float<br>SqlDbType.Decimal<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
+| double          | SqlDecimalAttribute<br>SqlMoneyAttribute | SqlDbType.Decimal<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
+| decimal         | SqlFloatAttribute<br>SqlMoneyAttribute | SqlDbType.Float<br>SqlDbType.Money<br>SqlDbType.SmallMoney |
 
 [Table of Contents](#table-of-contents)
 
