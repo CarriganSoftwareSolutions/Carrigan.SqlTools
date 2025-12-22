@@ -58,4 +58,20 @@ public class SqlCharTests
         NullableCharTest actual = Invoker<NullableCharTest>.Invoke(data);
         Assert.Null(actual.Value);
     }
+
+    [Fact]
+    public void Char_FromString_FirstCharacter()
+    {
+        Dictionary<string, object?> data = GetTestData("Y");
+        CharTest actual = Invoker<CharTest>.Invoke(data);
+        Assert.Equal('Y', actual.Value);
+    }
+
+    [Fact]
+    public void NullableChar_FromString_FirstCharacter()
+    {
+        Dictionary<string, object?> data = GetTestData("Y");
+        NullableCharTest actual = Invoker<NullableCharTest>.Invoke(data);
+        Assert.Equal('Y', actual.Value);
+    }
 }
