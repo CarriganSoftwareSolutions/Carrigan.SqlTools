@@ -137,6 +137,22 @@ public class Joins<leftT> : JoinsBase
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
+    /// a newly created <see cref="RightJoin{rightT}"/> operation.
+    /// </summary>
+    /// <typeparam name="rightT">
+    /// The data model representing the right-side table being joined.
+    /// </typeparam>
+    /// <param name="predicates">
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.
+    /// </param>
+    /// <returns>
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="RightJoin{rightT}"/>.
+    /// </returns>
+    public static Joins<leftT> RightJoin<rightT>(Predicates predicates) =>
+        JoinTypes.RightJoin<rightT>.Joins<leftT>(predicates);
+
+    /// <summary>
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created generic <see cref="Join{rightT}"/> operation.
     /// </summary>
     /// <typeparam name="rightT">

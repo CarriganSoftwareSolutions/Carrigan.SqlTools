@@ -53,7 +53,7 @@ public class RightJoin<rightT> : JoinBase
     /// a newly created <see cref="RightJoin{rightT}"/> operation.
     /// </summary>
     /// <typeparam name="leftT">
-    /// The data model representing the right (base) table being joined onto.
+    /// The data model representing the left (base) table being joined onto.
     /// </typeparam>
     /// <param name="predicate">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.
@@ -72,7 +72,7 @@ public class RightJoin<rightT> : JoinBase
     /// the current <see cref="RightJoin{rightT}"/> instance.
     /// </summary>
     /// <typeparam name="leftT">
-    /// The data model representing the right (base) table being joined onto.
+    /// The data model representing the left (base) table being joined onto.
     /// </typeparam>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing the current <see cref="RightJoin{rightT}"/> instance.
@@ -81,7 +81,7 @@ public class RightJoin<rightT> : JoinBase
         new(this);
 
     /// <summary>
-    /// Gets the <see cref="TableTag"/> associated with the right-side table in the <c>Right JOIN</c> operation.
+    /// Gets the <see cref="TableTag"/> associated with the right-side table in the <c>RIGHT JOIN</c> operation.
     /// </summary>
     /// <exception cref="TypeInitializationException">
     /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
@@ -93,7 +93,7 @@ public class RightJoin<rightT> : JoinBase
     /// Converts the current <see cref="RightJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
     /// <returns>
-    /// A SQL string representing the <c>Right JOIN</c> clause.
+    /// A SQL string representing the <c>RIGHT JOIN</c> clause.
     /// </returns>
     internal override string ToSql() =>
         _sql;

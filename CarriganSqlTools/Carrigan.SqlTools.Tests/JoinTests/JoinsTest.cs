@@ -54,6 +54,14 @@ public class JoinsTest
     }
 
     [Fact]
+    public void JoinsRightJoin()
+    {
+        Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.RightJoin<JoinRightTable>(RightOnLeftPredicate);
+        string expected = "RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSql());
+    }
+
+    [Fact]
     public void JoinsJoin()
     {
         Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate);
