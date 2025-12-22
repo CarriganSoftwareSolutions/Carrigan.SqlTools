@@ -1,20 +1,19 @@
-﻿using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
 
-public class LeftJoinsTest
+public class LeftJoinTest
 {
     [Fact]
     public void NewJoinsNewLeftJoin()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        LeftJoin<JoinRightTable> leftJoin = new(id);
+        LeftJoin<JoinRightTable> join = new(id);
 
-        string actual = (new Joins<JoinLeftTable>(leftJoin)).ToSql();
+        string actual = (new Joins<JoinLeftTable>(join)).ToSql();
         string expected = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -24,9 +23,9 @@ public class LeftJoinsTest
     public void NewLeftJoinAsJoins()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        LeftJoin<JoinRightTable> leftJoin = new(id);
+        LeftJoin<JoinRightTable> join = new(id);
 
-        string actual = leftJoin.AsJoins<JoinLeftTable>().ToSql();
+        string actual = join.AsJoins<JoinLeftTable>().ToSql();
         string expected = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -47,8 +46,18 @@ public class LeftJoinsTest
     public void TableTag()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        LeftJoin<JoinLeftTable> join = new(id);
-        TableTag expected = new(null, "Left");
+        LeftJoin<JoinRightTable> join = new(id);
+
+        TableTag expected = new(null, "Right");
+
         Assert.Equal(expected, join.TableTag);
     }
+
+    [Fact]
+    public void Constructor_Null_Exception() => 
+        Assert.Throws<ArgumentNullException>(() => new LeftJoin<JoinRightTable>(null!));
+
+    [Fact]
+    public void Joins_Null_Exception() => 
+        Assert.Throws<ArgumentNullException>(() => LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(null!));
 }

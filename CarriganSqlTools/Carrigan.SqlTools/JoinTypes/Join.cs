@@ -12,20 +12,19 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </typeparam>
 /// <example>
 /// <para>
-/// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates property names and throws an exception if a property name is invalid.
+/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates property names and throws an exception if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// ColumnEqualsColumn&lt;Customer, Order&gt; predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// JoinsBase join = Joins<Customer>.Join<Order>(predicate);
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// JOIN [Order] 
+/// SELECT [Customer].*
+/// FROM [Customer]
+/// JOIN [Order]
 /// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
@@ -39,11 +38,18 @@ public class Join<rightT> : JoinBase
     /// <summary>
     /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
-    public Join(Predicates predicate) : base(predicate) =>
-        _sql = $"JOIN {TableTag} ON {predicate.ToSql()}";
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="TypeInitializationException">
+    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
+    /// </exception>
+    public Join(Predicates predicates)
+        : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) =>
+        _sql = $"JOIN {TableTag} ON {_predicates.ToSql()}";
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object containing
@@ -58,29 +64,32 @@ public class Join<rightT> : JoinBase
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> instance containing a <see cref="Join{rightT}"/>.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicate"/> is <c>null</c>.
+    /// </exception>
     public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
         new(new Join<rightT>(predicate));
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object containing
-    /// a newly created <see cref="Join{rightT}"/> instance.
+    /// the current <see cref="Join{rightT}"/> instance.
     /// </summary>
     /// <typeparam name="leftT">
     /// The data model representing the left (base) table being joined onto.
     /// </typeparam>
-    /// <param name="predicate">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
-    /// </param>
     /// <returns>
-    /// A new <see cref="Joins{leftT}"/> instance containing a <see cref="Join{rightT}"/>.
+    /// A new <see cref="Joins{leftT}"/> object containing the current <see cref="Join{rightT}"/> instance.
     /// </returns>
     public Joins<leftT> AsJoins<leftT>() =>
         new(this);
 
     /// <summary>
-    /// Gets the <see cref="Tags.TableTag"/> representing the right-side table
+    /// Gets the <see cref="TableTag"/> representing the right-side table
     /// associated with <typeparamref name="rightT"/>.
     /// </summary>
+    /// <exception cref="TypeInitializationException">
+    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
+    /// </exception>
     internal override TableTag TableTag =>
         SqlToolsReflectorCache<rightT>.Table;
 
