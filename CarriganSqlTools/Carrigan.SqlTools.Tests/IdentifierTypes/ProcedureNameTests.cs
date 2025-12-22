@@ -509,4 +509,31 @@ public class ProcedureNameTests
         Assert.NotNull(nameWrapper);
         Assert.Equal(white, nameWrapper!.ToString());
     }
+
+    [Fact]
+    public void CompareTo_Null_Returns1()
+    {
+        ProcedureName nameWrapper = new(eStr);
+
+        Assert.Equal(1, nameWrapper.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_EqualObjects_Returns0()
+    {
+        ProcedureName left = new("ABC");
+        ProcedureName right = new("ABC");
+
+        Assert.Equal(0, left.CompareTo(right));
+    }
+
+    [Fact]
+    public void CompareTo_OrdersByUnderlyingString()
+    {
+        ProcedureName left = new("A");
+        ProcedureName right = new("B");
+
+        Assert.True(left.CompareTo(right) < 0);
+        Assert.True(right.CompareTo(left) > 0);
+    }
 }

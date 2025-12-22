@@ -3,7 +3,7 @@ using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tests.IdentifierTypes;
-public class ColumnNameTests
+public class ResultColumnNameTests
 {
     private readonly string white = " ";
     private readonly string? nul = null;
@@ -21,28 +21,28 @@ public class ColumnNameTests
     [Fact]
     public void Constructor_Null()
     {
-        ColumnName nameWrapper = new (nul);
+        ResultColumnName nameWrapper = new (nul);
         Assert.NotNull(nameWrapper);
     }
 
     [Fact]
     public void New_Null()
     {
-        ColumnName? nameWrapper = ColumnName.New(nul);
+        ResultColumnName? nameWrapper = ResultColumnName.New(nul);
         Assert.Null(nameWrapper);
     }
 
     [Fact]
     public void New_Empty()
     {
-        ColumnName? nameWrapper = ColumnName.New(empty);
+        ResultColumnName? nameWrapper = ResultColumnName.New(empty);
         Assert.Null(nameWrapper);
     }
 
     [Fact]
     public void New_White()
     {
-        ColumnName? nameWrapper = ColumnName.New(white);
+        ResultColumnName? nameWrapper = ResultColumnName.New(white);
         Assert.NotNull(nameWrapper);
     }
 
@@ -50,21 +50,21 @@ public class ColumnNameTests
     [Fact]
     public void ToString_Null()
     {
-        ColumnName nameWrapper = new(nul);
+        ResultColumnName nameWrapper = new(nul);
         Assert.Equal(string.Empty, nameWrapper.ToString());
     }
 
     [Fact]
     public void ToString_Empty()
     {
-        ColumnName nameWrapper = new(empty);
+        ResultColumnName nameWrapper = new(empty);
         Assert.Equal(empty, nameWrapper.ToString());
     }
 
     [Fact]
     public void ToString_Text()
     {
-        ColumnName nameWrapper = new(eStr);
+        ResultColumnName nameWrapper = new(eStr);
         Assert.Equal(eStr, nameWrapper.ToString());
     }
 
@@ -73,8 +73,8 @@ public class ColumnNameTests
     {
         string? name = null;
 
-        ColumnName nameWrapper1 = new(name);
-        ColumnName nameWrapper2 = new(name);
+        ResultColumnName nameWrapper1 = new(name);
+        ResultColumnName nameWrapper2 = new(name);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(string.Empty, nameWrapper2);
     }
@@ -84,8 +84,8 @@ public class ColumnNameTests
     {
         string? name = string.Empty;
 
-        ColumnName nameWrapper1 = new(name);
-        ColumnName nameWrapper2 = new(name);
+        ResultColumnName nameWrapper1 = new(name);
+        ResultColumnName nameWrapper2 = new(name);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(string.Empty, nameWrapper2);
     }
@@ -93,8 +93,8 @@ public class ColumnNameTests
     [Fact]
     public void Equal_Default_Text()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(eStrAlt);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(eStrAlt);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(eStr, nameWrapper2);
     }
@@ -102,8 +102,8 @@ public class ColumnNameTests
     [Fact]
     public void EqualEqual_Null()
     {
-        ColumnName nameWrapper1 = new(nul);
-        ColumnName nameWrapper2 = new(nul);
+        ResultColumnName nameWrapper1 = new(nul);
+        ResultColumnName nameWrapper2 = new(nul);
         Assert.True(nameWrapper1 == nameWrapper2);
         Assert.True(string.Empty == nameWrapper2);
     }
@@ -111,8 +111,8 @@ public class ColumnNameTests
     [Fact]
     public void EqualEqual_Empty()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(empty);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(empty);
         Assert.True(nameWrapper1 == nameWrapper2);
         Assert.True(string.Empty == nameWrapper2);
     }
@@ -120,8 +120,8 @@ public class ColumnNameTests
     [Fact]
     public void EqualEqual_Text()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(eStrAlt);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(eStrAlt);
         bool test = eStr == nameWrapper2;
         bool test2 = eStr != nameWrapper2;
         Assert.True(nameWrapper1 == nameWrapper2);
@@ -133,8 +133,8 @@ public class ColumnNameTests
     [Fact]
     public void EqualEqual_NullComparisons()
     {
-        ColumnName nonNull = new(string.Empty);
-        ColumnName? isNull = null;
+        ResultColumnName nonNull = new(string.Empty);
+        ResultColumnName? isNull = null;
 
         Assert.False(nonNull == isNull);
         Assert.False(isNull == nonNull);
@@ -143,8 +143,8 @@ public class ColumnNameTests
     [Fact]
     public void NotEqualEqual_NullComparisons()
     {
-        ColumnName nonNull = new(string.Empty);
-        ColumnName? isNull = null;
+        ResultColumnName nonNull = new(string.Empty);
+        ResultColumnName? isNull = null;
         Assert.True(nonNull != isNull);
         Assert.True(isNull != nonNull);
     }
@@ -153,10 +153,10 @@ public class ColumnNameTests
     public void DictionaryKey_Null()
     {
         string? name = null;
-        Dictionary<ColumnName, decimal> dictionary= [];
+        Dictionary<ResultColumnName, decimal> dictionary= [];
 
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(name);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(name);
         dictionary[nameWrapper1] = pi;
         Assert.True(dictionary.ContainsKey(nameWrapper2));
         Assert.True(dictionary[nameWrapper1] == pi);
@@ -166,10 +166,10 @@ public class ColumnNameTests
     [Fact]
     public void DictionaryKey_Empty()
     {
-        Dictionary<ColumnName, decimal> dictionary = [];
+        Dictionary<ResultColumnName, decimal> dictionary = [];
 
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(empty);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(empty);
         dictionary[nameWrapper1] = pi;
         Assert.True(dictionary.ContainsKey(nameWrapper2));
         Assert.True(dictionary[nameWrapper1] == pi);
@@ -180,10 +180,10 @@ public class ColumnNameTests
     public void DictionaryKey_Text()
     {
         string? name = eStr;
-        Dictionary<ColumnName, decimal> dictionary = [];
+        Dictionary<ResultColumnName, decimal> dictionary = [];
 
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(eStrAlt);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(eStrAlt);
         dictionary[nameWrapper1] = pi;
         Assert.True(dictionary.ContainsKey(nameWrapper2));
         Assert.True(dictionary[nameWrapper1] == pi);
@@ -194,14 +194,14 @@ public class ColumnNameTests
     public void DictionaryKey_Multi()
     {
         string? name = eStr;
-        Dictionary<ColumnName, decimal> dictionary = [];
+        Dictionary<ResultColumnName, decimal> dictionary = [];
 
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(eStrAlt);
-        ColumnName nameWrapper3 = new(tString);
-        ColumnName nameWrapper4 = new(goldenString);
-        ColumnName nameWrapper5 = new(piString);
-        ColumnName nameWrapper6 = new(empty);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(eStrAlt);
+        ResultColumnName nameWrapper3 = new(tString);
+        ResultColumnName nameWrapper4 = new(goldenString);
+        ResultColumnName nameWrapper5 = new(piString);
+        ResultColumnName nameWrapper6 = new(empty);
         dictionary[nameWrapper1] = e;
         dictionary[nameWrapper3] = t;
         dictionary[nameWrapper4] = pi;
@@ -222,8 +222,8 @@ public class ColumnNameTests
     [Fact]
     public void NotEqual_Null()
     {
-        ColumnName nameWrapper1 = new(nul);
-        ColumnName nameWrapper2 = new(goldenString);
+        ResultColumnName nameWrapper1 = new(nul);
+        ResultColumnName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.NotEqual(empty, nameWrapper2);
     }
@@ -231,8 +231,8 @@ public class ColumnNameTests
     [Fact]
     public void NotEqual_Empty()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(goldenString);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.NotEqual(empty, nameWrapper2);
     }
@@ -240,8 +240,8 @@ public class ColumnNameTests
     [Fact]
     public void NotEqual_Text()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(goldenString);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.NotEqual(eStr, nameWrapper2);
     }
@@ -249,8 +249,8 @@ public class ColumnNameTests
     [Fact]
     public void NotEqualEqual_Null()
     {
-        ColumnName nameWrapper1 = new(nul);
-        ColumnName nameWrapper2 = new(eStr);
+        ResultColumnName nameWrapper1 = new(nul);
+        ResultColumnName nameWrapper2 = new(eStr);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.True(empty != nameWrapper2);
     }
@@ -258,8 +258,8 @@ public class ColumnNameTests
     [Fact]
     public void NotEqualEqual_Empty()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(eStr);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(eStr);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.True(empty != nameWrapper2);
     }
@@ -267,8 +267,8 @@ public class ColumnNameTests
     [Fact]
     public void NotEqualEqual_Text()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(goldenString);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(goldenString);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.True(nameWrapper1 != nameWrapper2);
     }
@@ -276,19 +276,19 @@ public class ColumnNameTests
     [Fact]
     public void IsEmpty_True()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
         Assert.True(nameWrapper1.IsEmpty());
         Assert.True(nameWrapper2.IsEmpty());
     }
     [Fact]
     public void IsNullOrEmpty_True()
     {
-        ColumnName? nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
-        ColumnName? nameWrapper3 = null;
-        ColumnName? nameWrapper4 = ColumnName.New(nul);
-        ColumnName? nameWrapper5 = ColumnName.New(empty);
+        ResultColumnName? nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
+        ResultColumnName? nameWrapper3 = null;
+        ResultColumnName? nameWrapper4 = ResultColumnName.New(nul);
+        ResultColumnName? nameWrapper5 = ResultColumnName.New(empty);
         Assert.True(nameWrapper1.IsNullOrEmpty());
         Assert.True(nameWrapper2.IsNullOrEmpty());
         Assert.True(nameWrapper3.IsNullOrEmpty());
@@ -299,8 +299,8 @@ public class ColumnNameTests
     [Fact]
     public void IsEmpty_False()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(white);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(white);
         Assert.False(nameWrapper1.IsEmpty());
         Assert.False(nameWrapper2.IsEmpty());
     }
@@ -308,10 +308,10 @@ public class ColumnNameTests
     [Fact]
     public void IsNullOrEmpty_False()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(white);
-        ColumnName? nameWrapper3 = ColumnName.New(eStr);
-        ColumnName? nameWrapper4 = ColumnName.New(white);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(white);
+        ResultColumnName? nameWrapper3 = ResultColumnName.New(eStr);
+        ResultColumnName? nameWrapper4 = ResultColumnName.New(white);
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
@@ -321,8 +321,8 @@ public class ColumnNameTests
     [Fact]
     public void IsNotEmpty_False()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
         Assert.False(nameWrapper1.IsNotEmpty());
         Assert.False(nameWrapper2.IsNotEmpty());
     }
@@ -330,12 +330,12 @@ public class ColumnNameTests
     [Fact]
     public void IsNotNullOrEmpty_False()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
-        ColumnName? nameWrapper3 = null;
-        ColumnName? nameWrapper4 = ColumnName.New(null);
-        ColumnName? nameWrapper5 = ColumnName.New(nul);
-        ColumnName? nameWrapper6 = ColumnName.New(empty);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
+        ResultColumnName? nameWrapper3 = null;
+        ResultColumnName? nameWrapper4 = ResultColumnName.New(null);
+        ResultColumnName? nameWrapper5 = ResultColumnName.New(nul);
+        ResultColumnName? nameWrapper6 = ResultColumnName.New(empty);
         Assert.False(nameWrapper1.IsNotNullOrEmpty());
         Assert.False(nameWrapper2.IsNotNullOrEmpty());
         Assert.False(nameWrapper3.IsNotNullOrEmpty());
@@ -347,8 +347,8 @@ public class ColumnNameTests
     [Fact]
     public void IsNotEmpty_True()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(white);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(white);
         Assert.True(nameWrapper1.IsNotEmpty());
         Assert.True(nameWrapper2.IsNotEmpty());
     }
@@ -356,10 +356,10 @@ public class ColumnNameTests
     [Fact]
     public void IsNotNullOrEmpty_True()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(white);
-        ColumnName? nameWrapper3 = ColumnName.New(eStr);
-        ColumnName? nameWrapper4 = ColumnName.New(white);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(white);
+        ResultColumnName? nameWrapper3 = ResultColumnName.New(eStr);
+        ResultColumnName? nameWrapper4 = ResultColumnName.New(white);
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
@@ -369,9 +369,9 @@ public class ColumnNameTests
     [Fact]
     public void IsWhitespace_True()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
-        ColumnName nameWrapper3 = new(white);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
+        ResultColumnName nameWrapper3 = new(white);
         Assert.True(nameWrapper1.IsWhiteSpace());
         Assert.True(nameWrapper2.IsWhiteSpace());
         Assert.True(nameWrapper3.IsWhiteSpace());
@@ -380,14 +380,14 @@ public class ColumnNameTests
     [Fact]
     public void IsNullOrWhitespace_True()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
-        ColumnName nameWrapper3 = new(white);
-        ColumnName? nameWrapper4 = null;
-        ColumnName? nameWrapper5 = ColumnName.New(null);
-        ColumnName? nameWrapper6 = ColumnName.New(nul);
-        ColumnName? nameWrapper7 = ColumnName.New(empty);
-        ColumnName? nameWrapper8 = ColumnName.New(white);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
+        ResultColumnName nameWrapper3 = new(white);
+        ResultColumnName? nameWrapper4 = null;
+        ResultColumnName? nameWrapper5 = ResultColumnName.New(null);
+        ResultColumnName? nameWrapper6 = ResultColumnName.New(nul);
+        ResultColumnName? nameWrapper7 = ResultColumnName.New(empty);
+        ResultColumnName? nameWrapper8 = ResultColumnName.New(white);
         Assert.True(nameWrapper1.IsNullOrWhiteSpace());
         Assert.True(nameWrapper2.IsNullOrWhiteSpace());
         Assert.True(nameWrapper3.IsNullOrWhiteSpace());
@@ -401,15 +401,15 @@ public class ColumnNameTests
     [Fact]
     public void IsWhitespace_False()
     {
-        ColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper1 = new(eStr);
         Assert.False(nameWrapper1.IsWhiteSpace());
     }
 
     [Fact]
     public void IsNullOrWhitespace_False()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName? nameWrapper2 = ColumnName.New(eStr);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName? nameWrapper2 = ResultColumnName.New(eStr);
         Assert.False(nameWrapper1.IsNullOrWhiteSpace());
         Assert.False(nameWrapper2.IsNullOrWhiteSpace());
     }
@@ -417,9 +417,9 @@ public class ColumnNameTests
     [Fact]
     public void IsNotWhitespace_False()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
-        ColumnName nameWrapper3 = new(white);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
+        ResultColumnName nameWrapper3 = new(white);
         Assert.False(nameWrapper1.IsNotWhiteSpace());
         Assert.False(nameWrapper2.IsNotWhiteSpace());
         Assert.False(nameWrapper3.IsNotWhiteSpace());
@@ -428,13 +428,13 @@ public class ColumnNameTests
     [Fact]
     public void IsNotNullOrWhitespace_False()
     {
-        ColumnName nameWrapper1 = new(empty);
-        ColumnName nameWrapper2 = new(nul);
-        ColumnName nameWrapper3 = new(white);
-        ColumnName? nameWrapper4 = null;
-        ColumnName? nameWrapper5 = ColumnName.New(empty);
-        ColumnName? nameWrapper6 = ColumnName.New(nul);
-        ColumnName? nameWrapper7 = ColumnName.New(white);
+        ResultColumnName nameWrapper1 = new(empty);
+        ResultColumnName nameWrapper2 = new(nul);
+        ResultColumnName nameWrapper3 = new(white);
+        ResultColumnName? nameWrapper4 = null;
+        ResultColumnName? nameWrapper5 = ResultColumnName.New(empty);
+        ResultColumnName? nameWrapper6 = ResultColumnName.New(nul);
+        ResultColumnName? nameWrapper7 = ResultColumnName.New(white);
         Assert.False(nameWrapper1.IsNotNullOrWhiteSpace());
         Assert.False(nameWrapper2.IsNotNullOrWhiteSpace());
         Assert.False(nameWrapper3.IsNotNullOrWhiteSpace());
@@ -447,21 +447,21 @@ public class ColumnNameTests
     [Fact]
     public void IsNotWhitespace_True()
     {
-        ColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper1 = new(eStr);
         Assert.True(nameWrapper1.IsNotWhiteSpace());
     }
 
     [Fact]
     public void IsNotNullOrWhitespace_True()
     {
-        ColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper1 = new(eStr);
         Assert.True(nameWrapper1.IsNotNullOrWhiteSpace());
     }
 
     [Fact]
     public void ImplicitConversion_ToString_AssignmentAndInterpolation()
     {
-        ColumnName a = new(eStr);
+        ResultColumnName a = new(eStr);
         string assigned = a;
         string interpolated = $"{a}";
 
@@ -472,8 +472,8 @@ public class ColumnNameTests
     [Fact]
     public void GetHashCode_EqualObjects_SameHash()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new(eStr);
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new(eStr);
         Assert.Equal(nameWrapper1, nameWrapper2);
         Assert.Equal(nameWrapper1.GetHashCode(), nameWrapper2.GetHashCode());
     }
@@ -481,8 +481,8 @@ public class ColumnNameTests
     [Fact]
     public void Equality_PreservesWhitespace()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        ColumnName nameWrapper2 = new($" {eStr} ");
+        ResultColumnName nameWrapper1 = new(eStr);
+        ResultColumnName nameWrapper2 = new($" {eStr} ");
         Assert.NotEqual(nameWrapper1, nameWrapper2);
         Assert.True(nameWrapper1 != nameWrapper2);
         Assert.False(nameWrapper2.IsWhiteSpace()); 
@@ -491,8 +491,8 @@ public class ColumnNameTests
     [Fact]
     public void Equals_ObjectAndTyped_Agree()
     {
-        ColumnName nameWrapper1 = new(eStr);
-        object nameWrapper2 = new ColumnName(eStr);
+        ResultColumnName nameWrapper1 = new(eStr);
+        object nameWrapper2 = new ResultColumnName(eStr);
         Assert.True(nameWrapper1.Equals((StringWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
@@ -500,7 +500,7 @@ public class ColumnNameTests
     [Fact]
     public void New_White_PreservesValue()
     {
-        ColumnName? nameWrapper = ColumnName.New(white);
+        ResultColumnName? nameWrapper = ResultColumnName.New(white);
         Assert.NotNull(nameWrapper);
         Assert.Equal(white, nameWrapper!.ToString());
     }

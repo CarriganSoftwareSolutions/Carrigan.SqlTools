@@ -504,4 +504,31 @@ public class TableNameTests
         Assert.NotNull(nameWrapper);
         Assert.Equal(white, nameWrapper!.ToString());
     }
+
+    [Fact]
+    public void CompareTo_Null_Returns1()
+    {
+        TableName nameWrapper = new(eStr);
+
+        Assert.Equal(1, nameWrapper.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_EqualObjects_Returns0()
+    {
+        TableName left = new("ABC");
+        TableName right = new("ABC");
+
+        Assert.Equal(0, left.CompareTo(right));
+    }
+
+    [Fact]
+    public void CompareTo_OrdersByUnderlyingString()
+    {
+        TableName left = new("A");
+        TableName right = new("B");
+
+        Assert.True(left.CompareTo(right) < 0);
+        Assert.True(right.CompareTo(left) > 0);
+    }
 }

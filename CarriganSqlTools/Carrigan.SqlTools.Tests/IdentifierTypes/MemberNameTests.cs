@@ -504,4 +504,33 @@ public class MemberNameTests
         Assert.NotNull(nameWrapper);
         Assert.Equal(white, nameWrapper!.ToString());
     }
+
+
+
+    [Fact]
+    public void CompareTo_Null_Returns1()
+    {
+        MemberName nameWrapper = new(eStr);
+
+        Assert.Equal(1, nameWrapper.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_EqualObjects_Returns0()
+    {
+        MemberName left = new("ABC");
+        MemberName right = new("ABC");
+
+        Assert.Equal(0, left.CompareTo(right));
+    }
+
+    [Fact]
+    public void CompareTo_OrdersByUnderlyingString()
+    {
+        MemberName left = new("A");
+        MemberName right = new("B");
+
+        Assert.True(left.CompareTo(right) < 0);
+        Assert.True(right.CompareTo(left) > 0);
+    }
 }

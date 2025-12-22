@@ -504,4 +504,33 @@ public class SchemaNameTests
         Assert.NotNull(nameWrapper);
         Assert.Equal(white, nameWrapper!.ToString());
     }
+
+
+
+    [Fact]
+    public void CompareTo_Null_Returns1()
+    {
+        SchemaName nameWrapper = new(eStr);
+
+        Assert.Equal(1, nameWrapper.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_EqualObjects_Returns0()
+    {
+        SchemaName left = new("ABC");
+        SchemaName right = new("ABC");
+
+        Assert.Equal(0, left.CompareTo(right));
+    }
+
+    [Fact]
+    public void CompareTo_OrdersByUnderlyingString()
+    {
+        SchemaName left = new("A");
+        SchemaName right = new("B");
+
+        Assert.True(left.CompareTo(right) < 0);
+        Assert.True(right.CompareTo(left) > 0);
+    }
 }
