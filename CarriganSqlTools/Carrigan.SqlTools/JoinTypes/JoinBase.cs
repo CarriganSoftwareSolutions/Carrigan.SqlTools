@@ -14,32 +14,41 @@ namespace Carrigan.SqlTools.JoinTypes;
 public abstract class JoinBase
 {
     protected readonly Predicates _predicates;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="JoinBase"/> class.
     /// </summary>
     /// <param name="predicates">
     /// The predicate(s) used to define the <c>ON</c> condition for the <c>JOIN</c> clause.
     /// </param>
-    public JoinBase(Predicates predicates) =>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
+    /// </exception>
+    protected JoinBase(Predicates predicates)
+    {
+        ArgumentNullException.ThrowIfNull(predicates);
+
         _predicates = predicates;
+    }
 
     /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the right-hand (joined) table
     /// in the SQL <c>JOIN</c> clause.
-    /// </summary>use.
-    /// </remarks>
+    /// </summary>
     internal abstract TableTag TableTag { get; }
 
     /// <summary>
     /// Gets an enumeration of all <see cref="TableTag"/> objects involved in the
-    /// current join’s predicate logic.
+    /// current join's predicate logic.
     /// </summary>
     /// <remarks>
-    /// Each <see cref="TableTag"/> represents a table referenced within the join’s
+    /// Each <see cref="TableTag"/> represents a table referenced within the join's
     /// <c>ON</c> clause.
     /// </remarks>
     internal IEnumerable<TableTag> JoinsOn =>
-        _predicates.Columns.Select(column => column.ColumnInfo.ColumnTag.TableTag);
+        _predicates.Columns
+            .Select(column => column.ColumnInfo.ColumnTag.TableTag)
+            .Distinct();
 
     /// <summary>
     /// Generates the SQL fragment representing the specific <c>JOIN</c> clause,
