@@ -1,5 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using System.Data.SqlTypes;
@@ -16,10 +15,12 @@ namespace Carrigan.SqlTools.Invocation;
 /// corresponding writable properties on <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">
-/// The entity or model type to instantiate. Must provide a parameter less constructor.
+/// The entity or model type to instantiate. Must provide a parameterless constructor.
 /// </typeparam>
-public static class Invoker<T> where T : class?, new()
+public static class Invoker<T> where T : class, new()
 {
+    private static readonly NullabilityInfoContext NullabilityContext = new();
+
     /// <summary>
     /// Creates a new instance of <typeparamref name="T"/> and assigns property values from
     /// the supplied result set values using a reflection cache. The dictionary keys are
@@ -28,139 +29,131 @@ public static class Invoker<T> where T : class?, new()
     /// <see cref="InvocationReflectorCache{T}.PropertyInfoCache"/>.
     /// </summary>
     /// <param name="invocation">
-    /// A <see cref="Dictionary{TKey, TValue}"/> where each key is a result column name
-    /// (e.g., the column label returned by the query, potentially an alias) and each value
-    /// is the raw value to assign to the corresponding property on <typeparamref name="T"/>.
+    /// The key/value pairs representing a single result row. Keys are result column names,
+    /// values are raw ADO.NET values (including <see cref="DBNull.Value"/>).
     /// </param>
     /// <returns>
-    /// A newly created instance of <typeparamref name="T"/> populated with the provided values.
+    /// A new instance of <typeparamref name="T"/> populated with values from <paramref name="invocation"/>.
     /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown if <see cref="Activator.CreateInstance(Type)"/> fails to create the instance
-    /// or the result cannot be cast to <typeparamref name="T"/>.
-    /// </exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="invocation"/> is <c>null</c>.</exception>
     /// <exception cref="InvalidResultColumnNameException{T}">
-    /// Thrown when one or more keys in <paramref name="invocation"/> do not resolve to properties
-    /// on <typeparamref name="T"/> via the <see cref="ResultColumnName"/> mapping.
+    /// Thrown when one or more result column names do not map to a writable property on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when a result value is <c>null</c> / <see cref="DBNull.Value"/> but the target property is a non-nullable value type,
+    /// or when a special-case conversion fails due to an unexpected input shape (for example, an empty string for a <see cref="char"/>).
+    /// </exception>
+    /// <exception cref="XmlException">
+    /// Thrown when XML parsing fails while converting <see cref="SqlXml"/> to <see cref="XDocument"/> or <see cref="XmlDocument"/>.
+    /// </exception>
+    /// <exception cref="TargetException">
+    /// Thrown when reflection-based assignment fails due to an invalid target instance.
+    /// </exception>
+    /// <exception cref="TargetInvocationException">
+    /// Thrown when the property setter throws while assigning a value.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when enum parsing fails, or when the converted value cannot be assigned to the target property type.
     /// </exception>
     public static T Invoke(Dictionary<string, object?> invocation)
     {
-        InvalidResultColumnNameException<T>? exception = null;
-        if (Activator.CreateInstance(InvocationReflectorCache<T>.Type) is not T invoked)
-        {
-            throw new InvalidOperationException("Instance creation failed or the cast was invalid.");
-        }
-        exception =
-            InvocationReflectorCache<T>
-                .PropertyInfoCache
-                .GetExceptionForInvalidProperties(invocation.Keys.Select(name => new ResultColumnName(name)));
-        if (exception != null)
-            throw exception;
-        foreach (string key in invocation.Keys)
-        {
-            ResultColumnName columnName = new(key);
-            PropertyInfo property = InvocationReflectorCache<T>.PropertyInfoCache.Get(columnName);
-            object? rawValue = invocation[key];
-            object? valueToSet = Invoker<T>.ConvertValue(rawValue, InvocationReflectorCache<T>.PropertyInfoCache.Get(columnName));
+        ArgumentNullException.ThrowIfNull(invocation, nameof(invocation));
 
-            property.SetValue(invoked, valueToSet);
+        PropertyInfoCache<T> propertyInfoCache = InvocationReflectorCache<T>.PropertyInfoCache;
+        InvalidResultColumnNameException<T>? invalidException =
+            propertyInfoCache.GetExceptionForInvalidProperties(invocation.Keys.Select(static key => new ResultColumnName(key)));
+
+        if (invalidException is not null)
+            throw invalidException;
+
+        T invoked = new();
+
+        foreach (KeyValuePair<string, object?> pair in invocation)
+        {
+            ResultColumnName columnName = new(pair.Key);
+            PropertyInfo propertyInfo = propertyInfoCache.Get(columnName);
+            object? valueToSet = ConvertValue(pair.Value, columnName, propertyInfo);
+            propertyInfo.SetValue(invoked, valueToSet);
         }
+
         return invoked;
     }
+
     /// <summary>
-    /// Converts a raw ADO.NET value to the specified target property type, handling common
-    /// cases such as <see cref="DateTime"/> to <see cref="DateOnly"/>, <see cref="TimeOnly"/>,
-    /// and <see cref="DateTimeOffset"/>; <see cref="TimeSpan"/> to <see cref="TimeOnly"/>;
-    /// and enum conversions from either strings or underlying numeric values.
+    /// Converts a raw ADO.NET value to a value assignable to the given property.
     /// </summary>
-    /// <param name="databaseValue">The raw value to be converted (may be <c>null</c> or <see cref="DBNull.Value"/>).</param>
-    /// <param name="targetType">The property type to convert to (nullable types are supported).</param>
+    /// <param name="databaseValue">
+    /// The raw value to convert (may be <c>null</c> or <see cref="DBNull.Value"/>).
+    /// </param>
+    /// <param name="columnName">
+    /// The originating result column name (used for exception messages).
+    /// </param>
+    /// <param name="propertyInfo">
+    /// The property receiving the converted value.
+    /// </param>
     /// <returns>
-    /// The converted value suitable for assignment to a property of type <paramref name="targetType"/>,
-    /// or <c>null</c> if <paramref name="databaseValue"/> is <c>null</c> or <see cref="DBNull.Value"/>.
+    /// A value suitable for assignment to <paramref name="propertyInfo"/>, or <c>null</c> when the input is null/DBNull and the
+    /// target type supports null.
     /// </returns>
-    /// <remarks>
-    /// Conversion rules:
-    /// <list type="bullet">
-    /// <item><description><c>null</c> or <see cref="DBNull.Value"/> → <c>null</c></description></item>
-    /// <item><description><see cref="DateTime"/> → <see cref="DateOnly"/>, <see cref="TimeOnly"/>, or <see cref="DateTimeOffset"/> (when requested)</description></item>
-    /// <item><description><see cref="TimeSpan"/> → <see cref="TimeOnly"/></description></item>
-    /// <item><description>Enums: string values parsed via <see cref="Enum.Parse(Type, string)"/>, otherwise constructed via <see cref="Enum.ToObject(Type, object)"/></description></item>
-    /// <item><description>All other types are returned as-is</description></item>
-    /// </list>
-    /// </remarks>
-    private static object? ConvertValue(object? databaseValue, PropertyInfo propertyInfo)
+    private static object? ConvertValue(object? databaseValue, ResultColumnName columnName, PropertyInfo propertyInfo)
     {
+        ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
+
         Type targetType = propertyInfo.PropertyType;
-        // If the value is null or DBNull, return null
-        if (databaseValue == null || databaseValue == DBNull.Value)
+        Type underlyingTargetType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        if (databaseValue is null || databaseValue == DBNull.Value)
         {
-            if (targetType == typeof(string))
+            if (underlyingTargetType == typeof(string))
                 return IsNullable(propertyInfo) ? null : string.Empty;
-            if (targetType == typeof(byte[]))
+            else if (underlyingTargetType == typeof(byte[]))
                 return IsNullable(propertyInfo) ? null : Array.Empty<byte>();
             else
                 return null;
         }
-        else
+        else if (databaseValue is SqlXml sqlXmlValue)
         {
-            // Handle nullable types by getting the underlying type.
-            Type underlyingTargetType = Nullable.GetUnderlyingType(targetType) ?? targetType;
-
-            // Special case: SQL date (returned as DateTime) to DateOnly conversion.
-            if (databaseValue is DateTime dateTime)
+            if (sqlXmlValue.IsNull)
+                return null;
+            else if (underlyingTargetType == typeof(XDocument))
+                return XDocument.Parse(sqlXmlValue.Value);
+            else if (underlyingTargetType == typeof(XmlDocument))
             {
-                if (underlyingTargetType == typeof(DateOnly))
-                    return DateOnly.FromDateTime(dateTime);
-                else if (underlyingTargetType == typeof(TimeOnly))
-                    return TimeOnly.FromDateTime(dateTime);
-                else if (underlyingTargetType == typeof(DateTimeOffset))
-                    return new DateTimeOffset(dateTime);
-                else
-                    return databaseValue;
+                XmlDocument xmlDocument = new();
+                xmlDocument.LoadXml(sqlXmlValue.Value);
+                return xmlDocument;
             }
 
-            // Special case: SQL datetime to TimeOnly conversion.
-            else if (underlyingTargetType == typeof(TimeOnly) && databaseValue is TimeSpan timeSpan)
-            {
-                return TimeOnly.FromTimeSpan(timeSpan);
-            }
+            return sqlXmlValue;
+        }
+        // Special case: SQL date (returned as DateTime) to DateOnly conversion.
+        else if (databaseValue is DateTime dateTime)
+        {
+            if (underlyingTargetType == typeof(DateOnly))
+                return DateOnly.FromDateTime(dateTime);
 
-            else if(underlyingTargetType == typeof(char) && databaseValue is string charAsString)
-            {
-                return charAsString[0];
-            }
+            else if (underlyingTargetType == typeof(TimeOnly))
+                return TimeOnly.FromDateTime(dateTime);
 
-            // Special case: SQL XML
-            else if (databaseValue is SqlXml sqlXmlValue)
-            {
-                if (underlyingTargetType == typeof(XDocument))
-                    return XDocument.Parse(sqlXmlValue.Value);
-                else if (underlyingTargetType == typeof(XmlDocument))
-                {
-                    XmlDocument xmlDocument = new ();
-                    xmlDocument.LoadXml(sqlXmlValue.Value);
-                    return xmlDocument;
-                }
-                else
-                    return sqlXmlValue;
-            }
-
-            // Special case: Enum conversion.
-            else if (underlyingTargetType.IsEnum)
-            {
-                if (databaseValue is string s)
-                {
-                    return Enum.Parse(underlyingTargetType, s);
-                }
-                else
-                {
-                    return Enum.ToObject(underlyingTargetType, databaseValue);
-                }
-            }
+            else if (underlyingTargetType == typeof(DateTimeOffset))
+                return new DateTimeOffset(dateTime);
             else
                 return databaseValue;
         }
+        // Special case: SQL datetime to TimeOnly conversion.
+        else if (underlyingTargetType == typeof(TimeOnly) && databaseValue is TimeSpan timeSpan)
+            return TimeOnly.FromTimeSpan(timeSpan);
+        else if (underlyingTargetType == typeof(char) && databaseValue is string charAsString)
+            return charAsString.FirstOrDefault();
+        else if (underlyingTargetType.IsEnum)
+        {
+            if (databaseValue is string s)
+                return Enum.Parse(underlyingTargetType, s);
+            else
+                return Enum.ToObject(underlyingTargetType, databaseValue);
+        }
+
+        return databaseValue;
     }
 
     private static bool IsNullable(PropertyInfo propertyInfo)
@@ -170,9 +163,7 @@ public static class Invoker<T> where T : class?, new()
         if (type.IsValueType)
             return Nullable.GetUnderlyingType(type) != null;
 
-        NullabilityInfoContext context = new ();
-        NullabilityInfo nullable = context.Create(propertyInfo);
-
+        NullabilityInfo nullable = NullabilityContext.Create(propertyInfo);
         return nullable.WriteState == NullabilityState.Nullable;
     }
 }
