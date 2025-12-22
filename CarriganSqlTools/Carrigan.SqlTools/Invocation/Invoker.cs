@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
-//IGNORE SPELLING: datetime, Enums
+//IGNORE SPELLING: datetime, Enums, parameterless, Nullability
 namespace Carrigan.SqlTools.Invocation;
 
 /// <summary>
@@ -39,10 +39,6 @@ public static class Invoker<T> where T : class, new()
     /// <exception cref="InvalidResultColumnNameException{T}">
     /// Thrown when one or more result column names do not map to a writable property on <typeparamref name="T"/>.
     /// </exception>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when a result value is <c>null</c> / <see cref="DBNull.Value"/> but the target property is a non-nullable value type,
-    /// or when a special-case conversion fails due to an unexpected input shape (for example, an empty string for a <see cref="char"/>).
-    /// </exception>
     /// <exception cref="XmlException">
     /// Thrown when XML parsing fails while converting <see cref="SqlXml"/> to <see cref="XDocument"/> or <see cref="XmlDocument"/>.
     /// </exception>
@@ -57,7 +53,7 @@ public static class Invoker<T> where T : class, new()
     /// </exception>
     public static T Invoke(Dictionary<string, object?> invocation)
     {
-        ArgumentNullException.ThrowIfNull(invocation, nameof(invocation));
+        ArgumentNullException.ThrowIfNull(invocation);
 
         PropertyInfoCache<T> propertyInfoCache = InvocationReflectorCache<T>.PropertyInfoCache;
         InvalidResultColumnNameException<T>? invalidException =
@@ -72,7 +68,7 @@ public static class Invoker<T> where T : class, new()
         {
             ResultColumnName columnName = new(pair.Key);
             PropertyInfo propertyInfo = propertyInfoCache.Get(columnName);
-            object? valueToSet = ConvertValue(pair.Value, columnName, propertyInfo);
+            object? valueToSet = ConvertValue(pair.Value, propertyInfo);
             propertyInfo.SetValue(invoked, valueToSet);
         }
 
@@ -92,12 +88,14 @@ public static class Invoker<T> where T : class, new()
     /// The property receiving the converted value.
     /// </param>
     /// <returns>
-    /// A value suitable for assignment to <paramref name="propertyInfo"/>, or <c>null</c> when the input is null/DBNull and the
-    /// target type supports null.
+    /// A value suitable for assignment to <paramref name="propertyInfo"/>. When the input is <c>null</c> /
+    /// <see cref="DBNull.Value"/>, this method returns <c>null</c> even if the property type is non-nullable,
+    /// except that non-nullable <see cref="string"/> and <see cref="byte"/>[] properties are normalized to
+    /// <see cref="string.Empty"/> and <see cref="Array.Empty{T}"/> respectively.
     /// </returns>
-    private static object? ConvertValue(object? databaseValue, ResultColumnName columnName, PropertyInfo propertyInfo)
+    private static object? ConvertValue(object? databaseValue, PropertyInfo propertyInfo)
     {
-        ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
+        ArgumentNullException.ThrowIfNull(propertyInfo);
 
         Type targetType = propertyInfo.PropertyType;
         Type underlyingTargetType = Nullable.GetUnderlyingType(targetType) ?? targetType;
@@ -114,7 +112,7 @@ public static class Invoker<T> where T : class, new()
         else if (databaseValue is SqlXml sqlXmlValue)
         {
             if (sqlXmlValue.IsNull)
-                return null;
+                    return null;
             else if (underlyingTargetType == typeof(XDocument))
                 return XDocument.Parse(sqlXmlValue.Value);
             else if (underlyingTargetType == typeof(XmlDocument))
@@ -144,7 +142,12 @@ public static class Invoker<T> where T : class, new()
         else if (underlyingTargetType == typeof(TimeOnly) && databaseValue is TimeSpan timeSpan)
             return TimeOnly.FromTimeSpan(timeSpan);
         else if (underlyingTargetType == typeof(char) && databaseValue is string charAsString)
-            return charAsString.FirstOrDefault();
+        {
+            if (charAsString.Length == 0)
+                return null;
+            else
+                return charAsString[0];
+        }
         else if (underlyingTargetType.IsEnum)
         {
             if (databaseValue is string s)
