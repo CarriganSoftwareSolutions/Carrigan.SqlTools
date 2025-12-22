@@ -86,6 +86,14 @@ public class JoinsTest
     }
 
     [Fact]
+    public void JoinsCrossJoin()
+    {
+        Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>(RightOnLeftPredicate);
+        string expected = "CROSS JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSql());
+    }
+
+    [Fact]
     public void NewJoinsNewLeftJoinNewLeftJoin()
     {
         Joins<JoinLeftTable> relation = new
