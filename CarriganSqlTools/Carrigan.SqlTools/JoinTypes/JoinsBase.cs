@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </summary>
 /// <remarks>
 /// This class represents a sequence of one or more <see cref="JoinBase"/> instances that collectively
-/// define the set of <c>JOIN</c> clauses used in a query.  
+/// define the set of <c>JOIN</c> clauses used in a query.
 /// Derived types, such as <see cref="Joins{T}"/>, manage construction and validation of these joins
 /// to ensure referential correctness and proper join ordering.
 /// </remarks>
@@ -34,8 +34,11 @@ public abstract class JoinsBase
     /// A <see cref="Dictionary{TKey, TValue}"/> mapping <see cref="ParameterTag"/> instances
     /// to their corresponding parameter values.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
     internal Dictionary<ParameterTag, object> Parameters =>
-        [.. Joints.SelectMany(join => join.Parameters)];
+        [.. ValidatedJoints.SelectMany(join => join.Parameters)];
 
     /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the base (left-most) table in the join sequence.
@@ -53,18 +56,24 @@ public abstract class JoinsBase
     /// <returns>
     /// An enumeration of all <see cref="TableTag"/> instances involved in the join sequence.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
     internal IEnumerable<TableTag> TableTags =>
-        Joints.Select(join => join.TableTag).Append(TableTag);
+        ValidatedJoints.Select(join => join.TableTag).Append(TableTag);
 
     /// <summary>
     /// Generates the complete SQL fragment for all <c>JOIN</c> clauses
-    /// represented by the current <see cref="Joints"/> collection.
+    /// represented by this <see cref="JoinsBase"/> instance.
     /// </summary>
     /// <returns>
     /// A concatenated SQL string containing all <c>JOIN</c> clauses in sequence.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
     internal string ToSql() =>
-        string.Join(" ", Joints.Select(join => join.ToSql()));
+        string.Join(" ", ValidatedJoints.Select(join => join.ToSql()));
 
     /// <summary>
     /// Determines whether this <see cref="JoinsBase"/> instance contains any join definitions.
@@ -72,6 +81,23 @@ public abstract class JoinsBase
     /// <returns>
     /// <see langword="true"/> if no joins are defined; otherwise, <see langword="false"/>.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
     internal bool IsEmpty() =>
-        Joints.None();
+        ValidatedJoints.None();
+
+    private IEnumerable<JoinBase> ValidatedJoints
+    {
+        get
+        {
+            IEnumerable<JoinBase>? joints = Joints ?? throw new InvalidOperationException($"{GetType().Name}.{nameof(Joints)} returned null.");
+            JoinBase[] materialized = joints as JoinBase[] ?? [.. joints];
+
+            if (materialized.Any(static j => j is null))
+                throw new InvalidOperationException($"{GetType().Name}.{nameof(Joints)} contains null join entries.");
+
+            return materialized;
+        }
+    }
 }
