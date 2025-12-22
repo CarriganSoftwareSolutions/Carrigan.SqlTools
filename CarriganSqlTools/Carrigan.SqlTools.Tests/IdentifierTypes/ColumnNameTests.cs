@@ -461,9 +461,9 @@ public class ResultColumnNameTests
     [Fact]
     public void ImplicitConversion_ToString_AssignmentAndInterpolation()
     {
-        ResultColumnName a = new(eStr);
-        string assigned = eStr;
-        string interpolated = $"{eStr}";
+        ColumnName a = new(eStr);
+        string assigned = a;
+        string interpolated = $"{a}";
 
         Assert.Equal(eStr, assigned);
         Assert.Equal(eStr, interpolated);
@@ -495,5 +495,12 @@ public class ResultColumnNameTests
         object nameWrapper2 = new ResultColumnName(eStr);
         Assert.True(nameWrapper1.Equals((StringWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
+    }
+    [Fact]
+    public void New_White_PreservesValue()
+    {
+        ColumnName? nameWrapper = ColumnName.New(white);
+        Assert.NotNull(nameWrapper);
+        Assert.Equal(white, nameWrapper!.ToString());
     }
 }

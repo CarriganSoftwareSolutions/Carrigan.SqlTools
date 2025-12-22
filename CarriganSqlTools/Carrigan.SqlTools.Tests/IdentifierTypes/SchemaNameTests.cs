@@ -462,8 +462,8 @@ public class SchemaNameTests
     public void ImplicitConversion_ToString_AssignmentAndInterpolation()
     {
         SchemaName a = new(eStr);
-        string assigned = eStr;
-        string interpolated = $"{eStr}";
+        string assigned = a;
+        string interpolated = $"{a}";
 
         Assert.Equal(eStr, assigned);
         Assert.Equal(eStr, interpolated);
@@ -495,5 +495,13 @@ public class SchemaNameTests
         object nameWrapper2 = new SchemaName(eStr);
         Assert.True(nameWrapper1.Equals((StringWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
+    }
+
+    [Fact]
+    public void New_White_PreservesValue()
+    {
+        SchemaName? nameWrapper = SchemaName.New(white);
+        Assert.NotNull(nameWrapper);
+        Assert.Equal(white, nameWrapper!.ToString());
     }
 }

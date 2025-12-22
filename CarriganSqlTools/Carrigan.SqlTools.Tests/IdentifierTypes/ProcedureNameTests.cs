@@ -468,8 +468,8 @@ public class ProcedureNameTests
     public void ImplicitConversion_ToString_AssignmentAndInterpolation()
     {
         ProcedureName a = new(eStr);
-        string assigned = eStr;
-        string interpolated = $"{eStr}";
+        string assigned = a;
+        string interpolated = $"{a}";
 
         Assert.Equal(eStr, assigned);
         Assert.Equal(eStr, interpolated);
@@ -501,5 +501,12 @@ public class ProcedureNameTests
         object nameWrapper2 = new ProcedureName(eStr);
         Assert.True(nameWrapper1.Equals((StringWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
+    }
+    [Fact]
+    public void New_White_PreservesValue()
+    {
+        ProcedureName? nameWrapper = ProcedureName.New(white);
+        Assert.NotNull(nameWrapper);
+        Assert.Equal(white, nameWrapper!.ToString());
     }
 }

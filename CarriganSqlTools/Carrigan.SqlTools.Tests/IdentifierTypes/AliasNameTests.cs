@@ -462,8 +462,8 @@ public class AliasNameTests
     public void ImplicitConversion_ToString_AssignmentAndInterpolation()
     {
         AliasName a = new(eStr);
-        string assigned = eStr;
-        string interpolated = $"{eStr}";
+        string assigned = a;
+        string interpolated = $"{a}";
 
         Assert.Equal(eStr, assigned);
         Assert.Equal(eStr, interpolated);
@@ -495,5 +495,13 @@ public class AliasNameTests
         object nameWrapper2 = new AliasName(eStr);
         Assert.True(nameWrapper1.Equals((StringWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
+    }
+
+    [Fact]
+    public void New_White_PreservesValue()
+    {
+        AliasName? nameWrapper = AliasName.New(white);
+        Assert.NotNull(nameWrapper);
+        Assert.Equal(white, nameWrapper!.ToString());
     }
 }
