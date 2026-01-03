@@ -26,15 +26,18 @@ public abstract class JoinBase
     /// </exception>
     protected JoinBase(Predicates predicates)
     {
-        ArgumentNullException.ThrowIfNull(predicates);
+        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
 
         _predicates = predicates;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JoinBase"/> class. This constructor is should only be used for CrossJoin
+    /// Initializes a new instance of the <see cref="JoinBase"/> class without predicates.
     /// </summary>
-    protected JoinBase() => 
+    /// <remarks>
+    /// This constructor exists for join types that do not use an <c>ON</c> clause (for example, <c>CROSS JOIN</c>).
+    /// </remarks>
+    protected JoinBase() =>
         _predicates = null;
 
     /// <summary>
@@ -48,34 +51,33 @@ public abstract class JoinBase
     /// current join's predicate logic.
     /// </summary>
     /// <remarks>
-    /// Each <see cref="TableTag"/> represents a table referenced within the join's
-    /// <c>ON</c> clause.
+    /// Each <see cref="TableTag"/> represents a table referenced within the join's <c>ON</c> clause.
+    /// When this join type does not use predicates, this returns an empty sequence.
     /// </remarks>
     internal IEnumerable<TableTag> JoinsOn =>
         _predicates?.Columns
             ?.Select(column => column.ColumnInfo.ColumnTag.TableTag)
             ?.Distinct() ?? [];
 
-
     /// <summary>
-    /// Generates the SQL fragment representing the specific <c>JOIN</c> clause,
-    /// including the table being joined and the <c>ON</c> condition.
+    /// Generates the SQL fragment representing the specific <c>JOIN</c> clause.
     /// </summary>
+    /// <remarks>
+    /// For join types that require an <c>ON</c> clause, the derived implementation typically throws when no predicates exist.
+    /// For join types that do not use predicates (for example, <c>CROSS JOIN</c>), the derived implementation should ignore
+    /// the <paramref name="predicates"/> argument.
+    /// </remarks>
     /// <returns>
     /// A SQL fragment representing the complete <c>JOIN</c> clause for this relationship.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Throws if if <see cref="_predicates"/> is null.
-    /// </exception>
     internal string ToSql() =>
         ToSql(_predicates);
 
     /// <summary>
-    /// Generates the SQL fragment representing the specific <c>JOIN</c> clause,
-    /// including the table being joined and the <c>ON</c> condition.
+    /// Generates the SQL fragment representing the specific <c>JOIN</c> clause.
     /// </summary>
     /// <param name="predicates">
-    /// Represents the predicates for the on clause.
+    /// The predicate(s) that define the <c>ON</c> clause, or <c>null</c> for join types that do not use an <c>ON</c> clause.
     /// </param>
     /// <returns>
     /// A SQL fragment representing the complete <c>JOIN</c> clause for this relationship.
