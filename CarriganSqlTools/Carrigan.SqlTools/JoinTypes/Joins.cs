@@ -210,7 +210,7 @@ public class Joins<leftT> : JoinsBase
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> FullJoin<rightT>() =>
+    public static Joins<leftT> CrossJoin<rightT>() =>
         CrossJoin<rightT>.Joins<leftT>();
 
     /// <summary>
