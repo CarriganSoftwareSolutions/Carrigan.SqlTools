@@ -211,7 +211,7 @@ public class Joins<leftT> : JoinsBase
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
     /// </returns>
     public static Joins<leftT> CrossJoin<rightT>() =>
-        CrossJoin<rightT>.Joins<leftT>();
+        JoinTypes.CrossJoin<rightT>.Joins<leftT>();
 
     /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.
