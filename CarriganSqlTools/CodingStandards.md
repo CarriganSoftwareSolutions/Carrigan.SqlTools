@@ -16,6 +16,7 @@
 - Use **collection expressions** when possible.
 - Attribute's will validate null and empty values for arguments, but all other correctness checks will be performed by the SqlGenerator's validation method.
 - Prefer params IEnumerable<T> over params T[], and yes,params as an IEnumerable is supported in the version of c# used by the SqlTools project.
+- You may assume lines of code up to 180 characters are allowed for optimal viewing on a 1080p at 100% magnification with a reasonable allowance for a Solution Explorer pane. 180 characters is a suggested guideline, not a hard and fast rule.
 
 ---
 
