@@ -46,7 +46,7 @@ public class InnerJoin<rightT> : JoinBase
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
-    /// a newly created <see cref="InnerJoin{rightT}"/> operation, using the supplied <paramref name="predicates"/>.
+    /// a newly created <see cref="InnerJoin{rightT}"/> operation.
     /// </summary>
     /// <typeparam name="leftT">
     /// The data model representing the left (base) table being joined onto.
@@ -88,19 +88,15 @@ public class InnerJoin<rightT> : JoinBase
     /// <summary>
     /// Converts the current <see cref="InnerJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
+    /// <param name="predicates">
+    /// The predicate(s) that define the <c>ON</c> clause.
+    /// </param>
     /// <returns>
     /// A SQL string representing the <c>INNER JOIN</c> clause.
     /// </returns>
-    /// <param name="predicates">
-    /// Represents the predicates for the on clause.
-    /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Throws if if <see cref="_predicates"/> is null.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    protected override string ToSql(Predicates? predicates)
-    {
-        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
-
-        return $"INNER JOIN {TableTag} ON {predicates.ToSql()}";
-    }
+    protected override string ToSql(Predicates? predicates) =>
+        $"INNER JOIN {TableTag} ON {(predicates ?? throw new ArgumentNullException(nameof(predicates))).ToSql()}";
 }

@@ -33,16 +33,16 @@ public class FullJoin<rightT> : JoinBase
     /// <summary>
     /// Initializes a new instance of the <see cref="FullJoin{rightT}"/> class.
     /// </summary>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="predicate"/> is <c>null</c>.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
     /// <exception cref="TypeInitializationException">
     /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
     /// </exception>
-    public FullJoin(Predicates predicate) : base(predicate ?? throw new ArgumentNullException(nameof(predicate))) { }
+    public FullJoin(Predicates predicates) : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) { }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -51,17 +51,17 @@ public class FullJoin<rightT> : JoinBase
     /// <typeparam name="leftT">
     /// The data model representing the left (base) table being joined onto.
     /// </typeparam>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="FullJoin{rightT}"/> instance.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="predicate"/> is <c>null</c>.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
-        new(new FullJoin<rightT>(predicate));
+    public static Joins<leftT> Joins<leftT>(Predicates predicates) =>
+        new(new FullJoin<rightT>(predicates));
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -88,19 +88,15 @@ public class FullJoin<rightT> : JoinBase
     /// <summary>
     /// Converts the current <see cref="FullJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
+    /// <param name="predicates">
+    /// The predicate(s) that define the <c>ON</c> clause.
+    /// </param>
     /// <returns>
     /// A SQL string representing the <c>FULL JOIN</c> clause.
     /// </returns>
-    /// <param name="predicates">
-    /// Represents the predicates for the on clause.
-    /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Throws if if <see cref="_predicates"/> is null.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    protected override string ToSql(Predicates? predicates)
-    { 
-        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
-
-        return $"FULL JOIN {TableTag} ON {predicates.ToSql()}";
-    }
+    protected override string ToSql(Predicates? predicates) =>
+        $"FULL JOIN {TableTag} ON {(predicates ?? throw new ArgumentNullException(nameof(predicates))).ToSql()}";
 }
