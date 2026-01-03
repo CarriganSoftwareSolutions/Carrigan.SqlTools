@@ -31,11 +31,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 public class Join<rightT> : JoinBase
 {
     /// <summary>
-    /// The SQL representation of the <c>JOIN</c> clause.
-    /// </summary>
-    protected readonly string _sql;
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
     /// <param name="predicates">
@@ -47,9 +42,7 @@ public class Join<rightT> : JoinBase
     /// <exception cref="TypeInitializationException">
     /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
     /// </exception>
-    public Join(Predicates predicates)
-        : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) =>
-        _sql = $"JOIN {TableTag} ON {_predicates.ToSql()}";
+    public Join(Predicates predicates) : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) { }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object containing
@@ -99,6 +92,16 @@ public class Join<rightT> : JoinBase
     /// <returns>
     /// A SQL string representing the <c>JOIN</c> clause and its corresponding <c>ON</c> predicate.
     /// </returns>
-    internal override string ToSql() =>
-        _sql;
+    /// <param name="predicates">
+    /// Represents the predicates for the on clause.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Throws if if <see cref="_predicates"/> is null.
+    /// </exception>
+    protected override string ToSql(Predicates? predicates)
+    {
+        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
+
+        return $"JOIN {TableTag} ON {predicates.ToSql()}";
+    }
 }

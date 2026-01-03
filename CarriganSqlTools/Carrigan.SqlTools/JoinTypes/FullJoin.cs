@@ -30,8 +30,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </example>
 public class FullJoin<rightT> : JoinBase
 {
-    private readonly string _sql;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="FullJoin{rightT}"/> class.
     /// </summary>
@@ -44,9 +42,7 @@ public class FullJoin<rightT> : JoinBase
     /// <exception cref="TypeInitializationException">
     /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
     /// </exception>
-    public FullJoin(Predicates predicate)
-        : base(predicate ?? throw new ArgumentNullException(nameof(predicate))) =>
-        _sql = $"FULL JOIN {TableTag} ON {_predicates.ToSql()}";
+    public FullJoin(Predicates predicate) : base(predicate ?? throw new ArgumentNullException(nameof(predicate))) { }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -95,6 +91,16 @@ public class FullJoin<rightT> : JoinBase
     /// <returns>
     /// A SQL string representing the <c>FULL JOIN</c> clause.
     /// </returns>
-    internal override string ToSql() =>
-        _sql;
+    /// <param name="predicates">
+    /// Represents the predicates for the on clause.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Throws if if <see cref="_predicates"/> is null.
+    /// </exception>
+    protected override string ToSql(Predicates? predicates)
+    { 
+        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
+
+        return $"FULL JOIN {TableTag} ON {predicates.ToSql()}";
+    }
 }

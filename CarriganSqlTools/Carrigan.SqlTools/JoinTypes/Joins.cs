@@ -201,6 +201,19 @@ public class Joins<leftT> : JoinsBase
         JoinTypes.FullJoin<rightT>.Joins<leftT>(predicates);
 
     /// <summary>
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
+    /// a newly created <see cref="CrossJoin{rightT}"/> operation.
+    /// </summary>
+    /// <typeparam name="rightT">
+    /// The data model representing the right-side table being joined.
+    /// </typeparam>
+    /// <returns>
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
+    /// </returns>
+    public static Joins<leftT> FullJoin<rightT>() =>
+        CrossJoin<rightT>.Joins<leftT>();
+
+    /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.
     /// </summary>
     internal override TableTag TableTag =>

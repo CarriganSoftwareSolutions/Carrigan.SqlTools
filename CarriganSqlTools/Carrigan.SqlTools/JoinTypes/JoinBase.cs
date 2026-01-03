@@ -13,7 +13,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </remarks>
 public abstract class JoinBase
 {
-    protected readonly Predicates _predicates;
+    protected readonly Predicates? _predicates;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JoinBase"/> class.
@@ -32,6 +32,12 @@ public abstract class JoinBase
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="JoinBase"/> class. This constructor is should only be used for CrossJoin
+    /// </summary>
+    protected JoinBase() => 
+        _predicates = null;
+
+    /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the right-hand (joined) table
     /// in the SQL <c>JOIN</c> clause.
     /// </summary>
@@ -46,9 +52,10 @@ public abstract class JoinBase
     /// <c>ON</c> clause.
     /// </remarks>
     internal IEnumerable<TableTag> JoinsOn =>
-        _predicates.Columns
-            .Select(column => column.ColumnInfo.ColumnTag.TableTag)
-            .Distinct();
+        _predicates?.Columns
+            ?.Select(column => column.ColumnInfo.ColumnTag.TableTag)
+            ?.Distinct() ?? [];
+
 
     /// <summary>
     /// Generates the SQL fragment representing the specific <c>JOIN</c> clause,
@@ -57,7 +64,23 @@ public abstract class JoinBase
     /// <returns>
     /// A SQL fragment representing the complete <c>JOIN</c> clause for this relationship.
     /// </returns>
-    internal abstract string ToSql();
+    /// <exception cref="ArgumentNullException">
+    /// Throws if if <see cref="_predicates"/> is null.
+    /// </exception>
+    internal string ToSql() =>
+        ToSql(_predicates);
+
+    /// <summary>
+    /// Generates the SQL fragment representing the specific <c>JOIN</c> clause,
+    /// including the table being joined and the <c>ON</c> condition.
+    /// </summary>
+    /// <param name="predicates">
+    /// Represents the predicates for the on clause.
+    /// </param>
+    /// <returns>
+    /// A SQL fragment representing the complete <c>JOIN</c> clause for this relationship.
+    /// </returns>
+    protected abstract string ToSql(Predicates? predicates);
 
     /// <summary>
     /// Retrieves all parameters associated with the predicate logic of this join.
@@ -67,5 +90,5 @@ public abstract class JoinBase
     /// to its corresponding runtime value, for use in parameterized SQL queries.
     /// </returns>
     internal Dictionary<ParameterTag, object> Parameters =>
-        _predicates.GetParameters();
+        _predicates?.GetParameters() ?? [];
 }

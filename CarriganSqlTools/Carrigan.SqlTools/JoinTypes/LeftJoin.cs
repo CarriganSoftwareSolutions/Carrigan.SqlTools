@@ -30,8 +30,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </example>
 public class LeftJoin<rightT> : JoinBase
 {
-    private readonly string _sql;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="LeftJoin{rightT}"/> class.
     /// </summary>
@@ -44,9 +42,7 @@ public class LeftJoin<rightT> : JoinBase
     /// <exception cref="TypeInitializationException">
     /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
     /// </exception>
-    public LeftJoin(Predicates predicates)
-        : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) =>
-        _sql = $"LEFT JOIN {TableTag} ON {_predicates.ToSql()}";
+    public LeftJoin(Predicates predicates) : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) { }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -95,6 +91,16 @@ public class LeftJoin<rightT> : JoinBase
     /// <returns>
     /// A SQL string representing the <c>LEFT JOIN</c> clause.
     /// </returns>
-    internal override string ToSql() =>
-        _sql;
+    /// <param name="predicates">
+    /// Represents the predicates for the on clause.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Throws if if <see cref="_predicates"/> is null.
+    /// </exception>
+    protected override string ToSql(Predicates? predicates)
+    {
+        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
+
+        return $"LEFT JOIN {TableTag} ON {predicates.ToSql()}";
+    }
 }
