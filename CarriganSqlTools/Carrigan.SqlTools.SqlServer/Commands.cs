@@ -2,8 +2,6 @@
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
@@ -11,6 +9,7 @@ using System.Data.SqlTypes;
 using System.Reflection;
 using System.Xml;
 
+//IGNORE Spelling: xml
 
 namespace Carrigan.SqlTools.SqlServer;
 
@@ -87,10 +86,10 @@ public static class Commands
         }
     }
 
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection) where T : class?, new() => 
+    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection) where T : class, new() => 
         ExecuteReader<T>(query, transaction, connection, null);
 
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters) where T : class?, new()
+    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters) where T : class, new()
     {
         List<T> results = [];
         PropertyInfo? keyVersionProperty = ClientReflectorCache<T>.KeyVersionProperty;
