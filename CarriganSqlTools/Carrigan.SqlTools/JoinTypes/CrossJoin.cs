@@ -11,13 +11,8 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// The data model representing the right-side table being joined.
 /// </typeparam>
 /// <example>
-/// <para>
-/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates property names and throws an exception if a property name is invalid.
-/// </para>
 /// <code language="csharp"><![CDATA[
-/// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// JoinsBase join = Joins<Customer>.CrossJoin<Order>(predicate);
-///
+/// JoinsBase join = Joins<Customer>.CrossJoin<Order>();
 /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
@@ -25,7 +20,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// CROSS JOIN [Order]
-/// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
 public class CrossJoin<rightT> : JoinBase
@@ -33,9 +27,6 @@ public class CrossJoin<rightT> : JoinBase
     /// <summary>
     /// Initializes a new instance of the <see cref="CrossJoin{rightT}"/> class.
     /// </summary>
-    /// <exception cref="TypeInitializationException">
-    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
-    /// </exception>
     public CrossJoin() : base() { }
 
     /// <summary>
@@ -79,16 +70,9 @@ public class CrossJoin<rightT> : JoinBase
     /// <returns>
     /// A SQL string representing the <c>CROSS JOIN</c> clause.
     /// </returns>
-    /// <param name="predicates">
-    /// Represents the predicates for the on clause.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Throws if if <see cref="_predicates"/> is null.
-    /// </exception>
-    protected override string ToSql(Predicates? predicates)
-    {
-        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
-
-        return $"CROSS JOIN {TableTag}";
-    }
+    /// <remarks>
+    /// A <c>CROSS JOIN</c> has no <c>ON</c> clause; <paramref name="predicates"/> is ignored.
+    /// </remarks>
+    protected override string ToSql(Predicates? predicates) =>
+        $"CROSS JOIN {TableTag}";
 }
