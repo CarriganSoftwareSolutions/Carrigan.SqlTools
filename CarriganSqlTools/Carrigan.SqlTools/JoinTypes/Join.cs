@@ -45,26 +45,26 @@ public class Join<rightT> : JoinBase
     public Join(Predicates predicates) : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) { }
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> object containing
-    /// a newly created <see cref="Join{rightT}"/> instance.
+    /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
+    /// a newly created <see cref="Join{rightT}"/> operation.
     /// </summary>
     /// <typeparam name="leftT">
     /// The data model representing the left (base) table being joined onto.
     /// </typeparam>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
     /// <returns>
-    /// A new <see cref="Joins{leftT}"/> instance containing a <see cref="Join{rightT}"/>.
+    /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="Join{rightT}"/> instance.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="predicate"/> is <c>null</c>.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
-        new(new Join<rightT>(predicate));
+    public static Joins<leftT> Joins<leftT>(Predicates predicates) =>
+        new(new Join<rightT>(predicates));
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> object containing
+    /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
     /// the current <see cref="Join{rightT}"/> instance.
     /// </summary>
     /// <typeparam name="leftT">
@@ -77,8 +77,7 @@ public class Join<rightT> : JoinBase
         new(this);
 
     /// <summary>
-    /// Gets the <see cref="TableTag"/> representing the right-side table
-    /// associated with <typeparamref name="rightT"/>.
+    /// Gets the <see cref="TableTag"/> associated with the right-side table in the <c>JOIN</c> operation.
     /// </summary>
     /// <exception cref="TypeInitializationException">
     /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
@@ -89,19 +88,15 @@ public class Join<rightT> : JoinBase
     /// <summary>
     /// Converts the current <see cref="Join{rightT}"/> instance to its SQL representation.
     /// </summary>
-    /// <returns>
-    /// A SQL string representing the <c>JOIN</c> clause and its corresponding <c>ON</c> predicate.
-    /// </returns>
     /// <param name="predicates">
-    /// Represents the predicates for the on clause.
+    /// The predicate(s) that define the <c>ON</c> clause.
     /// </param>
+    /// <returns>
+    /// A SQL string representing the <c>JOIN</c> clause.
+    /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// Throws if if <see cref="_predicates"/> is null.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    protected override string ToSql(Predicates? predicates)
-    {
-        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
-
-        return $"JOIN {TableTag} ON {predicates.ToSql()}";
-    }
+    protected override string ToSql(Predicates? predicates) =>
+        $"JOIN {TableTag} ON {(predicates ?? throw new ArgumentNullException(nameof(predicates))).ToSql()}";
 }
