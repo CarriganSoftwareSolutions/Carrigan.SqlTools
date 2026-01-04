@@ -36,7 +36,7 @@ public class InvalidTableException : Exception
     /// </summary>
     /// <param name="tableTags">The <see cref="TableTag"/> instances representing the invalid tables.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableTags"/> is <c>null</c>.</exception>
-    internal InvalidTableException(params IEnumerable<TableTag> tableTags)
+    internal InvalidTableException(params IEnumerable<TableTag?> tableTags)
         : base(CreateMessage(tableTags))
     {
     }
@@ -47,7 +47,7 @@ public class InvalidTableException : Exception
     /// <param name="tableTags">The <see cref="TableTag"/> instances representing the invalid tables.</param>
     /// <returns>A formatted error message describing the missing or invalid tables.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableTags"/> is <c>null</c>.</exception>
-    private static string CreateMessage(params IEnumerable<TableTag> tableTags)
+    private static string CreateMessage(params IEnumerable<TableTag?> tableTags)
     {
         ArgumentNullException.ThrowIfNull(tableTags, nameof(tableTags));
 

@@ -4,46 +4,48 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
-//IGNORE SPELLING: joins
-
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
-/// Defines a class that represents one or more SQL <c>JOIN</c> operations.
+/// Represents one or more SQL <c>JOIN</c> operations applied to the table modeled by
+/// <typeparamref name="leftT"/>.
 /// </summary>
 /// <typeparam name="leftT">
 /// The data model representing the left (base) table onto which joins are applied.
 /// </typeparam>
+/// <remarks>
+/// Join definitions are validated in the order provided. Each join’s predicate(s) may only reference:
+/// <list type="bullet">
+/// <item><description>Tables already introduced earlier in the join sequence, and/or</description></item>
+/// <item><description>The table being introduced by the current join.</description></item>
+/// </list>
+/// If a join references a table that has not yet been introduced, an <see cref="InvalidTableException"/> is thrown.
+/// </remarks>
 /// <example>
 /// <para>
-/// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates property names and throws an exception if a property name is invalid.
+/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates property names and throws an exception
+/// if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin<Order> join1 = new(predicate);
-/// 
+///
 /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
-/// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
-/// 
-/// Joins<Customer> joins = new(join1, join2);
-/// 
 /// SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// INNER JOIN [Order] 
-/// ON ([Customer].[Id] = [Order].[CustomerId]) 
-/// INNER JOIN [PaymentMethod] 
-/// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
 /// <example>
 /// <para>
-/// Note: <c><ColumnEqualsColumn<Customer, Order>/c> validates the names of the properties, and throws an error if the property isn't valid
+/// Note: <see cref="ColumnEqualsColumn{Customer, Order}"/> validates property names and throws an exception
+/// if a property name is invalid.
 /// </para>
-/// /// <code language="csharp"><![CDATA[
+/// <code language="csharp"><![CDATA[
 /// SelectTags selectTags =
 ///     SelectTags.Get<Customer>("Id", "CustomerId")
 ///         .Concat<Customer>(["Name", "Email", "Phone"])
@@ -51,15 +53,15 @@ namespace Carrigan.SqlTools.JoinTypes;
 ///         .Concat<Order>(["OrderDate", "Total"])
 ///         .Append<PaymentMethod>("Id", "PaymentMethodId")
 ///         .Append<PaymentMethod>("ZipCode");
-/// 
+///
 /// ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin<Order> join1 = new(customerIdEquals);
-/// 
-/// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
+///
+/// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals =
+///     new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
 /// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
-/// 
+///
 /// Joins<Customer> joins = new(join1, join2);
-/// 
 /// SqlQuery query = customerGenerator.Select(selectTags, joins, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
@@ -73,62 +75,64 @@ namespace Carrigan.SqlTools.JoinTypes;
 ///     [Order].[OrderDate], 
 ///     [Order].[Total], 
 ///     [PaymentMethod].[Id] AS PaymentMethodId, 
-///     [PaymentMethod].[ZipCode] 
-/// FROM [Customer] 
-/// INNER JOIN [Order] 
-/// ON ([Customer].[Id] = [Order].[CustomerId]) 
-/// INNER JOIN [PaymentMethod] 
+///     [PaymentMethod].[ZipCode]
+/// FROM [Customer]
+/// INNER JOIN [Order]
+/// ON ([Customer].[Id] = [Order].[CustomerId])
+/// INNER JOIN [PaymentMethod]
 /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
 public class Joins<leftT> : JoinsBase
 {
     /// <summary>
-    /// A collection of <see cref="JoinBase"/> instances, where each instance represents
-    /// a single SQL <c>JOIN</c> operation.
+    /// The collection of join operations represented by this instance.
     /// </summary>
-    /// <remarks>
-    /// This property is named <c>Joints</c> to avoid a naming conflict with the enclosing class name.
-    /// </remarks>
     protected override IEnumerable<JoinBase> Joints { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Joins{leftT}"/> class.
+    /// Initializes a new instance of the <see cref="Joins{leftT}"/> class from one or more join definitions.
     /// </summary>
-    /// <param name="joins">
-    /// One or more <see cref="JoinBase"/> instances, where each instance defines a single SQL <c>JOIN</c> operation.
-    /// </param>
+    /// <param name="joins">The join operations in the order they should appear in SQL.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="joins"/> is <c>null</c> or contains a <c>null</c> join entry.
+    /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown if any join references a table that is not part of the valid join sequence.
+    /// Thrown when a join’s predicate references a table that has not been introduced earlier in the join sequence.
     /// </exception>
     public Joins(params IEnumerable<JoinBase> joins)
     {
         Joints = [];
-        IEnumerable<TableTag> invalids; ;
+        HashSet<TableTag?> invalids = [];
+        HashSet<TableTag> validTables = [TableTag];
 
         //validate each join to ensure it is joined in the proper order for column participation.
         foreach (JoinBase join in joins)
         {
-            IEnumerable<TableTag> valid = TableTags.Append(join.TableTag);
+            validTables.Add(join.TableTag);
             //ensure each column involved in the join comes from either an earlier table or the table being joined on 
-            invalids = join.JoinsOn.Where(table => valid.DoesNotContain(table));
-            if (invalids.IsNullOrEmpty())
+            IEnumerable<TableTag?>  newInvalids = join.JoinsOn.Where(table => validTables.DoesNotContain(table));
+            if (newInvalids.IsNullOrEmpty())
                 Joints = Joints.Append(join);
             else
-                throw new InvalidTableException(invalids);
+            {
+                foreach(TableTag? tableTag in newInvalids)
+                {
+                    if (invalids.DoesNotContain(tableTag))
+                        invalids.Add(tableTag);
+                }
+            }
         }
+        if(invalids.IsNotNullOrEmpty())
+            throw new InvalidTableException(invalids);
     }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created <see cref="LeftJoin{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="rightT">
-    /// The data model representing the right-side table being joined.
-    /// </typeparam>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
-    /// </param>
+    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
+    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.</param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="LeftJoin{rightT}"/>.
     /// </returns>
@@ -139,12 +143,8 @@ public class Joins<leftT> : JoinsBase
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created <see cref="RightJoin{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="rightT">
-    /// The data model representing the right-side table being joined.
-    /// </typeparam>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.
-    /// </param>
+    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
+    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.</param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="RightJoin{rightT}"/>.
     /// </returns>
@@ -155,15 +155,10 @@ public class Joins<leftT> : JoinsBase
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created generic <see cref="Join{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="rightT">
-    /// The data model representing the right-side table being joined.
-    /// </typeparam>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
-    /// </param>
+    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
+    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.</param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="Join{rightT}"/>.
-    /// </returns><see cref="Join{rightT}"/> object.
     /// </returns>
     public static Joins<leftT> Join<rightT>(Predicates predicates) =>
         JoinTypes.Join<rightT>.Joins<leftT>(predicates);
@@ -172,12 +167,8 @@ public class Joins<leftT> : JoinsBase
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created <see cref="InnerJoin{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="rightT">
-    /// The data model representing the right-side table being joined.
-    /// </typeparam>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.
-    /// </param>
+    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
+    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.</param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="InnerJoin{rightT}"/>.
     /// </returns>
@@ -188,12 +179,8 @@ public class Joins<leftT> : JoinsBase
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created <see cref="FullJoin{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="rightT">
-    /// The data model representing the right-side table being joined.
-    /// </typeparam>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>Full JOIN</c>.
-    /// </param>
+    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
+    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.</param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
     /// </returns>
@@ -204,13 +191,22 @@ public class Joins<leftT> : JoinsBase
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created <see cref="CrossJoin{rightT}"/> operation.
     /// </summary>
-    /// <typeparam name="rightT">
-    /// The data model representing the right-side table being joined.
-    /// </typeparam>
+    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="CrossJoin{rightT}"/>.
     /// </returns>
     public static Joins<leftT> CrossJoin<rightT>() =>
+        JoinTypes.CrossJoin<rightT>.Joins<leftT>();
+
+    /// <summary>
+    /// Legacy overload that returns a <see cref="CrossJoin{rightT}"/> join sequence.
+    /// </summary>
+    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
+    /// <returns>
+    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="CrossJoin{rightT}"/>.
+    /// </returns>
+    [Obsolete("Use CrossJoin<rightT>() instead.")]
+    public static Joins<leftT> FullJoin<rightT>() =>
         JoinTypes.CrossJoin<rightT>.Joins<leftT>();
 
     /// <summary>
