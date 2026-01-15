@@ -38,8 +38,16 @@ public abstract class JoinsBase
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
-    internal Dictionary<ParameterTag, object> Parameters =>
-        [.. ValidatedJoints.SelectMany(join => join.Parameters)];
+    internal Dictionary<ParameterTag, object> Parameters
+    {
+        get
+        {
+            if (ValidatedJoints.Count() == 1)
+                return [.. ValidatedJoints.SelectMany((join, i) => join.GetParameters($"JoinParameter"))];
+            else
+                return [.. ValidatedJoints.SelectMany((join, i) => join.GetParameters($"Joins{i}Parameter"))];
+        }
+    }
 
     /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the base (left-most) table in the join sequence.
@@ -73,8 +81,14 @@ public abstract class JoinsBase
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
-    internal string ToSql() =>
-        string.Join(" ", ValidatedJoints.Select(join => join.ToSql()));
+    internal string ToSql()
+    {
+        if(ValidatedJoints.Count() == 1)
+            return string.Join(" ", ValidatedJoints.Select(join => join.ToSql("Join")));
+        else
+            return string.Join(" ", ValidatedJoints.Select((join, i) => join.ToSql($"Joins{i}")));
+
+    }
 
     /// <summary>
     /// Determines whether this <see cref="JoinsBase"/> instance contains any join definitions.

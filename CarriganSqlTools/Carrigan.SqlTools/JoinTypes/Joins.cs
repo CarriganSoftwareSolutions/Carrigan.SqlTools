@@ -199,17 +199,6 @@ public class Joins<leftT> : JoinsBase
         JoinTypes.CrossJoin<rightT>.Joins<leftT>();
 
     /// <summary>
-    /// Legacy overload that returns a <see cref="CrossJoin{rightT}"/> join sequence.
-    /// </summary>
-    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="CrossJoin{rightT}"/>.
-    /// </returns>
-    [Obsolete("Use CrossJoin<rightT>() instead.")]
-    public static Joins<leftT> FullJoin<rightT>() =>
-        JoinTypes.CrossJoin<rightT>.Joins<leftT>();
-
-    /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.
     /// </summary>
     internal override TableTag TableTag =>

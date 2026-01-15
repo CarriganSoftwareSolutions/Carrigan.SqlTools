@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -57,7 +58,7 @@ public class ParameterTests
     public void ParameterValues_Theory_SqlValues(string parameter, object value, object expected)
     {
         Parameter parameterValue = new(parameter, value);
-        string actual = parameterValue.ToSql();
+        string actual = parameterValue.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expected, actual);
     }
@@ -71,8 +72,8 @@ public class ParameterTests
     public void ParameterValues_ParameterCount(string parameter, object value)
     {
         Parameter parameterValue = new(new ParameterTag(null, parameter, null, new(value)), value);
-        int expected = 1;
-        int actual = parameterValue.Parameters.Count();
+        int expected = 0;
+        int actual = parameterValue.DescendantParameters.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -122,34 +123,34 @@ public class ParameterTests
             );
 
         string expected = "(([TestSqlTypes].[IntValue] = @Parameter_0_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_1_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_2_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_3_R_Test) OR ([TestSqlTypes].[IntValue] = @Parameter_NotTest) OR ([TestSqlTypes].[IntValue] = @Parameter_5_R_Test))";
-        string actual = predicate.ToSql();
+        string actual = predicate.ToSqlFragments("Parameter").ToSql();
         Assert.Equal(expected, actual);
 
-        int actualInt = predicate.Parameters.Where(parameter => parameter.Name == "Test").Count();
+        int actualInt = predicate.DescendantParameters.Where(parameter => parameter.Name == "Test").Count();
         int expectedInt = 5;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_0_R_Test").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_0_R_Test").Single().Value!;
         expectedInt = 0;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_1_R_Test").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_1_R_Test").Single().Value!;
         expectedInt = 1;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_2_R_Test").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_2_R_Test").Single().Value!;
         expectedInt = 2;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_3_R_Test").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_3_R_Test").Single().Value!;
         expectedInt = 3;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_NotTest").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_NotTest").Single().Value!;
         expectedInt = 4;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_5_R_Test").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_5_R_Test").Single().Value!;
         expectedInt = 10;
         Assert.Equal(expectedInt, actualInt);
     }
@@ -171,26 +172,26 @@ public class ParameterTests
             );
 
         string expected = "((([TestSqlTypes].[IntValue] = @Parameter_0_0_R_Test) AND ([TestSqlTypes].[CharValue] = @Parameter_0_1_R_Test)) OR (([TestSqlTypes].[IntValue] = @Parameter_1_0_R_Test) AND (@Parameter_1_1_L_Test = [TestSqlTypes].[CharValue])))";
-        string actual = predicate.ToSql();
+        string actual = predicate.ToSqlFragments("Parameter").ToSql();
         Assert.Equal(expected, actual);
 
-        int actualInt = predicate.Parameters.Where(parameter => parameter.Name == "Test").Count();
+        int actualInt = predicate.DescendantParameters.Where(parameter => parameter.Name == "Test").Count();
         int expectedInt = 4;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_0_0_R_Test").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_0_0_R_Test").Single().Value!;
         expectedInt = 0;
         Assert.Equal(actualInt, expectedInt);
 
-        char actualChar = (char)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_0_1_R_Test").Single().Value!;
+        char actualChar = (char)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_0_1_R_Test").Single().Value!;
         char expectedChar = 'A';
         Assert.Equal(actualChar, expectedChar);
 
-        actualInt = (int)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_1_0_R_Test").Single().Value!;
+        actualInt = (int)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_1_0_R_Test").Single().Value!;
         expectedInt = 1;
         Assert.Equal(expectedInt, actualInt);
 
-        actualChar = (char)predicate.GetParameters().Where(parameter => parameter.Key == "@Parameter_1_1_L_Test").Single().Value!;
+        actualChar = (char)predicate.ToSqlFragments("Parameter").GetParameters().Where(parameter => parameter.Key == "@Parameter_1_1_L_Test").Single().Value!;
         expectedChar = 'B';
         Assert.Equal(actualChar, expectedChar);
     }
@@ -256,7 +257,7 @@ public class ParameterTests
         Parameter parameter = new(parameterName, value);
 
         KeyValuePair<ParameterTag, object> singleParameter =
-            parameter.GetParameters().Single();
+            parameter.ToSqlFragments("Parameter").GetParameters().Single();
 
         string expectedKey = "@Parameter_Name";
         object expectedValue = DBNull.Value;

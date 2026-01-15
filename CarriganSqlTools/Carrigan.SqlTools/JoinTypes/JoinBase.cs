@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
@@ -13,7 +14,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </remarks>
 public abstract class JoinBase
 {
-    protected readonly Predicates? _predicates;
+    protected readonly Predicates _predicates;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="JoinBase"/> class.
@@ -32,15 +33,6 @@ public abstract class JoinBase
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="JoinBase"/> class without predicates.
-    /// </summary>
-    /// <remarks>
-    /// This constructor exists for join types that do not use an <c>ON</c> clause (for example, <c>CROSS JOIN</c>).
-    /// </remarks>
-    protected JoinBase() =>
-        _predicates = null;
-
-    /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the right-hand (joined) table
     /// in the SQL <c>JOIN</c> clause.
     /// </summary>
@@ -55,13 +47,16 @@ public abstract class JoinBase
     /// When this join type does not use predicates, this returns an empty sequence.
     /// </remarks>
     internal IEnumerable<TableTag> JoinsOn =>
-        _predicates?.Columns
+        _predicates?.DescendantColumns
             ?.Select(column => column.ColumnInfo.ColumnTag.TableTag)
             ?.Distinct() ?? [];
 
     /// <summary>
     /// Generates the SQL fragment representing the specific <c>JOIN</c> clause.
     /// </summary>
+    /// <param name="branchPrefix">
+    /// This is the prefix used to append at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
+    /// </param>
     /// <remarks>
     /// For join types that require an <c>ON</c> clause, the derived implementation typically throws when no predicates exist.
     /// For join types that do not use predicates (for example, <c>CROSS JOIN</c>), the derived implementation should ignore
@@ -70,19 +65,7 @@ public abstract class JoinBase
     /// <returns>
     /// A SQL fragment representing the complete <c>JOIN</c> clause for this relationship.
     /// </returns>
-    internal string ToSql() =>
-        ToSql(_predicates);
-
-    /// <summary>
-    /// Generates the SQL fragment representing the specific <c>JOIN</c> clause.
-    /// </summary>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause, or <c>null</c> for join types that do not use an <c>ON</c> clause.
-    /// </param>
-    /// <returns>
-    /// A SQL fragment representing the complete <c>JOIN</c> clause for this relationship.
-    /// </returns>
-    protected abstract string ToSql(Predicates? predicates);
+    internal abstract string ToSql(string branchPrefix);
 
     /// <summary>
     /// Retrieves all parameters associated with the predicate logic of this join.
@@ -91,6 +74,6 @@ public abstract class JoinBase
     /// A <see cref="Dictionary{TKey, TValue}"/> mapping each <see cref="ParameterTag"/>
     /// to its corresponding runtime value, for use in parameterized SQL queries.
     /// </returns>
-    internal Dictionary<ParameterTag, object> Parameters =>
-        _predicates?.GetParameters() ?? [];
+    internal Dictionary<ParameterTag, object> GetParameters(string branchPrefix) =>
+        _predicates?.ToSqlFragments(branchPrefix)?.GetParameters() ?? [];
 }

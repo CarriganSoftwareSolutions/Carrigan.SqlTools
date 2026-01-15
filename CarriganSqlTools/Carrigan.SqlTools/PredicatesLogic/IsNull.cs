@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -34,21 +35,8 @@ public class IsNull : Predicates
     /// The expression to test for null.
     /// Typically a <see cref="Column{T}"/> instance representing a database column.
     /// </param>
-    public IsNull(Predicates someValue) => 
+    public IsNull(Predicates someValue) : base([someValue]) => 
         _someValue = someValue;
-
-    /// <summary>
-    /// Recursively retrieves all parameters associated with this predicate.
-    /// </summary>
-    internal override IEnumerable<Parameter> Parameters =>
-       _someValue.Parameters;
-
-    /// <summary>
-    /// Recursively retrieves all columns associated with this predicate.
-    /// </summary>
-    internal override IEnumerable<ColumnBase> Columns =>
-       _someValue.Columns;
-
 
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
@@ -57,6 +45,9 @@ public class IsNull : Predicates
     /// A prefix added to parameter names during recursive traversal of the logic tree,
     /// ensuring that each parameter name remains unique.
     /// </param>
+    /// <param name="branchName">
+    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
+    /// </param>
     /// <param name="duplicates">
     /// Tracks user-supplied parameter names that are duplicates, allowing this method
     /// to determine when prefixes should be applied.
@@ -64,23 +55,11 @@ public class IsNull : Predicates
     /// <returns>
     /// A SQL string representing the <c>IS NULL</c> condition.
     /// </returns>
-    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        $"({_someValue.ToSql(prefix, duplicates)} IS NULL)";
-
-    /// <summary>
-    /// Recursively retrieves all parameters associated with this predicate as key–value pairs.
-    /// </summary>
-    /// <param name="prefix">
-    /// A prefix added to parameter names during recursive traversal of the logic tree,
-    /// ensuring that each parameter name remains unique.
-    /// </param>
-    /// <param name="duplicates">
-    /// Tracks user-supplied parameter names that are duplicates, allowing this method
-    /// to determine when prefixes should be applied.
-    /// </param>
-    /// <returns>
-    /// A collection of key–value pairs representing parameter tags and their corresponding values.
-    /// </returns>
-    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        _someValue.GetParameters(prefix, duplicates);
+    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    {
+        yield return new SqlFragmentText("(");
+        foreach (SqlFragment fragment in _someValue.ToSql(prefix, branchName, duplicates))
+            yield return fragment;
+        yield return new SqlFragmentText(" IS NULL)");
+    }
 }

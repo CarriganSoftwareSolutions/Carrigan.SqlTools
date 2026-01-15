@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -281,7 +282,7 @@ public partial class SqlGenerator<T>
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
 
         IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
         if (invalidTags.Any())
@@ -301,8 +302,8 @@ public partial class SqlGenerator<T>
         }
         if (predicates is not null)
         {
-            queryBuilder.Append($" WHERE {predicates.ToSql()}");
-            parametersDictionary.Add(predicates.GetParameters());
+            queryBuilder.Append($" WHERE {predicates.ToSqlFragments("Parameter").ToSql()}");
+            parametersDictionary.Add(predicates.ToSqlFragments("Parameter").GetParameters());
         }
         return new SqlQuery()
         {

@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -43,24 +44,11 @@ public class Contains<T> : Predicates
     /// The right-hand operand, representing the search term parameter
     /// (<see cref="Predicates.Parameter"/>).
     /// </param>
-    public Contains(Column<T> column, Parameter parameter)
+    public Contains(Column<T> column, Parameter parameter) : base([column, parameter])
     {
         _column = column;
         _parameter = parameter;
     }
-
-    /// <summary>
-    /// Recursively retrieves all <see cref="ColumnBase"/> instances referenced by this predicate.
-    /// </summary>
-    internal override IEnumerable<Parameter> Parameters =>
-       [_parameter];
-
-    /// <summary>
-    /// Leaf node in recursive logic to get all the Columns associated with the logic.
-    /// Since this there will be only this Column, return it as an enumerable.
-    /// </summary>
-    internal override IEnumerable<ColumnBase> Columns =>
-       [_column];
 
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
@@ -69,6 +57,9 @@ public class Contains<T> : Predicates
     /// A disambiguation prefix accumulated during predicate-tree traversal.
     /// Used to ensure parameter names are unique when duplicates exist.
     /// </param>
+    /// <param name="branchName">
+    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
+    /// </param>
     /// <param name="duplicates">
     /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
     /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
@@ -76,23 +67,14 @@ public class Contains<T> : Predicates
     /// <returns>
     /// A SQL fragment of the form <c>CONTAINS(&lt;column&gt;, &lt;parameter&gt;)</c>.
     /// </returns>
-    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        $"CONTAINS({_column.ToSql()}, {_parameter.ToSql()})";
-
-    /// <summary>
-    /// Recursively retrieves all parameters associated with this predicate as key/value pairs.
-    /// </summary>
-    /// <param name="prefix">
-    /// A disambiguation prefix accumulated during predicate-tree traversal.
-    /// Used to ensure parameter names are unique when duplicates exist.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
-    /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
-    /// </param>
-    /// <returns>
-    /// A sequence mapping each <see cref="ParameterTag"/> to its bound value.
-    /// </returns>
-    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        _parameter.GetParameters(prefix, duplicates);
+    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    {
+        yield return new SqlFragmentText("CONTAINS(");
+        foreach (SqlFragment fragment in _column.ToSql(prefix, branchName, duplicates))
+            yield return fragment;
+        yield return new SqlFragmentText(", ");
+        foreach (SqlFragment fragment in _parameter.ToSql(prefix, branchName, duplicates))
+            yield return fragment;
+        yield return new SqlFragmentText(")");
+    }
 }

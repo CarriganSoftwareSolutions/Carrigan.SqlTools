@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
 
@@ -23,7 +24,7 @@ public class AndTests
         ]);
 
         string expected = $"@Parameter_P1";
-        string actual = and.ToSql();
+        string actual = and.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expected, actual);
     }
@@ -46,7 +47,7 @@ public class AndTests
         ]);
 
         string expected = $"(@Parameter_P1 AND @Parameter_P2 AND [ColumnTable].[Col1] AND [ColumnTable].[Col2] AND ([ColumnTable].[ColA] OR [ColumnTable].[ColB] OR @Parameter_PA))";
-        string actual = and.ToSql();
+        string actual = and.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expected, actual);
 
@@ -69,7 +70,7 @@ public class AndTests
             ])
         ]);
 
-        int actual = and.Parameters.Count();
+        int actual = and.DescendantParameters.Count();
         int expected = 3;
 
         Assert.Equal(expected, actual);
@@ -92,7 +93,7 @@ public class AndTests
             ])
         ]);
 
-        int actual = and.Columns.Count();
+        int actual = and.DescendantColumns.Count();
         int expected = 4;
 
         Assert.Equal(expected, actual);
@@ -116,21 +117,21 @@ public class AndTests
         ]);
 
 
-        Parameter p = and.Parameters.Where(p => p.Name == "P1").Single();
+        Parameter p = and.DescendantParameters.Where(p => p.Name == "P1").Single();
         Assert.NotNull(p.Value);
         int actual = (int)p.Value;
         int expected = 1;
 
         Assert.Equal(expected, actual);
 
-        p = and.Parameters.Where(p => p.Name == "P2").Single();
+        p = and.DescendantParameters.Where(p => p.Name == "P2").Single();
         Assert.NotNull(p.Value);
         actual = (int)p.Value;
         expected = 2;
 
         Assert.Equal(expected, actual);
 
-        p = and.Parameters.Where(p => p.Name == "PA").Single();
+        p = and.DescendantParameters.Where(p => p.Name == "PA").Single();
         Assert.NotNull(p.Value);
         actual = (int)p.Value;
         expected = 3;
@@ -156,9 +157,9 @@ public class AndTests
         ]);
 
         //if the column doesn't exist an exception will be throw and the test will fail
-        ColumnBase col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
-        col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
-        col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
-        col = and.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
+        ColumnBase col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
     }
 }

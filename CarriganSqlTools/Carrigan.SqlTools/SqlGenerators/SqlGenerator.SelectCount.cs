@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -139,7 +140,7 @@ public partial class SqlGenerator<T>
     public SqlQuery SelectCount(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectableTableTags);
         StringBuilder queryBuilder;
         AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
@@ -162,12 +163,12 @@ public partial class SqlGenerator<T>
         }
         if (predicates is not null)
         {
-            queryBuilder.Append($" WHERE {predicates.ToSql()}");
+            queryBuilder.Append($" WHERE {predicates.ToSqlFragments("Parameter").ToSql()}");
         }
         return new SqlQuery()
         {
             QueryText = queryBuilder.ToString(),
-            Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.GetParameters() ?? [])],
+            Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.ToSqlFragments("Parameter").GetParameters() ?? [])],
             CommandType = CommandType.Text
         };
     }

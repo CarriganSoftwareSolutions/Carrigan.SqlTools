@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
@@ -57,16 +58,31 @@ public class ColumnValue<T> : Predicates
     /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is not eligible
     /// for column mapping.
     /// </exception>
-    public ColumnValue(PropertyName propertyName, object parameterValue)
+    public ColumnValue(PropertyName propertyName, object parameterValue) : this(CreateValue(propertyName, parameterValue))
     {
-        _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); //called for validation.
-        Column<T> left = new (propertyName);
+    }
+
+    /// <summary>
+    /// Used as a hack to get around the C# limitation of not being able to call the base constructor at the end of the constructor.
+    /// </summary>
+    /// <param name="equal">an <see cref="Equal"/> </param>
+    private ColumnValue(Equal equal) : base([equal]) => 
+        value = equal;
+
+    /// <summary>
+    /// Used to build the underlying <see cref="Equal"/> class.
+    /// </summary>
+    /// <param name="propertyName">a parameter name</param>
+    /// <param name="parameterValue">and the parameter value</param>
+    /// <returns></returns>
+    private static Equal CreateValue(PropertyName propertyName, object parameterValue)
+    {
+        _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); // called for validation
+
+        Column<T> left = new(propertyName);
         Parameter right = new(left.ColumnInfo.ParameterTag, parameterValue);
-        value = new Equal
-        (
-           left,
-           right
-        );
+
+        return new Equal(left, right);
     }
 
     /// <summary>
@@ -90,20 +106,8 @@ public class ColumnValue<T> : Predicates
     /// for column mapping.
     /// </exception>
     [ExternalOnly]
-    public ColumnValue(string propertyName, object parameterValue) 
-        : this(new PropertyName(propertyName), parameterValue) { }
-
-    /// <summary>
-    /// Leaf node: returns all parameters used by the composed predicate.
-    /// </summary>
-    internal override IEnumerable<Parameter> Parameters => 
-        value.Parameters;
-
-    /// <summary>
-    /// Leaf node: returns all columns used by the composed predicate.
-    /// </summary>
-    internal override IEnumerable<ColumnBase> Columns => 
-        value.Columns;
+    public ColumnValue(string propertyName, object parameterValue) : this(new PropertyName(propertyName), parameterValue)
+    { }
 
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
@@ -112,6 +116,9 @@ public class ColumnValue<T> : Predicates
     /// A prefix accumulated while traversing the predicate tree; used to disambiguate
     /// duplicate parameter names when necessary.
     /// </param>
+    /// <param name="branchName">
+    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
+    /// </param>
     /// <param name="duplicates">
     /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
     /// to decide when to apply the <paramref name="prefix"/>.
@@ -119,23 +126,9 @@ public class ColumnValue<T> : Predicates
     /// <returns>
     /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
     /// </returns>
-    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        value.ToSql(prefix, duplicates);
-
-    /// <summary>
-    /// Recursively retrieves all parameters associated with this predicate as key/value pairs.
-    /// </summary>
-    /// <param name="prefix">
-    /// A prefix accumulated while traversing the predicate tree; used to disambiguate
-    /// duplicate parameter names when necessary.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
-    /// to decide when to apply the <paramref name="prefix"/>.
-    /// </param>
-    /// <returns>
-    /// All parameters associated with this predicate, as key/value pairs of <see cref="ParameterTag"/> to value.
-    /// </returns>
-    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        value.GetParameters(prefix, duplicates);
+    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    {
+        foreach(SqlFragment fragment in value.ToSql(prefix, branchName, duplicates))
+            yield return fragment;
+    }
 }

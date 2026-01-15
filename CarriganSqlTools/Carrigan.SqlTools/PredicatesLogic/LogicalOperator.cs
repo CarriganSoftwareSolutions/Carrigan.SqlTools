@@ -1,5 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
+using System;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -42,7 +44,7 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c> or contains no elements.
     /// </exception>
-    public LogicalOperator(string op, params IEnumerable<Predicates> predicates)
+    public LogicalOperator(string op, params IEnumerable<Predicates> predicates) : base(predicates)
     {
         if (predicates.IsNullOrEmpty())
             throw new ArgumentNullException(nameof(predicates), $"{nameof(predicates)} must contain at least one value.");
@@ -51,23 +53,14 @@ public abstract class LogicalOperator : Predicates
     }
 
     /// <summary>
-    /// Recursively retrieves all parameters used by the combined predicates.
-    /// </summary>
-    internal override IEnumerable<Parameter> Parameters =>
-        _predicates.SelectMany(predicate => predicate.Parameters);
-
-    /// <summary>
-    /// Recursively retrieves all columns referenced by the combined predicates.
-    /// </summary>
-    internal override IEnumerable<ColumnBase> Columns =>
-        _predicates.SelectMany(predicate => predicate.Columns);
-
-    /// <summary>
     /// Generates the SQL fragment represented by this logical operator.
     /// </summary>
     /// <param name="prefix">
     /// A prefix accumulated while traversing the predicate tree. This is appended to parameter
     /// names to keep them unique when duplicates occur.
+    /// </param>
+    /// <param name="branchName">
+    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
     /// </param>
     /// <param name="duplicates">
     /// The set of user-specified parameter tags that are duplicates, used to decide when a prefix
@@ -78,33 +71,24 @@ public abstract class LogicalOperator : Predicates
     /// predicate’s SQL without adding the operator; otherwise returns the predicates joined by the
     /// operator and wrapped in parentheses.
     /// </returns>
-    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates)
+    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
     {
-        if (_predicates.Count() == 1)
-            return _predicates.Single().ToSql(prefix, duplicates);
+        int index = 0;
+        if (_predicates.Count() ==  1)
+            foreach(SqlFragment fragment in _predicates.Single().ToSql(prefix, branchName, duplicates))
+                yield return fragment;
         else
-            return $"({string.Join($" {_operator} ", _predicates.Select((predicate,index) => predicate.ToSql($"{prefix}_{index}", duplicates)))})";
-    }
-
-    /// <summary>
-    /// Recursively retrieves all parameters used by the combined predicates as key–value pairs.
-    /// </summary>
-    /// <param name="prefix">
-    /// A prefix accumulated while traversing the predicate tree. This is appended to parameter
-    /// names to keep them unique when duplicates occur.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-specified parameter tags that are duplicates, used to decide when a prefix
-    /// must be applied.
-    /// </param>
-    /// <returns>
-    /// A sequence of parameter tag / value pairs for all combined predicates.
-    /// </returns>
-    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates)
-    {
-        if (_predicates.Count() == 1)
-            return _predicates.Single().GetParameters(prefix, duplicates);
-        else
-            return _predicates.SelectMany((predicate, index) => predicate.GetParameters($"{prefix}_{index}", duplicates));
+        {
+            yield return new SqlFragmentText("(");
+            foreach (Predicates predicate in _predicates)
+            {
+                if (index > 0)
+                    yield return new SqlFragmentText($" {_operator} ");
+                foreach (SqlFragment fragment in predicate.ToSql($"{prefix}_{index}", branchName, duplicates))
+                    yield return fragment;
+                index++;
+            }
+            yield return new SqlFragmentText(")");
+        }
     }
 }

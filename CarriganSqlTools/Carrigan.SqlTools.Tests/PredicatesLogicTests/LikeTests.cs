@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
@@ -36,7 +37,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         string expectedValue = $"({leftSql} LIKE {rightSql})";
-        string actualValue = predicate.ToSql();
+        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -50,7 +51,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValue = 0;
-        int actualValue = predicate.Parameters.Count();
+        int actualValue = predicate.DescendantParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -67,7 +68,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         string expectedValue = $"({leftSql} LIKE {rightSql})";
-        string actualValue = predicate.ToSql();
+        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -82,7 +83,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValue = 1;
-        int actualValue = predicate.Parameters.Count();
+        int actualValue = predicate.DescendantParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -97,7 +98,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         float expectedValue = 3.14f;
-        object? nullableActualValueFloat = predicate.Parameters.First().Value;
+        object? nullableActualValueFloat = predicate.DescendantParameters.First().Value;
         Assert.NotNull(nullableActualValueFloat);
         float actualValue = (float)nullableActualValueFloat;
 
@@ -116,7 +117,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         string expectedValue = $"({leftSql} LIKE {rightSql})";
-        string actualValue = predicate.ToSql();
+        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -131,12 +132,12 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValueInt = 1337; 
-        object? nullableActualValueInt = predicate.Parameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
 
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.Parameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -154,7 +155,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         string expectedValue = $"({leftSql} LIKE {rightSql})";
-        string actualValue = predicate.ToSql();
+        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -169,7 +170,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValue = 2;
-        int actualValue = predicate.Parameters.Count();
+        int actualValue = predicate.DescendantParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -184,11 +185,11 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.Parameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.Parameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -204,7 +205,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValue = 2;
-        int actualValue = predicate.Columns.Count();
+        int actualValue = predicate.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -219,8 +220,8 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
 
-        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
-        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
     }
 
     [Fact]
@@ -233,7 +234,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValue = 1;
-        int actualValue = predicate.Columns.Count();
+        int actualValue = predicate.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -247,7 +248,7 @@ public class LikeTests
 
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
-        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 
     [Fact]
@@ -260,7 +261,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValue = 0;
-        int actualValue = predicate.Columns.Count();
+        int actualValue = predicate.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -275,7 +276,7 @@ public class LikeTests
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
         int expectedValue = 2;
-        int actualValue = predicate.Columns.Count();
+        int actualValue = predicate.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -289,7 +290,7 @@ public class LikeTests
 
         PredicatesLogic.Predicates predicate = new Like(left, right);
 
-        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
-        _ = predicate.Columns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
@@ -91,16 +92,10 @@ public class LeftJoin<rightT> : JoinBase
     /// <returns>
     /// A SQL string representing the <c>LEFT JOIN</c> clause.
     /// </returns>
-    /// <param name="predicates">
-    /// Represents the predicates for the on clause.
+    /// <param name="branchPrefix">
+    /// This is the prefix used to prepend at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Throws if if <see cref="_predicates"/> is null.
-    /// </exception>
-    protected override string ToSql(Predicates? predicates)
-    {
-        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
-
-        return $"LEFT JOIN {TableTag} ON {predicates.ToSql()}";
-    }
+    internal override string ToSql(string branchPrefix) =>
+        $"LEFT JOIN {TableTag} ON {_predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql()}";
+    
 }

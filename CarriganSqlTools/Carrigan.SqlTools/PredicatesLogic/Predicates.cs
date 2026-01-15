@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Tags;
+using System;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -7,17 +9,70 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// Supports recursive SQL generation and parameter collection (with automatic de-duplication/prefixing).
 /// </summary>
 public abstract class Predicates
-
 {
     /// <summary>
-    /// Recursively enumerates all <see cref="Parameter"/>s contained within this predicate tree.
+    /// Represents the direct children of the current predicate.
     /// </summary>
-    internal abstract IEnumerable<Parameter> Parameters { get; }
+    internal IEnumerable<Predicates> ChildNodes { get; }
 
     /// <summary>
-    /// Recursively enumerates all <see cref="ColumnBase"/> nodes contained within this predicate tree.
+    /// Base constructor for all predicate classes
     /// </summary>
-    internal abstract IEnumerable<ColumnBase> Columns { get; }
+    /// <param name="childPredicates">represents all child nodes for a given predicate</param>
+    protected Predicates(IEnumerable<Predicates> childPredicates) =>
+        ChildNodes = childPredicates;
+
+    /// <summary>
+    /// Retrieves all descendants of type <see cref="Parameter"/>.
+    /// </summary>
+    internal IEnumerable<Parameter> DescendantParameters =>
+        DescendantNodes.OfType<Parameter>();
+
+    /// <summary>
+    /// Represents all parameters that have the same unmodified parameter name.
+    /// </summary>
+    protected IEnumerable<ParameterTag> DuplicateParameters => DescendantParameters
+        .Select(parameter => parameter.Name)
+        .GroupBy(parameter => parameter)
+        .Where(nameGroup => nameGroup.Count() > 1)
+        .Select(nameGroup => nameGroup.Key);
+
+
+    /// <summary>
+    /// Retrieves all descendants predicates regardless of type.
+    /// </summary>
+    internal IEnumerable<Predicates> DescendantNodes =>
+        GetAllDescendentPredicates(ChildNodes);
+
+    /// <summary>
+    /// Retrieves all descendants of type <see cref="ColumnBase"/>.
+    /// </summary>
+    internal IEnumerable<ColumnBase> DescendantColumns =>
+        DescendantNodes.OfType<ColumnBase>();
+
+    /// <summary>
+    /// Retrieves all descendants predicates that are not also <see cref="ColumnBase"/> or  <see cref="Parameter"/> (the leaf nodes).
+    /// </summary>
+    internal IEnumerable<Predicates> DescendantPredicates =>
+        DescendantNodes.Where(predicate => predicate is not Parameter || predicate is not ColumnBase);
+
+    /// <summary>
+    /// Retrieves all direct children of type <see cref="Parameter"/>.
+    /// </summary>
+    internal IEnumerable<Parameter> ChildParameters =>
+        ChildNodes.OfType<Parameter>();
+
+    /// <summary>
+    /// Retrieves all direct children of type <see cref="ColumnBase"/>.
+    /// </summary>
+    internal IEnumerable<ColumnBase> ChildColumns =>
+        ChildNodes.OfType<ColumnBase>();
+
+    /// <summary>
+    /// Retrieves all direct children predicates that are not also columns or parameters (the leaf nodes).
+    /// </summary>
+    internal IEnumerable<Predicates> ChildPredicates =>
+        ChildNodes.Where(predicate => predicate is not Parameter || predicate is not ColumnBase);
 
     /// <summary>
     /// Generates the SQL fragment for this predicate tree.
@@ -28,67 +83,38 @@ public abstract class Predicates
     /// which may add disambiguating prefixes to produce unique parameter names.
     /// </remarks>
     /// <returns>The SQL fragment represented by this predicate tree.</returns>
-    internal string ToSql()
-    {
-        //get an IEnumerable of all the duplicate parameter names
-        IEnumerable<ParameterTag> duplicates = Parameters
-            .Select(parameter => parameter.Name)
-            .GroupBy(name => name)
-            .Where(nameGroup => nameGroup.Count() > 1)
-            .Select(nameGroup => nameGroup.Key);
-
-        return ToSql(string.Empty, duplicates);
-    }
+    internal IEnumerable<SqlFragment> ToSqlFragments(string branchName) =>
+        ToSql(string.Empty, branchName.TrimStart('@'), DuplicateParameters);
 
     /// <summary>
     /// Recursively generates the SQL fragment for this predicate tree, applying a prefix to
-    /// duplicate parameter names to ensure uniqueness and alignment with <see cref="GetParameters()"/>.
+    /// duplicate parameter names to ensure uniqueness and alignment with <see cref="GetDuplicateSafeParameters()"/>.
     /// </summary>
     /// <param name="prefix">
     /// A recursion-built prefix used to disambiguate duplicate parameter names. This is applied
     /// only when the parameter’s base name appears in <paramref name="duplicates"/>.
+    /// </param>
+    /// <param name="branchName">
+    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
     /// </param>
     /// <param name="duplicates">
     /// The set of base <see cref="ParameterTag"/> names that occur more than once within the predicate tree.
     /// </param>
     /// <returns>The SQL fragment for this node.</returns>
-    internal abstract string ToSql(string prefix, IEnumerable<ParameterTag> duplicates);
+    //internal abstract string ToSql(string prefix, IEnumerable<ParameterTag> duplicates);
+    internal abstract IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates);
 
-    /// <summary>
-    /// Recursively collects all parameters as key–value pairs suitable for command binding.
-    /// </summary>
-    /// <remarks>
-    /// This method computes duplicates in the same way as <see cref="ToSql()"/> and uses the recursive
-    /// <see cref="GetParameters(string, IEnumerable{ParameterTag})"/> overload to apply the same
-    /// disambiguating prefixes, ensuring parameter names in the emitted SQL match the binding keys.
-    /// </remarks>
-    /// <returns>
-    /// A dictionary mapping the final <see cref="ParameterTag"/> for each parameter to its value.
-    /// </returns>
-    internal Dictionary<ParameterTag,object> GetParameters()
+
+    private static IEnumerable<Predicates> GetAllDescendentPredicates(IEnumerable<Predicates> predicates)
     {
-        //get an IEnumerable of all the duplicate parameter names
-        IEnumerable<ParameterTag> duplicates = Parameters
-            .Select(parameter => parameter.Name)
-            .GroupBy(parameter => parameter)
-            .Where(nameGroup => nameGroup.Count() > 1)
-            .Select(nameGroup => nameGroup.Key);
+        foreach (Predicates predicate in predicates)
+        {
+            yield return predicate;
 
-        return GetParameters(string.Empty, duplicates)
-               .ToDictionary(pair => pair.Key, pair => pair.Value);
+            foreach (Predicates childPredicate in GetAllDescendentPredicates(predicate.ChildPredicates))
+                yield return childPredicate;
+        }
     }
 
-    /// <summary>
-    /// Recursively collects parameters as key–value pairs, applying a prefix to duplicate names
-    /// to ensure uniqueness and alignment with <see cref="ToSql(string, IEnumerable{ParameterTag})"/>.
-    /// </summary>
-    /// <param name="prefix">
-    /// A recursion-built prefix used to disambiguate duplicate parameter names. This is applied
-    /// only when the parameter’s base name appears in <paramref name="duplicates"/>.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of base <see cref="ParameterTag"/> names that occur more than once within the predicate tree.
-    /// </param>
-    /// <returns>An enumeration of final parameter tags and their associated values.</returns>
-    internal abstract IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates);
+
 }

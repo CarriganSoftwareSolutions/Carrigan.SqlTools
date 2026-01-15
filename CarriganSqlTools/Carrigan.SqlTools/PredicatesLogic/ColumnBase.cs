@@ -19,7 +19,7 @@ public abstract class ColumnBase : Predicates
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnBase"/> class.
     /// </summary>
-    protected ColumnBase(ColumnInfo columnInfo) =>
+    protected ColumnBase(ColumnInfo columnInfo) : base ([]) =>
         ColumnInfo = columnInfo;
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
@@ -195,7 +196,7 @@ public partial class SqlGenerator<T>
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.Columns?.Select(col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
@@ -231,7 +232,7 @@ public partial class SqlGenerator<T>
         }
         if (predicates is not null)
         {
-            queryBuilder.Append($" WHERE {predicates.ToSql()}");
+            queryBuilder.Append($" WHERE {predicates.ToSqlFragments("Parameter").ToSql()}");
         }
         if(orderBy.IsNotNullOrEmpty())
         {
@@ -244,7 +245,7 @@ public partial class SqlGenerator<T>
         return new SqlQuery()
         {
             QueryText = queryBuilder.ToString(),
-            Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.GetParameters() ?? [])],
+            Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.ToSqlFragments("Parameter").GetParameters() ?? [])],
             CommandType = CommandType.Text
         };
     }

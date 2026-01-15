@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
 
@@ -23,7 +24,7 @@ public class OrTests
         ]);
 
         string expected = $"@Parameter_P1";
-        string actual = and.ToSql();
+        string actual = and.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expected, actual);
     }
@@ -46,7 +47,7 @@ public class OrTests
         ]);
 
         string expected = $"(@Parameter_P1 OR @Parameter_P2 OR [ColumnTable].[Col1] OR [ColumnTable].[Col2] OR ([ColumnTable].[ColA] AND [ColumnTable].[ColB] AND @Parameter_PA))";
-        string actual = or.ToSql();
+        string actual = or.ToSqlFragments("Parameter").ToSql();
 
         Assert.Equal(expected, actual);
 
@@ -69,7 +70,7 @@ public class OrTests
             ])
         ]);
 
-        int actual = or.Parameters.Count();
+        int actual = or.DescendantParameters.Count();
         int expected = 3;
 
         Assert.Equal(expected, actual);
@@ -93,7 +94,7 @@ public class OrTests
         ]);
 
 
-        Parameter p = or.Parameters.Where(p => p.Name == "P1").Single(); 
+        Parameter p = or.DescendantParameters.Where(p => p.Name == "P1").Single(); 
         object? nullableActual = p.Value;
         Assert.NotNull(nullableActual);
         int actual = (int)nullableActual;
@@ -101,7 +102,7 @@ public class OrTests
 
         Assert.Equal(expected, actual);
 
-        p = or.Parameters.Where(p => p.Name == "P2").Single();
+        p = or.DescendantParameters.Where(p => p.Name == "P2").Single();
         nullableActual = p.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
@@ -109,7 +110,7 @@ public class OrTests
 
         Assert.Equal(expected, actual);
 
-        p = or.Parameters.Where(p => p.Name == "PA").Single();
+        p = or.DescendantParameters.Where(p => p.Name == "PA").Single();
         nullableActual = p.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
@@ -135,7 +136,7 @@ public class OrTests
                 ])
         ]);
 
-        int actual = or.Columns.Count();
+        int actual = or.DescendantColumns.Count();
         int expected = 4;
 
         Assert.Equal(expected, actual);
@@ -159,9 +160,9 @@ public class OrTests
         ]);
 
         //if the column doesn't exist an exception will be throw and the test will fail
-        ColumnBase col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
-        col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
-        col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
-        col = or.Columns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
+        ColumnBase col = or.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
+        col = or.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
+        col = or.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
+        col = or.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
     }
 }

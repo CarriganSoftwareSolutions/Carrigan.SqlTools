@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
@@ -68,23 +69,14 @@ public class Column<T> : ColumnBase
         PropertyName = propertyName;
 
     /// <summary>
-    /// Leaf node: returns an empty sequence because columns do not themselves introduce parameters.
-    /// </summary>
-    internal override IEnumerable<Parameter> Parameters =>
-        [];
-
-    /// <summary>
-    /// Leaf node: returns this column as a single-item sequence.
-    /// </summary>
-    internal override IEnumerable<ColumnBase> Columns =>
-        [this];
-
-    /// <summary>
     /// Produces the SQL fragment represented by this column.
     /// </summary>
     /// <param name="prefix">
     /// A prefix accumulated through the predicate tree to disambiguate duplicate parameter names.
     /// Not used by columns.
+    /// </param>
+    /// <param name="branchName">
+    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
     /// </param>
     /// <param name="duplicates">
     /// The set of user-supplied parameter names that are duplicated and may require a prefix.
@@ -93,21 +85,8 @@ public class Column<T> : ColumnBase
     /// <returns>
     /// The SQL-escaped column identifier (e.g., <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>).
     /// </returns>
-    internal override string ToSql(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        ColumnInfo;
-
-    /// <summary>
-    /// Leaf node: returns an empty sequence because columns contribute no parameters.
-    /// </summary>
-    /// <param name="prefix">
-    /// A prefix accumulated through the predicate tree to disambiguate duplicate parameter names.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied parameter names that are duplicated and may require a prefix.
-    /// </param>
-    /// <returns>
-    /// An empty sequence, since columns have no associated parameters.
-    /// </returns>
-    internal override IEnumerable<KeyValuePair<ParameterTag, object>> GetParameters(string prefix, IEnumerable<ParameterTag> duplicates) =>
-        [];
+    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    {
+        yield return new SqlFragmentText(ColumnInfo);
+    }
 }

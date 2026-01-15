@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -29,7 +30,7 @@ public  class ColumnsTests
     {
         Column<ColumnTable> cv = new(propertyName);
         int expectedValue = 0;
-        int actual = cv.Parameters.Count();
+        int actual = cv.DescendantParameters.Count();
 
         Assert.Equal(expectedValue, actual);
     }
@@ -42,23 +43,24 @@ public  class ColumnsTests
     public void ColumnValues_One_Constructor_Value_ColumnCount(string propertyName)
     {
         Column<ColumnTable> cv = new(propertyName);
-        int expectedValue = 1;
-        int actual = cv.Columns.Count();
+        int expectedValue = 0;
+        int actual = cv.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actual);
     }
 
-    [InlineData("Col1", "Col1")]
-    [InlineData("Col2", "Col2")]
-    [InlineData("ColA", "ColA")]
-    [InlineData("ColB", "ColB")]
+    [InlineData("Col1", "[ColumnTable].[Col1]")]
+    [InlineData("Col2", "[ColumnTable].[Col2]")]
+    [InlineData("ColA", "[ColumnTable].[ColA]")]
+    [InlineData("ColB", "[ColumnTable].[ColB]")]
     [Theory]
     public void ColumnValues_One_Constructor_Value_ColumnName(string propertyName, string expectedColumnName)
     {
         Column<ColumnTable> cv = new(propertyName);
 
+        string actual = cv?.ToSqlFragments("ZZ")?.ToSql() ?? string.Empty ;
 
-        _ = cv.Columns.Where(col => col.ColumnInfo == $"[ColumnTable].[{expectedColumnName}]").Single();
+        Assert.Equal(expectedColumnName, actual);
     }
 
     [Fact]

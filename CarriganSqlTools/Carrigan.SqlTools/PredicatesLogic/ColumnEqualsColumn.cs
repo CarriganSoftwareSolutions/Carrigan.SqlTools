@@ -43,12 +43,8 @@ public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator
     /// </summary>
     /// <param name="leftPropertyName">The property on the left-hand entity (<typeparamref name="leftT"/>).</param>
     /// <param name="rightPropertyName">The property on the right-hand entity (<typeparamref name="rightT"/>).</param>
-    public ColumnEqualsColumn(PropertyName leftPropertyName, PropertyName rightPropertyName)
+    public ColumnEqualsColumn(PropertyName leftPropertyName, PropertyName rightPropertyName) : base(new Column<leftT>(leftPropertyName), new Column<rightT>(rightPropertyName), "=")
     {
-        Column<leftT> left = new (leftPropertyName);
-        Column<rightT> right = new (rightPropertyName);
-
-        Initialize(left, right, "=");
     }
 
     /// <summary>
@@ -58,8 +54,7 @@ public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator
     /// <param name="leftPropertyName">The property name on the left-hand entity (<typeparamref name="leftT"/>).</param>
     /// <param name="rightPropertyName">The property name on the right-hand entity (<typeparamref name="rightT"/>).</param>
     [ExternalOnly]
-    public ColumnEqualsColumn(string leftPropertyName, string rightPropertyName) : 
-        this (new PropertyName(leftPropertyName), new PropertyName(rightPropertyName))
+    public ColumnEqualsColumn(string leftPropertyName, string rightPropertyName) : this (new PropertyName(leftPropertyName), new PropertyName(rightPropertyName))
     {
     }
 }

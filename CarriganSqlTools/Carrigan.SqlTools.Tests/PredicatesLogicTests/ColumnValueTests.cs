@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -21,7 +22,7 @@ public class ColumnValueTests
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
-        int actual = byColumnValues.Parameters.Count();
+        int actual = byColumnValues.DescendantParameters.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -38,7 +39,7 @@ public class ColumnValueTests
 
         Parameter parameter;
 
-        parameter = byColumnValues.Parameters.Where(param => param.Name == "Col1").First();
+        parameter = byColumnValues.DescendantParameters.Where(param => param.Name == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
         actualValue = parameter.Value ?? string.Empty;
@@ -52,7 +53,7 @@ public class ColumnValueTests
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
-        int actual = byColumnValues.Columns.Count();
+        int actual = byColumnValues.DescendantColumns.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -66,7 +67,7 @@ public class ColumnValueTests
 
         ColumnBase column;
 
-        column = byColumnValues.Columns.Where(col => col.ColumnInfo.ToString() == "[ColumnTable].[Col1]").First();
+        column = byColumnValues.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "[ColumnTable].[Col1]").First();
         expectedString = "[ColumnTable].[Col1]";
         actualString = column.ColumnInfo.ToString();
         Assert.Equal(expectedString, actualString);
@@ -77,7 +78,7 @@ public class ColumnValueTests
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         string expectedString = "([ColumnTable].[Col1] = @Parameter_Col1)";
-        string actualString = byColumnValues.ToSql();
+        string actualString = byColumnValues.ToSqlFragments("Parameter").ToSql();
         Assert.Equal(expectedString, actualString);
     }
 }

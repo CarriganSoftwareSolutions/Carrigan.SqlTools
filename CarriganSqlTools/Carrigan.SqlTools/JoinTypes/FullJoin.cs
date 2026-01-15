@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
@@ -88,15 +89,12 @@ public class FullJoin<rightT> : JoinBase
     /// <summary>
     /// Converts the current <see cref="FullJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause.
+    /// <param name="branchPrefix">
+    /// This is the prefix used to prepend at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
     /// </param>
     /// <returns>
     /// A SQL string representing the <c>FULL JOIN</c> clause.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
-    /// </exception>
-    protected override string ToSql(Predicates? predicates) =>
-        $"FULL JOIN {TableTag} ON {(predicates ?? throw new ArgumentNullException(nameof(predicates))).ToSql()}";
+    internal override string ToSql(string branchPrefix) =>
+        $"FULL JOIN {TableTag} ON {_predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql()}";
 }
