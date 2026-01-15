@@ -60,4 +60,24 @@ public class JoinTests
     [Fact]
     public void Joins_Null_Exception() => 
         Assert.Throws<ArgumentNullException>(() => Join<JoinRightTable>.Joins<JoinLeftTable>(null!));
+
+    [Fact]
+    public void JoinsNewJoin()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+
+        string actual = Join<JoinRightTable>.Joins<JoinLeftTable>(id).ToSql();
+        string expected = "JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void ToSql_EmptyPredicate_Exception()
+    {
+        Predicates id = new EmptyPredicate();
+        Join<JoinRightTable> join = new(id);
+
+        Assert.Throws<InvalidOperationException>(() => join.ToSql("Join"));
+    }
 }

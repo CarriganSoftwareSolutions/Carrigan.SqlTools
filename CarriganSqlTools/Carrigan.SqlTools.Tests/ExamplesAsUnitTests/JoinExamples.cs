@@ -70,10 +70,10 @@ public class JoinExamples
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join1 = new(predicate);
-
+       
         ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
         InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
-
+       
         Joins<Customer> joins = new(join1, join2);
 
         SqlQuery query = customerGenerator.Select(null, joins, null, null, null);

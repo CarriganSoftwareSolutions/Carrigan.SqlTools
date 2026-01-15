@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// including <c>INNER JOIN</c>, <c>LEFT JOIN</c>, <c>RIGHT JOIN</c>, and <c>FULL JOIN</c>.
 /// </summary>
 /// <remarks>
-/// This class encapsulates the shared logic for representing a join clause,
+/// This class encapsulates shared logic for representing a join clause,
 /// including access to predicates, involved table tags, and parameter resolution.
 /// </remarks>
 public abstract class JoinBase
@@ -48,32 +48,44 @@ public abstract class JoinBase
     /// </remarks>
     internal IEnumerable<TableTag> JoinsOn =>
         _predicates.DescendantColumns
-            .Select(column => column.ColumnInfo.ColumnTag.TableTag)
-            .Distinct() ?? [];
+            .Select(static column => column.ColumnInfo.ColumnTag.TableTag)
+            .Distinct();
 
     /// <summary>
-    /// Generates the SQL fragment representing the specific <c>JOIN</c> clause.
+    /// Generates the SQL string representing the specific <c>JOIN</c> clause.
     /// </summary>
     /// <param name="branchPrefix">
-    /// This is the prefix used to append at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
+    /// The branch name used when generating predicate SQL and parameter tags via
+    /// <see cref="Predicates.ToSqlFragments(string)"/>.
     /// </param>
+    /// <returns>
+    /// A SQL string representing the complete <c>JOIN</c> clause for this relationship.
+    /// </returns>
     /// <remarks>
     /// For join types that require an <c>ON</c> clause, the derived implementation typically throws when no predicates exist.
     /// For join types that do not use predicates (for example, <c>CROSS JOIN</c>), the derived implementation should ignore
-    /// the <paramref name="predicates"/> argument.
+    /// <paramref name="branchPrefix"/>.
     /// </remarks>
-    /// <returns>
-    /// A SQL fragment representing the complete <c>JOIN</c> clause for this relationship.
-    /// </returns>
     internal abstract string ToSql(string branchPrefix);
 
     /// <summary>
     /// Retrieves all parameters associated with the predicate logic of this join.
     /// </summary>
+    /// <param name="branchPrefix">
+    /// The branch name used when generating predicate SQL and parameter tags via
+    /// <see cref="Predicates.ToSqlFragments(string)"/>.
+    /// </param>
     /// <returns>
     /// A <see cref="Dictionary{TKey, TValue}"/> mapping each <see cref="ParameterTag"/>
     /// to its corresponding runtime value, for use in parameterized SQL queries.
     /// </returns>
-    internal Dictionary<ParameterTag, object> GetParameters(string branchPrefix) =>
-        _predicates.ToSqlFragments(branchPrefix).GetParameters() ?? [];
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="branchPrefix"/> is <c>null</c>.
+    /// </exception>
+    internal Dictionary<ParameterTag, object> GetParameters(string branchPrefix)
+    {
+        ArgumentNullException.ThrowIfNull(branchPrefix);
+
+        return _predicates.ToSqlFragments(branchPrefix).GetParameters();
+    }
 }

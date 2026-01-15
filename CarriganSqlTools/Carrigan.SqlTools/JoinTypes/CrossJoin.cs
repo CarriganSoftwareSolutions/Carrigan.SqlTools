@@ -27,7 +27,7 @@ public class CrossJoin<rightT> : JoinBase
     /// <summary>
     /// Initializes a new instance of the <see cref="CrossJoin{rightT}"/> class.
     /// </summary>
-    public CrossJoin() : base(new EmptyPredicate()) 
+    public CrossJoin() : base(new EmptyPredicate())
     { }
 
     /// <summary>
@@ -69,13 +69,12 @@ public class CrossJoin<rightT> : JoinBase
     /// Converts the current <see cref="CrossJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
     /// <param name="branchPrefix">
-    /// This is the prefix used to prepend at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
+    /// The branch prefix used to distinguish parameters in join predicates from the main where clause.
+    /// This value is ignored for <c>CROSS JOIN</c> because no <c>ON</c> clause is emitted.
     /// </param>
+    /// <returns>
     /// A SQL string representing the <c>CROSS JOIN</c> clause.
     /// </returns>
-    /// <remarks>
-    /// A <c>CROSS JOIN</c> has no <c>ON</c> clause; <paramref name="predicates"/> is ignored.
-    /// </remarks>
     internal override string ToSql(string branchPrefix) =>
         $"CROSS JOIN {TableTag}";
 }

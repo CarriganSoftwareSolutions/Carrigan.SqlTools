@@ -3,11 +3,11 @@
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
-/// Provides extension methods for working with instances of the <see cref="JoinsBase"/> class.
+/// Provides extension methods for working with <see cref="JoinsBase"/> instances.
 /// </summary>
 /// <remarks>
-/// These helper methods simplify common null and emptiness checks for join collections
-/// represented by <see cref="JoinsBase"/> and its derived types, such as <see cref="Joins{T}"/>.
+/// These helpers provide consistent null and emptiness checks for join collections represented by
+/// <see cref="JoinsBase"/> and its derived types, such as <see cref="Joins{T}"/>.
 /// </remarks>
 internal static class RelationsExtensions
 {
@@ -20,7 +20,11 @@ internal static class RelationsExtensions
     /// <see langword="true"/> if <paramref name="relation"/> is <see langword="null"/> or has no join elements;
     /// otherwise, <see langword="false"/>.
     /// </returns>
-    internal static bool IsNullOrEmpty(this JoinsBase? relation) =>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <paramref name="relation"/> is not <see langword="null"/> and the underlying join collection is invalid
+    /// (for example, <see cref="JoinsBase"/> has a null join collection or contains null join entries).
+    /// </exception>
+    internal static bool IsNullOrEmpty([NotNullWhen(false)] this JoinsBase? relation) =>
         relation?.IsEmpty() ?? true;
 
     /// <summary>
@@ -29,9 +33,13 @@ internal static class RelationsExtensions
     /// </summary>
     /// <param name="relation">The <see cref="JoinsBase"/> instance to evaluate.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="relation"/> is not <see langword="null"/> 
+    /// <see langword="true"/> if <paramref name="relation"/> is not <see langword="null"/>
     /// and contains one or more join elements; otherwise, <see langword="false"/>.
     /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <paramref name="relation"/> is not <see langword="null"/> and the underlying join collection is invalid
+    /// (for example, <see cref="JoinsBase"/> has a null join collection or contains null join entries).
+    /// </exception>
     internal static bool IsNotNullOrEmpty([NotNullWhen(true)] this JoinsBase? relation) =>
         relation.IsNullOrEmpty() == false;
 }

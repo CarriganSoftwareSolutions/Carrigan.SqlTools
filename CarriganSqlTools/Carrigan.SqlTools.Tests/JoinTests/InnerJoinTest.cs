@@ -54,14 +54,30 @@ public class InnerJoinTest
     }
 
     [Fact]
-    public void Constructor_Null_Exception()
-    {
+    public void Constructor_Null_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new InnerJoin<JoinRightTable>(null!));
+
+    [Fact]
+    public void Joins_Null_Exception() => 
+        Assert.Throws<ArgumentNullException>(() => InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(null!));
+
+    [Fact]
+    public void JoinsNewInnerJoin()
+    {
+        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
+
+        string actual = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSql();
+        string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void Joins_Null_Exception()
+    public void ToSql_EmptyPredicate_Exception()
     {
-        Assert.Throws<ArgumentNullException>(() => InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(null!));
+        Predicates id = new EmptyPredicate();
+        InnerJoin<JoinRightTable> join = new(id);
+
+        Assert.Throws<InvalidOperationException>(() => join.ToSql("Join"));
     }
 }

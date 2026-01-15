@@ -13,7 +13,8 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </typeparam>
 /// <example>
 /// <para>
-/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates property names and throws an exception if a property name is invalid.
+/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates property names and throws an exception
+/// if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -40,10 +41,8 @@ public class FullJoin<rightT> : JoinBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    /// <exception cref="TypeInitializationException">
-    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
-    /// </exception>
-    public FullJoin(Predicates predicates) : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) { }
+    public FullJoin(Predicates predicates) : base(predicates) 
+    { }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -90,11 +89,24 @@ public class FullJoin<rightT> : JoinBase
     /// Converts the current <see cref="FullJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
     /// <param name="branchPrefix">
-    /// This is the prefix used to prepend at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
+    /// The branch prefix used to distinguish parameters in join predicates from the main where clause.
     /// </param>
     /// <returns>
     /// A SQL string representing the <c>FULL JOIN</c> clause.
     /// </returns>
-    internal override string ToSql(string branchPrefix) =>
-        $"FULL JOIN {TableTag} ON {_predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql()}";
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the join predicates render to an empty SQL expression, because <c>FULL JOIN</c> requires an <c>ON</c> clause.
+    /// </exception>
+    /// <remarks>
+    /// Any exception thrown while rendering the predicate tree will be propagated to the caller.
+    /// </remarks>
+    internal override string ToSql(string branchPrefix)
+    {
+        string predicateSql = _predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql();
+
+        if (string.IsNullOrWhiteSpace(predicateSql))
+            throw new InvalidOperationException("FULL JOIN requires at least one predicate for the ON clause.");
+
+        return $"FULL JOIN {TableTag} ON {predicateSql}";
+    }
 }

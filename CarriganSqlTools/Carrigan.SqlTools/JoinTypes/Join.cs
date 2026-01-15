@@ -40,10 +40,8 @@ public class Join<rightT> : JoinBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    /// <exception cref="TypeInitializationException">
-    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
-    /// </exception>
-    public Join(Predicates predicates) : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) { }
+    public Join(Predicates predicates) : base(predicates)
+    { }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -90,11 +88,24 @@ public class Join<rightT> : JoinBase
     /// Converts the current <see cref="Join{rightT}"/> instance to its SQL representation.
     /// </summary>
     /// <param name="branchPrefix">
-    /// This is the prefix used to prepend at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
+    /// The branch prefix used to distinguish parameters in the join predicates from the main where clause.
     /// </param>
     /// <returns>
     /// A SQL string representing the <c>JOIN</c> clause.
     /// </returns>
-    internal override string ToSql(string branchPrefix) =>
-        $"JOIN {TableTag} ON {_predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql()}";
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the join predicates render to an empty SQL expression, because <c>JOIN</c> requires an <c>ON</c> clause.
+    /// </exception>
+    /// <remarks>
+    /// Any exception thrown while rendering the predicate tree or while resolving <see cref="TableTag"/> will be propagated to the caller.
+    /// </remarks>
+    internal override string ToSql(string branchPrefix)
+    {
+        string predicateSql = _predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql();
+
+        if (string.IsNullOrWhiteSpace(predicateSql))
+            throw new InvalidOperationException("JOIN requires at least one predicate for the ON clause.");
+
+        return $"JOIN {TableTag} ON {predicateSql}";
+    }
 }

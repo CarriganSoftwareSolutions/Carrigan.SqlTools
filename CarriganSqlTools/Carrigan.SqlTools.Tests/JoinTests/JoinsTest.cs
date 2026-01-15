@@ -333,4 +333,29 @@ public class JoinsTest
         TableTag expected = new(null, "Left");
         Assert.Equal(expected, relation.TableTag);
     }
+
+    [Fact]
+    public void Constructor_NullJoins_Exception() => 
+        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(null!));
+
+    [Fact]
+    public void Constructor_NullJoinEntry_Exception()
+    {
+        JoinBase[] joins =
+        [
+            new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
+        null!
+        ];
+
+        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(joins));
+    }
+
+    [Fact]
+    public void JoinsCrossJoin()
+    {
+        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSql();
+        string expected = "CROSS JOIN [Right]";
+
+        Assert.Equal(expected, actual);
+    }
 }

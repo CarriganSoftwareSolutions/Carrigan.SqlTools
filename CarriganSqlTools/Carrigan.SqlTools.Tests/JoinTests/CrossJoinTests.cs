@@ -52,4 +52,21 @@ public class CrossJoinTest
 
         Assert.Equal(expected, join.TableTag);
     }
+
+    [Fact]
+    public void CrossJoin_JoinsFactoryMethod()
+    {
+        string actual = CrossJoin<JoinRightTable>.Joins<JoinLeftTable>().ToSql();
+        string expected = "CROSS JOIN [Right]";
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void CrossJoin_NotEmpty()
+    {
+        CrossJoin<Customer> join = new();
+        JoinsBase? joins = new Joins<Order>(join);
+        Assert.False(joins.IsNullOrEmpty());
+    }
 }

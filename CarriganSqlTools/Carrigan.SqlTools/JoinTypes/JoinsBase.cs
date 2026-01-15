@@ -1,5 +1,4 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
@@ -38,6 +37,9 @@ public abstract class JoinsBase
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when duplicate <see cref="ParameterTag"/> keys are encountered while aggregating parameters.
+    /// </exception>
     internal Dictionary<ParameterTag, object> Parameters
     {
         get
@@ -46,8 +48,8 @@ public abstract class JoinsBase
                 return [.. ValidatedJoints.SelectMany((join, i) => join.GetParameters($"JoinParameter"))];
             else
                 return [.. ValidatedJoints.SelectMany((join, i) => join.GetParameters($"Joins{i}Parameter"))];
+            }
         }
-    }
 
     /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the base (left-most) table in the join sequence.
@@ -69,7 +71,7 @@ public abstract class JoinsBase
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
     internal IEnumerable<TableTag> TableTags =>
-        ValidatedJoints.Select(join => join.TableTag).Append(TableTag);
+        ValidatedJoints.Select(static join => join.TableTag).Append(TableTag);
 
     /// <summary>
     /// Generates the complete SQL fragment for all <c>JOIN</c> clauses
@@ -81,6 +83,9 @@ public abstract class JoinsBase
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
+    /// <remarks>
+    /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
+    /// </remarks>
     internal string ToSql()
     {
         if(ValidatedJoints.Count() == 1)
@@ -99,7 +104,7 @@ public abstract class JoinsBase
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
-    internal bool IsEmpty() =>
+    internal virtual bool IsEmpty() =>
         ValidatedJoints.None();
 
     private IEnumerable<JoinBase> ValidatedJoints

@@ -31,13 +31,19 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// InnerJoin<Order> join1 = new(predicate);
 ///
 /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
+/// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
+///
+/// Joins<Customer> joins = new(join1, join2);
 /// SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// INNER JOIN [Order] 
+/// INNER JOIN [Order]
+/// ON ([Customer].[Id] = [Order].[CustomerId])
+/// INNER JOIN [PaymentMethod]
+/// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
 /// <example>
@@ -66,15 +72,15 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT 
-///     [Customer].[Id] AS CustomerId, 
-///     [Customer].[Name], 
-///     [Customer].[Email], 
-///     [Customer].[Phone], 
-///     [Order].[Id] AS OrderId, 
-///     [Order].[OrderDate], 
-///     [Order].[Total], 
-///     [PaymentMethod].[Id] AS PaymentMethodId, 
+/// SELECT
+///     [Customer].[Id] AS CustomerId,
+///     [Customer].[Name],
+///     [Customer].[Email],
+///     [Customer].[Phone],
+///     [Order].[Id] AS OrderId,
+///     [Order].[OrderDate],
+///     [Order].[Total],
+///     [PaymentMethod].[Id] AS PaymentMethodId,
 ///     [PaymentMethod].[ZipCode]
 /// FROM [Customer]
 /// INNER JOIN [Order]
@@ -100,31 +106,49 @@ public class Joins<leftT> : JoinsBase
     /// <exception cref="InvalidTableException">
     /// Thrown when a join’s predicate references a table that has not been introduced earlier in the join sequence.
     /// </exception>
-    public Joins(params IEnumerable<JoinBase> joins)
+    /// <exception cref="TypeInitializationException">
+    /// Thrown when the SQL reflection cache for <typeparamref name="leftT"/> fails to initialize.
+    /// </exception>
+    public Joins(params JoinBase[] joins)
     {
-        Joints = [];
-        HashSet<TableTag?> invalids = [];
+        ArgumentNullException.ThrowIfNull(joins);
+
+        if (joins.Any(static join => join is null))
+        {
+            throw new ArgumentNullException(nameof(joins), "joins contains null join entries.");
+        }
+
+        List<JoinBase> joints = [];
+        HashSet<TableTag> invalids = [];
         HashSet<TableTag> validTables = [TableTag];
 
-        //validate each join to ensure it is joined in the proper order for column participation.
+        // Validate each join to ensure it is joined in the proper order for column participation.
         foreach (JoinBase join in joins)
         {
             validTables.Add(join.TableTag);
-            //ensure each column involved in the join comes from either an earlier table or the table being joined on 
-            IEnumerable<TableTag?>  newInvalids = join.JoinsOn.Where(table => validTables.DoesNotContain(table));
-            if (newInvalids.IsNullOrEmpty())
-                Joints = Joints.Append(join);
+
+            // Ensure each table involved in the join comes from either an earlier table or the table being joined.
+            TableTag[] newInvalids =
+            [
+                .. join.JoinsOn.Where(tableTag => validTables.DoesNotContain(tableTag))
+            ];
+
+            if (newInvalids.Length == 0)
+            {
+                joints.Add(join);
+            }
             else
             {
-                foreach(TableTag? tableTag in newInvalids)
-                {
-                    if (invalids.DoesNotContain(tableTag))
-                        invalids.Add(tableTag);
-                }
+                invalids.UnionWith(newInvalids);
             }
         }
-        if(invalids.IsNotNullOrEmpty())
-            throw new InvalidTableException(invalids);
+
+        if (invalids.IsNotNullOrEmpty())
+        {
+            throw new InvalidTableException([.. invalids]);
+        }
+
+        Joints = joints;
     }
 
     /// <summary>

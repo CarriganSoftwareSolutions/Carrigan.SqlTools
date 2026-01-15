@@ -40,10 +40,8 @@ public class RightJoin<rightT> : JoinBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    /// <exception cref="TypeInitializationException">
-    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
-    /// </exception>
-    public RightJoin(Predicates predicates) : base(predicates ?? throw new ArgumentNullException(nameof(predicates))) { }
+    public RightJoin(Predicates predicates) : base(predicates)
+    { }
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -52,17 +50,17 @@ public class RightJoin<rightT> : JoinBase
     /// <typeparam name="leftT">
     /// The data model representing the left (base) table being joined onto.
     /// </typeparam>
-    /// <param name="predicate">
+    /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="RightJoin{rightT}"/> instance.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="predicate"/> is <c>null</c>.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
-        new(new RightJoin<rightT>(predicate));
+    public static Joins<leftT> Joins<leftT>(Predicates predicates) =>
+        new(new RightJoin<rightT>(predicates));
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -89,12 +87,27 @@ public class RightJoin<rightT> : JoinBase
     /// <summary>
     /// Converts the current <see cref="RightJoin{rightT}"/> instance to its SQL representation.
     /// </summary>
+    /// <param name="branchPrefix">
+    /// The branch prefix used to distinguish parameters in the join predicates from the main where clause.
+    /// </param>
     /// <returns>
     /// A SQL string representing the <c>RIGHT JOIN</c> clause.
     /// </returns>
-    /// <param name="branchPrefix">
-    /// This is the prefix used to prepend at the start of each parameter to distinguish the parameters in the join predicates from the main where clause.
-    /// </param>
-    internal override string ToSql(string branchPrefix) => 
-        $"RIGHT JOIN {TableTag} ON {_predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql()}";    
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the join predicates render to an empty SQL expression, because <c>RIGHT JOIN</c> requires an <c>ON</c> clause.
+    /// </exception>
+    /// <remarks>
+    /// Any exception thrown while rendering the predicate tree or while resolving <see cref="TableTag"/> will be propagated to the caller.
+    /// </remarks>
+    internal override string ToSql(string branchPrefix)
+    {
+        string predicateSql = _predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql();
+
+        if (string.IsNullOrWhiteSpace(predicateSql))
+        {
+            throw new InvalidOperationException("RIGHT JOIN requires at least one predicate for the ON clause.");
+        }
+
+        return $"RIGHT JOIN {TableTag} ON {predicateSql}";
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
 
@@ -16,7 +17,7 @@ public class JoinsBaseValidationTests
     [Fact]
     public void ToSql_WhenJointsContainsNull_ThrowsInvalidOperationException()
     {
-        JoinsBase joins = new NullEntryJointsJoins();
+        JoinsBase joins = new NullJointsJoins();
 
         Assert.Throws<InvalidOperationException>(() => joins.ToSql());
     }
@@ -24,24 +25,25 @@ public class JoinsBaseValidationTests
     [Fact]
     public void TableTags_WhenJointsContainsNull_ThrowsInvalidOperationException()
     {
-        JoinsBase joins = new NullEntryJointsJoins();
+        JoinsBase joins = new NullJointsJoins();
 
         _ = Assert.Throws<InvalidOperationException>(() => joins.TableTags.ToList());
     }
 
-    private sealed class NullJointsJoins : JoinsBase
-    {
-        protected override IEnumerable<JoinBase> Joints
-        {
-            get => null!;
-            set => throw new NotSupportedException();
-        }
+    [Fact]
+    public void Constructor_NullJoins_Exception() => 
+        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(null!));
 
-        internal override TableTag TableTag =>
-            new(null, "FakeTable");
+    [Fact]
+    public void JoinsCrossJoin()
+    {
+        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSql();
+        string expected = "CROSS JOIN [Right]";
+
+        Assert.Equal(expected, actual);
     }
 
-    private sealed class NullEntryJointsJoins : JoinsBase
+    private sealed class NullJointsJoins : JoinsBase
     {
         protected override IEnumerable<JoinBase> Joints
         {

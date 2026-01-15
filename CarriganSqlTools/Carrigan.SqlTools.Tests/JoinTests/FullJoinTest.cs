@@ -54,10 +54,19 @@ public class FullJoinTest
     }
 
     [Fact]
-    public void Constructor_Null_Exception() => 
+    public void Constructor_Null_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new FullJoin<JoinRightTable>(null!));
 
     [Fact]
-    public void Joins_Null_Exception() => 
+    public void Joins_Null_Exception() =>
         Assert.Throws<ArgumentNullException>(() => FullJoin<JoinRightTable>.Joins<JoinLeftTable>(null!));
+
+    [Fact]
+    public void ToSql_EmptyPredicate_Exception()
+    {
+        Predicates predicate = new EmptyPredicate();
+        FullJoin<JoinRightTable> join = new(predicate);
+
+        Assert.Throws<InvalidOperationException>(() => join.ToSql("Join"));
+    }
 }
