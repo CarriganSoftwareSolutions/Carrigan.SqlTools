@@ -54,7 +54,7 @@ public abstract class Predicates
     /// Retrieves all descendants predicates that are not also <see cref="ColumnBase"/> or  <see cref="Parameter"/> (the leaf nodes).
     /// </summary>
     internal IEnumerable<Predicates> DescendantPredicates =>
-        DescendantNodes.Where(predicate => predicate is not Parameter || predicate is not ColumnBase);
+        DescendantNodes.Where(predicate => predicate is not Parameter && predicate is not ColumnBase);
 
     /// <summary>
     /// Retrieves all direct children of type <see cref="Parameter"/>.
@@ -72,7 +72,7 @@ public abstract class Predicates
     /// Retrieves all direct children predicates that are not also columns or parameters (the leaf nodes).
     /// </summary>
     internal IEnumerable<Predicates> ChildPredicates =>
-        ChildNodes.Where(predicate => predicate is not Parameter || predicate is not ColumnBase);
+        ChildNodes.Where(predicate => predicate is not Parameter && predicate is not ColumnBase);
 
     /// <summary>
     /// Generates the SQL fragment for this predicate tree.
@@ -88,7 +88,7 @@ public abstract class Predicates
 
     /// <summary>
     /// Recursively generates the SQL fragment for this predicate tree, applying a prefix to
-    /// duplicate parameter names to ensure uniqueness and alignment with <see cref="GetDuplicateSafeParameters()"/>.
+    /// duplicate parameter names to ensure uniqueness.
     /// </summary>
     /// <param name="prefix">
     /// A recursion-built prefix used to disambiguate duplicate parameter names. This is applied
