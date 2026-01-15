@@ -47,9 +47,9 @@ public abstract class JoinBase
     /// When this join type does not use predicates, this returns an empty sequence.
     /// </remarks>
     internal IEnumerable<TableTag> JoinsOn =>
-        _predicates?.DescendantColumns
-            ?.Select(column => column.ColumnInfo.ColumnTag.TableTag)
-            ?.Distinct() ?? [];
+        _predicates.DescendantColumns
+            .Select(column => column.ColumnInfo.ColumnTag.TableTag)
+            .Distinct() ?? [];
 
     /// <summary>
     /// Generates the SQL fragment representing the specific <c>JOIN</c> clause.
@@ -75,5 +75,5 @@ public abstract class JoinBase
     /// to its corresponding runtime value, for use in parameterized SQL queries.
     /// </returns>
     internal Dictionary<ParameterTag, object> GetParameters(string branchPrefix) =>
-        _predicates?.ToSqlFragments(branchPrefix)?.GetParameters() ?? [];
+        _predicates.ToSqlFragments(branchPrefix).GetParameters() ?? [];
 }

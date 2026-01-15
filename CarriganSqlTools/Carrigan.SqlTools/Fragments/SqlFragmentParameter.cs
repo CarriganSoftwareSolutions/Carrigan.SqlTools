@@ -4,7 +4,7 @@ namespace Carrigan.SqlTools.Fragments;
 
 internal class SqlFragmentParameter : SqlFragment
 {
-    internal Parameter Parameter;
+    internal readonly Parameter Parameter;
     internal SqlFragmentParameter(Parameter parameter) =>
         Parameter = parameter;
 

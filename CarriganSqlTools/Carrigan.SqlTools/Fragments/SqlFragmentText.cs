@@ -2,9 +2,9 @@
 
 internal class SqlFragmentText : SqlFragment
 {
-    protected string SqlText;
+    protected readonly string SqlText;
 
-    public SqlFragmentText(string text) =>
+    internal SqlFragmentText(string text) =>
         SqlText = text;
 
     internal override string ToSql() =>
