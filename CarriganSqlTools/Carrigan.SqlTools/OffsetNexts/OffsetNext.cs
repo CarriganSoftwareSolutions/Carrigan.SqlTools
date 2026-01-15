@@ -1,17 +1,20 @@
 ﻿namespace Carrigan.SqlTools.OffsetNexts;
 
 /// <summary>
-/// Represents SQL Server’s <c>OFFSET … FETCH NEXT</c> paging feature,  
+/// Represents SQL Server’s <c>OFFSET … FETCH NEXT</c> paging feature,
 /// defining the row offset and fetch count used to return a specific range of results.
 /// </summary>
 /// <remarks>
-/// This class only defines paging behavior and does not modify SQL directly.  
-/// When a <see cref="OffsetNext"/> (or derived class such as <see cref="DefinePage"/>) 
-/// is passed to the SQL generator, the generator automatically appends an additional
-/// <c>ORDER BY</c> criterion for key columns (if not already present) to ensure
-/// deterministic paging results.  
-/// This compensates for SQL Server’s requirement that <c>OFFSET</c> and <c>FETCH NEXT</c>
-/// be used in conjunction with an <c>ORDER BY</c> clause.
+/// <para>
+/// This class only defines paging behavior and does not modify SQL directly.
+/// When an <see cref="OffsetNext"/> (or a derived type such as <see cref="DefinePage"/>) is passed to the SQL generator,
+/// the generator automatically appends an additional <c>ORDER BY</c> criterion for key columns (if not already present)
+/// to ensure deterministic paging results.
+/// </para>
+/// <para>
+/// This compensates for SQL Server’s requirement that <c>OFFSET</c> and <c>FETCH NEXT</c> be used in conjunction with an
+/// <c>ORDER BY</c> clause.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
@@ -20,9 +23,9 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// ORDER BY [Customer].[Id] ASC 
+/// SELECT [Customer].*
+/// FROM [Customer]
+/// ORDER BY [Customer].[Id] ASC
 /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
@@ -34,9 +37,9 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC 
+/// SELECT [Customer].*
+/// FROM [Customer]
+/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC
 /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
@@ -53,13 +56,11 @@ public class OffsetNext
     public uint Next { get; protected set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="OffsetNext"/> class
-    /// for use by derived types.
+    /// Initializes a new instance of the <see cref="OffsetNext"/> class for use by derived types.
     /// </summary>
+    protected OffsetNext() 
+    { }
 
-    protected OffsetNext()
-    {
-    }
     /// <summary>
     /// Initializes a new instance of the <see cref="OffsetNext"/> class,
     /// defining both the SQL <c>OFFSET</c> and <c>FETCH NEXT</c> values.
@@ -76,22 +77,14 @@ public class OffsetNext
     /// Generates the SQL fragment representing the <c>OFFSET</c> and <c>FETCH NEXT</c> clauses.
     /// </summary>
     /// <returns>
-    /// A SQL string containing the <c>OFFSET</c> and <c>FETCH NEXT</c> clauses,  
-    /// or an empty string if both <see cref="Offset"/> and <see cref="Next"/> are zero.
+    /// A SQL string containing the <c>OFFSET</c> and <c>FETCH NEXT</c> clauses, or an empty string if both
+    /// <see cref="Offset"/> and <see cref="Next"/> are zero.
     /// </returns>
-    internal string ToSql()
-    {
-        if(Next == 0 && Offset ==0)
+    internal string ToSql() =>
+        (Offset, Next) switch
         {
-            return string.Empty;
-        }
-        else if(Next == 0)
-        {
-            return $"OFFSET {Offset}";
-        }
-        else
-        {
-            return $"OFFSET {Offset} ROWS FETCH NEXT {Next} ROWS ONLY";
-        }
-    }
+            (0u, 0u) => string.Empty,
+            (_, 0u) => $"OFFSET {Offset}",
+            _ => $"OFFSET {Offset} ROWS FETCH NEXT {Next} ROWS ONLY"
+        };
 }
