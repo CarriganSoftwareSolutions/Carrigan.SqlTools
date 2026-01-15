@@ -111,7 +111,7 @@ public abstract class Predicates
         {
             yield return predicate;
 
-            foreach (Predicates childPredicate in GetAllDescendentPredicates(predicate.ChildPredicates))
+            foreach (Predicates childPredicate in GetAllDescendentPredicates(predicate.ChildNodes))
                 yield return childPredicate;
         }
     }
