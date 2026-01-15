@@ -1,20 +1,20 @@
 ﻿using Carrigan.SqlTools.Fragments;
 
-namespace Carrigan.SqlTools.Tests.FragmentTests;
+namespace Carrigan.SqlTools.Tests.Fragments;
 
 public class SqlFragmentTextTests
 {
     [Fact]
-    public void Constructor_WhenTextIsNull_ThrowsArgumentNullException() => 
-        _ = Assert.Throws<ArgumentNullException>(() => new SqlFragmentText(null!));
+    public void Constructor_NullText_Exception() => 
+        Assert.Throws<ArgumentNullException>(() => new SqlFragmentText(null!));
 
     [Fact]
-    public void ToSql_ReturnsProvidedText()
+    public void ToSql_ReturnsText()
     {
-        SqlFragmentText fragment = new("  SELECT 1  ");
+        SqlFragmentText fragment = new("SELECT 1");
 
-        string sql = fragment.ToSql();
+        string actualValue = fragment.ToSql();
 
-        Assert.Equal("  SELECT 1  ", sql);
+        Assert.Equal("SELECT 1", actualValue);
     }
 }

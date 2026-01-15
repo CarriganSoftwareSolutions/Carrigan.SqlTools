@@ -1,32 +1,32 @@
-﻿using System;
-
-namespace Carrigan.SqlTools.Fragments;
+﻿namespace Carrigan.SqlTools.Fragments;
 
 /// <summary>
-/// Represents a SQL fragment that emits literal SQL text.
+/// Represents an SQL fragment containing literal SQL text.
 /// </summary>
 /// <remarks>
-/// This fragment does not perform any formatting or normalization; it returns the text exactly as provided.
+/// This fragment is used for SQL tokens that are not parameters, such as keywords, punctuation, or whitespace.
 /// </remarks>
 internal class SqlFragmentText : SqlFragment
 {
-    private readonly string _sqlText;
-
     /// <summary>
-    /// Initializes a new instance of <see cref="SqlFragmentText"/>.
+    /// The literal SQL text represented by this fragment.
     /// </summary>
-    /// <param name="text">The literal SQL text for this fragment.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="text"/> is <c>null</c>.</exception>
-    internal SqlFragmentText(string text)
-    {
-        ArgumentNullException.ThrowIfNull(text, nameof(text));
-        _sqlText = text;
-    }
+    protected readonly string SqlText;
 
     /// <summary>
-    /// Converts this fragment to SQL.
+    /// Initializes a new instance of <see cref="SqlFragmentText"/> with the provided SQL text.
+    /// </summary>
+    /// <param name="text">The literal SQL text for the fragment.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="text"/> is <c>null</c>.
+    /// </exception>
+    internal SqlFragmentText(string text) =>
+        SqlText = text ?? throw new ArgumentNullException(nameof(text));
+
+    /// <summary>
+    /// Converts this fragment into its SQL representation.
     /// </summary>
     /// <returns>The literal SQL text for this fragment.</returns>
     internal override string ToSql() =>
-        _sqlText;
+        SqlText;
 }

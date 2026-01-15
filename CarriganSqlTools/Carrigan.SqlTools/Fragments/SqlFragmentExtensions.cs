@@ -3,34 +3,48 @@
 namespace Carrigan.SqlTools.Fragments;
 
 /// <summary>
-/// Provides helper methods for working with collections of <see cref="SqlFragment"/>.
+/// Extension methods for <see cref="SqlFragment"/> sequences.
 /// </summary>
 internal static class SqlFragmentExtensions
 {
     /// <summary>
-    /// Extracts parameters from the provided SQL fragments and returns them as a flattened dictionary.
+    /// Collects all SQL parameters from a sequence of SQL fragments.
     /// </summary>
-    /// <param name="sqlFragments">The fragment sequence to analyze.</param>
+    /// <param name="sqlFragments">
+    /// The sequence of fragments to scan for <see cref="SqlFragmentParameter"/> entries.
+    /// </param>
     /// <returns>
-    /// A dictionary mapping each emitted <see cref="ParameterTag"/> to its runtime value.
-    /// Null values are normalized to <see cref="DBNull.Value"/>.
+    /// A dictionary mapping each <see cref="ParameterTag"/> to its runtime value. Null values are materialized as
+    /// <see cref="DBNull.Value"/>.
     /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when <paramref name="sqlFragments"/> contains a <c>null</c> fragment, or when duplicate
-    /// <see cref="ParameterTag"/> keys are encountered.
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="sqlFragments"/> is <c>null</c>.
     /// </exception>
-    internal static Dictionary<ParameterTag, object> GetParameters(this IEnumerable<SqlFragment> sqlFragments) =>
-        sqlFragments
+    /// <exception cref="ArgumentException">
+    /// Thrown when duplicate <see cref="ParameterTag"/> keys are encountered.
+    /// </exception>
+    internal static Dictionary<ParameterTag, object> GetParameters(this IEnumerable<SqlFragment> sqlFragments)
+    {
+        ArgumentNullException.ThrowIfNull(sqlFragments);
+
+        return sqlFragments
             .OfType<SqlFragmentParameter>()
-            .Select(fragment => fragment.Parameter)
-            .ToDictionary(pair => pair.Name, pair => pair.Value ?? DBNull.Value);
+            .Select(static fragment => fragment.Parameter)
+            .ToDictionary(static parameter => parameter.Name, static parameter => parameter.Value ?? DBNull.Value);
+    }
 
     /// <summary>
-    /// Converts the provided SQL fragments to a single SQL string.
+    /// Concatenates the SQL text representation of a sequence of fragments.
     /// </summary>
-    /// <param name="sqlFragments">The fragment sequence to concatenate.</param>
-    /// <returns>A concatenated SQL string produced by calling <see cref="SqlFragment.ToSql"/> on each fragment.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when <paramref name="sqlFragments"/> contains a <c>null</c> fragment.</exception>
-    internal static string ToSql(this IEnumerable<SqlFragment> sqlFragments) =>
-        string.Concat(sqlFragments.Select(fragment => fragment.ToSql()));
+    /// <param name="sqlFragments">The sequence of fragments to render.</param>
+    /// <returns>The concatenated SQL text.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="sqlFragments"/> is <c>null</c>.
+    /// </exception>
+    internal static string ToSql(this IEnumerable<SqlFragment> sqlFragments)
+    {
+        ArgumentNullException.ThrowIfNull(sqlFragments);
+
+        return string.Concat(sqlFragments.Select(static fragment => fragment.ToSql()));
+    }
 }
