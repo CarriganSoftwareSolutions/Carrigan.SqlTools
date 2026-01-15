@@ -1,20 +1,28 @@
 ﻿namespace Carrigan.SqlTools.Fragments;
 
 /// <summary>
-/// Represents fragments of an SQL statement
+/// Represents a fragment of a SQL statement.
 /// </summary>
 internal abstract class SqlFragment
 {
     /// <summary>
-    /// Parses the fragment to string.
+    /// Converts this fragment to its SQL string representation.
     /// </summary>
-    /// <returns>returns a string representing the fragment's SQL</returns>
+    /// <returns>
+    /// A string containing the SQL text for this fragment.
+    /// </returns>
     internal abstract string ToSql();
 
     /// <summary>
-    /// Turns ToString into an alias for ToSql
+    /// Converts this fragment to its SQL string representation.
     /// </summary>
-    /// <returns>returns a string representing the fragment's SQL</returns>
+    /// <remarks>
+    /// This method delegates to <see cref="ToSql"/>. Any exceptions thrown by <see cref="ToSql"/>
+    /// will propagate through this method.
+    /// </remarks>
+    /// <returns>
+    /// A string containing the SQL text for this fragment.
+    /// </returns>
     public override string ToString() =>
         ToSql();
 }
