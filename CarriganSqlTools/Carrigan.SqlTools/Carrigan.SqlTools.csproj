@@ -36,8 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202512220048" />
-    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.0-alpha.202512220048" PrivateAssets="all" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202601161738" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.0-alpha.202601161738" PrivateAssets="all" />
   </ItemGroup>
   
   <ItemGroup>
