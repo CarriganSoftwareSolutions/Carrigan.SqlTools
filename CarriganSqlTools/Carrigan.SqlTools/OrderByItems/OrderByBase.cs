@@ -20,6 +20,9 @@ public abstract class OrderByBase
     /// <returns>
     /// <c>true</c> if the item is already part of the <c>ORDER BY</c> clause; otherwise, <c>false</c>.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// </exception>
     public abstract bool Contains(OrderByItemBase orderByItem);
 
     /// <summary>
@@ -48,8 +51,10 @@ public abstract class OrderByBase
     /// <returns>
     /// A new <c>ORDER BY</c> clause that includes the appended <see cref="OrderByItemBase"/>.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// </exception>
     public abstract OrderBy WithAppend(OrderByItemBase orderByItem);
-
 
     /// <summary>
     /// Creates a new <c>ORDER BY</c> clause with the specified sequence of
@@ -63,6 +68,9 @@ public abstract class OrderByBase
     /// <returns>
     /// A new <c>ORDER BY</c> clause that includes the concatenated items.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
+    /// </exception>
     public abstract OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems);
 
     /// <summary>

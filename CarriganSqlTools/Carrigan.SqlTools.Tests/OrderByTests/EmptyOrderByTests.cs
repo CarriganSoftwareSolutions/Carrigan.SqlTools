@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.OrderByTests;
 
@@ -32,5 +33,13 @@ public class EmptyOrderByTests
         OrderBy orderBy = OrderBy.Empty;
 
         Assert.True(orderBy.IsEmpty());
+    }
+
+    [Fact]
+    public void Equals_Object_DifferentType_ReturnsFalse()
+    {
+        OrderByItemBase item = new OrderByItem<Address>("Street");
+
+        Assert.False(item.Equals((object)"Street"));
     }
 }

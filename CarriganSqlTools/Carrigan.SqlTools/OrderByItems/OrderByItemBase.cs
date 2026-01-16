@@ -6,17 +6,17 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// <summary>
 /// Represents a single-column specification within a SQL <c>ORDER BY</c> clause.
 /// </summary>
-public abstract class OrderByItemBase : OrderByBase, IEquatable<OrderByItemBase> 
+public abstract class OrderByItemBase : OrderByBase, IEquatable<OrderByItemBase>
 {
     /// <summary>
-    /// Gets the <see cref="Tags.ColumnInfo"/> associated with this item.
+    /// Gets the <see cref="ColumnInfo"/> associated with this item.
     /// </summary>
     internal abstract ColumnInfo ColumnInfo { get; }
 
     /// <summary>
     /// Gets the table tag associated with the ordered column.
     /// </summary>
-    internal TableTag TableTag => 
+    internal TableTag TableTag =>
         ColumnInfo.ColumnTag.TableTag;
 
     /// <summary>
@@ -28,7 +28,7 @@ public abstract class OrderByItemBase : OrderByBase, IEquatable<OrderByItemBase>
     /// Initializes a new instance of the <see cref="OrderByItemBase"/> class with the specified sort direction.
     /// </summary>
     /// <param name="sortDirection">The sort direction to apply (defaults to <see cref="SortDirectionEnum.Ascending"/>).</param>
-    protected OrderByItemBase(SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) => 
+    protected OrderByItemBase(SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) =>
         SortDirection = sortDirection;
 
     /// <summary>
