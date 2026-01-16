@@ -41,7 +41,7 @@ public class CrossJoinTest
     {
         CrossJoin<JoinRightTable> join = new();
 
-        Assert.Empty(join.GetParameters(string.Empty));
+        Assert.Empty(join.GetParameters("Bob"));
     }
 
     [Fact]
