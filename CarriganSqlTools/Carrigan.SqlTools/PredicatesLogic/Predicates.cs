@@ -1,6 +1,5 @@
 ﻿using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
-using System;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -10,17 +9,34 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 public abstract class Predicates
 {
+    private readonly IReadOnlyList<Predicates> _childNodes;
+
     /// <summary>
     /// Represents the direct children of the current predicate.
     /// </summary>
-    internal IEnumerable<Predicates> ChildNodes { get; }
+    internal IEnumerable<Predicates> ChildNodes => _childNodes;
 
     /// <summary>
-    /// Base constructor for all predicate classes
+    /// Base constructor for all predicate classes.
     /// </summary>
-    /// <param name="childPredicates">represents all child nodes for a given predicate</param>
-    protected Predicates(IEnumerable<Predicates> childPredicates) =>
-        ChildNodes = childPredicates;
+    /// <param name="childPredicates">Represents all child nodes for a given predicate.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="childPredicates"/> is <c>null</c>.
+    /// </exception>
+    protected Predicates(IEnumerable<Predicates> childPredicates)
+    {
+        ArgumentNullException.ThrowIfNull(childPredicates, nameof(childPredicates));
+
+        List<Predicates> predicates = [];
+
+        foreach (Predicates predicate in childPredicates)
+        {
+            ArgumentNullException.ThrowIfNull(predicate, nameof(childPredicates));
+            predicates.Add(predicate);
+        }
+
+        _childNodes = predicates;
+    }
 
     /// <summary>
     /// Retrieves all descendants of type <see cref="Parameter"/>.
@@ -31,18 +47,14 @@ public abstract class Predicates
     /// <summary>
     /// Represents all parameters that have the same unmodified parameter name.
     /// </summary>
-    protected IEnumerable<ParameterTag> DuplicateParameters => DescendantParameters
-        .Select(parameter => parameter.Name)
-        .GroupBy(parameter => parameter)
-        .Where(nameGroup => nameGroup.Count() > 1)
-        .Select(nameGroup => nameGroup.Key);
-
+    protected IEnumerable<ParameterTag> DuplicateParameters =>
+        GetDuplicateParameterTags();
 
     /// <summary>
-    /// Retrieves all descendants predicates regardless of type.
+    /// Retrieves all descendant predicates regardless of type.
     /// </summary>
     internal IEnumerable<Predicates> DescendantNodes =>
-        GetAllDescendentPredicates(ChildNodes);
+        GetAllDescendantPredicates(_childNodes);
 
     /// <summary>
     /// Retrieves all descendants of type <see cref="ColumnBase"/>.
@@ -51,43 +63,66 @@ public abstract class Predicates
         DescendantNodes.OfType<ColumnBase>();
 
     /// <summary>
-    /// Retrieves all descendants predicates that are not also <see cref="ColumnBase"/> or  <see cref="Parameter"/> (the leaf nodes).
+    /// Retrieves all descendant predicates that are not also <see cref="ColumnBase"/> or <see cref="Parameter"/>.
+    /// These are the non-leaf operator nodes (e.g., <see cref="LogicalOperator"/>, <see cref="ComparisonOperator"/>).
     /// </summary>
     internal IEnumerable<Predicates> DescendantPredicates =>
-        DescendantNodes.Where(predicate => predicate is not Parameter && predicate is not ColumnBase);
+        DescendantNodes.Where(static predicate => predicate is not Parameter && predicate is not ColumnBase);
 
     /// <summary>
     /// Retrieves all direct children of type <see cref="Parameter"/>.
     /// </summary>
     internal IEnumerable<Parameter> ChildParameters =>
-        ChildNodes.OfType<Parameter>();
+        _childNodes.OfType<Parameter>();
 
     /// <summary>
     /// Retrieves all direct children of type <see cref="ColumnBase"/>.
     /// </summary>
     internal IEnumerable<ColumnBase> ChildColumns =>
-        ChildNodes.OfType<ColumnBase>();
+        _childNodes.OfType<ColumnBase>();
 
     /// <summary>
-    /// Retrieves all direct children predicates that are not also columns or parameters (the leaf nodes).
+    /// Retrieves all direct children that are not also <see cref="ColumnBase"/> or <see cref="Parameter"/>.
+    /// These are the non-leaf operator nodes.
     /// </summary>
     internal IEnumerable<Predicates> ChildPredicates =>
-        ChildNodes.Where(predicate => predicate is not Parameter && predicate is not ColumnBase);
+        _childNodes.Where(static predicate => predicate is not Parameter && predicate is not ColumnBase);
 
     /// <summary>
-    /// Generates the SQL fragment for this predicate tree.
+    /// Generates the SQL fragments for this predicate tree.
     /// </summary>
     /// <remarks>
     /// Before rendering, this method computes duplicate user-supplied parameter names and
-    /// passes that set to the recursive <see cref="ToSql(string, IEnumerable{ParameterTag})"/> overload,
+    /// passes that set to the recursive <see cref="ToSql(string, string, IEnumerable{ParameterTag})"/> overload,
     /// which may add disambiguating prefixes to produce unique parameter names.
     /// </remarks>
-    /// <returns>The SQL fragment represented by this predicate tree.</returns>
-    internal IEnumerable<SqlFragment> ToSqlFragments(string branchName) =>
-        ToSql(string.Empty, branchName.TrimStart('@'), DuplicateParameters);
+    /// <param name="branchName">
+    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
+    /// The leading <c>@</c> is optional and will be ignored.
+    /// </param>
+    /// <returns>The SQL fragments represented by this predicate tree.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="branchName"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="branchName"/> is empty or whitespace (or becomes empty after trimming <c>@</c>).
+    /// </exception>
+    internal IEnumerable<SqlFragment> ToSqlFragments(string branchName)
+    {
+        ArgumentNullException.ThrowIfNull(branchName, nameof(branchName));
+
+        string normalizedBranchName = branchName.Trim().TrimStart('@');
+
+        if (normalizedBranchName.Length == 0)
+            throw new ArgumentException($"{nameof(branchName)} must not be empty or whitespace.", nameof(branchName));
+
+        HashSet<ParameterTag> duplicates = GetDuplicateParameterTags();
+
+        return ToSql(string.Empty, normalizedBranchName, duplicates);
+    }
 
     /// <summary>
-    /// Recursively generates the SQL fragment for this predicate tree, applying a prefix to
+    /// Recursively generates the SQL fragments for this predicate tree, applying a prefix to
     /// duplicate parameter names to ensure uniqueness.
     /// </summary>
     /// <param name="prefix">
@@ -101,20 +136,39 @@ public abstract class Predicates
     /// The set of base <see cref="ParameterTag"/> names that occur more than once within the predicate tree.
     /// </param>
     /// <returns>The SQL fragment for this node.</returns>
-    //internal abstract string ToSql(string prefix, IEnumerable<ParameterTag> duplicates);
     internal abstract IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates);
 
+    private HashSet<ParameterTag> GetDuplicateParameterTags()
+    {
+        Dictionary<ParameterTag, int> counts = [];
 
-    private static IEnumerable<Predicates> GetAllDescendentPredicates(IEnumerable<Predicates> predicates)
+        foreach (ParameterTag parameterTag in DescendantParameters.Select(static parameter => parameter.Name))
+        {
+            counts.TryGetValue(parameterTag, out int count);
+            counts[parameterTag] = count + 1;
+        }
+
+        HashSet<ParameterTag> duplicates = [];
+
+        foreach (KeyValuePair<ParameterTag, int> pair in counts)
+        {
+            if (pair.Value > 1)
+                duplicates.Add(pair.Key);
+        }
+
+        return duplicates;
+    }
+
+    private static IEnumerable<Predicates> GetAllDescendantPredicates(IEnumerable<Predicates> predicates)
     {
         foreach (Predicates predicate in predicates)
         {
             yield return predicate;
 
-            foreach (Predicates childPredicate in GetAllDescendentPredicates(predicate.ChildNodes))
+            foreach (Predicates childPredicate in GetAllDescendantPredicates(predicate.ChildNodes))
+            {
                 yield return childPredicate;
+            }
         }
     }
-
-
 }
