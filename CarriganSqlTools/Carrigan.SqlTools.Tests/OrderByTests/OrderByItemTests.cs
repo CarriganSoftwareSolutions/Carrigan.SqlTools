@@ -216,6 +216,28 @@ public class OrderByItemTests
     public void Empty() =>
         //There is currently no way to test IsEmpty is true, as that should always generate an exception.
         Assert.Throws<InvalidPropertyException<Address>>(() => { OrderByItem<Address> streetItem = new(string.Empty); });
+
+    [Fact]
+    public void Contains_Null_ArgumentNullException()
+    {
+        OrderByItem<Address> item = new("City");
+        Assert.Throws<ArgumentNullException>(() => item.Contains(null!));
+    }
+
+    [Fact]
+    public void WithAppend_Null_ArgumentNullException()
+    {
+        OrderByItem<Address> item = new("City");
+        Assert.Throws<ArgumentNullException>(() => item.WithAppend(null!));
+    }
+
+    [Fact]
+    public void WithConcat_Null_ArgumentNullException()
+    {
+        OrderByItem<Address> item = new("City");
+        Assert.Throws<ArgumentNullException>(() => item.WithConcat((IEnumerable<OrderByItemBase>)null!));
+    }
+
 }
 
 #pragma warning restore CA1859 // Use concrete types when possible for improved performance

@@ -1,5 +1,4 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
@@ -22,12 +21,12 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
 /// ]]></code>
 /// </example>
-public class OrderBy: OrderByBase
+public class OrderBy : OrderByBase
 {
     /// <summary>
     /// Gets an empty <c>ORDER BY</c> clause.
     /// </summary>
-    public static OrderBy Empty => 
+    public static OrderBy Empty =>
         new();
 
     /// <summary>
@@ -41,11 +40,23 @@ public class OrderBy: OrderByBase
     /// representing an <c>ORDER BY</c> clause.
     /// </summary>
     /// <param name="orderByItems">
-    /// One or more sequences of <see cref="OrderByItemBase"/> objects,
-    /// each defining an individual column and sort direction.
+    /// The <see cref="OrderByItemBase"/> objects defining the columns and sort directions
+    /// for the <c>ORDER BY</c> clause.
     /// </param>
-    public OrderBy(params IEnumerable<OrderByItemBase> orderByItems) => 
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
+    /// </exception>
+    public OrderBy(params IEnumerable<OrderByItemBase> orderByItems)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
+
+        foreach (OrderByItemBase orderByItem in orderByItems)
+        {
+            ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItems));
+        }
+
         _orderByItems = orderByItems;
+    }
 
     /// <summary>
     /// Determines whether the specified <paramref name="orderByItem"/> is present
@@ -59,30 +70,33 @@ public class OrderBy: OrderByBase
     /// <returns>
     /// <c>true</c> if the item is contained in this <c>ORDER BY</c>; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Contains(OrderByItemBase orderByItem) =>
-        _orderByItems.Contains(orderByItem);
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// </exception>
+    public override bool Contains(OrderByItemBase orderByItem)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
+
+        return _orderByItems.Contains(orderByItem);
+    }
 
     /// <summary>
     /// Enumerates all <see cref="TableTag"/> objects referenced in the <c>ORDER BY</c> clause.
     /// </summary>
-    internal override IEnumerable<TableTag>TableTags =>
-        _orderByItems.Select(item => item.TableTag);
+    internal override IEnumerable<TableTag> TableTags =>
+        _orderByItems.Select(static item => item.TableTag);
 
     /// <summary>
     /// Generates the SQL <c>ORDER BY</c> clause represented by this instance.
     /// </summary>
-    /// <remarks>
-    /// Unlike <see cref="OrderByItem{T}"/>, this class includes the <c>ORDER BY</c> keyword.
-    /// The <see cref="SqlGenerator{T}"/> calls this to append the clause to the final query.
-    /// </remarks>
     /// <returns>
     /// A SQL string for the <c>ORDER BY</c> clause, or <see cref="string.Empty"/>
     /// if no ordering is defined.
     /// </returns>
     internal override string ToSql() =>
-        IsEmpty() 
+        IsEmpty()
             ? string.Empty
-            : $"ORDER BY {string.Join(", ", _orderByItems.Select(item => item.ToSql()))}";
+            : $"ORDER BY {string.Join(", ", _orderByItems.Select(static item => item.ToSql()))}";
 
     /// <summary>
     /// Returns all contained <see cref="OrderByItemBase"/> objects.
@@ -103,7 +117,7 @@ public class OrderBy: OrderByBase
         OrderByItemsAsEnumerable().IsNullOrEmpty();
 
     /// <summary>
-    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="OrderByItemBase"/> appended.  
+    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="OrderByItemBase"/> appended.
     /// This operation is immutable and does not modify the original instance.
     /// </summary>
     /// <param name="orderByItem">
@@ -112,23 +126,36 @@ public class OrderBy: OrderByBase
     /// <returns>
     /// A new <c>ORDER BY</c> clause that includes the appended <see cref="OrderByItemBase"/>.
     /// </returns>
-    public override OrderBy WithAppend(OrderByItemBase orderByItem) =>
-        new(_orderByItems.Append(orderByItem));
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// </exception>
+    public override OrderBy WithAppend(OrderByItemBase orderByItem)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
+
+        return new(_orderByItems.Append(orderByItem));
+    }
 
     /// <summary>
     /// Creates a new <c>ORDER BY</c> clause with the specified sequence of
-    /// <see cref="OrderByItemBase"/> objects concatenated.  
+    /// <see cref="OrderByItemBase"/> objects concatenated.
     /// This operation is immutable and does not modify the original instance.
     /// </summary>
     /// <param name="orderByItems">
-    /// One or more sequences of <see cref="OrderByItemBase"/> objects—each defining a table,
-    /// column, and sort direction—to append to the clause.
+    /// The <see cref="OrderByItemBase"/> objects to append to the clause.
     /// </param>
     /// <returns>
     /// A new <c>ORDER BY</c> clause that includes the concatenated items.
     /// </returns>
-    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems) =>
-        new (_orderByItems.Concat(orderByItems));
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
+    /// </exception>
+    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
+
+        return new(_orderByItems.Concat(orderByItems));
+    }
 
     /// <summary>
     /// Returns this instance cast to the concrete implementation, <see cref="OrderBy"/>.

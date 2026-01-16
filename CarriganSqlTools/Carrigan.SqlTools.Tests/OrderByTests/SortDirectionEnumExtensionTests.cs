@@ -25,4 +25,18 @@ public class SortDirectionEnumExtensionTests
         // Act & Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => invalidSortDirection.ToSql());
     }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(2)]
+    public void ToSql_InvalidValue_ThrowsArgumentOutOfRangeException(int invalidValue)
+    {
+        SortDirectionEnum invalid = (SortDirectionEnum)invalidValue;
+
+        ArgumentOutOfRangeException ex =
+            Assert.Throws<ArgumentOutOfRangeException>(() => invalid.ToSql());
+
+        Assert.Equal("value", ex.ParamName);
+        Assert.Equal(invalid, ex.ActualValue);
+    }
 }

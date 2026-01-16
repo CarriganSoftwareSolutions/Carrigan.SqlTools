@@ -18,10 +18,14 @@ internal static class SortDirectionEnumExtension
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when <paramref name="value"/> is not a valid <see cref="SortDirectionEnum"/> value.
     /// </exception>
-    internal static string ToSql(this SortDirectionEnum value) => value switch
-    {
-        SortDirectionEnum.Descending => "DESC",
-        SortDirectionEnum.Ascending => "ASC",
-        _ => throw new ArgumentOutOfRangeException(nameof(value), value, null)
-    };
+    internal static string ToSql(this SortDirectionEnum value) =>
+        value switch
+        {
+            SortDirectionEnum.Ascending => "ASC",
+            SortDirectionEnum.Descending => "DESC",
+            _ => throw CreateInvalidValueException(value),
+        };
+
+    private static ArgumentOutOfRangeException CreateInvalidValueException(SortDirectionEnum value) =>
+        new(nameof(value), value, $"Invalid {nameof(SortDirectionEnum)} value: {value}.");
 }

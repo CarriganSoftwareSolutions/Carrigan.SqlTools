@@ -3,7 +3,6 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
-using System;
 
 namespace Carrigan.SqlTools.OrderByItems;
 
@@ -23,7 +22,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// <code><![CDATA[
 /// SELECT [Customer].* 
 /// FROM [Customer] 
-/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
+/// ORDER BY [Customer].[Name] ASC
 /// ]]></code>
 /// </example>
 public class OrderByItem<T> : OrderByItemBase
@@ -33,11 +32,14 @@ public class OrderByItem<T> : OrderByItemBase
     /// specifying the table type <typeparamref name="T"/>, the property name,
     /// and the desired sort direction.
     /// </summary>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown when<paramref name="propertyName"/> does not map to a valid column on <typeparamref name = "T" />.
-    /// </exception>
     /// <param name="propertyName">The property representing the column to order by.</param>
     /// <param name="sortDirection">The sort direction to apply.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the resolved column metadata does not contain exactly one match.
+    /// </exception>
     public OrderByItem(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
         : base(sortDirection) =>
         ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
@@ -47,14 +49,19 @@ public class OrderByItem<T> : OrderByItemBase
     /// specifying the table type <typeparamref name="T"/>, the property name,
     /// and the desired sort direction.
     /// </summary>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown when<paramref name="propertyName"/> does not map to a valid column on <typeparamref name = "T" />.
-    /// </exception>
     /// <param name="propertyName">The property representing the column to order by.</param>
     /// <param name="sortDirection">The sort direction to apply.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the resolved column metadata does not contain exactly one match.
+    /// </exception>
     [ExternalOnly]
-    public OrderByItem(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) :
-        this (new PropertyName(propertyName), sortDirection) {}
+    public OrderByItem(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
+        : this(new PropertyName(propertyName), sortDirection)
+    {
+    }
 
     /// <summary>
     /// The <see cref="Tags.ColumnInfo"/> that specifies the column being ordered.
@@ -65,7 +72,7 @@ public class OrderByItem<T> : OrderByItemBase
     /// Part of the <see cref="OrderByBase"/> implementation.
     /// Returns the single <see cref="TableTag"/> involved in this order-by item.
     /// </summary>
-    internal override IEnumerable<TableTag> TableTags => 
+    internal override IEnumerable<TableTag> TableTags =>
         [TableTag];
 
     /// <summary>
@@ -77,8 +84,8 @@ public class OrderByItem<T> : OrderByItemBase
     /// <c>true</c> if <paramref name="obj"/> is an <see cref="OrderByItemBase"/>
     /// that represents the same table/column; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object? obj)
-        => Equals(obj as OrderByItemBase);
+    public override bool Equals(object? obj) =>
+        Equals(obj as OrderByItemBase);
 
     /// <summary>
     /// Serves as the default hash function for <see cref="OrderByItemBase"/>.
@@ -86,11 +93,11 @@ public class OrderByItem<T> : OrderByItemBase
     /// <returns>
     /// An integer hash code computed from the <see cref="TableTag"/> and <see cref="ColumnInfo"/>.
     /// </returns>
-    public override int GetHashCode()
-        => HashCode.Combine(TableTag, ColumnInfo);
+    public override int GetHashCode() =>
+        HashCode.Combine(TableTag, ColumnInfo);
 
     /// <summary>
-    /// Returns whether this single order-by item “contains” the specified item.
+    /// Returns whether this single order-by item "contains" the specified item.
     /// </summary>
     /// <remarks>
     /// Because <see cref="OrderByItem{T}"/> is modeled as a single-item sequence for interchangeability
@@ -98,8 +105,15 @@ public class OrderByItem<T> : OrderByItemBase
     /// </remarks>
     /// <param name="orderByItem">The order-by item to compare.</param>
     /// <returns><c>true</c> if both items are equal; otherwise, <c>false</c>.</returns>
-    public override bool Contains(OrderByItemBase orderByItem) =>
-        EqualityComparer<OrderByItemBase>.Default.Equals(this, orderByItem);
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// </exception>
+    public override bool Contains(OrderByItemBase orderByItem)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
+
+        return EqualityComparer<OrderByItemBase>.Default.Equals(this, orderByItem);
+    }
 
     /// <summary>
     /// Determines whether this order-by item is empty.
@@ -118,26 +132,38 @@ public class OrderByItem<T> : OrderByItemBase
     /// <returns>
     /// A new <see cref="OrderBy"/> that includes both this item and <paramref name="orderByItem"/>.
     /// </returns>
-    public override OrderBy WithAppend(OrderByItemBase orderByItem) =>
-        new (new List<OrderByItemBase>([this, orderByItem]));
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// </exception>
+    public override OrderBy WithAppend(OrderByItemBase orderByItem)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
+
+        return new(new List<OrderByItemBase>([this, orderByItem]));
+    }
 
     /// <summary>
     /// Creates a new <see cref="OrderBy"/> with this item followed by the specified sequence.
     /// This operation is immutable; the current instance is not modified.
     /// </summary>
-    /// <param name="orderByItems">
-    /// One or more sequences of <see cref="OrderByItemBase"/> objects to append.
-    /// </param>
+    /// <param name="orderByItems">The order-by items to append.</param>
     /// <returns>
     /// A new <see cref="OrderBy"/> that includes this item and all provided items.
     /// </returns>
-    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems) =>
-        new (orderByItems.Prepend(this));
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
+    /// </exception>
+    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
+
+        return new(orderByItems.Prepend(this));
+    }
 
     /// <summary>
     /// Returns a new <see cref="OrderBy"/> instance that represents this single item.
     /// </summary>
     /// <returns>A new <see cref="OrderBy"/> containing this item.</returns>
     public override OrderBy AsOrderBy() =>
-        new (this);
+        new(this);
 }
