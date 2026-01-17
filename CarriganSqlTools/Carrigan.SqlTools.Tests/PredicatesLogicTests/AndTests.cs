@@ -9,7 +9,7 @@ public class AndTests
 {
     [Fact]
     public void And_Empty_ToSql() => 
-        Assert.Throws<ArgumentNullException>(() => new And([]));
+        Assert.Throws<ArgumentException>(() => new And([]));
 
     [Fact]
     public void And_null_ToSql() => 

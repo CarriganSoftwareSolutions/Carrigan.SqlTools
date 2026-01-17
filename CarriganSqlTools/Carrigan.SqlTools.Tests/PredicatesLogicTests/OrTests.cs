@@ -9,7 +9,7 @@ public class OrTests
 {
     [Fact]
     public void Or_Empty_ToSql() => 
-        Assert.Throws<ArgumentNullException>(() => new Or([]));
+        Assert.Throws<ArgumentException>(() => new Or([]));
 
     [Fact]
     public void Or_null_ToSql() => 

@@ -1,6 +1,5 @@
 ﻿using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.PredicatesLogic;
 using System.Data;
 using System.Reflection;
 
