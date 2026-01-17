@@ -358,5 +358,39 @@ public class ColumnInfoTests
         Assert.Equal(expectedScale, columnInfo.SqlType.Scale);
         Assert.Equal(expectedUseMax, columnInfo.SqlType.UseMax);
     }
+    [Fact]
+    public void New_TableNameNull_Exception()
+    {
+        Type type = typeof(ColumnIdentifiers);
+        PropertyInfo property = type.GetProperty("Id")!;
+        IEnumerable<PropertyInfo> keys = [property];
+
+        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(null, null!, property, keys));
+    }
+
+    [Fact]
+    public void New_PropertyInfoNull_Exception()
+    {
+        Type type = typeof(ColumnIdentifiers);
+        IEnumerable<PropertyInfo> keys = [type.GetProperty("Id")!];
+
+        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(null, new("ColumnIdentifiersTable"), null!, keys));
+    }
+
+    [Fact]
+    public void New_KeysNull_Exception()
+    {
+        Type type = typeof(ColumnIdentifiers);
+        PropertyInfo property = type.GetProperty("Id")!;
+
+        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(null, new("ColumnIdentifiersTable"), property, null!));
+    }
+
+    [Fact]
+    public void ImplicitString_Null_Exception()
+    {
+        ColumnInfo? value = null;
+        Assert.Throws<ArgumentNullException>(() => _ = (string)value!);
+    }
 
 }

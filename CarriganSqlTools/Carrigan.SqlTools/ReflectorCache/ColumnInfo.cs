@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.ReflectorCache;
 
 /// <summary>
 /// Represents reflection-based metadata describing a single property
-/// in a data model that maps to a SQL column.  
+/// in a data model that maps to a SQL column.
 /// <para>
 /// Each instance of <see cref="ColumnInfo"/> provides a cached snapshot of
 /// identifiers, tags, and attribute-derived information for the associated property,
@@ -21,9 +21,9 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <remarks>
 /// Cached values include schema, table, and column identifiers as well as
 /// metadata derived from custom attributes such as
-/// <see cref="ColumnAttribute"/>, <see cref="IdentifierAttribute"/>, <see cref="SqlTypeAttribute"/>
+/// <see cref="ColumnAttribute"/>, <see cref="IdentifierAttribute"/>, <see cref="SqlTypeAttribute"/>,
 /// <see cref="AliasAttribute"/>, <see cref="EncryptedAttribute"/>,
-/// and <see cref="KeyVersionAttribute"/>.
+/// <see cref="KeyVersionAttribute"/>, and <see cref="ParameterAttribute"/>.
 /// </remarks>
 public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqualityComparer<ColumnInfo>
 {
@@ -95,7 +95,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly bool IsEncrypted;
 
-
     /// <summary>
     /// Indicates whether this property is designated as a key version property
     /// using a <see cref="KeyVersionAttribute"/>.
@@ -119,31 +118,42 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// A collection of <see cref="System.Reflection.PropertyInfo"/> instances representing the key properties
     /// for the entity, used to determine the value of <see cref="IsKeyPart"/>.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="tableName"/>, <paramref name="propertyInfo"/>, or <paramref name="keys"/> is <c>null</c>.
+    /// </exception>
     internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
-        string? columnName = propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
+        ArgumentNullException.ThrowIfNull(tableName, nameof(tableName));
+        ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
+        ArgumentNullException.ThrowIfNull(keys, nameof(keys));
+
+        string columnName =
+            propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
             ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
             ?? propertyInfo.Name;
 
-        string? parameterName = propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name?.GetValueOrNull() ?? columnName;
+        string parameterName =
+            propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name?.GetValueOrNull()
+            ?? columnName;
 
         AliasName? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
-
         SqlTypeAttribute? sqlTypeAttribute = propertyInfo.GetCustomAttribute<SqlTypeAttribute>();
 
-        ColumnName = new ColumnName(columnName);
+        ColumnName = new(columnName);
         ColumnTag = new(new(schemaName, tableName), ColumnName);
-        PropertyInfo = propertyInfo;
-        PropertyName = new(PropertyInfo.Name);
-        SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new (PropertyInfo.PropertyType);
 
-        ParameterTag = new ParameterTag(null, parameterName, null, SqlType);
+        PropertyInfo = propertyInfo;
+        PropertyName = new(propertyInfo.Name);
+
+        SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new(propertyInfo.PropertyType);
+
+        ParameterTag = new(null, parameterName, null, SqlType);
         AliasName = aliasName;
         SelectTag = new(ColumnTag, AliasTag.New(aliasName));
 
-        IsKeyPart = keys.Contains(PropertyInfo);
-        IsEncrypted = PropertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;
-        IsKeyVersionProperty = PropertyInfo.GetCustomAttribute<KeyVersionAttribute>() != null;
+        IsKeyPart = keys.Contains(propertyInfo);
+        IsEncrypted = propertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;
+        IsKeyVersionProperty = propertyInfo.GetCustomAttribute<KeyVersionAttribute>() != null;
     }
 
     /// <summary>
@@ -155,8 +165,14 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// A SQL-formatted string representing the column name, including schema
     /// and table context where applicable.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="value"/> is <c>null</c>.
+    /// </exception>
     public static implicit operator string(ColumnInfo value)
-        => value.ColumnTag;
+    {
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
+        return value.ColumnTag;
+    }
 
     /// <summary>
     /// Returns the SQL string representation of this <see cref="ColumnInfo"/> instance,
@@ -203,7 +219,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
     /// <summary>
     /// Determines whether the specified object is equal to the current
-    /// <see cref="ColumnInfo"/> instance, using the <see cref="ColumnTag"/> property
+    /// <see cref="ColumnInfo"/> instance, using the <see cref="ColumnTag"/> property.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
     /// <returns>
@@ -216,7 +232,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </remarks>
     public override bool Equals(object? obj) =>
         obj is ColumnInfo ct && Equals(ct);
-
 
     /// <summary>
     /// Returns a hash code for this instance, consistent with
@@ -242,8 +257,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
 
     /// <summary>
-    /// Determines whether two <see cref="ColumnInfo"/> instances represent
-    /// the same column, using case-insensitive comparison of their tags.
+    /// Determines whether two <see cref="ColumnInfo"/> instances represent the same column.
     /// </summary>
     public static bool operator ==(ColumnInfo? left, ColumnInfo? right)
     {
@@ -253,8 +267,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     }
 
     /// <summary>
-    /// Determines whether two <see cref="ColumnInfo"/> instances do not represent
-    /// the same column.
+    /// Determines whether two <see cref="ColumnInfo"/> instances do not represent the same column.
     /// </summary>
     public static bool operator !=(ColumnInfo? left, ColumnInfo? right)
     {
@@ -262,8 +275,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     }
 
     /// <summary>
-    /// Determines whether this <see cref="ColumnInfo"/> instance represents
-    /// an empty or invalid column (for debugging or validation purposes).
+    /// Determines whether this <see cref="ColumnInfo"/> instance represents an empty or invalid column
+    /// (for debugging or validation purposes).
     /// </summary>
     /// <returns>
     /// <c>true</c> if the string representation of this column is <c>null</c>,

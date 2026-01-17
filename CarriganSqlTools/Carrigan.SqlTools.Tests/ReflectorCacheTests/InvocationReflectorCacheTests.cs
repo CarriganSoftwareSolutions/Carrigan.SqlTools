@@ -1,6 +1,8 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;
 public class InvocationReflectorCacheTests
@@ -31,20 +33,6 @@ public class InvocationReflectorCacheTests
         Assert.Equal(expected, actual);
     }
 
-
-    [Theory]
-    [InlineData(_id)]
-    [InlineData(_property)]
-    [InlineData(_column)]
-    [InlineData(_identifier)]
-    [InlineData(_identifierOverride)]
-    [InlineData(_alias)]
-    [InlineData(_aliasOverride)]
-    [InlineData(_id, _column, _property, _identifier, _identifierOverride, _alias, _aliasOverride)]
-    public void Exists(params string[] columns) =>
-        Assert.True(InvocationReflectorCache<SelectsEntity>.PropertyInfoCache.Exists(columns.Select(column => new ResultColumnName(column))));
-
-
     [Theory]
     [InlineData(_id, _idName)]
     [InlineData(_property, _propertyName)]
@@ -55,4 +43,26 @@ public class InvocationReflectorCacheTests
     [InlineData(_aliasOverride, _aliasOverrideName)]
     public void Get(string column, string expected) =>
         Assert.Equal(expected, InvocationReflectorCache<SelectsEntity>.PropertyInfoCache.Get(new(column)).Name);
+
+
+    [Fact]
+    public void DuplicateResultColumnNames_ThrowsTypeInitializationException()
+    {
+        TypeInitializationException exception =
+            Assert.Throws<TypeInitializationException>(() =>
+                InvocationReflectorCache<InvocationDuplicateColumnsEntity>.PropertyInfoCache.Values.ToList());
+
+        Assert.IsType<ArgumentException>(exception.InnerException);
+    }
+
+    internal class InvocationDuplicateColumnsEntity
+    {
+        [Column("Dup")]
+        public int A { get; set; }
+
+        [Alias("Dup")]
+        public int B { get; set; }
+    }
+
+
 }

@@ -50,24 +50,6 @@ public class PropertyInfoCacheTests
     }
 
     [Theory]
-    [InlineData(_id)]
-    [InlineData(_property)]
-    [InlineData(_column)]
-    [InlineData(_identifier)]
-    [InlineData(_identifierOverride)]
-    [InlineData(_alias)]
-    [InlineData(_aliasOverride)]
-    [InlineData(_id, _column, _property, _identifier, _identifierOverride, _alias, _aliasOverride)]
-    public void Exists(params string[] columns) => 
-        Assert.True(_cache.Exists(columns.Select(column => new ResultColumnName(column))));
-
-    [Theory]
-    [InlineData(_invalid)]
-    [InlineData(_invalid, _id)]
-    public void DoesNotExist(params string[] columns) => 
-        Assert.False(_cache.Equals(columns.Select(column => new ResultColumnName(column))));
-
-    [Theory]
     [InlineData(_id, _idName)]
     [InlineData(_property, _propertyName)]
     [InlineData(_column, _columnName)]
@@ -92,7 +74,8 @@ public class PropertyInfoCacheTests
     [InlineData(_aliasOverride, _aliasOverrideName)]
     public void GetMany_Single(string column, string expected) => 
         Assert.Equal(expected, _cache.GetMany(new ResultColumnName(column)).Single().Name);
-    
+
+
     [Theory]
     [InlineData(new[] { _id }, new[] { _idName })]
     [InlineData(new[] { _property }, new[] { _propertyName })]
@@ -143,4 +126,11 @@ public class PropertyInfoCacheTests
         Assert.Contains(invalid2, exception.Message);
     }
 
+    [Fact]
+    public void Get_NullKey_ThrowsArgumentNullException() =>
+    Assert.Throws<ArgumentNullException>(() => _cache.Get(null!));
+
+    [Fact]
+    public void GetMany_NullParamEnumerable_ThrowsArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => _cache.GetMany(null!));
 }

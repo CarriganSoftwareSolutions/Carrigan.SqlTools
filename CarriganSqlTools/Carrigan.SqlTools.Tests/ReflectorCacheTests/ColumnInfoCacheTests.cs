@@ -33,21 +33,6 @@ public class ColumnInfoCacheTests
     }
 
     [Fact]
-    public void Exists()
-    {
-        Assert.True(_cache.Exists(_streetPropertyName));
-        Assert.True(_cache.Exists(_cityPropertyName));
-        Assert.True(_cache.Exists(_postalCodePropertyName));
-        Assert.True(_cache.Exists(_streetPropertyName, _cityPropertyName));
-        Assert.True(_cache.Exists(_cityPropertyName, _postalCodePropertyName));
-        Assert.True(_cache.Exists(_streetPropertyName, _postalCodePropertyName));
-        Assert.True(_cache.Exists(_streetPropertyName, _cityPropertyName, _postalCodePropertyName));
-    }
-    [Fact]
-    public void DoesNotExist() => 
-        Assert.False(_cache.Exists(_invalid));
-
-    [Fact]
     public void Get()
     {
         Assert.Equal(_streetPropertyName, _cache.Get(_streetPropertyName));

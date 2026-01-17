@@ -1,4 +1,5 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
@@ -24,7 +25,6 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <typeparam name="T">
 /// The entity or data model type that represents a SQL table or stored procedure.
 /// </typeparam>
-
 public class SqlToolsReflectorCache<T>
 {
     /// <summary>
@@ -49,15 +49,20 @@ public class SqlToolsReflectorCache<T>
     /// the fully qualified table identifier for <typeparamref name="T"/>.
     /// </summary>
     internal static TableTag Table =>
-        new (SchemaName, TableName);
+        new(SchemaName, TableName);
 
+    /// <summary>
+    /// The <see cref="IdentifierTypes.ProcedureName"/> associated
+    /// with <typeparamref name="T"/> if it represents a stored procedure.
+    /// </summary>
+    internal static readonly ProcedureName ProcedureName;
 
     /// <summary>
     /// Gets the <see cref="Tags.ProcedureTag"/> representing the stored procedure
     /// associated with <typeparamref name="T"/>, if applicable.
     /// </summary>
     internal static ProcedureTag ProcedureTag =>
-        new (SchemaName, ProcedureName);
+        new(SchemaName, ProcedureName);
 
     /// <summary>
     /// A collection of <see cref="ReflectorCache.ColumnInfo"/> instances representing
@@ -74,8 +79,7 @@ public class SqlToolsReflectorCache<T>
     /// <summary>
     /// Gets all <see cref="ReflectorCache.ColumnInfo"/> instances defined for <typeparamref name="T"/>.
     /// </summary>
-    internal static IEnumerable<ColumnInfo> ColumnInfo =>
-        _ColumnInfoCache.Values;
+    internal static IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
 
     /// <summary>
     /// A collection of <see cref="ReflectorCache.ColumnInfo"/> instances that exclude
@@ -84,15 +88,9 @@ public class SqlToolsReflectorCache<T>
     internal static readonly IEnumerable<ColumnInfo> ColumnInfoLessKeys;
 
     /// <summary>
-    /// The <see cref="IdentifierTypes.ProcedureName"/> associated
-    /// with <typeparamref name="T"/> if it represents a stored procedure.
-    /// </summary>
-    internal readonly static ProcedureName ProcedureName;
-    /// <summary>
     /// The <see cref="ReflectorCache.ColumnInfo"/> representing the encryption key version column,
     /// or <c>null</c> if no encrypted columns are defined for <typeparamref name="T"/>.
     /// </summary>
-    /// <summary>
     internal static ColumnInfo? KeyVersionColumnInfo =>
         KeyVersionColumnsInfo.FirstOrDefault();
 
@@ -103,9 +101,14 @@ public class SqlToolsReflectorCache<T>
     /// <returns>
     /// <c>true</c> if the column is encrypted; otherwise, <c>false</c>.
     /// </returns>
-    internal static bool IsEncrypted(ColumnInfo column) =>
-        _EncryptedColumnInfoHashSet.Contains(column);
-
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="column"/> is <c>null</c>.
+    /// </exception>
+    internal static bool IsEncrypted(ColumnInfo column)
+    {
+        ArgumentNullException.ThrowIfNull(column, nameof(column));
+        return _EncryptedColumnInfoHashSet.Contains(column);
+    }
 
     /// <summary>
     /// Determines whether <typeparamref name="T"/> defines any encrypted columns.
@@ -119,9 +122,6 @@ public class SqlToolsReflectorCache<T>
     /// <summary>
     /// Indicates whether <typeparamref name="T"/> defines one or more columns with an alias name.
     /// </summary>
-    /// <returns>
-    /// <c>true</c> if at least one column has an alias name; otherwise, <c>false</c>.
-    /// </returns>
     internal static readonly bool HasAliasedColumns;
 
     /// <summary>
@@ -141,17 +141,26 @@ public class SqlToolsReflectorCache<T>
     /// <returns>
     /// The matching <see cref="ReflectorCache.ColumnInfo"/> objects.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyNames"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="propertyNames"/> contains disallowed <c>null</c> values.
+    /// </exception>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when one or more <see cref="PropertyName"/> do not match valid
     /// column properties in <typeparamref name="T"/>.
     /// </exception>
     internal static IEnumerable<ColumnInfo> GetColumnsFromProperties(params IEnumerable<PropertyName> propertyNames)
     {
-        InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(propertyNames);
+        ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
+        IEnumerable<PropertyName> keys = propertyNames.Materialize(NullOptionsEnum.Exception);
+
+        InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(keys);
         if (invalidPropertyException is not null)
             throw invalidPropertyException;
         else
-            return _ColumnInfoCache.GetMany(propertyNames);
+            return _ColumnInfoCache.GetMany(keys);
     }
 
     /// <summary>
@@ -180,76 +189,94 @@ public class SqlToolsReflectorCache<T>
     {
         Type = typeof(T);
 
+        IdentifierAttribute? identifierAttribute = Type.GetCustomAttribute<IdentifierAttribute>();
+        TableAttribute? tableAttribute = Type.GetCustomAttribute<TableAttribute>();
+
         string? schemaName =
-            Type.GetCustomAttribute<IdentifierAttribute>()?.Schema?.ToString().GetValueOrNull()
-                ?? Type.GetCustomAttribute<TableAttribute>()?.Schema?.GetValueOrNull();
+            identifierAttribute?.Schema?.ToString().GetValueOrNull()
+                ?? tableAttribute?.Schema?.GetValueOrNull();
+
         SchemaName = SchemaName.New(schemaName);
 
-        TableName = new 
+        TableName = new
         (
-            Type.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
-                ?? Type.GetCustomAttribute<TableAttribute>()?.Name?.GetValueOrNull()
+            identifierAttribute?.Name?.ToString().GetValueOrNull()
+                ?? tableAttribute?.Name?.GetValueOrNull()
                 ?? Type.Name
         );
 
         ProcedureName = new
         (
-            Type.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
+            identifierAttribute?.Name?.ToString().GetValueOrNull()
                 ?? Type.Name
         );
 
-        // Get properties that are public, not marked with [NotMapped], and are either value types or strings
-        IEnumerable<PropertyInfo> properties =
-            ReflectorCache<T>
-                .ReadablePublicInstanceProperties
-                .Where
-                (property => property.GetCustomAttribute<NotMappedAttribute>() == null
-                        && property.PropertyType != typeof(object) //to filter out properties with types that map to SqlDbType.Variant
-                        && SqlTypeCache.GetAllCSharpTypes().Contains(property.PropertyType)
-                );
+        HashSet<Type> supportedTypes = [.. SqlTypeCache.GetAllCSharpTypes()];
 
-        IEnumerable<PropertyInfo> keys =
+        IEnumerable<PropertyInfo> readableProperties =
             ReflectorCache<T>
                 .ReadablePublicInstanceProperties
-                .Where(property => property.GetCustomAttribute<PrimaryKeyAttribute>() != null);
-        if (keys.None())
+                .Materialize(NullOptionsEnum.Exception);
+
+        IEnumerable<PropertyInfo> properties =
+            readableProperties
+                .Where(property =>
+                    property.GetCustomAttribute<NotMappedAttribute>() is null
+                    && property.PropertyType != typeof(object) // filters out SqlDbType.Variant
+                    && supportedTypes.Contains(property.PropertyType))
+                .Materialize(NullOptionsEnum.Exception);
+
+        IEnumerable<PropertyInfo> primaryKeys =
+            readableProperties
+                .Where(property => property.GetCustomAttribute<PrimaryKeyAttribute>() is not null)
+                .Materialize(NullOptionsEnum.Exception);
+
+        IEnumerable<PropertyInfo> keys;
+
+        if (primaryKeys.None())
             keys =
-                ReflectorCache<T>
-                    .ReadablePublicInstanceProperties
-                    .Where(property => property.GetCustomAttribute<KeyAttribute>() != null);
+                readableProperties
+                    .Where(property => property.GetCustomAttribute<KeyAttribute>() is not null)
+                    .Materialize(NullOptionsEnum.Exception);
+        else
+            keys = primaryKeys;
 
         _ColumnInfoCache = new ColumnInfoCache<T, ColumnInfo>
         (
-            properties.Select
-            (
-                property =>
+            properties.Select(property =>
                 new Tuple<PropertyInfo, ColumnInfo>
                 (
                     property,
                     new ColumnInfo(SchemaName, TableName, property, keys)
-                )
-            )
+                ))
         );
 
-        KeyColumnInfo =
+        ColumnInfo =
             _ColumnInfoCache
                 .Values
-                .Where(column => column.IsKeyPart);
+                .Materialize(NullOptionsEnum.Exception);
+
+        KeyColumnInfo =
+            ColumnInfo
+                .Where(column => column.IsKeyPart)
+                .Materialize(NullOptionsEnum.Exception);
 
         ColumnInfoLessKeys =
-            ColumnInfo.Where(column => column.IsKeyPart is false); 
+            ColumnInfo
+                .Where(column => column.IsKeyPart is false)
+                .Materialize(NullOptionsEnum.Exception);
 
         HasKeyProperty = KeyColumnInfo.Any();
 
         KeyVersionColumnsInfo =
-            _ColumnInfoCache
-                .Values
-                .Where(column => column.IsKeyVersionProperty);
+            ColumnInfo
+                .Where(column => column.IsKeyVersionProperty)
+                .Materialize(NullOptionsEnum.Exception);
 
         _EncryptedColumnInfoHashSet =
-            [.._ColumnInfoCache
-                .Values
-                .Where(column => column.IsEncrypted)];
+        [
+            .. ColumnInfo.Where(column => column.IsEncrypted),
+        ];
 
         HasAliasedColumns = ColumnInfo.Any(column => column.AliasName is not null);
     }

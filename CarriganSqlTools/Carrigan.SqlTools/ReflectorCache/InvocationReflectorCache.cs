@@ -1,4 +1,5 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -20,13 +21,12 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// </typeparam>
 /// <remarks>
 /// <see cref="InvocationReflectorCache{T}"/> does not filter properties based on type,
-/// unlike <see cref="SqlToolsReflectorCache{T}"/>.  
-/// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.  
+/// unlike <see cref="SqlToolsReflectorCache{T}"/>.
+/// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.
 /// In contrast, <see cref="InvocationReflectorCache{T}"/> optimistically attempts to map any data returned.
 /// Since a query should never return unwanted or non-mappable data, this approach is safe.
 /// By comparison, C# classes often contain properties that cannot be mapped to SQL data.
 /// </remarks>
-
 internal static class InvocationReflectorCache<T>
 {
     /// <summary>
@@ -65,16 +65,31 @@ internal static class InvocationReflectorCache<T>
     /// Since a query should never return unwanted or non-mappable data, this approach is safe.
     /// By comparison, C# classes often contain properties that cannot be mapped to SQL data.
     /// </remarks>
-    static InvocationReflectorCache() =>
-        PropertyInfoCache = new
-                (
-                    // Although this consumes a lower-level cache, we keep a dedicated layer here
-                    // to isolate invocation/materialization concerns and minimize repeated work.
-                    ReflectorCache<T>
-                        .WriteablePublicInstanceProperties
-                        .Where(property => property.GetCustomAttribute<NotMappedAttribute>() == null)
-                        .Select(property => new Tuple<ResultColumnName, PropertyInfo>(GetResultColumnName(property), property))
-                );
+    static InvocationReflectorCache()
+    {
+        IEnumerable<Tuple<ResultColumnName, PropertyInfo>> mappings =
+            ReflectorCache<T>
+                .WriteablePublicInstanceProperties
+                .Where(static property => property.IsDefined(typeof(NotMappedAttribute), inherit: true) is false)
+                .Select(static property => new Tuple<ResultColumnName, PropertyInfo>(GetResultColumnName(property), property))
+                .Materialize(NullOptionsEnum.Exception);
+
+        IEnumerable<IGrouping<ResultColumnName, Tuple<ResultColumnName, PropertyInfo>>> duplicates =
+            mappings
+                .GroupBy(static tuple => tuple.Item1)
+                .Where(static grouping => grouping.Skip(1).Any());
+
+        if (duplicates.Any())
+        {
+            string details = 
+                string.Join("; ", duplicates.Select(static grouping =>$"{grouping.Key}: {string.Join(", ", grouping.Select(static tuple => tuple.Item2.Name))}"));
+
+            throw new ArgumentException(
+                $"Duplicate result column names were detected while building {nameof(InvocationReflectorCache<T>)} for {Type.Name}. Duplicates: {details}.");
+        }
+
+        PropertyInfoCache = new(mappings);
+    }
 
     /// <summary>
     /// Computes the <see cref="ResultColumnName"/> for a given property based on
@@ -86,12 +101,19 @@ internal static class InvocationReflectorCache<T>
     /// <returns>
     /// The <see cref="ResultColumnName"/> that should be used to match result-set columns.
     /// </returns>
-    internal static ResultColumnName GetResultColumnName(PropertyInfo propertyInfo) =>
-        new
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyInfo"/> is <c>null</c>.
+    /// </exception>
+    internal static ResultColumnName GetResultColumnName(PropertyInfo propertyInfo)
+    {
+        ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
+
+        return new
         (
             propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name?.ToString().GetValueOrNull()
                 ?? propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
                 ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
                 ?? propertyInfo.Name
         );
+    }
 }
