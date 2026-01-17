@@ -88,4 +88,9 @@ public  class ColumnsTests
 
         Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnInfo);
     }
+
+    [Fact]
+    public void ColumnValues_PropertyNameConstructor_Null_ThrowsArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => new Column<ColumnTable>((PropertyName)null!));
+
 }

@@ -162,4 +162,12 @@ public class AndTests
         col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
         col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
     }
+
+    [Fact]
+    public void And_ContainsNullPredicate_ThrowsNullReferenceException() =>
+    Assert.Throws<NullReferenceException>(() => new And(
+    [
+        new Parameter("P1", 1, null),
+        null!,
+    ]));
 }

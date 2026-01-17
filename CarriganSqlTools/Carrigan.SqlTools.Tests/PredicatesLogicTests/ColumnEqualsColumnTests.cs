@@ -63,4 +63,25 @@ public class ColumnEqualsColumnTests
         Assert.Equal("SELECT [Right].* FROM [Right] JOIN [Last] ON ([Right].[LastId] = [Last].[Id])", query.QueryText);
         Assert.Empty(query.Parameters);
     }
+
+    [Fact]
+    public void LeftEmpty_ThrowsInvalidPropertyException() =>
+    Assert.Throws<InvalidPropertyException<JoinLeftTable>>(() =>
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(string.Empty, nameof(JoinRightTable.Id)));
+
+    [Fact]
+    public void RightEmpty_ThrowsInvalidPropertyException() =>
+        Assert.Throws<InvalidPropertyException<JoinRightTable>>(() =>
+            new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), string.Empty));
+
+    [Fact]
+    public void LeftNull_ThrowsInvalidPropertyException() =>
+        Assert.Throws<InvalidPropertyException<JoinLeftTable>>(() =>
+            new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(null!, nameof(JoinRightTable.Id)));
+
+    [Fact]
+    public void RightNull_ThrowsInvalidPropertyException() =>
+        Assert.Throws<InvalidPropertyException<JoinRightTable>>(() =>
+            new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), null!));
+
 }

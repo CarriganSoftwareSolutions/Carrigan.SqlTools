@@ -1,13 +1,13 @@
 ﻿using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
+/// <summary>
+/// Represents an empty predicate that emits no SQL and has no parameters.
+/// Used for join types that do not have an <c>ON</c> clause (for example, <c>CROSS JOIN</c>).
+/// </summary>
 internal class EmptyPredicate : Predicates
 {
     internal EmptyPredicate() : base([])

@@ -290,4 +290,12 @@ public class GreaterThanTests
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
+
+    [Fact]
+    public void GreaterThan_LeftNull_Throws() =>
+    Assert.Throws<NullReferenceException>(() => new GreaterThan(null!, new Parameter("P1", 1)));
+
+    [Fact]
+    public void GreaterThan_RightNull_Throws() =>
+        Assert.Throws<NullReferenceException>(() => new GreaterThan(new Parameter("P1", 1), null!));
 }

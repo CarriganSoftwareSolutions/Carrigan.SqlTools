@@ -1,7 +1,7 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Represents SQL’s logical <c>AND</c> operator, used to combine two or more boolean predicates.
+/// Represents SQL's logical <c>AND</c> operator, used to combine two or more boolean predicates.
 /// </summary>
 /// <remarks>
 /// The <see cref="And"/> operator intelligently handles any number of predicates:
@@ -50,7 +50,6 @@
 /// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-/// 
 public class And : LogicalOperator
 {
     /// <summary>
@@ -66,6 +65,12 @@ public class And : LogicalOperator
     /// <item><description>If only one predicate is provided, that predicate is used directly.</description></item>
     /// </list>
     /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicates"/> is <c>null</c> or contains no elements.
+    /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
+    /// </exception>
     public And(params IEnumerable<Predicates> predicates) : base("AND", predicates)
     {
     }

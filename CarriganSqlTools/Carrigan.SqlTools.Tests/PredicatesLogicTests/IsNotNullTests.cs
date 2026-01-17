@@ -399,4 +399,9 @@ public class IsNotNullTests
         _ = and.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
         _ = and.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
+
+    [Fact]
+    public void IsNotNull_NullValue_ThrowsArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => new IsNotNull(null!));
+
 }

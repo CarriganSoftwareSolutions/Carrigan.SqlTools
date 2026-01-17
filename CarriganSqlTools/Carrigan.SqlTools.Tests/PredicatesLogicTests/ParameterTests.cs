@@ -265,4 +265,12 @@ public class ParameterTests
         Assert.Equal(expectedKey, singleParameter.Key);
         Assert.Equal(expectedValue, singleParameter.Value);
     }
+
+    [Fact]
+    public void ToSqlFragments_NullBranchName_ThrowsArgumentNullException()
+    {
+        Parameter parameter = new("Test", 1);
+        Assert.Throws<ArgumentNullException>(() => parameter.ToSqlFragments(null!));
+    }
+
 }

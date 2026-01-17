@@ -292,4 +292,13 @@ public class NotEqualsTests
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
+
+    [Fact]
+    public void NotEqual_LeftNull_Throws() =>
+    Assert.Throws<NullReferenceException>(() => new NotEqual(null!, new Parameter("P1", 1)));
+
+    [Fact]
+    public void NotEqual_RightNull_Throws() =>
+        Assert.Throws<NullReferenceException>(() => new NotEqual(new Parameter("P1", 1), null!));
+
 }

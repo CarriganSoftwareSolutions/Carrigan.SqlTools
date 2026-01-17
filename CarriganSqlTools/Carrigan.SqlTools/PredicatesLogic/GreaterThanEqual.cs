@@ -1,10 +1,13 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Represents SQL’s greater-than-or-equal-to (<c>&gt;=</c>) comparison operator,
+/// Represents SQL's greater-than-or-equal (<c>&gt;=</c>) comparison operator,
 /// used to compare two expressions within <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
+/// <para>
+/// <see cref="Column{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
+/// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterTotal = new("Total", 1776.00m);
 /// Column<Order> columnTotal = new(nameof(Order.Total));
@@ -23,7 +26,7 @@ public class GreaterThanEqual : ComparisonOperator
     /// <summary>
     /// Initializes a new instance of the <see cref="GreaterThanEqual"/> class,
     /// representing a predicate that compares two values using the SQL
-    /// greater-than-or-equal-to (<c>&gt;=</c>) operator.
+    /// greater-than-or-equal (<c>&gt;=</c>) operator.
     /// </summary>
     /// <param name="left">
     /// The left-hand operand of the comparison, typically a <see cref="Column{T}"/> instance.
@@ -31,7 +34,10 @@ public class GreaterThanEqual : ComparisonOperator
     /// <param name="right">
     /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.
     /// </param>
-    public GreaterThanEqual(Predicates left, Predicates right) : base (left, right, ">=")
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.
+    /// </exception>
+    public GreaterThanEqual(Predicates left, Predicates right) : base(left, right, ">=")
     {
     }
 }

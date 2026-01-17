@@ -1,10 +1,9 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using System.Data.Common;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -19,7 +18,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </remarks>
 /// <example>
 /// <para>
-/// <see cref="ColumnValue{T}"/> validates the names of the properties, and throws an error if the property isn't valid
+/// <see cref="ColumnValue{T}"/> validates property names and throws an exception if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
@@ -54,30 +53,31 @@ public class ColumnValue<T> : Predicates
     /// This constructor validates that <paramref name="propertyName"/> maps to a valid property
     /// on <typeparamref name="T"/>. If it does not, an exception is thrown.
     /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyName"/> is <c>null</c>.
+    /// </exception>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is not eligible
-    /// for column mapping.
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid, eligible property on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown only if a property passes validation but no matching column metadata is returned.
+    /// This is not expected under normal conditions.
     /// </exception>
     public ColumnValue(PropertyName propertyName, object parameterValue) : this(CreateValue(propertyName, parameterValue))
     {
     }
 
     /// <summary>
-    /// Used as a hack to get around the C# limitation of not being able to call the base constructor at the end of the constructor.
+    /// Private constructor used to ensure the base <see cref="Predicates"/> type is constructed
+    /// with the composed predicate as a child node.
     /// </summary>
-    /// <param name="equal">an <see cref="Equal"/> </param>
-    private ColumnValue(Equal equal) : base([equal]) => 
+    /// <param name="equal">The composed <see cref="Equal"/> predicate.</param>
+    private ColumnValue(Equal equal) : base([equal]) =>
         value = equal;
 
-    /// <summary>
-    /// Used to build the underlying <see cref="Equal"/> class.
-    /// </summary>
-    /// <param name="propertyName">a parameter name</param>
-    /// <param name="parameterValue">and the parameter value</param>
-    /// <returns></returns>
     private static Equal CreateValue(PropertyName propertyName, object parameterValue)
     {
-        _ = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName); // called for validation
+        ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
         Column<T> left = new(propertyName);
         Parameter right = new(left.ColumnInfo.ParameterTag, parameterValue);
@@ -102,12 +102,16 @@ public class ColumnValue<T> : Predicates
     /// <see cref="PropertyName"/>.
     /// </remarks>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is not eligible
-    /// for column mapping.
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid, eligible property on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown only if a property passes validation but no matching column metadata is returned.
+    /// This is not expected under normal conditions.
     /// </exception>
     [ExternalOnly]
     public ColumnValue(string propertyName, object parameterValue) : this(new PropertyName(propertyName), parameterValue)
-    { }
+    {
+    }
 
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
@@ -117,7 +121,7 @@ public class ColumnValue<T> : Predicates
     /// duplicate parameter names when necessary.
     /// </param>
     /// <param name="branchName">
-    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
+    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
     /// </param>
     /// <param name="duplicates">
     /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
@@ -128,7 +132,7 @@ public class ColumnValue<T> : Predicates
     /// </returns>
     internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
     {
-        foreach(SqlFragment fragment in value.ToSql(prefix, branchName, duplicates))
+        foreach (SqlFragment fragment in value.ToSql(prefix, branchName, duplicates))
             yield return fragment;
     }
 }

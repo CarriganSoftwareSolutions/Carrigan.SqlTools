@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
@@ -15,7 +16,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </typeparam>
 /// <example>
 /// <para>
-///  <see cref="Column{T}"/> validates property names and throws an exception if a property name is invalid.
+/// <see cref="Column{T}"/> validates property names and throws an exception if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterName = new("Name", "Hank");
@@ -33,7 +34,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 public class Column<T> : ColumnBase
 {
     /// <summary>
-    /// The name of the property representing the column
+    /// The name of the property representing the column.
     /// </summary>
     internal PropertyName PropertyName { get; }
 
@@ -45,28 +46,46 @@ public class Column<T> : ColumnBase
     /// An <see cref="ArgumentException"/> describing the invalid property and the corresponding model/table context.
     /// </returns>
     internal static ArgumentException NoSuchProperty(PropertyName propertyName) =>
-        new ($"{propertyName} is not the valid name of a property in the class, {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(propertyName));
+        new($"{propertyName} is not a valid property name on {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(propertyName));
 
     /// <summary>
     /// Initializes a new <see cref="Column{T}"/> using a property name.
     /// </summary>
     /// <param name="propertyName">The property name that identifies the column.</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="propertyName"/> does not map to a valid property on <typeparamref name="T"/>.
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyName"/> is <c>null</c>.
     /// </exception>
-    [ExternalOnlyAttribute]
-    public Column(string propertyName) : this(new PropertyName(propertyName)) { }
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid, eligible property on <typeparamref name="T"/>.
+    /// </exception>
+    [ExternalOnly]
+    public Column(string propertyName) : this(new PropertyName(propertyName))
+    { }
 
     /// <summary>
     /// Initializes a new <see cref="Column{T}"/> using a <see cref="PropertyName"/> wrapper.
     /// </summary>
     /// <param name="propertyName">The property name wrapper that identifies the column.</param>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="propertyName"/> does not map to a valid property on <typeparamref name="T"/>.
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyName"/> is <c>null</c>.
     /// </exception>
-    public Column(PropertyName propertyName)
-        : base(SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault() ?? throw NoSuchProperty(propertyName)) => 
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid, eligible property on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown only if the property passes validation but no matching column metadata is returned.
+    /// This is not expected under normal conditions.
+    /// </exception>
+    public Column(PropertyName propertyName) : base(GetColumnInfo(propertyName)) =>
         PropertyName = propertyName;
+
+    private static ColumnInfo GetColumnInfo(PropertyName propertyName)
+    {
+        ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
+
+        return SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault()
+            ?? throw NoSuchProperty(propertyName);
+    }
 
     /// <summary>
     /// Produces the SQL fragment represented by this column.
@@ -76,7 +95,7 @@ public class Column<T> : ColumnBase
     /// Not used by columns.
     /// </param>
     /// <param name="branchName">
-    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
+    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
     /// </param>
     /// <param name="duplicates">
     /// The set of user-supplied parameter names that are duplicated and may require a prefix.

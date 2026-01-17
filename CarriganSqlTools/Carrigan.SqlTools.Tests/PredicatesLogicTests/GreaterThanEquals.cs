@@ -294,4 +294,13 @@ public class GreaterThanEqualsTests
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
+
+    [Fact]
+    public void GreaterThanEqual_LeftNull_Throws() =>
+    Assert.Throws<NullReferenceException>(() => new GreaterThanEqual(null!, new Parameter("P1", 1)));
+
+    [Fact]
+    public void GreaterThanEqual_RightNull_Throws() =>
+        Assert.Throws<NullReferenceException>(() => new GreaterThanEqual(new Parameter("P1", 1), null!));
+
 }

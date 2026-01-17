@@ -1,12 +1,12 @@
 ﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Represents SQL’s <c>&lt;&gt;</c> (Not Equal) comparison operator,
-/// used to test inequality between two expressions in <c>WHERE</c> or <c>JOIN</c> clauses.
+/// Represents SQL's not-equal (<c>&lt;&gt;</c>) comparison operator,
+/// used in <c>WHERE</c> and <c>JOIN</c> clauses.
 /// </summary>
 /// <example>
 /// <para>
-/// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// <see cref="Column{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterName = new("Name", "Hank");
@@ -25,7 +25,8 @@ public class NotEqual : ComparisonOperator
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="NotEqual"/> class,
-    /// representing SQL’s <c>&lt;&gt;</c> (Not Equal) comparison operator.
+    /// representing a predicate that compares two values using the SQL
+    /// not-equal (<c>&lt;&gt;</c>) operator.
     /// </summary>
     /// <param name="left">
     /// The left-hand operand of the comparison, typically a <see cref="Column{T}"/> instance.
@@ -33,7 +34,10 @@ public class NotEqual : ComparisonOperator
     /// <param name="right">
     /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.
     /// </param>
-    public NotEqual(Predicates left, Predicates right) : base (left, right, "<>")
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.
+    /// </exception>
+    public NotEqual(Predicates left, Predicates right) : base(left, right, "<>")
     {
     }
 }

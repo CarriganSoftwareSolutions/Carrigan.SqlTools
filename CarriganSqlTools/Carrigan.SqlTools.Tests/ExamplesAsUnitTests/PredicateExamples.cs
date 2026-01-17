@@ -271,9 +271,8 @@ public class PredicateExamples
     {
         //This method of having an add with only one predicate is supported for uses cases when you might only have one predicate, or might have more.
         //This way you don't HAVE to test for an the only one edge case. Instead OR intelligently ignores itself.
-        Parameter parameterName = new("Name", "Hank");
-        Column<Customer> columnName = new(nameof(Customer.Name));
-        Equal equalName = new(columnName, parameterName);
+
+        ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
         Or or = new(equalName);
         SqlQuery query = customerGenerator.Select(null, null, or, null, null);
 

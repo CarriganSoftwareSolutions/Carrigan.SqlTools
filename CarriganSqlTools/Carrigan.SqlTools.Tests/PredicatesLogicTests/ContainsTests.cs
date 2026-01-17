@@ -16,4 +16,15 @@ public class ContainsTests
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Contains_NullColumn_ThrowsNullReferenceException() =>
+    Assert.Throws<NullReferenceException>(() =>
+        new Contains<ColumnTable>(null!, new Parameter("Col1", "test", null)));
+
+    [Fact]
+    public void Contains_NullParameter_ThrowsNullReferenceException() =>
+        Assert.Throws<NullReferenceException>(() =>
+            new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), null!));
+
 }

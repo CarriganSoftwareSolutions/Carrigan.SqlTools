@@ -165,4 +165,13 @@ public class OrTests
         col = or.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
         col = or.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
     }
+
+    [Fact]
+    public void Or_ContainsNullPredicate_ThrowsNullReferenceException() =>
+    Assert.Throws<NullReferenceException>(() => new Or(
+    [
+        new Parameter("P1", 1, null),
+        null!,
+    ]));
+
 }

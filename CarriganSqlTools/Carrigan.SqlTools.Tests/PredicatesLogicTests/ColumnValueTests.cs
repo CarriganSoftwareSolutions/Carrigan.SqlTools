@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -81,4 +82,9 @@ public class ColumnValueTests
         string actualString = byColumnValues.ToSqlFragments("Parameter").ToSql();
         Assert.Equal(expectedString, actualString);
     }
+
+    [Fact]
+    public void ByColumnValue_PropertyNameNull_ThrowsArgumentNullException() =>
+        Assert.Throws<ArgumentNullException>(() => new ColumnValue<ColumnTable>((PropertyName)null!, "1"));
+
 }

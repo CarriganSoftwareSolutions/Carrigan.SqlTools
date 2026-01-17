@@ -12,7 +12,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 /// <example>
 /// <para>
-/// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// <see cref="Column{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterName = new("Name", "Hank");
@@ -64,18 +64,27 @@ public class Parameter : Predicates
     /// </remarks>
     /// <param name="parameter">The base parameter name (do not include the leading <c>@</c>).</param>
     /// <param name="value">The value to bind; <c>null</c> becomes <see cref="DBNull.Value"/> at materialization time.</param>
-    /// <exception cref="InvalidSqlIdentifierException">
-    /// Thrown by <see cref="ParameterTag"/> if <paramref name="parameter"/> is empty or fails identifier validation.
+    /// <param name="sqlType">
+    /// Optional explicit SQL type definition used to validate <paramref name="value"/> before SQL generation.
+    /// When not provided, a type definition is inferred from <paramref name="value"/>.
+    /// </param>
+    /// <exception cref="InvalidParameterIdentifierException">
+    /// Thrown when <paramref name="parameter"/> is invalid (including <c>null</c>, empty, or failing identifier validation).
+    /// </exception>
+    /// <exception cref="SqlTypeMismatchException">
+    /// Thrown when <paramref name="value"/> is incompatible with the provided <paramref name="sqlType"/>.
     /// </exception>
     [ExternalOnly]
     public Parameter(string parameter, object? value, SqlTypeDefinition? sqlType = null) : base([])
     {
         SqlTypeDefinition sqlTypeDefinition = sqlType ?? new(value);
+
         SqlTypeMismatchException? exception = null;
-        if(value is not null)
+        if (value is not null)
         {
             exception = SqlTypeMismatchException.Validate(value, sqlTypeDefinition.Type);
         }
+
         if (exception is not null)
             throw exception;
 
@@ -92,14 +101,24 @@ public class Parameter : Predicates
     /// <param name="prefix">
     /// The recursion-built prefix used to disambiguate duplicate user-supplied parameter names.
     /// </param>
+    /// <param name="branchName">
+    /// The branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
+    /// </param>
     /// <param name="duplicates">
     /// The set of user-supplied parameter tags identified as duplicates within the predicate tree.
     /// </param>
     /// <returns>
     /// The SQL parameter name (e.g., <c>@Parameter_Name</c> or a prefixed variant).
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
+    /// </exception>
     internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
     {
+        ArgumentNullException.ThrowIfNull(prefix, nameof(prefix));
+        ArgumentNullException.ThrowIfNull(branchName, nameof(branchName));
+        ArgumentNullException.ThrowIfNull(duplicates, nameof(duplicates));
+
         yield return new SqlFragmentParameter(new Parameter(GetFinalParameterName(prefix, branchName, duplicates), Value));
     }
 
@@ -110,7 +129,7 @@ public class Parameter : Predicates
     /// The recursion-built prefix used for disambiguation when the base name is a duplicate.
     /// </param>
     /// <param name="branchName">
-    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
+    /// The branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
     /// </param>
     /// <param name="duplicates">
     /// The set of user-supplied parameter tags identified as duplicates within the predicate tree.
