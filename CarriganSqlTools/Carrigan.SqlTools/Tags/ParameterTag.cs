@@ -1,4 +1,5 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
@@ -45,7 +46,7 @@ namespace Carrigan.SqlTools.Tags;
 /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 /// ]]></code>
 /// </example>
-public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>, IEqualityComparer<ParameterTag>
+public class ParameterTag : StringWrapper
 {
     /// <summary>
     /// The base (core) parameter name. This value must not be <c>null</c>, empty, or whitespace.
@@ -81,7 +82,8 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// <exception cref="InvalidParameterIdentifierException">
     /// Thrown when <paramref name="parameterName"/> or the combined result is invalid per SQL identifier rules.
     /// </exception>
-    internal ParameterTag(string? prefix, string parameterName, string? index, SqlTypeDefinition? sqlType)
+    internal ParameterTag(string? prefix, string parameterName, string? index, SqlTypeDefinition? sqlType) :
+        base(CreateParameterTagString(prefix, parameterName, index), StringComparison.OrdinalIgnoreCase)
     {
         if (SqlParameterPattern.Fails(parameterName))
             throw new InvalidParameterIdentifierException(parameterName);
@@ -99,7 +101,7 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
     /// Deeper copy constructor for the parameter tag.
     /// </summary>
     /// <param name="parameter"></param>
-    private ParameterTag(ParameterTag parameter)
+    private ParameterTag(ParameterTag parameter) : base(CreateParameterTagString(parameter._prefix, parameter._parameterBaseName, parameter._index), StringComparison.OrdinalIgnoreCase)
     {
         _parameterBaseName = parameter._parameterBaseName;
         _prefix = parameter._prefix;
@@ -184,139 +186,6 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
         GetParameter(encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
 
     /// <summary>
-    /// Implicitly converts a <see cref="ParameterTag"/> to its SQL string representation,
-    /// combining prefix, base name, and index (if present) with underscores.
-    /// </summary>
-    /// <param name="value">The <see cref="ParameterTag"/> to convert.</param>
-    /// <returns>
-    /// The SQL parameter name string (e.g., <c>Prefix_Column_Index</c>; missing parts are omitted).
-    /// </returns>
-    public static implicit operator string(ParameterTag value)
-    {
-        IEnumerable<string?> stringParts = new List<string?>([value._prefix, value._parameterBaseName, value._index])
-            .Where(part => part.IsNotNullOrWhiteSpace());
-        return string.Join('_',  stringParts);
-    }
-
-    /// <summary>
-    /// Returns the SQL string representation of this <see cref="ParameterTag"/> instance.
-    /// </summary>
-    /// <returns>
-    /// The SQL parameter name string (e.g., <c>Prefix_Column_Index</c>; missing parts are omitted).
-    /// </returns>
-    public override string ToString() =>
-        (string)this;
-
-    /// <summary>
-    /// Compares this <see cref="ParameterTag"/> with another instance to determine sort order.
-    /// </summary>
-    /// <param name="other">The other <see cref="ParameterTag"/> to compare.</param>
-    /// <returns>
-    /// A signed integer: <c>0</c> if equal; less than <c>0</c> if this instance precedes
-    /// <paramref name="other"/>; greater than <c>0</c> if it follows.
-    /// </returns>
-    /// <remarks>
-    /// Comparison is case-insensitive via <see cref="StringComparison.OrdinalIgnoreCase"/>.
-    /// If <paramref name="other"/> is <c>null</c>, this instance is considered greater.
-    /// </remarks>
-    public int CompareTo(ParameterTag? other)
-    {
-        if (other is null) return 1;
-        return string.Compare(this, (string)other, StringComparison.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// Determines whether this <see cref="ParameterTag"/> is equal to another instance.
-    /// </summary>
-    /// <param name="other">The other <see cref="ParameterTag"/> to compare.</param>
-    /// <returns>
-    /// <c>true</c> if both represent the same parameter (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    /// <remarks>Equality uses <see cref="StringComparison.OrdinalIgnoreCase"/>.</remarks>
-    public bool Equals(ParameterTag? other)
-    {
-        if (other is null) return false;
-        return string.Equals((string)this, (string)other, StringComparison.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// Determines whether the specified object is equal to this <see cref="ParameterTag"/>.
-    /// </summary>
-    /// <param name="obj">The object to compare with this instance.</param>
-    /// <returns>
-    /// <c>true</c> if <paramref name="obj"/> is a <see cref="ParameterTag"/> representing the same
-    /// parameter (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    public override bool Equals(object? obj) =>
-        obj is ParameterTag ct && Equals(ct);
-
-    /// <summary>
-    /// Returns a hash code for this <see cref="ParameterTag"/>, consistent with case-insensitive equality.
-    /// </summary>
-    /// <returns>
-    /// An integer hash code computed from the string representation using
-    /// <see cref="StringComparison.OrdinalIgnoreCase"/>.
-    /// </returns>
-    public override int GetHashCode() =>
-        ((string) this).GetHashCode(StringComparison.OrdinalIgnoreCase);
-
-    /// <summary>
-    /// Determines whether two <see cref="ParameterTag"/> instances are equal.
-    /// </summary>
-    /// <param name="x">The first <see cref="ParameterTag"/> to compare.</param>
-    /// <param name="y">The second <see cref="ParameterTag"/> to compare.</param>
-    /// <returns><c>true</c> if both represent the same parameter (case-insensitive); otherwise, <c>false</c>.</returns>
-    public bool Equals(ParameterTag? x, ParameterTag? y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (x is null || y is null) return false;
-        return x.Equals(y);
-    }
-
-    /// <summary>
-    /// Returns a hash code for the specified <see cref="ParameterTag"/> instance,
-    /// consistent with case-insensitive equality semantics.
-    /// </summary>
-    /// <param name="obj">The <see cref="ParameterTag"/> for which to compute a hash code.</param>
-    /// <returns>An integer hash code for <paramref name="obj"/>.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="obj"/> is <c>null</c>.</exception>
-    public int GetHashCode(ParameterTag obj) =>
-        obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
-
-    /// <summary>
-    /// Determines whether two <see cref="ParameterTag"/> instances are equal.
-    /// </summary>
-    /// <param name="left">The first <see cref="ParameterTag"/> to compare.</param>
-    /// <param name="right">The second <see cref="ParameterTag"/> to compare.</param>
-    /// <returns><c>true</c> if both represent the same parameter (case-insensitive); otherwise, <c>false</c>.</returns>
-    public static bool operator ==(ParameterTag? left, ParameterTag? right)
-    {
-        if (ReferenceEquals(left, right)) return true;
-        if (left is null || right is null) return false;
-        return left.Equals(right);
-    }
-
-    /// <summary>
-    /// Determines whether two <see cref="ParameterTag"/> instances are not equal.
-    /// </summary>
-    /// <param name="left">The first <see cref="ParameterTag"/> to compare.</param>
-    /// <param name="right">The second <see cref="ParameterTag"/> to compare.</param>
-    /// <returns><c>true</c> if the instances differ; otherwise, <c>false</c>.</returns>
-    public static bool operator !=(ParameterTag? left, ParameterTag? right)
-    {
-        return !(left == right);
-    }
-
-    /// <summary>
-    /// Determines whether this <see cref="ParameterTag"/> is empty.
-    /// </summary>
-    /// <returns>
-    /// <c>true</c> if the parameter string is <c>null</c>, empty, or whitespace; otherwise, <c>false</c>.
-    /// </returns>
-    internal bool IsEmpty() =>
-        ((string)this).IsNullOrWhiteSpace();
-
-    /// <summary>
     /// Creates a new <see cref="ParameterTag"/> with text prepended to the existing prefix (if any).
     /// </summary>
     /// <param name="textToPrepend">
@@ -343,5 +212,29 @@ public class ParameterTag : IComparable<ParameterTag>, IEquatable<ParameterTag>,
             return new(_prefix, _parameterBaseName, newIndex, SqlType);
         else
             throw new ArgumentException("Index was already defined on the Parameter");
+    }
+
+    private static string CreateParameterTagString(string? prefix, string parameterName, string? index)
+    {
+        if (SqlParameterPattern.Fails(parameterName))
+            throw new InvalidParameterIdentifierException(parameterName);
+
+        IEnumerable<string?> parts =
+        [
+            prefix,
+            parameterName,
+            index
+        ];
+
+        IEnumerable<string?> nonEmptyParts =
+            parts.Where(static part => part.IsNotNullOrWhiteSpace());
+
+        string parameterTag =
+            string.Join('_', nonEmptyParts);
+
+        if (SqlParameterPattern.Fails(parameterTag))
+            throw new InvalidParameterIdentifierException(parameterTag);
+
+        return parameterTag;
     }
 }

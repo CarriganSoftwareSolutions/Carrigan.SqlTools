@@ -94,8 +94,6 @@ public class ColumnInfoTests
         int hashCode = columnInfo.GetHashCode();
 
         Assert.Equal(expectedColumnTag, columnInfo.ColumnTag);
-        Assert.Equal(expectedColumnTag, columnInfo.ColumnTag);
-        Assert.Equal(expectedColumnTag, columnInfo.ColumnTag);
         Assert.Equal(expectedColumnName, columnInfo.ColumnName);
         Assert.Equal(expectedTableTag, columnInfo.ColumnTag.TableTag);
         Assert.Equal(expectedPropertyName, columnInfo.PropertyInfo.Name);

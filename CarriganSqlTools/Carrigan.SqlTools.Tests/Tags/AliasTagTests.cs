@@ -368,4 +368,40 @@ public class AliasTagTests
         Assert.NotEqual(tag1, tag2);
         Assert.True(tag1 != tag2);
     }
+
+    [Theory]
+    [InlineData("a", "b", -1)]
+    [InlineData("b", "a", 1)]
+    [InlineData("a", "a", 0)]
+    public void CompareTo_OrdinalOrdering(string left, string right, int expectedSign)
+    {
+        AliasTag leftTag = new(new AliasName(left));
+        AliasTag rightTag = new(new AliasName(right));
+
+        int compare = leftTag.CompareTo(rightTag);
+        int sign = Math.Sign(compare);
+
+        Assert.Equal(expectedSign, sign);
+    }
+
+    [Fact]
+    public void CompareTo_Null()
+    {
+        AliasTag tag = new(new AliasName("a"));
+        Assert.Equal(1, tag.CompareTo(null));
+    }
+
+    [Fact]
+    public void EqualityComparer_Equals_NullNull()
+    {
+        AliasTag comparer = new(new AliasName("x"));
+        Assert.True(comparer.Equals(null, null));
+    }
+
+    [Fact]
+    public void EqualityComparer_GetHashCode_Null_Exception()
+    {
+        AliasTag comparer = new(new AliasName("x"));
+        Assert.Throws<ArgumentNullException>(() => comparer.GetHashCode(null!));
+    }
 }
