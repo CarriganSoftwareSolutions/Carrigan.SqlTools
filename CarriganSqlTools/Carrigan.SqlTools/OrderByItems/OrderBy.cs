@@ -1,4 +1,6 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
@@ -46,26 +48,20 @@ public class OrderBy : OrderByBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
     /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="orderByItems"/> contains disallowed <c>null</c> values.
+    /// </exception>
     public OrderBy(params IEnumerable<OrderByItemBase> orderByItems)
     {
         ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
 
-        foreach (OrderByItemBase orderByItem in orderByItems)
-        {
-            ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItems));
-        }
-
-        _orderByItems = orderByItems;
+        _orderByItems = orderByItems.Materialize(NullOptionsEnum.Exception);
     }
 
     /// <summary>
     /// Determines whether the specified <paramref name="orderByItem"/> is present
     /// in the <c>ORDER BY</c> clause.
     /// </summary>
-    /// <remarks>
-    /// Equality is determined by the <see cref="OrderByItemBase"/> implementation’s
-    /// equality semantics.
-    /// </remarks>
     /// <param name="orderByItem">The individual order-by item to check.</param>
     /// <returns>
     /// <c>true</c> if the item is contained in this <c>ORDER BY</c>; otherwise, <c>false</c>.
@@ -110,11 +106,8 @@ public class OrderBy : OrderByBase
     /// <summary>
     /// Determines whether the <c>ORDER BY</c> clause is empty.
     /// </summary>
-    /// <returns>
-    /// <c>true</c> if the <c>ORDER BY</c> clause contains no items; otherwise, <c>false</c>.
-    /// </returns>
     public override bool IsEmpty() =>
-        OrderByItemsAsEnumerable().IsNullOrEmpty();
+        _orderByItems.IsNullOrEmpty();
 
     /// <summary>
     /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="OrderByItemBase"/> appended.

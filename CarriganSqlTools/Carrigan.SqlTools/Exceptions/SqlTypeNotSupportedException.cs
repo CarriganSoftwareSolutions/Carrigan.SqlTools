@@ -1,4 +1,5 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.PredicatesLogic;
 using System.Data;
 using System.Reflection;
@@ -54,20 +55,23 @@ public class SqlTypeNotSupportedException : Exception
     {
         ArgumentNullException.ThrowIfNull(sqlTypes, nameof(sqlTypes));
 
+        IEnumerable<(PropertyInfo Property, SqlDbType SqlType)> materialized =
+            sqlTypes.Materialize(NullOptionsEnum.Allowed);
+
         IReadOnlyCollection<string> types =
             [..
-                sqlTypes
-                    .Select(pair => pair.SqlType.ToString())
+                materialized
+                    .Select(static pair => pair.SqlType.ToString())
                     .Distinct()
-                    .Select(type => $"\"{type}\"")
+                    .Select(static type => $"\"{type}\"")
             ];
 
         IReadOnlyCollection<string> properties =
             [..
-                sqlTypes
-                    .Select(pair => FormatProperty(pair.Property))
+                materialized
+                    .Select(static pair => FormatProperty(pair.Property))
                     .Distinct()
-                    .Select(property => $"\"{property}\"")
+                    .Select(static property => $"\"{property}\"")
             ];
 
         return "The following SQL types are not supported by the SQL Builder: "
@@ -104,12 +108,15 @@ public class SqlTypeNotSupportedException : Exception
     {
         ArgumentNullException.ThrowIfNull(sqlTypes, nameof(sqlTypes));
 
+        IEnumerable<SqlDbType> materialized =
+            sqlTypes.Materialize(NullOptionsEnum.Allowed);
+
         IReadOnlyCollection<string> types =
             [..
-                sqlTypes
-                    .Select(type => type.ToString())
+                materialized
+                    .Select(static type => type.ToString())
                     .Distinct()
-                    .Select(type => $"\"{type}\"")
+                    .Select(static type => $"\"{type}\"")
             ];
 
         return "The following SQL type(s) are not supported by the SQL generator in parameters: "

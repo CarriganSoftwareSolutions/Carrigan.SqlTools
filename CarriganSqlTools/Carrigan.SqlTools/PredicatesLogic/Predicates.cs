@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -9,12 +11,10 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 public abstract class Predicates
 {
-    private readonly IReadOnlyList<Predicates> _childNodes;
-
     /// <summary>
     /// Represents the direct children of the current predicate.
     /// </summary>
-    internal IEnumerable<Predicates> ChildNodes => _childNodes;
+    internal IEnumerable<Predicates> ChildNodes { get; }
 
     /// <summary>
     /// Base constructor for all predicate classes.
@@ -23,24 +23,16 @@ public abstract class Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="childPredicates"/> is <c>null</c>.
     /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="childPredicates"/> contains disallowed <c>null</c> values.
+    /// </exception>
     protected Predicates(IEnumerable<Predicates> childPredicates)
     {
         ArgumentNullException.ThrowIfNull(childPredicates, nameof(childPredicates));
 
-        List<Predicates> predicates = [];
-
-        foreach (Predicates predicate in childPredicates)
-        {
-            ArgumentNullException.ThrowIfNull(predicate, nameof(childPredicates));
-            predicates.Add(predicate);
-        }
-
-        _childNodes = predicates;
+        ChildNodes = childPredicates.Materialize(NullOptionsEnum.Exception);
     }
 
-    /// <summary>
-    /// Retrieves all descendants of type <see cref="Parameter"/>.
-    /// </summary>
     internal IEnumerable<Parameter> DescendantParameters =>
         DescendantNodes.OfType<Parameter>();
 
@@ -48,13 +40,17 @@ public abstract class Predicates
     /// Represents all parameters that have the same unmodified parameter name.
     /// </summary>
     protected IEnumerable<ParameterTag> DuplicateParameters =>
-        GetDuplicateParameterTags();
+        DescendantParameters
+            .Select(static parameter => parameter.Name)
+            .GroupBy(static parameter => parameter)
+            .Where(static nameGroup => nameGroup.Count() > 1)
+            .Select(static nameGroup => nameGroup.Key);
 
     /// <summary>
     /// Retrieves all descendant predicates regardless of type.
     /// </summary>
     internal IEnumerable<Predicates> DescendantNodes =>
-        GetAllDescendantPredicates(_childNodes);
+        GetAllDescendantPredicates(ChildNodes);
 
     /// <summary>
     /// Retrieves all descendants of type <see cref="ColumnBase"/>.
@@ -73,20 +69,20 @@ public abstract class Predicates
     /// Retrieves all direct children of type <see cref="Parameter"/>.
     /// </summary>
     internal IEnumerable<Parameter> ChildParameters =>
-        _childNodes.OfType<Parameter>();
+        ChildNodes.OfType<Parameter>();
 
     /// <summary>
     /// Retrieves all direct children of type <see cref="ColumnBase"/>.
     /// </summary>
     internal IEnumerable<ColumnBase> ChildColumns =>
-        _childNodes.OfType<ColumnBase>();
+        ChildNodes.OfType<ColumnBase>();
 
     /// <summary>
     /// Retrieves all direct children that are not also <see cref="ColumnBase"/> or <see cref="Parameter"/>.
     /// These are the non-leaf operator nodes.
     /// </summary>
     internal IEnumerable<Predicates> ChildPredicates =>
-        _childNodes.Where(static predicate => predicate is not Parameter && predicate is not ColumnBase);
+        ChildNodes.Where(static predicate => predicate is not Parameter && predicate is not ColumnBase);
 
     /// <summary>
     /// Generates the SQL fragments for this predicate tree.
@@ -104,21 +100,11 @@ public abstract class Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="branchName"/> is <c>null</c>.
     /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="branchName"/> is empty or whitespace (or becomes empty after trimming <c>@</c>).
-    /// </exception>
     internal IEnumerable<SqlFragment> ToSqlFragments(string branchName)
     {
         ArgumentNullException.ThrowIfNull(branchName, nameof(branchName));
 
-        string normalizedBranchName = branchName.Trim().TrimStart('@');
-
-        if (normalizedBranchName.Length == 0)
-            throw new ArgumentException($"{nameof(branchName)} must not be empty or whitespace.", nameof(branchName));
-
-        HashSet<ParameterTag> duplicates = GetDuplicateParameterTags();
-
-        return ToSql(string.Empty, normalizedBranchName, duplicates);
+        return ToSql(string.Empty, branchName.TrimStart('@'), DuplicateParameters);
     }
 
     /// <summary>
@@ -138,27 +124,6 @@ public abstract class Predicates
     /// <returns>The SQL fragment for this node.</returns>
     internal abstract IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates);
 
-    private HashSet<ParameterTag> GetDuplicateParameterTags()
-    {
-        Dictionary<ParameterTag, int> counts = [];
-
-        foreach (ParameterTag parameterTag in DescendantParameters.Select(static parameter => parameter.Name))
-        {
-            counts.TryGetValue(parameterTag, out int count);
-            counts[parameterTag] = count + 1;
-        }
-
-        HashSet<ParameterTag> duplicates = [];
-
-        foreach (KeyValuePair<ParameterTag, int> pair in counts)
-        {
-            if (pair.Value > 1)
-                duplicates.Add(pair.Key);
-        }
-
-        return duplicates;
-    }
-
     private static IEnumerable<Predicates> GetAllDescendantPredicates(IEnumerable<Predicates> predicates)
     {
         foreach (Predicates predicate in predicates)
@@ -166,9 +131,7 @@ public abstract class Predicates
             yield return predicate;
 
             foreach (Predicates childPredicate in GetAllDescendantPredicates(predicate.ChildNodes))
-            {
                 yield return childPredicate;
-            }
         }
     }
 }
