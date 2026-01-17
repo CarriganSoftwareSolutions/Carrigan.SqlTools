@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -80,5 +81,54 @@ public class ColumnCollectionTests
         Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2")], originalSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));
         //NewSet has new column
         Assert.Equal([new ColumnName("Col1"), new ColumnName("Col2"), new ColumnName("ColA"), new ColumnName("ColB")], newSet.ColumnInfo.Select(columnTag => columnTag.ColumnName));
+    }
+    [Fact]
+    public void Constructor_WithDuplicateColumns_ShouldNotDuplicate()
+    {
+        string[] columns = ["Col1", "Col1", "Col2"];
+
+        ColumnCollection<ColumnTable> columnCollection = new(columns);
+
+        Assert.Equal(
+            [new ColumnName("Col1"), new ColumnName("Col2")],
+            columnCollection.ColumnInfo.Select(column => column.ColumnName));
+    }
+
+    [Fact]
+    public void AddColumn_WhenColumnAlreadyExists_ShouldNotDuplicate()
+    {
+        ColumnCollection<ColumnTable> columnCollection = new(nameof(ColumnTable.Col1));
+
+        columnCollection.AddColumn(nameof(ColumnTable.Col1));
+
+        Assert.Equal(
+            [new ColumnName("Col1")],
+            columnCollection.ColumnInfo.Select(column => column.ColumnName));
+    }
+
+    [Fact]
+    public void ColumnInfo_ShouldBeMaterialized()
+    {
+        ColumnCollection<ColumnTable> columnCollection = new(nameof(ColumnTable.Col1));
+
+        Assert.True(columnCollection.ColumnInfo is IReadOnlyCollection<ColumnInfo>);
+    }
+
+    [Fact]
+    public void AppendColumn_ShouldReturnMaterializedCollection()
+    {
+        ColumnCollection<ColumnTable> originalSet = new(nameof(ColumnTable.Col1));
+        ColumnCollection<ColumnTable> newSet = originalSet.AppendColumn(nameof(ColumnTable.Col2));
+
+        Assert.True(newSet.ColumnInfo is IReadOnlyCollection<ColumnInfo>);
+    }
+
+    [Fact]
+    public void ConcatColumn_ShouldReturnMaterializedCollection()
+    {
+        ColumnCollection<ColumnTable> originalSet = new(nameof(ColumnTable.Col1));
+        ColumnCollection<ColumnTable> newSet = originalSet.ConcatColumn(nameof(ColumnTable.Col2), nameof(ColumnTable.ColA));
+
+        Assert.True(newSet.ColumnInfo is IReadOnlyCollection<ColumnInfo>);
     }
 }

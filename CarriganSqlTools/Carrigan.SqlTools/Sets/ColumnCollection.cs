@@ -1,36 +1,26 @@
-﻿using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Sets;
+
 /// <summary>
-/// Represents the SQL <c>SET</c> clause used when generating <c>UPDATE</c> statements.
-/// Use this to specify only certain columns to update instead of updating all non-key columns.
-/// The name mirrors SQL syntax: <c>SET [Column] = @Parameter</c>.
+/// Represents a validated collection of model properties (SQL columns) used to define
+/// which columns are included in generated SQL statements (for example: UPDATE SET,
+/// INSERT column lists, and INSERT return/output column lists).
 /// </summary>
-/// <typeparam name="T">
-/// The entity/data model type that maps to the target table.
-/// </typeparam>
-/// <para>Update example not using ColumnCollection</para>
-/// <example>
-/// <code language="csharp"><![CDATA[
-/// Customer entity = new()
-/// {
-///     Id = 42,
-///     Name = "Hank",
-///     Email = "Hank@tx.gov",
-///     Phone = "+1(555)555-5555"
-/// };
-/// SqlQuery query = customerGenerator.UpdateById(entity);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// UPDATE [Customer] 
-/// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone 
-/// WHERE [Id] = @Id;
-/// ]]></code>
-/// </example>
+/// <typeparam name="T">The entity or data model type used to resolve SQL column metadata.</typeparam>
+/// <remarks>
+/// This type validates CLR property names against <typeparamref name="T"/> using
+/// <see cref="SqlToolsReflectorCache{T}"/> and stores the resolved <see cref="ReflectorCache.ColumnInfo"/>
+/// metadata.
+/// <para>
+/// Duplicate property names are ignored, preserving the first occurrence.
+/// </para>
+/// </remarks>
 /// <example>
 /// <para>
 /// Update example using ColumnCollection
@@ -56,108 +46,184 @@ namespace Carrigan.SqlTools.Sets;
 public class ColumnCollection<T>
 {
     /// <summary>
-    /// The <see cref="ColumnInfo"/> entries corresponding to the columns included in the <c>SET</c> clause.
+    /// Gets the resolved <see cref="ColumnInfo"/> metadata for this collection.
     /// </summary>
-    internal IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
+    /// <remarks>
+    /// This enumerable is always materialized (not lazy) to avoid repeated reflection/cache
+    /// look ups and to prevent deep iterator chains from repeated Append/Concat operations.
+    /// </remarks>
+    internal IEnumerable<ColumnInfo> ColumnInfo { get; private set; } = [];
 
     /// <summary>
-    /// Initializes a new <see cref="ColumnCollection{T}"/> containing the specified properties (columns).
+    /// Initializes a new instance of the <see cref="ColumnCollection{T}"/> class.
     /// </summary>
-    /// <param name="propertyNames">
-    /// One or more property names that map to column names to be updated.
-    /// Each name is validated via the reflection cache; invalid names throw.
-    /// </param>
-    public ColumnCollection(params IEnumerable<PropertyName> propertyNames) =>
-        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
+    /// <param name="propertyNames">The property names to include in the collection.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyNames"/> is <c>null</c>.</exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="propertyNames"/> contains a disallowed <c>null</c> entry.
+    /// </exception>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when one or more property names do not exist on <typeparamref name="T"/>.
+    /// </exception>
+    public ColumnCollection(params IEnumerable<PropertyName> propertyNames) => 
+        ColumnInfo =
+            SqlToolsReflectorCache<T>
+                .GetColumnsFromProperties(propertyNames)
+                .DistinctBy(static columnInfo => columnInfo.PropertyName)
+                .Materialize(NullOptionsEnum.Exception);
 
     /// <summary>
-    /// Initializes a new <see cref="ColumnCollection{T}"/> containing the specified properties (columns).
+    /// Initializes a new instance of the <see cref="ColumnCollection{T}"/> class.
     /// </summary>
-    /// <param name="propertyNames">
-    /// One or more property names that map to column names to be updated.
-    /// Each name is validated via the reflection cache; invalid names throw.
-    /// </param>
+    /// <param name="propertyNames">The CLR property name strings to include in the collection.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyNames"/> is <c>null</c>.</exception>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when one or more property names do not exist on <typeparamref name="T"/>.
+    /// </exception>
     [ExternalOnly]
     public ColumnCollection(params IEnumerable<string> propertyNames) :
         this(propertyNames.Select(name => new PropertyName(name)))
     { }
 
     /// <summary>
-    /// Adds an additional column to the <c>SET</c> clause.
+    /// Adds a column to the current collection.
     /// </summary>
-    /// <param name="propertyName">The property name mapping to the column to add.</param>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// <param name="propertyName">The property name to add.</param>
+    /// <remarks>
+    /// If the property already exists in the collection, this method does not add a duplicate.
+    /// </remarks>
+    /// <exception cref="NullReferenceException">Thrown when <paramref name="propertyName"/> is <c>null</c>.</exception>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     public void AddColumn(PropertyName propertyName)
     {
-        ColumnInfo? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
-        if (newTag is not null)
-            ColumnInfo = ColumnInfo.Append(newTag);
+        bool alreadyIncluded =
+            ColumnInfo
+                .Select(static columnInfo => columnInfo.PropertyName)
+                .Contains(propertyName);
+
+        if (alreadyIncluded)
+        {
+            return;
+        }
+
+        ColumnInfo resolvedColumnInfo =
+            SqlToolsReflectorCache<T>
+                .GetColumnsFromProperties(propertyName)
+                .Single();
+
+        ColumnInfo =
+            ColumnInfo
+                .Append(resolvedColumnInfo)
+                .Materialize(NullOptionsEnum.Exception);
     }
 
     /// <summary>
-    /// Adds an additional column to the <c>SET</c> clause.
+    /// Adds a column to the current collection.
     /// </summary>
-    /// <param name="propertyName">The property name mapping to the column to add.</param>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// <param name="propertyName">The property name to add.</param>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
     public void AddColumn(string propertyName) =>
         AddColumn(new PropertyName(propertyName));
 
     /// <summary>
-    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with an additional column appended to the <c>SET</c> clause.
+    /// Returns a new <see cref="ColumnCollection{T}"/> with an additional column.
     /// </summary>
-    /// <param name="propertyName">The property name mapping to the column to append.</param>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// <param name="propertyName">The property name to append.</param>
+    /// <returns>A new collection that includes the appended column.</returns>
+    /// <remarks>
+    /// If the property already exists in the collection, the returned collection is unchanged.
+    /// </remarks>
+    /// <exception cref="NullReferenceException">Thrown when <paramref name="propertyName"/> is <c>null</c>.</exception>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     public ColumnCollection<T> AppendColumn(PropertyName propertyName)
     {
-        ColumnCollection<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
-        ColumnInfo? newTag = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
-        if (newTag is not null)
-            returnValue.ColumnInfo = returnValue.ColumnInfo.Append(newTag);
+        ColumnCollection<T> returnValue =
+            new(ColumnInfo.Select(static columnInfo => columnInfo.PropertyName));
+
+        bool alreadyIncluded =
+            returnValue
+                .ColumnInfo
+                .Select(static columnInfo => columnInfo.PropertyName)
+                .Contains(propertyName);
+
+        if (alreadyIncluded)
+        {
+            return returnValue;
+        }
+
+        ColumnInfo resolvedColumnInfo =
+            SqlToolsReflectorCache<T>
+                .GetColumnsFromProperties(propertyName)
+                .Single();
+
+        returnValue.ColumnInfo =
+            returnValue
+                .ColumnInfo
+                .Append(resolvedColumnInfo)
+                .Materialize(NullOptionsEnum.Exception);
+
         return returnValue;
     }
 
     /// <summary>
-    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with an additional column appended to the <c>SET</c> clause.
+    /// Returns a new <see cref="ColumnCollection{T}"/> with an additional column.
     /// </summary>
-    /// <param name="propertyName">The property name mapping to the column to append.</param>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if <paramref name="propertyName"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// <param name="propertyName">The property name to append.</param>
+    /// <returns>A new collection that includes the appended column.</returns>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
     public ColumnCollection<T> AppendColumn(string propertyName) =>
         AppendColumn(new PropertyName(propertyName));
 
     /// <summary>
-    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with additional columns concatenated to the <c>SET</c> clause.
+    /// Returns a new <see cref="ColumnCollection{T}"/> with additional columns appended.
     /// </summary>
-    /// <param name="propertyNames">The property names mapping to the columns to concatenate.</param>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// <param name="propertyNames">The property names to append.</param>
+    /// <returns>A new collection that includes the appended columns.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyNames"/> is <c>null</c>.</exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="propertyNames"/> contains a disallowed <c>null</c> entry.
+    /// </exception>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     public ColumnCollection<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames)
     {
-        ColumnCollection<T> returnValue = new(ColumnInfo.Select(columnInfo => columnInfo.PropertyName));
-        IEnumerable<ColumnInfo> newTags = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyNames);
-        if (newTags is not null)
-            returnValue.ColumnInfo = returnValue.ColumnInfo.Concat(newTags);
+        ColumnCollection<T> returnValue =
+            new(ColumnInfo.Select(static columnInfo => columnInfo.PropertyName));
+
+        IEnumerable<ColumnInfo> additionalColumnInfo =
+            SqlToolsReflectorCache<T>
+                .GetColumnsFromProperties(propertyNames);
+
+        returnValue.ColumnInfo =
+            returnValue
+                .ColumnInfo
+                .Concat(additionalColumnInfo)
+                .DistinctBy(static columnInfo => columnInfo.PropertyName)
+                .Materialize(NullOptionsEnum.Exception);
+
         return returnValue;
     }
 
     /// <summary>
-    /// Creates a new instance of <see cref="ColumnCollection{T}"/> with additional columns concatenated to the <c>SET</c> clause.
+    /// Returns a new <see cref="ColumnCollection{T}"/> with additional columns appended.
     /// </summary>
-    /// <param name="propertyNames">The property names mapping to the columns to concatenate.</param>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown if any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/> or is ineligible.
+    /// <param name="propertyNames">The property names to append.</param>
+    /// <returns>A new collection that includes the appended columns.</returns>
+    /// <exception cref="InvalidPropertyException{T}">
+    /// Thrown when any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
     public ColumnCollection<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
-        ConcatColumn(propertyNames.Select(aString => new PropertyName(aString)));
+        ConcatColumn(propertyNames.Select(static propertyName => new PropertyName(propertyName)));
 }
