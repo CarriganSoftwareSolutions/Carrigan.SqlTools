@@ -25,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202601172304" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202601172327" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
   </ItemGroup>
 
