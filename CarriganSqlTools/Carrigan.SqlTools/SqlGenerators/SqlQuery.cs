@@ -1,8 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Tags;
 using System.Data;
-using System.Data.Common;
-using System.Reflection.Metadata;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -17,14 +14,16 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// </remarks>
 public class SqlQuery
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlQuery"/> class.
     /// </summary>
     internal SqlQuery()
     {
+        QueryText = string.Empty;
+        Parameters = [];
+        CommandType = CommandType.Text;
     }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlQuery"/> class with the specified
     /// command text and parameters.
@@ -38,12 +37,20 @@ public class SqlQuery
     /// <param name="parameters">
     /// The parameter dictionary for the command, keyed by <see cref="ParameterTag"/>.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="query"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="parameters"/> is <c>null</c>.
+    /// </exception>
     public SqlQuery(string query, Dictionary<ParameterTag, object> parameters)
     {
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(parameters);
+
         QueryText = query;
         Parameters = parameters;
     }
-
 
     /// <summary>
     /// Gets or sets the SQL command text.
@@ -62,19 +69,37 @@ public class SqlQuery
     public CommandType CommandType { get; set; }
 
     /// <summary>
-    /// Retrieves the value of a parameter by its <see cref="ParameterTag"/> (for unit testing).
+    /// Retrieves the value of a parameter by its name (for unit testing).
     /// </summary>
     /// <typeparam name="T">The expected type of the parameter value.</typeparam>
-    /// <param name="parameter">The parameter tag to look up.</param>
+    /// <param name="parameterTestName">The parameter name to look up.</param>
     /// <returns>The parameter value cast to <typeparamref name="T"/>.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="parameterTestName"/> is <c>null</c>.
+    /// </exception>
     /// <exception cref="KeyNotFoundException">
-    /// Thrown when <paramref name="parameter"/> is not present in <see cref="Parameters"/>.
+    /// Thrown when <paramref name="parameterTestName"/> is not present in <see cref="Parameters"/>.
     /// </exception>
     /// <exception cref="InvalidCastException">
     /// Thrown when the stored parameter value cannot be cast to <typeparamref name="T"/>.
     /// </exception>
-    internal T GetParameterValue<T>(string parameterTestName) =>
-        (T)Parameters.Where(param => param.Key == parameterTestName).Single().Value;
+    /// <exception cref="NullReferenceException">
+    /// Thrown when the stored parameter value is <c>null</c> and cannot be unboxed to <typeparamref name="T"/>.
+    /// </exception>
+    internal T GetParameterValue<T>(string parameterTestName)
+    {
+        ArgumentNullException.ThrowIfNull(parameterTestName);
+
+        foreach (KeyValuePair<ParameterTag, object> item in Parameters)
+        {
+            if (item.Key == parameterTestName)
+            {
+                return (T)item.Value;
+            }
+        }
+
+        throw new KeyNotFoundException($"Parameter '{parameterTestName}' was not found.");
+    }
 
     /// <summary>
     /// Returns the total number of parameters (for unit testing).

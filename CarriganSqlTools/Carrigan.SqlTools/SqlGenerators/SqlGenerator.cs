@@ -1,4 +1,5 @@
-﻿using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
@@ -61,32 +62,41 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
 
         invalidColumns =
             ColumnInfo
-                .Where(column => SqlIdentifierPattern.Fails(column.ColumnName))
-                .Select(column => new Tuple<PropertyInfo, ColumnName>(column.PropertyInfo, column.ColumnName));
+                .Where(static column => SqlIdentifierPattern.Fails(column.ColumnName))
+                .Select(static column => new Tuple<PropertyInfo, ColumnName>(column.PropertyInfo, column.ColumnName))
+                .Materialize(NullOptionsEnum.Exception);
+
         if (invalidColumns.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
 
         ColumnInfo
-            .Select(column => new Tuple<PropertyInfo, SqlTypeAttribute?>(column.PropertyInfo, SqlTypeAttribute.GetSqlTypeAttribute(column.PropertyInfo)))
-            .Select(tuple => SqlTypeMismatchException.Validate(tuple.Item1, tuple.Item2))
+            .Select(static column => new Tuple<PropertyInfo, SqlTypeAttribute?>(column.PropertyInfo, SqlTypeAttribute.GetSqlTypeAttribute(column.PropertyInfo)))
+            .Select(static tuple => SqlTypeMismatchException.Validate(tuple.Item1, tuple.Item2))
             .ForEach(sqlTypeMismatchException =>
             {
                 if (sqlTypeMismatchException is not null)
                     exceptions.Add(sqlTypeMismatchException);
             });
 
-        invalidAliases =
+       invalidAliases =
             ColumnInfo
-                .Where(column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName))
-                .Select(column => column.AliasName is not null ? new Tuple<PropertyInfo, AliasName>(column.PropertyInfo, column.AliasName) : null)
-                .OfType<Tuple<PropertyInfo, AliasName>>();
+                .Where(static column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName))
+                .Select(static column =>
+                    column.AliasName is not null
+                        ? new Tuple<PropertyInfo, AliasName>(column.PropertyInfo, column.AliasName)
+                        : null)
+                .OfType<Tuple<PropertyInfo, AliasName>>()
+                .Materialize(NullOptionsEnum.Exception);
+
         if (invalidAliases.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidAliases));
 
         invalidParameters =
             ColumnInfo
-                .Where(column => SqlIdentifierPattern.Fails(column.ParameterTag))
-                .Select(column => new Tuple<PropertyInfo, ParameterTag>(column.PropertyInfo, column.ParameterTag));
+                .Where(static column => SqlIdentifierPattern.Fails(column.ParameterTag))
+                .Select(static column => new Tuple<PropertyInfo, ParameterTag>(column.PropertyInfo, column.ParameterTag))
+                .Materialize(NullOptionsEnum.Exception);
+
         if (invalidParameters.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidParameters));
 
@@ -99,7 +109,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             else if ((Nullable.GetUnderlyingType(KeyVersionColumnInfo.PropertyInfo.PropertyType) ?? KeyVersionColumnInfo.PropertyInfo.PropertyType) != typeof(int))
                 exceptions.Add(new InvalidKeyVersionPropertyTypeException<T>(new PropertyName(KeyVersionColumnInfo.PropertyInfo.Name)));
             if (KeyVersionColumnsInfo.Count() > 1)
-                exceptions.Add(new MultipleKeyVersionsException<T>(KeyVersionColumnsInfo.Select(column => column.PropertyName)));
+                exceptions.Add(new MultipleKeyVersionsException<T>(KeyVersionColumnsInfo.Select(static column => column.PropertyName)));
         }
 
         if (exceptions.Count == 1)
@@ -179,7 +189,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// Useful for selecting a record by primary key.
     /// </returns>
     private static And GetByKeyPredicates(T entity) =>
-        new (KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.ParameterTag, key.PropertyInfo.GetValue(entity)))));
+        new(KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.ParameterTag, key.PropertyInfo.GetValue(entity)))));
 
 
     /// <summary>
@@ -201,17 +211,33 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// If the column is encrypted, the value is encrypted.  
     /// If the column is the key-version column, the encrypter's version is used instead of the entity value.  
     /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="column"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="entity"/> is <c>null</c>.
+    /// </exception>
     /// <exception cref="NullReferenceException">
     /// Thrown if <paramref name="column"/> does not expose a <see cref="ParameterTag"/>.
     /// </exception>
+    /// <exception cref="InvalidParameterIdentifierException">
+    /// Thrown if <paramref name="parameterPrepend"/> produces an invalid parameter identifier.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when an index is applied to a parameter that already has an index.
+    /// </exception>
     private KeyValuePair<ParameterTag, object> GetSqlParameterKeyValue(ColumnInfo column, T entity, int? entityIndex = null, string? parameterPrepend = null)
     {
+        ArgumentNullException.ThrowIfNull(column);
+        ArgumentNullException.ThrowIfNull(entity);
+
         if (column.ParameterTag is null)
             throw new NullReferenceException();
-        ParameterTag? parameter = column.ParameterTag.PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
+
+        ParameterTag parameter = column.ParameterTag.PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
 
         if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
-            return parameter.GetParameter(_Encryption?.Version);
+            return parameter.GetParameter(_Encryption.Version);
         else if (_Encryption is not null && IsEncrypted(column))
             return parameter.GetParameter(_Encryption, column, entity);
         else

@@ -38,10 +38,9 @@ public partial class SqlGenerator<T>
     /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
     /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown when any table referenced by <paramref name="predicates"/> (or by their columns)
+    /// Thrown when any table referenced by <paramref name="selects"/> or <paramref name="predicates"/> (or by their columns)
     /// is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
-    /// <param name="orderBy"></param>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = orderGenerator.SelectCount(null, null, null);
@@ -140,17 +139,23 @@ public partial class SqlGenerator<T>
     public SqlQuery SelectCount(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectableTableTags);
+
+        IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
+        IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
+
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
+
+        IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
+
+
         StringBuilder queryBuilder;
         AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
         if (ambiguousResultColumns is not null)
             throw ambiguousResultColumns;
 
         if (invalidTags.Any())
-        {
             throw new InvalidTableException(invalidTags);
-        }
 
         if (selects is not null && selects.Any())
             queryBuilder = new($"SELECT COUNT({selects.ToSql()}) FROM {Table}");
@@ -158,17 +163,16 @@ public partial class SqlGenerator<T>
             queryBuilder = new($"SELECT COUNT({Table}.*) FROM {Table}");
 
         if (joins?.IsNotNullOrEmpty() ?? false)
-        {
             queryBuilder.Append($" {joins.ToSql()}");
-        }
+
+        IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments("Parameter") ?? [];
         if (predicates is not null)
-        {
-            queryBuilder.Append($" WHERE {predicates.ToSqlFragments("Parameter").ToSql()}");
-        }
+            queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
+
         return new SqlQuery()
         {
             QueryText = queryBuilder.ToString(),
-            Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.ToSqlFragments("Parameter").GetParameters() ?? [])],
+            Parameters = [.. (joins?.Parameters ?? []).Concat(predicateSqlFragments.GetParameters())],
             CommandType = CommandType.Text
         };
     }

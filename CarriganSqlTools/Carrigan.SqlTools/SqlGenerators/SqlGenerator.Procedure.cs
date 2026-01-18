@@ -25,9 +25,17 @@ public partial class SqlGenerator<T>
     /// Only properties that can be publicly read from accessible types are considered;
     /// members not visible outside their defining assembly are ignored.
     /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="entity"/> is <c>null</c>.
+    /// </exception>
     /// <exception cref="NullReferenceException">
-    /// Thrown if <paramref name="entity"/> is <c>null</c> (or otherwise invalid for reflection-based
-    /// property reads) when extracting parameter values.
+    /// Thrown if a mapped column lacks a <see cref="ParameterTag"/> during parameter generation.
+    /// This can surface indirectly from
+    /// <see cref="GetSqlParameterKeyValue(Carrigan.SqlTools.ReflectorCache.ColumnInfo, T, int?, string?)"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when one or more procedure parameters resolve to the same <see cref="ParameterTag"/>,
+    /// causing a duplicate key during dictionary construction.
     /// </exception>
     /// <example>
     /// <para>
@@ -48,11 +56,11 @@ public partial class SqlGenerator<T>
     public SqlQuery Procedure(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = ColumnInfo.Select(columns => GetSqlParameterKeyValue(columns, entity));
+        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = ColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity));
 
         return new SqlQuery()
         {
-            Parameters = new Dictionary<ParameterTag, object>([.. parameters]),
+            Parameters = new Dictionary<ParameterTag, object>(parameters),
             QueryText = ProcedureTag,
             CommandType = CommandType.StoredProcedure
         };

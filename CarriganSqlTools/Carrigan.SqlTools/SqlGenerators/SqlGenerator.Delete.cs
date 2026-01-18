@@ -4,8 +4,6 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
-using System;
-using System.Buffers.Text;
 using System.Data;
 using System.Text;
 
@@ -25,22 +23,15 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="entity"/> is <c>null</c>.
+    /// </exception>
     /// <exception cref="NullReferenceException">
     /// Thrown if a key column lacks a <see cref="ParameterTag"/> during parameter generation.
     /// </exception>
-    /// <param name="entity">
-    /// An instance of the data model that supplies the key property values
-    /// used to locate the record to delete.
-    /// </param>
-    /// <returns>
-    /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
-    /// </returns>
-    /// <remarks>
-    /// When building the SQL, only public properties with a getter are considered.
-    /// </remarks>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new() { Id = 42 };
@@ -53,8 +44,12 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Delete(T entity)
     {
+        ArgumentNullException.ThrowIfNull(entity);
+
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = KeyColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity));
+
         string whereClause = string.Join(" and ", KeyColumnInfo.Select(column => $"[{column.ColumnName}] = @{column.ParameterTag}"));
+
         return new SqlQuery()
         {
             Parameters = [.. parameters],
@@ -82,7 +77,7 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Customer];
     /// ]]></code>
     /// </example>
-    public SqlQuery DeleteAll() => new ()
+    public SqlQuery DeleteAll() => new()
     {
         Parameters = [],
         QueryText = $"DELETE FROM {Table};",
@@ -90,20 +85,23 @@ public partial class SqlGenerator<T>
     };
 
     /// <summary>
-    /// Generates a SQL <c>DELETE</c> statement that removes all rows
-    /// from the table represented by the data model type <typeparamref name="T"/>.
+    /// Generates a SQL <c>DELETE</c> statement that deletes rows by primary key values.
     /// </summary>
+    /// <param name="entities">
+    /// A collection of entities used only as key-value holders. Only key properties are used.
+    /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
-    /// <param name="entity">an IEnumerable of the data model use only as an id holder, uses only the key properties</param>
-    /// <returns>Returns an SqlQuery object</returns>
-    /// <exception cref = "Carrigan.SqlTools.Exceptions.NoPrimaryKeyPropertyException{T}" >
-    /// Thrown when<typeparamref name = "T" /> has no key property metadata but a key-based delete was requested.
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="entities"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="NoPrimaryKeyPropertyException{T}">
+    /// Thrown when <typeparamref name="T"/> has no key property metadata but a key-based delete was requested.
     /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -117,10 +115,12 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery DeleteById(params IEnumerable<T> entities)
     {
+        ArgumentNullException.ThrowIfNull(entities);
+
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return Delete(null, new Or(entities.Select(entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
+            return Delete(null, new Or(entities.Select(static entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
     }
 
     /// <summary>
@@ -138,7 +138,7 @@ public partial class SqlGenerator<T>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
     /// <remarks>
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. 
+    /// When generating SQL, only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="InvalidTableException">
@@ -202,33 +202,38 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Delete(JoinsBase? joins, Predicates? predicates)
     {
-        if (predicates == null && joins.IsNullOrEmpty())
+        if (predicates is null && joins.IsNullOrEmpty())
         {
             return DeleteAll();
         }
         else
         {
             IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-            IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
+            IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
+
             StringBuilder queryBuilder = new($"DELETE FROM {Table}");
 
             if (invalidTags.Any())
             {
                 throw new InvalidTableException(invalidTags);
             }
+
             if (joins?.IsNotNullOrEmpty() ?? false)
             {
-                queryBuilder.Append($" {joins.ToSql()}"); ;
+                queryBuilder.Append($" {joins.ToSql()}");
             }
+
+            IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments("Parameter") ?? [];
             if (predicates is not null)
             {
-                queryBuilder.Append($" WHERE {predicates.ToSqlFragments("Parameter").ToSql()}");
+                queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
             }
+
             return new SqlQuery()
             {
                 QueryText = queryBuilder.ToString(),
-                Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.ToSqlFragments("Parameter").GetParameters() ?? [])],
+                Parameters = [.. (joins?.Parameters ?? []).Concat(predicateSqlFragments.GetParameters())],
                 CommandType = CommandType.Text
             };
         }

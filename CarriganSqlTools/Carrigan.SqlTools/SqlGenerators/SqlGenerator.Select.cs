@@ -1,5 +1,4 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -7,8 +6,6 @@ using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
-using System;
-using System.Buffers.Text;
 using System.Data;
 using System.Text;
 
@@ -87,9 +84,9 @@ public partial class SqlGenerator<T>
     /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
     /// </returns>
     /// <remarks>
-    /// When providing <paramref name="selects"/>, you will almost certainly need a model
-    /// matching the projected columns to materialize results correctly (since they may no
-    /// longer map back to <typeparamref name="T"/>).
+    /// When providing <paramref name="selects"/>, you will almost certainly need a different model
+    /// matching the projected columns to materialize results correctly (since they may no longer map
+    /// back to <typeparamref name="T"/>).
     /// Only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
@@ -100,15 +97,10 @@ public partial class SqlGenerator<T>
     /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
     /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
-    /// <remarks>
-    /// When providing <paramref name="selects"/>, you will almost certainly need to provide a different class model
-    /// to map the ADO results columns back to a materialized class, as the results columns will no longer map back to <typeparamref name="T"/> correctly.
-    /// When generating SQL, only properties that can be publicly read from accessible types are considered. Members not visible outside their defining assembly are ignored.
-    /// </remarks>
     /// <example>
     /// <para>Select with join example:</para>
     /// <para>
-    /// Note:<see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -126,8 +118,8 @@ public partial class SqlGenerator<T>
     /// <example>
     /// <para>Select with join and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -147,11 +139,11 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// </example>
     /// <example>
-    /// <para>Select with join and order by example:</para>
+    /// <para>Select with join, where, and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: <see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid
-    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid
+    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -188,20 +180,17 @@ public partial class SqlGenerator<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    /// <param name="offsetNext">
-    /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
-    /// </param>
     public SqlQuery Select(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates, OrderByBase? orderBy, OffsetNext? offsetNext)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> invalidTags = invalidSelectedTags.Concat(invalidPredicateTags).Concat(invalidOrderByTags).Distinct();
-        StringBuilder queryBuilder;
+
         AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
         if (ambiguousResultColumns is not null)
             throw ambiguousResultColumns;
@@ -209,43 +198,46 @@ public partial class SqlGenerator<T>
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);
 
+        IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments("Parameter") ?? [];
 
         if (offsetNext is not null)
         {
-            //add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server that has unexpected behavior if the order by values are not unique
+            // add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server
+            // that has unexpected behavior if the order by values are not unique
             orderBy ??= new OrderBy();
-            IEnumerable<OrderByItem<T>> oderByKeyItems = [.. KeyColumnInfo.Select(key => new OrderByItem<T>(key.PropertyName, SortDirectionEnum.Ascending)).Where(item => orderBy.Contains(item) == false)];
-            orderBy = orderBy.WithConcat(oderByKeyItems);
+            IEnumerable<OrderByItem<T>> orderByKeyItems =
+            [
+                .. KeyColumnInfo
+                    .Select(static key => new OrderByItem<T>(key.PropertyName, SortDirectionEnum.Ascending))
+                    .Where(item => orderBy.Contains(item) == false)
+            ];
+            orderBy = orderBy.WithConcat(orderByKeyItems);
         }
 
-
-        if(selects is not null &&  selects.Any())
+        StringBuilder queryBuilder;
+        if (selects is not null && selects.Any())
             queryBuilder = new($"SELECT {selects.ToSql()} FROM {Table}");
-        else if(HasAliasedColumns)
+        else if (HasAliasedColumns)
             queryBuilder = new($"SELECT {SelectTags.ToSql()} FROM {Table}");
         else
             queryBuilder = new($"SELECT {Table}.* FROM {Table}");
 
         if (joins?.IsNotNullOrEmpty() ?? false)
-        {
             queryBuilder.Append($" {joins.ToSql()}");
-        }
+
         if (predicates is not null)
-        {
-            queryBuilder.Append($" WHERE {predicates.ToSqlFragments("Parameter").ToSql()}");
-        }
-        if(orderBy.IsNotNullOrEmpty())
-        {
+            queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
+
+        if (orderBy.IsNotNullOrEmpty())
             queryBuilder.Append($" {orderBy.AsOrderBy().ToSql()}");
-        }
-        if(offsetNext is not null)
-        {
+
+        if (offsetNext is not null)
             queryBuilder.Append($" {offsetNext.ToSql()}");
-        }
+
         return new SqlQuery()
         {
             QueryText = queryBuilder.ToString(),
-            Parameters = [.. (joins?.Parameters ?? []).Concat(predicates?.ToSqlFragments("Parameter").GetParameters() ?? [])],
+            Parameters = [.. (joins?.Parameters ?? []).Concat(predicateSqlFragments.GetParameters())],
             CommandType = CommandType.Text
         };
     }
@@ -267,10 +259,13 @@ public partial class SqlGenerator<T>
     /// Only properties that can be publicly read from accessible types are considered.
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
-    /// <exception cref="NoPrimaryKeyPropertyException{T}">
-    /// <exception cref = "NoPrimaryKeyPropertyException{T}" >
-    /// Thrown when<typeparamref name = "T" /> has no key property metadata but a key-based select was requested.
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="entities"/> is <c>null</c>.
     /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="entities"/> is empty.
+    /// </exception>
+    /// <exception cref="NoPrimaryKeyPropertyException{T}">
     /// Thrown when <typeparamref name="T"/> has no key annotations (neither the SQL generator’s
     /// <c>PrimaryKey</c> nor <c>Key</c> attributes) and a “By Id” operation is invoked.
     /// </exception>
@@ -288,7 +283,7 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery SelectById(params IEnumerable<T> entities)
     {
-
+        ArgumentNullException.ThrowIfNull(entities);
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
