@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+﻿﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Invocation;
@@ -19,6 +19,9 @@ public static class CommandsAsync
 {
     public async static Task TestConnectionStringAsync(string connectionString, string friendlyName)
     {
+        ArgumentNullException.ThrowIfNull(connectionString);
+        ArgumentNullException.ThrowIfNull(friendlyName);
+
         try
         {
             using SqlConnection connection = new(connectionString);
@@ -33,6 +36,9 @@ public static class CommandsAsync
 
     public async static Task<int> ExecuteNonQueryAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(connection);
+
         bool wasClosed = false;
         if (connection.State != ConnectionState.Open)
         {
@@ -61,6 +67,9 @@ public static class CommandsAsync
     }
     public async static Task<object?> ExecuteScalarAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(connection);
+
         bool wasClosed = false;
         if (connection.State != ConnectionState.Open)
         {
@@ -84,20 +93,21 @@ public static class CommandsAsync
         finally
         {
             if (wasClosed && connection.State == ConnectionState.Open)
-                connection.Close();
+                await connection.CloseAsync();
         }
     }
     public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection) where T : class, new() =>
         await ExecuteReaderAsync<T>(query, transaction, connection, null);
 
+
     public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters) where T : class, new()
     {
-        Type type = typeof(T);
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(connection);
+
         List<T> results = [];
         List<Task<T>> invocationTasks = [];
-        int? decryptionVersion = 1; //in later versions this will be read from a property marked by a custom annotation attribute, due time constraints, for now it will just be hard coded
         bool wasClosed = false;
-        string dataTypeName;
 
         if (ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)
         {
@@ -125,19 +135,7 @@ public static class CommandsAsync
 
             while (await dataReader.ReadAsync())
             {
-                Dictionary<string, object?> rowData = [];
-                for (int i = 0; i < dataReader.FieldCount; i++)
-                {
-                    dataTypeName = dataReader.GetDataTypeName(i);
-                    if(dataReader.IsDBNull(i))
-                        rowData.Add(dataReader.GetName(i), DBNull.Value);
-                    else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
-                        rowData.Add(dataReader.GetName(i), new SqlXml(XmlReader.Create(new StringReader(dataReader.GetString(i)))));
-                    else
-                        rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
-                }
-
-                invocationTasks.Add(Task.Run(() => Invoker<T>.Invoke(rowData)));
+                invocationTasks.Add(Task.Run(() => Invoker<T>.Invoke(CommandSharedMethods.ReadRecord(dataReader))));
             }
             results = [.. await Task.WhenAll(invocationTasks)];
         }
@@ -146,33 +144,7 @@ public static class CommandsAsync
             if (wasClosed && connection.State == ConnectionState.Open)
                 await connection.CloseAsync();
         }
-
-        if (ClientReflectorCache<T>.EncryptedProperties.Any())
-        {
-            if (decrypters is null)
-                throw new DecrypterNotProvided<T>();
-
-            _ = ClientReflectorCache<T>.KeyVersionProperty ?? throw new NoKeyVersionException<T>();
-            foreach (T record in results)
-            {
-                decryptionVersion = (int?) ClientReflectorCache<T>.KeyVersionProperty.GetValue(record);
-                if (decryptionVersion is not null && decrypters.Keys.Contains(decryptionVersion.Value))
-                {
-                    IEncryption? decrypter = decryptionVersion is not null ? decrypters.Decrypter(decryptionVersion.Value) : null;
-
-                    foreach (PropertyInfo property in ClientReflectorCache<T>.EncryptedProperties)
-                    {
-                        string? value = property.GetValue(record)?.ToString();
-                        if (value.IsNotNullOrWhiteSpace() && decrypter is not null)
-                        {
-                            value = decrypter.Decrypt(value);
-                            property.SetValue(record, value);
-                        }
-                    }
-                }
-            }
-        }
-        
+        CommandSharedMethods.ProcessResults(results, decrypters);
         return results;
     }
 }
