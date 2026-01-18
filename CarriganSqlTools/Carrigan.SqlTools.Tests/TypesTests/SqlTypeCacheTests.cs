@@ -15,6 +15,11 @@ public sealed class SqlTypeCacheTests
         None = 0
     }
 
+    private enum UIntEnum : uint
+    {
+        None = 0
+    }
+
     private sealed class CustomType
     {
     }
@@ -52,6 +57,8 @@ public sealed class SqlTypeCacheTests
     [InlineData(typeof(TimeOnly?), SqlDbType.Time)]
     [InlineData(typeof(DateTimeOffset), SqlDbType.DateTimeOffset)]
     [InlineData(typeof(DateTimeOffset?), SqlDbType.DateTimeOffset)]
+    [InlineData(typeof(System.Xml.Linq.XDocument), SqlDbType.Xml)]
+    [InlineData(typeof(System.Xml.XmlDocument), SqlDbType.Xml)]
     public void GetSqlDbType_KnownTypes(Type type, SqlDbType expectedSqlDbType)
     {
         SqlDbType sqlDbType = SqlTypeCache.GetSqlDbType(type);
@@ -62,6 +69,7 @@ public sealed class SqlTypeCacheTests
     [Theory]
     [InlineData(typeof(IntEnum), SqlDbType.Int)]
     [InlineData(typeof(ByteEnum), SqlDbType.TinyInt)]
+    [InlineData(typeof(UIntEnum), SqlDbType.Variant)]
     public void GetSqlDbType_EnumTypesUseUnderlyingType(Type enumType, SqlDbType expectedSqlDbType)
     {
         SqlDbType sqlDbType = SqlTypeCache.GetSqlDbType(enumType);
@@ -78,6 +86,10 @@ public sealed class SqlTypeCacheTests
 
         Assert.Equal(SqlDbType.Variant, sqlDbType);
     }
+
+    [Fact]
+    public void GetSqlDbType_Null_Exception() =>
+        Assert.Throws<ArgumentNullException>(() => SqlTypeCache.GetSqlDbType(null!));
 
     [Fact]
     public void GetSqlDbTypeFromValue_NullReturnsVariant()
@@ -179,6 +191,8 @@ public sealed class SqlTypeCacheTests
     [InlineData(typeof(DateTimeOffset?))]
 
     [InlineData(typeof(object))]
+    [InlineData(typeof(System.Xml.Linq.XDocument))]
+    [InlineData(typeof(System.Xml.XmlDocument))]
     public void GetAllCSharpTypes_ContainsExpectedMappedType(Type expectedType)
     {
         IEnumerable<Type> types = SqlTypeCache.GetAllCSharpTypes();

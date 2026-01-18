@@ -18,7 +18,7 @@ namespace Carrigan.SqlTools.Types;
 /// <summary>
 /// Provides a centralized and efficient mapping from CLR <see cref="Type"/> values
 /// to their corresponding ADO.NET <see cref="SqlDbType"/> values as used by
-/// <see cref="SqlParameter.SqlDbType"/>.
+/// SQL Server parameters.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -44,19 +44,24 @@ namespace Carrigan.SqlTools.Types;
 public static class SqlTypeCache
 {
     /// <summary>
-    /// Retrieves the <see cref="SqlDbType"/> for a runtime value.
+    /// Retrieves the <see cref="SqlDbType"/> for a CLR <see cref="Type"/>.
     /// </summary>
-    /// <param name="value">The value to inspect, or <c>null</c>.</param>
+    /// <param name="type">The CLR <see cref="Type"/> to map.</param>
     /// <returns>
-    /// <see cref="SqlDbType.Variant"/> if <paramref name="value"/> is <c>null</c>;
-    /// otherwise the mapped <see cref="SqlDbType"/> of the value's CLR type.
+    /// The mapped <see cref="SqlDbType"/> for <paramref name="type"/>,
+    /// or <see cref="SqlDbType.Variant"/> if the type is not mapped.
     /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="type"/> is <c>null</c>.
+    /// </exception>
     internal static SqlDbType GetSqlDbType(Type type)
     {
+        ArgumentNullException.ThrowIfNull(type);
+
         Type underlyingType = Nullable.GetUnderlyingType(type) ?? type;
         if (underlyingType.IsEnum)
             return MapEnum(underlyingType);
-        else if (_cache.TryGetValue(type, out SqlDbType sqlDbType))
+        else if (_cache.TryGetValue(underlyingType, out SqlDbType sqlDbType))
             return sqlDbType;
         else
             return SqlDbType.Variant;
@@ -80,8 +85,10 @@ public static class SqlTypeCache
     /// </returns>
     private static SqlDbType MapEnum(Type enumType)
     {
+        ArgumentNullException.ThrowIfNull(enumType);
+
         Type underlyingType = Enum.GetUnderlyingType(enumType);
-        if (_cache.TryGetValue(underlyingType, out SqlDbType sqlType)) 
+        if (_cache.TryGetValue(underlyingType, out SqlDbType sqlType))
             return sqlType;
         else
             return SqlDbType.Variant;
@@ -141,7 +148,7 @@ public static class SqlTypeCache
             new(typeof(DateTimeOffset),     SqlDbType.DateTimeOffset),
             new(typeof(DateTimeOffset?),    SqlDbType.DateTimeOffset),
 
-            //Note: Is Enum is not directly handled by the cache, but rather the underlying type of the enum is handled by the cache.
+            // Note: Enums are not directly handled by the cache. The underlying type of the enum is handled by the cache.
 
             new(typeof(System.Xml.Linq.XDocument), SqlDbType.Xml),
             new(typeof(System.Xml.XmlDocument),    SqlDbType.Xml),
@@ -159,6 +166,6 @@ public static class SqlTypeCache
     /// <returns>
     /// All CLR types that are explicitly supported by this cache.
     /// </returns>
-    internal static IEnumerable<Type> GetAllCSharpTypes() => 
+    internal static IEnumerable<Type> GetAllCSharpTypes() =>
         _cache.Keys;
 }

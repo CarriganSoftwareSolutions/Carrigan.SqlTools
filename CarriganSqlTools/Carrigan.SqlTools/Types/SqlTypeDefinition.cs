@@ -152,8 +152,13 @@ public class SqlTypeDefinition
     /// <param name="type">
     /// The CLR <see cref="Type"/> to use when determining the <see cref="SqlDbType"/>.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="type"/> is <c>null</c>.
+    /// </exception>
     public SqlTypeDefinition(Type type)
     {
+        ArgumentNullException.ThrowIfNull(type);
+
         Type = SqlTypeCache.GetSqlDbType(type);
         if (type.GetUnderlyingType() == typeof(char))
         {
@@ -194,7 +199,9 @@ public class SqlTypeDefinition
     private static void EnsureRange(SqlDbType type, string name, int value, int min, int max)
     {
         if (value < min || value > max)
+        {
             throw new SqlTypeArgumentOutOfRangeException(type, name, value, min, max);
+        }
     }
 
     /// <summary>
@@ -218,7 +225,9 @@ public class SqlTypeDefinition
     private static void EnsureRange(SqlDbType type, string name, byte value, byte max)
     {
         if (value > max)
+        {
             throw new SqlTypeArgumentOutOfRangeException(type, name, value, 0, max);
+        }
     }
 
     /// <summary>
@@ -230,13 +239,16 @@ public class SqlTypeDefinition
     /// <param name="min">The inclusive minimum allowed size.</param>
     /// <param name="max">The inclusive maximum allowed size.</param>
     /// <returns>A new <see cref="SqlTypeDefinition"/> instance.</returns>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException">
+    /// Thrown when <paramref name="size"/> is outside the valid range for <paramref name="type"/>.
+    /// </exception>
     private static SqlTypeDefinition WithSize(SqlDbType type, int? size, int min, int max)
     {
         string sizeAsString;
         if (size is not null)
         {
-            sizeAsString = size.ToString() ?? string.Empty; //the compiler seems to think the preferred code: size.ToString() could return null. This is not the case.
             EnsureRange(type, nameof(size), size.Value, min, max);
+            sizeAsString = size.Value.ToString();
         }
         else
         {
@@ -266,7 +278,7 @@ public class SqlTypeDefinition
     /// </summary>
     /// <param name="type">The <see cref="SqlDbType"/> being configured.</param>
     /// <returns>A new <see cref="SqlTypeDefinition"/> instance.</returns>
-    private static SqlTypeDefinition ByType(SqlDbType type) => new ()
+    private static SqlTypeDefinition ByType(SqlDbType type) => new()
     {
         Type = type,
         TypeDeclaration = ToSql(type)
@@ -300,6 +312,9 @@ public class SqlTypeDefinition
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <see cref="SqlDbType.Char"/>.
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException">
+    /// Thrown when <paramref name="size"/> is less than 1 or greater than 8000.
+    /// </exception>
     public static SqlTypeDefinition AsChar(int? size = null) =>
         WithSize(SqlDbType.Char, size, 1, LIMIT_FOR_ASCII);
 
@@ -307,14 +322,19 @@ public class SqlTypeDefinition
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <see cref="SqlDbType.NChar"/>.
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException">
+    /// Thrown when <paramref name="size"/> is less than 1 or greater than 4000.
+    /// </exception>
     public static SqlTypeDefinition AsNChar(int? size = null) =>
         WithSize(SqlDbType.NChar, size, 1, LIMIT_FOR_UNICODE);
 
     /// <summary>
-    /// <summary>
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <see cref="SqlDbType.VarChar"/>.
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException">
+    /// Thrown when <paramref name="size"/> is less than 1 or greater than 8000.
+    /// </exception>
     public static SqlTypeDefinition AsVarChar(int? size = null) =>
         WithSize(SqlDbType.VarChar, size, 1, LIMIT_FOR_ASCII);
 
@@ -323,6 +343,9 @@ public class SqlTypeDefinition
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <see cref="SqlDbType.NVarChar"/>.
     /// </summary>
     /// <param name="size">The length in characters, or <c>null</c> for no explicit size.</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException">
+    /// Thrown when <paramref name="size"/> is less than 1 or greater than 4000.
+    /// </exception>
     public static SqlTypeDefinition AsNVarChar(int? size = null) =>
         WithSize(SqlDbType.NVarChar, size, 1, LIMIT_FOR_UNICODE);
 
@@ -366,6 +389,9 @@ public class SqlTypeDefinition
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <see cref="SqlDbType.Binary"/>.
     /// </summary>
     /// <param name="size">The length in bytes, or <c>null</c> for no explicit size.</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException">
+    /// Thrown when <paramref name="size"/> is less than 1 or greater than 8000.
+    /// </exception>
     public static SqlTypeDefinition AsBinary(int? size = null) =>
         WithSize(SqlDbType.Binary, size, 1, LIMIT_FOR_BYTE_ARRAY);
 
@@ -374,6 +400,9 @@ public class SqlTypeDefinition
     /// Creates and returns a <see cref="SqlTypeDefinition"/> representing <see cref="SqlDbType.VarBinary"/>.
     /// </summary>
     /// <param name="size">The length in bytes, or <c>null</c> for no explicit size.</param>
+    /// <exception cref="SqlTypeArgumentOutOfRangeException">
+    /// Thrown when <paramref name="size"/> is less than 1 or greater than 8000.
+    /// </exception>
     public static SqlTypeDefinition AsVarBinary(int? size = null) =>
         WithSize(SqlDbType.VarBinary, size, 1, LIMIT_FOR_BYTE_ARRAY);
 
@@ -452,7 +481,10 @@ public class SqlTypeDefinition
     {
         SqlDbType type = SqlDbType.Float;
         if (precision is not null && (precision < 1 || precision > 53))
+        {
             throw new SqlTypeArgumentOutOfRangeException(type, nameof(precision), precision.Value, 1, 53);
+        }
+
         return new SqlTypeDefinition()
         {
             Type = type,

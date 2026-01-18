@@ -5,6 +5,10 @@ namespace Carrigan.SqlTools.Tests.TypesTests;
 
 public sealed partial class SqlTypeDefinitionTests
 {
+    [Fact]
+    public void TypeConstructor_Null_Exception() =>
+        Assert.Throws<ArgumentNullException>(() => new SqlTypeDefinition((Type)null!));
+
     [Theory]
     [InlineData(typeof(Guid), SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
     [InlineData(typeof(Guid?), SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
@@ -54,7 +58,6 @@ public sealed partial class SqlTypeDefinitionTests
         Assert.Equal(expectedDbType, definition.Type);
         Assert.Equal(expectedDeclaration, definition.TypeDeclaration);
     }
-
 
 
     [Theory]
@@ -171,7 +174,7 @@ public sealed partial class SqlTypeDefinitionTests
     [Fact]
     public void ValueConstructor_Object()
     {
-        object value = new object();
+        object value = new ();
         SqlDbType expectedDbType = SqlDbType.Variant;
         string expectedDeclaration = "SQL_VARIANT";
         SqlTypeDefinition definition = new(value);
