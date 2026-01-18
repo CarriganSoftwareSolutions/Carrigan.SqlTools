@@ -18,11 +18,18 @@ namespace Carrigan.SqlTools.Tags;
 /// as a single string with parts joined by underscores (for example, <c>Prefix_Column_Index</c>).
 /// </summary>
 /// <remarks>
+/// <para>
 /// This class implements <see cref="IComparable{T}"/>, <see cref="IEquatable{T}"/>,
 /// and <see cref="IEqualityComparer{T}"/> to support sorting, equality checks,
 /// and use in collections that rely on hashing. Parameter names may be provided
 /// explicitly (for example, via <see cref="ParameterAttribute"/>), or derived from
 /// property and column names.
+/// </para>
+/// <para>
+/// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
+/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
+/// <see cref="StringComparison"/> mode.
+/// </para>
 /// </remarks>
 /// <example>
 /// <para>Example usage with a parameter attribute:</para>
@@ -59,7 +66,7 @@ public class ParameterTag : StringWrapper
     private readonly string? _prefix;
 
     /// <summary>
-    /// Optional prefix to prepend to the parameter name.
+    /// Optional index to append to the parameter name.
     /// </summary>
     private readonly string? _index;
 
@@ -67,8 +74,8 @@ public class ParameterTag : StringWrapper
     /// Represents the SQL type definition associated with this parameter, when known.
     /// </summary>
     /// <remarks>
-    /// This value may be inferred from a runtime value or copied from the owning
-    /// <see cref="ColumnInfo"/>. It is used when materializing <see cref="IDbDataParameter"/>
+    /// This value may be inferred from a runtime value (including <c>null</c>, which infers <see cref="SqlDbType.Variant"/>),
+    /// or copied from the owning <see cref="ColumnInfo"/>. It is used when materializing <see cref="IDbDataParameter"/>
     /// instances for the generated SQL.
     /// </remarks>
     public SqlTypeDefinition? SqlType { get; private set; }
@@ -79,12 +86,14 @@ public class ParameterTag : StringWrapper
     /// <param name="prefix">An optional prefix to prepend to the parameter name.</param>
     /// <param name="parameterName">The base parameter name. Must not be <c>null</c>, empty, or whitespace.</param>
     /// <param name="index">An optional index to append to the parameter name.</param>
+    /// <param name="sqlType">The optional SQL type definition associated with this parameter.</param>
     /// <exception cref="InvalidParameterIdentifierException">
     /// Thrown when <paramref name="parameterName"/> or the combined result is invalid per SQL identifier rules.
     /// </exception>
     internal ParameterTag(string? prefix, string parameterName, string? index, SqlTypeDefinition? sqlType) :
         base(CreateParameterTagString(prefix, parameterName, index), StringComparison.OrdinalIgnoreCase)
     {
+        //TODO: Determine if these sql pattern checks are redundant
         if (SqlParameterPattern.Fails(parameterName))
             throw new InvalidParameterIdentifierException(parameterName);
 
@@ -100,8 +109,9 @@ public class ParameterTag : StringWrapper
     /// <summary>
     /// Deeper copy constructor for the parameter tag.
     /// </summary>
-    /// <param name="parameter"></param>
-    private ParameterTag(ParameterTag parameter) : base(CreateParameterTagString(parameter._prefix, parameter._parameterBaseName, parameter._index), StringComparison.OrdinalIgnoreCase)
+    /// <param name="parameter">The parameter tag to clone.</param>
+    private ParameterTag(ParameterTag parameter) :
+        base(CreateParameterTagString(parameter._prefix, parameter._parameterBaseName, parameter._index), StringComparison.OrdinalIgnoreCase)
     {
         _parameterBaseName = parameter._parameterBaseName;
         _prefix = parameter._prefix;
@@ -138,7 +148,7 @@ public class ParameterTag : StringWrapper
     /// <returns>
     /// A <see cref="KeyValuePair{TKey, TValue}"/> whose key is a cloned
     /// <see cref="ParameterTag"/> with an inferred <see cref="SqlType"/> (when
-    /// <paramref name="value"/> is not <c>null</c>), and whose value is the
+    /// the current instance does not already have one), and whose value is the
     /// supplied value or <see cref="DBNull.Value"/>.
     /// </returns>
     internal KeyValuePair<ParameterTag, object> GetParameter(object? value)
@@ -167,7 +177,7 @@ public class ParameterTag : StringWrapper
         ParameterTag parameterTag = new(this);
         object? value = column.PropertyInfo.GetValue(entity);
 
-        parameterTag.SqlType ??= column?.SqlType;
+        parameterTag.SqlType ??= column.SqlType;
         return new(parameterTag, ConvertValue(value));
     }
 
@@ -189,7 +199,7 @@ public class ParameterTag : StringWrapper
     /// Creates a new <see cref="ParameterTag"/> with text prepended to the existing prefix (if any).
     /// </summary>
     /// <param name="textToPrepend">
-    /// The text to prepend to the current prefix. If the prefix is empty, this becomes the new prefix.
+    /// The text to prepend to the current prefix. If the existing prefix is empty, this becomes the new prefix.
     /// </param>
     /// <returns>A new <see cref="ParameterTag"/> with the updated prefix.</returns>
     internal ParameterTag PrefixPrepend(string? textToPrepend)
@@ -198,12 +208,12 @@ public class ParameterTag : StringWrapper
             return new(textToPrepend, _parameterBaseName, _index, SqlType);
         else
             return new($"{textToPrepend}_{_prefix}", _parameterBaseName, _index, SqlType);
-    }
+        }
 
     /// <summary>
     /// Creates a new <see cref="ParameterTag"/> with the specified index appended.
     /// </summary>
-    /// <param name="newIndex">The index value to append. Must not be <c>null</c>, empty, or whitespace.</param>
+    /// <param name="newIndex">The index value to append. If <c>null</c> or whitespace, no index is appended.</param>
     /// <returns>A new <see cref="ParameterTag"/> that includes the specified index.</returns>
     /// <exception cref="ArgumentException">Thrown if an index has already been defined on this instance.</exception>
     internal ParameterTag AddIndex(string? newIndex)
@@ -211,7 +221,7 @@ public class ParameterTag : StringWrapper
         if (_index.IsNullOrWhiteSpace())
             return new(_prefix, _parameterBaseName, newIndex, SqlType);
         else
-            throw new ArgumentException("Index was already defined on the Parameter");
+            throw new ArgumentException("Index was already defined on the Parameter", nameof(newIndex));
     }
 
     private static string CreateParameterTagString(string? prefix, string parameterName, string? index)

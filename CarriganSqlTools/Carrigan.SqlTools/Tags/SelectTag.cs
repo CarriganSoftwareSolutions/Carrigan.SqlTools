@@ -173,8 +173,8 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// <returns>
     /// The SQL text for this select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c>.
     /// </returns>
-    public override string ToString()
-        => this;
+    public override string ToString() => 
+        _selectTag;
 
 
     /// <summary>
@@ -279,7 +279,7 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// </summary>
     /// <returns>The SQL text represented by this instance.</returns>
     public override string ToSql() =>
-        this;
+        _selectTag;
 
     /// <summary>
     /// Gets all distinct <see cref="TableTag"/> values referenced by this select tag.

@@ -8,8 +8,15 @@ namespace Carrigan.SqlTools.Tags;
 /// Represents an SQL alias token used by SQL generation.
 /// </summary>
 /// <remarks>
+/// <para>
 /// This type wraps an <see cref="AliasName"/> value and uses <see cref="StringWrapper"/> to provide
 /// consistent equality, ordering, and hashing semantics.
+/// </para>
+/// <para>
+/// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
+/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
+/// <see cref="StringComparison"/> mode.
+/// </para>
 /// </remarks>
 public class AliasTag : StringWrapper
 {

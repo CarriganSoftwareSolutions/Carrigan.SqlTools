@@ -11,14 +11,20 @@ namespace Carrigan.SqlTools.Tags;
 /// <remarks>
 /// This type uses <see cref="StringWrapper"/> to provide consistent equality, ordering,
 /// and hashing semantics (case-insensitive via <see cref="StringComparison.OrdinalIgnoreCase"/>).
+/// <para>
+/// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
+/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
+/// <see cref="StringComparison"/> mode.
+/// </para>
 /// </remarks>
 /// <example>
 /// <para>
 /// Using Identifier Attribute
 /// </para>
 /// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.Attributes;
 /// using Carrigan.SqlTools.SqlGenerators;
-/// 
+///
 /// [Identifier("Email", "schema")]
 /// public class EmailModel
 /// {
@@ -28,9 +34,9 @@ namespace Carrigan.SqlTools.Tags;
 ///     [Identifier("Email")]
 ///     public string? EmailAddress { get; set; }
 /// }
-/// 
+///
 /// SqlGenerator<EmailModel> emailGenerator = new();
-/// 
+///
 /// EmailModel email = new()
 /// {
 ///     Id = 10,
@@ -41,8 +47,8 @@ namespace Carrigan.SqlTools.Tags;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [schema].[Phone] 
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// UPDATE [schema].[Email]
+/// SET [CustomerId] = @CustomerId, [Email] = @Email
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
@@ -52,7 +58,9 @@ namespace Carrigan.SqlTools.Tags;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// using Carrigan.SqlTools.SqlGenerators;
-/// 
+/// using System.ComponentModel.DataAnnotations;
+/// using System.ComponentModel.DataAnnotations.Schema;
+///
 /// [Table("Phone", Schema = "schema")]
 /// public class PhoneModel
 /// {
@@ -62,9 +70,9 @@ namespace Carrigan.SqlTools.Tags;
 ///     [Column("Phone")]
 ///     public string? PhoneNumber { get; set; }
 /// }
-/// 
+///
 /// SqlGenerator<PhoneModel> phoneGenerator = new();
-/// 
+///
 /// PhoneModel phone = new()
 /// {
 ///     Id = 2718,
@@ -75,8 +83,8 @@ namespace Carrigan.SqlTools.Tags;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [schema].[Phone] 
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// UPDATE [schema].[Phone]
+/// SET [CustomerId] = @CustomerId, [Phone] = @Phone
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
@@ -98,7 +106,7 @@ internal class ColumnTag : StringWrapper
     /// <param name="tableTag">The <see cref="Tags.TableTag"/> representing the table containing the column.</param>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
     internal ColumnTag(TableTag tableTag, ColumnName columnName)
-        : base(CreateColumnTagString(tableTag, columnName), StringComparison.Ordinal)
+        : base(CreateColumnTagString(tableTag, columnName), StringComparison.OrdinalIgnoreCase)
     {
         ColumnName = columnName;
         TableTag = tableTag;
@@ -122,14 +130,13 @@ internal class ColumnTag : StringWrapper
     }
 
     /// <summary>
-    /// Determines whether this <see cref="ColumnTag"/> is empty.
+    /// Determines whether this <see cref="ColumnTag"/> represents an empty or whitespace column name.
     /// </summary>
     /// <returns>
-    /// <c>true</c> if the SQL representation of this column is <c>null</c>, empty, or whitespace;
-    /// otherwise, <c>false</c>.
+    /// <c>true</c> if the underlying <see cref="ColumnName"/> is empty or whitespace; otherwise, <c>false</c>.
     /// </returns>
     public new bool IsEmpty() =>
-        ToString().IsNullOrWhiteSpace();
+        ColumnName.IsNullOrWhiteSpace();
 
     private static string CreateColumnTagString(TableTag tableTag, ColumnName columnName) =>
         tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";

@@ -4,6 +4,8 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using System.Data;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Tests.Tags;
 
@@ -386,5 +388,31 @@ public class ParameterTagTests
         Assert.Equal(123, result.Value);
         Assert.NotNull(result.Key.SqlType);
         Assert.Equal(SqlDbType.Int, result.Key.SqlType.Type);
+    }
+
+    [Fact]
+    public void GetParameter_XDocument_ConvertsToString()
+    {
+        ParameterTag tag = new(null, "XmlParam", null, null);
+        XDocument document = new(new XElement("Root", new XElement("Child", "Value")));
+
+        KeyValuePair<ParameterTag, object> result = tag.GetParameter(document);
+
+        Assert.IsType<string>(result.Value);
+        Assert.Contains("<Root>", (string)result.Value);
+    }
+
+    [Fact]
+    public void GetParameter_XmlDocument_ConvertsToOuterXml()
+    {
+        ParameterTag tag = new(null, "XmlParam", null, null);
+
+        XmlDocument document = new();
+        document.LoadXml("<Root><Child>Value</Child></Root>");
+
+        KeyValuePair<ParameterTag, object> result = tag.GetParameter(document);
+
+        Assert.IsType<string>(result.Value);
+        Assert.Equal("<Root><Child>Value</Child></Root>", (string)result.Value);
     }
 }

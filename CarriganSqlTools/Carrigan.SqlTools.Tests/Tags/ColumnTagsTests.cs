@@ -342,5 +342,36 @@ public class ColumnTagsTests
         Assert.NotNull(columnTag);
     }
 
+    [Fact]
+    public void Equals_DifferentCase_ReturnsTrue()
+    {
+        ColumnTag lower = new(new TableTag("s", "t"), new ColumnName("c"));
+        ColumnTag upper = new(new TableTag("S", "T"), new ColumnName("C"));
+
+        Assert.True(lower.Equals(upper));
+        Assert.True(upper.Equals(lower));
+    }
+
+    [Fact]
+    public void GetHashCode_DifferentCase_EqualInstances_HaveSameHash()
+    {
+        ColumnTag lower = new(new TableTag("s", "t"), new ColumnName("c"));
+        ColumnTag upper = new(new TableTag("S", "T"), new ColumnName("C"));
+
+        Assert.Equal(lower.GetHashCode(), upper.GetHashCode());
+    }
+
+    [Fact]
+    public void DictionaryKey_RetrievalByDifferentCaseColumnTag_Works()
+    {
+        Dictionary<ColumnTag, string> dict = [];
+        ColumnTag keyLower = new(new TableTag("s", "t"), new ColumnName("c"));
+        dict[keyLower] = "value";
+
+        ColumnTag keyUpper = new(new TableTag("S", "T"), new ColumnName("C"));
+
+        Assert.True(dict.ContainsKey(keyUpper));
+        Assert.Equal("value", dict[keyUpper]);
+    }
 
 }

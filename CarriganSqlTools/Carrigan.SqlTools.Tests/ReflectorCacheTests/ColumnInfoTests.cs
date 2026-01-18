@@ -120,7 +120,7 @@ public class ColumnInfoTests
 
         Assert.Equal(expectedColumnTag, implicitString);
         Assert.Equal(expectedColumnTag, explicitString);
-        Assert.Equal(expectedColumnTag.GetHashCode(), columnInfo.GetHashCode());
+        Assert.Equal(expectedColumnTag.GetHashCode(StringComparison.OrdinalIgnoreCase), columnInfo.GetHashCode());
 
         Assert.False(columnInfo.IsEmpty());
 

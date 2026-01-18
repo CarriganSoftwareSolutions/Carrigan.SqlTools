@@ -15,6 +15,11 @@ namespace Carrigan.SqlTools.Tags;
 /// This type uses <see cref="StringWrapper"/> to provide consistent equality, ordering,
 /// and hashing semantics (case-sensitive via <see cref="StringComparison.Ordinal"/>).
 /// <para>
+/// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
+/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
+/// <see cref="StringComparison"/> mode.
+/// </para>
+/// <para>
 /// SQL identifier correctness (invalid characters, reserved words, length constraints, etc.)
 /// is validated by the SQL generator.
 /// </para>
@@ -84,6 +89,9 @@ internal class ProcedureTag : StringWrapper
     /// <param name="value">The entity CLR <see cref="Type"/> whose procedure tag should be retrieved.</param>
     /// <returns>The <see cref="ProcedureTag"/> for the specified type.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="value"/> is <c>null</c>.</exception>
+    /// <exception cref="AmbiguousMatchException">Thrown when multiple matching properties are found.</exception>
+    /// <exception cref="TargetInvocationException">Thrown when the property getter throws an exception.</exception>
+    /// <exception cref="MethodAccessException">Thrown when the property getter is inaccessible.</exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the underlying reflection cache does not expose a non-public static
     /// <c>ProcedureTag</c> property, or when the property value is <c>null</c>.
