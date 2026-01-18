@@ -415,4 +415,24 @@ public class SqlGenerator_UpdateByIdTests
         Assert.Throws<NoPrimaryKeyPropertyException<Address>>(() => _sqlGeneratorAddress.UpdateById(entities.Single()));
         Assert.Throws<NoPrimaryKeyPropertyException<Address>>(() => _sqlGeneratorAddress.UpdateByIds(value, null, entities));
     }
+
+    [Fact]
+    public void SqlUpdateString_GeneratesCorrectSql_WithCompositePrimaryKey_UsesAndInWhereClause()
+    {
+        CompositePrimaryKeyTable entity = new()
+        {
+            Id1 = 1,
+            Id2 = 2,
+            NotKey1 = 10,
+            NotKey2 = 20,
+            NotKey3 = 30
+        };
+
+        SqlQuery query = _sqlGeneratorCompositeKeyTable.UpdateById(entity);
+
+        string expectedSql =
+            "UPDATE [Ck] SET [NotKey1] = @NotKey1, [NotKey2] = @NotKey2, [NotKey3] = @NotKey3 WHERE [Id1] = @Id1 AND [Id2] = @Id2;";
+
+        Assert.Equal(expectedSql, query.QueryText);
+    }
 }

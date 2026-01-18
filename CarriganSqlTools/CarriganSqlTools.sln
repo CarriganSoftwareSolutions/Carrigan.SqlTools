@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36408.4
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11408.102 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools", "Carrigan.SqlTools\Carrigan.SqlTools.csproj", "{E631F123-8CB9-4782-9310-8D6663821DAA}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.IntegrationTests", "Carrigan.SqlTools.IntegrationTests\Carrigan.SqlTools.IntegrationTests.csproj", "{615D61CB-B58C-49C3-8F31-8EBC4419836D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Analyzers", "Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj", "{B89156B8-5789-4B08-B8C4-60A9EBBD430D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.SqlServer.Tests", "Carrigan.SqlTools.SqlServer.Tests\Carrigan.SqlTools.SqlServer.Tests.csproj", "{32407DBD-8440-41B5-B8D3-7E360E59C2FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,6 +50,10 @@ Global
 		{B89156B8-5789-4B08-B8C4-60A9EBBD430D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B89156B8-5789-4B08-B8C4-60A9EBBD430D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B89156B8-5789-4B08-B8C4-60A9EBBD430D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

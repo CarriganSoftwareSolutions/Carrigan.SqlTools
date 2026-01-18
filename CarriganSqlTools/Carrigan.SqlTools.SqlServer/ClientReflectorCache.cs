@@ -15,6 +15,7 @@ internal static class ClientReflectorCache<T>
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyEncryptedProperties;
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyProperties;
     private static readonly Lazy<PropertyInfo?> _LazyKeyVersionProperty;
+
     static ClientReflectorCache()
     {
         Type = typeof(T);
@@ -22,18 +23,17 @@ internal static class ClientReflectorCache<T>
         _LazyProperties = new Lazy<IEnumerable<PropertyInfo>>
             (() => [.. ReflectorCache<T>
                         .WriteablePublicInstanceProperties
-                        .Where(property => property.GetCustomAttribute<NotMappedAttribute>() == null)]
+                        .Where(static property => property.IsDefined(typeof(NotMappedAttribute), inherit: true) is false)]
             );
 
         _LazyEncryptedProperties = new Lazy<IEnumerable<PropertyInfo>>
-            (() => Properties
-                    .Where(property => property.GetCustomAttribute<EncryptedAttribute>() != null)
+            (() => [.. Properties
+                    .Where(static property => property.IsDefined(typeof(EncryptedAttribute), inherit: true))]
             );
 
         _LazyKeyVersionProperty = new Lazy<PropertyInfo?>
             (() => Properties
-                    .Where(property => property.GetCustomAttribute<KeyVersionAttribute>() != null)
-                    .FirstOrDefault()
+                    .FirstOrDefault(static property => property.IsDefined(typeof(KeyVersionAttribute), inherit: true))
             );
     }
 }

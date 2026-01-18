@@ -37,6 +37,13 @@ public partial class SqlGenerator<T>
     /// Thrown when the entity type <typeparamref name="T"/> does not define a primary key property,
     /// but an ID-based update is requested.
     /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="entity"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="columns"/> selects one or more key properties, or when it selects
+    /// no non-key columns.
+    /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new()
@@ -78,10 +85,12 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery UpdateById(T entity, ColumnCollection<T>? columns = null)
     {
+        ArgumentNullException.ThrowIfNull(entity);
+
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
 
-        IEnumerable<ColumnInfo> updateTheseColumns = 
+        IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
 
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Concat(KeyColumnInfo).Select(column => GetSqlParameterKeyValue(column, entity));
@@ -100,7 +109,7 @@ public partial class SqlGenerator<T>
             KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, entity);
             whereColumnAndParameterName.Add(new(column.ColumnTag, parameter.Key));
         }
-        string where = string.Join(", ", whereColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
+        string where = string.Join(" AND ", whereColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
 
         return new SqlQuery()
         {
@@ -109,6 +118,7 @@ public partial class SqlGenerator<T>
             CommandType = CommandType.Text
         };
     }
+
 
     /// <summary>
     /// Generates a SQL <c>UPDATE</c> statement that sets column values from
@@ -137,6 +147,12 @@ public partial class SqlGenerator<T>
     /// <exception cref="NoPrimaryKeyPropertyException{T}">
     /// Thrown when the entity type <typeparamref name="T"/> does not define a primary key property,
     /// but an ID-based update is requested.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="valuesEntity"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="idEntities"/> is <c>null</c>.
     /// </exception>
     /// <example>
     /// <para>
@@ -169,6 +185,8 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery UpdateByIds(T valuesEntity, ColumnCollection<T>? columns, params IEnumerable<T> idEntities)
     {
+        ArgumentNullException.ThrowIfNull(valuesEntity);
+
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
@@ -217,6 +235,9 @@ public partial class SqlGenerator<T>
     /// <exception cref="InvalidTableException">
     /// Thrown when <paramref name="predicates"/> reference tables that are not present
     /// on the base table or in the specified <paramref name="joins"/>.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="entity"/> is <c>null</c>.
     /// </exception>
     /// <example>
     /// <para>
@@ -278,15 +299,17 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Update(T entity, ColumnCollection<T>? columns, JoinsBase? joins, Predicates? predicates)
     {
+        ArgumentNullException.ThrowIfNull(entity);
+
         IEnumerable<ColumnInfo> updateTheseColumns =
-            (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
+            [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys)];
 
         IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
         if (invalidTags.Any())
-        { 
+        {
             throw new InvalidTableException(invalidTags);
         }
 
@@ -302,8 +325,9 @@ public partial class SqlGenerator<T>
         }
         if (predicates is not null)
         {
-            queryBuilder.Append($" WHERE {predicates.ToSqlFragments("Parameter").ToSql()}");
-            parametersDictionary.Add(predicates.ToSqlFragments("Parameter").GetParameters());
+            IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments("Parameter")];
+            queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
+            parametersDictionary.Add(predicateSqlFragments.GetParameters());
         }
         return new SqlQuery()
         {
