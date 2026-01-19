@@ -3,6 +3,7 @@ using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer.Exceptions;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;

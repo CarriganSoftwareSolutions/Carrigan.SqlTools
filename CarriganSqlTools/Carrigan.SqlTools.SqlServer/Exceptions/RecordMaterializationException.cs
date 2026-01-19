@@ -3,7 +3,7 @@
 namespace Carrigan.SqlTools.SqlServer.Exceptions;
 
 /// <summary>
-/// Thrown when invoking a model instance from a result row fails.
+/// Thrown when materializing a record into a model instance fails.
 /// </summary>
 public sealed class RecordMaterializationException : SqlToolsSqlServerException
 {
@@ -29,22 +29,6 @@ public sealed class RecordMaterializationException : SqlToolsSqlServerException
             names.Add(name);
         }
 
-        string preview = BuildPreview(names);
-        return $"Failed to materialize '{modelType.Name}' from result row. Columns={names.Count}{preview}.";
-    }
-
-    private static string BuildPreview(List<string> names)
-    {
-        if (names.Count == 0)
-            return string.Empty;
-
-        int max = Math.Min(10, names.Count);
-        List<string> previewNames = [];
-        for (int i = 0; i < max; i++)
-        {
-            previewNames.Add(names[i]);
-        }
-
-        return $", Preview='{string.Join(", ", previewNames)}'";
+        return $"Failed to materialize '{modelType.Name}' from result row. Columns={names.Count}, ColumnNames='{string.Join(", ", names)}'.";
     }
 }

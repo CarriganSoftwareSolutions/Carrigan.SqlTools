@@ -1,6 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.SqlGenerators;
 using System.Data;
 using System.Data.Common;
 
@@ -12,52 +11,41 @@ namespace Carrigan.SqlTools.SqlServer.Exceptions;
 public sealed class CommandExecutionFailedException : SqlToolsSqlServerException
 {
     public string Operation { get; }
+
+    /// <summary>
+    /// Gets the generated SQL text.
+    /// </summary>
     public string QueryText { get; }
+
     public CommandType CommandType { get; }
+
+    /// <summary>
+    /// Gets parameter names only. Values are intentionally excluded.
+    /// </summary>
     public IEnumerable<string> ParameterNames { get; }
-    public string ConnectionType { get; }
-    public string? Database { get; }
-    public ConnectionState ConnectionState { get; }
+
     public bool HasTransaction { get; }
 
     public CommandExecutionFailedException(string operation, SqlQuery query, DbConnection connection, DbTransaction? transaction, Exception innerException)
-        : base(BuildMessage(operation, query, connection, transaction), innerException)
+        : base(BuildMessage(operation, query, transaction), innerException)
     {
         ArgumentNullException.ThrowIfNull(operation);
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(innerException);
 
+        _ = connection;
+
         Operation = operation;
         QueryText = query.QueryText;
         CommandType = query.CommandType;
-        ParameterNames = query.Parameters.Select(parameter => parameter.Key.ToString()).Materialize(Core.Enums.NullOptionsEnum.FilteredOut);
-        ConnectionType = connection.GetType().Name;
-        Database = SafeGetDatabase(connection);
-        ConnectionState = connection.State;
+        ParameterNames = query.Parameters.Select(parameters => parameters.Key.ToString()).Materialize(Core.Enums.NullOptionsEnum.FilteredOut);
         HasTransaction = transaction is not null;
     }
 
-    private static string? SafeGetDatabase(DbConnection connection)
+    private static string BuildMessage(string operation, SqlQuery query, DbTransaction? transaction)
     {
-        try
-        {
-            return connection.Database;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    private static string BuildMessage(string operation, SqlQuery query, DbConnection connection, DbTransaction? transaction)
-    {
-        string database = SafeGetDatabase(connection) ?? "";
-        string databaseDisplay = string.IsNullOrWhiteSpace(database) ? "" : $", Database='{database}'";
-
-        int parameterCount = query.Parameters.Count;
         string transactionDisplay = transaction is null ? "No" : "Yes";
-
-        return $"{operation} failed. CommandType='{query.CommandType}', Parameters={parameterCount}, Transaction={transactionDisplay}, ConnectionType='{connection.GetType().Name}', ConnectionState='{connection.State}'{databaseDisplay}.";
+        return $"{operation} failed. CommandType='{query.CommandType}', Parameters={query.Parameters.Count}, Transaction={transactionDisplay}.";
     }
 }

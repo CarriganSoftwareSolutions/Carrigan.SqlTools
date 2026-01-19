@@ -22,9 +22,8 @@ public sealed class DataReaderFailedException : SqlToolsSqlServerException
 
     private static string BuildMessage(Type modelType, int? ordinal, string? columnName)
     {
-        string ordinalDisplay = ordinal is null ? "" : $", Ordinal={ordinal.Value}";
-        string columnDisplay = string.IsNullOrWhiteSpace(columnName) ? "" : $", Column='{columnName}'";
-
+        string ordinalDisplay = ordinal is null ? string.Empty : $", Ordinal={ordinal.Value}";
+        string columnDisplay = string.IsNullOrWhiteSpace(columnName) ? string.Empty : $", Column='{columnName}'";
         return $"Failed to read record for '{modelType.Name}'{ordinalDisplay}{columnDisplay}.";
     }
 }

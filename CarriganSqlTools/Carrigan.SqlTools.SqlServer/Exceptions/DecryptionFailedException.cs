@@ -3,7 +3,6 @@
 /// <summary>
 /// Thrown when a decryption operation fails.
 /// </summary>
-/// <typeparam name="T">The model type being materialized.</typeparam>
 public sealed class DecryptionFailedException<T> : SqlToolsSqlServerException
 {
     /// <summary>
@@ -22,6 +21,7 @@ public sealed class DecryptionFailedException<T> : SqlToolsSqlServerException
     /// <param name="keyVersion">The key version used.</param>
     /// <param name="propertyName">The property name being decrypted.</param>
     /// <param name="innerException">The underlying exception.</param>
+
     public DecryptionFailedException(int keyVersion, string propertyName, Exception innerException)
         : base(BuildMessage(keyVersion, propertyName), innerException)
     {
