@@ -13,8 +13,21 @@ using System.Xml;
 
 namespace Carrigan.SqlTools.SqlServer;
 
+/// <summary>
+/// provides methods to execute various ado commands utilizing <see cref="SqlQuery"/>s synchronously
+/// </summary>
 public static class Commands
 {
+    /// <summary>
+    /// Help method to test a connect, arguably useful for ensuring your connection strings work...
+    /// This is just a fail safe to make sure the connection string for an application is set up correctly. 
+    /// This provides a fail early error, in case things aren't set up correctly.
+    /// I don't necessarily recommend using this, but I needed somewhere to put it for my own use.
+    /// </summary>
+    /// <param name="connectionString">a connection string</param>
+    /// <param name="friendlyName">used for generating exceptions</param>
+    /// <returns></returns>
+    /// <exception cref="Exception">Thrown if a connection can't be established</exception>
     public static void TestConnectionString(string connectionString, string friendlyName)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
@@ -32,6 +45,13 @@ public static class Commands
         }
     }
 
+    /// <summary>
+    /// Provides a convenient way to execute an ADO.net NonQuery utilizing <see cref="SqlQuery"/>
+    /// </summary>
+    /// <param name="query">the query</param>
+    /// <param name="transaction">the transaction, optionally null</param>
+    /// <param name="connection">the connection</param>
+    /// <returns>returns what the underlying ExecuteNonQuery returns, if successful</returns>
     public static int ExecuteNonQuery(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
@@ -45,15 +65,7 @@ public static class Commands
         }
         try
         {
-            using DbCommand command = connection.CreateCommand();
-            if (transaction != null)
-            {
-                command.Transaction = transaction;
-            }
-
-            command.CommandText = query.QueryText;
-            command.CommandType = query.CommandType;
-            command.Parameters.AddRange(query.GetParameterCollection().ToArray());
+            using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
 
             return command.ExecuteNonQuery();
         }
@@ -63,6 +75,13 @@ public static class Commands
                 connection.Close();
         }
     }
+    /// <summary>
+    /// Provides a convenient way to execute an ADO.net Scalar utilizing <see cref="SqlQuery"/>
+    /// </summary>
+    /// <param name="query">the query</param>
+    /// <param name="transaction">the transaction, optionally null</param>
+    /// <param name="connection">the connection</param>
+    /// <returns>returns what the underlying ExecuteScalar returns, if successful</returns>
     public static object? ExecuteScalar(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
@@ -77,14 +96,7 @@ public static class Commands
 
         try
         {
-            using DbCommand command = connection.CreateCommand();
-            if (transaction != null)
-            {
-                command.Transaction = transaction;
-            }
-            command.CommandText = query.QueryText;
-            command.CommandType = query.CommandType;
-            command.Parameters.AddRange(query.GetParameterCollection().ToArray());
+            using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
 
             return command.ExecuteScalar();
         }
@@ -95,10 +107,14 @@ public static class Commands
         }
     }
 
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection) where T : class, new() =>
-        ExecuteReader<T>(query, transaction, connection, null);
-
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters) where T : class, new()
+    /// <summary>
+    /// Provides a convenient way to execute an ADO.net Reader utilizing <see cref="SqlQuery"/>
+    /// </summary>
+    /// <param name="query">the query</param>
+    /// <param name="transaction">the transaction, optionally null</param>
+    /// <param name="connection">the connection</param>
+    /// <returns>returns an IEnumerable<T> of records read using ADO.Net</returns>
+    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -121,19 +137,12 @@ public static class Commands
 
         try
         {
-            using DbCommand command = connection.CreateCommand();
-            if (transaction != null)
-            {
-                command.Transaction = transaction;
-            }
-            command.CommandText = query.QueryText;
-            command.CommandType = query.CommandType;
-            command.Parameters.AddRange(query.GetParameterCollection().ToArray());
+            using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
 
             using DbDataReader dataReader = command.ExecuteReader();
             while (dataReader.Read())
             {
-                results.Add(Invoker<T>.Invoke(CommandSharedMethods.ReadRecord(dataReader)));
+                results.Add(CommandSharedMethods.ReadRecord<T>(dataReader));
             }
         }
         finally
@@ -141,7 +150,7 @@ public static class Commands
             if (wasClosed && connection.State == ConnectionState.Open)
                 connection.Close();
         }
-        CommandSharedMethods.ProcessResults(results, decrypters);
+        CommandSharedMethods.DecryptFields(results, decrypters);
         return results;
     }
 }

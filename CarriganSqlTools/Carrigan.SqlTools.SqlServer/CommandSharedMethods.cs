@@ -1,22 +1,53 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Exceptions;
-using System;
-using System.Collections.Generic;
+using Carrigan.SqlTools.Invocation;
+using Carrigan.SqlTools.SqlGenerators;
+using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Transactions;
 using System.Xml;
+//IGNORE SPELLING: xml
 
 namespace Carrigan.SqlTools.SqlServer;
 
+/// <summary>
+/// Provides command functionality used by <see cref="Commands"/> and <see cref="CommandsAsync"/>
+/// </summary>
 internal static class CommandSharedMethods
 {
-    internal static Dictionary<string, object?> ReadRecord(DbDataReader dataReader)
+    /// <summary>
+    /// Builds an <see cref="DBCommand"/> object
+    /// </summary>
+    /// <param name="query">An SQL Generated from Carrigan.SqlTools</param>
+    /// <param name="connection">a connection</param>
+    /// <param name="transaction">a transaction</param>
+    /// <returns>an <see cref="DBCommand"/> object</returns>
+    public static DbCommand CreateCommand(SqlQuery query, DbConnection connection, DbTransaction? transaction = null)
     {
+        DbCommand command = connection.CreateCommand();
+        if (transaction != null)
+        {
+            command.Transaction = transaction;
+        }
+        command.CommandText = query.QueryText;
+        command.CommandType = query.CommandType;
+        command.Parameters.AddRange(query.GetParameterCollection().ToArray());
+
+        return command;
+    }
+
+    /// <summary>
+    /// Reads individual records fields by field, performs type mapping, property mapping and returns the value in a newly invoked object.
+    /// </summary>
+    /// <param name="dataReader">a DbDataReader</param>
+    /// <returns>an instance of type <see cref="{T}"/> with the values read from the database for a given record</returns>    
+    internal static T ReadRecord<T>(DbDataReader dataReader) where T : class, new()
+    {
+        ArgumentNullException.ThrowIfNull(dataReader);
+
         Dictionary<string, object?> rowData = [];
         string dataTypeName;
         for (int i = 0; i < dataReader.FieldCount; i++)
@@ -25,22 +56,23 @@ internal static class CommandSharedMethods
             if (dataReader.IsDBNull(i))
                 rowData.Add(dataReader.GetName(i), DBNull.Value);
             else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
-            {
-                object xmlValue = dataReader.GetValue(i);
-                if (xmlValue is SqlXml sqlXml)
-                    rowData.Add(dataReader.GetName(i), sqlXml);
-                else if (xmlValue is string xmlString)
-                    rowData.Add(dataReader.GetName(i), new SqlXml(XmlReader.Create(new StringReader(xmlString))));
-                else
-                    rowData.Add(dataReader.GetName(i), xmlValue);
-            }
+                rowData.Add(dataReader.GetName(i), new SqlXml(XmlReader.Create(new StringReader(dataReader.GetString(i)))));
             else
                 rowData.Add(dataReader.GetName(i), dataReader.GetValue(i));
         }
-        return rowData;
+        return Invoker<T>.Invoke(rowData);
     }
 
-    internal static void ProcessResults<T>(List<T> results, IDecrypters? decrypters) where T : class, new()
+    /// <summary>
+    /// Performs field level decryption, if the necessary, and modifies the record.
+    /// </summary>
+    /// <typeparam name="T">the object type of the record</typeparam>
+    /// <param name="results">the list to modify</param>
+    /// <param name="decrypters">decryption interface</param>
+    /// <exception cref="DecrypterNotProvided{T}">throw if a field is defined for encryption and no <see cref="IDecrypters"/> is provided</exception>
+    /// <exception cref="NoKeyVersionException{T}">throw if a field is defined for encryption and no type doesn't have a keyversion field is defined for the class</exception>
+    /// <exception cref="Exception"></exception>
+    internal static void DecryptFields<T>(List<T> results, IDecrypters? decrypters) where T : class, new()
     {
         int? decryptionVersion = 1;
         IEncryption? decrypter = null;
