@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
 
 namespace Carrigan.SqlTools.SqlServer;
+
 internal static class SqlQueryExtensions
 {
     /// <summary>
@@ -47,24 +48,26 @@ internal static class SqlQueryExtensions
     {
         static SqlParameter GetSqlParameter(ParameterTag parameter, object value)
         {
-            SqlParameter sqlParameter = new(parameter, value)
+            object valueToUse = value is null ? DBNull.Value : value;
+
+            SqlParameter sqlParameter = new(parameter, valueToUse)
             {
-                SqlDbType = parameter.SqlType?.Type ?? (new SqlTypeDefinition(value)).Type
+                SqlDbType = parameter.SqlType?.Type ?? (new SqlTypeDefinition(valueToUse)).Type
             };
 
-            if (parameter.SqlType?.UseMax is not null)
+            if (parameter.SqlType is not null)
             {
                 if (parameter.SqlType.UseMax)
                     sqlParameter.Size = -1;
-            }
-            else
-            {
-                if (parameter.SqlType?.Size is not null)
-                    sqlParameter.Size = parameter.SqlType.Size.Value;
-                if (parameter.SqlType?.Precision is not null)
-                    sqlParameter.Precision = parameter.SqlType.Precision.Value;
-                if (parameter.SqlType?.Scale is not null)
-                    sqlParameter.Scale = parameter.SqlType.Scale.Value;
+                else
+                {
+                    if (parameter.SqlType.Size is not null)
+                        sqlParameter.Size = parameter.SqlType.Size.Value;
+                    if (parameter.SqlType.Precision is not null)
+                        sqlParameter.Precision = parameter.SqlType.Precision.Value;
+                    if (parameter.SqlType.Scale is not null)
+                        sqlParameter.Scale = parameter.SqlType.Scale.Value;
+                }
             }
 
             return sqlParameter;

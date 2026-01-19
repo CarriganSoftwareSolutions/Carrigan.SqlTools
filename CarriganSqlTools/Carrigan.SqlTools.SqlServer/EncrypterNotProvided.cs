@@ -22,7 +22,7 @@ public class DecrypterNotProvided<T> : Exception
     /// This exception is raised when encrypted properties exist on <typeparamref name="T"/>, but no decrypter provider is supplied.
     /// </remarks>
     internal DecrypterNotProvided() :
-        base($"No Decrypter provided for Sql Generator<{nameof(T)}>, and {nameof(T)} has Decrypted properties.")
+        base($"No Decrypter provided for Sql Generator<{typeof(T).Name}>, and {typeof(T).Name} has Encrypted properties.")
     {
     }
 }
