@@ -40,19 +40,16 @@ internal static class ClientReflectorCache<T>
     {
         Type = typeof(T);
 
-        _LazyProperties = new Lazy<IEnumerable<PropertyInfo>>
-            (() => [.. ReflectorCache<T>
+        _LazyProperties = new(() => [.. ReflectorCache<T>
                         .WriteablePublicInstanceProperties
                         .Where(static property => property.IsDefined(typeof(NotMappedAttribute), inherit: true) is false)]
             );
 
-        _LazyEncryptedProperties = new Lazy<IEnumerable<PropertyInfo>>
-            (() => [.. Properties
+        _LazyEncryptedProperties = new(() => [.. Properties
                     .Where(static property => property.IsDefined(typeof(EncryptedAttribute), inherit: true))]
             );
 
-        _LazyKeyVersionProperty = new Lazy<PropertyInfo?>
-            (() => Properties
+        _LazyKeyVersionProperty = new(() => Properties
                     .FirstOrDefault(static property => property.IsDefined(typeof(KeyVersionAttribute), inherit: true))
             );
     }

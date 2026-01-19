@@ -37,9 +37,9 @@ public static class CommandsAsync
             await connection.OpenAsync();
             await connection.CloseAsync();
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            throw new Exception($"{friendlyName}: Connection could not be established.", ex);
+            throw new Exception($"{friendlyName}: Connection could not be established.", exception);
         }
     }
 
@@ -122,7 +122,6 @@ public static class CommandsAsync
         ArgumentNullException.ThrowIfNull(connection);
 
         List<T> results = [];
-        List<Task<T>> invocationTasks = [];
         bool wasClosed = false;
 
         if (ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)

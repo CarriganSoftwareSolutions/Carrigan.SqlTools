@@ -76,6 +76,6 @@ internal static class SqlQueryExtensions
         return query
                     .Parameters
                     .AsEnumerable()
-                    .Select(parameter => GetSqlParameter(parameter.Key, parameter.Value));
+                    .Select(static parameter => GetSqlParameter(parameter.Key, parameter.Value));
     }
 }
