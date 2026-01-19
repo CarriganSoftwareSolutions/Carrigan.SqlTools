@@ -6,25 +6,26 @@ using System.Reflection;
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
-/// reflection provider used when invoking new instances with values read from the database.
+/// Reflection provider used when invoking new instances with values read from the database.
 /// </summary>
-/// <typeparam name="T">the datatype of the model</typeparam>
+/// <typeparam name="T">The data type of the model.</typeparam>
 internal static class ClientReflectorCache<T>
 {
     /// <summary>
-    /// class type
+    /// Gets the model type.
     /// </summary>
     internal static Type Type { get; }
     /// <summary>
-    /// Properties of the type
+    /// Gets the writable public instance properties for <typeparamref name="T"/> that are not marked with <see cref="NotMappedAttribute"/>.
     /// </summary>
     internal static IEnumerable<PropertyInfo> Properties => _LazyProperties.Value;
     /// <summary>
-    /// properties that are encrypted.
+    /// Gets the properties marked with <see cref="EncryptedAttribute"/>.
     /// </summary>
     internal static IEnumerable<PropertyInfo> EncryptedProperties => _LazyEncryptedProperties.Value;
     /// <summary>
-    /// stores the encryption key version used to decrypt / decrypt a record
+    /// Gets the property marked with <see cref="KeyVersionAttribute"/> that stores the encryption key version used to decrypt and encrypt a record,
+    /// or <see langword="null"/> when no such property is defined.
     /// </summary>
     internal static PropertyInfo? KeyVersionProperty => _LazyKeyVersionProperty.Value;
 
@@ -33,7 +34,7 @@ internal static class ClientReflectorCache<T>
     private static readonly Lazy<PropertyInfo?> _LazyKeyVersionProperty;
 
     /// <summary>
-    /// static constructor
+    /// Initializes static members of the <see cref="ClientReflectorCache{T}"/> class.
     /// </summary>
     static ClientReflectorCache()
     {

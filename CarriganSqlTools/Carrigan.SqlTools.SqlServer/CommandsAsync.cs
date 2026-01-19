@@ -16,21 +16,17 @@ using System.Xml;
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
-/// provides methods to execute various ado commands utilizing <see cref="SqlQuery"/>s asynchronously
+/// Provides methods to execute various ADO.NET commands using <see cref="SqlQuery"/> asynchronously.
 /// </summary>
 public static class CommandsAsync
 {
     /// <summary>
-    /// Help method to test a connect, arguably useful for ensuring your connection strings work...
-    /// This is just a fail safe to make sure the connection string for an application is set up correctly. 
-    /// This provides a fail early error, in case things aren't set up correctly.
-    /// I don't necessarily recommend using this, but I needed somewhere to put it for my own use.
+    /// Attempts to open and close a SQL connection to validate the provided connection string.
     /// </summary>
-    /// <param name="connectionString">a connection string</param>
-    /// <param name="friendlyName">used for generating exceptions</param>
-    /// <returns></returns>
-    /// <exception cref="Exception">Thrown if a connection can't be established</exception>
-    public async static Task TestConnectionStringAsync(string connectionString, string friendlyName)
+    /// <param name="connectionString">The connection string.</param>
+    /// <param name="friendlyName">A friendly name included in the exception message when a connection cannot be established.</param>
+    /// <exception cref="Exception">Thrown if a connection cannot be established.</exception>
+    public static async Task TestConnectionStringAsync(string connectionString, string friendlyName)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
         ArgumentNullException.ThrowIfNull(friendlyName);
@@ -48,13 +44,13 @@ public static class CommandsAsync
     }
 
     /// <summary>
-    /// Provides a convenient way to execute an ADO.net NonQueryAsync utilizing <see cref="SqlQuery"/>
+    /// Executes an ADO.NET non-query command (for example, INSERT/UPDATE/DELETE) using a <see cref="SqlQuery"/>.
     /// </summary>
-    /// <param name="query">the query</param>
-    /// <param name="transaction">the transaction, optionally null</param>
-    /// <param name="connection">the connection</param>
-    /// <returns>returns what the underlying ExecuteNonQueryAsync returns, if successful</returns>
-    public async static Task<int> ExecuteNonQueryAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
+    /// <param name="query">The query to execute.</param>
+    /// <param name="transaction">The transaction (optional).</param>
+    /// <param name="connection">The connection.</param>
+    /// <returns>The number of rows affected.</returns>
+    public static async Task<int> ExecuteNonQueryAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -78,13 +74,13 @@ public static class CommandsAsync
         }
     }
     /// <summary>
-    /// Provides a convenient way to execute an ADO.net ScalarAsync utilizing <see cref="SqlQuery"/>
+    /// Executes an ADO.NET scalar command using a <see cref="SqlQuery"/>.
     /// </summary>
-    /// <param name="query">the query</param>
-    /// <param name="transaction">the transaction, optionally null</param>
-    /// <param name="connection">the connection</param>
-    /// <returns>returns what the underlying ExecuteScalarAsync returns, if successful</returns>
-    public async static Task<object?> ExecuteScalarAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
+    /// <param name="query">The query to execute.</param>
+    /// <param name="transaction">The transaction (optional).</param>
+    /// <param name="connection">The connection.</param>
+    /// <returns>The first column of the first row in the result set, or <see langword="null"/> if the result set is empty.</returns>
+    public static async Task<object?> ExecuteScalarAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -110,13 +106,17 @@ public static class CommandsAsync
     }
 
     /// <summary>
-    /// Provides a convenient way to execute an ADO.net ReaderAsync utilizing <see cref="SqlQuery"/>
+    /// Executes an ADO.NET reader command using a <see cref="SqlQuery"/> and materializes all records.
     /// </summary>
-    /// <param name="query">the query</param>
-    /// <param name="transaction">the transaction, optionally null</param>
-    /// <param name="connection">the connection</param>
-    /// <returns>returns an IEnumerable<T> of records read using ADO.Net</returns>
-    public async static Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
+    /// <param name="query">The query to execute.</param>
+    /// <param name="transaction">The transaction (optional).</param>
+    /// <param name="connection">The connection.</param>
+    /// <param name="decrypters">Optional decrypter provider used to decrypt properties marked as encrypted.</param>
+    /// <returns>A sequence of records read from the database.</returns>
+    /// <exception cref="DecrypterNotProvided{T}">Thrown when one or more encrypted properties exist, but no decrypter provider is supplied.</exception>
+    /// <exception cref="NoKeyVersionException{T}">Thrown when encrypted properties exist, but the type does not define a key-version property (for example, a property marked with <c>[KeyVersion]</c>).</exception>
+    /// <exception cref="Exception">Thrown when encrypted properties contain values, but no matching decryption key can be found.</exception>
+    public static async Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
