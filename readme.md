@@ -1,6 +1,6 @@
 # Carrigan.SqlTools  
 
-Carrigan.SqlTools is a .NET library that simplifies SQL generation for **Microsoft SQL Server**, while still giving you control when you need it.  
+Carrigan.SqlTools is a .NET library that simplifies SQL generation for **Microsoft SQL Server**, while still giving you control when you need it.
 
 It automatically generates `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements using reflection, **Carrigan.Core** provides an interfaces and property attributes to integrate your custom field level encryption, and provides a safe, object-oriented API for building more advanced queries.  
 
