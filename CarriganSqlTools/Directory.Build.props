@@ -22,14 +22,14 @@
     <Deterministic>true</Deterministic>
 
     <!-- PreRelease Status -->
-    <PreReleaseLabel></PreReleaseLabel>
+    <PreReleaseLabel>alpha</PreReleaseLabel>
 
     <!--Base Version for other projects-->
-    <BaseVersion>0.5.0</BaseVersion>
+    <BaseVersion>0.5.1</BaseVersion>
     <!-- Base version: x.y.z For Carrigan.SqlTools -->
-    <SqlToolsVersionBase>0.5.0</SqlToolsVersionBase>
+    <SqlToolsVersionBase>0.5.1</SqlToolsVersionBase>
     <!-- Base version: x.y.z For Carrigan.SqlTools.SqlServer -->
-    <SqlToolsSqlServerVersionBase>0.5.0</SqlToolsSqlServerVersionBase>
+    <SqlToolsSqlServerVersionBase>0.5.1</SqlToolsSqlServerVersionBase>
     
     <!-- Time Stamp -->
     <BuildTimeStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmm'))</BuildTimeStamp>
