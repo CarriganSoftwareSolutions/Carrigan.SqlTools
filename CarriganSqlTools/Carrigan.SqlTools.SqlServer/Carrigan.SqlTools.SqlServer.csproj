@@ -1,14 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Carrigan.SqlTools.SqlServer</PackageId>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Carrigan.SqlTools.SqlServer</PackageId>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">True</GeneratePackageOnBuild>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+
     <Description>
       Carrigan.SqlTools.SqlServer is a companion library to Carrigan.SqlTools, focused on executing SQL Server queries at runtime.
 
@@ -31,6 +42,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+    <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
+    <None Include="NOTICE.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

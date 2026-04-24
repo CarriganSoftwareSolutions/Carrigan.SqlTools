@@ -17,12 +17,15 @@
 - Attribute's will validate null and empty values for arguments, but all other correctness checks will be performed by the SqlGenerator's validation method.
 - Prefer params IEnumerable<T> over params T[], and yes,params as an IEnumerable is supported in the version of c# used by the SqlTools project.
 - You may assume lines of code up to 180 characters are allowed for optimal viewing on a 1080p at 100% magnification with a reasonable allowance for a Solution Explorer pane. 180 characters is a suggested guideline, not a hard and fast rule.
-
+- Avoid leaving warnings in the codebase. If a warning cannot be resolved, it must be suppressed with a justification comment. Warnings have been tuned to enforce additional coding standards, not addressed in this document. 
+- Especially avoid warnings related to nullable reference types. Use nullable reference types properly and avoid suppressing warnings related to them. If you find yourself needing to suppress a nullable reference type warning, consider whether the code can be refactored to avoid the need for suppression.
+- You may ignore warnings regarding the obsolete "RoleTag" class as I am still trying to decide if I want to remove it or add the implementation back in.
+- The project has "Ignore Spelling" comments, these are intentional and should not be removed. They are used to prevent false positives from the EWS Software's "Spell Check My Code" extension on technical terms, class names, method names, and other identifiers that may not be recognized as standard words but are correct in the context of the codebase.
 ---
 
 ## Assumed Global Usings
 
-The following namespaces are assumed to be globally imported in all projects:
+The following namespaces are assumed to be globally imported in this project:
 
 ```csharp
 global using global::System;

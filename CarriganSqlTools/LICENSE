@@ -1,10 +1,7 @@
 ﻿Carrigan.SqlTools
-Carrigan.SqlTools.SqlServer
-Carrigan.SqlTools.Tests
-Carrigan.SqlTools.IntegrationTests
 and related projects
 
-Copyright 2025 Carrigan Software Solutions LLC
+Copyright 2025 - 2026 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,47 +14,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
----------------------------------------------------------------------
-THIRD-PARTY DEPENDENCIES AND ATTRIBUTIONS
-
-This project includes projects that depend on external packages.  
-Those packages are licensed separately as follows:
-
-- Microsoft.NETCore.App  
-    © Microsoft Corporation  
-    Licensed under the MIT License  
-    https://github.com/dotnet/runtime/blob/main/LICENSE.TXT  
-
-- Microsoft.Data.SqlClient  
-    © Microsoft Corporation  
-    Licensed under the MIT License  
-    https://github.com/dotnet/SqlClient/blob/main/LICENSE
-
-- coverlet.collector  
-    © Contributors  
-    Licensed under the MIT License  
-    https://github.com/coverlet-coverage/coverlet/blob/master/LICENSE  
-
-- Microsoft.NET.Test.Sdk  
-    © Microsoft Corporation  
-    Licensed under the MIT License  
-    https://github.com/microsoft/vstest/blob/main/LICENSE  
-
-- xUnit  
-    © James Newkirk, Brad Wilson, and xUnit contributors  
-    Licensed under the Apache License, Version 2.0  
-    https://github.com/xunit/xunit/blob/main/LICENSE
-
-- xunit.runner.visualstudio  
-    © xUnit contributors  
-    Licensed under the Apache License, Version 2.0  
-    https://github.com/xunit/visualstudio.xunit/blob/main/License.txt
-
-- Respawn
-    @ Jimmy Bogard
-    Licensed under the Apache License, Version 2.0  
-    https://github.com/jbogard/Respawn/blob/master/LICENSE
 
 ---------------------------------------------------------------------
 
@@ -245,7 +201,7 @@ Full text of Apache License 2.0 as follows:
    APPENDIX: How to apply the Apache License to your work.
 
       To apply the Apache License to your work, attach the following
-      boilerplate notice, with the properties enclosed by brackets "[]"
+      boilerplate notice, with the fields enclosed by brackets "[]"
       replaced with your own identifying information. (Don't include
       the brackets!)  The text should be enclosed in the appropriate
       comment syntax for the file format. We also recommend that a

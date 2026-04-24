@@ -1,15 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Carrigan.SqlTools</PackageId>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <IsPackable>true</IsPackable>
     <Nullable>enable</Nullable>
-  </PropertyGroup>
+    
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
+
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  
   <PropertyGroup>
-    <PackageId>Carrigan.SqlTools</PackageId>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">True</GeneratePackageOnBuild>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    
     <Description>
       Carrigan.SqlTools is a lightweight library designed to simplify SQL generation for Microsoft SQL Server while maintaining flexibility and safety. Its primary purpose is to automatically generate SELECT, INSERT, UPDATE, and DELETE statements using reflection.
 
@@ -48,4 +58,10 @@
     <None Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\bin\$(Configuration)\netstandard2.0\Carrigan.SqlTools.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+    <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
+    <None Include="NOTICE.txt" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>
