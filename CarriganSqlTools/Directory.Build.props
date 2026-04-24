@@ -11,6 +11,7 @@
     <Authors>Carrigan Software Solutions LLC</Authors>
 
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <_CurrentYear>$([System.DateTime]::UtcNow.ToString('yyyy'))</_CurrentYear>
     <Copyright>© $(_CurrentYear) $(Company)</Copyright>
 

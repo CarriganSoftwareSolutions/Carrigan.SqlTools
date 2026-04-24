@@ -24,6 +24,8 @@ and upstream project repositories.
     https://github.com/dotnet/SqlClient/blob/main/LICENSE
     https://github.com/dotnet/SqlClient/blob/main/NOTICE.txt
 
+SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+
 Unless otherwise expressly stated in a given package or distribution, references
 to third-party dependencies in this package generally refer to dependencies
 that are restored, resolved, or loaded separately through normal package or

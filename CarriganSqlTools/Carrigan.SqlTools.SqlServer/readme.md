@@ -8,6 +8,12 @@ In addition, the library handles decryption of encrypted properties when encrypt
 
 Together with Carrigan.SqlTools, this library provides a full workflow for generating, executing, and consuming SQL Server queries with object-oriented protections.  
 
+SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+
+This library may generate or execute SQL. Review generated SQL before use in production systems. Always test against non-production databases first.
+
+Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.
+
 ---
 
 ## Features  
@@ -32,3 +38,17 @@ Carrigan.SqlTools.SqlServer is available as a NuGet package:
 
 ```powershell
 dotnet add package Carrigan.SqlTools.SqlServer
+```
+
+SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+
+---
+
+## Disclaimers
+
+
+SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+
+This library may generate or execute SQL. Review generated SQL before use in production systems. Always test against non-production databases first.
+
+Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.

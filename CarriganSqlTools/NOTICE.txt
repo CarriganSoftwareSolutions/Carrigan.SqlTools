@@ -5,3 +5,5 @@ This NOTICE file applies to the Carrigan.SqlTools NuGet package only.
 Copyright (c) 2025 - 2026 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0.
+
+SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.

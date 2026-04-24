@@ -1,9 +1,5 @@
-﻿> ⚠️ This repository is not ready for public consumption.
-It is shared for review and collaboration purposes only.
-
-# Carrigan.SqlTools  
+﻿# Carrigan.SqlTools  
 <!--Ignore Spelling: executenonqueryasync executescalarasync executereaderasynct executenonquery executescalar executereadert adonet sqlquery exampleencryptor aesgcm idecrypters dotnet csharp nameof foreach readonly const gcm decryptor decrypters encryptor encrypters-->
-
 
 Carrigan.SqlTools is a .NET library that simplifies SQL generation for **Microsoft SQL Server**, while still giving you control when you need it.  
 
@@ -12,7 +8,15 @@ It automatically generates `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements
 A companion library, **Carrigan.SqlTools.SqlServer**, extends functionality by wrapping ADO.NET to execute generated queries, map rows to objects, and handle decryption of encrypted properties.
 
  The transient dependency **Carrigan.Core** provides interfaces and property attributes to integrate your custom property-level encryption, and other miscellaneous "helper" dependencies.
+ 
 
+This package includes Roslyn analyzers bundled with the package to assist with safe usage patterns.
+
+SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+
+This library may generate or execute SQL. Review generated SQL before use in production systems. Always test against non-production databases first.
+
+Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.
 
 ---
 
@@ -811,3 +815,13 @@ Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/L
 
 [Table of Contents](#table-of-contents)
 
+---
+
+## Disclaimers
+
+
+SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+
+This library may generate or execute SQL. Review generated SQL before use in production systems. Always test against non-production databases first.
+
+Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.
