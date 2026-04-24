@@ -55,5 +55,10 @@
           PackagePath="">
       <Link>LICENSE</Link>
     </None>
+    <None Include="$(MSBuildThisFileDirectory)NOTICE.txt"
+          Pack="true"
+          PackagePath="">
+      <Link>NOTICE.txt</Link>
+    </None>
   </ItemGroup>
 </Project>
