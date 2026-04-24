@@ -16,6 +16,52 @@ and upstream project repositories.
     https://github.com/dotnet/runtime/blob/main/LICENSE.TXT  
     https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT
 
+- Microsoft.CodeAnalysis.Analyzers
+  Copyright © Microsoft Corporation
+  Commonly distributed under the MIT License.
+  Repository:
+  https://github.com/dotnet/roslyn
+  License:
+  https://github.com/dotnet/roslyn/blob/main/License.txt
+  Notices:
+  https://github.com/dotnet/roslyn/blob/main/THIRD-PARTY-NOTICES.txt
+
+- Microsoft.CodeAnalysis.CSharp
+  Copyright © Microsoft Corporation
+  Commonly distributed under the MIT License.
+  Repository:
+  https://github.com/dotnet/roslyn
+  License:
+  https://github.com/dotnet/roslyn/blob/main/License.txt
+  Notices:
+  https://github.com/dotnet/roslyn/blob/main/THIRD-PARTY-NOTICES.txt
+
+- Microsoft.SourceLink.GitHub
+    © .NET Foundation and Contributors
+    Licensed under the MIT License
+    https://github.com/dotnet/sourcelink/blob/main/License.txt
+
+- NETStandard.Library
+  Copyright © Microsoft Corporation
+  Reference assemblies and framework support components commonly
+  distributed under the MIT License.
+  Repository:
+  https://github.com/dotnet/runtime
+  License:
+  https://github.com/dotnet/runtime/blob/main/LICENSE.TXT
+  Notices:
+  https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT
+
+- .NET SDK / .NET CLI
+  Copyright © Microsoft Corporation
+  Used for build, pack, restore, and test operations.
+  Repository:
+  https://github.com/dotnet/sdk
+  License:
+  https://github.com/dotnet/sdk/blob/main/LICENSE.TXT
+  Notices:
+  https://github.com/dotnet/sdk/blob/main/THIRD-PARTY-NOTICES.TXT
+
 SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
 
 Unless otherwise expressly stated in a given package or distribution, references

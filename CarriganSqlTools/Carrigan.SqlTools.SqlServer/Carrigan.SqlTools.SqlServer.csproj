@@ -38,6 +38,7 @@
   <ItemGroup>
     <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202601172327" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.203" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,7 +49,6 @@
   <ItemGroup>
     <None Include="readme.md" Pack="true" PackagePath="\" />
     <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
-    <None Include="NOTICE.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

@@ -48,6 +48,7 @@
   <ItemGroup>
     <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202601172327" />
     <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.0-alpha.202601172327" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.203" PrivateAssets="All" />
   </ItemGroup>
   
   <ItemGroup>
@@ -62,6 +63,5 @@
   <ItemGroup>
     <None Include="readme.md" Pack="true" PackagePath="\" />
     <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
-    <None Include="NOTICE.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
