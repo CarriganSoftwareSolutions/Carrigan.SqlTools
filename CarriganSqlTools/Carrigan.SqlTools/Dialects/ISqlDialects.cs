@@ -29,10 +29,10 @@ public interface ISqlDialects
     /// </summary>
     /// <remarks>If <paramref name="schema"/> is provided, the output includes the schema and table names. If
     /// <paramref name="includeTable"/> is false, only the column name is rendered.</remarks>
-    /// <param name="schema">The optional schema name that qualifies the table. May be null to omit the schema.</param>
-    /// <param name="table">The name of the table to render. Cannot be null or empty.</param>
+    /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
+    /// <param name="tableName">The name of the table to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified table.</returns>
-    string RenderTable(string? schema, string table);
+    string RenderTable(SchemaName? schemaName, TableName tableName);
     /// <summary>
     /// Renders a fully qualified column name for use in SQL statements.
     /// </summary>

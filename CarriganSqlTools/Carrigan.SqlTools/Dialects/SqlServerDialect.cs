@@ -31,11 +31,14 @@ public class SqlServerDialect : ISqlDialects
     /// <summary>
     /// Generates a string representation of the specified database table, optionally qualified by schema.
     /// </summary>
-    /// <param name="schema">The name of the schema that contains the table, or null to use the default schema.</param>
-    /// <param name="table">The name of the table to render. Cannot be null or empty.</param>
+    /// <param name="schemaName">The name of the schema to which the table belongs, or null to omit the schema from the rendered output.</param>
+    /// <param name="tableName">The name of the table to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified table.</returns>
     /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
-    public string RenderTable(string? schema, string table) => throw new NotImplementedException();
+    public string RenderTable(SchemaName? schemaName, TableName tableName) =>
+        schemaName.IsNotNullOrEmpty()
+            ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(tableName)}"
+            : QuoteIdentifier(tableName);
     /// <summary>
     /// Renders the fully qualified name of a database column, optionally including the table name and schema.
     /// </summary>

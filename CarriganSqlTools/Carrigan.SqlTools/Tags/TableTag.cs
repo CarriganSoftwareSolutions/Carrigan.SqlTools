@@ -105,7 +105,7 @@ public class TableTag : StringWrapper
     /// </exception>
     /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
     internal TableTag(ISqlDialects dialect, SchemaName? schemaName, TableName tableName)
-        : base(CreateTableTagString(schemaName, tableName), StringComparison.Ordinal) => 
+        : base(dialect.RenderTable(schemaName, tableName), StringComparison.Ordinal) => 
         Dialect = dialect;
 
     /// <summary>
@@ -150,13 +150,5 @@ public class TableTag : StringWrapper
 
         return (TableTag?)tableTagProperty.GetValue(null)
             ?? throw new InvalidOperationException($"The property 'Table' on type '{cacheType.FullName}' returned null.");
-    }
-
-    private static string CreateTableTagString(SchemaName? schemaName, TableName tableName)
-    {
-        if (schemaName.IsNullOrEmpty())
-            return $"[{tableName}]";
-        else
-            return $"[{schemaName}].[{tableName}]";
     }
 }
