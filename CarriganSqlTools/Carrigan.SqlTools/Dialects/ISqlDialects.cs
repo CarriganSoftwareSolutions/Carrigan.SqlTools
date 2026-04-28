@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ public interface ISqlDialects
     /// <param name="tableName">The name of the table to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified table.</returns>
     string RenderTable(SchemaName? schemaName, TableName tableName);
+
     /// <summary>
     /// Renders a fully qualified column name for use in SQL statements.
     /// </summary>
@@ -43,6 +45,17 @@ public interface ISqlDialects
     /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
     /// <returns>A string containing the rendered column name, optionally qualified by table and schema as specified.</returns>
     string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true);
+
+    /// <summary>
+    ///Renders an INSERT statement with a RETURNING clause (or equivalent) to retrieve specified columns after an insert operation. 
+    /// </summary>
+    /// <typeparam name="T">The type of the entity being inserted, used to determine the table and column information for rendering the SQL statement.</typeparam>
+    /// <param name="insertIntoClause">The INSERT INTO clause of the SQL statement.</param>
+    /// <param name="insertValuesClause">The VALUES clause of the SQL statement.</param>
+    /// <param name="columnInfo">A collection of ColumnInfo objects representing the columns to be returned after the insert operation.</param>
+    /// <returns>A SQL string representing the INSERT statement with an appended RETURNING clause for the specified columns.</returns>
+    string RenderInsertReturning<T>(string insertIntoClause, string insertValuesClause, IEnumerable<ColumnInfo> columnInfo);
+
     /// <summary>
     /// Generates a parameter string by combining the specified prefix, name, and optional index.
     /// </summary>
@@ -50,6 +63,7 @@ public interface ISqlDialects
     /// <param name="name">The name of the parameter to render. Cannot be null or empty.</param>
     /// <param name="index">An optional index to append to the parameter name. May be null or empty if no index is required.</param>
     /// <returns>A string representing the rendered parameter, including the prefix and index if provided.</returns>
+
     string RenderParameter(string? prefix, string name, string? index);
     /// <summary>
     /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
@@ -58,14 +72,4 @@ public interface ISqlDialects
     /// <param name="fetch">The maximum number of rows to return. Must be greater than 0.</param>
     /// <returns>A string containing the SQL paging clause representing the specified offset and fetch values.</returns>
     string RenderPaging(int offset, int fetch);
-    /// <summary>
-    /// Generates a SQL statement that appends a RETURNING clause to the specified INSERT statement, allowing retrieval
-    /// of specified columns after insertion.
-    /// </summary>
-    /// <param name="insertSql">The base SQL INSERT statement to which the RETURNING clause will be appended. Must be a valid INSERT statement.</param>
-    /// <param name="returnColumns">A read-only list of tuples specifying the columns to return. Each tuple contains the column name, its SQL type
-    /// declaration, and an optional alias to use in the RETURNING clause.</param>
-    /// <returns>A SQL string representing the original INSERT statement with an appended RETURNING clause that returns the
-    /// specified columns.</returns>
-    string RenderInsertReturning(string insertSql, IReadOnlyList<(string ColumnName, string TypeDeclaration, string? Alias)> returnColumns);
 }

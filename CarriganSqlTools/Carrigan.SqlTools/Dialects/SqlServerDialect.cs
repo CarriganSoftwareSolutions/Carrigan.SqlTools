@@ -1,6 +1,10 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+using System.Reflection.Emit;
+using System.Text;
 
 namespace Carrigan.SqlTools.Dialects;
 
@@ -51,17 +55,26 @@ public class SqlServerDialect : ISqlDialects
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
                 ? $"{tableTag}.{QuoteIdentifier(columnName)}"
                 : QuoteIdentifier(columnName);
+
     /// <summary>
-    /// Generates an INSERT SQL statement that includes a RETURNING clause for retrieving specified columns after
-    /// insertion.
+    /// Renders an INSERT statement that captures inserted values for the specified columns using SQL Server's OUTPUT clause.
     /// </summary>
-    /// <param name="insertSql">The base INSERT SQL statement to which the RETURNING clause will be appended. Must not include a RETURNING
-    /// clause.</param>
-    /// <param name="returnColumns">A read-only list of tuples specifying the columns to return. Each tuple contains the column name, its type
-    /// declaration, and an optional alias.</param>
-    /// <returns>A SQL string representing the INSERT statement with an appended RETURNING clause for the specified columns.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as this method is not yet implemented.</exception>
-    public string RenderInsertReturning(string insertSql, IReadOnlyList<(string ColumnName, string TypeDeclaration, string? Alias)> returnColumns) => throw new NotImplementedException();
+    /// <typeparam name="T">The type of the entity being inserted, used to determine the table and column information for rendering the SQL statement.</typeparam>
+    /// <param name="insertIntoClause">The INSERT INTO clause of the SQL statement.</param>
+    /// <param name="insertValuesClause">The VALUES clause of the SQL statement.</param>
+    /// <param name="columnInfo">The collection of columns for which to capture inserted values.</param>
+    /// <returns>A string containing the complete INSERT statement with OUTPUT clause.</returns>
+    public string RenderInsertReturning<T>(string insertIntoClause, string insertValuesClause, IEnumerable<ColumnInfo> columnInfo)
+    {
+        StringBuilder queryBuilder = new();
+        queryBuilder.AppendLine(ReturnTableDefinition(columnInfo));
+        queryBuilder.AppendLine(insertIntoClause);
+        queryBuilder.AppendLine(ReturnOutputColumns(columnInfo));
+        queryBuilder.AppendLine(insertValuesClause);
+        queryBuilder.AppendLine(ReturnSelectOutput<T>(columnInfo));
+        return queryBuilder.ToString();
+    }
+
     /// <summary>
     /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
     /// </summary>
@@ -79,4 +92,69 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>A string representing the rendered parameter, including the prefix and index if provided.</returns>
     /// <exception cref="NotImplementedException">Thrown in all cases as this method is not yet implemented.</exception>
     public string RenderParameter(string? prefix, string name, string? index) => throw new NotImplementedException();
+
+
+
+    /// <summary>
+    /// Generates SQL to declare an output table used to capture inserted values
+    /// for the columns specified by <paramref name="columnInfo"/>.
+    /// </summary>
+    /// <param name="columnInfo">
+    /// Columns for which the inserted values should be captured.
+    /// </param>
+    /// <returns>
+    /// A SQL statement that declares <c>@OutputTable</c> with one column per entry in <paramref name="columnInfo"/>.
+    /// </returns>
+    private static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
+        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});";
+
+
+    /// <summary>
+    /// Generates SQL to output the inserted column values into <c>@OutputTable</c>.
+    /// </summary>
+    /// <param name="columnInfo">
+    /// Columns for which the inserted values should be captured.
+    /// </param>
+    /// <returns>
+    /// A SQL <c>OUTPUT</c> clause that writes the specified inserted columns into <c>@OutputTable</c>.
+    /// </returns>
+    private static string ReturnOutputColumns(IEnumerable<ColumnInfo> columnInfo) =>
+       $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable";
+
+
+    /// <summary>
+    /// Gets the column expression to use when returning values inserted for the column
+    /// described by <paramref name="columnInfo"/>.
+    /// </summary>
+    /// <remarks>
+    /// Because the caller will expect column names as they would appear in a <c>SELECT</c>,
+    /// this method ensures that the final projection from <c>@OutputTable</c> uses the
+    /// invoker’s expected column name, applying an alias when necessary.
+    /// </remarks>
+    /// <param name="columnInfo">
+    /// The column for which the returned column name should be resolved.
+    /// </param>
+    /// <returns>
+    /// A string containing either the raw column name or a <c>ColumnName AS ResultName</c> expression.
+    /// </returns>
+    private static string ReturnSelectName<T>(ColumnInfo columnInfo)
+    {
+        string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo);
+        if (resultColumnName != columnInfo.ColumnName)
+            return $"{columnInfo.ColumnName} AS {resultColumnName}";
+        else
+            return columnInfo.ColumnName;
+    }
+
+    /// <summary>
+    /// Generates a <c>SELECT</c> statement that reads the captured values from <c>@OutputTable</c>.
+    /// </summary>
+    /// <param name="columnInfo">
+    /// Columns for which the inserted values were captured.
+    /// </param>
+    /// <returns>
+    /// A SQL <c>SELECT</c> statement projecting the requested columns from <c>@OutputTable</c>.
+    /// </returns>
+    private static string ReturnSelectOutput<T>(IEnumerable<ColumnInfo> columnInfo) =>
+        $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName<T>(column)))} FROM @OutputTable;";
 }

@@ -12,70 +12,6 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public partial class SqlGenerator<T>
 {
     /// <summary>
-    /// Generates SQL to declare an output table used to capture inserted values
-    /// for the columns specified by <paramref name="columnInfo"/>.
-    /// </summary>
-    /// <param name="columnInfo">
-    /// Columns for which the inserted values should be captured.
-    /// </param>
-    /// <returns>
-    /// A SQL statement that declares <c>@OutputTable</c> with one column per entry in <paramref name="columnInfo"/>.
-    /// </returns>
-    internal static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
-        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});";
-
-
-    /// <summary>
-    /// Generates SQL to output the inserted column values into <c>@OutputTable</c>.
-    /// </summary>
-    /// <param name="columnInfo">
-    /// Columns for which the inserted values should be captured.
-    /// </param>
-    /// <returns>
-    /// A SQL <c>OUTPUT</c> clause that writes the specified inserted columns into <c>@OutputTable</c>.
-    /// </returns>
-    internal static string ReturnOutputColumns(IEnumerable<ColumnInfo> columnInfo) =>
-       $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable";
-
-
-    /// <summary>
-    /// Gets the column expression to use when returning values inserted for the column
-    /// described by <paramref name="columnInfo"/>.
-    /// </summary>
-    /// <remarks>
-    /// Because the caller will expect column names as they would appear in a <c>SELECT</c>,
-    /// this method ensures that the final projection from <c>@OutputTable</c> uses the
-    /// invoker’s expected column name, applying an alias when necessary.
-    /// </remarks>
-    /// <param name="columnInfo">
-    /// The column for which the returned column name should be resolved.
-    /// </param>
-    /// <returns>
-    /// A string containing either the raw column name or a <c>ColumnName AS ResultName</c> expression.
-    /// </returns>
-    internal static string ReturnSelectName(ColumnInfo columnInfo)
-    {
-        string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo);
-        if (resultColumnName != columnInfo.ColumnName)
-            return $"{columnInfo.ColumnName} AS {resultColumnName}";
-        else
-            return columnInfo.ColumnName;
-    }
-
-    /// <summary>
-    /// Generates a <c>SELECT</c> statement that reads the captured values from <c>@OutputTable</c>.
-    /// </summary>
-    /// <param name="columnInfo">
-    /// Columns for which the inserted values were captured.
-    /// </param>
-    /// <returns>
-    /// A SQL <c>SELECT</c> statement projecting the requested columns from <c>@OutputTable</c>.
-    /// </returns>
-    internal static string ReturnSelectOutput(IEnumerable<ColumnInfo> columnInfo) =>
-        $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName(column)))} FROM @OutputTable;";
-
-
-    /// <summary>
     /// Builds the <c>VALUES</c> clause for a single SQL <c>INSERT</c> row,
     /// generating parameter placeholders for the specified columns.
     /// </summary>
@@ -322,7 +258,6 @@ public partial class SqlGenerator<T>
         IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? ColumnInfo;
         string queryPart1;
         string queryPart2;
-        StringBuilder queryBuilder = new();
 
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
@@ -334,7 +269,7 @@ public partial class SqlGenerator<T>
         else
             parameters = [.. GetSqlParameterKeyValuePairs(insertTheseColumns, entities)];
 
-        string columns = string.Join(", ", insertTheseColumns.Select(column => $"[{column.ColumnName}]"));
+        string columns = string.Join(", ", insertTheseColumns.Select(column => Dialect.QuoteIdentifier(column.ColumnName)));
         if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
             values = SqlGenerator<T>.EnumeratedInsertValues(insertTheseColumns);
         else
@@ -354,15 +289,10 @@ public partial class SqlGenerator<T>
         }
         else 
         {
-            queryBuilder.AppendLine(ReturnTableDefinition(returnColumns.ColumnInfo));
-            queryBuilder.AppendLine(queryPart1);
-            queryBuilder.AppendLine(ReturnOutputColumns(returnColumns.ColumnInfo));
-            queryBuilder.AppendLine(queryPart2);
-            queryBuilder.AppendLine(ReturnSelectOutput(returnColumns.ColumnInfo));
             return new SqlQuery()
             {
                 Parameters = [.. parameters],
-                QueryText = queryBuilder.ToString(),
+                QueryText = Dialect.RenderInsertReturning<T>(queryPart1, queryPart2, returnColumns.ColumnInfo),
                 CommandType = System.Data.CommandType.Text
             };
         }
