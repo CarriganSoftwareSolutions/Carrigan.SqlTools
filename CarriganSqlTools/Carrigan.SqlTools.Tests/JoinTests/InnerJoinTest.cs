@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -48,7 +49,7 @@ public class InnerJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         InnerJoin<JoinRightTable> join = new(id);
 
-        TableTag expected = new(null, "Right");
+        TableTag expected = new(new SqlServerDialect(), null, "Right");
 
         Assert.Equal(expected, join.TableTag);
     }

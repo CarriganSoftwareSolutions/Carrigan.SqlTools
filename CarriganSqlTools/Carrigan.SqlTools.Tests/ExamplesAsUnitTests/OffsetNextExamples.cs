@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.SqlGenerators;
@@ -8,7 +8,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class OffsetNextExamples
 {
-    private readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
+    private readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
     public void SelectWithDefinePage()

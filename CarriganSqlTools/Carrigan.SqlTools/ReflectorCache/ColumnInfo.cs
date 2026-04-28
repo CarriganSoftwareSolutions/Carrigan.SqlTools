@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
@@ -105,6 +106,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// Initializes a new instance of the <see cref="ColumnInfo"/> class,
     /// caching the reflected column metadata for a specific property.
     /// </summary>
+    /// <param name="dialect">The SQL dialect configuration used for generating database queries.</param>
     /// <param name="schemaName">
     /// The <see cref="SchemaName"/> that identifies the schema for the data model.
     /// </param>
@@ -114,14 +116,14 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <param name="propertyInfo">
     /// The <see cref="PropertyInfo"/> representing the reflected property.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="tableName"/>, <paramref name="propertyInfo"/>, or <paramref name="keys"/> is <c>null</c>.
+    /// </exception>
     /// <param name="keys">
     /// A collection of <see cref="System.Reflection.PropertyInfo"/> instances representing the key properties
     /// for the entity, used to determine the value of <see cref="IsKeyPart"/>.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="tableName"/>, <paramref name="propertyInfo"/>, or <paramref name="keys"/> is <c>null</c>.
-    /// </exception>
-    internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
+    internal ColumnInfo(ISqlDialects dialect, SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
         ArgumentNullException.ThrowIfNull(tableName, nameof(tableName));
         ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
@@ -140,7 +142,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         SqlTypeAttribute? sqlTypeAttribute = propertyInfo.GetCustomAttribute<SqlTypeAttribute>();
 
         ColumnName = new(columnName);
-        ColumnTag = new(new(schemaName, tableName), ColumnName);
+        ColumnTag = new(new(dialect, schemaName, tableName), ColumnName);
 
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);

@@ -1,6 +1,8 @@
-﻿using Carrigan.SqlTools;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.Dialects.SqlServer;
+namespace Carrigan.SqlTools.Dialects;
 
 /// <summary>
 /// Provides SQL dialect-specific formatting and rendering logic for Microsoft SQL Server.
@@ -27,16 +29,25 @@ public class SqlServerDialect : ISqlDialects
     public string QuoteIdentifier(string identifier) => 
         $"[{identifier}]";
     /// <summary>
+    /// Generates a string representation of the specified database table, optionally qualified by schema.
+    /// </summary>
+    /// <param name="schema">The name of the schema that contains the table, or null to use the default schema.</param>
+    /// <param name="table">The name of the table to render. Cannot be null or empty.</param>
+    /// <returns>A string containing the rendered representation of the specified table.</returns>
+    /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
+    public string RenderTable(string? schema, string table) => throw new NotImplementedException();
+    /// <summary>
     /// Renders the fully qualified name of a database column, optionally including the table name and schema.
     /// </summary>
     /// <param name="schema">The schema name of the table containing the column, or null to omit the schema.</param>
     /// <param name="table">The name of the table containing the column. Cannot be null or empty.</param>
-    /// <param name="column">The name of the column to render. Cannot be null or empty.</param>
     /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
     /// <returns>A string representing the fully qualified column name, formatted according to the specified parameters.</returns>
     /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
-    public string RenderColumn(string? schema, string table, string column, bool includeTable = true) =>
-        throw new NotImplementedException();
+    public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
+        includeTable && tableTag.ToString().IsNotNullOrEmpty()
+                ? $"{tableTag}.{QuoteIdentifier(columnName)}"
+                : QuoteIdentifier(columnName);
     /// <summary>
     /// Generates an INSERT SQL statement that includes a RETURNING clause for retrieving specified columns after
     /// insertion.
@@ -65,12 +76,4 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>A string representing the rendered parameter, including the prefix and index if provided.</returns>
     /// <exception cref="NotImplementedException">Thrown in all cases as this method is not yet implemented.</exception>
     public string RenderParameter(string? prefix, string name, string? index) => throw new NotImplementedException();
-    /// <summary>
-    /// Generates a string representation of the specified database table, optionally qualified by schema.
-    /// </summary>
-    /// <param name="schema">The name of the schema that contains the table, or null to use the default schema.</param>
-    /// <param name="table">The name of the table to render. Cannot be null or empty.</param>
-    /// <returns>A string containing the rendered representation of the specified table.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
-    public string RenderTable(string? schema, string table) => throw new NotImplementedException();
 }

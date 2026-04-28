@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
@@ -8,7 +8,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class JoinExamples
 {
-    private static readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
     public void SelectWithInnerJoin()

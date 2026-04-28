@@ -1,13 +1,13 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class TagExamples
 {
-    private static readonly SqlGenerator<PhoneModel> phoneGenerator = new(new SqlServerDialect());
-    private static readonly SqlGenerator<EmailModel> emailGenerator = new(new SqlServerDialect());
-    private static readonly SqlGenerator<ProcedureExec> procedureExecGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<PhoneModel> phoneGenerator = new();
+    private static readonly SqlGenerator<EmailModel> emailGenerator = new();
+    private static readonly SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 
     [Fact]
     public void TableColumnKey()

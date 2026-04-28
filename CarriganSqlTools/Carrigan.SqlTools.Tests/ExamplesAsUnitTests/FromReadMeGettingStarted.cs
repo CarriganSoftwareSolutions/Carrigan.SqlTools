@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
 public class FromReadMeGettingStarted
 {
-    private static readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
 
     private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
     {

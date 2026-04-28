@@ -1,6 +1,6 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer, DateOnly, TimeOnly, XDocument, XmlDocument, lorem ipsum
 
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.SqlGenerators;
@@ -18,7 +18,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
     public FieldsRoundTripTests(FieldsFixture fixture)
     {
         _fixture = fixture;
-        _generator = new(new SqlServerDialect());
+        _generator = new();
     }
 
     [Theory]

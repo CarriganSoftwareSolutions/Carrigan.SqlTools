@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -48,7 +49,7 @@ public class CrossJoinTest
     public void TableTag()
     {
         CrossJoin<JoinRightTable> join = new();
-        TableTag expected = new(null, "Right");
+        TableTag expected = new(new SqlServerDialect(), null, "Right");
 
         Assert.Equal(expected, join.TableTag);
     }

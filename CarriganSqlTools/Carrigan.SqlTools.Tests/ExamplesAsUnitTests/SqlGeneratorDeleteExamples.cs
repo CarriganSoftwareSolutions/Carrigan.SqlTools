@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
@@ -7,8 +7,8 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class SqlGeneratorDeleteExamples
 {
-    private static readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
-    private static readonly SqlGenerator<Order> orderGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Order> orderGenerator = new();
 
 
     [Fact]

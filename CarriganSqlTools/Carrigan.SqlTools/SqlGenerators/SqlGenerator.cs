@@ -8,9 +8,9 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools;
 using System.Data;
 using System.Reflection;
+using Carrigan.SqlTools.Dialects;
 //IGNORE SPELLING: parameterization
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -33,11 +33,6 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// or <c>null</c> if encryption is not required or no encrypter was provided.
     /// </summary>
     private readonly IEncryption? _Encryption;
-
-    /// <summary>
-    /// This an dialect abstraction used to generate dialect-specific SQL syntax.
-    /// </summary>
-    private ISqlDialects? _SqlDialects;
 
     /// <summary>
     /// Validates identifier formats, SQL type compatibility, and encryption prerequisites
@@ -146,7 +141,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="MultipleKeyVersionsException{T}">
     /// if more than one key-version property is present.
     /// </exception>
-    public SqlGenerator(ISqlDialects dialect)
+    public SqlGenerator()
     {
         _Encryption = null;
         ValidationChecks();
@@ -179,7 +174,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// The <see cref="IEncryption"/> implementation used to encrypt and decrypt values.
     /// Must not be <c>null</c>.
     /// </param>
-    public SqlGenerator(ISqlDialects dialect, IEncryption encryption)
+    public SqlGenerator(IEncryption encryption)
     {
         _Encryption = encryption ?? throw new ArgumentNullException(nameof(encryption));
 

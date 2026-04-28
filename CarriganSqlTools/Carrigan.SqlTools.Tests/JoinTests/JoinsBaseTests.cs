@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -52,6 +53,6 @@ public class JoinsBaseValidationTests
         }
 
         internal override TableTag TableTag =>
-            new(null, "FakeTable");
+            new(new SqlServerDialect(), null, "FakeTable");
     }
 }

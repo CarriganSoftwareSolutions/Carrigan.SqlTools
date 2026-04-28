@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -16,9 +16,9 @@ public class SqlGenerator_DeleteByIdTests
     public SqlGenerator_DeleteByIdTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new(new SqlServerDialect(), _mockEncrypter);
-        _sqlGeneratorForCompositeKeyTable = new(new SqlServerDialect(), _mockEncrypter);
-        _sqlGeneratorForAddress = new(new SqlServerDialect());
+        _sqlGeneratorForEntityWithTableAttribute = new(_mockEncrypter);
+        _sqlGeneratorForCompositeKeyTable = new(_mockEncrypter);
+        _sqlGeneratorForAddress = new();
     }
 
     [Fact]

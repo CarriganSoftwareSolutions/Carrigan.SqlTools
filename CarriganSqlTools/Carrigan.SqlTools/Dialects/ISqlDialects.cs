@@ -1,11 +1,13 @@
-﻿using System;
+﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Tags;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carrigan.SqlTools;
+namespace Carrigan.SqlTools.Dialects;
 
 /// <summary>
 /// This is the ISqlDialects interface, which defines the methods that a SQL dialect must implement. 
@@ -38,10 +40,9 @@ public interface ISqlDialects
     /// <paramref name="includeTable"/> is false, only the column name is rendered.</remarks>
     /// <param name="schema">The optional schema name that qualifies the table. May be null to omit the schema.</param>
     /// <param name="table">The name of the table containing the column. Cannot be null or empty.</param>
-    /// <param name="column">The name of the column to render. Cannot be null or empty.</param>
     /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
     /// <returns>A string containing the rendered column name, optionally qualified by table and schema as specified.</returns>
-    string RenderColumn(string? schema, string table, string column, bool includeTable = true);
+    string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true);
     /// <summary>
     /// Generates a parameter string by combining the specified prefix, name, and optional index.
     /// </summary>

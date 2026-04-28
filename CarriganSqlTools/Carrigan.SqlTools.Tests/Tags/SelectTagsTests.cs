@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -10,7 +11,7 @@ public class SelectTagsTests
     private static SelectTag New(string? schemaName, string tableName, string columnName, string? aliasName) =>
         New(SchemaName.New(schemaName), new TableName(tableName), new ColumnName(columnName), AliasName.New(aliasName));
     private static SelectTag New(SchemaName? schemaName, TableName tableName, ColumnName columnName, AliasName? aliasName) =>
-        new (new ColumnTag(new TableTag(schemaName, tableName), columnName), AliasTag.New(aliasName));
+        new (new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName), columnName), AliasTag.New(aliasName));
 
     private static readonly SelectTag a = New(null, "SomeTable", "SomeColumn", null);
     private static readonly SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);

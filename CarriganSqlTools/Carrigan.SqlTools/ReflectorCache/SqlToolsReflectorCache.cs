@@ -2,6 +2,7 @@
 using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
@@ -33,6 +34,11 @@ public class SqlToolsReflectorCache<T>
     internal static readonly Type Type;
 
     /// <summary>
+    /// The SQL dialect configuration used for generating database queries.
+    /// </summary>
+    internal static readonly ISqlDialects Dialect;
+
+    /// <summary>
     /// The <see cref="IdentifierTypes.SchemaName"/> associated with
     /// the SQL schema for <typeparamref name="T"/> and its columns.
     /// </summary>
@@ -49,7 +55,7 @@ public class SqlToolsReflectorCache<T>
     /// the fully qualified table identifier for <typeparamref name="T"/>.
     /// </summary>
     internal static TableTag Table =>
-        new(SchemaName, TableName);
+        new(Dialect, SchemaName, TableName);
 
     /// <summary>
     /// The <see cref="IdentifierTypes.ProcedureName"/> associated
@@ -196,6 +202,10 @@ public class SqlToolsReflectorCache<T>
             identifierAttribute?.Schema?.ToString().GetValueOrNull()
                 ?? tableAttribute?.Schema?.GetValueOrNull();
 
+        DialectAttribute? dialectAttribute = Type.GetCustomAttribute<DialectAttribute>();
+        DialectEnum dialectEnum = dialectAttribute?.DialectEnum ?? DialectEnum.SqlServer;
+        Dialect = DialectProvider.GetDialect(dialectEnum);
+
         SchemaName = SchemaName.New(schemaName);
 
         TableName = new
@@ -247,7 +257,7 @@ public class SqlToolsReflectorCache<T>
                 new Tuple<PropertyInfo, ColumnInfo>
                 (
                     property,
-                    new ColumnInfo(SchemaName, TableName, property, keys)
+                    new ColumnInfo(Dialect, SchemaName, TableName, property, keys)
                 ))
         );
 

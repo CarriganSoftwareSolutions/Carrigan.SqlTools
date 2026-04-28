@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -9,7 +9,7 @@ public sealed class SqlGenerator_InsertArgumentValidationTests
     [Fact]
     public void Insert_EntitiesNull_ArgumentException()
     {
-        SqlGenerator<EntityWithTableAttribute> generator = new(new SqlServerDialect());
+        SqlGenerator<EntityWithTableAttribute> generator = new();
 
         IEnumerable<EntityWithTableAttribute> entities = null!;
 
@@ -19,7 +19,7 @@ public sealed class SqlGenerator_InsertArgumentValidationTests
     [Fact]
     public void Insert_EntitiesEmpty_ArgumentException()
     {
-        SqlGenerator<EntityWithTableAttribute> generator = new(new SqlServerDialect());
+        SqlGenerator<EntityWithTableAttribute> generator = new();
 
         Assert.Throws<ArgumentException>(() => generator.Insert(null, null, []));
     }

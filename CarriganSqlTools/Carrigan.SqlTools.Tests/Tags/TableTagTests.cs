@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -15,7 +16,7 @@ public class TableTagTests
     [InlineData("", "Pizza", "[Pizza]")]
     public void Table_Tag_Tests(string? schemaName, string tableName, string expected)
     {
-        string actual = new TableTag(schemaName, tableName);
+        string actual = new TableTag(new SqlServerDialect(), schemaName, tableName);
 
         Assert.Equal(expected, actual);
     }
@@ -31,7 +32,7 @@ public class TableTagTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName) => 
-        _ = new TableTag(schemaName, tableName!);
+        _ = new TableTag(new SqlServerDialect(), schemaName, tableName!);
 
     [Theory]
     [InlineData("Franks", "Pizza", "Franks", "Pizza")]
@@ -41,8 +42,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_Comparisons(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -63,8 +64,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_Equals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -84,8 +85,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_EqualsObject(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -106,8 +107,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_EqualsEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -127,8 +128,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_NotEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(new SqlServerDialect(), schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -142,7 +143,7 @@ public class TableTagTests
     public void TableTag_Equals_BothNull_ReturnsTrue()
     {
         // Since the comparison methods are on TableTag itself, we just need an instance.
-        TableTag comparer = new("Schema", "Table");
+        TableTag comparer = new(new SqlServerDialect(), "Schema", "Table");
 
         bool result = comparer.Equals(null, null);
 
@@ -152,8 +153,8 @@ public class TableTagTests
     [Fact]
     public void TableTag__Equals_OneNullOneNonNull_ReturnsFalse()
     {
-        TableTag comparer = new("Schema", "Table");
-        TableTag nonNullTag = new("Schema", "Table");
+        TableTag comparer = new(new SqlServerDialect(), "Schema", "Table");
+        TableTag nonNullTag = new(new SqlServerDialect(), "Schema", "Table");
 
         bool result = comparer.Equals(null, nonNullTag);
 
@@ -163,9 +164,9 @@ public class TableTagTests
     [Fact]
     public void TableTag_Equals_SameValues_ReturnsTrue()
     {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("Schema", "Table");
-        TableTag tag2 = new("Schema", "Table");
+        TableTag comparer = new(new SqlServerDialect(), "Schema", "Table");
+        TableTag tag1 = new(new SqlServerDialect(), "Schema", "Table");
+        TableTag tag2 = new(new SqlServerDialect(), "Schema", "Table");
 
         bool result = comparer.Equals(tag1, tag2);
 
@@ -175,9 +176,9 @@ public class TableTagTests
     [Fact]
     public void TableTag_Equals_DifferentValues_ReturnsFalse()
     {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("SchemaA", "TableA");
-        TableTag tag2 = new("SchemaB", "TableB");
+        TableTag comparer = new(new SqlServerDialect(), "Schema", "Table");
+        TableTag tag1 = new(new SqlServerDialect(), "SchemaA", "TableA");
+        TableTag tag2 = new(new SqlServerDialect(), "SchemaB", "TableB");
 
         bool result = comparer.Equals(tag1, tag2);
 
@@ -187,9 +188,9 @@ public class TableTagTests
     [Fact]
     public void TableTag_GetHashCode_SameValues_ReturnsSameHash()
     {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("MySchema", "MyTable");
-        TableTag tag2 = new("MySchema", "MyTable");
+        TableTag comparer = new(new SqlServerDialect(), "Schema", "Table");
+        TableTag tag1 = new(new SqlServerDialect(), "MySchema", "MyTable");
+        TableTag tag2 = new(new SqlServerDialect(), "MySchema", "MyTable");
 
         int hash1 = comparer.GetHashCode(tag1);
         int hash2 = comparer.GetHashCode(tag2);
@@ -200,9 +201,9 @@ public class TableTagTests
     [Fact]
     public void TableTag_GetHashCode_DifferentValues_ReturnsDifferentHash()
     {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("Schema1", "Table1");
-        TableTag tag2 = new("Schema2", "Table2");
+        TableTag comparer = new(new SqlServerDialect(), "Schema", "Table");
+        TableTag tag1 = new(new SqlServerDialect(), "Schema1", "Table1");
+        TableTag tag2 = new(new SqlServerDialect(), "Schema2", "Table2");
 
         int hash1 = comparer.GetHashCode(tag1);
         int hash2 = comparer.GetHashCode(tag2);
@@ -219,7 +220,7 @@ public class TableTagTests
         string expected = "[ValidTable]";
 
         // Act
-        TableTag tableTag = new(null, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), null, tableName);
 
         // Assert
         Assert.Equal(expected, tableTag.ToString());
@@ -237,7 +238,7 @@ public class TableTagTests
         string expected = "[dbo].[ValidTable]";
 
         // Act
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
 
         // Assert
         Assert.Equal(expected, tableTag.ToString());
@@ -258,7 +259,7 @@ public class TableTagTests
         string schemaName = "dbo";
 
         // Act & Assert
-        _ = new TableTag(schemaName, invalidTable);
+        _ = new TableTag(new SqlServerDialect(), schemaName, invalidTable);
     }
 
     [Theory]
@@ -274,7 +275,7 @@ public class TableTagTests
         string tableName = "ValidTable";
 
         // Act & Assert
-        _ = new TableTag(invalidSchema, tableName);
+        _ = new TableTag(new SqlServerDialect(), invalidSchema, tableName);
     }
 
     [Fact]
@@ -283,7 +284,7 @@ public class TableTagTests
         // Arrange
         string schemaName = "dbo";
         string tableName = "ValidTable";
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         string expected = "[dbo].[ValidTable]";
 
         // Act
@@ -299,7 +300,7 @@ public class TableTagTests
         // Arrange
         string schemaName = "dbo";
         string tableName = "ValidTable";
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         string expected = "[dbo].[ValidTable]";
 
         // Act
@@ -314,7 +315,7 @@ public class TableTagTests
     {
         // Arrange
         Type entityType = typeof(EntityWithSchema);
-        TableTag expectedTag = new("myschema", "EntityWithSchema");
+        TableTag expectedTag = new(new SqlServerDialect(), "myschema", "EntityWithSchema");
 
         // Act
         TableTag actualTag = TableTag.Get(entityType);

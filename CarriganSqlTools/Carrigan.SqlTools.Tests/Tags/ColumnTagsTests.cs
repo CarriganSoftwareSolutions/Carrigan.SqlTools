@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
@@ -12,7 +13,7 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", "Pizza", "Pizza")]
     public void ColumnNameTest(string? schemaName, string tableName, string columnName, string expected)
     {
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         ColumnTag actual = new(tableTag, new ColumnName(columnName));
 
         Assert.Equal(expected, actual.ColumnName);
@@ -24,7 +25,7 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", "Pizza", "[Sloppy]")]
     public void ColumnTagTable(string? schemaName, string tableName, string columnName, string expected)
     {
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         ColumnTag actual = new (tableTag, new ColumnName(columnName));
 
         Assert.Equal(expected, actual.TableTag);
@@ -36,7 +37,7 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
     public void Col_Tag_Tests_3_Params(string? schemaName, string tableName, string columnName, string expected)
     {
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         string actual = new ColumnTag(tableTag, new ColumnName(columnName));
 
         Assert.Equal(expected, actual);
@@ -48,7 +49,7 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
     public void Col_Tag_Tests_3_Params_ExplicitToString(string? schemaName, string tableName, string columnName, string expected)
     {
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         string actual = (new ColumnTag(tableTag, new ColumnName(columnName))).ToString();
 
         Assert.Equal(expected, actual);
@@ -60,7 +61,7 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
     public void Col_Tag_Tests_3_Params_ExplicitToString_UseTable (string? schemaName, string tableName, string columnName, string expected)
     {
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         string actual = (new ColumnTag(tableTag, new ColumnName(columnName))).ToString(true);
 
         Assert.Equal(expected, actual);
@@ -72,7 +73,7 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", "Pizza", "[Pizza]")]
     public void Col_Tag_Tests_3_Params_ExplicitToString_DoNotUseTable(string? schemaName, string tableName, string columnName, string expected)
     {
-        TableTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(new SqlServerDialect(), schemaName, tableName);
         string actual = (new ColumnTag(tableTag, new ColumnName(columnName))).ToString(false);
 
         Assert.Equal(expected, actual);
@@ -89,7 +90,7 @@ public class ColumnTagsTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_Schema_Null(string? schemaName, string? tableName, string? columnName)
-        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
+        => _ = new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("", "Sloppy", "")]
@@ -102,7 +103,7 @@ public class ColumnTagsTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_Schema_Empty(string? schemaName, string? tableName, string? columnName)
-        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
+        => _ = new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("", null, "")]
@@ -114,7 +115,7 @@ public class ColumnTagsTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_3_Table_Null(string? schemaName, string? tableName, string? columnName)
-        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
+        => _ = new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("", "", "")]
@@ -125,7 +126,7 @@ public class ColumnTagsTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_3_Table_Empty(string? schemaName, string? tableName, string? columnName)
-        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
+        => _ = new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", null)]
@@ -140,7 +141,7 @@ public class ColumnTagsTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_3_Column_Null(string? schemaName, string? tableName, string? columnName)
-        => _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
+        => _ = new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", "")]
@@ -155,7 +156,7 @@ public class ColumnTagsTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_3_Params_Column_Empty(string? schemaName, string? tableName, string? columnName)  =>
-         _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
+         _ = new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
     [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
@@ -163,7 +164,7 @@ public class ColumnTagsTests
     [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
     public void Col_Tag_Tests_2_Params(string? schemaName, string tableName, string columnName, string expected)
     {
-        TableTag tg = new(schemaName, tableName);
+        TableTag tg = new(new SqlServerDialect(), schemaName, tableName);
         string actual = new ColumnTag(tg, new ColumnName(columnName));
 
         Assert.Equal(expected, actual);
@@ -183,7 +184,7 @@ public class ColumnTagsTests
     //I kept the tests, in case I forget I moved them on purpose.
     public void Col_Tag_Tests_2_Params_no_longer_throws_exception(string? schemaName, string tableName, string? columnName)
     {
-        TableTag tg = new(schemaName, tableName);
+        TableTag tg = new(new SqlServerDialect(), schemaName, tableName);
 
         _ = new ColumnTag(tg, new ColumnName(columnName!));
     }
@@ -196,7 +197,7 @@ public class ColumnTagsTests
     [InlineData("", "T", "C", "[T].[C]")]
     public void ImplicitStringAndToString_AreEquivalent(string? schema, string table, string column, string expected)
     {
-        TableTag tableTag = new(schema, table);
+        TableTag tableTag = new(new SqlServerDialect(), schema, table);
         ColumnTag colTag = new(tableTag, new ColumnName(column));
 
         // implicit cast
@@ -211,7 +212,7 @@ public class ColumnTagsTests
     [Fact]
     public void Equals_SameUnderlyingTag_ReturnsTrue()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag a = new(tableTag, new ColumnName("C"));
         ColumnTag b = new(tableTag, new ColumnName("C"));
 
@@ -222,7 +223,7 @@ public class ColumnTagsTests
     [Fact]
     public void Equals_DifferentUnderlyingTag_ReturnsFalse()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag a = new(tableTag, new ColumnName("C1"));
         ColumnTag b = new(tableTag, new ColumnName("C2"));
 
@@ -234,7 +235,7 @@ public class ColumnTagsTests
     [Fact]
     public void EqualityOperator_WorksLikeEquals()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag x = new(tableTag, new ColumnName("C"));
         ColumnTag y = new(tableTag, new ColumnName("C"));
         ColumnTag z = new(tableTag, new ColumnName("Different"));
@@ -248,7 +249,7 @@ public class ColumnTagsTests
     [Fact]
     public void GetHashCode_EqualInstances_HaveSameHash()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag a = new(tableTag, new ColumnName("C"));
         ColumnTag b = new(tableTag, new ColumnName("C"));
 
@@ -259,7 +260,7 @@ public class ColumnTagsTests
     [Fact]
     public void Comparer_EqualsAndHashCode_ViaIEqualityComparer()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag a = new(tableTag, new ColumnName("C"));
         ColumnTag b = new(tableTag, new ColumnName("C"));
         ColumnTag c = new(tableTag, new ColumnName("Other"));
@@ -274,7 +275,7 @@ public class ColumnTagsTests
     [Fact]
     public void CompareTo_SortsByUnderlyingStringOrdinal()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag lower = new(tableTag, new ColumnName("A"));
         ColumnTag higher = new(tableTag, new ColumnName("B"));
 
@@ -287,7 +288,7 @@ public class ColumnTagsTests
     [Fact]
     public void Sort_ListOfColumnTags_OrdersLexicographically()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag charlie = new(tableTag, new ColumnName("Charlie"));
         ColumnTag bravo = new(tableTag, new ColumnName("Bravo"));
         ColumnTag alpha = new(tableTag, new ColumnName("Alpha"));
@@ -311,7 +312,7 @@ public class ColumnTagsTests
     public void DictionaryKey_RetrievalByEquivalentColumnTag_Works()
     {
         Dictionary<ColumnTag, string> dict = [];
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag key1 = new(tableTag, new ColumnName("C"));
         dict[key1] = "value";
 
@@ -325,7 +326,7 @@ public class ColumnTagsTests
     [Fact]
     public void CompareTo_Null_IsGreaterThanNull()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag columnTag = new(tableTag, new ColumnName("C"));
         Assert.True(columnTag.CompareTo(null) > 0);
     }
@@ -333,7 +334,7 @@ public class ColumnTagsTests
     [Fact]
     public void Equals_Null_ReturnsFalse()
     {
-        TableTag tableTag = new("S", "T");
+        TableTag tableTag = new(new SqlServerDialect(), "S", "T");
         ColumnTag columnTag = new(tableTag, new ColumnName("C"));
         Assert.False(columnTag.Equals(null));
         Assert.NotNull(columnTag);
@@ -345,8 +346,8 @@ public class ColumnTagsTests
     [Fact]
     public void Equals_DifferentCase_ReturnsTrue()
     {
-        ColumnTag lower = new(new TableTag("s", "t"), new ColumnName("c"));
-        ColumnTag upper = new(new TableTag("S", "T"), new ColumnName("C"));
+        ColumnTag lower = new(new TableTag(new SqlServerDialect(), "s", "t"), new ColumnName("c"));
+        ColumnTag upper = new(new TableTag(new SqlServerDialect(), "S", "T"), new ColumnName("C"));
 
         Assert.True(lower.Equals(upper));
         Assert.True(upper.Equals(lower));
@@ -355,8 +356,8 @@ public class ColumnTagsTests
     [Fact]
     public void GetHashCode_DifferentCase_EqualInstances_HaveSameHash()
     {
-        ColumnTag lower = new(new TableTag("s", "t"), new ColumnName("c"));
-        ColumnTag upper = new(new TableTag("S", "T"), new ColumnName("C"));
+        ColumnTag lower = new(new TableTag(new SqlServerDialect(), "s", "t"), new ColumnName("c"));
+        ColumnTag upper = new(new TableTag(new SqlServerDialect(), "S", "T"), new ColumnName("C"));
 
         Assert.Equal(lower.GetHashCode(), upper.GetHashCode());
     }
@@ -365,10 +366,10 @@ public class ColumnTagsTests
     public void DictionaryKey_RetrievalByDifferentCaseColumnTag_Works()
     {
         Dictionary<ColumnTag, string> dict = [];
-        ColumnTag keyLower = new(new TableTag("s", "t"), new ColumnName("c"));
+        ColumnTag keyLower = new(new TableTag(new SqlServerDialect(), "s", "t"), new ColumnName("c"));
         dict[keyLower] = "value";
 
-        ColumnTag keyUpper = new(new TableTag("S", "T"), new ColumnName("C"));
+        ColumnTag keyUpper = new(new TableTag(new SqlServerDialect(), "S", "T"), new ColumnName("C"));
 
         Assert.True(dict.ContainsKey(keyUpper));
         Assert.Equal("value", dict[keyUpper]);

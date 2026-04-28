@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
@@ -19,10 +19,10 @@ public class SqlGenerator_SelectTests
     public SqlGenerator_SelectTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(new SqlServerDialect(), _mockEncrypter);
-        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(new SqlServerDialect(), _mockEncrypter);
-        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(new SqlServerDialect(), _mockEncrypter);
-        _sqlGeneratorForColumnTable = new SqlGenerator<ColumnTable>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncrypter);
+        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(_mockEncrypter);
+        _sqlGeneratorForColumnTable = new SqlGenerator<ColumnTable>(_mockEncrypter);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 
@@ -38,7 +39,7 @@ public class RelationsExtensionsTests
         protected override IEnumerable<JoinBase> Joints { get; set; }
 
         internal override TableTag TableTag =>
-            new(null, "Left");
+            new(new SqlServerDialect(), null, "Left");
 
         internal TestJoins(IEnumerable<JoinBase> joints) =>
             Joints = joints;
@@ -47,7 +48,7 @@ public class RelationsExtensionsTests
     private sealed class DummyJoin : JoinBase
     {
         internal override TableTag TableTag =>
-            new(null, "Right");
+            new(new SqlServerDialect(), null, "Right");
 
         internal DummyJoin() : base(new EmptyPredicate()) { }
 

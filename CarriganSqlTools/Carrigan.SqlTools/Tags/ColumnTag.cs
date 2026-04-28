@@ -106,7 +106,7 @@ internal class ColumnTag : StringWrapper
     /// <param name="tableTag">The <see cref="Tags.TableTag"/> representing the table containing the column.</param>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
     internal ColumnTag(TableTag tableTag, ColumnName columnName)
-        : base(CreateColumnTagString(tableTag, columnName), StringComparison.OrdinalIgnoreCase)
+        : base(tableTag.Dialect.RenderColumn(tableTag, columnName), StringComparison.OrdinalIgnoreCase)
     {
         ColumnName = columnName;
         TableTag = tableTag;
@@ -126,7 +126,7 @@ internal class ColumnTag : StringWrapper
         if (useTableTag)
             return ToString();
         else
-            return $"[{ColumnName}]";
+            return TableTag.Dialect.RenderColumn(TableTag, ColumnName, false);
     }
 
     /// <summary>
@@ -137,7 +137,4 @@ internal class ColumnTag : StringWrapper
     /// </returns>
     public new bool IsEmpty() =>
         ColumnName.IsNullOrWhiteSpace();
-
-    private static string CreateColumnTagString(TableTag tableTag, ColumnName columnName) =>
-        tableTag.ToString().IsNullOrEmpty() ? $"[{columnName}]" : $"{tableTag}.[{columnName}]";
 }

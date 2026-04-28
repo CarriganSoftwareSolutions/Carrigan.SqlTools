@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -23,7 +23,7 @@ public class ParameterAndColumnIdentifierTests
     }
 
     //IGNORE SPELLING: tac
-    private static readonly SqlGenerator<ColumnIdentifiers> _generator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<ColumnIdentifiers> _generator = new();
     private static readonly ColumnIdentifiers _entity = new ()
     {
         Id = 1,
@@ -49,7 +49,7 @@ public class ParameterAndColumnIdentifierTests
         IdentifierOverrideName = 15
     };
 
-    private static readonly SqlGenerator<TableAndColumnIdentifiers> _tacGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<TableAndColumnIdentifiers> _tacGenerator = new();
     private static readonly TableAndColumnIdentifiers _tacEntity = new()
     {
         Id = 1,

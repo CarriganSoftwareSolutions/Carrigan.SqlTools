@@ -1,6 +1,6 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.Sets;
@@ -19,7 +19,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
     public ReturnModelRoundTripTests(ReturnFixture fixture)
     {
         _fixture = fixture;
-        _generator = new(new SqlServerDialect());
+        _generator = new();
     }
 
     [Fact]

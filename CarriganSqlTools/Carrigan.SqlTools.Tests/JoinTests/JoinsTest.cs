@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -330,7 +331,7 @@ public class JoinsTest
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        TableTag expected = new(null, "Left");
+        TableTag expected = new(new SqlServerDialect(), null, "Left");
         Assert.Equal(expected, relation.TableTag);
     }
 

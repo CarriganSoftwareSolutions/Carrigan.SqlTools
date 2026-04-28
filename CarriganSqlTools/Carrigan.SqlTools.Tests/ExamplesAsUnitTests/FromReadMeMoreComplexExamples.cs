@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -12,8 +12,8 @@ namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
 public class FromReadMeMoreComplexExamples
 {
-    private static readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
-    private static readonly SqlGenerator<Order> orderGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Order> orderGenerator = new();
 
     [Fact]
     public void SelectWithJoinsAndOrderBy()

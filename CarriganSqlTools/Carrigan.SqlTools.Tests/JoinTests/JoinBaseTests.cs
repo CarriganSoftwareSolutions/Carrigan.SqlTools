@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -47,8 +48,8 @@ public class JoinBaseTests
 
         TableTag[] actual = [.. join.JoinsOn];
 
-        Assert.Contains(new TableTag(null, "Left"), actual);
-        Assert.Contains(new TableTag(null, "Right"), actual);
+        Assert.Contains(new TableTag(new SqlServerDialect(), null, "Left"), actual);
+        Assert.Contains(new TableTag(new SqlServerDialect(), null, "Right"), actual);
     }
 
     [Fact]
