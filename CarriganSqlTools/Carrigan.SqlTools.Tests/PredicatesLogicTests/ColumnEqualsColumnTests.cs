@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
@@ -7,8 +8,8 @@ using Carrigan.SqlTools.Tests.TestEntities;
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 public class ColumnEqualsColumnTests
 {
-    private static readonly SqlGenerator<JoinLeftTable> leftGenerator = new();
-    private static readonly SqlGenerator<JoinRightTable> rightGenerator = new();
+    private static readonly SqlGenerator<JoinLeftTable> leftGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<JoinRightTable> rightGenerator = new(new SqlServerDialect());
     [Fact]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
     public void NewLeftRight()

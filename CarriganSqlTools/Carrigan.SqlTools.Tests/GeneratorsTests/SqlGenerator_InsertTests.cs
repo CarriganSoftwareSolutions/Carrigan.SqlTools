@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -21,13 +22,13 @@ public class SqlGenerator_InsertTests
     public SqlGenerator_InsertTests()
     {
         _mockEncrypter = new("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new();
-        _sqlGeneratorForEntityWithoutTableAttribute = new();
-        _sqlGeneratorForEntityWithSchema = new();
-        _sqlGeneratorForSqlTypeEntity = new();
-        _sqlGeneratorForNullableTestEntity = new();
-        _sqlGeneratorForEntityWithEncryption = new(_mockEncrypter);
-        _sqlGeneratorForCompositePrimaryKeyTable = new();
+        _sqlGeneratorForEntityWithTableAttribute = new(new SqlServerDialect());
+        _sqlGeneratorForEntityWithoutTableAttribute = new(new SqlServerDialect());
+        _sqlGeneratorForEntityWithSchema = new(new SqlServerDialect());
+        _sqlGeneratorForSqlTypeEntity = new(new SqlServerDialect());
+        _sqlGeneratorForNullableTestEntity = new(new SqlServerDialect());
+        _sqlGeneratorForEntityWithEncryption = new(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForCompositePrimaryKeyTable = new(new SqlServerDialect());
     }
 
     private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)

@@ -1,17 +1,18 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 public  class TableIdentifierTests
 {
-    private static readonly SqlGenerator<EntityName> _entityNameSqlGenerator = new();
-    private static readonly SqlGenerator<IdentifierName> _identifierNameSqlGenerator = new();
-    private static readonly SqlGenerator<IdentifierNameOverride> _identifierNameOverrideSqlGenerator = new();
-    private static readonly SqlGenerator<IdentifierNameOverrideSchema> _identifierNameOverrideSchemaSqlGenerator = new();
-    private static readonly SqlGenerator<IdentifierNameOverrideSchemaOverride> _identifierNameOverrideSchemaOverrideSqlGenerator = new();
-    private static readonly SqlGenerator<IdentifierNameSchema> _identifierNameSchemaSqlGenerator = new();
-    private static readonly SqlGenerator<TableNameClass> _tableNameSqlGenerator = new();
-    private static readonly SqlGenerator<TableNameSchema> _tableNameSchemaSqlGenerator = new();
+    private static readonly SqlGenerator<EntityName> _entityNameSqlGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<IdentifierName> _identifierNameSqlGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<IdentifierNameOverride> _identifierNameOverrideSqlGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<IdentifierNameOverrideSchema> _identifierNameOverrideSchemaSqlGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<IdentifierNameOverrideSchemaOverride> _identifierNameOverrideSchemaOverrideSqlGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<IdentifierNameSchema> _identifierNameSchemaSqlGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<TableNameClass> _tableNameSqlGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<TableNameSchema> _tableNameSchemaSqlGenerator = new(new SqlServerDialect());
 
     private static readonly Guid guid = Guid.NewGuid();
 

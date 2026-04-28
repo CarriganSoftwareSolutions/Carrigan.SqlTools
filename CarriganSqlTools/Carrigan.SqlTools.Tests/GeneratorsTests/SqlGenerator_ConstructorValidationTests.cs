@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
@@ -18,41 +20,41 @@ public class SqlGenerator_ConstructorValidationTests
 {
     [Fact]
     public void MultiKeyVersionException() =>
-        Assert.Throws<MultipleKeyVersionsException<MultiKeyVersions>>(() => new SqlGenerator<MultiKeyVersions>(new MockEncryption("the")));
+        Assert.Throws<MultipleKeyVersionsException<MultiKeyVersions>>(() => new SqlGenerator<MultiKeyVersions>(new SqlServerDialect(), new MockEncryption("the")));
     [Fact]
     public void NoKeyVersionException() =>
-        Assert.Throws<NoKeyVersionException<NoKeyVersionPropertyEntity>>(() => new SqlGenerator<NoKeyVersionPropertyEntity>(new MockEncryption("the")));
+        Assert.Throws<NoKeyVersionException<NoKeyVersionPropertyEntity>>(() => new SqlGenerator<NoKeyVersionPropertyEntity>(new SqlServerDialect(), new MockEncryption("the")));
     [Fact]
     public void NoEncrypterVersionException() =>
-        Assert.Throws<EncrypterNotProvidedException<EntityWithEncryption>>(() => new SqlGenerator<EntityWithEncryption>());
+        Assert.Throws<EncrypterNotProvidedException<EntityWithEncryption>>(() => new SqlGenerator<EntityWithEncryption>(new SqlServerDialect()));
 
     [Fact]
     public void NonIntKeyVersions() =>
-        Assert.Throws<InvalidKeyVersionPropertyTypeException<NonIntKeyVersions>>(() => new SqlGenerator<NonIntKeyVersions>(new MockEncryption("the")));
+        Assert.Throws<InvalidKeyVersionPropertyTypeException<NonIntKeyVersions>>(() => new SqlGenerator<NonIntKeyVersions>(new SqlServerDialect(), new MockEncryption("the")));
 
     [Fact]
     public void NullableIntKeyVersions() =>
-        _ = new SqlGenerator<NullableIntKeyVersions>(new MockEncryption("the"));
+        _ = new SqlGenerator<NullableIntKeyVersions>(new SqlServerDialect(), new MockEncryption("the"));
 
     [Fact]
     public void ColumnNameFromNullIdentifier()
     {
         TypeInitializationException ex = 
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullIdentifier>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullIdentifier>(new SqlServerDialect()));
         Assert.IsType<ArgumentNullException>(ex.InnerException);
     }
     [Fact]
     public void ColumnNameFromEmptyIdentifier()
     {
         TypeInitializationException ex = 
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyIdentifier>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyIdentifier>(new SqlServerDialect()));
         Assert.IsType<ArgumentException>(ex.InnerException);
     }
 
     [Fact]
     public void ColumnNameFromInvalidIdentifier()
     {
-        AggregateException ex =Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidIdentifier>());
+        AggregateException ex =Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidIdentifier>(new SqlServerDialect()));
 
         Assert.NotEmpty(ex.InnerExceptions.OfType<InvalidSqlIdentifierException>());
     }
@@ -61,20 +63,20 @@ public class SqlGenerator_ConstructorValidationTests
     public void ColumnNameFromNullAnnotation()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullAnnotation>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromNullAnnotation>(new SqlServerDialect()));
         Assert.IsType<ArgumentNullException>(ex.InnerException);
     }
     [Fact]
     public void ColumnNameFromEmptyAnnotation()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyAnnotation>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ColumnNameFromEmptyAnnotation>(new SqlServerDialect()));
         Assert.IsType<ArgumentException>(ex.InnerException);
     }
     [Fact]
     public void ColumnNameFromInvalidAnnotation()
     {
-        AggregateException ex = Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidAnnotation>());
+        AggregateException ex = Assert.Throws<AggregateException>(() => _ = new SqlGenerator<ColumnNameFromInvalidAnnotation>(new SqlServerDialect()));
 
         Assert.NotEmpty(ex.InnerExceptions.OfType<InvalidSqlIdentifierException>());
     }
@@ -82,21 +84,21 @@ public class SqlGenerator_ConstructorValidationTests
     public void TableNameFromNullIdentifier()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromNullIdentifier>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromNullIdentifier>(new SqlServerDialect()));
         Assert.IsType<ArgumentNullException>(ex.InnerException);
     }
     [Fact]
     public void TableNameFromEmptyIdentifier()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromEmptyIdentifier>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromEmptyIdentifier>(new SqlServerDialect()));
         Assert.IsType<ArgumentException>(ex.InnerException);
     }
 
     [Fact]
     public void TableNameFromInvalidIdentifier()
     {
-        AggregateException ex = Assert.Throws<AggregateException>(() => _ = new SqlGenerator<TableNameFromInvalidIdentifier>());
+        AggregateException ex = Assert.Throws<AggregateException>(() => _ = new SqlGenerator<TableNameFromInvalidIdentifier>(new SqlServerDialect()));
 
         Assert.NotEmpty(ex.InnerExceptions.OfType<InvalidSqlIdentifierException>());
     }
@@ -105,44 +107,44 @@ public class SqlGenerator_ConstructorValidationTests
     public void TableNameFromNullAnnotation()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromNullAnnotation>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromNullAnnotation>(new SqlServerDialect()));
         Assert.IsType<ArgumentNullException>(ex.InnerException);
     }
     [Fact]
     public void TableNameFromEmptyAnnotation()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromEmptyAnnotation>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<TableNameFromEmptyAnnotation>(new SqlServerDialect()));
         Assert.IsType<ArgumentException>(ex.InnerException);
     }
     [Fact]
     public void TableNameFromInvalidAnnotation() => 
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<TableNameFromInvalidAnnotation>());
+        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<TableNameFromInvalidAnnotation>(new SqlServerDialect()));
 
 
     [Fact]
     public void ParameterNameNull()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ParameterNameNull>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ParameterNameNull>(new SqlServerDialect()));
         Assert.IsType<ArgumentNullException>(ex.InnerException);
     }
     [Fact]
     public void ParameterNameEmpty()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ParameterNameEmpty>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<ParameterNameEmpty>(new SqlServerDialect()));
         Assert.IsType<ArgumentException>(ex.InnerException);
     }
     [Fact]
     public void ParameterNameInvalid() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<ParameterNameInvalid>());
+        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<ParameterNameInvalid>(new SqlServerDialect()));
 
     [Fact]
     public void AliasNameNull()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameNull>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameNull>(new SqlServerDialect()));
         Assert.IsType<ArgumentNullException>(ex.InnerException);
     }
 
@@ -150,30 +152,30 @@ public class SqlGenerator_ConstructorValidationTests
     public void AliasNameEmpty()
     {
         TypeInitializationException ex =
-            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameEmpty>());
+            Assert.Throws<TypeInitializationException>(() => _ = new SqlGenerator<AliasNameEmpty>(new SqlServerDialect()));
         Assert.IsType<ArgumentException>(ex.InnerException);
     }
 
     [Fact]
     public void AliasNameInvalid() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<AliasNameInvalid>());
+        Assert.Throws<InvalidSqlIdentifierException>(() => _ = new SqlGenerator<AliasNameInvalid>(new SqlServerDialect()));
 
     [Fact]
     public void EncrypterNotProvided() =>
-        Assert.Throws<EncrypterNotProvidedException<EntityWithEncryption>>(() => _ = new SqlGenerator<EntityWithEncryption>());
+        Assert.Throws<EncrypterNotProvidedException<EntityWithEncryption>>(() => _ = new SqlGenerator<EntityWithEncryption>(new SqlServerDialect()));
 
     [Fact]
     public void EntityWithEncryptionNull() =>
-        Assert.Throws<ArgumentNullException>(() => _ = new SqlGenerator<EntityWithEncryption>(null!));
+        Assert.Throws<ArgumentNullException>(() => _ = new SqlGenerator<EntityWithEncryption>(new SqlServerDialect(), (IEncryption)null!));
 
     [Fact]
     public void EncryptionProvided() =>
-        _ = new SqlGenerator<EntityWithEncryption>(new MockEncryption("Hello"));
+        _ = new SqlGenerator<EntityWithEncryption>(new SqlServerDialect(), new MockEncryption("Hello"));
 
     [Fact]
     public void AmbiguousException()
     {
-        SqlGenerator<AmbiguousLeft> sqlGenerator = new ();
+        SqlGenerator<AmbiguousLeft> sqlGenerator = new(new SqlServerDialect());
         ColumnEqualsColumn<AmbiguousLeft, AmbiguousRight> id = new (nameof(AmbiguousLeft.Id), nameof(AmbiguousRight.Id));
         Joins<AmbiguousLeft> joins = Joins<AmbiguousLeft>.LeftJoin<AmbiguousRight>(id);
         SelectTags selects = 
@@ -184,7 +186,7 @@ public class SqlGenerator_ConstructorValidationTests
 
     [Fact]
     public void SqlTypeMismatch_SingleInvalidAttribute_Exception() =>
-        Assert.Throws<SqlTypeMismatchException>(() => _ = new SqlGenerator<SqlTypeMismatchAttributeEntity>());
+        Assert.Throws<SqlTypeMismatchException>(() => _ = new SqlGenerator<SqlTypeMismatchAttributeEntity>(new SqlServerDialect()));
 
     [Fact]
     public void SqlTypeMismatch_MultipleInvalidAttributes_Exception()
@@ -192,7 +194,7 @@ public class SqlGenerator_ConstructorValidationTests
         AggregateException ex =
             Assert.Throws<AggregateException>
             (
-                () => _ = new SqlGenerator<SqlTypeMismatchMultipleAttributesEntity>()
+                () => _ = new SqlGenerator<SqlTypeMismatchMultipleAttributesEntity>(new SqlServerDialect())
             );
 
         IEnumerable<SqlTypeMismatchException> mismatches =

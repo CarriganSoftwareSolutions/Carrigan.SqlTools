@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Carrigan.SqlTools.Dialects.SqlServer\Carrigan.SqlTools.Dialects.SqlServer.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools.SqlServer\Carrigan.SqlTools.SqlServer.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
   </ItemGroup>

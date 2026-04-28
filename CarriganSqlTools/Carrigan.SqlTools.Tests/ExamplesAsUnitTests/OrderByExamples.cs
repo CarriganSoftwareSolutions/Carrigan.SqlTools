@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
@@ -6,7 +7,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class OrderByExamples
 {
-    private readonly SqlGenerator<Customer> customerGenerator = new();
+    private readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
 
     [Fact]
     public void SelectWithWithOrderByItem()

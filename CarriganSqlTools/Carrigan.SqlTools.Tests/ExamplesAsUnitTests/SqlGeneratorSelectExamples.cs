@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -9,7 +10,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class SqlGeneratorSelectExamples
 {
-    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
 
     [Fact]
     public void SelectAll()

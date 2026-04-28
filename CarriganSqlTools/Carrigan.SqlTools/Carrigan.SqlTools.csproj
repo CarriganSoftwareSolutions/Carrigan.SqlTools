@@ -43,6 +43,7 @@
   
   <ItemGroup>
     <InternalsVisibleTo Include="Carrigan.SqlTools.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Dialects.SqlServer" />
   </ItemGroup>
 
   <ItemGroup>

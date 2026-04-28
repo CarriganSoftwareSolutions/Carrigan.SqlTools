@@ -8,6 +8,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools;
 using System.Data;
 using System.Reflection;
 //IGNORE SPELLING: parameterization
@@ -32,6 +33,11 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// or <c>null</c> if encryption is not required or no encrypter was provided.
     /// </summary>
     private readonly IEncryption? _Encryption;
+
+    /// <summary>
+    /// This an dialect abstraction used to generate dialect-specific SQL syntax.
+    /// </summary>
+    private ISqlDialects? _SqlDialects;
 
     /// <summary>
     /// Validates identifier formats, SQL type compatibility, and encryption prerequisites
@@ -140,7 +146,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="MultipleKeyVersionsException{T}">
     /// if more than one key-version property is present.
     /// </exception>
-    public SqlGenerator()
+    public SqlGenerator(ISqlDialects dialect)
     {
         _Encryption = null;
         ValidationChecks();
@@ -150,10 +156,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// Initializes a new instance of the <see cref="SqlGenerator{T}"/> class
     /// using the specified encryption service.
     /// </summary>
-    /// <param name="encryption">
-    /// The <see cref="IEncryption"/> implementation used to encrypt and decrypt values.
-    /// Must not be <c>null</c>.
-    /// </param>
+    /// <param name="dialect"></param>
     /// <exception cref="AggregateException">
     /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
     /// </exception>
@@ -172,9 +175,14 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="MultipleKeyVersionsException{T}">
     /// if more than one key-version property is present.
     /// </exception>
-    public SqlGenerator(IEncryption encryption)
+    /// <param name="encryption">
+    /// The <see cref="IEncryption"/> implementation used to encrypt and decrypt values.
+    /// Must not be <c>null</c>.
+    /// </param>
+    public SqlGenerator(ISqlDialects dialect, IEncryption encryption)
     {
         _Encryption = encryption ?? throw new ArgumentNullException(nameof(encryption));
+
         ValidationChecks();
     }
 

@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -11,7 +12,7 @@ public sealed class SqlGenerator_SelectCountInvalidSelectTableTests
     public void SelectCount_SelectsReferencesNonJoinedTable_InvalidTableException()
     {
         MockEncryption mockEncrypter = new("+Encrypted+");
-        SqlGenerator<Customer> customerGenerator = new(mockEncrypter);
+        SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect(), mockEncrypter);
 
         // Selects include [Order] but we provide no joins for [Order]
         SelectTags selectTags =

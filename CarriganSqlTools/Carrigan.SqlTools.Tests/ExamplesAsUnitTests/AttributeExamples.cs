@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
@@ -16,7 +17,7 @@ public class AttributeExamples
             nameof(AliasEntity.NoAlias)
         );
 
-        SqlGenerator<AliasEntity> generator = new();
+        SqlGenerator<AliasEntity> generator = new(new SqlServerDialect());
         SqlQuery query = generator.Select(tags, null, null, null, null);
 
         string expected = "SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias] FROM [AliasEntity]";
@@ -27,7 +28,7 @@ public class AttributeExamples
     [Fact]
     public void IdentifierAttributeExample()
     {
-        SqlGenerator<EmailModel> emailGenerator = new();
+        SqlGenerator<EmailModel> emailGenerator = new(new SqlServerDialect());
         EmailModel email = new()
         {
             Id = 10,
@@ -49,7 +50,7 @@ public class AttributeExamples
     // Yes this is the exact same test as the one above, deal with it.
     public void PrimaryKeyAttributeExample()
     { 
-        SqlGenerator<EmailModel> emailGenerator = new();
+        SqlGenerator<EmailModel> emailGenerator = new(new SqlServerDialect());
         EmailModel email = new()
         {
             Id = 10,

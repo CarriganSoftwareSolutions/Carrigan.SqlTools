@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -20,12 +21,12 @@ public class SqlGenerator_UpdateByIdColumnsTests
     public SqlGenerator_UpdateByIdColumnsTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
-        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(_mockEncrypter);
-        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(_mockEncrypter);
-        _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(_mockEncrypter);
-        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullableTestEntity>(_mockEncrypter);
-        _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(_mockEncrypter);
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForEntityWithoutTableAttribute = new SqlGenerator<EntityWithoutTableAttribute>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForEntityWithSchema = new SqlGenerator<EntityWithSchema>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForSqlTypeEntity = new SqlGenerator<SqlTypeEntity>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForNullablesTestEntity = new SqlGenerator<NullableTestEntity>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForEntityWithEncryption = new SqlGenerator<EntityWithEncryption>(new SqlServerDialect(), _mockEncrypter);
     }
 
     [Fact]

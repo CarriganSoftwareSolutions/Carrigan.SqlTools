@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
 
 
@@ -8,9 +9,9 @@ namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
 public class FromReadMeAttributeExamples
 {
-    private static readonly SqlGenerator<PhoneModel> phoneGenerator = new();
-    private static readonly SqlGenerator<EmailModel> emailGenerator = new();
-    private static readonly SqlGenerator<ProcedureExec> procedureExecGenerator = new();
+    private static readonly SqlGenerator<PhoneModel> phoneGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<EmailModel> emailGenerator = new(new SqlServerDialect());
+    private static readonly SqlGenerator<ProcedureExec> procedureExecGenerator = new(new SqlServerDialect());
 
     [Fact]
     public void TableColumnKey()

@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -53,7 +54,7 @@ public class AliasAttributeTests
             nameof(AliasEntity.NoAlias)
         );
 
-        SqlGenerator<AliasEntity> generator = new();
+        SqlGenerator<AliasEntity> generator = new(new SqlServerDialect());
 
         string expected = "SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias] FROM [AliasEntity]";
         SqlQuery query = generator.Select(tags, null, null, null, null);

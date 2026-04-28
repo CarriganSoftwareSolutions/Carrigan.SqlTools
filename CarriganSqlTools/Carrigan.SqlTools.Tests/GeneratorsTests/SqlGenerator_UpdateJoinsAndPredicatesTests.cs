@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
@@ -15,7 +16,7 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
     public SqlGenerator_UpdateJoinsAndPredicatesTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(_mockEncrypter);
+        _sqlGeneratorForJoinLeftTable = new SqlGenerator<JoinLeftTable>(new SqlServerDialect(), _mockEncrypter);
     }
 
     [Fact]

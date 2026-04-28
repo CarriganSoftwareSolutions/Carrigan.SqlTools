@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -13,9 +14,9 @@ public class SqlGenerator_SelectByIdTests
     public SqlGenerator_SelectByIdTests()
     {
         _mockEncrypter = new MockEncryption("+Encrypted+");
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(_mockEncrypter);
-        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositePrimaryKeyTable>(_mockEncrypter);
-        _sqlGeneratorForAddress = new();
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForCompositeKeyTable = new SqlGenerator<CompositePrimaryKeyTable>(new SqlServerDialect(), _mockEncrypter);
+        _sqlGeneratorForAddress = new(new SqlServerDialect());
     }
 
     private readonly Guid _guid = new("711c4dff-6e8a-4e43-9eab-b83115244a57");

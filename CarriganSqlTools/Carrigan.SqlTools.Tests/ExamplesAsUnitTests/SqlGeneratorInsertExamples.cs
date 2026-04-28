@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 using System.Text;
 
@@ -6,7 +7,7 @@ using System.Text;
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class SqlGeneratorInsertExamples
 {
-    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
 
     private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
     {

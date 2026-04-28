@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -6,7 +7,7 @@ using Carrigan.SqlTools.Tests.TestEntities;
 namespace Carrigan.SqlTools.Tests.JoinTests;
 public class JoinsParameterTest
 {
-    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Customer> customerGenerator = new(new SqlServerDialect());
 
     [Fact]
     public void SelectJoinParameterTest()

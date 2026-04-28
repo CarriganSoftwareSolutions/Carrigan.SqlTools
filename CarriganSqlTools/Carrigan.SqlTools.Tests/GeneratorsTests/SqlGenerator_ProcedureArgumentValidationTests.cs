@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using System.Data;
 
@@ -9,7 +10,7 @@ public sealed class SqlGenerator_ProcedureArgumentValidationTests
     [Fact]
     public void Procedure_NullEntity_ArgumentNullException()
     {
-        SqlGenerator<EntityWithTableAttribute> generator = new();
+        SqlGenerator<EntityWithTableAttribute> generator = new(new SqlServerDialect());
 
         Assert.Throws<ArgumentNullException>(() => generator.Procedure(null!));
     }
@@ -17,7 +18,7 @@ public sealed class SqlGenerator_ProcedureArgumentValidationTests
     [Fact]
     public void Procedure_SetsCommandTypeStoredProcedure()
     {
-        SqlGenerator<EntityWithTableAttribute> generator = new();
+        SqlGenerator<EntityWithTableAttribute> generator = new(new SqlServerDialect());
 
         EntityWithTableAttribute entity = new()
         {

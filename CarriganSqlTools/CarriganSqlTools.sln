@@ -31,6 +31,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Analyzers
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.SqlServer.Tests", "Carrigan.SqlTools.SqlServer.Tests\Carrigan.SqlTools.SqlServer.Tests.csproj", "{32407DBD-8440-41B5-B8D3-7E360E59C2FB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dialects", "Dialects", "{A5A8456E-DF36-491B-AB46-FBED660BB6B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Dialects.SqlServer", "Carrigan.SqlTools.Dialects.SqlServer\Carrigan.SqlTools.Dialects.SqlServer.csproj", "{7A97D237-ED86-45E1-8DE3-470F07A6382A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{4A91D235-418D-49AC-9E8F-71ED65D6C2FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,9 +67,19 @@ Global
 		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A97D237-ED86-45E1-8DE3-470F07A6382A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A97D237-ED86-45E1-8DE3-470F07A6382A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A97D237-ED86-45E1-8DE3-470F07A6382A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A97D237-ED86-45E1-8DE3-470F07A6382A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31A66230-7525-4650-85AA-471ACFD05D5D} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
+		{615D61CB-B58C-49C3-8F31-8EBC4419836D} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
+		{32407DBD-8440-41B5-B8D3-7E360E59C2FB} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
+		{7A97D237-ED86-45E1-8DE3-470F07A6382A} = {A5A8456E-DF36-491B-AB46-FBED660BB6B1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7E326BD-0E69-4927-9699-75A4A950E268}

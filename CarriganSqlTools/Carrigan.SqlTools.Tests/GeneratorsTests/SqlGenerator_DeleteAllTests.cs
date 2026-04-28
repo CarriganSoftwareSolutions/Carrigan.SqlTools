@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -8,7 +9,7 @@ public class SqlGenerator_DeleteAllTests
     private readonly SqlGenerator<EntityWithTableAttribute> _sqlGeneratorForEntityWithTableAttribute;
 
     public SqlGenerator_DeleteAllTests() => 
-        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>();
+        _sqlGeneratorForEntityWithTableAttribute = new SqlGenerator<EntityWithTableAttribute>(new SqlServerDialect());
 
     [Fact]
     public void SqlDeleteAll_GeneratesCorrectSql_WithTableAttribute()
