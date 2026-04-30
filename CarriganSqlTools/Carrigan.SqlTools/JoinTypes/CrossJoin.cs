@@ -85,5 +85,5 @@ public class CrossJoin<rightT> : JoinBase
     /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
     internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
-        [new SqlFragmentText($"CROSS JOIN {TableTag}")];
+        [new SqlFragmentText($" CROSS JOIN {TableTag}")];
 }

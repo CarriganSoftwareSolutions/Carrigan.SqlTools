@@ -215,29 +215,51 @@ public partial class SqlGenerator<T>
         }
 
         StringBuilder queryBuilder;
+        IEnumerable<SqlFragment> queryFragments = [];
         if (selects is not null && selects.Any())
+        {
             queryBuilder = new($"SELECT {selects.ToSql()} FROM {Table}");
+            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {selects.ToSql()} FROM {Table}"));
+        }
         else if (HasAliasedColumns)
+        {
             queryBuilder = new($"SELECT {SelectTags.ToSql()} FROM {Table}");
+            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {SelectTags.ToSql()} FROM {Table}"));
+        }
         else
+        {
             queryBuilder = new($"SELECT {Table}.* FROM {Table}");
+            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {Table}.* FROM {Table}"));
+        }
 
         if (joins?.IsNotNullOrEmpty() ?? false)
+        {
             queryBuilder.Append($" {joins.ToSql()}");
+            queryFragments = queryFragments.Concat(joins.ToSqlFragments());
+        }
 
         if (predicates is not null)
+        {
             queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
+            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicates.ToSqlFragments("Parameter"));
+        }
 
         if (orderBy.IsNotNullOrEmpty())
+        {
             queryBuilder.Append($" {orderBy.AsOrderBy().ToSql()}");
+            queryFragments = queryFragments.Append(new SqlFragmentText($" {orderBy.AsOrderBy().ToSql()}"));
+        }
 
         if (offsetNext is not null)
+        {
             queryBuilder.Append($" {offsetNext.ToSql()}");
+            queryFragments = queryFragments.Append(new SqlFragmentText($" {offsetNext.ToSql()}"));
+        }
 
         return new SqlQuery()
         {
-            QueryText = queryBuilder.ToString(),
-            Parameters = [.. (joins?.Parameters ?? []).Concat(predicateSqlFragments.GetParameters())],
+            QueryText = queryFragments.ToSql(),
+            Parameters = queryFragments.GetParameters(),
             CommandType = CommandType.Text
         };
     }

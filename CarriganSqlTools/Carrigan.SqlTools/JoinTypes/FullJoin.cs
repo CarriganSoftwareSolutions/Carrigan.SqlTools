@@ -119,5 +119,5 @@ public class FullJoin<rightT> : JoinBase
     /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
     internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
-        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($"FULL JOIN {TableTag} ON "));
+        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" FULL JOIN {TableTag} ON "));
 }
