@@ -110,4 +110,8 @@ public class LeftJoin<rightT> : JoinBase
 
         return $"LEFT JOIN {TableTag} ON {predicateSql}";
     }
+
+
+    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
+        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" LEFT JOIN {TableTag} ON "));
 }

@@ -1,8 +1,12 @@
-﻿using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -47,13 +51,52 @@ public class Parameter : Predicates
     /// The parameter tag is used as the base name; a unique prefix may be added during SQL generation
     /// when duplicate names are detected within a predicate tree.
     /// </remarks>
-    /// <param name="parameter">The base parameter tag (name + metadata).</param>
+    /// <param name="parameterTag">The base parameter tag (name + metadata).</param>
     /// <param name="value">The value to bind; <c>null</c> becomes <see cref="DBNull.Value"/> at materialization time.</param>
-    internal Parameter(ParameterTag parameter, object? value) : base([])
+    internal Parameter(ParameterTag parameterTag, object? value) : base([])
     {
-        ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));
-        Name = parameter;
+        ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
+        Name = new(parameterTag, value);
         Value = value;
+    }
+
+    /// <summary>
+    /// Creates a <see cref="Parameter"/> using an encrypted value for the given entity and column.
+    /// </summary>
+    /// <typeparam name="T">The entity type.</typeparam>
+    /// <param name="parameterTag">The base parameter tag (name + metadata) to use for the parameter.</param>
+    /// <param name="encryption">The encryption service, or <c>null</c> to skip encryption.</param>
+    /// <param name="column">Column metadata used to locate the property and SQL type.</param>
+    /// <param name="entity">The entity instance providing the value.</param>
+    /// <returns>
+    /// A <see cref="Parameter"/> whose value is the encrypted string
+    /// (or <c>null</c>/<see cref="DBNull.Value"/> when no encryption or value is available).
+    /// </returns>
+    internal static Parameter GetParameter<T>(ParameterTag parameterTag, IEncryption? encryption, ColumnInfo column, T entity) =>
+        new(parameterTag, encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
+
+
+    /// <summary>
+    /// Creates a <see cref="Parameter"/> for the supplied entity and column.
+    /// </summary>
+    /// <typeparam name="T">The entity type.</typeparam>
+    /// <param name="parameterTag">The base parameter tag (name + metadata) to use for the parameter.</param>
+    /// <param name="column">
+    /// The <see cref="ColumnInfo"/> used to locate the property and supply its <see cref="SqlTypeDefinition"/>.
+    /// </param>
+    /// <param name="entity">The entity instance to read the value from.</param>
+    /// <returns>
+    /// A <see cref="Parameter"/> whose key is a cloned
+    /// <see cref="ParameterTag"/> configured with <paramref name="column"/>'s
+    /// <see cref="ColumnInfo.SqlType"/>, and whose value is the property value
+    /// or <see cref="DBNull.Value"/>.
+    /// </returns>
+    internal static Parameter GetParameter<T>(ParameterTag parameterTag, ColumnInfo column, T entity)
+    {
+        object? value = column.PropertyInfo.GetValue(entity);
+        ParameterTag parameterTagCopy = new(parameterTag, value);
+
+        return new(parameterTagCopy, ConvertValue(value));
     }
 
     /// <summary>
@@ -139,4 +182,28 @@ public class Parameter : Predicates
     /// </returns>
     private ParameterTag GetFinalParameterName(string prefix, string branchName, IEnumerable<ParameterTag> duplicates) =>
         duplicates.Contains(Name) ? Name.PrefixPrepend($"@{branchName}{prefix}") : Name.PrefixPrepend($"@{branchName}");
+
+
+
+    /// <summary>
+    /// Performs the necessary conversions for a parameter value
+    /// before it is passed to the database.
+    /// </summary>
+    /// <param name="value">
+    /// The value to convert. A <c>null</c> value is converted to
+    /// <see cref="DBNull.Value"/>.
+    /// </param>
+    /// <returns>
+    /// The converted value suitable for database operations.
+    /// </returns>
+    private static object ConvertValue(object? value)
+    {
+        if (value == null)
+            return DBNull.Value;
+        else if (value is XDocument xDocument)
+            return xDocument.ToString();
+        else if (value is XmlDocument xmlDocument)
+            return ((object?)xmlDocument.OuterXml) ?? DBNull.Value; //the compiler didn't like xmlDocument.ToString() ?? DBNull.Value, so I had to get creative.
+        else return value;
+    }
 }

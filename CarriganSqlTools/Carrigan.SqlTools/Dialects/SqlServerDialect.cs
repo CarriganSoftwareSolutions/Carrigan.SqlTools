@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
@@ -30,7 +31,7 @@ public class SqlServerDialect : ISqlDialects
     /// null.</param>
     /// <returns>A string containing the quoted identifier, suitable for safe inclusion in a SQL statement.</returns>
     /// <exception cref="NotImplementedException">Thrown in all cases as this method is not yet implemented.</exception>
-    public string QuoteIdentifier(string identifier) => 
+    public string QuoteIdentifier(string identifier) =>
         $"[{identifier}]";
     /// <summary>
     /// Generates a string representation of the specified database table, optionally qualified by schema.
@@ -56,24 +57,23 @@ public class SqlServerDialect : ISqlDialects
                 ? $"{tableTag}.{QuoteIdentifier(columnName)}"
                 : QuoteIdentifier(columnName);
 
+
     /// <summary>
-    /// Renders an INSERT statement that captures inserted values for the specified columns using SQL Server's OUTPUT clause.
+    /// Generates SQL fragments for an INSERT statement that captures the inserted values using an OUTPUT clause.
     /// </summary>
-    /// <typeparam name="T">The type of the entity being inserted, used to determine the table and column information for rendering the SQL statement.</typeparam>
-    /// <param name="insertIntoClause">The INSERT INTO clause of the SQL statement.</param>
-    /// <param name="insertValuesClause">The VALUES clause of the SQL statement.</param>
-    /// <param name="columnInfo">The collection of columns for which to capture inserted values.</param>
-    /// <returns>A string containing the complete INSERT statement with OUTPUT clause.</returns>
-    public string RenderInsertReturning<T>(string insertIntoClause, string insertValuesClause, IEnumerable<ColumnInfo> columnInfo)
-    {
-        StringBuilder queryBuilder = new();
-        queryBuilder.AppendLine(ReturnTableDefinition(columnInfo));
-        queryBuilder.AppendLine(insertIntoClause);
-        queryBuilder.AppendLine(ReturnOutputColumns(columnInfo));
-        queryBuilder.AppendLine(insertValuesClause);
-        queryBuilder.AppendLine(ReturnSelectOutput<T>(columnInfo));
-        return queryBuilder.ToString();
-    }
+    /// <typeparam name="T">The type of the entity being inserted. Used to determine the context for the generated SQL fragments.</typeparam>
+    /// <param name="insertIntoFragments">The SQL fragments representing the INSERT INTO clause, including the target table and columns.</param>
+    /// <param name="insertValuesFragments">The SQL fragments representing the VALUES clause for the INSERT statement.</param>
+    /// <param name="columnInfo">A collection of column metadata specifying which columns should be included in the OUTPUT clause.</param>
+    /// <returns></returns>
+    public IEnumerable<SqlFragment> GetInsertReturningFragments<T>(IEnumerable<SqlFragment> insertIntoFragments, IEnumerable<SqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo) =>
+        new SqlFragmentText(ReturnTableDefinition(columnInfo))
+            .Concat(insertIntoFragments)
+            .Append(new SqlFragmentText($"{Environment.NewLine}"))
+            .Append(new SqlFragmentText(ReturnOutputColumns(columnInfo)))
+            .Concat(insertValuesFragments)
+            .Append(new SqlFragmentText($"{Environment.NewLine}"))
+            .Append(new SqlFragmentText(ReturnSelectOutput<T>(columnInfo)));
 
     /// <summary>
     /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
@@ -106,7 +106,7 @@ public class SqlServerDialect : ISqlDialects
     /// A SQL statement that declares <c>@OutputTable</c> with one column per entry in <paramref name="columnInfo"/>.
     /// </returns>
     private static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
-        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});";
+        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});{Environment.NewLine}";
 
 
     /// <summary>
@@ -119,7 +119,7 @@ public class SqlServerDialect : ISqlDialects
     /// A SQL <c>OUTPUT</c> clause that writes the specified inserted columns into <c>@OutputTable</c>.
     /// </returns>
     private static string ReturnOutputColumns(IEnumerable<ColumnInfo> columnInfo) =>
-       $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable";
+       $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable{Environment.NewLine}";
 
 
     /// <summary>
@@ -156,5 +156,5 @@ public class SqlServerDialect : ISqlDialects
     /// A SQL <c>SELECT</c> statement projecting the requested columns from <c>@OutputTable</c>.
     /// </returns>
     private static string ReturnSelectOutput<T>(IEnumerable<ColumnInfo> columnInfo) =>
-        $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName<T>(column)))} FROM @OutputTable;";
+        $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName<T>(column)))} FROM @OutputTable;{Environment.NewLine}";
 }

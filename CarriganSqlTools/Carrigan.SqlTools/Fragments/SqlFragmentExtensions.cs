@@ -28,8 +28,7 @@ internal static class SqlFragmentExtensions
         ArgumentNullException.ThrowIfNull(sqlFragments);
 
         return sqlFragments
-            .OfType<SqlFragmentParameter>()
-            .Select(static fragment => fragment.Parameter)
+            .SelectMany(fragment => fragment.GetParameters())
             .ToDictionary(static parameter => parameter.Name, static parameter => parameter.Value ?? DBNull.Value);
     }
 
@@ -46,5 +45,58 @@ internal static class SqlFragmentExtensions
         ArgumentNullException.ThrowIfNull(sqlFragments);
 
         return string.Concat(sqlFragments.Select(static fragment => fragment.ToSql()));
+    }
+
+    /// <summary>
+    /// Joins a sequence of SQL fragments with an optional separator.
+    /// </summary>
+    /// <param name="fragments">The sequence of fragments to join.</param>
+    /// <param name="separator">The optional separator to insert between fragments.</param>
+    /// <returns>An enumerable of <see cref="SqlFragment"/> representing the joined fragments.</returns>
+    internal static IEnumerable<SqlFragment> JoinFragments(this IEnumerable<SqlFragment> fragments, SqlFragment? separator = null)
+    {
+        ArgumentNullException.ThrowIfNull(fragments);
+
+        bool first = true;
+
+        foreach (SqlFragment fragment in fragments)
+        {
+            if (!first && separator is not null)
+            {
+                yield return separator;
+            }
+
+            yield return fragment;
+            first = false;
+        }
+    }
+
+    /// <summary>
+    /// Returns an enumerable sequence containing the specified SQL fragments in order.
+    /// </summary>
+    /// <param name="fragment1">The first SQL fragment to include in the sequence.</param>
+    /// <param name="fragment2">The second SQL fragment to include in the sequence.</param>
+    /// <returns>An enumerable sequence of SQL fragments, with the first fragment followed by the second fragment.</returns>
+    internal static IEnumerable<SqlFragment> Append(this SqlFragment fragment1, SqlFragment fragment2)
+    {
+        yield return fragment1;
+        yield return fragment2;
+    }
+
+    /// <summary>
+    /// Returns a sequence that contains the specified initial fragment followed by the elements of the provided
+    /// fragment collection.
+    /// </summary>
+    /// <param name="fragment1">The first fragment to include in the resulting sequence.</param>
+    /// <param name="fragments">A collection of fragments to append after the initial fragment. Cannot be null.</param>
+    /// <returns>An <see cref="IEnumerable{SqlFragment}"/> containing the initial fragment followed by the elements of <paramref
+    /// name="fragments"/>.</returns>
+    internal static IEnumerable<SqlFragment> Concat(this SqlFragment fragment1, IEnumerable<SqlFragment> fragments)
+    {
+        yield return fragment1;
+        foreach (SqlFragment f in fragments)
+        {
+            yield return f;
+        }
     }
 }

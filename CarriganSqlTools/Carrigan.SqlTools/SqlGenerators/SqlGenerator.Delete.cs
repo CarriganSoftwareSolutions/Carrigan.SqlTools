@@ -213,6 +213,7 @@ public partial class SqlGenerator<T>
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
             StringBuilder queryBuilder = new($"DELETE FROM {Table}");
+            IEnumerable<SqlFragment> fragments = [new SqlFragmentText($"DELETE FROM {Table}")];
 
             if (invalidTags.Any())
             {
@@ -221,19 +222,21 @@ public partial class SqlGenerator<T>
 
             if (joins?.IsNotNullOrEmpty() ?? false)
             {
-                queryBuilder.Append($" {joins.ToSql()}");
+                fragments = fragments.Concat(joins.ToSqlFragments());
             }
 
             IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments("Parameter") ?? [];
             if (predicates is not null)
             {
                 queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
+                fragments = fragments.Append(new SqlFragmentText(" WHERE "));    
+                fragments = fragments.Concat(predicateSqlFragments);
             }
 
             return new SqlQuery()
             {
-                QueryText = queryBuilder.ToString(),
-                Parameters = [.. (joins?.Parameters ?? []).Concat(predicateSqlFragments.GetParameters())],
+                QueryText = fragments.ToSql(),
+                Parameters = fragments.GetParameters(),
                 CommandType = CommandType.Text
             };
         }

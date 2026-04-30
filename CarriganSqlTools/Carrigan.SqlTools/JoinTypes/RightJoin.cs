@@ -110,4 +110,6 @@ public class RightJoin<rightT> : JoinBase
 
         return $"RIGHT JOIN {TableTag} ON {predicateSql}";
     }
+    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
+        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" RIGHT JOIN {TableTag} ON "));
 }

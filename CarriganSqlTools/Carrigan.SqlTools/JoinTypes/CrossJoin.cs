@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
@@ -77,4 +78,12 @@ public class CrossJoin<rightT> : JoinBase
     /// </returns>
     internal override string ToSql(string branchPrefix) =>
         $"CROSS JOIN {TableTag}";
+
+    /// <summary>
+    /// Generates the SQL fragments representing the <c>CROSS JOIN</c> operation.
+    /// </summary>
+    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
+    /// instance.</returns>
+    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
+        [new SqlFragmentText($"CROSS JOIN {TableTag}")];
 }

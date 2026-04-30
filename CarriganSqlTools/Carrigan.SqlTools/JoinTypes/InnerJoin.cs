@@ -108,4 +108,6 @@ public class InnerJoin<rightT> : JoinBase
 
         return $"INNER JOIN {TableTag} ON {predicateSql}";
     }
+    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
+        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" INNER JOIN {TableTag} ON "));
 }

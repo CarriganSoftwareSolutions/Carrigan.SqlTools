@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using System;
@@ -46,15 +47,18 @@ public interface ISqlDialects
     /// <returns>A string containing the rendered column name, optionally qualified by table and schema as specified.</returns>
     string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true);
 
+
     /// <summary>
-    ///Renders an INSERT statement with a RETURNING clause (or equivalent) to retrieve specified columns after an insert operation. 
+    /// Generates the SQL fragments required to perform an INSERT statement with a RETURNING clause for the specified
+    /// columns.
     /// </summary>
-    /// <typeparam name="T">The type of the entity being inserted, used to determine the table and column information for rendering the SQL statement.</typeparam>
-    /// <param name="insertIntoClause">The INSERT INTO clause of the SQL statement.</param>
-    /// <param name="insertValuesClause">The VALUES clause of the SQL statement.</param>
-    /// <param name="columnInfo">A collection of ColumnInfo objects representing the columns to be returned after the insert operation.</param>
-    /// <returns>A SQL string representing the INSERT statement with an appended RETURNING clause for the specified columns.</returns>
-    string RenderInsertReturning<T>(string insertIntoClause, string insertValuesClause, IEnumerable<ColumnInfo> columnInfo);
+    /// <typeparam name="T">The type of the entity being inserted. Used to determine the context for the generated SQL fragments.</typeparam>
+    /// <param name="insertIntoFragments">The SQL fragments representing the INSERT INTO clause, including the target table and columns.</param>
+    /// <param name="insertValuesFragments">The SQL fragments representing the VALUES clause for the INSERT statement.</param>
+    /// <param name="columnInfo">A collection of column metadata specifying which columns should be included in the RETURNING clause.</param>
+    /// <returns>An enumerable collection of SQL fragments that, when combined, form a complete INSERT statement with a RETURNING
+    /// clause for the specified columns.</returns>
+    IEnumerable<SqlFragment> GetInsertReturningFragments<T>(IEnumerable<SqlFragment> insertIntoFragments, IEnumerable<SqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo);
 
     /// <summary>
     /// Generates a parameter string by combining the specified prefix, name, and optional index.

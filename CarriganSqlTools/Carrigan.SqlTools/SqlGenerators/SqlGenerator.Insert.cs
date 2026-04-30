@@ -1,6 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Invocation;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Net;
@@ -23,13 +26,35 @@ public partial class SqlGenerator<T>
     /// If <c>null</c>, no index is appended and unindexed parameter names are used.
     /// </param>
     /// <returns>
-    /// A SQL string representing the <c>VALUES</c> list for one row,
+    /// An <see cref="IEnumerable{SqlFragment}"/> representing the <c>VALUES</c> list for one row,
     /// for example <c>(@Column1, @Column2)</c> or <c>(@Column1_0, @Column2_0)</c>.
     /// </returns>
-    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, int? i = null) =>
-        i == null
-            ? $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag}"))})"
-            : $"({string.Join(", ", columns.Select(column => $"@{column.ParameterTag.AddIndex(i.Value.ToString())}"))})";
+    private IEnumerable<SqlFragment> GetInsertValueFragments(IEnumerable<ColumnInfo> columns, T entity, int? i = null) =>
+    [
+        new SqlFragmentText("("),
+        ..columns
+            .Select(column => new SqlFragmentParameter(GetSqlParameter(column, entity, i)))
+            .JoinFragments(new SqlFragmentText(", ")),
+        new SqlFragmentText(")")
+    ];
+
+    /// <summary>
+    /// Builds the <c>VALUES</c> clause for a single SQL <c>INSERT</c> row,
+    /// generating parameter placeholders for the specified columns.
+    /// </summary>
+    /// <param name="columns">
+    /// The collection of <see cref="ColumnInfo"/> objects that identify the columns to insert.
+    /// </param>
+    /// <param name="i">
+    /// Optional zero-based index used to append a unique index to each parameter name.
+    /// If <c>null</c>, no index is appended and unindexed parameter names are used.
+    /// </param>
+    /// <returns>
+    /// A <see cref="SqlFragmentGroup"/> representing the <c>VALUES</c> list for one row,
+    /// for example <c>(@Column1, @Column2)</c> or <c>(@Column1_0, @Column2_0)</c>.
+    /// </returns>
+    private SqlFragmentGroup GetEnumeratedInsertValueFragmentsGroup(IEnumerable<ColumnInfo> columns, T entity, int i) =>
+        new(GetInsertValueFragments(columns, entity, i));
 
     /// <summary>
     /// Builds the combined <c>VALUES</c> clause for a multi-row SQL <c>INSERT</c> statement,
@@ -42,12 +67,12 @@ public partial class SqlGenerator<T>
     /// The collection of entity instances providing values for each row to insert.
     /// </param>
     /// <returns>
-    /// A SQL string representing the <c>VALUES</c> clause for all entities,
-    /// for example <c>(@Column1_0, @Column2_0), (@Column1_1, @Column2_1)</c>.
+    /// An enumerable sequence of <see cref="SqlFragment"/> representing the combined <c>VALUES</c> clause for all entities.
     /// </returns>
-    private static string EnumeratedInsertValues(IEnumerable<ColumnInfo> columns, IEnumerable<T> entities) =>
-        $"{string.Join(", ", entities.Select((entity, index) => SqlGenerator<T>.EnumeratedInsertValues(columns, index)))}";
-    
+    private IEnumerable<SqlFragment> GetEnumeratedInsertValueFragments(IEnumerable<ColumnInfo> columns, IEnumerable<T> entities) =>
+        entities.Select((entity, index) => GetEnumeratedInsertValueFragmentsGroup(columns, entity, index))
+            .JoinFragments(new SqlFragmentText(", "));
+
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities,
     /// relying on database default values for key (identity, <c>NEWID()</c>) properties.
@@ -256,46 +281,37 @@ public partial class SqlGenerator<T>
     public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, ColumnCollection<T>? returnColumns, params IEnumerable<T> entities)
     {
         IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? ColumnInfo;
-        string queryPart1;
-        string queryPart2;
+        IEnumerable<SqlFragment> insertIntoFragments;
 
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters;
-        string values;
-
-        if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            parameters = [.. GetSqlParameterKeyValuePairs(insertTheseColumns, entities.Single())];
-        else
-            parameters = [.. GetSqlParameterKeyValuePairs(insertTheseColumns, entities)];
 
         string columns = string.Join(", ", insertTheseColumns.Select(column => Dialect.QuoteIdentifier(column.ColumnName)));
-        if(entities.Count() == 1) //when there is only one record use the overload that doesn't add index counts to the parameters
-            values = SqlGenerator<T>.EnumeratedInsertValues(insertTheseColumns);
-        else
-            values = SqlGenerator<T>.EnumeratedInsertValues(insertTheseColumns, entities);
 
-        queryPart1 = $"INSERT INTO {Table} ({columns})";
-        queryPart2 = $"VALUES {values};";
+        insertIntoFragments = [new SqlFragmentText($"INSERT INTO {Table} ({columns})")];
 
-        if (returnColumns is null)
+        IEnumerable<SqlFragment> valuesFragments = entities.Count() switch //when there is only one record use the overload that doesn't add index counts to the parameters
         {
-            return new SqlQuery()
-            {
-                Parameters = [.. parameters],
-                QueryText = $"{queryPart1} {queryPart2}",
-                CommandType = System.Data.CommandType.Text
-            };
-        }
-        else 
+            1 => new SqlFragmentText($"VALUES ")
+                    .Concat(GetInsertValueFragments(insertTheseColumns, entities.Single()))
+                    .Append(new SqlFragmentText(";")),
+            _ => new SqlFragmentText($"VALUES ")
+                    .Concat(GetEnumeratedInsertValueFragments(insertTheseColumns, entities))
+                    .Append(new SqlFragmentText(";")),
+        };
+
+        IEnumerable<SqlFragment> finalFragmentForm = returnColumns switch
         {
-            return new SqlQuery()
-            {
-                Parameters = [.. parameters],
-                QueryText = Dialect.RenderInsertReturning<T>(queryPart1, queryPart2, returnColumns.ColumnInfo),
-                CommandType = System.Data.CommandType.Text
-            };
-        }
+            null => insertIntoFragments.Append(new SqlFragmentText(" ")).Concat(valuesFragments),
+            _ => Dialect.GetInsertReturningFragments<T>(insertIntoFragments, valuesFragments, returnColumns.ColumnInfo),
+        };
+
+        return new SqlQuery()
+        {
+            Parameters = finalFragmentForm.GetParameters(),
+            QueryText = finalFragmentForm.ToSql(),
+            CommandType = System.Data.CommandType.Text
+        };
 
     }
 }

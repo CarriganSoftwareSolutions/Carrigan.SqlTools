@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.Fragments;
 /// This fragment wraps a <see cref="Parameter"/> so it can participate in fragment concatenation
 /// while preserving access to the parameter’s tag and bound value for later materialization.
 /// </remarks>
-internal class SqlFragmentParameter : SqlFragment
+public class SqlFragmentParameter : SqlFragment
 {
     /// <summary>
     /// The wrapped parameter instance used for SQL rendering and parameter materialization.
@@ -36,6 +36,26 @@ internal class SqlFragmentParameter : SqlFragment
     /// <remarks>
     /// Any exception thrown by <see cref="Parameter.ToSql"/> will be propagated to the caller.
     /// </remarks>
-    internal override string ToSql() =>
-        Parameter.ToSql();
+    internal override string ToSql()
+    {
+        string value = Parameter.ToSql();
+        if (value[0] == '@')
+        {
+            return value;
+        }
+        else
+        {
+            return $"@{value}";
+        }
+
+    }
+
+    /// <summary>
+    /// Retrieves the parameters contained within this fragment for later materialization.
+    /// </summary>
+    /// <returns>An enumerable collection containing the single <see cref="Parameter"/> wrapped by this fragment.</returns>
+    internal override IEnumerable<Parameter> GetParameters()
+    {
+        yield return Parameter;
+    }
 }

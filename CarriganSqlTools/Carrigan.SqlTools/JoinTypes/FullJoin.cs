@@ -109,4 +109,15 @@ public class FullJoin<rightT> : JoinBase
 
         return $"FULL JOIN {TableTag} ON {predicateSql}";
     }
+
+    /// <summary>
+    /// Converts the current <see cref="FullJoin{rightT}"/> instance to a collection of <see cref="SqlFragment"/> objects
+    /// representing the SQL <c>FULL JOIN</c> clause.
+    /// </summary>
+    /// <param name="branchPrefix">The branch name used when generating predicate SQL and parameter tags via
+    /// <see cref="Predicates.ToSqlFragments(string)"/>.</param>
+    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
+    /// instance.</returns>
+    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
+        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($"FULL JOIN {TableTag} ON "));
 }

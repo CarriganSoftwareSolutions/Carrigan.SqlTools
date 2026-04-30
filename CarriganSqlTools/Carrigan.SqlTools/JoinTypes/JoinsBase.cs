@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.JoinTypes;
@@ -93,6 +94,14 @@ public abstract class JoinsBase
         else
             return string.Join(" ", ValidatedJoints.Select((join, i) => join.ToSql($"Joins{i}")));
 
+    }
+
+    internal IEnumerable<SqlFragment> ToSqlFragments()
+    {
+        if (ValidatedJoints.Count() == 1)
+            return ValidatedJoints.SelectMany(join => join.ToSqlFragments("Join"));
+        else
+            return ValidatedJoints.SelectMany((join, i) => join.ToSqlFragments($"Joins{i}"));
     }
 
     /// <summary>

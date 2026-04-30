@@ -120,6 +120,19 @@ public class ParameterTag : StringWrapper
     }
 
     /// <summary>
+    /// Deeper copy constructor for the parameter tag.
+    /// </summary>
+    /// <param name="parameter">The parameter tag to clone.</param>
+    internal ParameterTag(ParameterTag parameter, object? value) :
+        base(CreateParameterTagString(parameter._prefix, parameter._parameterBaseName, parameter._index), StringComparison.OrdinalIgnoreCase)
+    {
+        _parameterBaseName = parameter._parameterBaseName;
+        _prefix = parameter._prefix;
+        _index = parameter._index;
+        SqlType = parameter.SqlType ?? new(value);
+    }
+
+    /// <summary>
     /// Performs the necessary conversions for a parameter value
     /// before it is passed to the database.
     /// </summary>
@@ -224,6 +237,14 @@ public class ParameterTag : StringWrapper
             throw new ArgumentException("Index was already defined on the Parameter", nameof(newIndex));
     }
 
+    /// <summary>
+    /// Creates the parameter tag string by combining the prefix, parameter name, and index with underscores.
+    /// </summary>
+    /// <param name="prefix">The prefix to prepend to the parameter name.</param>
+    /// <param name="parameterName">The base name of the parameter.</param>
+    /// <param name="index">The index to append to the parameter name.</param>
+    /// <returns>The constructed parameter tag string.</returns>
+    /// <exception cref="InvalidParameterIdentifierException"></exception>
     private static string CreateParameterTagString(string? prefix, string parameterName, string? index)
     {
         if (SqlParameterPattern.Fails(parameterName))

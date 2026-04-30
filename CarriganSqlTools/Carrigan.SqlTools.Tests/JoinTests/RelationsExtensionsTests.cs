@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -54,5 +55,7 @@ public class RelationsExtensionsTests
 
         internal override string ToSql(string branchPrefix) =>
             "JOIN [Right] ON (1 = 1)";
+        internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
+            [new SqlFragmentText("JOIN [Right] ON (1 = 1)")];
     }
 }

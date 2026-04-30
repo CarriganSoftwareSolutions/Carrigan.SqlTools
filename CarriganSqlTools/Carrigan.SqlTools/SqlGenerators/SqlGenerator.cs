@@ -247,24 +247,53 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
             return parameter.GetParameter(column, entity);
     }
 
-
     /// <summary>
-    /// Generates SQL parameter key–value pairs for all mapped columns of a single entity.
+    /// Creates a <see cref="Parameter"/> object for the specified column and entity instance. 
     /// </summary>
-    /// <param name="columns">The columns that require parameterization.</param>
-    /// <param name="entity">The entity instance.</param>
-    /// <param name="entityIndex">Optional index for batch parameter naming.</param>
-    /// <returns>A sequence of SQL parameter key–value pairs.</returns>
-    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(IEnumerable<ColumnInfo> columns, T entity, int? entityIndex = null) =>
-        columns.Select(column => GetSqlParameterKeyValue(column, entity, entityIndex));
+    /// <param name="column">The <see cref="ColumnInfo"/> describing the target column. Must not be <c>null</c> and must expose a <see cref="ParameterTag"/>; otherwise a <see cref="NullReferenceException"/> is thrown.</param>
+    /// <param name="entity">The entity instance that supplies the value for the column. Must not be <c>null</c>.</param>
+    /// <param name="entityIndex">Optional zero-based index appended to the parameter name when batching multiple entities. Pass <c>null</c> to omit an index.</param>
+    /// <param name="parameterPrepend">Optional prefix to prepend to the parameter name before any index is added. Use to scope or avoid name collisions; if the resulting identifier is invalid an <see cref="InvalidParameterIdentifierException"/> will be thrown.</param>
+    /// <returns>
+    /// A <see cref="Parameter"/> constructed for the specified column and entity.  
+    /// - If the column is the key-version column, the returned <see cref="Parameter"/> contains the encrypter's version.  
+    /// - If the column is encrypted, the returned <see cref="Parameter"/> contains the encrypted value.  
+    /// - Otherwise, the returned <see cref="Parameter"/> contains the raw value or <see cref="DBNull.Value"/>.
+    /// </returns>
+    /// <remarks>
+    /// If the column is encrypted, the value is encrypted.  
+    /// If the column is the key-version column, the encrypter's version is used instead of the entity value.  
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="column"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="entity"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown if <paramref name="column"/> does not expose a <see cref="ParameterTag"/>.
+    /// </exception>
+    /// <exception cref="InvalidParameterIdentifierException">
+    /// Thrown if <paramref name="parameterPrepend"/> produces an invalid parameter identifier.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when an index is applied to a parameter that already has an index.
+    /// </exception>
+    private Parameter GetSqlParameter(ColumnInfo column, T entity, int? entityIndex = null, string? parameterPrepend = null)
+    {
+        ArgumentNullException.ThrowIfNull(column);
+        ArgumentNullException.ThrowIfNull(entity);
 
-    /// <summary>
-    /// Generates a flattened sequence of SQL parameter key–value pairs for a collection of entities,
-    /// automatically indexing parameter names to ensure uniqueness in batched operations.
-    /// </summary>
-    /// <param name="columns">Columns requiring parameters.</param>
-    /// <param name="entities">The collection of entities.</param>
-    /// <returns>A combined sequence of SQL parameter key–value pairs.</returns>
-    private IEnumerable<KeyValuePair<ParameterTag, object>> GetSqlParameterKeyValuePairs(IEnumerable<ColumnInfo> columns, params IEnumerable<T> entities) =>
-        entities.SelectMany((entity, index) => GetSqlParameterKeyValuePairs(columns, entity, index));
+        if (column.ParameterTag is null)
+            throw new NullReferenceException();
+
+        ParameterTag parameter = column.ParameterTag.PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
+
+        if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
+            return new (parameter, _Encryption.Version);
+        else if (_Encryption is not null && IsEncrypted(column))
+            return Parameter.GetParameter(parameter, _Encryption, column, entity);
+        else
+            return Parameter.GetParameter(parameter, column, entity);
+    }
 }

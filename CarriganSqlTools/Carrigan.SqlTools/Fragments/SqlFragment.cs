@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.PredicatesLogic;
+
+namespace Carrigan.SqlTools.Fragments;
 
 /// <summary>
 /// Represents a single fragment of an SQL statement.
@@ -14,7 +16,7 @@
 /// easily written into logs, debuggers, and interpolated strings.
 /// </para>
 /// </remarks>
-internal abstract class SqlFragment
+public abstract class SqlFragment
 {
     /// <summary>
     /// Converts this fragment into its SQL representation.
@@ -31,4 +33,10 @@ internal abstract class SqlFragment
     /// </remarks>
     public override string ToString() =>
         ToSql();
+
+    /// <summary>
+    /// Gets the parameters that are referenced by this fragment.
+    /// </summary>
+    /// <returns>An enumerable collection of <see cref="Parameter"/> objects referenced by this fragment.</returns>
+    internal abstract IEnumerable<Parameter> GetParameters();
 }
