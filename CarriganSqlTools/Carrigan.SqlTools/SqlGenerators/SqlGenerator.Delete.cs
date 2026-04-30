@@ -46,14 +46,21 @@ public partial class SqlGenerator<T>
     {
         ArgumentNullException.ThrowIfNull(entity);
 
+
         IEnumerable<KeyValuePair<ParameterTag, object>> parameters = KeyColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity));
 
         string whereClause = string.Join(" and ", KeyColumnInfo.Select(column => $"[{column.ColumnName}] = @{column.ParameterTag}"));
 
+        IEnumerable<SqlFragment> whereClauseFragments =
+            KeyColumnInfo
+                .Select(column => new SqlFragmentGroup([new SqlFragmentText($"[{column.ColumnName}] = "), new SqlFragmentParameter(GetSqlParameter(column, entity))]))
+                .JoinFragments(new SqlFragmentText(" and "));
+        whereClauseFragments = new SqlFragmentText($"DELETE FROM {Table} WHERE ").Concat(whereClauseFragments).Append(new SqlFragmentText(";"));
+
         return new SqlQuery()
         {
-            Parameters = [.. parameters],
-            QueryText = $"DELETE FROM {Table} WHERE {whereClause};",
+            Parameters = whereClauseFragments.GetParameters(),
+            QueryText = whereClauseFragments.ToSql(),
             CommandType = CommandType.Text
         };
     }
