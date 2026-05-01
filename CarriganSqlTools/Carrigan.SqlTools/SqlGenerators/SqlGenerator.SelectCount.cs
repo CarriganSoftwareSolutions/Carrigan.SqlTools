@@ -148,8 +148,7 @@ public partial class SqlGenerator<T>
 
         IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
 
-
-        StringBuilder queryBuilder;
+        IEnumerable<SqlFragment> queryFragments;
         AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
         if (ambiguousResultColumns is not null)
             throw ambiguousResultColumns;
@@ -158,21 +157,20 @@ public partial class SqlGenerator<T>
             throw new InvalidTableException(invalidTags);
 
         if (selects is not null && selects.Any())
-            queryBuilder = new($"SELECT COUNT({selects.ToSql()}) FROM {Table}");
+            queryFragments = new SqlFragmentText($"SELECT COUNT({selects.ToSql()}) FROM {Table}").AsEnumerable();
         else
-            queryBuilder = new($"SELECT COUNT({Table}.*) FROM {Table}");
+            queryFragments = new SqlFragmentText($"SELECT COUNT({Table}.*) FROM {Table}").AsEnumerable();
 
         if (joins?.IsNotNullOrEmpty() ?? false)
-            queryBuilder.Append($" {joins.ToSql()}");
+            queryFragments = queryFragments.Concat(joins.ToSqlFragments());
 
-        IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments("Parameter") ?? [];
         if (predicates is not null)
-            queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
+            queryFragments = queryFragments.Append(new SqlFragmentText(" WHERE ")).Concat(predicates.ToSqlFragments("Parameter"));
 
         return new SqlQuery()
         {
-            QueryText = queryBuilder.ToString(),
-            Parameters = [.. (joins?.Parameters ?? []).Concat(predicateSqlFragments.GetParameters())],
+            QueryText = queryFragments.ToSql(),
+            Parameters = queryFragments.GetParameters(),
             CommandType = CommandType.Text
         };
     }

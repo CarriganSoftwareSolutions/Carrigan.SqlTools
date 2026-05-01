@@ -39,4 +39,39 @@ public abstract class SqlFragment
     /// </summary>
     /// <returns>An enumerable collection of <see cref="Parameter"/> objects referenced by this fragment.</returns>
     internal abstract IEnumerable<Parameter> GetParameters();
+
+
+    /// <summary>
+    /// Returns an enumerable sequence containing the specified SQL fragments in order.
+    /// </summary>
+    /// <param name="fragment1">The first SQL fragment to include in the sequence.</param>
+    /// <param name="fragment2">The second SQL fragment to include in the sequence.</param>
+    /// <returns>An enumerable sequence of SQL fragments, with the first fragment followed by the second fragment.</returns>
+    internal IEnumerable<SqlFragment> Append(SqlFragment fragment2)
+    {
+        yield return this;
+        yield return fragment2;
+    }
+
+    /// <summary>
+    /// Returns a sequence that contains the specified initial fragment followed by the elements of the provided
+    /// fragment collection.
+    /// </summary>
+    /// <param name="fragment1">The first fragment to include in the resulting sequence.</param>
+    /// <param name="fragments">A collection of fragments to append after the initial fragment. Cannot be null.</param>
+    /// <returns>An <see cref="IEnumerable{SqlFragment}"/> containing the initial fragment followed by the elements of <paramref
+    /// name="fragments"/>.</returns>
+    internal IEnumerable<SqlFragment> Concat(IEnumerable<SqlFragment> fragments)
+    {
+        yield return this;
+        foreach (SqlFragment f in fragments)
+        {
+            yield return f;
+        }
+    }
+
+    internal IEnumerable<SqlFragment> AsEnumerable()
+    {
+        yield return this;
+    }
 }
