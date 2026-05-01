@@ -18,7 +18,7 @@ public class SqlFragmentGroup : SqlFragment
     /// Initializes a new instance of the SqlFragmentGroup class with the specified collection of SQL fragments.
     /// </summary>
     /// <param name="sqlFragments">The collection of SQL fragments to include in the group. Cannot be null.</param>
-    internal SqlFragmentGroup(IEnumerable<SqlFragment> sqlFragments) =>
+    internal SqlFragmentGroup(params IEnumerable<SqlFragment> sqlFragments) =>
         this.sqlFragments = sqlFragments;
 
     /// <summary>

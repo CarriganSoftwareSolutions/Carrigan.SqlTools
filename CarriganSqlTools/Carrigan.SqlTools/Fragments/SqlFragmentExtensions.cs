@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -70,4 +71,12 @@ internal static class SqlFragmentExtensions
             first = false;
         }
     }
+
+    internal static SqlQuery ToSqlQuery(this IEnumerable<SqlFragment> fragments) =>
+        new ()
+        {
+            CommandType = System.Data.CommandType.Text,
+            QueryText = fragments.ToSql(),
+            Parameters = fragments.GetParameters()
+        };
 }

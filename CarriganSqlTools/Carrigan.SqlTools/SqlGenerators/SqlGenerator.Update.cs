@@ -93,30 +93,40 @@ public partial class SqlGenerator<T>
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
 
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = updateTheseColumns.Concat(KeyColumnInfo).Select(column => GetSqlParameterKeyValue(column, entity));
+        IEnumerable<SqlFragment> setFragments =
+            updateTheseColumns
+                .Select
+                (
+                    column =>
+                    new SqlFragmentGroup
+                    (
+                        new SqlFragmentText($"{column.ColumnTag.ToString(false)} = "),
+                        new SqlFragmentParameter(GetSqlParameter(column, entity))
+                    )
+                )
+                .JoinFragments(new SqlFragmentText(", "));
 
-        List<Tuple<ColumnTag, ParameterTag>> setColumnAndParameterName = [];
-        foreach (ColumnInfo column in updateTheseColumns)
-        {
-            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, entity);
-            setColumnAndParameterName.Add(new(column.ColumnTag, parameter.Key));
-        }
-        string sets = string.Join(", ", setColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
+        IEnumerable<SqlFragment> whereFragments =
+            KeyColumnInfo
+                .Select
+                (
+                    column =>
+                    new SqlFragmentGroup
+                    (
+                        new SqlFragmentText($"{column.ColumnTag.ToString(false)} = "),
+                        new SqlFragmentParameter(GetSqlParameter(column, entity))
+                    )
+                )
+                .JoinFragments(new SqlFragmentText(" AND "));
 
-        List<Tuple<ColumnTag, string>> whereColumnAndParameterName = [];
-        foreach (ColumnInfo column in KeyColumnInfo)
-        {
-            KeyValuePair<ParameterTag, object> parameter = GetSqlParameterKeyValue(column, entity);
-            whereColumnAndParameterName.Add(new(column.ColumnTag, parameter.Key));
-        }
-        string where = string.Join(" AND ", whereColumnAndParameterName.Select(columnParameter => $"{columnParameter.Item1.ToString(false)} = @{columnParameter.Item2}"));
+        IEnumerable<SqlFragment> queryFragments =
+                new SqlFragmentText($"UPDATE {Table} SET ")
+                .Concat(setFragments)
+                .Append(new SqlFragmentText($" WHERE "))
+                .Concat(whereFragments)
+                .Append(new SqlFragmentText(";"));
 
-        return new SqlQuery()
-        {
-            Parameters = [.. parameters],
-            QueryText = $"UPDATE {Table} SET {sets} WHERE {where};",
-            CommandType = CommandType.Text
-        };
+        return queryFragments.ToSqlQuery();
     }
 
 
@@ -313,6 +323,23 @@ public partial class SqlGenerator<T>
             throw new InvalidTableException(invalidTags);
         }
 
+        IEnumerable <SqlFragment> setFragments =
+            updateTheseColumns
+                .Select
+                (
+                    column =>
+                    new SqlFragmentGroup
+                    (
+                        new SqlFragmentText($"{column.ColumnTag.ToString(true)} = "),
+                        new SqlFragmentParameter(GetSqlParameter(column, entity, null, "@ParameterSet"))
+                    )
+                )
+                .JoinFragments(new SqlFragmentText(", "));
+
+        IEnumerable<SqlFragment> queryFragments = new SqlFragmentText($"UPDATE {Table} SET ")
+            .Concat(setFragments)
+            .Append(new SqlFragmentText($" FROM {Table}"));
+
         Dictionary<ParameterTag, object> parametersDictionary = [.. updateTheseColumns.Select(column => GetSqlParameterKeyValue(column, entity, null, "@ParameterSet"))];
 
         string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = {column.ParameterTag.PrefixPrepend("@ParameterSet")}"));
@@ -322,18 +349,25 @@ public partial class SqlGenerator<T>
         {
             queryBuilder.Append($" {joins.ToSql()}");
             parametersDictionary.Add(joins.Parameters);
+            queryFragments = queryFragments.Concat(joins.ToSqlFragments()); 
+
         }
         if (predicates is not null)
         {
             IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments("Parameter")];
+            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicateSqlFragments);
+
             queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
             parametersDictionary.Add(predicateSqlFragments.GetParameters());
         }
-        return new SqlQuery()
-        {
-            QueryText = queryBuilder.ToString(),
-            Parameters = parametersDictionary,
-            CommandType = CommandType.Text
-        };
+
+
+        return queryFragments.ToSqlQuery();
+        //return new SqlQuery()
+        //{
+        //    QueryText = queryBuilder.ToString(),
+        //    Parameters = parametersDictionary,
+        //    CommandType = CommandType.Text
+        //};
     }
 }

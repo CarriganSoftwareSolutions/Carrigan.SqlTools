@@ -233,12 +233,7 @@ public partial class SqlGenerator<T>
         if (offsetNext is not null)
             queryFragments = queryFragments.Append(new SqlFragmentText($" {offsetNext.ToSql()}"));
 
-        return new SqlQuery()
-        {
-            QueryText = queryFragments.ToSql(),
-            Parameters = queryFragments.GetParameters(),
-            CommandType = CommandType.Text
-        };
+        return queryFragments.ToSqlQuery();
     }
 
     /// <summary>

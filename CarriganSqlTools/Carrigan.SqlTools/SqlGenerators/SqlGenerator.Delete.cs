@@ -46,23 +46,13 @@ public partial class SqlGenerator<T>
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = KeyColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity));
-
-        string whereClause = string.Join(" and ", KeyColumnInfo.Select(column => $"[{column.ColumnName}] = @{column.ParameterTag}"));
-
-        IEnumerable<SqlFragment> whereClauseFragments =
+        IEnumerable<SqlFragment> queryFragments =
             KeyColumnInfo
                 .Select(column => new SqlFragmentGroup([new SqlFragmentText($"[{column.ColumnName}] = "), new SqlFragmentParameter(GetSqlParameter(column, entity))]))
                 .JoinFragments(new SqlFragmentText(" and "));
-        whereClauseFragments = new SqlFragmentText($"DELETE FROM {Table} WHERE ").Concat(whereClauseFragments).Append(new SqlFragmentText(";"));
+        queryFragments = new SqlFragmentText($"DELETE FROM {Table} WHERE ").Concat(queryFragments).Append(new SqlFragmentText(";"));
 
-        return new SqlQuery()
-        {
-            Parameters = whereClauseFragments.GetParameters(),
-            QueryText = whereClauseFragments.ToSql(),
-            CommandType = CommandType.Text
-        };
+        return queryFragments.ToSqlQuery();
     }
 
     /// <summary>
@@ -219,33 +209,22 @@ public partial class SqlGenerator<T>
             IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
-            StringBuilder queryBuilder = new($"DELETE FROM {Table}");
-            IEnumerable<SqlFragment> fragments = [new SqlFragmentText($"DELETE FROM {Table}")];
+            IEnumerable<SqlFragment> queryFragments = [new SqlFragmentText($"DELETE FROM {Table}")];
 
             if (invalidTags.Any())
-            {
                 throw new InvalidTableException(invalidTags);
-            }
 
             if (joins?.IsNotNullOrEmpty() ?? false)
-            {
-                fragments = fragments.Concat(joins.ToSqlFragments());
-            }
+                queryFragments = queryFragments.Concat(joins.ToSqlFragments());
 
             IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments("Parameter") ?? [];
             if (predicates is not null)
-            {
-                queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
-                fragments = fragments.Append(new SqlFragmentText(" WHERE "));    
-                fragments = fragments.Concat(predicateSqlFragments);
-            }
+                queryFragments = queryFragments
+                    .Append(new SqlFragmentText(" WHERE ")) 
+                    .Concat(predicateSqlFragments);
 
-            return new SqlQuery()
-            {
-                QueryText = fragments.ToSql(),
-                Parameters = fragments.GetParameters(),
-                CommandType = CommandType.Text
-            };
+
+            return queryFragments.ToSqlQuery();
         }
     }
 }

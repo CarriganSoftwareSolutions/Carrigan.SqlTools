@@ -300,18 +300,12 @@ public partial class SqlGenerator<T>
                     .Append(new SqlFragmentText(";")),
         };
 
-        IEnumerable<SqlFragment> finalFragmentForm = returnColumns switch
+        IEnumerable<SqlFragment> queryFragments = returnColumns switch
         {
             null => insertIntoFragments.Append(new SqlFragmentText(" ")).Concat(valuesFragments),
             _ => Dialect.GetInsertReturningFragments<T>(insertIntoFragments, valuesFragments, returnColumns.ColumnInfo),
         };
 
-        return new SqlQuery()
-        {
-            Parameters = finalFragmentForm.GetParameters(),
-            QueryText = finalFragmentForm.ToSql(),
-            CommandType = System.Data.CommandType.Text
-        };
-
+        return queryFragments.ToSqlQuery();
     }
 }
