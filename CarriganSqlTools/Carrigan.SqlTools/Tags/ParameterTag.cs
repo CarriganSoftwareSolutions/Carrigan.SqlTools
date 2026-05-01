@@ -110,19 +110,6 @@ public class ParameterTag : StringWrapper
     /// Deeper copy constructor for the parameter tag.
     /// </summary>
     /// <param name="parameter">The parameter tag to clone.</param>
-    private ParameterTag(ParameterTag parameter) :
-        base(CreateParameterTagString(parameter._prefix, parameter._parameterBaseName, parameter._index), StringComparison.OrdinalIgnoreCase)
-    {
-        _parameterBaseName = parameter._parameterBaseName;
-        _prefix = parameter._prefix;
-        _index = parameter._index;
-        SqlType = parameter.SqlType;
-    }
-
-    /// <summary>
-    /// Deeper copy constructor for the parameter tag.
-    /// </summary>
-    /// <param name="parameter">The parameter tag to clone.</param>
     internal ParameterTag(ParameterTag parameter, object? value) :
         base(CreateParameterTagString(parameter._prefix, parameter._parameterBaseName, parameter._index), StringComparison.OrdinalIgnoreCase)
     {
@@ -130,28 +117,6 @@ public class ParameterTag : StringWrapper
         _prefix = parameter._prefix;
         _index = parameter._index;
         SqlType = parameter.SqlType ?? new(value);
-    }
-
-    /// <summary>
-    /// Performs the necessary conversions for a parameter value
-    /// before it is passed to the database.
-    /// </summary>
-    /// <param name="value">
-    /// The value to convert. A <c>null</c> value is converted to
-    /// <see cref="DBNull.Value"/>.
-    /// </param>
-    /// <returns>
-    /// The converted value suitable for database operations.
-    /// </returns>
-    private static object ConvertValue(object? value)
-    {
-        if (value == null)
-            return DBNull.Value;
-        else if (value is XDocument xDocument)
-            return xDocument.ToString();
-        else if (value is XmlDocument xmlDocument)
-            return ((object?)xmlDocument.OuterXml) ?? DBNull.Value; //the compiler didn't like xmlDocument.ToString() ?? DBNull.Value, so I had to get creative.
-        else return value;
     }
 
     /// <summary>
