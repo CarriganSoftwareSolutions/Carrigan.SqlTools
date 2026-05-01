@@ -52,23 +52,6 @@ public abstract class JoinBase
             .Distinct();
 
     /// <summary>
-    /// Generates the SQL string representing the specific <c>JOIN</c> clause.
-    /// </summary>
-    /// <param name="branchPrefix">
-    /// The branch name used when generating predicate SQL and parameter tags via
-    /// <see cref="Predicates.ToSqlFragments(string)"/>.
-    /// </param>
-    /// <returns>
-    /// A SQL string representing the complete <c>JOIN</c> clause for this relationship.
-    /// </returns>
-    /// <remarks>
-    /// For join types that require an <c>ON</c> clause, the derived implementation typically throws when no predicates exist.
-    /// For join types that do not use predicates (for example, <c>CROSS JOIN</c>), the derived implementation should ignore
-    /// <paramref name="branchPrefix"/>.
-    /// </remarks>
-    internal abstract string ToSql(string branchPrefix);
-
-    /// <summary>
     /// Generates a sequence of SQL fragments that represent the current object.
     /// </summary>
     /// <param name="branchPrefix"> 

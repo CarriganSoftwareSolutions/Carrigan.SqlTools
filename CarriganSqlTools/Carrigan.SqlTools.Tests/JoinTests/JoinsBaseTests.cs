@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -20,7 +21,7 @@ public class JoinsBaseValidationTests
     {
         JoinsBase joins = new NullJointsJoins();
 
-        Assert.Throws<InvalidOperationException>(() => joins.ToSql());
+        Assert.Throws<InvalidOperationException>(() => joins.ToSqlFragments());
     }
 
     [Fact]
@@ -38,8 +39,8 @@ public class JoinsBaseValidationTests
     [Fact]
     public void JoinsCrossJoin()
     {
-        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSql();
-        string expected = "CROSS JOIN [Right]";
+        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSqlFragments().ToSql();
+        string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
     }

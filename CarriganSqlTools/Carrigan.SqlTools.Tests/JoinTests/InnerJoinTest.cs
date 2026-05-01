@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -14,8 +15,8 @@ public class InnerJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         InnerJoin<JoinRightTable> join = new(id);
 
-        string actual = (new Joins<JoinLeftTable>(join)).ToSql();
-        string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments().ToSql();
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
     }
@@ -26,8 +27,8 @@ public class InnerJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         InnerJoin<JoinRightTable> join = new(id);
 
-        string actual = join.AsJoins<JoinLeftTable>().ToSql();
-        string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments().ToSql();
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
     }
@@ -37,8 +38,8 @@ public class InnerJoinTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Joins<JoinLeftTable>.InnerJoin<JoinRightTable>(id).ToSql();
-        string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string actual = Joins<JoinLeftTable>.InnerJoin<JoinRightTable>(id).ToSqlFragments().ToSql();
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
     }
@@ -67,8 +68,8 @@ public class InnerJoinTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSql();
-        string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string actual = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments().ToSql();
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
     }
@@ -79,6 +80,6 @@ public class InnerJoinTest
         Predicates id = new EmptyPredicate();
         InnerJoin<JoinRightTable> join = new(id);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSql("Join"));
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments("Join").ToSql());
     }
 }

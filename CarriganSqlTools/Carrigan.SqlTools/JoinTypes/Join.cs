@@ -85,13 +85,13 @@ public class Join<rightT> : JoinBase
         SqlToolsReflectorCache<rightT>.Table;
 
     /// <summary>
-    /// Converts the current <see cref="Join{rightT}"/> instance to its SQL representation.
+    /// Converts the current <see cref="Join{rightT}"/> instance to its <see cref="SqlFragment"/> representation.
     /// </summary>
     /// <param name="branchPrefix">
     /// The branch prefix used to distinguish parameters in the join predicates from the main where clause.
     /// </param>
     /// <returns>
-    /// A SQL string representing the <c>JOIN</c> clause.
+    /// A <see cref="SqlFragment"/> string representing the <c>JOIN</c> clause.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the join predicates render to an empty SQL expression, because <c>JOIN</c> requires an <c>ON</c> clause.
@@ -99,16 +99,11 @@ public class Join<rightT> : JoinBase
     /// <remarks>
     /// Any exception thrown while rendering the predicate tree or while resolving <see cref="TableTag"/> will be propagated to the caller.
     /// </remarks>
-    internal override string ToSql(string branchPrefix)
+    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix)
     {
-        string predicateSql = _predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql();
-
-        if (string.IsNullOrWhiteSpace(predicateSql))
+        if (_predicates == null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("JOIN requires at least one predicate for the ON clause.");
 
-        return $"JOIN {TableTag} ON {predicateSql}";
+        return _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" JOIN {TableTag} ON "));
     }
-
-    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
-        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" JOIN {TableTag} ON "));
 }

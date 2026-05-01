@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -21,69 +22,69 @@ public class JoinsTest
     public void NewJoinsNewLeftJoin()
     {
         Joins<JoinLeftTable> relation = new (new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
-        string expected = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
     [Fact]
     public void NewJoinsNewJoin()
     {
         Joins<JoinLeftTable> relation = new(new Join<JoinRightTable>(RightOnLeftPredicate));
-        string expected = "JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
     [Fact]
     public void NewJoinsNewInnerJoin()
     {
         Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
-        string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
     [Fact]
     public void NewJoinsNewFullJoin()
     {
         Joins<JoinLeftTable> relation = new(new FullJoin<JoinRightTable>(RightOnLeftPredicate));
-        string expected = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
     public void JoinsLeftJoin()
     {
         Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(RightOnLeftPredicate);
-        string expected = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
     public void JoinsRightJoin()
     {
         Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.RightJoin<JoinRightTable>(RightOnLeftPredicate);
-        string expected = "RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
     public void JoinsJoin()
     {
         Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate);
-        string expected = "JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
     public void JoinsInnerJoin()
     {
         Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.InnerJoin<JoinRightTable>(RightOnLeftPredicate);
-        string expected = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
     public void JoinsFullJoin()
     {
         Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.FullJoin<JoinRightTable>(RightOnLeftPredicate);
-        string expected = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -94,10 +95,8 @@ public class JoinsTest
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -108,10 +107,8 @@ public class JoinsTest
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -122,10 +119,8 @@ public class JoinsTest
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -136,10 +131,8 @@ public class JoinsTest
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -150,10 +143,8 @@ public class JoinsTest
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -164,10 +155,8 @@ public class JoinsTest
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -178,10 +167,8 @@ public class JoinsTest
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -192,10 +179,8 @@ public class JoinsTest
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -206,10 +191,8 @@ public class JoinsTest
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -220,10 +203,8 @@ public class JoinsTest
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -234,10 +215,8 @@ public class JoinsTest
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -248,10 +227,8 @@ public class JoinsTest
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -262,10 +239,8 @@ public class JoinsTest
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -276,10 +251,9 @@ public class JoinsTest
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -290,10 +264,8 @@ public class JoinsTest
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -304,10 +276,8 @@ public class JoinsTest
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        string expected1 = "FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
-        string expected2 = "FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
-        string expected = $"{expected1} {expected2}";
-        Assert.Equal(expected, relation.ToSql());
+        string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+        Assert.Equal(expected, relation.ToSqlFragments().ToSql());
     }
 
     [Fact]
@@ -354,8 +324,8 @@ public class JoinsTest
     [Fact]
     public void JoinsCrossJoin()
     {
-        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSql();
-        string expected = "CROSS JOIN [Right]";
+        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSqlFragments().ToSql();
+        string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
     }

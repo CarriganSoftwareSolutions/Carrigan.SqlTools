@@ -75,11 +75,11 @@ public abstract class JoinsBase
         ValidatedJoints.Select(static join => join.TableTag).Append(TableTag);
 
     /// <summary>
-    /// Generates the complete SQL fragment for all <c>JOIN</c> clauses
+    /// Generates the SQL fragments for all <c>JOIN</c> clauses
     /// represented by this <see cref="JoinsBase"/> instance.
     /// </summary>
     /// <returns>
-    /// A concatenated SQL string containing all <c>JOIN</c> clauses in sequence.
+    /// An <see cref="IEnumerable{SqlFragment}"/> representing the <c>JOIN</c> clauses in sequence.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
@@ -87,15 +87,6 @@ public abstract class JoinsBase
     /// <remarks>
     /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
     /// </remarks>
-    internal string ToSql()
-    {
-        if(ValidatedJoints.Count() == 1)
-            return string.Join(" ", ValidatedJoints.Select(join => join.ToSql("Join")));
-        else
-            return string.Join(" ", ValidatedJoints.Select((join, i) => join.ToSql($"Joins{i}")));
-
-    }
-
     internal IEnumerable<SqlFragment> ToSqlFragments()
     {
         if (ValidatedJoints.Count() == 1)

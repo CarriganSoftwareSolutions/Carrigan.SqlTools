@@ -86,13 +86,13 @@ public class FullJoin<rightT> : JoinBase
         SqlToolsReflectorCache<rightT>.Table;
 
     /// <summary>
-    /// Converts the current <see cref="FullJoin{rightT}"/> instance to its SQL representation.
+    /// Converts the current <see cref="FullJoin{rightT}"/> instance to its <see cref="SqlFragment"/> representation.
     /// </summary>
     /// <param name="branchPrefix">
     /// The branch prefix used to distinguish parameters in join predicates from the main where clause.
     /// </param>
     /// <returns>
-    /// A SQL string representing the <c>FULL JOIN</c> clause.
+    /// A <see cref="SqlFragment"/> representing the <c>FULL JOIN</c> clause.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the join predicates render to an empty SQL expression, because <c>FULL JOIN</c> requires an <c>ON</c> clause.
@@ -100,24 +100,11 @@ public class FullJoin<rightT> : JoinBase
     /// <remarks>
     /// Any exception thrown while rendering the predicate tree will be propagated to the caller.
     /// </remarks>
-    internal override string ToSql(string branchPrefix)
+    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix)
     {
-        string predicateSql = _predicates.ToSqlFragments($"{branchPrefix}Parameter").ToSql();
-
-        if (string.IsNullOrWhiteSpace(predicateSql))
+        if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("FULL JOIN requires at least one predicate for the ON clause.");
 
-        return $"FULL JOIN {TableTag} ON {predicateSql}";
+        return _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" FULL JOIN {TableTag} ON "));
     }
-
-    /// <summary>
-    /// Converts the current <see cref="FullJoin{rightT}"/> instance to a collection of <see cref="SqlFragment"/> objects
-    /// representing the SQL <c>FULL JOIN</c> clause.
-    /// </summary>
-    /// <param name="branchPrefix">The branch name used when generating predicate SQL and parameter tags via
-    /// <see cref="Predicates.ToSqlFragments(string)"/>.</param>
-    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
-    /// instance.</returns>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix) =>
-        _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" FULL JOIN {TableTag} ON "));
 }
