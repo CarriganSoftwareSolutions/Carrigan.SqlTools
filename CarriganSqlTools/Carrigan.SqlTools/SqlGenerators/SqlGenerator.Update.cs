@@ -340,34 +340,16 @@ public partial class SqlGenerator<T>
             .Concat(setFragments)
             .Append(new SqlFragmentText($" FROM {Table}"));
 
-        Dictionary<ParameterTag, object> parametersDictionary = [.. updateTheseColumns.Select(column => GetSqlParameterKeyValue(column, entity, null, "@ParameterSet"))];
-
-        string setColumnValues = string.Join(", ", updateTheseColumns.Select(column => $"{column} = {column.ParameterTag.PrefixPrepend("@ParameterSet")}"));
-        StringBuilder queryBuilder = new($"UPDATE {Table} SET {setColumnValues} FROM {Table}");
-
         if (joins?.IsNotNullOrEmpty() ?? false)
-        {
-            queryBuilder.Append($" {joins.ToSql()}");
-            parametersDictionary.Add(joins.Parameters);
             queryFragments = queryFragments.Concat(joins.ToSqlFragments()); 
 
-        }
         if (predicates is not null)
         {
             IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments("Parameter")];
             queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicateSqlFragments);
-
-            queryBuilder.Append($" WHERE {predicateSqlFragments.ToSql()}");
-            parametersDictionary.Add(predicateSqlFragments.GetParameters());
         }
 
 
         return queryFragments.ToSqlQuery();
-        //return new SqlQuery()
-        //{
-        //    QueryText = queryBuilder.ToString(),
-        //    Parameters = parametersDictionary,
-        //    CommandType = CommandType.Text
-        //};
     }
 }

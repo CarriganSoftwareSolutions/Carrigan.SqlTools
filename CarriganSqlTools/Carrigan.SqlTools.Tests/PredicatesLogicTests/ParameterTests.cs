@@ -4,6 +4,9 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
+using System.Data;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
@@ -273,4 +276,82 @@ public class ParameterTests
         Assert.Throws<ArgumentNullException>(() => parameter.ToSqlFragments(null!));
     }
 
+
+
+    [Fact]
+    public void GetParameter_Value_SetsSqlTypeOnClone()
+    {
+        ParameterTag original = new(null, "IntParameter", null, null);
+
+        Parameter result = new(original, 42);
+
+        // Original should remain without a SqlType
+        Assert.Null(original.SqlType);
+
+        // Returned key should be a different instance with a non-null SqlType
+        Assert.NotSame(original, result.Value);
+        Assert.NotNull(result.Name.SqlType);
+        Assert.Equal(SqlDbType.Int, result.Name.SqlType.Type);
+        Assert.Equal(42, result.Value);
+    }
+
+    [Fact]
+    public void GetParameter_ValueNullUsesDBNullAndKeepsSqlTypeNull()
+    {
+        ParameterTag tag = new(null, "ParameterName", null, null);
+        
+        Parameter result = new(tag, null);
+
+        // Uses DBNull.Value for the parameter value
+        Assert.Same(DBNull.Value, result.Value);
+
+        Assert.Equal(tag, result.Name);
+
+        Assert.NotNull(result.Name.SqlType);
+        Assert.Equal(SqlDbType.Variant, result.Name.SqlType.Type);
+    }
+
+    [Fact]
+    public void GetParameter_Value_DoesNotChangeExistingSqlTypeOnOriginal()
+    {
+        SqlTypeDefinition presetType = SqlTypeDefinition.AsInt();
+        ParameterTag original = new(null, "IntParameter", null, presetType);
+
+        Parameter result =  new(original, 123);
+
+        // Original should keep its preset type
+        Assert.Same(presetType, original.SqlType);
+
+        // Clone should also carry the same SqlTypeDefinition instance
+        Assert.Same(presetType, result.Name.SqlType);
+        Assert.Equal(123, result.Value);
+        Assert.NotNull(result.Name.SqlType);
+        Assert.Equal(SqlDbType.Int, result.Name.SqlType.Type);
+    }
+
+    [Fact]
+    public void GetParameter_XDocument_ConvertsToString()
+    {
+        ParameterTag tag = new(null, "XmlParam", null, null);
+        XDocument document = new(new XElement("Root", new XElement("Child", "Value")));
+
+        Parameter result = new(tag, document);
+
+        Assert.IsType<string>(result.Value);
+        Assert.Contains("<Root>", (string)result.Value);
+    }
+
+    [Fact]
+    public void GetParameter_XmlDocument_ConvertsToOuterXml()
+    {
+        ParameterTag tag = new(null, "XmlParam", null, null);
+
+        XmlDocument document = new();
+        document.LoadXml("<Root><Child>Value</Child></Root>");
+
+        Parameter result = new(tag, document);
+
+        Assert.IsType<string>(result.Value);
+        Assert.Equal("<Root><Child>Value</Child></Root>", (string)result.Value);
+    }
 }

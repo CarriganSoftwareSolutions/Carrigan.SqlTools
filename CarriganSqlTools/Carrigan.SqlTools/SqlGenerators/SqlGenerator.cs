@@ -194,59 +194,6 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     private static And GetByKeyPredicates(T entity) =>
         new(KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.ParameterTag, key.PropertyInfo.GetValue(entity)))));
 
-
-    /// <summary>
-    /// Creates a SQL parameter key–value pair for the specified column and entity instance.
-    /// </summary>
-    /// <param name="column">The <see cref="ColumnInfo"/> describing the target column.</param>
-    /// <param name="entity">The entity instance supplying the column value.</param>
-    /// <param name="entityIndex">
-    /// Optional zero-based index used when batching operations; appended to the parameter name.
-    /// </param>
-    /// <param name="parameterPrepend">
-    /// Optional prefix to prepend to the parameter name.
-    /// </param>
-    /// <returns>
-    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose key is the computed <see cref="ParameterTag"/>
-    /// and whose value is either the encrypted/unencrypted value or <see cref="DBNull.Value"/>.
-    /// </returns>
-    /// <remarks>
-    /// If the column is encrypted, the value is encrypted.  
-    /// If the column is the key-version column, the encrypter's version is used instead of the entity value.  
-    /// </remarks>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="column"/> is <c>null</c>.
-    /// </exception>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="entity"/> is <c>null</c>.
-    /// </exception>
-    /// <exception cref="NullReferenceException">
-    /// Thrown if <paramref name="column"/> does not expose a <see cref="ParameterTag"/>.
-    /// </exception>
-    /// <exception cref="InvalidParameterIdentifierException">
-    /// Thrown if <paramref name="parameterPrepend"/> produces an invalid parameter identifier.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown when an index is applied to a parameter that already has an index.
-    /// </exception>
-    private KeyValuePair<ParameterTag, object> GetSqlParameterKeyValue(ColumnInfo column, T entity, int? entityIndex = null, string? parameterPrepend = null)
-    {
-        ArgumentNullException.ThrowIfNull(column);
-        ArgumentNullException.ThrowIfNull(entity);
-
-        if (column.ParameterTag is null)
-            throw new NullReferenceException();
-
-        ParameterTag parameter = column.ParameterTag.PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
-
-        if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
-            return parameter.GetParameter(_Encryption.Version);
-        else if (_Encryption is not null && IsEncrypted(column))
-            return parameter.GetParameter(_Encryption, column, entity);
-        else
-            return parameter.GetParameter(column, entity);
-    }
-
     /// <summary>
     /// Creates a <see cref="Parameter"/> object for the specified column and entity instance. 
     /// </summary>

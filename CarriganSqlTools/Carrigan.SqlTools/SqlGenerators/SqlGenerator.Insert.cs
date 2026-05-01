@@ -89,7 +89,7 @@ public partial class SqlGenerator<T>
     /// <exception cref="NullReferenceException">
     /// Thrown if a column lacks a <see cref="ParameterTag"/> during parameter generation.
     /// This can surface indirectly from
-    /// <see cref="GetSqlParameterKeyValue(ColumnInfo, T, int?, string?)"/>.
+    /// <see cref="GetSqlParameter(ColumnInfo, T, int?, string?)"/>.
     /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[

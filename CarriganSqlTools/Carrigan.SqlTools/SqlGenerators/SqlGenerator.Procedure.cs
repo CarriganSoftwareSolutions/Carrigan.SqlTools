@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Tags;
 using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -31,7 +32,7 @@ public partial class SqlGenerator<T>
     /// <exception cref="NullReferenceException">
     /// Thrown if a mapped column lacks a <see cref="ParameterTag"/> during parameter generation.
     /// This can surface indirectly from
-    /// <see cref="GetSqlParameterKeyValue(Carrigan.SqlTools.ReflectorCache.ColumnInfo, T, int?, string?)"/>.
+    /// <see cref="GetSqlParameter(ReflectorCache.ColumnInfo, T, int?, string?)"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     /// Thrown when one or more procedure parameters resolve to the same <see cref="ParameterTag"/>,
@@ -56,11 +57,11 @@ public partial class SqlGenerator<T>
     public SqlQuery Procedure(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        IEnumerable<KeyValuePair<ParameterTag, object>> parameters = ColumnInfo.Select(column => GetSqlParameterKeyValue(column, entity));
+        IEnumerable<SqlFragmentParameter> parameters = ColumnInfo.Select(column => new SqlFragmentParameter(GetSqlParameter(column, entity)));
 
         return new SqlQuery()
         {
-            Parameters = new Dictionary<ParameterTag, object>(parameters),
+            Parameters = parameters.GetParameters(),
             QueryText = ProcedureTag,
             CommandType = CommandType.StoredProcedure
         };

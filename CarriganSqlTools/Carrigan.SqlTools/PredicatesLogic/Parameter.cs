@@ -57,7 +57,7 @@ public class Parameter : Predicates
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         Name = new(parameterTag, value);
-        Value = value;
+        Value = ConvertValue(value);
     }
 
     /// <summary>
@@ -135,6 +135,10 @@ public class Parameter : Predicates
         Value = value;
     }
 
+    /// <summary>
+    /// Produces the SQL fragment for this parameter using its base name (without any disambiguating prefix).
+    /// </summary>
+    /// <returns></returns>
     internal string ToSql() =>
         Name.ToString();
 

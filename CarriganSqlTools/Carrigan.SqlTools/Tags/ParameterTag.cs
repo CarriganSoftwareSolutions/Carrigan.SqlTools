@@ -155,60 +155,6 @@ public class ParameterTag : StringWrapper
     }
 
     /// <summary>
-    /// Creates a parameter key–value pair for the supplied value.
-    /// </summary>
-    /// <param name="value">The runtime value to bind to this parameter.</param>
-    /// <returns>
-    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose key is a cloned
-    /// <see cref="ParameterTag"/> with an inferred <see cref="SqlType"/> (when
-    /// the current instance does not already have one), and whose value is the
-    /// supplied value or <see cref="DBNull.Value"/>.
-    /// </returns>
-    internal KeyValuePair<ParameterTag, object> GetParameter(object? value)
-    {
-        ParameterTag parameterTag = new(this);
-        parameterTag.SqlType ??= new(value);
-        return new(parameterTag, ConvertValue(value));
-    }
-
-    /// <summary>
-    /// Creates a parameter key–value pair for the supplied entity and column.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <param name="column">
-    /// The <see cref="ColumnInfo"/> used to locate the property and supply its <see cref="SqlTypeDefinition"/>.
-    /// </param>
-    /// <param name="entity">The entity instance to read the value from.</param>
-    /// <returns>
-    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose key is a cloned
-    /// <see cref="ParameterTag"/> configured with <paramref name="column"/>'s
-    /// <see cref="ColumnInfo.SqlType"/>, and whose value is the property value
-    /// or <see cref="DBNull.Value"/>.
-    /// </returns>
-    internal KeyValuePair<ParameterTag, object> GetParameter<T>(ColumnInfo column, T entity)
-    {
-        ParameterTag parameterTag = new(this);
-        object? value = column.PropertyInfo.GetValue(entity);
-
-        parameterTag.SqlType ??= column.SqlType;
-        return new(parameterTag, ConvertValue(value));
-    }
-
-    /// <summary>
-    /// Creates a parameter key–value pair using an encrypted value for the given entity and column.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <param name="encryption">The encryption service, or <c>null</c> to skip encryption.</param>
-    /// <param name="column">Column metadata used to locate the property and SQL type.</param>
-    /// <param name="entity">The entity instance providing the value.</param>
-    /// <returns>
-    /// A <see cref="KeyValuePair{TKey, TValue}"/> whose value is the encrypted string
-    /// (or <c>null</c>/<see cref="DBNull.Value"/> when no encryption or value is available).
-    /// </returns>
-    internal KeyValuePair<ParameterTag, object> GetParameter<T>(IEncryption? encryption, ColumnInfo column, T entity) =>
-        GetParameter(encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
-
-    /// <summary>
     /// Creates a new <see cref="ParameterTag"/> with text prepended to the existing prefix (if any).
     /// </summary>
     /// <param name="textToPrepend">
