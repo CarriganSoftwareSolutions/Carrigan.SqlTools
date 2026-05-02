@@ -126,7 +126,7 @@ public partial class SqlGenerator<T>
                 .Concat(whereFragments)
                 .Append(new SqlFragmentText(";"));
 
-        return queryFragments.ToSqlQuery();
+        return queryFragments.ToSqlQuery(Dialect);
     }
 
 
@@ -331,7 +331,7 @@ public partial class SqlGenerator<T>
                     new SqlFragmentGroup
                     (
                         new SqlFragmentText($"{column.ColumnTag.ToString(true)} = "),
-                        new SqlFragmentParameter(GetSqlParameter(column, entity, null, "@ParameterSet"))
+                        new SqlFragmentParameter(GetSqlParameter(column, entity))
                     )
                 )
                 .JoinFragments(new SqlFragmentText(", "));
@@ -345,11 +345,11 @@ public partial class SqlGenerator<T>
 
         if (predicates is not null)
         {
-            IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments("Parameter")];
+            IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments()];
             queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicateSqlFragments);
         }
 
 
-        return queryFragments.ToSqlQuery();
+        return queryFragments.ToSqlQuery(Dialect);
     }
 }

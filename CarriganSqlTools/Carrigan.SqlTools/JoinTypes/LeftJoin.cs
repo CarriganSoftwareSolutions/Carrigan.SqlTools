@@ -103,6 +103,6 @@ public class LeftJoin<rightT> : JoinBase
     {
         if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("LEFT JOIN requires at least one predicate for the ON clause.");
-        return _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" LEFT JOIN {TableTag} ON "));
+        return _predicates.ToSqlFragments().Prepend(new SqlFragmentText($" LEFT JOIN {TableTag} ON "));
     }
 }

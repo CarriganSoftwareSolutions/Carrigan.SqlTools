@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -16,13 +17,13 @@ public class NotTests
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
     private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
-    private readonly string ParameterPiSql = "@Parameter_Pi";
+    private readonly string ParameterPiSql = "@Pi_1";
 
     private readonly Predicates ParameterElite = new Parameter("Elite", 1337, null);
-    private readonly string ParameterEliteSql = "@Parameter_Elite";
+    private readonly string ParameterEliteSql = "@Elite_1";
 
     private readonly Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!", null);
-    private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
+    private readonly string ParameterHelloWorldSql = "@HelloWorld_1";
 
 
     [Fact]
@@ -34,7 +35,7 @@ public class NotTests
         Predicates predicate = new Not(inner);
 
         string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -60,7 +61,7 @@ public class NotTests
         Predicates predicate = new Not(inner);
 
         string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -86,7 +87,7 @@ public class NotTests
         Predicates predicate = new Not(inner);
 
         string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -113,7 +114,7 @@ public class NotTests
         Predicates predicate = new Not(inner);
 
         string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -156,7 +157,7 @@ public class NotTests
         Predicates predicate = new Not(inner);
 
         string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -202,7 +203,7 @@ public class NotTests
         Predicates predicate = new Not(inner);
 
         string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -238,10 +239,10 @@ public class NotTests
     public void Not_Nested_ToSql()
     {
         Predicates and = new And(new Not(ParameterElite), new Not(ParameterHelloWorld), new Not(ColumnFutureCity), new Not(ColumnDestructCode));
-        string andSql = $"((NOT {ParameterEliteSql}) AND (NOT {ParameterHelloWorldSql}) AND (NOT {ColumnFutureCitySql}) AND (NOT {ColumnDestructCodeSql}))";
+        string andSql = $"((NOT @Elite_1) AND (NOT @HelloWorld_2) AND (NOT {ColumnFutureCitySql}) AND (NOT {ColumnDestructCodeSql}))";
 
         string expectedValue = andSql;
-        string actualValue = and.ToSqlFragments("Parameter").ToSql();
+        string actualValue = and.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }

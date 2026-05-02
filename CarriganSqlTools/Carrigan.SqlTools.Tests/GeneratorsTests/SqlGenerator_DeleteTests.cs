@@ -34,7 +34,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id;";
+        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -51,12 +51,12 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id;";
+        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.Single(query.Parameters);
         Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.First().Value); // Id
-        Assert.Equal("Id", query.Parameters.First().Key); // Id
+        Assert.Equal("@Id_1", query.Parameters.First().Key); // Id
     }
 
     [Fact]
@@ -66,15 +66,15 @@ public class SqlGenerator_DeleteTests
         {
             Id = new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"),
             Name = "Test Name",
-            Where = "Here", 
+            Where = "Here",
             HideTimeFlag = true,
             When = "Now",
-            DateOf = DateTime.UtcNow 
+            DateOf = DateTime.UtcNow
         };
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id;";
+        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.DoesNotContain("Name", query.QueryText);
@@ -101,7 +101,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Delete(entityWithoutTableAttribute);
 
-        string expectedSql = "DELETE FROM [EntityWithoutTableAttribute] WHERE [Id] = @Id;";
+        string expectedSql = "DELETE FROM [EntityWithoutTableAttribute] WHERE [Id] = @Id_1;";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -116,7 +116,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithSchema.Delete(entityWithSchema);
 
-        string expectedSql = "DELETE FROM [myschema].[EntityWithSchema] WHERE [Id] = @Id;";
+        string expectedSql = "DELETE FROM [myschema].[EntityWithSchema] WHERE [Id] = @Id_1;";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -134,7 +134,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id;";
+        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.DoesNotContain("Name", query.QueryText);

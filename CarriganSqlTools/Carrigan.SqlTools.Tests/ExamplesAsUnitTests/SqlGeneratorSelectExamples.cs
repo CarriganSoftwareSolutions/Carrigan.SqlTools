@@ -8,6 +8,7 @@ using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order a
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
+
 public class SqlGeneratorSelectExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
@@ -81,10 +82,10 @@ public class SqlGeneratorSelectExamples
 
         SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Order].[Total] > @Parameter_Total) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
+        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Order].[Total] > @Total_1) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
+        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
     }
 
     [Fact]
@@ -104,7 +105,7 @@ public class SqlGeneratorSelectExamples
         Customer entity = new() { Id = 42 };
         SqlQuery query = customerGenerator.SelectById(entity);
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)", query.QueryText);
+        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Id_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
         Assert.Equal(42, (int)query.Parameters.Single().Value);

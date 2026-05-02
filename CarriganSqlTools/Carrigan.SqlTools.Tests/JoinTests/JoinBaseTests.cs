@@ -51,26 +51,4 @@ public class JoinBaseTests
         Assert.Contains(new TableTag(new SqlServerDialect(), null, "Left"), actual);
         Assert.Contains(new TableTag(new SqlServerDialect(), null, "Right"), actual);
     }
-
-    [Fact]
-    public void Join_GetParameters()
-    {
-        Predicates predicate = new Equal(new Column<JoinLeftTable>("RightId"), new Parameter("Id", 5));
-        Join<JoinRightTable> join = new(predicate);
-
-        Dictionary<ParameterTag, object> actual = join.GetParameters("JoinParameter");
-
-        Assert.Single(actual);
-        Assert.Equal("@JoinParameter_Id", (string)actual.Keys.Single());
-        Assert.Equal(5, actual.Values.Single());
-    }
-
-    [Fact]
-    public void Join_GetParameters_NullBranchPrefix_ThrowsArgumentNullException()
-    {
-        Predicates predicate = new Equal(new Column<JoinLeftTable>("RightId"), new Parameter("Id", 5));
-        Join<JoinRightTable> join = new(predicate);
-
-        Assert.Throws<ArgumentNullException>(() => join.GetParameters(null!));
-    }
 }

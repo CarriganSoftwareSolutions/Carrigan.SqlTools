@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
@@ -17,13 +18,13 @@ public class IsNotNullTests
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
     private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
-    private readonly string ParameterPiSql = "@Parameter_Pi";
+    private readonly string ParameterPiSql = "@Pi_1";
 
     private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337, null);
-    private readonly string ParameterEliteSql = "@Parameter_Elite";
+    private readonly string ParameterEliteSql = "@Elite_1";
 
     private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
-    private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
+    private readonly string ParameterHelloWorldSql = "@HelloWorld_1";
 
 
     [Fact]
@@ -35,7 +36,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -61,7 +62,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -87,7 +88,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -114,7 +115,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -157,7 +158,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -199,7 +200,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -235,10 +236,10 @@ public class IsNotNullTests
     public void IsNotNull_Nested_ToSql()
     {
         PredicatesLogic.Predicates and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
-        string andSql = $"(({ParameterEliteSql} IS NOT NULL) AND ({ParameterHelloWorldSql} IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
+        string andSql = $"((@Elite_1 IS NOT NULL) AND (@HelloWorld_2 IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
 
         string expectedValue = andSql;
-        string actualValue = and.ToSqlFragments("Parameter").ToSql();
+        string actualValue = and.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }

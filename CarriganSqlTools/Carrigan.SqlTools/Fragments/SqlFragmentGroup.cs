@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -35,4 +36,14 @@ public class SqlFragmentGroup : SqlFragment
     /// <returns></returns>
     internal override IEnumerable<Parameter> GetParameters() =>
         sqlFragments.SelectMany(f => f.GetParameters());
+
+    /// <summary>
+    /// Returns a flattened sequence of all SQL fragments contained within this fragment and its descendants.
+    /// </summary>
+    /// <remarks>Use this method to enumerate all SQL fragments in a hierarchical structure as a flat list,
+    /// which can simplify processing or analysis of complex fragment trees.</remarks>
+    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects representing all nested fragments in a single,
+    /// flat sequence.</returns>
+    internal override IEnumerable<SqlFragment> Flaten() => 
+        sqlFragments.SelectMany(element => element.Flaten());
 }

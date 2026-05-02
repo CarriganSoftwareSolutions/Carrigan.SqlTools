@@ -14,5 +14,5 @@ internal class EmptyPredicate : Predicates
     {
     }
 
-    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates) => [];
+    internal override IEnumerable<SqlFragment> ToSqlFragments() => [];
 }

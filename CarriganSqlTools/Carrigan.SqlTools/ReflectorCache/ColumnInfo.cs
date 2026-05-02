@@ -149,7 +149,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new(propertyInfo.PropertyType);
 
-        ParameterTag = new(null, parameterName, null, SqlType);
+        ParameterTag = new(parameterName, SqlType);
         AliasName = aliasName;
         SelectTag = new(ColumnTag, AliasTag.New(aliasName));
 

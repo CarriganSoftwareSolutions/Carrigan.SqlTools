@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -11,11 +12,11 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 public class ColumnValueTests
 {
     [Fact]
-    public void ByColumnValue_ConstructorSimple_InValid_BadCol() => 
+    public void ByColumnValue_ConstructorSimple_InValid_BadCol() =>
         Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new ColumnValue<ColumnTable>("ilsabasbdyas", "1"));
 
     [Fact]
-    public void ByColumnValue_ConstructorSimple_Valid() => 
+    public void ByColumnValue_ConstructorSimple_Valid() =>
         _ = new ColumnValue<ColumnTable>(nameof(ColumnTable.Col1), "1");
 
     [Fact]
@@ -78,8 +79,8 @@ public class ColumnValueTests
     public void ByColumnValue_ConstructorSimple_ToSql()
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
-        string expectedString = "([ColumnTable].[Col1] = @Parameter_Col1)";
-        string actualString = byColumnValues.ToSqlFragments("Parameter").ToSql();
+        string expectedString = "([ColumnTable].[Col1] = @Col1_1)";
+        string actualString = byColumnValues.ToSqlFragments().ToSql(new SqlServerDialect());
         Assert.Equal(expectedString, actualString);
     }
 

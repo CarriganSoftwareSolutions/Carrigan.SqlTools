@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -58,7 +59,7 @@ public  class ColumnsTests
     {
         Column<ColumnTable> cv = new(propertyName);
 
-        string actual = cv?.ToSqlFragments("ZZ")?.ToSql() ?? string.Empty ;
+        string actual = cv?.ToSqlFragments()?.ToSql(new SqlServerDialect()) ?? string.Empty ;
 
         Assert.Equal(expectedColumnName, actual);
     }

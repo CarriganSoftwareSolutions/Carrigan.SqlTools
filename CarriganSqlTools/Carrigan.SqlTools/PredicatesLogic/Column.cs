@@ -104,7 +104,7 @@ public class Column<T> : ColumnBase
     /// <returns>
     /// The SQL-escaped column identifier (e.g., <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>).
     /// </returns>
-    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    internal override IEnumerable<SqlFragment> ToSqlFragments()
     {
         yield return new SqlFragmentText(ColumnInfo);
     }

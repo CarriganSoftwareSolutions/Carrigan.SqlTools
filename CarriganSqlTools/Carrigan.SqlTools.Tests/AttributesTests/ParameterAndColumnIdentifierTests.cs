@@ -10,8 +10,10 @@ using Carrigan.SqlTools.Types;
 using System.Text;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
+
 public class ParameterAndColumnIdentifierTests
-{    private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
+{
+    private static string ModifyInsertQueryWithReturn(string queryPart1, string queryPart2, string type)
     {
         StringBuilder queryBuilder = new();
         queryBuilder.AppendLine($"DECLARE @OutputTable TABLE (Id {type});");
@@ -24,7 +26,7 @@ public class ParameterAndColumnIdentifierTests
 
     //IGNORE SPELLING: tac
     private static readonly SqlGenerator<ColumnIdentifiers> _generator = new();
-    private static readonly ColumnIdentifiers _entity = new ()
+    private static readonly ColumnIdentifiers _entity = new()
     {
         Id = 1,
         Property = 2,
@@ -74,11 +76,11 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.Delete(_tacEntity);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE [SomeId] = @SomeIdParameter;";
+        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE [SomeId] = @SomeIdParameter_1;";
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("SomeIdParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_1"));
     }
     [Fact]
     public void DeleteAllTest()
@@ -99,12 +101,12 @@ public class ParameterAndColumnIdentifierTests
         And and = new(id, column);
         SqlQuery query = _tacGenerator.Delete(null, and);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE (([SomeSchema].[SomeTable].[SomeId] = @Parameter_SomeIdParameter) AND ([SomeSchema].[SomeTable].[SomeColumn] = @Parameter_SomeColumnParameter))";
+        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE (([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_1) AND ([SomeSchema].[SomeTable].[SomeColumn] = @SomeColumnParameter_2))";
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_SomeIdParameter"));
-        Assert.Equal(3, query.GetParameterValue<int>("@Parameter_SomeColumnParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_1"));
+        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_2"));
     }
 
     [Fact]
@@ -112,12 +114,12 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.Insert(null, null, _tacEntity);
         string actual = query.QueryText;
-        string expected = "INSERT INTO [SomeSchema].[SomeTable] ([SomeId], [SomeColumn]) VALUES (@SomeIdParameter, @SomeColumnParameter);";
+        string expected = "INSERT INTO [SomeSchema].[SomeTable] ([SomeId], [SomeColumn]) VALUES (@SomeIdParameter_1, @SomeColumnParameter_2);";
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("SomeIdParameter"));
-        Assert.Equal(3, query.GetParameterValue<int>("SomeColumnParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_1"));
+        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_2"));
     }
 
     [Fact]
@@ -125,10 +127,10 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.InsertAutoId(_tacEntity);
         string actual = query.QueryText;
-        string expected = ModifyInsertQueryWithReturn("INSERT INTO [SomeSchema].[SomeTable] ([SomeColumn])", "VALUES (SomeColumnParameter)", "UNIQUEIDENTIFIER");
+        string expected = ModifyInsertQueryWithReturn("INSERT INTO [SomeSchema].[SomeTable] ([SomeColumn])", "VALUES (@SomeColumnParameter_1)", "UNIQUEIDENTIFIER");
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(3, query.GetParameterValue<int>("SomeColumnParameter"));
+        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_1"));
     }
 
     [Fact]
@@ -136,12 +138,12 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.UpdateById(_tacEntity);
         string actual = query.QueryText;
-        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeColumn] = @SomeColumnParameter WHERE [SomeId] = @SomeIdParameter;";
+        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeColumn] = @SomeColumnParameter_1 WHERE [SomeId] = @SomeIdParameter_2;";
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("SomeIdParameter"));
-        Assert.Equal(3, query.GetParameterValue<int>("SomeColumnParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_2"));
+        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_1"));
     }
 
     [Fact]
@@ -149,13 +151,13 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.UpdateByIds(_tacUpdateValues, null, _tacEntities);
         string actual = query.QueryText;
-        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeSchema].[SomeTable].[SomeColumn] = @ParameterSet_SomeColumnParameter FROM [SomeSchema].[SomeTable] WHERE (([SomeSchema].[SomeTable].[SomeId] = @Parameter_0_R_SomeIdParameter) OR ([SomeSchema].[SomeTable].[SomeId] = @Parameter_1_R_SomeIdParameter))";
+        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeSchema].[SomeTable].[SomeColumn] = @SomeColumnParameter_1 FROM [SomeSchema].[SomeTable] WHERE (([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_2) OR ([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_3))";
         Assert.Equal(expected, actual);
 
         Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_0_R_SomeIdParameter"));
-        Assert.Equal(6, query.GetParameterValue<int>("@Parameter_1_R_SomeIdParameter"));
-        Assert.Equal(13, query.GetParameterValue<int>("@ParameterSet_SomeColumnParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_2"));
+        Assert.Equal(6, query.GetParameterValue<int>("@SomeIdParameter_3"));
+        Assert.Equal(13, query.GetParameterValue<int>("@SomeColumnParameter_1"));
     }
 
     [Fact]
@@ -211,28 +213,28 @@ public class ParameterAndColumnIdentifierTests
     public void AndTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new(new ParameterTag(null, "p1", null, SqlTypeDefinition.AsInt()), 1);
+        Parameter parameter1 = new(new ParameterTag("p1", SqlTypeDefinition.AsInt()), 1);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new(new ParameterTag(null, "p2", null, SqlTypeDefinition.AsInt()), 2);
+        Parameter parameter2 = new(new ParameterTag("@p2", SqlTypeDefinition.AsInt()), 2);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
-        And and = new (equal1, equal2);
+        And and = new(equal1, equal2);
 
         SqlQuery query = _generator.Select(null, null, and, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) AND ([ColumnIdentifiers].[Column] = @Parameter_p2))";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @p1_1) AND ([ColumnIdentifiers].[Column] = @p2_2))";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
-        Assert.Equal(2, query.GetParameterValue<int>("@Parameter_p2"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(2, query.GetParameterValue<int>("@p2_2"));
     }
 
     [Fact]
     public void ColumnEqualsColumnTest()
     {
-        ColumnEqualsColumn<ColumnIdentifiers, ColumnIdentifiers> columns = new (nameof(ColumnIdentifiers.IdentifierOverrideName), nameof(ColumnIdentifiers.ColumnName));
+        ColumnEqualsColumn<ColumnIdentifiers, ColumnIdentifiers> columns = new(nameof(ColumnIdentifiers.IdentifierOverrideName), nameof(ColumnIdentifiers.ColumnName));
 
         SqlQuery query = _generator.Select(null, null, columns, null, null);
         string expectedSql =
@@ -247,17 +249,17 @@ public class ParameterAndColumnIdentifierTests
     public void ColumnTest()
     {
         Column<ColumnIdentifiers> identifierOverrideColumn = new(nameof(ColumnIdentifiers.IdentifierOverrideName));
-        Parameter parameter =new(new ParameterTag(null, "p1", null, SqlTypeDefinition.AsInt()), 1);
+        Parameter parameter = new(new ParameterTag("@p1", SqlTypeDefinition.AsInt()), 1);
         Equal equal = new(identifierOverrideColumn, parameter);
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[IdentifierOverride] = @Parameter_p1)";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[IdentifierOverride] = @p1_1)";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -266,11 +268,11 @@ public class ParameterAndColumnIdentifierTests
         ColumnValue<ColumnIdentifiers> whereIdEquals = new(nameof(ColumnIdentifiers.Id), 1);
         SqlQuery query = _generator.Delete(null, whereIdEquals);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Id] = @Parameter_IdParameter)";
+        string expected = "DELETE FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Id] = @IdParameter_1)";
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_IdParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("@IdParameter_1"));
     }
 
     [Fact]
@@ -278,15 +280,15 @@ public class ParameterAndColumnIdentifierTests
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
         Parameter parameter = new("p1", 1, null);
-        Contains<ColumnIdentifiers> contains = new (column, parameter);
+        Contains<ColumnIdentifiers> contains = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, contains, null, null);
-        string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE CONTAINS([ColumnIdentifiers].[Identifier], @Parameter_p1)";
+        string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE CONTAINS([ColumnIdentifiers].[Identifier], @p1_1)";
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -298,12 +300,12 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] = @Parameter_p1)";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] = @p1_1)";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -315,12 +317,12 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] >= @Parameter_p1)";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] >= @p1_1)";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -332,12 +334,12 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] > @Parameter_p1)";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] > @p1_1)";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -370,7 +372,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(0, query.GetParameterCount());
     }
 
-    
+
 
     [Fact]
     public void LessThanEqualsTest()
@@ -381,12 +383,12 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <= @Parameter_p1)";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <= @p1_1)";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -398,12 +400,12 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] < @Parameter_p1)";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] < @p1_1)";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -415,12 +417,12 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <> @Parameter_p1)";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE ([ColumnIdentifiers].[Identifier] <> @p1_1)";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
     }
 
     [Fact]
@@ -451,13 +453,13 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, or, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) OR ([ColumnIdentifiers].[Column] = @Parameter_p2))";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @p1_1) OR ([ColumnIdentifiers].[Column] = @p2_2))";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
-        Assert.Equal(2, query.GetParameterValue<int>("@Parameter_p2"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(2, query.GetParameterValue<int>("@p2_2"));
     }
 
     [Fact]
@@ -473,30 +475,30 @@ public class ParameterAndColumnIdentifierTests
 
         SqlQuery query = _generator.Select(null, null, xor, null, null);
         string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @Parameter_p1) ^ ([ColumnIdentifiers].[Column] = @Parameter_p2))";
+            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (([ColumnIdentifiers].[Identifier] = @p1_1) ^ ([ColumnIdentifiers].[Column] = @p2_2))";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@Parameter_p1"));
-        Assert.Equal(2, query.GetParameterValue<int>("@Parameter_p2"));
+        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(2, query.GetParameterValue<int>("@p2_2"));
     }
 
-    [Fact] 
+    [Fact]
     public void ProcedureTest()
     {
         //Note: The context that determines if it is a procedure or a table is the generator function used.
         SqlQuery query = _generator.Procedure(_entity);
 
         string expectedSql = "[ColumnIdentifiers]";
-        string actualSql = query.QueryText; 
+        string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(5, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("IdParameter"));
-        Assert.Equal(2, query.GetParameterValue<int>("PropertyParameter"));
-        Assert.Equal(3, query.GetParameterValue<int>("ColumnParameter"));
-        Assert.Equal(4, query.GetParameterValue<int>("IdentifierParameter"));
-        Assert.Equal(5, query.GetParameterValue<int>("IdentifierOverrideParameter"));
+        Assert.Equal(1, query.GetParameterValue<int>("@IdParameter_1"));
+        Assert.Equal(2, query.GetParameterValue<int>("@PropertyParameter_2"));
+        Assert.Equal(3, query.GetParameterValue<int>("@ColumnParameter_3"));
+        Assert.Equal(4, query.GetParameterValue<int>("@IdentifierParameter_4"));
+        Assert.Equal(5, query.GetParameterValue<int>("@IdentifierOverrideParameter_5"));
     }
 }

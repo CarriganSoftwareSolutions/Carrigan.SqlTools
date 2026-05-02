@@ -224,7 +224,7 @@ public partial class SqlGenerator<T>
             queryFragments = queryFragments.Concat(joins.ToSqlFragments());
 
         if (predicates is not null)
-            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicates.ToSqlFragments("Parameter"));
+            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicates.ToSqlFragments());
 
         if (orderBy.IsNotNullOrEmpty())
             queryFragments = queryFragments.Append(new SqlFragmentText($" {orderBy.AsOrderBy().ToSql()}"));
@@ -233,7 +233,7 @@ public partial class SqlGenerator<T>
         if (offsetNext is not null)
             queryFragments = queryFragments.Append(new SqlFragmentText($" {offsetNext.ToSql()}"));
 
-        return queryFragments.ToSqlQuery();
+        return queryFragments.ToSqlQuery(Dialect);
     }
 
     /// <summary>

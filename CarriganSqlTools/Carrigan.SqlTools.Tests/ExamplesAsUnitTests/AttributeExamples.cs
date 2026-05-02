@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
+
 public class AttributeExamples
 {
     [Fact]
@@ -37,19 +38,19 @@ public class AttributeExamples
         };
         SqlQuery query = emailGenerator.UpdateById(email);
 
-        string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId, [Email] = @Email WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(10, query.GetParameterValue<int>("Id"));
-        Assert.Equal(313, query.GetParameterValue<int>("CustomerId"));
-        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("Email"));
+        Assert.Equal(10, query.GetParameterValue<int>("@Id_3"));
+        Assert.Equal(313, query.GetParameterValue<int>("@CustomerId_1"));
+        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("@Email_2"));
     }
 
     [Fact]
     // Yes this is the exact same test as the one above, deal with it.
     public void PrimaryKeyAttributeExample()
-    { 
+    {
         SqlGenerator<EmailModel> emailGenerator = new();
         EmailModel email = new()
         {
@@ -59,12 +60,12 @@ public class AttributeExamples
         };
         SqlQuery query = emailGenerator.UpdateById(email);
 
-        string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId, [Email] = @Email WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(10, query.GetParameterValue<int>("Id"));
-        Assert.Equal(313, query.GetParameterValue<int>("CustomerId"));
-        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("Email"));
+        Assert.Equal(10, query.GetParameterValue<int>("@Id_3"));
+        Assert.Equal(313, query.GetParameterValue<int>("@CustomerId_1"));
+        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("@Email_2"));
     }
 }

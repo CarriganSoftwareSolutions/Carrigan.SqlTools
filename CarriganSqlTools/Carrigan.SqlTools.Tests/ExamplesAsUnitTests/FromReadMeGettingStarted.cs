@@ -39,7 +39,7 @@ public class FromReadMeGettingStarted
         Customer entity = new() { Id = 42 };
         SqlQuery query = customerGenerator.SelectById(entity);
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)", query.QueryText);
+        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Id_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
         Assert.Equal(42, (int)query.Parameters.Single().Value);
@@ -48,67 +48,67 @@ public class FromReadMeGettingStarted
     [Fact]
     public void Insert()
     {
-        Customer entity = new() 
-        { 
-            Id = 42, 
-            Name = "Hank", 
-            Email = "Hank@example.com", 
-            Phone = "+1(555)555-5555" 
+        Customer entity = new()
+        {
+            Id = 42,
+            Name = "Hank",
+            Email = "Hank@example.com",
+            Phone = "+1(555)555-5555"
         };
         SqlQuery query = customerGenerator.Insert(null, null, entity);
 
-        Assert.Equal("INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) VALUES (@Id, @Name, @Email, @Phone);", query.QueryText);
+        Assert.Equal("INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) VALUES (@Id_1, @Name_2, @Email_3, @Phone_4);", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(4, query.Parameters.Count);
 
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "Id").Single().Value);
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "Name").Single().Value);
-        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "Email").Single().Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "Phone").Single().Value);
+        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
+        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_2").Single().Value);
+        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_3").Single().Value);
+        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "@Phone_4").Single().Value);
     }
 
     [Fact]
     public void InsertWithAutoId()
     {
-        Customer entity = new() 
-        { 
-            Name = "Hank", 
+        Customer entity = new()
+        {
+            Name = "Hank",
             Email = "Hank@example.com",
-            Phone= "+1(555)555-5555" 
+            Phone = "+1(555)555-5555"
         };
         SqlQuery query = customerGenerator.InsertAutoId(entity);
 
-        string expectedQueryText = ModifyInsertQueryWithReturn("INSERT INTO [Customer] ([Name], [Email], [Phone])","VALUES (@Name, @Email, @Phone);", "INT");
+        string expectedQueryText = ModifyInsertQueryWithReturn("INSERT INTO [Customer] ([Name], [Email], [Phone])", "VALUES (@Name_1, @Email_2, @Phone_3);", "INT");
 
         Assert.Equal(expectedQueryText, query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(3, query.Parameters.Count);
 
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "Name").Single().Value);
-        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "Email").Single().Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "Phone").Single().Value);
+        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_1").Single().Value);
+        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_2").Single().Value);
+        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "@Phone_3").Single().Value);
     }
 
     [Fact]
     public void UpdateById()
     {
-        Customer entity = new() 
-        { 
-            Id = 42, 
-            Name = "Hank", 
+        Customer entity = new()
+        {
+            Id = 42,
+            Name = "Hank",
             Email = "Hank@example.com",
             Phone = "+1(555)555-5555"
         };
         SqlQuery query = customerGenerator.UpdateById(entity);
 
-        Assert.Equal("UPDATE [Customer] SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone WHERE [Id] = @Id;", query.QueryText);
+        Assert.Equal("UPDATE [Customer] SET [Name] = @Name_1, [Email] = @Email_2, [Phone] = @Phone_3 WHERE [Id] = @Id_4;", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(4, query.Parameters.Count);
 
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "Id").Single().Value);
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "Name").Single().Value);
-        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "Email").Single().Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "Phone").Single().Value);
+        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_4").Single().Value);
+        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_1").Single().Value);
+        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_2").Single().Value);
+        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "@Phone_3").Single().Value);
     }
 
     [Fact]
@@ -119,12 +119,12 @@ public class FromReadMeGettingStarted
         Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
         SqlQuery query = customerGenerator.UpdateById(entity, columns);
 
-        Assert.Equal("UPDATE [Customer] SET [Email] = @Email WHERE [Id] = @Id;", query.QueryText);
+        Assert.Equal("UPDATE [Customer] SET [Email] = @Email_1 WHERE [Id] = @Id_2;", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.Parameters.Count);
 
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "Id").Single().Value);
-        Assert.Equal("Hank@example.gov", (string)query.Parameters.Where(param => param.Key == "Email").Single().Value);
+        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_2").Single().Value);
+        Assert.Equal("Hank@example.gov", (string)query.Parameters.Where(param => param.Key == "@Email_1").Single().Value);
     }
 
     [Fact]
@@ -133,10 +133,10 @@ public class FromReadMeGettingStarted
         Customer entity = new() { Id = 42 };
         SqlQuery query = customerGenerator.Delete(entity);
 
-        Assert.Equal("DELETE FROM [Customer] WHERE [Id] = @Id;", query.QueryText);
+        Assert.Equal("DELETE FROM [Customer] WHERE [Id] = @Id_1;", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "Id").Single().Value);
+        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
     }
 
     [Fact]
@@ -145,11 +145,11 @@ public class FromReadMeGettingStarted
         Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
         SqlQuery query = customerGenerator.DeleteById(entities);
 
-        Assert.Equal("DELETE FROM [Customer] WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))", query.QueryText);
+        Assert.Equal("DELETE FROM [Customer] WHERE (([Customer].[Id] = @Id_1) OR ([Customer].[Id] = @Id_2))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.Parameters.Count);
 
-        Assert.Equal(1, (int)query.Parameters.Where(param => param.Key == "@Parameter_0_R_Id").Single().Value);
-        Assert.Equal(2, (int)query.Parameters.Where(param => param.Key == "@Parameter_1_R_Id").Single().Value);
+        Assert.Equal(1, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
+        Assert.Equal(2, (int)query.Parameters.Where(param => param.Key == "@Id_2").Single().Value);
     }
 }

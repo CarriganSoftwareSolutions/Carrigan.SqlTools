@@ -32,7 +32,7 @@ public partial class SqlGenerator<T>
     /// <exception cref="NullReferenceException">
     /// Thrown if a mapped column lacks a <see cref="ParameterTag"/> during parameter generation.
     /// This can surface indirectly from
-    /// <see cref="GetSqlParameter(ReflectorCache.ColumnInfo, T, int?, string?)"/>.
+    /// <see cref="GetSqlParameter(ReflectorCache.ColumnInfo, T)"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     /// Thrown when one or more procedure parameters resolve to the same <see cref="ParameterTag"/>,
@@ -61,7 +61,7 @@ public partial class SqlGenerator<T>
 
         return new SqlQuery()
         {
-            Parameters = parameters.GetParameters(),
+            Parameters = parameters.GetParameters(Dialect),
             QueryText = ProcedureTag,
             CommandType = CommandType.StoredProcedure
         };

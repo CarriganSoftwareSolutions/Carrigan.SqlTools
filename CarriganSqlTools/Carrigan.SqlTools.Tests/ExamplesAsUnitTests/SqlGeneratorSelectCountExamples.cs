@@ -6,6 +6,7 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
+
 public class SqlGeneratorSelectCountExamples
 {
     private static readonly SqlGenerator<Order> orderGenerator = new();
@@ -31,10 +32,10 @@ public class SqlGeneratorSelectCountExamples
 
         SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
 
-        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
+        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
+        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
     }
 
     [Fact]
@@ -51,10 +52,10 @@ public class SqlGeneratorSelectCountExamples
 
         SqlQuery query = orderGenerator.SelectCount(null, joins, greaterThan);
 
-        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
+        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
+        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
     }
 
     [Fact]

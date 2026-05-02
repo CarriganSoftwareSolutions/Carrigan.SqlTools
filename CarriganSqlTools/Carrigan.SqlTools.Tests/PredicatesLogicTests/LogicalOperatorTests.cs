@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
@@ -13,17 +14,17 @@ public class LogicalOperatorTests
     }
 
     [Fact]
-    public void LogicalOperator_OperatorNull_ThrowsArgumentNullException() => 
+    public void LogicalOperator_OperatorNull_ThrowsArgumentNullException() =>
         _ = Assert.Throws<ArgumentNullException>(() =>
             new TestLogicalOperator(null!, [new Parameter("P1", 1, null)]));
 
     [Fact]
-    public void LogicalOperator_OperatorWhitespace_ThrowsArgumentException() => 
+    public void LogicalOperator_OperatorWhitespace_ThrowsArgumentException() =>
         _ = Assert.Throws<ArgumentException>(() =>
             new TestLogicalOperator(" ", [new Parameter("P1", 1, null)]));
 
     [Fact]
-    public void LogicalOperator_EmptyPredicates_ThrowsArgumentNullException() =>  
+    public void LogicalOperator_EmptyPredicates_ThrowsArgumentNullException() =>
         _ = Assert.Throws<ArgumentException>(() =>
             new TestLogicalOperator("AND", []));
 
@@ -35,8 +36,8 @@ public class LogicalOperatorTests
             new Parameter("P1", 1, null),
         ]);
 
-        string expected = "@Parameter_P1";
-        string actual = op.ToSqlFragments("Parameter").ToSql();
+        string expected = "@P1_1";
+        string actual = op.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expected, actual);
     }
@@ -50,8 +51,8 @@ public class LogicalOperatorTests
             new Parameter("P2", 2, null),
         ]);
 
-        string expected = "(@Parameter_P1 AND @Parameter_P2)";
-        string actual = op.ToSqlFragments("Parameter").ToSql();
+        string expected = "(@P1_1 AND @P2_2)";
+        string actual = op.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expected, actual);
     }

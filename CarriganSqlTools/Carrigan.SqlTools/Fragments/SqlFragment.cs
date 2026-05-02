@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -12,9 +13,6 @@ namespace Carrigan.SqlTools.Fragments;
 /// <item><description><see cref="SqlFragmentParameter"/> for parameter references.</description></item>
 /// </list>
 /// <para>
-/// <see cref="ToString"/> is intentionally implemented as an alias for <see cref="ToSql"/> so fragments can be
-/// easily written into logs, debuggers, and interpolated strings.
-/// </para>
 /// </remarks>
 public abstract class SqlFragment
 {
@@ -25,21 +23,10 @@ public abstract class SqlFragment
     internal abstract string ToSql();
 
     /// <summary>
-    /// Returns the SQL representation of this fragment.
-    /// </summary>
-    /// <returns>The SQL text for this fragment.</returns>
-    /// <remarks>
-    /// Any exception thrown by <see cref="ToSql"/> will be propagated to the caller.
-    /// </remarks>
-    public override string ToString() =>
-        ToSql();
-
-    /// <summary>
     /// Gets the parameters that are referenced by this fragment.
     /// </summary>
     /// <returns>An enumerable collection of <see cref="Parameter"/> objects referenced by this fragment.</returns>
     internal abstract IEnumerable<Parameter> GetParameters();
-
 
     /// <summary>
     /// Returns an enumerable sequence containing the specified SQL fragments in order.
@@ -70,8 +57,21 @@ public abstract class SqlFragment
         }
     }
 
+    /// <summary>
+    /// Returns an enumerable sequence containing only this SQL fragment.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{SqlFragment}"/> containing only this fragment.</returns>
     internal IEnumerable<SqlFragment> AsEnumerable()
     {
         yield return this;
     }
+
+    /// <summary>
+    /// Returns a flattened sequence of all child SQL fragments contained within this fragment.
+    /// </summary>
+    /// <remarks>Use this method to enumerate all nested SQL fragments in a single, flat sequence, regardless
+    /// of their original hierarchical structure.</remarks>
+    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects representing the flattened structure of this
+    /// fragment. The collection may be empty if there are no child fragments.</returns>
+    internal abstract IEnumerable<SqlFragment> Flaten();
 }

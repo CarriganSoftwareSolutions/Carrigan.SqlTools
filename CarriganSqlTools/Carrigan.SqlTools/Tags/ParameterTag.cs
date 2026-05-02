@@ -11,7 +11,6 @@ using System.Xml;
 using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Tags;
-
 /// <summary>
 /// Represents a SQL parameter identifier, or “tag,” used in query generation.
 /// A parameter tag can optionally include a prefix and/or an index, and is rendered
@@ -58,17 +57,7 @@ public class ParameterTag : StringWrapper
     /// <summary>
     /// The base (core) parameter name. This value must not be <c>null</c>, empty, or whitespace.
     /// </summary>
-    private readonly string _parameterBaseName;
-
-    /// <summary>
-    /// Optional prefix to prepend to the parameter name.
-    /// </summary>
-    private readonly string? _prefix;
-
-    /// <summary>
-    /// Optional index to append to the parameter name.
-    /// </summary>
-    private readonly string? _index;
+    internal readonly string BaseName;
 
     /// <summary>
     /// Represents the SQL type definition associated with this parameter, when known.
@@ -83,23 +72,20 @@ public class ParameterTag : StringWrapper
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterTag"/> class.
     /// </summary>
-    /// <param name="prefix">An optional prefix to prepend to the parameter name.</param>
-    /// <param name="parameterName">The base parameter name. Must not be <c>null</c>, empty, or whitespace.</param>
-    /// <param name="index">An optional index to append to the parameter name.</param>
+    /// <param name="baseName">The base parameter name. Must not be <c>null</c>, empty, or whitespace.</param>
     /// <param name="sqlType">The optional SQL type definition associated with this parameter.</param>
+    /// 
+    /// 
     /// <exception cref="InvalidParameterIdentifierException">
-    /// Thrown when <paramref name="parameterName"/> or the combined result is invalid per SQL identifier rules.
+    /// Thrown when <paramref name="baseName"/> or the combined result is invalid per SQL identifier rules.
     /// </exception>
-    internal ParameterTag(string? prefix, string parameterName, string? index, SqlTypeDefinition? sqlType) :
-        base(CreateParameterTagString(prefix, parameterName, index), StringComparison.OrdinalIgnoreCase)
+    internal ParameterTag(string baseName, SqlTypeDefinition? sqlType) :
+        base(baseName, StringComparison.OrdinalIgnoreCase)
     {
-        //TODO: Determine if these sql pattern checks are redundant
-        if (SqlParameterPattern.Fails(parameterName))
-            throw new InvalidParameterIdentifierException(parameterName);
+        if (SqlParameterPattern.Fails(baseName))
+            throw new InvalidParameterIdentifierException(baseName);
 
-        _parameterBaseName = parameterName;
-        _prefix = prefix;
-        _index = index;
+        BaseName = baseName;
         SqlType = sqlType;
 
         if (SqlParameterPattern.Fails(ToString()))
@@ -110,73 +96,8 @@ public class ParameterTag : StringWrapper
     /// Deeper copy constructor for the parameter tag.
     /// </summary>
     /// <param name="parameter">The parameter tag to clone.</param>
-    internal ParameterTag(ParameterTag parameter, object? value) :
-        base(CreateParameterTagString(parameter._prefix, parameter._parameterBaseName, parameter._index), StringComparison.OrdinalIgnoreCase)
+    internal ParameterTag(ParameterTag parameter, object? value)
+        : this(parameter?.BaseName ?? throw new InvalidParameterIdentifierException("null"), parameter.SqlType ?? new SqlTypeDefinition(value))
     {
-        _parameterBaseName = parameter._parameterBaseName;
-        _prefix = parameter._prefix;
-        _index = parameter._index;
-        SqlType = parameter.SqlType ?? new(value);
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="ParameterTag"/> with text prepended to the existing prefix (if any).
-    /// </summary>
-    /// <param name="textToPrepend">
-    /// The text to prepend to the current prefix. If the existing prefix is empty, this becomes the new prefix.
-    /// </param>
-    /// <returns>A new <see cref="ParameterTag"/> with the updated prefix.</returns>
-    internal ParameterTag PrefixPrepend(string? textToPrepend)
-    {
-        if (_prefix.IsNullOrWhiteSpace())
-            return new(textToPrepend, _parameterBaseName, _index, SqlType);
-        else
-            return new($"{textToPrepend}_{_prefix}", _parameterBaseName, _index, SqlType);
-        }
-
-    /// <summary>
-    /// Creates a new <see cref="ParameterTag"/> with the specified index appended.
-    /// </summary>
-    /// <param name="newIndex">The index value to append. If <c>null</c> or whitespace, no index is appended.</param>
-    /// <returns>A new <see cref="ParameterTag"/> that includes the specified index.</returns>
-    /// <exception cref="ArgumentException">Thrown if an index has already been defined on this instance.</exception>
-    internal ParameterTag AddIndex(string? newIndex)
-    {
-        if (_index.IsNullOrWhiteSpace())
-            return new(_prefix, _parameterBaseName, newIndex, SqlType);
-        else
-            throw new ArgumentException("Index was already defined on the Parameter", nameof(newIndex));
-    }
-
-    /// <summary>
-    /// Creates the parameter tag string by combining the prefix, parameter name, and index with underscores.
-    /// </summary>
-    /// <param name="prefix">The prefix to prepend to the parameter name.</param>
-    /// <param name="parameterName">The base name of the parameter.</param>
-    /// <param name="index">The index to append to the parameter name.</param>
-    /// <returns>The constructed parameter tag string.</returns>
-    /// <exception cref="InvalidParameterIdentifierException"></exception>
-    private static string CreateParameterTagString(string? prefix, string parameterName, string? index)
-    {
-        if (SqlParameterPattern.Fails(parameterName))
-            throw new InvalidParameterIdentifierException(parameterName);
-
-        IEnumerable<string?> parts =
-        [
-            prefix,
-            parameterName,
-            index
-        ];
-
-        IEnumerable<string?> nonEmptyParts =
-            parts.Where(static part => part.IsNotNullOrWhiteSpace());
-
-        string parameterTag =
-            string.Join('_', nonEmptyParts);
-
-        if (SqlParameterPattern.Fails(parameterTag))
-            throw new InvalidParameterIdentifierException(parameterTag);
-
-        return parameterTag;
     }
 }

@@ -65,26 +65,26 @@ public class FromReadMeMoreComplexExamples
 
         SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
-        Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);
+        Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Parameter_Email").Single().Value);
+        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_1").Single().Value);
     }
 
-    [Fact] 
+    [Fact]
     public void SelectCountWithWhere()
     {
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        Column<Order> totalCol = new (nameof(Order.Total));
-        Parameter minTotal = new ("Total", 500m);
-        GreaterThan greaterThan = new (totalCol, minTotal);
+        Column<Order> totalCol = new(nameof(Order.Total));
+        Parameter minTotal = new("Total", 500m);
+        GreaterThan greaterThan = new(totalCol, minTotal);
 
         SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
 
-        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] WHERE ([Order].[Total] > @Parameter_Total)", query.QueryText);
+        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Parameter_Total").Single().Value);
+        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class FromReadMeMoreComplexExamples
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
 
-        Order entity = new () { Id = 10, Total = 123.45m };
+        Order entity = new() { Id = 10, Total = 123.45m };
 
         ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
 
@@ -107,11 +107,11 @@ public class FromReadMeMoreComplexExamples
         SqlQuery query = orderGenerator.Update(entity, columnCollection, join, customerEmailEquals);
 
 
-        Assert.Equal("UPDATE [Order] SET [Order].[Total] = @ParameterSet_Total FROM [Order] INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);
+        Assert.Equal("UPDATE [Order] SET [Order].[Total] = @Total_1 FROM [Order] INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Customer].[Email] = @Email_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.Parameters.Count);
 
-        Assert.Equal(123.45m, (decimal)query.Parameters.Where(param => param.Key == "@ParameterSet_Total").Single().Value);
-        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Parameter_Email").Single().Value);
+        Assert.Equal(123.45m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
+        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_2").Single().Value);
     }
 }

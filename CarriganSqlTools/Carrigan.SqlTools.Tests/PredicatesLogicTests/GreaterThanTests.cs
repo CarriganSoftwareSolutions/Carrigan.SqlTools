@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -6,49 +7,49 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class GreaterThanTests
 {
-    private readonly PredicatesLogic.Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
+    private readonly Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly PredicatesLogic.Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
+    private readonly Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly PredicatesLogic.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
+    private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f);
-    private readonly string ParameterPiSql = "@Parameter_Pi";
+    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f);
+    private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337);
-    private readonly string ParameterEliteSql = "@Parameter_Elite";
+    private readonly Predicates ParameterElite = new Parameter("Elite", 1337);
+    private readonly string ParameterEliteSql = "@Elite_1";
 
-    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
-    private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
+    private readonly Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
+    private readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 
     [Fact]
     public void GreaterThan_1_ToSql()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        Predicates left = ColumnTastyPizza;
         string leftSql = ColumnTastyPizzaExpectedSql;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        Predicates right = ColumnDestructCode;
         string rightSql = ColumnDestructCodeSql;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         string expectedValue = $"({leftSql} > {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
     [Fact]
     public void GreaterThan_1_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        Predicates left = ColumnTastyPizza;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        Predicates right = ColumnDestructCode;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValue = 0;
         int actualValue = predicate.DescendantParameters.Count();
@@ -59,16 +60,16 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_2_ToSql()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        Predicates left = ColumnFutureCity;
         string leftSql = ColumnFutureCitySql;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        Predicates right = ParameterPi;
         string rightSql = ParameterPiSql;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         string expectedValue = $"({leftSql} > {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -76,11 +77,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_2_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        Predicates left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        Predicates right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValue = 1;
         int actualValue = predicate.DescendantParameters.Count();
@@ -91,11 +92,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_2_ParameterValues()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        Predicates left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        Predicates right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         float expectedValue = 3.14f;
         object? nullableActualValueFloat = predicate.DescendantParameters.First().Value;
@@ -108,16 +109,16 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_3_ToSql()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        PredicatesLogic.Predicates right = ParameterHelloWorld;
+        Predicates right = ParameterHelloWorld;
         string rightSql = ParameterHelloWorldSql;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         string expectedValue = $"({leftSql} > {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -125,11 +126,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_3_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
 
-        PredicatesLogic.Predicates right = ParameterHelloWorld;
+        Predicates right = ParameterHelloWorld;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValueInt = 1337; object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
@@ -144,16 +145,16 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_Nested_ToSql()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
         string rightSql = $"({ParameterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         string expectedValue = $"({leftSql} > {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -161,11 +162,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_Nested_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValue = 2;
         int actualValue = predicate.DescendantParameters.Count();
@@ -176,13 +177,13 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_Nested_ParameterValue()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
-        int expectedValueInt = 1337; 
+        int expectedValueInt = 1337;
         object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
@@ -196,11 +197,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_1_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        Predicates left = ColumnTastyPizza;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        Predicates right = ColumnDestructCode;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValue = 2;
         int actualValue = predicate.DescendantColumns.Count();
@@ -211,11 +212,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_1_ColumnName()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        Predicates left = ColumnTastyPizza;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        Predicates right = ColumnDestructCode;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
@@ -224,11 +225,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_2_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        Predicates left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        Predicates right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValue = 1;
         int actualValue = predicate.DescendantColumns.Count();
@@ -239,11 +240,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_2_ColumnName()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        Predicates left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        Predicates right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
     }
@@ -251,11 +252,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_3_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        Predicates right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValue = 0;
         int actualValue = predicate.DescendantColumns.Count();
@@ -266,11 +267,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_Nested_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         int expectedValue = 2;
         int actualValue = predicate.DescendantColumns.Count();
@@ -281,11 +282,11 @@ public class GreaterThanTests
     [Fact]
     public void GreaterThan_Nested_ColumnName()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        Predicates left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
 
-        PredicatesLogic.Predicates predicate = new GreaterThan(left, right);
+        Predicates predicate = new GreaterThan(left, right);
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();

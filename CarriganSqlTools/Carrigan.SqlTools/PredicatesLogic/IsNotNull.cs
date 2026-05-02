@@ -69,15 +69,11 @@ public class IsNotNull : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    internal override IEnumerable<SqlFragment> ToSqlFragments()
     {
-        ArgumentNullException.ThrowIfNull(prefix, nameof(prefix));
-        ArgumentNullException.ThrowIfNull(branchName, nameof(branchName));
-        ArgumentNullException.ThrowIfNull(duplicates, nameof(duplicates));
-
         yield return new SqlFragmentText("(");
 
-        foreach (SqlFragment fragment in _someValue.ToSql(prefix, branchName, duplicates))
+        foreach (SqlFragment fragment in _someValue.ToSqlFragments())
             yield return fragment;
 
         yield return new SqlFragmentText(" IS NOT NULL)");

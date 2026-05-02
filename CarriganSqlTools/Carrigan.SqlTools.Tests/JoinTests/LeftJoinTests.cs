@@ -15,7 +15,7 @@ public class LeftJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinRightTable> join = new(id);
 
-        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments().ToSql();
+        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments().ToSql(new SqlServerDialect());
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -27,7 +27,7 @@ public class LeftJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinRightTable> join = new(id);
 
-        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments().ToSql();
+        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments().ToSql(new SqlServerDialect());
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -38,7 +38,7 @@ public class LeftJoinTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(id).ToSqlFragments().ToSql();
+        string actual = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(id).ToSqlFragments().ToSql(new SqlServerDialect());
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -68,7 +68,7 @@ public class LeftJoinTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments().ToSql();
+        string actual = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments().ToSql(new SqlServerDialect());
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -80,6 +80,6 @@ public class LeftJoinTest
         Predicates id = new EmptyPredicate();
         LeftJoin<JoinRightTable> join = new(id);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments("Join").ToSql());
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments("Join").ToSql(new SqlServerDialect()));
     }
 }

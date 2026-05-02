@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
@@ -8,11 +9,11 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 public class OrTests
 {
     [Fact]
-    public void Or_Empty_ToSql() => 
+    public void Or_Empty_ToSql() =>
         Assert.Throws<ArgumentException>(() => new Or([]));
 
     [Fact]
-    public void Or_null_ToSql() => 
+    public void Or_null_ToSql() =>
         Assert.Throws<ArgumentNullException>(() => new Or(null!));
 
     [Fact]
@@ -23,8 +24,8 @@ public class OrTests
                 new Parameter("P1", 1, SqlTypeDefinition.AsInt()),
         ]);
 
-        string expected = $"@Parameter_P1";
-        string actual = and.ToSqlFragments("Parameter").ToSql();
+        string expected = $"@P1_1";
+        string actual = and.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expected, actual);
     }
@@ -46,8 +47,8 @@ public class OrTests
             ])
         ]);
 
-        string expected = $"(@Parameter_P1 OR @Parameter_P2 OR [ColumnTable].[Col1] OR [ColumnTable].[Col2] OR ([ColumnTable].[ColA] AND [ColumnTable].[ColB] AND @Parameter_PA))";
-        string actual = or.ToSqlFragments("Parameter").ToSql();
+        string expected = $"(@P1_1 OR @P2_2 OR [ColumnTable].[Col1] OR [ColumnTable].[Col2] OR ([ColumnTable].[ColA] AND [ColumnTable].[ColB] AND @PA_3))";
+        string actual = or.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expected, actual);
 
@@ -94,7 +95,7 @@ public class OrTests
         ]);
 
 
-        Parameter p = or.DescendantParameters.Where(p => p.Name == "P1").Single(); 
+        Parameter p = or.DescendantParameters.Where(p => p.Name == "P1").Single();
         object? nullableActual = p.Value;
         Assert.NotNull(nullableActual);
         int actual = (int)nullableActual;

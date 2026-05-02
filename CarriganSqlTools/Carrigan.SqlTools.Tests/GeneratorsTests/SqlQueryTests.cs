@@ -32,8 +32,8 @@ public sealed class SqlQueryTests
     {
         Dictionary<ParameterTag, object> parameters = new()
         {
-            [new ParameterTag(null, "@p1", null, SqlTypeDefinition.AsInt())] = 1,
-            [new ParameterTag(null, "@p2", null, SqlTypeDefinition.AsInt())] = 2
+            [new ParameterTag("@p1", SqlTypeDefinition.AsInt())] = 1,
+            [new ParameterTag("@p2", SqlTypeDefinition.AsInt())] = 2
         };
 
         SqlQuery query = new("SELECT @p1, @p2;", parameters);
@@ -46,7 +46,7 @@ public sealed class SqlQueryTests
     {
         Dictionary<ParameterTag, object> parameters = new()
         {
-            [new ParameterTag(null, "@p1", null, SqlTypeDefinition.AsInt())] = 123
+            [new ParameterTag("@p1", SqlTypeDefinition.AsInt())] = 123
         };
 
         SqlQuery query = new("SELECT @p1;", parameters);

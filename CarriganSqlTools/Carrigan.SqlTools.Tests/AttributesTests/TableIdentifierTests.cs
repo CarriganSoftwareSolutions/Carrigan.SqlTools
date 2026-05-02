@@ -3,7 +3,8 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
-public  class TableIdentifierTests
+
+public class TableIdentifierTests
 {
     private static readonly SqlGenerator<EntityName> _entityNameSqlGenerator = new();
     private static readonly SqlGenerator<IdentifierName> _identifierNameSqlGenerator = new();
@@ -83,7 +84,7 @@ public  class TableIdentifierTests
     [Fact]
     public void ProcedureTest()
     {
-        IdentifierNameSchema identifierNameSchema = new ()
+        IdentifierNameSchema identifierNameSchema = new()
         {
             Text = "Test",
             Id = guid
@@ -97,14 +98,14 @@ public  class TableIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal("Test", query.GetParameterValue<string>("Text"));
-        Assert.Equal(guid, query.GetParameterValue<Guid>("Id"));
+        Assert.Equal("Test", query.GetParameterValue<string>("@Text_2"));
+        Assert.Equal(guid, query.GetParameterValue<Guid>("@Id_1"));
     }
 
     [Fact]
     public void ProcedureTestWithJustTableAttribute()
     {
-        TableNameSchema entity = new ()
+        TableNameSchema entity = new()
         {
             Text = "Test",
             Id = guid
@@ -120,7 +121,7 @@ public  class TableIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal("Test", query.GetParameterValue<string>("Text"));
-        Assert.Equal(guid, query.GetParameterValue<Guid>("Id"));
+        Assert.Equal("Test", query.GetParameterValue<string>("@Text_2"));
+        Assert.Equal(guid, query.GetParameterValue<Guid>("@Id_1"));
     }
 }

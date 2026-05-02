@@ -130,9 +130,9 @@ public class ColumnValue<T> : Predicates
     /// <returns>
     /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
     /// </returns>
-    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    internal override IEnumerable<SqlFragment> ToSqlFragments()
     {
-        foreach (SqlFragment fragment in value.ToSql(prefix, branchName, duplicates))
+        foreach (SqlFragment fragment in value.ToSqlFragments())
             yield return fragment;
     }
 }

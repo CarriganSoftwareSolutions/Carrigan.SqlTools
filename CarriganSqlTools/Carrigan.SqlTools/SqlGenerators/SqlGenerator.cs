@@ -199,8 +199,8 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// </summary>
     /// <param name="column">The <see cref="ColumnInfo"/> describing the target column. Must not be <c>null</c> and must expose a <see cref="ParameterTag"/>; otherwise a <see cref="NullReferenceException"/> is thrown.</param>
     /// <param name="entity">The entity instance that supplies the value for the column. Must not be <c>null</c>.</param>
-    /// <param name="entityIndex">Optional zero-based index appended to the parameter name when batching multiple entities. Pass <c>null</c> to omit an index.</param>
-    /// <param name="parameterPrepend">Optional prefix to prepend to the parameter name before any index is added. Use to scope or avoid name collisions; if the resulting identifier is invalid an <see cref="InvalidParameterIdentifierException"/> will be thrown.</param>
+    /// 
+    /// 
     /// <returns>
     /// A <see cref="Parameter"/> constructed for the specified column and entity.  
     /// - If the column is the key-version column, the returned <see cref="Parameter"/> contains the encrypter's version.  
@@ -226,7 +226,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="ArgumentException">
     /// Thrown when an index is applied to a parameter that already has an index.
     /// </exception>
-    private Parameter GetSqlParameter(ColumnInfo column, T entity, int? entityIndex = null, string? parameterPrepend = null)
+    private Parameter GetSqlParameter(ColumnInfo column, T entity)
     {
         ArgumentNullException.ThrowIfNull(column);
         ArgumentNullException.ThrowIfNull(entity);
@@ -234,13 +234,11 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         if (column.ParameterTag is null)
             throw new NullReferenceException();
 
-        ParameterTag parameter = column.ParameterTag.PrefixPrepend(parameterPrepend).AddIndex(entityIndex?.ToString() ?? null);
-
         if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
-            return new (parameter, _Encryption.Version);
+            return new (column.ParameterTag, _Encryption.Version);
         else if (_Encryption is not null && IsEncrypted(column))
-            return Parameter.GetParameter(parameter, _Encryption, column, entity);
+            return Parameter.GetParameter(column.ParameterTag, _Encryption, column, entity);
         else
-            return Parameter.GetParameter(parameter, column, entity);
+            return Parameter.GetParameter(column.ParameterTag, column, entity);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -16,13 +17,13 @@ public class XorThanTests
     private static readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
     private static readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f);
-    private static readonly string ParameterPiSql = "@Parameter_Pi";
+    private static readonly string ParameterPiSql = "@Pi_1";
 
     private static readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337);
-    private static readonly string ParameterEliteSql = "@Parameter_Elite";
+    private static readonly string ParameterEliteSql = "@Elite_1";
 
     private static readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
-    private static readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
+    private static readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 
     [Fact]
@@ -37,7 +38,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -68,7 +69,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -117,7 +118,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -154,7 +155,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }

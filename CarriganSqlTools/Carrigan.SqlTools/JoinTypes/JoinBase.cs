@@ -56,30 +56,9 @@ public abstract class JoinBase
     /// </summary>
     /// <param name="branchPrefix"> 
     /// The branch name used when generating predicate SQL and parameter tags via
-    /// <see cref="Predicates.ToSqlFragments(string)"/>.
+    /// <see cref="Predicates.ToSqlFragments()"/>.
     /// </param>
     /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
     internal abstract IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix);
-
-    /// <summary>
-    /// Retrieves all parameters associated with the predicate logic of this join.
-    /// </summary>
-    /// <param name="branchPrefix">
-    /// The branch name used when generating predicate SQL and parameter tags via
-    /// <see cref="Predicates.ToSqlFragments(string)"/>.
-    /// </param>
-    /// <returns>
-    /// A <see cref="Dictionary{TKey, TValue}"/> mapping each <see cref="ParameterTag"/>
-    /// to its corresponding runtime value, for use in parameterized SQL queries.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="branchPrefix"/> is <c>null</c>.
-    /// </exception>
-    internal Dictionary<ParameterTag, object> GetParameters(string branchPrefix)
-    {
-        ArgumentNullException.ThrowIfNull(branchPrefix);
-
-        return _predicates.ToSqlFragments(branchPrefix).GetParameters();
-    }
 }

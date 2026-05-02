@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -38,4 +39,10 @@ public class SqlFragmentText : SqlFragment
     /// <returns>An empty enumerable collection, as this fragment does not contain any parameters.</returns>
     internal override IEnumerable<Parameter> GetParameters() =>
         [];
+
+    /// <summary>
+    /// Returns an enumerable collection containing the current SQL fragment instance.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{SqlFragment}"/> that contains only this instance.</returns>
+    internal override IEnumerable<SqlFragment> Flaten() => [this];
 }

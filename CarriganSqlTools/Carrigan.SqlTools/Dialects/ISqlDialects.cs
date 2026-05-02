@@ -61,14 +61,12 @@ public interface ISqlDialects
     IEnumerable<SqlFragment> GetInsertReturningFragments<T>(IEnumerable<SqlFragment> insertIntoFragments, IEnumerable<SqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo);
 
     /// <summary>
-    /// Generates a parameter string by combining the specified prefix, name, and optional index.
+    /// Generates the final parameter name a dialect specific parameter delimiter, parameter index and base name if applicable in the dialect.
     /// </summary>
-    /// <param name="prefix">An optional string to prepend to the parameter name. May be null or empty if no prefix is required.</param>
-    /// <param name="name">The name of the parameter to render. Cannot be null or empty.</param>
-    /// <param name="index">An optional index to append to the parameter name. May be null or empty if no index is required.</param>
-    /// <returns>A string representing the rendered parameter, including the prefix and index if provided.</returns>
-
-    string RenderParameter(string? prefix, string name, string? index);
+    /// <param name="baseParameterName">The base name to use for the parameter. Cannot be null or empty.</param>
+    /// <param name="parameterIndex">The index to append to the base parameter name. Must be zero or greater.</param>
+    /// <returns>A string representing the final parameter name, formed by combining the base name and the index.</returns>
+    string RenderFinalParameterName(string baseParameterName, int parameterIndex);
     /// <summary>
     /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
     /// </summary>

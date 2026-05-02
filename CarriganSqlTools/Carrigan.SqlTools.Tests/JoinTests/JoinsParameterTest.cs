@@ -5,6 +5,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
+
 public class JoinsParameterTest
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
@@ -21,11 +22,11 @@ public class JoinsParameterTest
 
         SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Joins0Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Joins1Parameter_ZipCode)", query.QueryText);
+        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_1) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Joins0Parameter_Total"));
-        Assert.Equal("37067", query.GetParameterValue<string>("@Joins1Parameter_ZipCode"));
+        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Total_1"));
+        Assert.Equal("37067", query.GetParameterValue<string>("@ZipCode_2"));
     }
 
     [Fact]
@@ -39,11 +40,11 @@ public class JoinsParameterTest
 
         SqlQuery query = customerGenerator.SelectCount(null, new Joins<JoinLeftTable>(join1, join2), null);
 
-        Assert.Equal("SELECT COUNT([Customer].*) FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Joins0Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Joins1Parameter_ZipCode)", query.QueryText);
+        Assert.Equal("SELECT COUNT([Customer].*) FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_1) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Joins0Parameter_Total"));
-        Assert.Equal("37067", query.GetParameterValue<string>("@Joins1Parameter_ZipCode"));
+        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Total_1"));
+        Assert.Equal("37067", query.GetParameterValue<string>("@ZipCode_2"));
     }
 
     [Fact]
@@ -64,14 +65,14 @@ public class JoinsParameterTest
 
         SqlQuery query = customerGenerator.Update(customer, null, new Joins<JoinLeftTable>(join1, join2), null);
 
-        Assert.Equal("UPDATE [Customer] SET [Customer].[Name] = @ParameterSet_Name, [Customer].[Email] = @ParameterSet_Email, [Customer].[Phone] = @ParameterSet_Phone FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Joins0Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Joins1Parameter_ZipCode)", query.QueryText);
+        Assert.Equal("UPDATE [Customer] SET [Customer].[Name] = @Name_1, [Customer].[Email] = @Email_2, [Customer].[Phone] = @Phone_3 FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_4) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_5)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(5, query.GetParameterCount());
-        Assert.Equal("Jenny Tester", query.GetParameterValue<string>("@ParameterSet_Name"));
-        Assert.Equal("Jenny@wall.com", query.GetParameterValue<string>("@ParameterSet_Email"));
-        Assert.Equal("867-5309", query.GetParameterValue<string>("@ParameterSet_Phone"));
-        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Joins0Parameter_Total"));
-        Assert.Equal("37067", query.GetParameterValue<string>("@Joins1Parameter_ZipCode"));
+        Assert.Equal("Jenny Tester", query.GetParameterValue<string>("@Name_1"));
+        Assert.Equal("Jenny@wall.com", query.GetParameterValue<string>("@Email_2"));
+        Assert.Equal("867-5309", query.GetParameterValue<string>("@Phone_3"));
+        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Total_4"));
+        Assert.Equal("37067", query.GetParameterValue<string>("@ZipCode_5"));
     }
 
     [Fact]
@@ -84,11 +85,11 @@ public class JoinsParameterTest
         InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
         SqlQuery query = customerGenerator.Delete(new Joins<JoinLeftTable>(join1, join2), null);
-        
-        Assert.Equal("DELETE FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Joins0Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Joins1Parameter_ZipCode)", query.QueryText);
+
+        Assert.Equal("DELETE FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_1) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Joins0Parameter_Total"));
-        Assert.Equal("37067", query.GetParameterValue<string>("@Joins1Parameter_ZipCode"));
+        Assert.Equal(1000m, query.GetParameterValue<decimal>("@Total_1"));
+        Assert.Equal("37067", query.GetParameterValue<string>("@ZipCode_2"));
     }
 }

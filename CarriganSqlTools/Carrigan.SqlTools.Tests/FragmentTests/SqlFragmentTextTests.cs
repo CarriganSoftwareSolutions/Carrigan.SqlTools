@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Tests.FragmentTests;
@@ -28,7 +29,7 @@ public class SqlFragmentTextTests
             new SqlFragmentText("1")
         ];
 
-        Dictionary<ParameterTag, object> parameters = fragments.GetParameters();
+        Dictionary<ParameterTag, object> parameters = fragments.GetParameters(new SqlServerDialect());
 
         Assert.Empty(parameters);
     }

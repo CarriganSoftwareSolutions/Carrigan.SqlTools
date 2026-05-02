@@ -3,6 +3,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
+
 public class TagExamples
 {
     private static readonly SqlGenerator<PhoneModel> phoneGenerator = new();
@@ -20,13 +21,13 @@ public class TagExamples
         };
         SqlQuery query = phoneGenerator.UpdateById(phone);
 
-        string expectedSql = "UPDATE [schema].[Phone] SET [CustomerId] = @CustomerId, [Phone] = @Phone WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [schema].[Phone] SET [CustomerId] = @CustomerId_1, [Phone] = @Phone_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(2718, query.GetParameterValue<int>("Id"));
-        Assert.Equal(3141, query.GetParameterValue<int>("CustomerId"));
-        Assert.Equal("07700 900461", query.GetParameterValue<string>("Phone"));
+        Assert.Equal(2718, query.GetParameterValue<int>("@Id_3"));
+        Assert.Equal(3141, query.GetParameterValue<int>("@CustomerId_1"));
+        Assert.Equal("07700 900461", query.GetParameterValue<string>("@Phone_2"));
     }
 
     [Fact]
@@ -40,13 +41,13 @@ public class TagExamples
         };
         SqlQuery query = emailGenerator.UpdateById(email);
 
-        string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId, [Email] = @Email WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(10, query.GetParameterValue<int>("Id"));
-        Assert.Equal(313, query.GetParameterValue<int>("CustomerId"));
-        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("Email"));
+        Assert.Equal(10, query.GetParameterValue<int>("@Id_3"));
+        Assert.Equal(313, query.GetParameterValue<int>("@CustomerId_1"));
+        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("@Email_2"));
     }
 
     [Fact]
@@ -62,6 +63,6 @@ public class TagExamples
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal("DangIt", query.GetParameterValue<string>("SomeValue"));
+        Assert.Equal("DangIt", query.GetParameterValue<string>("@SomeValue_1"));
     }
 }

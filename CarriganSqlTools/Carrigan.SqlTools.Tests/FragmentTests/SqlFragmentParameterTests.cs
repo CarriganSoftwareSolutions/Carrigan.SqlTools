@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 
@@ -42,20 +43,10 @@ public class SqlFragmentParameterTests
             new SqlFragmentParameter(parameter)
         ];
 
-        Dictionary<ParameterTag, object> parameters = fragments.GetParameters();
+        Dictionary<ParameterTag, object> parameters = fragments.GetParameters(new SqlServerDialect());
 
         Assert.Single(parameters);
-        Assert.Same(DBNull.Value, parameters[parameter.Name]);
-    }
-
-    [Fact]
-    public void SqlFragmentParameter_ToSql_AddsAtSignWhenMissing()
-    {
-        SqlFragmentParameter fragment = new(new Parameter("Name", "Jonathan"));
-
-        string sql = fragment.ToSql();
-
-        Assert.Equal("@Name", sql);
+        Assert.Same(DBNull.Value, parameters[new Parameter ("@Name_1", null).Name]);
     }
 
     [Fact]

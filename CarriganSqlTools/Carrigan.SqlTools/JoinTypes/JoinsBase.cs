@@ -26,33 +26,6 @@ public abstract class JoinsBase
     protected abstract IEnumerable<JoinBase> Joints { get; set; }
 
     /// <summary>
-    /// Gets a dictionary containing all parameters associated with the join logic.
-    /// </summary>
-    /// <remarks>
-    /// Each parameter represents a value used in a predicate within one or more <c>JOIN</c> conditions.
-    /// </remarks>
-    /// <returns>
-    /// A <see cref="Dictionary{TKey, TValue}"/> mapping <see cref="ParameterTag"/> instances
-    /// to their corresponding parameter values.
-    /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown when duplicate <see cref="ParameterTag"/> keys are encountered while aggregating parameters.
-    /// </exception>
-    internal Dictionary<ParameterTag, object> Parameters
-    {
-        get
-        {
-            if (ValidatedJoints.Count() == 1)
-                return [.. ValidatedJoints.SelectMany((join, i) => join.GetParameters($"JoinParameter"))];
-            else
-                return [.. ValidatedJoints.SelectMany((join, i) => join.GetParameters($"Joins{i}Parameter"))];
-            }
-        }
-
-    /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the base (left-most) table in the join sequence.
     /// </summary>
     internal abstract TableTag TableTag { get; }

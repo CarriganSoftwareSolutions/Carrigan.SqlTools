@@ -89,7 +89,7 @@ public abstract class Predicates
     /// </summary>
     /// <remarks>
     /// Before rendering, this method computes duplicate user-supplied parameter names and
-    /// passes that set to the recursive <see cref="ToSql(string, string, IEnumerable{ParameterTag})"/> overload,
+    /// passes that set to the recursive <see cref="ToSqlFragments()"/> overload,
     /// which may add disambiguating prefixes to produce unique parameter names.
     /// </remarks>
     /// <param name="branchName">
@@ -100,29 +100,7 @@ public abstract class Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="branchName"/> is <c>null</c>.
     /// </exception>
-    internal IEnumerable<SqlFragment> ToSqlFragments(string branchName)
-    {
-        ArgumentNullException.ThrowIfNull(branchName, nameof(branchName));
-
-        return ToSql(string.Empty, branchName.TrimStart('@'), DuplicateParameters);
-    }
-
-    /// <summary>
-    /// Recursively generates the SQL fragments for this predicate tree, applying a prefix to
-    /// duplicate parameter names to ensure uniqueness.
-    /// </summary>
-    /// <param name="prefix">
-    /// A recursion-built prefix used to disambiguate duplicate parameter names. This is applied
-    /// only when the parameter’s base name appears in <paramref name="duplicates"/>.
-    /// </param>
-    /// <param name="branchName">
-    /// the branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of base <see cref="ParameterTag"/> names that occur more than once within the predicate tree.
-    /// </param>
-    /// <returns>The SQL fragment for this node.</returns>
-    internal abstract IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates);
+    internal abstract IEnumerable<SqlFragment> ToSqlFragments();
 
     private static IEnumerable<Predicates> GetAllDescendantPredicates(IEnumerable<Predicates> predicates)
     {

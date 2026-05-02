@@ -39,7 +39,7 @@ public class SqlGenerator_DeleteByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.DeleteById([.. entities]);
 
-        string expectedSql = "DELETE FROM [Test] WHERE (([Test].[Id] = @Parameter_0_R_Id) OR ([Test].[Id] = @Parameter_1_R_Id) OR ([Test].[Id] = @Parameter_2_R_Id))";
+        string expectedSql = "DELETE FROM [Test] WHERE (([Test].[Id] = @Id_1) OR ([Test].[Id] = @Id_2) OR ([Test].[Id] = @Id_3))";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -50,20 +50,20 @@ public class SqlGenerator_DeleteByIdTests
         CompositePrimaryKeyTable entity = new() { Id1 = 1, Id2 = 2, NotKey1 = 5, NotKey2 = 6, NotKey3 = 7 };
         SqlQuery query = _sqlGeneratorForCompositeKeyTable.DeleteById(entity);
 
-        string expectedSql = $"DELETE FROM [Ck] WHERE (([Ck].[Id1] = @Parameter_Id1) AND ([Ck].[Id2] = @Parameter_Id2))";
+        string expectedSql = $"DELETE FROM [Ck] WHERE (([Ck].[Id1] = @Id1_1) AND ([Ck].[Id2] = @Id2_2))";
         Assert.Equal(expectedSql, query.QueryText);
 
         int expectedCount = 2;
-        int actualCount = query.Parameters.Count    ;
+        int actualCount = query.Parameters.Count;
 
         Assert.Equal(expectedCount, actualCount);
 
         int expectedValue = 1;
-        int actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Parameter_Id1").Single().Value;
+        int actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id1_1").Single().Value;
         Assert.Equal(expectedValue, actualValue);
 
         expectedValue = 2;
-        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Parameter_Id2").Single().Value;
+        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id2_2").Single().Value;
         Assert.Equal(expectedValue, actualValue);
     }
 

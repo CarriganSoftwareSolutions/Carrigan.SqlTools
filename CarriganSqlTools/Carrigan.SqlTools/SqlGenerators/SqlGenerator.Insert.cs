@@ -33,7 +33,7 @@ public partial class SqlGenerator<T>
     [
         new SqlFragmentText("("),
         ..columns
-            .Select(column => new SqlFragmentParameter(GetSqlParameter(column, entity, i)))
+            .Select(column => new SqlFragmentParameter(GetSqlParameter(column, entity)))
             .JoinFragments(new SqlFragmentText(", ")),
         new SqlFragmentText(")")
     ];
@@ -89,7 +89,7 @@ public partial class SqlGenerator<T>
     /// <exception cref="NullReferenceException">
     /// Thrown if a column lacks a <see cref="ParameterTag"/> during parameter generation.
     /// This can surface indirectly from
-    /// <see cref="GetSqlParameter(ColumnInfo, T, int?, string?)"/>.
+    /// <see cref="GetSqlParameter(ColumnInfo, T)"/>.
     /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
@@ -306,6 +306,6 @@ public partial class SqlGenerator<T>
             _ => Dialect.GetInsertReturningFragments<T>(insertIntoFragments, valuesFragments, returnColumns.ColumnInfo),
         };
 
-        return queryFragments.ToSqlQuery();
+        return queryFragments.ToSqlQuery(Dialect);
     }
 }

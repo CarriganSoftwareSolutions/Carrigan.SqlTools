@@ -104,6 +104,6 @@ public class InnerJoin<rightT> : JoinBase
         if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("INNER JOIN requires at least one predicate for the ON clause.");
 
-        return _predicates.ToSqlFragments($"{branchPrefix}Parameter").Prepend(new SqlFragmentText($" INNER JOIN {TableTag} ON "));
+        return _predicates.ToSqlFragments().Prepend(new SqlFragmentText($" INNER JOIN {TableTag} ON "));
     }
 }

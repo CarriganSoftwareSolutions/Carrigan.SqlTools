@@ -50,7 +50,7 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, null);
 
-        string expectedSql = "UPDATE [Test] SET [Name] = @Name, [DateOf] = @DateOf, [When] = @When WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [Test] SET [Name] = @Name_1, [DateOf] = @DateOf_2, [When] = @When_3 WHERE [Id] = @Id_4;";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -67,7 +67,7 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity);
 
-        string expectedSql = "UPDATE [Test] SET [Name] = @Name, [DateOf] = @DateOf, [When] = @When WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [Test] SET [Name] = @Name_1, [DateOf] = @DateOf_2, [When] = @When_3 WHERE [Id] = @Id_4;";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -85,10 +85,10 @@ public class SqlGenerator_UpdateByIdTests
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, null);
 
         Assert.Equal(4, query.Parameters.Count);
-        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "Id").Single().Value); // Id
-        Assert.Equal("Test Name", query.Parameters.Where(param => param.Key == "Name").Single().Value); // Name
-        Assert.Equal(new DateTime(2023, 10, 1), query.Parameters.Where(param => param.Key == "DateOf").Single().Value); // DateOf
-        Assert.Equal("Now", query.Parameters.Where(param => param.Key == "When").Single().Value); // When
+        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "@Id_4").Single().Value); // Id
+        Assert.Equal("Test Name", query.Parameters.Where(param => param.Key == "@Name_1").Single().Value); // Name
+        Assert.Equal(new DateTime(2023, 10, 1), query.Parameters.Where(param => param.Key == "@DateOf_2").Single().Value); // DateOf
+        Assert.Equal("Now", query.Parameters.Where(param => param.Key == "@When_3").Single().Value); // When
     }
 
     [Fact]
@@ -107,10 +107,10 @@ public class SqlGenerator_UpdateByIdTests
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, null);
 
         Assert.Equal(4, query.Parameters.Count);
-        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "Id").Single().Value); // Id
-        Assert.Equal("Test Name", query.Parameters.Where(param => param.Key == "Name").Single().Value); // Name
-        Assert.Equal(new DateTime(2023, 10, 1), query.Parameters.Where(param => param.Key == "DateOf").Single().Value); // DateOf
-        Assert.Equal("Now", query.Parameters.Where(param => param.Key == "When").Single().Value); // When
+        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "@Id_4").Single().Value); // Id
+        Assert.Equal("Test Name", query.Parameters.Where(param => param.Key == "@Name_1").Single().Value); // Name
+        Assert.Equal(new DateTime(2023, 10, 1), query.Parameters.Where(param => param.Key == "@DateOf_2").Single().Value); // DateOf
+        Assert.Equal("Now", query.Parameters.Where(param => param.Key == "@When_3").Single().Value); // When
 
         Assert.DoesNotContain("Where", query.QueryText);
         Assert.DoesNotContain("HideTimeFlag", query.QueryText);
@@ -131,8 +131,8 @@ public class SqlGenerator_UpdateByIdTests
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, null);
 
 
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "Name").Single().Value); // Name
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "When").Single().Value); // When
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@Name_1").Single().Value); // Name
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@When_3").Single().Value); // When
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.UpdateById(entityWithoutTableAttribute, null);
 
-        string expectedSql = "UPDATE [EntityWithoutTableAttribute] SET [Description] = @Description WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [EntityWithoutTableAttribute] SET [Description] = @Description_1 WHERE [Id] = @Id_2;";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -161,7 +161,7 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithSchema.UpdateById(entityWithSchema, null);
 
-        string expectedSql = "UPDATE [myschema].[EntityWithSchema] SET [Description] = @Description WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [myschema].[EntityWithSchema] SET [Description] = @Description_1 WHERE [Id] = @Id_2;";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -180,7 +180,7 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.UpdateById(testEntity, null);
 
-        string expectedSql = "UPDATE [Test] SET [Name] = @Name, [DateOf] = @DateOf, [When] = @When WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [Test] SET [Name] = @Name_1, [DateOf] = @DateOf_2, [When] = @When_3 WHERE [Id] = @Id_4;";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.Equal(4, query.Parameters.Count);
@@ -195,28 +195,28 @@ public class SqlGenerator_UpdateByIdTests
         SqlTypeEntity entity = SqlTypeEntity.GetStandardTestSet();
 
 
-        SqlQuery query  = _sqlGeneratorForSqlTypeEntity.UpdateById(entity, null);
+        SqlQuery query = _sqlGeneratorForSqlTypeEntity.UpdateById(entity, null);
 
-        string expectedSql = "UPDATE [TestSqlTypes] SET [LongValue] = @LongValue, [ShortValue] = @ShortValue, [ByteValue] = @ByteValue, [BoolValue] = @BoolValue, [DecimalValue] = @DecimalValue, [FloatValue] = @FloatValue, [DoubleValue] = @DoubleValue, [StringValue] = @StringValue, [DateTimeValue] = @DateTimeValue, [GuidValue] = @GuidValue, [ByteArrayValue] = @ByteArrayValue, [CharValue] = @CharValue, [TimeOnlyValue] = @TimeOnlyValue, [DateOnlyValue] = @DateOnlyValue, [DateTimeOffsetValue] = @DateTimeOffsetValue WHERE [IntValue] = @IntValue;";
+        string expectedSql = "UPDATE [TestSqlTypes] SET [LongValue] = @LongValue_1, [ShortValue] = @ShortValue_2, [ByteValue] = @ByteValue_3, [BoolValue] = @BoolValue_4, [DecimalValue] = @DecimalValue_5, [FloatValue] = @FloatValue_6, [DoubleValue] = @DoubleValue_7, [StringValue] = @StringValue_8, [DateTimeValue] = @DateTimeValue_9, [GuidValue] = @GuidValue_10, [ByteArrayValue] = @ByteArrayValue_11, [CharValue] = @CharValue_12, [TimeOnlyValue] = @TimeOnlyValue_13, [DateOnlyValue] = @DateOnlyValue_14, [DateTimeOffsetValue] = @DateTimeOffsetValue_15 WHERE [IntValue] = @IntValue_16;";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.Equal(16, query.Parameters.Count);
 
-        Assert.Equal(42, query.Parameters.Where(param => param.Key == "IntValue").Single().Value);                                                // IntValue
-        Assert.Equal(1234567890L, query.Parameters.Where(param => param.Key == "LongValue").Single().Value);                                      // LongValue
-        Assert.Equal((short)32000, query.Parameters.Where(param => param.Key == "ShortValue").Single().Value);                                    // ShortValue
-        Assert.Equal((byte)255, query.Parameters.Where(param => param.Key == "ByteValue").Single().Value);                                        // ByteValue
-        Assert.Equal(true, query.Parameters.Where(param => param.Key == "BoolValue").Single().Value);                                             // BoolValue
-        Assert.Equal(99.99m, query.Parameters.Where(param => param.Key == "DecimalValue").Single().Value);                                        // DecimalValue
-        Assert.Equal(3.14f, query.Parameters.Where(param => param.Key == "FloatValue").Single().Value);                                           // FloatValue
-        Assert.Equal(123.456, query.Parameters.Where(param => param.Key == "DoubleValue").Single().Value);                                        // DoubleValue
-        Assert.Equal("Test String", query.Parameters.Where(param => param.Key == "StringValue").Single().Value);                                  // StringValue
-        Assert.Equal(new DateTime(2024, 11, 6, 1, 14, 1, 2, 3), query.Parameters.Where(param => param.Key == "DateTimeValue").Single().Value);    // DateTimeValue
-        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "GuidValue").Single().Value); // GuidValue
-        Assert.Equal(new byte[] { 0x01, 0x02, 0x03 }, query.Parameters.Where(param => param.Key == "ByteArrayValue").Single().Value);             // ByteArrayValue
-        Assert.Equal('A', query.Parameters.Where(param => param.Key == "CharValue").Single().Value);                                              // CharValue
-        Assert.Equal(new TimeOnly(1, 2, 0), query.Parameters.Where(param => param.Key == "TimeOnlyValue").Single().Value);                        // TimeOnlyValue
-        Assert.Equal(dateTimeOffsetTestValue, query.Parameters.Where(param => param.Key == "DateTimeOffsetValue").Single().Value);                // DateTimeOffsetValue
+        Assert.Equal(42, query.Parameters.Where(param => param.Key == "@IntValue_16").Single().Value);                                                // IntValue
+        Assert.Equal(1234567890L, query.Parameters.Where(param => param.Key == "@LongValue_1").Single().Value);                                      // LongValue
+        Assert.Equal((short)32000, query.Parameters.Where(param => param.Key == "@ShortValue_2").Single().Value);                                    // ShortValue
+        Assert.Equal((byte)255, query.Parameters.Where(param => param.Key == "@ByteValue_3").Single().Value);                                        // ByteValue
+        Assert.Equal(true, query.Parameters.Where(param => param.Key == "@BoolValue_4").Single().Value);                                             // BoolValue
+        Assert.Equal(99.99m, query.Parameters.Where(param => param.Key == "@DecimalValue_5").Single().Value);                                        // DecimalValue
+        Assert.Equal(3.14f, query.Parameters.Where(param => param.Key == "@FloatValue_6").Single().Value);                                           // FloatValue
+        Assert.Equal(123.456, query.Parameters.Where(param => param.Key == "@DoubleValue_7").Single().Value);                                        // DoubleValue
+        Assert.Equal("Test String", query.Parameters.Where(param => param.Key == "@StringValue_8").Single().Value);                                  // StringValue
+        Assert.Equal(new DateTime(2024, 11, 6, 1, 14, 1, 2, 3), query.Parameters.Where(param => param.Key == "@DateTimeValue_9").Single().Value);    // DateTimeValue
+        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "@GuidValue_10").Single().Value); // GuidValue
+        Assert.Equal(new byte[] { 0x01, 0x02, 0x03 }, query.Parameters.Where(param => param.Key == "@ByteArrayValue_11").Single().Value);             // ByteArrayValue
+        Assert.Equal('A', query.Parameters.Where(param => param.Key == "@CharValue_12").Single().Value);                                              // CharValue
+        Assert.Equal(new TimeOnly(1, 2, 0), query.Parameters.Where(param => param.Key == "@TimeOnlyValue_13").Single().Value);                        // TimeOnlyValue
+        Assert.Equal(dateTimeOffsetTestValue, query.Parameters.Where(param => param.Key == "@DateTimeOffsetValue_15").Single().Value);                // DateTimeOffsetValue
     }
 
     [Fact]
@@ -229,26 +229,26 @@ public class SqlGenerator_UpdateByIdTests
         SqlQuery query
             = _sqlGeneratorForNullablesTestEntity.UpdateById(entity, null);
 
-        string expectedSql = "UPDATE [NullableTestEntity] SET [IntValue] = @IntValue, [LongValue] = @LongValue, [ShortValue] = @ShortValue, [ByteValue] = @ByteValue, [BoolValue] = @BoolValue, [DecimalValue] = @DecimalValue, [FloatValue] = @FloatValue, [DoubleValue] = @DoubleValue, [DateTimeValue] = @DateTimeValue, [GuidValue] = @GuidValue, [CharValue] = @CharValue, [TimeOnlyValue] = @TimeOnlyValue, [DateOnlyValue] = @DateOnlyValue, [ByteArrayValue] = @ByteArrayValue, [DateTimeOffsetValue] = @DateTimeOffsetValue WHERE [Key] = @Key;";
+        string expectedSql = "UPDATE [NullableTestEntity] SET [IntValue] = @IntValue_1, [LongValue] = @LongValue_2, [ShortValue] = @ShortValue_3, [ByteValue] = @ByteValue_4, [BoolValue] = @BoolValue_5, [DecimalValue] = @DecimalValue_6, [FloatValue] = @FloatValue_7, [DoubleValue] = @DoubleValue_8, [DateTimeValue] = @DateTimeValue_9, [GuidValue] = @GuidValue_10, [CharValue] = @CharValue_11, [TimeOnlyValue] = @TimeOnlyValue_12, [DateOnlyValue] = @DateOnlyValue_13, [ByteArrayValue] = @ByteArrayValue_14, [DateTimeOffsetValue] = @DateTimeOffsetValue_15 WHERE [Key] = @Key_16;";
         Assert.Equal(expectedSql, query.QueryText);
 
         // Assert that parameters have the correct values and are correctly mapped
-        Assert.Equal(Guid.Empty, query.Parameters.Where(param => param.Key == "Key").Single().Value);                                             // Key
-        Assert.Equal((int?)1, query.Parameters.Where(param => param.Key == "IntValue").Single().Value);                                           // Nullable IntValue
-        Assert.Equal((long?)123456789L, query.Parameters.Where(param => param.Key == "LongValue").Single().Value);                                // Nullable LongValue
-        Assert.Equal((short?)123, query.Parameters.Where(param => param.Key == "ShortValue").Single().Value);                                     // Nullable ShortValue
-        Assert.Equal((byte?)255, query.Parameters.Where(param => param.Key == "ByteValue").Single().Value);                                       // Nullable ByteValue
-        Assert.Equal((bool?)true, query.Parameters.Where(param => param.Key == "BoolValue").Single().Value);                                      // Nullable BoolValue
-        Assert.Equal((decimal?)99.99m, query.Parameters.Where(param => param.Key == "DecimalValue").Single().Value);                              // Nullable DecimalValue
-        Assert.Equal((float?)3.14f, query.Parameters.Where(param => param.Key == "FloatValue").Single().Value);                                   // Nullable FloatValue
-        Assert.Equal((double?)1.618, query.Parameters.Where(param => param.Key == "DoubleValue").Single().Value);                                 // Nullable DoubleValue
-        Assert.Equal(new DateTime(2024, 11, 6, 1, 14, 1, 2, 3), query.Parameters.Where(param => param.Key == "DateTimeValue").Single().Value);    // Nullable DateTimeValue
-        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "GuidValue").Single().Value); // Nullable GuidValue
-        Assert.Equal((char?)'A', query.Parameters.Where(param => param.Key == "CharValue").Single().Value);                                       // Nullable CharValue
-        Assert.Equal(new TimeOnly(1, 2, 0), query.Parameters.Where(param => param.Key == "TimeOnlyValue").Single().Value);                        // Nullable TimeOnlyValue
-        Assert.Equal(new DateOnly(1, 12, 25), query.Parameters.Where(param => param.Key == "DateOnlyValue").Single().Value);                      // Nullable DateOnlyValue
-        Assert.Equal(new byte[] { 0x01, 0x02, 0x03 }, query.Parameters.Where(param => param.Key == "ByteArrayValue").Single().Value);             // Nullable ByteArrayValue
-        Assert.Equal(dateTimeOffsetTestValue, query.Parameters.Where(param => param.Key == "DateTimeOffsetValue").Single().Value);                // Nullable DateTimeOffsetValue
+        Assert.Equal(Guid.Empty, query.Parameters.Where(param => param.Key == "@Key_16").Single().Value);                                             // Key
+        Assert.Equal((int?)1, query.Parameters.Where(param => param.Key == "@IntValue_1").Single().Value);                                           // Nullable IntValue
+        Assert.Equal((long?)123456789L, query.Parameters.Where(param => param.Key == "@LongValue_2").Single().Value);                                // Nullable LongValue
+        Assert.Equal((short?)123, query.Parameters.Where(param => param.Key == "@ShortValue_3").Single().Value);                                     // Nullable ShortValue
+        Assert.Equal((byte?)255, query.Parameters.Where(param => param.Key == "@ByteValue_4").Single().Value);                                       // Nullable ByteValue
+        Assert.Equal((bool?)true, query.Parameters.Where(param => param.Key == "@BoolValue_5").Single().Value);                                      // Nullable BoolValue
+        Assert.Equal((decimal?)99.99m, query.Parameters.Where(param => param.Key == "@DecimalValue_6").Single().Value);                              // Nullable DecimalValue
+        Assert.Equal((float?)3.14f, query.Parameters.Where(param => param.Key == "@FloatValue_7").Single().Value);                                   // Nullable FloatValue
+        Assert.Equal((double?)1.618, query.Parameters.Where(param => param.Key == "@DoubleValue_8").Single().Value);                                 // Nullable DoubleValue
+        Assert.Equal(new DateTime(2024, 11, 6, 1, 14, 1, 2, 3), query.Parameters.Where(param => param.Key == "@DateTimeValue_9").Single().Value);    // Nullable DateTimeValue
+        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.Where(param => param.Key == "@GuidValue_10").Single().Value); // Nullable GuidValue
+        Assert.Equal((char?)'A', query.Parameters.Where(param => param.Key == "@CharValue_11").Single().Value);                                       // Nullable CharValue
+        Assert.Equal(new TimeOnly(1, 2, 0), query.Parameters.Where(param => param.Key == "@TimeOnlyValue_12").Single().Value);                        // Nullable TimeOnlyValue
+        Assert.Equal(new DateOnly(1, 12, 25), query.Parameters.Where(param => param.Key == "@DateOnlyValue_13").Single().Value);                      // Nullable DateOnlyValue
+        Assert.Equal(new byte[] { 0x01, 0x02, 0x03 }, query.Parameters.Where(param => param.Key == "@ByteArrayValue_14").Single().Value);             // Nullable ByteArrayValue
+        Assert.Equal(dateTimeOffsetTestValue, query.Parameters.Where(param => param.Key == "@DateTimeOffsetValue_15").Single().Value);                // Nullable DateTimeOffsetValue
     }
 
 
@@ -260,27 +260,27 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForNullablesTestEntity.UpdateById(entity, null);
 
-        string expectedSql = "UPDATE [NullableTestEntity] SET [IntValue] = @IntValue, [LongValue] = @LongValue, [ShortValue] = @ShortValue, [ByteValue] = @ByteValue, [BoolValue] = @BoolValue, [DecimalValue] = @DecimalValue, [FloatValue] = @FloatValue, [DoubleValue] = @DoubleValue, [DateTimeValue] = @DateTimeValue, [GuidValue] = @GuidValue, [CharValue] = @CharValue, [TimeOnlyValue] = @TimeOnlyValue, [DateOnlyValue] = @DateOnlyValue, [ByteArrayValue] = @ByteArrayValue, [DateTimeOffsetValue] = @DateTimeOffsetValue WHERE [Key] = @Key;";
+        string expectedSql = "UPDATE [NullableTestEntity] SET [IntValue] = @IntValue_1, [LongValue] = @LongValue_2, [ShortValue] = @ShortValue_3, [ByteValue] = @ByteValue_4, [BoolValue] = @BoolValue_5, [DecimalValue] = @DecimalValue_6, [FloatValue] = @FloatValue_7, [DoubleValue] = @DoubleValue_8, [DateTimeValue] = @DateTimeValue_9, [GuidValue] = @GuidValue_10, [CharValue] = @CharValue_11, [TimeOnlyValue] = @TimeOnlyValue_12, [DateOnlyValue] = @DateOnlyValue_13, [ByteArrayValue] = @ByteArrayValue_14, [DateTimeOffsetValue] = @DateTimeOffsetValue_15 WHERE [Key] = @Key_16;";
         Assert.Equal(expectedSql, query.QueryText);
 
 
         // Assert that parameters have the correct values and are correctly mapped
-        Assert.Equal(Guid.Empty, query.Parameters.Where(param => param.Key == "Key").Single().Value);             // Key
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "IntValue").Single().Value);      // Nullable IntValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "LongValue").Single().Value);     // Nullable LongValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "ShortValue").Single().Value);    // Nullable ShortValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "ByteValue").Single().Value);     // Nullable ByteValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "BoolValue").Single().Value);     // Nullable BoolValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "DecimalValue").Single().Value);  // Nullable DecimalValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "FloatValue").Single().Value);    // Nullable FloatValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "DoubleValue").Single().Value);   // Nullable DoubleValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "DateTimeValue").Single().Value); // Nullable DateTimeValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "GuidValue").Single().Value);     // Nullable GuidValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "CharValue").Single().Value);     // Nullable CharValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "TimeOnlyValue").Single().Value); // Nullable TimeOnlyValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "DateOnlyValue").Single().Value); // Nullable DateOnlyValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "ByteArrayValue").Single().Value);    // Nullable ByteArrayValue
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "DateTimeOffsetValue").Single().Value); // Nullable DateTimeOffsetValue
+        Assert.Equal(Guid.Empty, query.Parameters.Where(param => param.Key == "@Key_16").Single().Value);             // Key
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@IntValue_1").Single().Value);      // Nullable IntValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@LongValue_2").Single().Value);     // Nullable LongValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@ShortValue_3").Single().Value);    // Nullable ShortValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@ByteValue_4").Single().Value);     // Nullable ByteValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@BoolValue_5").Single().Value);     // Nullable BoolValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@DecimalValue_6").Single().Value);  // Nullable DecimalValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@FloatValue_7").Single().Value);    // Nullable FloatValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@DoubleValue_8").Single().Value);   // Nullable DoubleValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@DateTimeValue_9").Single().Value); // Nullable DateTimeValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@GuidValue_10").Single().Value);     // Nullable GuidValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@CharValue_11").Single().Value);     // Nullable CharValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@TimeOnlyValue_12").Single().Value); // Nullable TimeOnlyValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@DateOnlyValue_13").Single().Value); // Nullable DateOnlyValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@ByteArrayValue_14").Single().Value);    // Nullable ByteArrayValue
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@DateTimeOffsetValue_15").Single().Value); // Nullable DateTimeOffsetValue
     }
 
 
@@ -296,16 +296,16 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.UpdateById(entity, null);
 
-        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData, [SensitiveData] = @SensitiveData, [KeyVersion] = @KeyVersion WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData_1, [SensitiveData] = @SensitiveData_2, [KeyVersion] = @KeyVersion_3 WHERE [Id] = @Id_4;";
 
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.Equal(4, query.Parameters.Count);
-        Assert.Equal(1337, query.Parameters.Where(param => param.Key == "Id").Single().Value); // Id
-        Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
-        Assert.NotEqual("Shhh...", query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
-        Assert.Equal("Shhh...", _mockEncrypter.Decrypt(query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value.ToString()));
-        Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
+        Assert.Equal(1337, query.Parameters.Where(param => param.Key == "@Id_4").Single().Value); // Id
+        Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "@NotSensitiveData_1").Single().Value);
+        Assert.NotEqual("Shhh...", query.Parameters.Where(param => param.Key == "@SensitiveData_2").Single().Value);
+        Assert.Equal("Shhh...", _mockEncrypter.Decrypt(query.Parameters.Where(param => param.Key == "@SensitiveData_2").Single().Value.ToString()));
+        Assert.Equal(1, query.Parameters.Where(param => param.Key == "@KeyVersion_3").Single().Value);
     }
 
     [Fact]
@@ -320,15 +320,15 @@ public class SqlGenerator_UpdateByIdTests
 
         SqlQuery query = _sqlGeneratorForEntityWithEncryption.UpdateById(entity, null);
 
-        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData, [SensitiveData] = @SensitiveData, [KeyVersion] = @KeyVersion WHERE [Id] = @Id;";
+        string expectedSql = "UPDATE [Test] SET [NotSensitiveData] = @NotSensitiveData_1, [SensitiveData] = @SensitiveData_2, [KeyVersion] = @KeyVersion_3 WHERE [Id] = @Id_4;";
 
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.Equal(4, query.Parameters.Count);
-        Assert.Equal(1337, query.Parameters.Where(param => param.Key == "Id").Single().Value); // Id
-        Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "NotSensitiveData").Single().Value);
-        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "SensitiveData").Single().Value);
-        Assert.Equal(1, query.Parameters.Where(param => param.Key == "KeyVersion").Single().Value);
+        Assert.Equal(1337, query.Parameters.Where(param => param.Key == "@Id_4").Single().Value); // Id
+        Assert.Equal("SHOUT. SHOUT IT OUT LOUD. THESE ARE THE THINGS...", query.Parameters.Where(param => param.Key == "@NotSensitiveData_1").Single().Value);
+        Assert.Equal(DBNull.Value, query.Parameters.Where(param => param.Key == "@SensitiveData_2").Single().Value);
+        Assert.Equal(1, query.Parameters.Where(param => param.Key == "@KeyVersion_3").Single().Value);
     }
 
     [Fact]
@@ -365,8 +365,8 @@ public class SqlGenerator_UpdateByIdTests
         PredicatesLogic.Predicates predicateId = new Equal(new Column<JoinLeftTable>("Id"), new Parameter("Id", 3));
         SqlQuery query = _sqlGeneratorCompositeKeyTable.UpdateByIds(entity3, _leftCompositeKeyTable, entity1, entity2);
 
-        string expectedSql = "UPDATE [Ck] SET [Ck].[NotKey1] = @ParameterSet_NotKey1, [Ck].[NotKey2] = @ParameterSet_NotKey2 FROM [Ck] WHERE " +
-            "((([Ck].[Id1] = @Parameter_0_0_R_Id1) AND ([Ck].[Id2] = @Parameter_0_1_R_Id2)) OR (([Ck].[Id1] = @Parameter_1_0_R_Id1) AND ([Ck].[Id2] = @Parameter_1_1_R_Id2)))";
+        string expectedSql = "UPDATE [Ck] SET [Ck].[NotKey1] = @NotKey1_1, [Ck].[NotKey2] = @NotKey2_2 FROM [Ck] WHERE " +
+            "((([Ck].[Id1] = @Id1_3) AND ([Ck].[Id2] = @Id2_4)) OR (([Ck].[Id1] = @Id1_5) AND ([Ck].[Id2] = @Id2_6)))";
         Assert.Equal(expectedSql, query.QueryText);
 
         int expectedCount = 6;
@@ -375,32 +375,32 @@ public class SqlGenerator_UpdateByIdTests
         Assert.Equal(expectedCount, actualCount);
 
         int expectedValue = 13;
-        int actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@ParameterSet_NotKey1").Single().Value;
+        int actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@NotKey1_1").Single().Value;
 
         Assert.Equal(expectedValue, actualValue);
 
         expectedValue = 14;
-        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@ParameterSet_NotKey2").Single().Value;
+        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@NotKey2_2").Single().Value;
 
         Assert.Equal(expectedValue, actualValue);
 
         expectedValue = 1;
-        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Parameter_0_0_R_Id1").Single().Value;
+        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Id1_3").Single().Value;
 
         Assert.Equal(expectedValue, actualValue);
 
         expectedValue = 2;
-        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Parameter_0_1_R_Id2").Single().Value;
+        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Id2_4").Single().Value;
 
         Assert.Equal(expectedValue, actualValue);
 
         expectedValue = 5;
-        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Parameter_1_0_R_Id1").Single().Value;
+        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Id1_5").Single().Value;
 
         Assert.Equal(expectedValue, actualValue);
 
         expectedValue = 6;
-        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Parameter_1_1_R_Id2").Single().Value;
+        actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Id2_6").Single().Value;
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -432,7 +432,7 @@ public class SqlGenerator_UpdateByIdTests
         SqlQuery query = _sqlGeneratorCompositeKeyTable.UpdateById(entity);
 
         string expectedSql =
-            "UPDATE [Ck] SET [NotKey1] = @NotKey1, [NotKey2] = @NotKey2, [NotKey3] = @NotKey3 WHERE [Id1] = @Id1 AND [Id2] = @Id2;";
+            "UPDATE [Ck] SET [NotKey1] = @NotKey1_1, [NotKey2] = @NotKey2_2, [NotKey3] = @NotKey3_3 WHERE [Id1] = @Id1_4 AND [Id2] = @Id2_5;";
 
         Assert.Equal(expectedSql, query.QueryText);
     }

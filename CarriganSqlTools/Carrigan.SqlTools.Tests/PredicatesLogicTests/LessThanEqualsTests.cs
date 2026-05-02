@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
@@ -17,13 +18,13 @@ public class LessThanEqualsTests
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
     private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f, SqlTypeDefinition.AsFloat());
-    private readonly string ParameterPiSql = "@Parameter_Pi";
+    private readonly string ParameterPiSql = "@Pi_1";
 
     private readonly Predicates ParameterElite = new Parameter("Elite", 1337, null);
-    private readonly string ParameterEliteSql = "@Parameter_Elite";
+    private readonly string ParameterEliteSql = "@Elite_1";
 
     private readonly Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!", SqlTypeDefinition.AsNVarCharMax());
-    private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
+    private readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 
     [Fact]
@@ -38,7 +39,7 @@ public class LessThanEqualsTests
         Predicates predicate = new LessThanEqual(left, right);
 
         string expectedValue = $"({leftSql} <= {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -69,7 +70,7 @@ public class LessThanEqualsTests
         Predicates predicate = new LessThanEqual(left, right);
 
         string expectedValue = $"({leftSql} <= {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -118,7 +119,7 @@ public class LessThanEqualsTests
         Predicates predicate = new LessThanEqual(left, right);
 
         string expectedValue = $"({leftSql} <= {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -155,7 +156,7 @@ public class LessThanEqualsTests
         Predicates predicate = new LessThanEqual(left, right);
 
         string expectedValue = $"({leftSql} <= {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }

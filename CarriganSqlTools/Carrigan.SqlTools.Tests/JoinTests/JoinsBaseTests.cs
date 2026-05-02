@@ -39,7 +39,7 @@ public class JoinsBaseValidationTests
     [Fact]
     public void JoinsCrossJoin()
     {
-        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSqlFragments().ToSql();
+        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSqlFragments().ToSql(new SqlServerDialect());
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);

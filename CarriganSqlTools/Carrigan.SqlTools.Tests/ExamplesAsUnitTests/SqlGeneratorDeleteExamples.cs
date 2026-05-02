@@ -5,6 +5,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
+
 public class SqlGeneratorDeleteExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
@@ -17,10 +18,10 @@ public class SqlGeneratorDeleteExamples
         Customer entity = new() { Id = 42 };
         SqlQuery query = customerGenerator.Delete(entity);
 
-        Assert.Equal("DELETE FROM [Customer] WHERE [Id] = @Id;", query.QueryText);
+        Assert.Equal("DELETE FROM [Customer] WHERE [Id] = @Id_1;", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "Id").Single().Value);
+        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
     }
 
     [Fact]
@@ -39,10 +40,10 @@ public class SqlGeneratorDeleteExamples
         Customer entity = new() { Id = 42 };
         SqlQuery query = customerGenerator.DeleteById(entity);
 
-        Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)", query.QueryText);
+        Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Parameter_Id").Single().Value);
+        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
     }
 
     [Fact]
@@ -61,10 +62,10 @@ public class SqlGeneratorDeleteExamples
         ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
         SqlQuery query = customerGenerator.Delete(null, columnValue);
 
-        Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Name] = @Parameter_Name)", query.QueryText);
+        Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Parameter_Name").Single().Value);
+        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_1").Single().Value);
     }
 
     [Fact]
@@ -93,9 +94,9 @@ public class SqlGeneratorDeleteExamples
 
         SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
-        Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Parameter_Email)", query.QueryText);
+        Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Single(query.Parameters);
-        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Parameter_Email").Single().Value);
+        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_1").Single().Value);
     }
 }

@@ -1,10 +1,14 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Reflection.Emit;
+using System.Reflection.Metadata;
 using System.Text;
 
 namespace Carrigan.SqlTools.Dialects;
@@ -83,17 +87,29 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>A string containing the SQL paging clause corresponding to the specified offset and fetch values.</returns>
     /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
     public string RenderPaging(int offset, int fetch) => throw new NotImplementedException();
+
+
     /// <summary>
-    /// Generates a parameter string using the specified prefix, name, and optional index.
+    /// Generates a unique parameter name by appending the specified index to the base parameter name, ensuring the
+    /// result is prefixed with '@'.
     /// </summary>
-    /// <param name="prefix">An optional prefix to prepend to the parameter name. May be null or empty if no prefix is required.</param>
-    /// <param name="name">The name of the parameter to render. Cannot be null or empty.</param>
-    /// <param name="index">An optional index to append to the parameter name. May be null or empty if no index is required.</param>
-    /// <returns>A string representing the rendered parameter, including the prefix and index if provided.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as this method is not yet implemented.</exception>
-    public string RenderParameter(string? prefix, string name, string? index) => throw new NotImplementedException();
-
-
+    /// <remarks>If the base parameter name already starts with '@', the prefix is preserved and the index is
+    /// appended after removing the initial '@'. This method is useful for generating unique parameter names in
+    /// scenarios such as SQL command construction.</remarks>
+    /// <param name="baseParameterName">The base name of the parameter. May optionally begin with '@'.</param>
+    /// <param name="parameterIndex">The index to append to the parameter name to ensure uniqueness.</param>
+    /// <returns>A string representing the final parameter name, prefixed with '@' and suffixed with the specified index.</returns>
+    public string RenderFinalParameterName(string baseParameterName, int parameterIndex)
+    {
+        if (baseParameterName[0] == '@')
+        {
+            return $"@{baseParameterName[1..]}_{parameterIndex}";
+        }
+        else
+        {
+            return $"@{baseParameterName}_{parameterIndex}";
+        }
+    }
 
     /// <summary>
     /// Generates SQL to declare an output table used to capture inserted values
@@ -108,7 +124,6 @@ public class SqlServerDialect : ISqlDialects
     private static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
         $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});{Environment.NewLine}";
 
-
     /// <summary>
     /// Generates SQL to output the inserted column values into <c>@OutputTable</c>.
     /// </summary>
@@ -120,7 +135,6 @@ public class SqlServerDialect : ISqlDialects
     /// </returns>
     private static string ReturnOutputColumns(IEnumerable<ColumnInfo> columnInfo) =>
        $"OUTPUT {string.Join(", ", columnInfo.Select(column => $"INSERTED.{column.ColumnName}"))} INTO @OutputTable{Environment.NewLine}";
-
 
     /// <summary>
     /// Gets the column expression to use when returning values inserted for the column

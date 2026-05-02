@@ -52,7 +52,7 @@ public partial class SqlGenerator<T>
                 .JoinFragments(new SqlFragmentText(" and "));
         queryFragments = new SqlFragmentText($"DELETE FROM {Table} WHERE ").Concat(queryFragments).Append(new SqlFragmentText(";"));
 
-        return queryFragments.ToSqlQuery();
+        return queryFragments.ToSqlQuery(Dialect);
     }
 
     /// <summary>
@@ -217,14 +217,14 @@ public partial class SqlGenerator<T>
             if (joins?.IsNotNullOrEmpty() ?? false)
                 queryFragments = queryFragments.Concat(joins.ToSqlFragments());
 
-            IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments("Parameter") ?? [];
+            IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments() ?? [];
             if (predicates is not null)
                 queryFragments = queryFragments
                     .Append(new SqlFragmentText(" WHERE ")) 
                     .Concat(predicateSqlFragments);
 
 
-            return queryFragments.ToSqlQuery();
+            return queryFragments.ToSqlQuery(Dialect);
         }
     }
 }

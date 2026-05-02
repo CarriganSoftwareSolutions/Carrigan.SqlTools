@@ -131,7 +131,7 @@ public class Parameter : Predicates
         if (exception is not null)
             throw exception;
 
-        Name = new ParameterTag(null, parameter, null, sqlTypeDefinition);
+        Name = new ParameterTag(parameter, sqlTypeDefinition);
         Value = value;
     }
 
@@ -160,34 +160,10 @@ public class Parameter : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSql(string prefix, string branchName, IEnumerable<ParameterTag> duplicates)
+    internal override IEnumerable<SqlFragment> ToSqlFragments()
     {
-        ArgumentNullException.ThrowIfNull(prefix, nameof(prefix));
-        ArgumentNullException.ThrowIfNull(branchName, nameof(branchName));
-        ArgumentNullException.ThrowIfNull(duplicates, nameof(duplicates));
-
-        yield return new SqlFragmentParameter(new Parameter(GetFinalParameterName(prefix, branchName, duplicates), Value));
+        yield return new SqlFragmentParameter(this);
     }
-
-    /// <summary>
-    /// Computes the final parameter tag used in SQL, adding a disambiguating prefix when required.
-    /// </summary>
-    /// <param name="prefix">
-    /// The recursion-built prefix used for disambiguation when the base name is a duplicate.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied parameter tags identified as duplicates within the predicate tree.
-    /// </param>
-    /// <returns>
-    /// The final <see cref="ParameterTag"/> to be emitted into SQL and used as the binding key.
-    /// </returns>
-    private ParameterTag GetFinalParameterName(string prefix, string branchName, IEnumerable<ParameterTag> duplicates) =>
-        duplicates.Contains(Name) ? Name.PrefixPrepend($"@{branchName}{prefix}") : Name.PrefixPrepend($"@{branchName}");
-
-
 
     /// <summary>
     /// Performs the necessary conversions for a parameter value

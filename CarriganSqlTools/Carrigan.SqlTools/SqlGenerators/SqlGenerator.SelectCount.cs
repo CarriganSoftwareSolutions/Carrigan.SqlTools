@@ -165,12 +165,12 @@ public partial class SqlGenerator<T>
             queryFragments = queryFragments.Concat(joins.ToSqlFragments());
 
         if (predicates is not null)
-            queryFragments = queryFragments.Append(new SqlFragmentText(" WHERE ")).Concat(predicates.ToSqlFragments("Parameter"));
+            queryFragments = queryFragments.Append(new SqlFragmentText(" WHERE ")).Concat(predicates.ToSqlFragments());
 
         return new SqlQuery()
         {
-            QueryText = queryFragments.ToSql(),
-            Parameters = queryFragments.GetParameters(),
+            QueryText = queryFragments.ToSql(Dialect),
+            Parameters = queryFragments.GetParameters(Dialect),
             CommandType = CommandType.Text
         };
     }

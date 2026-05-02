@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
@@ -17,13 +18,10 @@ public class EqualsTests
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
     private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
-    private readonly string ParameterPiSql = "@Parameter_Pi";
 
     private readonly Predicates ParameterElite = new Parameter("Elite", 1337, SqlTypeDefinition.AsInt());
-    private readonly string ParameterEliteSql = "@Parameter_Elite";
 
     private readonly Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
-    private readonly string ParameterHelloWorldSql = "@Parameter_HelloWorld";
 
 
     [Fact]
@@ -38,7 +36,7 @@ public class EqualsTests
         Predicates predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -91,12 +89,12 @@ public class EqualsTests
         string leftSql = ColumnFutureCitySql;
 
         Predicates right = ParameterPi;
-        string rightSql = ParameterPiSql;
+        string rightSql = "@Pi_1";
 
         Predicates predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -164,15 +162,15 @@ public class EqualsTests
     public void Equals_ToSql3()
     {
         Predicates left = ParameterElite;
-        string leftSql = ParameterEliteSql;
+        string leftSql = "@Elite_1";
 
         Predicates right = ParameterHelloWorld;
-        string rightSql = ParameterHelloWorldSql;
+        string rightSql = "@HelloWorld_2";
 
         Predicates predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -215,15 +213,15 @@ public class EqualsTests
     public void Equals_Nested_ToSql()
     {
         Predicates left = ParameterElite;
-        string leftSql = ParameterEliteSql;
+        string leftSql = "@Elite_1";
 
         Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
-        string rightSql = $"({ParameterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
+        string rightSql = $"(@HelloWorld_2 AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
 
         Predicates predicate = new Equal(left, right);
 
         string expectedValue = $"({leftSql} = {rightSql})";
-        string actualValue = predicate.ToSqlFragments("Parameter").ToSql();
+        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
 
         Assert.Equal(expectedValue, actualValue);
     }

@@ -1,5 +1,4 @@
-﻿
-using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using System.Data;
@@ -15,34 +14,34 @@ public class ParameterTagTests
     [Fact]
     public void ImplicitString_CreatesExpectedTag_AllPartsPresent()
     {
-        ParameterTag parameterTag = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
+        ParameterTag parameterTag = new("ParameterName", null);
         string actual = (string)parameterTag;
 
-        Assert.Equal("FirstPrefix_ParameterName_FirstIndex", actual);
+        Assert.Equal("ParameterName", actual);
     }
 
     [Fact]
     public void ImplicitString_SkipsNullOrWhitespaceParts_OnIndex()
     {
-        ParameterTag parameterTag = new ("FirstPrefix", "ParameterName", null, null);
+        ParameterTag parameterTag = new("ParameterName", null);
         string actual = (string)parameterTag;
 
-        Assert.Equal("FirstPrefix_ParameterName", actual);
+        Assert.Equal("ParameterName", actual);
     }
 
     [Fact]
     public void ImplicitString_SkipsNullOrWhitespaceParts_OnPrefix()
     {
-        ParameterTag parameterTag = new (null, "ParameterName", "FirstIndex", null);
+        ParameterTag parameterTag = new("ParameterName", null);
         string actual = (string)parameterTag;
 
-        Assert.Equal("ParameterName_FirstIndex", actual);
+        Assert.Equal("ParameterName", actual);
     }
 
     [Fact]
     public void ToString_ReturnsSameAsImplicitString()
     {
-        ParameterTag parameterTag = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
+        ParameterTag parameterTag = new("ParameterName", null);
         string viaCast = (string)parameterTag;
         string viaToString = parameterTag.ToString();
 
@@ -52,8 +51,8 @@ public class ParameterTagTests
     [Fact]
     public void CompareTo_IsCaseInsensitive()
     {
-        ParameterTag left = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
-        ParameterTag right = new ("firstPrefix", "parameterName", "firstIndex", null);
+        ParameterTag left = new("ParameterName", null);
+        ParameterTag right = new("parameterName", null);
 
         int comparison = left.CompareTo(right);
 
@@ -63,8 +62,8 @@ public class ParameterTagTests
     [Fact]
     public void Equals_IsCaseInsensitive_AndOperatorsMatch()
     {
-        ParameterTag first = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
-        ParameterTag second = new ("FIRSTPREFIX", "PARAMETERNAME", "FIRSTINDEX", null);
+        ParameterTag first = new("ParameterName", null);
+        ParameterTag second = new("PARAMETERNAME", null);
 
         Assert.True(first.Equals(second));
         Assert.True(first == second);
@@ -74,8 +73,8 @@ public class ParameterTagTests
     [Fact]
     public void Equals_ObjectOverride_Works()
     {
-        ParameterTag parameterTag = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
-        object boxed = new ParameterTag("firstPrefix", "parameterName", "firstIndex", null);
+        ParameterTag parameterTag = new("ParameterName", null);
+        object boxed = new ParameterTag("parameterName", null);
 
         Assert.True(parameterTag.Equals(boxed));
     }
@@ -83,8 +82,8 @@ public class ParameterTagTests
     [Fact]
     public void GetHashCode_IsCaseInsensitive_EqualObjectsHaveSameHash()
     {
-        ParameterTag first = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
-        ParameterTag second = new ("firstPrefix", "parameterName", "firstIndex", null);
+        ParameterTag first = new("ParameterName", null);
+        ParameterTag second = new("parameterName", null);
 
         int hashFirst = first.GetHashCode();
         int hashSecond = second.GetHashCode();
@@ -95,9 +94,9 @@ public class ParameterTagTests
     [Fact]
     public void IEqualityComparer_Equals_And_GetHashCode_Work()
     {
-        ParameterTag comparer = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
-        ParameterTag x = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
-        ParameterTag y = new ("firstPrefix", "parameterName", "firstIndex", null    );
+        ParameterTag comparer = new("ParameterName", null);
+        ParameterTag x = new("ParameterName", null);
+        ParameterTag y = new("parameterName", null);
 
         bool equalsResult = comparer.Equals(x, y);
         int hashX = comparer.GetHashCode(x);
@@ -110,7 +109,7 @@ public class ParameterTagTests
     [Fact]
     public void EqualityOperators_HandleNulls()
     {
-        ParameterTag left = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
+        ParameterTag left = new("ParameterName", null);
         ParameterTag? right = null;
 
         Assert.False(left == right);
@@ -121,75 +120,31 @@ public class ParameterTagTests
     [Fact]
     public void IsEmpty_ReturnsFalse_BecauseParameterNameIsRequired()
     {
-        ParameterTag parameterTag = new (null, "ParameterName", null, null);
+        ParameterTag parameterTag = new("ParameterName", null);
         bool isEmpty = parameterTag.IsEmpty();
 
         Assert.False(isEmpty);
     }
 
     [Fact]
-    public void PrefixPrepend_WhenNoExistingPrefix_SetsPrefix()
-    {
-        ParameterTag original = new (null, "ParameterName", "FirstIndex", null);
-        ParameterTag updated = original.PrefixPrepend("NewPrefix");
-
-        Assert.Equal("NewPrefix_ParameterName_FirstIndex", (string)updated);
-        // Original remains unchanged
-        Assert.NotEqual(original, updated);
-    }
-
-    [Fact]
-    public void PrefixPrepend_WhenExistingPrefix_PrependWithUnderscore()
-    {
-        ParameterTag original = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
-        ParameterTag updated = original.PrefixPrepend("NewPrefix");
-
-        Assert.Equal("NewPrefix_FirstPrefix_ParameterName_FirstIndex", (string)updated);
-        // Original remains unchanged
-        Assert.NotEqual(original, updated);
-    }
-
-    [Fact]
-    public void AddIndex_WhenNoExistingIndex_AddsIndex()
-    {
-        ParameterTag original = new ("FirstPrefix", "ParameterName", null, null);
-        ParameterTag updated = original.AddIndex("FirstIndex");
-
-        Assert.Equal("FirstPrefix_ParameterName_FirstIndex", (string)updated);
-        Assert.Equal("FirstPrefix_ParameterName", (string)original);
-        // Original remains unchanged
-        Assert.NotEqual(original, updated);
-    }
-
-    [Fact]
-    public void AddIndex_WhenExistingIndex_ThrowsArgumentException()
-    {
-        ParameterTag original = new ("FirstPrefix", "ParameterName", "ExistingIndex", null);
-
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => original.AddIndex("NewIndex"));
-
-        Assert.Contains("Index was already defined on the Parameter", exception.Message);
-    }
-
-    [Fact]
     public void Constructor_WhenParameterNameIsNullOrEmpty_Throws_1() =>
         // Null parameter name
-        Assert.Throws <InvalidParameterIdentifierException>(() => new ParameterTag("FirstPrefix", null!, null, null));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new ParameterTag(null!, (object)null!));
 
     [Fact]
     public void Constructor_WhenParameterNameIsNullOrEmpty_Throws_2() =>
         // Empty parameter name
-        Assert.Throws<InvalidParameterIdentifierException>(() => new ParameterTag("FirstPrefix", string.Empty, null, null));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new ParameterTag(string.Empty, null));
 
     [Fact]
     public void Constructor_WhenParameterNameIsNullOrEmpty_Throws_3() =>
         // Whitespace parameter name
-        Assert.Throws<InvalidParameterIdentifierException>(() => new ParameterTag("FirstPrefix", "   ", null, null));
+        Assert.Throws<InvalidParameterIdentifierException>(() => new ParameterTag("   ", null));
 
     [Fact]
     public void CompareTo_NullOther_ReturnsPositive()
     {
-        ParameterTag parameterTag = new ("FirstPrefix", "ParameterName", "FirstIndex", null);
+        ParameterTag parameterTag = new("ParameterName", null);
         int comparison = parameterTag.CompareTo(null);
 
         Assert.True(comparison > 0);
@@ -198,7 +153,7 @@ public class ParameterTagTests
     [Fact]
     public void ReferenceEquality_ShortCircuitInComparer()
     {
-        ParameterTag parameterTag = new ("FirstPrefix", "ParameterName", "FirstIndex", null );
+        ParameterTag parameterTag = new("ParameterName", null);
         bool equalsResult = parameterTag.Equals(parameterTag, parameterTag);
 
         Assert.True(equalsResult);
@@ -208,7 +163,7 @@ public class ParameterTagTests
     [Fact]
     public void ToString_OnlyParameterName()
     {
-        ParameterTag tag = new(null, "ParameterName", null, null);
+        ParameterTag tag = new("ParameterName", null);
         string actual = tag.ToString();
 
         Assert.Equal("ParameterName", actual);
@@ -220,8 +175,8 @@ public class ParameterTagTests
     [InlineData("alpha", "beta")]
     public void Equals_DifferentParameterNames_False(string leftName, string rightName)
     {
-        ParameterTag left = new("P", leftName, "I", null);
-        ParameterTag right = new("P", rightName, "I", null);
+        ParameterTag left = new(leftName, null);
+        ParameterTag right = new(rightName, null);
 
         Assert.False(left.Equals(right));
         Assert.False(left == right);
@@ -232,8 +187,8 @@ public class ParameterTagTests
     [Fact]
     public void CompareTo_DifferentValues_RespectsCaseInsensitiveOrdering()
     {
-        ParameterTag a = new("Prefix", "Alpha", "01", null);
-        ParameterTag b = new("Prefix", "Beta", "01", null);
+        ParameterTag a = new("Alpha", null);
+        ParameterTag b = new("Beta", null);
 
         int comparison = a.CompareTo(b);
         int reversed = b.CompareTo(a);
@@ -243,24 +198,9 @@ public class ParameterTagTests
     }
 
     [Fact]
-    public void PrefixPrepend_Chaining()
-    {
-        ParameterTag original = new("FirstPrefix", "ParameterName", "Idx", null);
-        ParameterTag withOne = original.PrefixPrepend("New1");
-        ParameterTag withTwo = withOne.PrefixPrepend("New2");
-
-        Assert.Equal("New1_FirstPrefix_ParameterName_Idx", (string)withOne);
-        Assert.Equal("New2_New1_FirstPrefix_ParameterName_Idx", (string)withTwo);
-        Assert.NotEqual(original, withOne);
-        Assert.NotEqual(withOne, withTwo);
-        Assert.NotSame(original, withOne);
-        Assert.NotSame(withOne, withTwo);
-    }
-
-    [Fact]
     public void Equals_ObjectOverride_NonTagObject()
     {
-        ParameterTag tag = new("1", "2", "3", null);
+        ParameterTag tag = new("2", null);
         object notATag = "1_2_3";
 
         Assert.False(tag.Equals(notATag));
@@ -269,8 +209,8 @@ public class ParameterTagTests
     [Fact]
     public void GetHashCode_DifferentLogicalValues()
     {
-        ParameterTag first = new("A", "B", "C", null);
-        ParameterTag second = new("A", "B2", "C", null);
+        ParameterTag first = new("B", null);
+        ParameterTag second = new("B2", null);
 
         int hashFirst = first.GetHashCode();
         int hashSecond = second.GetHashCode();
@@ -282,29 +222,17 @@ public class ParameterTagTests
     public void EqualityOperators_NullOnLeft()
     {
         ParameterTag? left = null;
-        ParameterTag right = new("1", "2", "3", null);
+        ParameterTag right = new("2", null);
 
         Assert.False(left == right);
         Assert.True(left != right);
     }
 
-    [Fact]
-    public void AddIndex_Then_PrefixPrepend()
-    {
-        ParameterTag original = new(null, "Name", null, null);
-        ParameterTag withIndex = original.AddIndex("01");
-        ParameterTag withPrefix = withIndex.PrefixPrepend("P");
-
-        Assert.Equal("Name_01", (string)withIndex);
-        Assert.Equal("P_Name_01", (string)withPrefix);
-        Assert.NotSame(original, withIndex);
-        Assert.NotSame(withIndex, withPrefix);
-    }
 
     [Fact]
     public void Constructor_NullPrefix_AndIndex_OnlyName()
     {
-        ParameterTag tag = new(null, "OnlyName", null, null);
+        ParameterTag tag = new("OnlyName", null);
         string actual = (string)tag;
 
         Assert.Equal("OnlyName", actual);
@@ -313,16 +241,16 @@ public class ParameterTagTests
     [Fact]
     public void Constructor_AllPartsPresent()
     {
-        ParameterTag tag = new("P1", "Name", "I1", null);
+        ParameterTag tag = new("Name", null);
         string actual = (string)tag;
 
-        Assert.Equal("P1_Name_I1", actual);
+        Assert.Equal("Name", actual);
     }
 
     [Fact]
     public void Equals_NullObject()
     {
-        ParameterTag tag = new("1", "2", "3", null);
+        ParameterTag tag = new("2", null);
 
         Assert.False(tag.Equals((object?)null));
     }
@@ -330,8 +258,8 @@ public class ParameterTagTests
     [Fact]
     public void CompareTo_EqualValues_ReturnsZero()
     {
-        ParameterTag a = new("P", "N", "I", null);
-        ParameterTag b = new("p", "n", "i", null);
+        ParameterTag a = new("N", null);
+        ParameterTag b = new("n", null);
 
         int compare = a.CompareTo(b);
 
