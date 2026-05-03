@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;

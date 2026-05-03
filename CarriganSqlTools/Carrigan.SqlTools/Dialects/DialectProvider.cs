@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;

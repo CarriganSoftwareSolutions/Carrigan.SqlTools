@@ -11,7 +11,7 @@ using System.Reflection.Emit;
 using System.Reflection.Metadata;
 using System.Text;
 
-namespace Carrigan.SqlTools.Dialects;
+namespace Carrigan.SqlTools.Dialects.SqlServer;
 
 /// <summary>
 /// Provides SQL dialect-specific formatting and rendering logic for Microsoft SQL Server.
