@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.Types;
 /// <remarks>
 /// This class describes the SQL Server side of a mapped field, including the provider type name,
 /// length, precision, scale, Unicode behavior, fixed-length behavior, fractional seconds precision,
-/// and nullability.
+/// provider base type, and nullability.
 /// </remarks>
 public sealed class FieldProperties
 {
@@ -35,12 +35,12 @@ public sealed class FieldProperties
     public bool? IsFixedLength { get; init; }
 
     /// <summary>
-    /// Gets the precision used by SQL Server decimal, numeric, and float types.
+    /// Gets the precision used by SQL Server decimal and floating-point types.
     /// </summary>
     public byte? Precision { get; init; }
 
     /// <summary>
-    /// Gets the scale used by SQL Server decimal and numeric types.
+    /// Gets the scale used by SQL Server decimal types.
     /// </summary>
     public byte? Scale { get; init; }
 
@@ -63,6 +63,14 @@ public sealed class FieldProperties
     public string? ProviderTypeName { get; init; }
 
     /// <summary>
+    /// Gets the provider base type for SQL Server types that support an additional base type argument.
+    /// </summary>
+    /// <example>
+    /// <c>FLOAT32</c> or <c>FLOAT16</c> for <c>VECTOR</c>.
+    /// </example>
+    public string? BaseType { get; init; }
+
+    /// <summary>
     /// Returns the SQL Server declaration for the field type.
     /// </summary>
     public override string ToString()
@@ -74,7 +82,11 @@ public sealed class FieldProperties
 
         string declaration = ProviderTypeName.ToUpperInvariant();
 
-        if (IsMax == true)
+        if (declaration == "VECTOR" && Length is not null && !string.IsNullOrWhiteSpace(BaseType))
+        {
+            declaration += $"({Length}, {BaseType.ToUpperInvariant()})";
+        }
+        else if (IsMax == true)
         {
             declaration += "(MAX)";
         }

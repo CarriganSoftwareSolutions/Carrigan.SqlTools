@@ -76,6 +76,7 @@ public static class SqlServerTypesProvider
         byte? precision = null,
         byte? scale = null,
         byte? fractionalSecondsPrecision = null,
+        string? baseType = null,
         bool? nullable = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(providerTypeName);
@@ -105,7 +106,8 @@ public static class SqlServerTypesProvider
             Scale = scale,
             FractionalSecondsPrecision = fractionalSecondsPrecision,
             IsNullable = nullable ?? DEFAULT_IS_NULLABLE,
-            ProviderTypeName = providerTypeName.ToUpperInvariant()
+            ProviderTypeName = providerTypeName.ToUpperInvariant(),
+            BaseType = baseType?.ToUpperInvariant()
         };
     }
 
@@ -255,8 +257,9 @@ public static class SqlServerTypesProvider
         }
 
         return Create(
-            providerTypeName: baseType is null ? "VECTOR" : $"VECTOR({dimensions}, {baseType.ToUpperInvariant()})",
-            length: baseType is null ? dimensions : null,
+            providerTypeName: "VECTOR",
+            length: dimensions,
+            baseType: baseType,
             nullable: nullable);
     }
 
