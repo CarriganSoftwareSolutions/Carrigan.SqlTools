@@ -312,7 +312,7 @@ public sealed class SqlTypeMismatchExceptionTests
     [Fact]
     public void Validate_ValueAndSqlDbType_DbNullValue()
     {
-        object value = DBNull.Value;
+        object value = null!;
         SqlDbType sqlDbType = SqlDbType.NVarChar;
 
         SqlTypeMismatchException? exception = SqlTypeMismatchException.Validate(value, sqlDbType);

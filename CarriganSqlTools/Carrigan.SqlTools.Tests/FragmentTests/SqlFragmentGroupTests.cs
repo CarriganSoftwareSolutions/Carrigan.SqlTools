@@ -1,6 +1,8 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tests.Helpers;
 using System;
 
 
@@ -44,8 +46,11 @@ public class SqlFragmentGroupTests
             innerGroup
         ]);
 
-        Parameter[] parameters = [.. outerGroup.GetParameters()];
+        IEnumerable<SqlFragmentParameter> parameters = [.. outerGroup.GetSqlFragmentParameters()];
 
-        Assert.Equal([parameter1, parameter2], parameters);
+        //These are pre-final rendered, so they lack the @ and the _#
+        int count = parameters.Where(p => p.ParameterTag == "Name" || p.ParameterTag == "Status").Count();
+
+        Assert.Equal(2, count);
     }
 }

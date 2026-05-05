@@ -1,5 +1,9 @@
-﻿using Carrigan.SqlTools.PredicatesLogic;
+﻿using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -12,10 +16,35 @@ namespace Carrigan.SqlTools.Fragments;
 /// </remarks>
 public class SqlFragmentParameter : SqlFragment
 {
-    /// <summary>
-    /// The wrapped parameter instance used for SQL rendering and parameter materialization.
-    /// </summary>
-    internal readonly Parameter Parameter;
+    public readonly ParameterTag ParameterTag;
+    public readonly FieldProperties? FieldProperties;
+    public readonly object? Value;
+
+    internal static SqlFragmentParameter GetEncryptedParameter<T>(IEncryption? encryption, ColumnInfo column, T entity) =>
+        new(column.ParameterTag, encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
+
+    internal static SqlFragmentParameter GetParameter<T>(ColumnInfo column, T entity) =>
+        new(column, column.PropertyInfo.GetValue(entity));
+
+    internal SqlFragmentParameter(ParameterTag parameterTag, FieldProperties fieldProperties, object? value)
+    {
+        ParameterTag = parameterTag;
+        FieldProperties = fieldProperties;
+        Value = value;
+    }
+    internal SqlFragmentParameter(ParameterTag parameterTag, object? value)
+    {
+        ParameterTag = parameterTag;
+        FieldProperties = null;
+        Value = value;
+    }
+
+    internal SqlFragmentParameter(ColumnInfo columnInfo, object? value)
+    {
+        ParameterTag = columnInfo.ParameterTag;
+        FieldProperties = columnInfo.SqlFieldProperties;
+        Value = value;
+    }
 
     /// <summary>
     /// Initializes a new instance of <see cref="SqlFragmentParameter"/> with the provided parameter.
@@ -27,7 +56,23 @@ public class SqlFragmentParameter : SqlFragment
     internal SqlFragmentParameter(Parameter parameter)
     {
         ArgumentNullException.ThrowIfNull(parameter);
-        Parameter = parameter;
+        ParameterTag = parameter.Name;
+        FieldProperties = null;
+        Value = parameter.Value;
+    }
+
+    internal SqlFragmentParameter(SqlFragmentParameter sqlFragmentParameter, ParameterTag newTag)
+    {
+        ParameterTag = newTag;
+        FieldProperties = sqlFragmentParameter.FieldProperties;
+        Value = sqlFragmentParameter.Value;
+    }
+
+    internal SqlFragmentParameter(SqlFragmentParameter sqlFragmentParameter, object? recastValue)
+    {
+        ParameterTag = sqlFragmentParameter.ParameterTag;
+        FieldProperties = sqlFragmentParameter.FieldProperties;
+        Value = recastValue;
     }
 
     /// <summary>
@@ -36,18 +81,18 @@ public class SqlFragmentParameter : SqlFragment
     /// <param name="dialect">The SQL dialect to use for rendering.</param>
     /// <returns>The SQL parameter name produced by the wrapped <see cref="Parameter"/>.</returns>
     /// <remarks>
-    /// Any exception thrown by <see cref="Parameter.ToSql"/> will be propagated to the caller.
+    /// Any exception thrown by <see cref="Parameter.ParameterTag"/> will be propagated to the caller.
     /// </remarks>
     internal override string ToSql() =>
-        Parameter.ToSql();
+        ParameterTag;
 
     /// <summary>
     /// Retrieves the parameters contained within this fragment for later materialization.
     /// </summary>
     /// <returns>An enumerable collection containing the single <see cref="Parameter"/> wrapped by this fragment.</returns>
-    internal override IEnumerable<Parameter> GetParameters()
+    internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters()
     {
-        yield return Parameter;
+        yield return this;
     }
 
     /// <summary>

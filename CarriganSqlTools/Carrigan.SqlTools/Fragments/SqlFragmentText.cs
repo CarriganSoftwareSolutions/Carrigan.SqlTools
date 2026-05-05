@@ -37,7 +37,7 @@ public class SqlFragmentText : SqlFragment
     /// Gets the parameters contained in this fragment. Since this fragment represents literal SQL text, it does not contain any parameters.
     /// </summary>
     /// <returns>An empty enumerable collection, as this fragment does not contain any parameters.</returns>
-    internal override IEnumerable<Parameter> GetParameters() =>
+    internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         [];
 
     /// <summary>

@@ -101,7 +101,7 @@ public partial class SqlGenerator<T>
                     new SqlFragmentGroup
                     (
                         new SqlFragmentText($"{column.ColumnTag.ToString(false)} = "),
-                        new SqlFragmentParameter(GetSqlParameter(column, entity))
+                        GetSqlParameter(column, entity)
                     )
                 )
                 .JoinFragments(new SqlFragmentText(", "));
@@ -114,7 +114,7 @@ public partial class SqlGenerator<T>
                     new SqlFragmentGroup
                     (
                         new SqlFragmentText($"{column.ColumnTag.ToString(false)} = "),
-                        new SqlFragmentParameter(GetSqlParameter(column, entity))
+                        GetSqlParameter(column, entity)
                     )
                 )
                 .JoinFragments(new SqlFragmentText(" AND "));
@@ -331,7 +331,7 @@ public partial class SqlGenerator<T>
                     new SqlFragmentGroup
                     (
                         new SqlFragmentText($"{column.ColumnTag.ToString(true)} = "),
-                        new SqlFragmentParameter(GetSqlParameter(column, entity))
+                        GetSqlParameter(column, entity)
                     )
                 )
                 .JoinFragments(new SqlFragmentText(", "));

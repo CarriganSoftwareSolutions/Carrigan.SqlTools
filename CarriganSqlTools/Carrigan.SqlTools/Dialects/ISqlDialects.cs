@@ -1,13 +1,18 @@
 ﻿using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Dialects;
 
@@ -74,4 +79,41 @@ public interface ISqlDialects
     /// <param name="fetch">The maximum number of rows to return. Must be greater than 0.</param>
     /// <returns>A string containing the SQL paging clause representing the specified offset and fetch values.</returns>
     string RenderPaging(int offset, int fetch);
+
+    /// <summary>
+    /// Returns the default <see cref="FieldProperties"/> for a given CLR type according to the SQL dialect's type mapping rules.
+    /// </summary>
+    /// <param name="type">The CLR type for which to retrieve the default field properties.</param>
+    /// <returns>The default <see cref="FieldProperties"/> for the specified CLR type.</returns>
+    FieldProperties GetDefaultFieldPropertiesByClrType(Type type);
+
+    /// <summary>
+    /// Renders the SQL declaration for a field based on the provided <see cref="FieldProperties"/>. This includes the provider type name,
+    /// </summary>
+    /// <param name="fieldProperties">
+    /// The <see cref="FieldProperties"/> containing the necessary information to generate the SQL declaration for the field, such as provider type name,
+    /// </param>
+    /// <returns>
+    /// A string representing the SQL declaration for the field, formatted according to the rules of the SQL dialect. This may include the provider type name,
+    /// </returns>
+    /// 
+    string RenderFieldProperties(FieldProperties fieldProperties);
+
+    SqlQuery RenderSqlQuery(IEnumerable<SqlFragment> sqlFragments);
+
+    SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag);
+
+
+    /// <summary>
+    /// Performs the necessary conversions for a parameter value
+    /// before it is passed to the database.
+    /// </summary>
+    /// <param name="value">
+    /// The value to convert. A <c>null</c> value is converted to
+    /// <see cref="DBNull.Value"/>.
+    /// </param>
+    /// <returns>
+    /// The converted value suitable for database operations.
+    /// </returns>
+    public object ValueConversion(object? value);
 }

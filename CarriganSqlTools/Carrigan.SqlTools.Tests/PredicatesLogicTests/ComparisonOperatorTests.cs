@@ -14,8 +14,8 @@ public class ComparisonOperatorTests
     [Fact]
     public void ComparisonOperator_OperatorNull_ThrowsArgumentNullException()
     {
-        Predicates left = new Parameter("P1", 1, null);
-        Predicates right = new Parameter("P2", 2, null);
+        Predicates left = new Parameter("P1", 1);
+        Predicates right = new Parameter("P2", 2);
 
         _ = Assert.Throws<ArgumentNullException>(() =>
             new TestComparisonOperator(left, right, null!));
@@ -24,8 +24,8 @@ public class ComparisonOperatorTests
     [Fact]
     public void ComparisonOperator_OperatorWhitespace_ThrowsArgumentException()
     {
-        Predicates left = new Parameter("P1", 1, null);
-        Predicates right = new Parameter("P2", 2, null);
+        Predicates left = new Parameter("P1", 1);
+        Predicates right = new Parameter("P2", 2);
 
         _ = Assert.Throws<ArgumentException>(() =>
             new TestComparisonOperator(left, right, " "));

@@ -57,13 +57,8 @@ public partial class SqlGenerator<T>
     public SqlQuery Procedure(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        IEnumerable<SqlFragmentParameter> parameters = ColumnInfo.Select(column => new SqlFragmentParameter(GetSqlParameter(column, entity)));
+        IEnumerable<SqlFragmentParameter> parameters = ColumnInfo.Select(column => GetSqlParameter(column, entity));
 
-        return new SqlQuery()
-        {
-            Parameters = parameters.GetParameters(Dialect),
-            QueryText = ProcedureTag,
-            CommandType = CommandType.StoredProcedure
-        };
+        return parameters.ToStoredProcedureQuery(Dialect, ProcedureTag);
     }
 }

@@ -1,7 +1,9 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 using System.Text;
+using Carrigan.SqlTools.Tests.Helpers;
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
@@ -32,15 +34,15 @@ public class SqlGeneratorInsertExamples
         };
         SqlQuery query = customerGenerator.InsertAutoId(entity);
 
-        string expectedQueryText = ModifyInsertQueryWithReturn("INSERT INTO [Customer] ([Name], [Email], [Phone])", "VALUES (@Name_1, @Email_2, @Phone_3);", "INT");
+        string expectedQueryText = ModifyInsertQueryWithReturn("INSERT INTO [Customer] ([Name], [Email], [Phone])", "VALUES (@Name_1, @Email_2, @Phone_3);", "INT NOT NULL");
 
         Assert.Equal(expectedQueryText, query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Equal(3, query.Parameters.Count);
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
 
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_1").Single().Value);
-        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_2").Single().Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "@Phone_3").Single().Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Hank@example.com");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Phone_3", "+1(555)555-5555");
     }
 
     [Fact]
@@ -67,16 +69,16 @@ public class SqlGeneratorInsertExamples
 
         Assert.Equal("INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) VALUES (@Id_1, @Name_2, @Email_3, @Phone_4), (@Id_5, @Name_6, @Email_7, @Phone_8);", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Equal(8, query.Parameters.Count);
+        SqlQueryTestHelper.AssertParameterCount(query, 8);
 
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_2").Single().Value);
-        Assert.Equal("Hank@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_3").Single().Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "@Phone_4").Single().Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 42);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_2", "Hank");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_3", "Hank@example.com");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Phone_4", "+1(555)555-5555");
 
-        Assert.Equal(732, (int)query.Parameters.Where(param => param.Key == "@Id_5").Single().Value);
-        Assert.Equal("Homer", (string)query.Parameters.Where(param => param.Key == "@Name_6").Single().Value);
-        Assert.Equal("Homer@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_7").Single().Value);
-        Assert.Equal("+1(555)555-1234", (string)query.Parameters.Where(param => param.Key == "@Phone_8").Single().Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_5", 732);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_6", "Homer");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_7", "Homer@example.com");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Phone_8", "+1(555)555-1234");
     }
 }

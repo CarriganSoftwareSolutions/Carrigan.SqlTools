@@ -17,10 +17,10 @@ public class LikeTests
     private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
+    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly Predicates ParameterElite = new Parameter("Elite", 1337, null);
+    private readonly Predicates ParameterElite = new Parameter("Elite", 1337);
     private readonly string ParameterEliteSql = "@Elite_1";
 
     private readonly Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");

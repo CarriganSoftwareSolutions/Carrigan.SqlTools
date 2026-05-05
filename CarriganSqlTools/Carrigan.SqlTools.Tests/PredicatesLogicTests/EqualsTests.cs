@@ -18,9 +18,9 @@ public class EqualsTests
     private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
+    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f);
 
-    private readonly Predicates ParameterElite = new Parameter("Elite", 1337, SqlTypeDefinition.AsInt());
+    private readonly Predicates ParameterElite = new Parameter("Elite", 1337);
 
     private readonly Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
 
@@ -294,10 +294,10 @@ public class EqualsTests
 
     [Fact]
     public void Equal_LeftNull_Throws() =>
-    Assert.Throws<NullReferenceException>(() => new Equal(null!, new Parameter("P1", 1, null)));
+    Assert.Throws<NullReferenceException>(() => new Equal(null!, new Parameter("P1", 1)));
 
     [Fact]
     public void Equal_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new Equal(new Parameter("P1", 1, null), null!));
+        Assert.Throws<NullReferenceException>(() => new Equal(new Parameter("P1", 1), null!));
 
 }

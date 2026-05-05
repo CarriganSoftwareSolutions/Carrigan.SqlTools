@@ -1,8 +1,10 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
@@ -18,10 +20,10 @@ public class SqlGeneratorDeleteExamples
         Customer entity = new() { Id = 42 };
         SqlQuery query = customerGenerator.Delete(entity);
 
-        Assert.Equal("DELETE FROM [Customer] WHERE [Id] = @Id_1;", query.QueryText);
+        Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 42);
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class SqlGeneratorDeleteExamples
 
         Assert.Equal("DELETE FROM [Customer];", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -42,8 +44,8 @@ public class SqlGeneratorDeleteExamples
 
         Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 42);
     }
 
     [Fact]
@@ -53,7 +55,7 @@ public class SqlGeneratorDeleteExamples
 
         Assert.Equal("DELETE FROM [Customer];", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -64,8 +66,8 @@ public class SqlGeneratorDeleteExamples
 
         Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -79,7 +81,7 @@ public class SqlGeneratorDeleteExamples
 
         Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -96,7 +98,7 @@ public class SqlGeneratorDeleteExamples
 
         Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "spam@example.com");
     }
 }

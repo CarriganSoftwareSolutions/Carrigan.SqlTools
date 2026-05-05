@@ -69,7 +69,7 @@ public sealed class SqlDecimalAttributeTests
     [Theory]
     [InlineData((byte)0)]
     [InlineData((byte)39)]
-    public void Constructor_WithPrecision_Exception(byte precision) => 
+    public void Constructor_WithPrecision_Exception(byte precision) =>
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlDecimalAttribute(precision));
 
     [Theory]
@@ -79,7 +79,7 @@ public sealed class SqlDecimalAttributeTests
     // Scale greater than precision (invalid)
     [InlineData((byte)5, (byte)6)]
     [InlineData((byte)10, (byte)11)]
-    public void Constructor_WithPrecisionAndScale_Exception(byte precision, byte scale) => 
+    public void Constructor_WithPrecisionAndScale_Exception(byte precision, byte scale) =>
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlDecimalAttribute(precision, scale));
 
     [Theory]

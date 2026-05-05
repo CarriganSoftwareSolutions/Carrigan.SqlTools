@@ -28,7 +28,7 @@ public sealed class SqlDateTime2AttributeTests
     [Theory]
     [InlineData((byte)0, "DATETIME2(0)")]
     [InlineData((byte)7, "DATETIME2(7)")]
-    public void Constructor_WithValue(byte fractionalSecondPrecision,string expectedTypeDeclaration)
+    public void Constructor_WithValue(byte fractionalSecondPrecision, string expectedTypeDeclaration)
     {
         SqlDateTime2Attribute sqlDateTime2Attribute = new(fractionalSecondPrecision);
 
@@ -48,6 +48,6 @@ public sealed class SqlDateTime2AttributeTests
     [Theory]
     [InlineData((byte)8)]
     [InlineData((byte)9)]
-    public void Constructor_WithFractionalSecondPrecision_Exception(byte fractionalSecondPrecision) => 
+    public void Constructor_WithFractionalSecondPrecision_Exception(byte fractionalSecondPrecision) =>
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlDateTime2Attribute(fractionalSecondPrecision));
 }

@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -7,6 +8,7 @@ using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
+
 public class AliasAttributeTests
 {
     [Fact]

@@ -1,8 +1,10 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 
@@ -41,10 +43,10 @@ public class AttributeExamples
         string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
-        Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(10, query.GetParameterValue<int>("@Id_3"));
-        Assert.Equal(313, query.GetParameterValue<int>("@CustomerId_1"));
-        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("@Email_2"));
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_3", 10);
+        SqlQueryTestHelper.AssertParameterValue(query, "@CustomerId_1", 313);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Exterminate@GenericTinCanLand.gov");
     }
 
     [Fact]
@@ -63,9 +65,9 @@ public class AttributeExamples
         string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
-        Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(10, query.GetParameterValue<int>("@Id_3"));
-        Assert.Equal(313, query.GetParameterValue<int>("@CustomerId_1"));
-        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("@Email_2"));
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_3", 10);
+        SqlQueryTestHelper.AssertParameterValue(query, "@CustomerId_1", 313);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Exterminate@GenericTinCanLand.gov");
     }
 }

@@ -64,6 +64,6 @@ public sealed class SqlBinaryAttributeTests
     // VARBINARY: valid range 1–8000
     [InlineData(StorageTypeEnum.Var, 0)]
     [InlineData(StorageTypeEnum.Var, 8001)]
-    public void Constructor_WithSize_OutOfRange_Exception(StorageTypeEnum storageTypeEnum, int size) => 
+    public void Constructor_WithSize_OutOfRange_Exception(StorageTypeEnum storageTypeEnum, int size) =>
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlBinaryAttribute(storageTypeEnum, size));
 }

@@ -39,13 +39,13 @@ public sealed class CommandExecutionFailedException : SqlToolsSqlServerException
         Operation = operation;
         QueryText = query.QueryText;
         CommandType = query.CommandType;
-        ParameterNames = query.Parameters.Select(parameters => parameters.Key.ToString()).Materialize(Core.Enums.NullOptionsEnum.FilteredOut);
+        ParameterNames = query.Parameters.Select(parameters => parameters.ToString() ?? string.Empty).Materialize(Core.Enums.NullOptionsEnum.FilteredOut);
         HasTransaction = transaction is not null;
     }
 
     private static string BuildMessage(string operation, SqlQuery query, DbTransaction? transaction)
     {
         string transactionDisplay = transaction is null ? "No" : "Yes";
-        return $"{operation} failed. CommandType='{query.CommandType}', Parameters={query.Parameters.Count}, Transaction={transactionDisplay}.";
+        return $"{operation} failed. CommandType='{query.CommandType}', Parameters={query.Parameters.Count()}, Transaction={transactionDisplay}.";
     }
 }

@@ -63,7 +63,7 @@ public class ColumnValue<T> : Predicates
     /// Thrown only if a property passes validation but no matching column metadata is returned.
     /// This is not expected under normal conditions.
     /// </exception>
-    public ColumnValue(PropertyName propertyName, object parameterValue) : this(CreateValue(propertyName, parameterValue))
+    public ColumnValue(PropertyName propertyName, object? parameterValue) : this(CreateValue(propertyName, parameterValue))
     {
     }
 
@@ -75,7 +75,7 @@ public class ColumnValue<T> : Predicates
     private ColumnValue(Equal equal) : base([equal]) =>
         value = equal;
 
-    private static Equal CreateValue(PropertyName propertyName, object parameterValue)
+    private static Equal CreateValue(PropertyName propertyName, object? parameterValue)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 

@@ -11,6 +11,7 @@ using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Reflection;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 //IGNORE SPELLING: parameterization
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -226,7 +227,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="ArgumentException">
     /// Thrown when an index is applied to a parameter that already has an index.
     /// </exception>
-    private Parameter GetSqlParameter(ColumnInfo column, T entity)
+    protected SqlFragmentParameter GetSqlParameter(ColumnInfo column, T entity)
     {
         ArgumentNullException.ThrowIfNull(column);
         ArgumentNullException.ThrowIfNull(entity);
@@ -237,8 +238,8 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
             return new (column.ParameterTag, _Encryption.Version);
         else if (_Encryption is not null && IsEncrypted(column))
-            return Parameter.GetParameter(column.ParameterTag, _Encryption, column, entity);
+            return SqlFragmentParameter.GetEncryptedParameter(_Encryption, column, entity);
         else
-            return Parameter.GetParameter(column.ParameterTag, column, entity);
+            return SqlFragmentParameter.GetParameter(column, entity);
     }
 }

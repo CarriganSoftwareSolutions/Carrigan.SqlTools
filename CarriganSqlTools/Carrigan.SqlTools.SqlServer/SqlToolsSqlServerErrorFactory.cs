@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlServer.Exceptions;
 using System.Data.Common;
 
@@ -9,7 +9,7 @@ internal static class SqlToolsSqlServerErrorFactory
     internal static ConnectionFailedException ConnectionFailed(string friendlyName, Exception exception) =>
         new(friendlyName, exception);
 
-    internal static CommandExecutionFailedException ExecutionFailed(string operation, SqlQuery query, DbConnection connection, DbTransaction? transaction, Exception exception) =>
+    internal static CommandExecutionFailedException ExecutionFailed(string operation, SqlServerQuery query, DbConnection connection, DbTransaction? transaction, Exception exception) =>
         new(operation, query, connection, transaction, exception);
 
     internal static DataReaderFailedException ReadFailed(Type modelType, int? ordinal, string? columnName, Exception exception) =>

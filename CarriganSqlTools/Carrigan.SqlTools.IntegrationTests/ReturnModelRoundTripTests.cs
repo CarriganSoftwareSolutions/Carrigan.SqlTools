@@ -1,6 +1,7 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.Sets;
@@ -43,7 +44,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
         ColumnCollection<ReturnModel> returnColumns =
             new("Id1", "Id2", "DateTime", "Status", "DeletedFlag");
 
-        SqlQuery insertQuery = _generator.Insert(insertColumns, returnColumns, toInsert);
+        SqlServerQuery insertQuery = (SqlServerQuery)_generator.Insert(insertColumns, returnColumns, toInsert);
 
         SqlConnection connection = new(_fixture.ConnectionString);
 
@@ -71,7 +72,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
         }
 
         // Act 2: select the rows from the database and compare to insert results
-        SqlQuery selectQuery = _generator.SelectById(returnedRows);
+        SqlServerQuery selectQuery = (SqlServerQuery)_generator.SelectById(returnedRows);
 
         List<ReturnModel> dbRows = [.. (await CommandsAsync.ExecuteReaderAsync<ReturnModel>(selectQuery, transaction: null, connection))];
 

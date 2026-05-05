@@ -65,7 +65,7 @@ public class SqlBinaryTests
     [Fact]
     public void ByteArray_DbNull()
     {
-        Dictionary<string, object?> data = GetTestData(DBNull.Value);
+        Dictionary<string, object?> data = GetTestData(null!);
         ByteArrayTest actual = Invoker<ByteArrayTest>.Invoke(data);
         Assert.NotNull(actual.Value);
         Assert.Empty(actual.Value);
@@ -74,7 +74,7 @@ public class SqlBinaryTests
     [Fact]
     public void NullableByteArray_DbNull()
     {
-        Dictionary<string, object?> data = GetTestData(DBNull.Value);
+        Dictionary<string, object?> data = GetTestData(null!);
         NullableByteArrayTest actual = Invoker<NullableByteArrayTest>.Invoke(data);
         Assert.Null(actual.Value);
     }

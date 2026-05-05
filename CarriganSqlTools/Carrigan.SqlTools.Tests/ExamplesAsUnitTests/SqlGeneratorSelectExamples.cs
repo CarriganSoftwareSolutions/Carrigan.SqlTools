@@ -1,10 +1,12 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
+using Carrigan.SqlTools.Tests.Helpers;
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
@@ -20,7 +22,7 @@ public class SqlGeneratorSelectExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer]", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class SqlGeneratorSelectExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Email] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -45,7 +47,7 @@ public class SqlGeneratorSelectExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -62,7 +64,7 @@ public class SqlGeneratorSelectExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -84,8 +86,8 @@ public class SqlGeneratorSelectExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Order].[Total] > @Total_1) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 500m);
     }
 
     [Fact]
@@ -96,7 +98,7 @@ public class SqlGeneratorSelectExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -107,7 +109,7 @@ public class SqlGeneratorSelectExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Id] = @Id_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal(42, (int)query.Parameters.Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertSingleParameterValue(query, 42);
     }
 }

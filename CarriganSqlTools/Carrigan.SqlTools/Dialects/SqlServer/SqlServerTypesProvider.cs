@@ -1,4 +1,5 @@
-﻿// IGNORE SPELLING: bigint, binary, bit, char, cursor, date, datetime, datetime2, datetimeoffset, decimal, float, geography, geometry, hierarchyid, image, int, json, money, nchar, ntext, numeric, nvarchar, real, rowversion, smalldatetime, smallint, smallmoney, sql_variant, table, text, time, timestamp, tinyint, uniqueidentifier, varbinary, varchar, vector, xml
+﻿//IGNORE SPELLING: bigint, char, datetime, datetime2, datetimeoffset, hierarchyid, int, json, nchar, ntext, nvarchar, rowversion,
+//IGNORE SPELLING: smalldatetime,smallint, smallmoney, sql_variant, tinyint, uniqueidentifier, varbinary, varchar, xml, nullability
 
 using System;
 using System.Xml;

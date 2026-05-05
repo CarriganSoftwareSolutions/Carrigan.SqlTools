@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.PredicatesLogic;
+using System.Collections;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -10,10 +11,10 @@ namespace Carrigan.SqlTools.Fragments;
 /// </summary>
 internal static class SqlFragmentExtensions
 {
-    private static Parameter RenderFinalParameter(ISqlDialects dialect, Parameter parameter, int index)
+    private static SqlFragmentParameter RenderFinalParameter(ISqlDialects dialect, SqlFragmentParameter parameter, int index)
     {
-        string finalParameterName = dialect.RenderFinalParameterName(parameter.Name, index);
-        return new Parameter(new ParameterTag(finalParameterName, parameter.Name.SqlType), parameter.Value);
+        string finalParameterName = dialect.RenderFinalParameterName(parameter.ParameterTag, index);
+        return new (parameter, new ParameterTag (finalParameterName));
     }
 
     private static IEnumerable<SqlFragment> RenderFinalFragmentEnumeration(this IEnumerable<SqlFragment> sqlFragments, ISqlDialects dialect)
@@ -25,7 +26,7 @@ internal static class SqlFragmentExtensions
         {
             if (flatenedSqlFragments.ElementAt(i) is SqlFragmentParameter parameterFragment)
             {
-                sqlFragmentsFinalForm.Add(new SqlFragmentParameter(RenderFinalParameter(dialect, parameterFragment.Parameter, j++)));
+                sqlFragmentsFinalForm.Add(RenderFinalParameter(dialect, parameterFragment, j++));
             }
             else
                 sqlFragmentsFinalForm.Add(flatenedSqlFragments.ElementAt(i));
@@ -50,15 +51,14 @@ internal static class SqlFragmentExtensions
     /// Thrown when duplicate <see cref="ParameterTag"/> keys are encountered.
     /// </exception>
     /// <param name="dialect"></param>
-    internal static Dictionary<ParameterTag, object> GetParameters(this IEnumerable<SqlFragment> sqlFragments, ISqlDialects dialect)
+    internal static IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(this IEnumerable<SqlFragment> sqlFragments, ISqlDialects dialect)
     {
         ArgumentNullException.ThrowIfNull(sqlFragments);
         ArgumentNullException.ThrowIfNull(dialect);
 
         return sqlFragments
             .RenderFinalFragmentEnumeration(dialect)
-            .SelectMany(fragment => fragment.GetParameters())
-            .ToDictionary(static parameter => parameter.Name, static parameter => parameter.Value ?? DBNull.Value);
+            .SelectMany(fragment => fragment.GetSqlFragmentParameters());
     }
 
     /// <summary>
@@ -109,12 +109,11 @@ internal static class SqlFragmentExtensions
     /// <param name="dialect">The SQL dialect to use for rendering the fragments.</param>
     /// <returns>A <see cref="SqlQuery"/> object containing the concatenated SQL text and the collected parameters.</returns>
     internal static SqlQuery ToSqlQuery(this IEnumerable<SqlFragment> fragments, ISqlDialects dialect) =>
-        new ()
-        {
-            CommandType = System.Data.CommandType.Text,
-            QueryText = fragments.ToSql(dialect),
-            Parameters = fragments.GetParameters(dialect)
-        };
+        dialect.RenderSqlQuery(fragments);
+
+    internal static SqlQuery ToStoredProcedureQuery(this IEnumerable<SqlFragmentParameter> fragments, ISqlDialects dialect, ProcedureTag procedureTag) =>
+        dialect.RenderStoredProcedureQuery(fragments, procedureTag);
+            
     /// <summary>
     /// Flattens a sequence of SQL fragments by recursively expanding any nested sequences of fragments into a single, flat sequence.
     /// </summary>

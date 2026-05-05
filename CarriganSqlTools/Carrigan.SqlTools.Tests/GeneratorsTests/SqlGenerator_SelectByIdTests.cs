@@ -1,7 +1,9 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -31,20 +33,8 @@ public class SqlGenerator_SelectByIdTests
         string expectedSql = $"SELECT [Test].* FROM [Test] WHERE ([Test].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
         Guid expectedValue = _guid;
-        Guid actualValue = (Guid)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", _guid);
     }
 
     [Fact]
@@ -56,18 +46,10 @@ public class SqlGenerator_SelectByIdTests
         string expectedSql = $"SELECT [Test].* FROM [Test] WHERE (([Test].[Id] = @Id_1) OR ([Test].[Id] = @Id_2))";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 2;
-        int actualCount = query.Parameters.Count;
 
-        Assert.Equal(expectedCount, actualCount);
-
-        Guid expectedValue = _guid;
-        Guid actualValue = (Guid)query.Parameters.Where(parameter => parameter.Key == "@Id_1").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
-
-        expectedValue = _guid2;
-        actualValue = (Guid)query.Parameters.Where(parameter => parameter.Key == "@Id_2").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", _guid);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_2", _guid2);
     }
 
     [Fact]
@@ -79,18 +61,9 @@ public class SqlGenerator_SelectByIdTests
         string expectedSql = $"SELECT [Ck].* FROM [Ck] WHERE (([Ck].[Id1] = @Id1_1) AND ([Ck].[Id2] = @Id2_2))";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 2;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        int expectedValue = 1;
-        int actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id1_1").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
-
-        expectedValue = 2;
-        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id2_2").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id1_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id2_2", 2);
     }
 
     [Fact]
@@ -103,26 +76,12 @@ public class SqlGenerator_SelectByIdTests
         string expectedSql = $"SELECT [Ck].* FROM [Ck] WHERE ((([Ck].[Id1] = @Id1_1) AND ([Ck].[Id2] = @Id2_2)) OR (([Ck].[Id1] = @Id1_3) AND ([Ck].[Id2] = @Id2_4)))";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 4;
-        int actualCount = query.Parameters.Count;
+        SqlQueryTestHelper.AssertParameterCount(query, 4);
 
-        Assert.Equal(expectedCount, actualCount);
-
-        int expectedValue = 1;
-        int actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id1_1").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
-
-        expectedValue = 2;
-        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id2_2").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
-
-        expectedValue = 3;
-        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id1_3").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
-
-        expectedValue = 4;
-        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id2_4").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id1_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id2_2", 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id1_3", 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id2_4", 4);
     }
 
     [Fact]

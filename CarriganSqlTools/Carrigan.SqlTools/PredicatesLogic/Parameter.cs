@@ -56,48 +56,10 @@ public class Parameter : Predicates
     internal Parameter(ParameterTag parameterTag, object? value) : base([])
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
-        Name = new(parameterTag, value);
-        Value = ConvertValue(value);
+        Name = new(parameterTag);
+        Value = value;
     }
 
-    /// <summary>
-    /// Creates a <see cref="Parameter"/> using an encrypted value for the given entity and column.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <param name="parameterTag">The base parameter tag (name + metadata) to use for the parameter.</param>
-    /// <param name="encryption">The encryption service, or <c>null</c> to skip encryption.</param>
-    /// <param name="column">Column metadata used to locate the property and SQL type.</param>
-    /// <param name="entity">The entity instance providing the value.</param>
-    /// <returns>
-    /// A <see cref="Parameter"/> whose value is the encrypted string
-    /// (or <c>null</c>/<see cref="DBNull.Value"/> when no encryption or value is available).
-    /// </returns>
-    internal static Parameter GetParameter<T>(ParameterTag parameterTag, IEncryption? encryption, ColumnInfo column, T entity) =>
-        new(parameterTag, encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
-
-
-    /// <summary>
-    /// Creates a <see cref="Parameter"/> for the supplied entity and column.
-    /// </summary>
-    /// <typeparam name="T">The entity type.</typeparam>
-    /// <param name="parameterTag">The base parameter tag (name + metadata) to use for the parameter.</param>
-    /// <param name="column">
-    /// The <see cref="ColumnInfo"/> used to locate the property and supply its <see cref="SqlTypeDefinition"/>.
-    /// </param>
-    /// <param name="entity">The entity instance to read the value from.</param>
-    /// <returns>
-    /// A <see cref="Parameter"/> whose key is a cloned
-    /// <see cref="ParameterTag"/> configured with <paramref name="column"/>'s
-    /// <see cref="ColumnInfo.SqlType"/>, and whose value is the property value
-    /// or <see cref="DBNull.Value"/>.
-    /// </returns>
-    internal static Parameter GetParameter<T>(ParameterTag parameterTag, ColumnInfo column, T entity)
-    {
-        object? value = column.PropertyInfo.GetValue(entity);
-        ParameterTag parameterTagCopy = new(parameterTag, value);
-
-        return new(parameterTagCopy, ConvertValue(value));
-    }
 
     /// <summary>
     /// Initializes a new instance of <see cref="Parameter"/> with a raw name.
@@ -117,21 +79,11 @@ public class Parameter : Predicates
     /// <exception cref="SqlTypeMismatchException">
     /// Thrown when <paramref name="value"/> is incompatible with the provided <paramref name="sqlType"/>.
     /// </exception>
+
     [ExternalOnly]
-    public Parameter(string parameter, object? value, SqlTypeDefinition? sqlType = null) : base([])
+    public Parameter(string parameter, object? value) : base([])
     {
-        SqlTypeDefinition sqlTypeDefinition = sqlType ?? new(value);
-
-        SqlTypeMismatchException? exception = null;
-        if (value is not null)
-        {
-            exception = SqlTypeMismatchException.Validate(value, sqlTypeDefinition.Type);
-        }
-
-        if (exception is not null)
-            throw exception;
-
-        Name = new ParameterTag(parameter, sqlTypeDefinition);
+        Name = new ParameterTag(parameter);
         Value = value;
     }
 
@@ -163,27 +115,5 @@ public class Parameter : Predicates
     internal override IEnumerable<SqlFragment> ToSqlFragments()
     {
         yield return new SqlFragmentParameter(this);
-    }
-
-    /// <summary>
-    /// Performs the necessary conversions for a parameter value
-    /// before it is passed to the database.
-    /// </summary>
-    /// <param name="value">
-    /// The value to convert. A <c>null</c> value is converted to
-    /// <see cref="DBNull.Value"/>.
-    /// </param>
-    /// <returns>
-    /// The converted value suitable for database operations.
-    /// </returns>
-    private static object ConvertValue(object? value)
-    {
-        if (value == null)
-            return DBNull.Value;
-        else if (value is XDocument xDocument)
-            return xDocument.ToString();
-        else if (value is XmlDocument xmlDocument)
-            return ((object?)xmlDocument.OuterXml) ?? DBNull.Value; //the compiler didn't like xmlDocument.ToString() ?? DBNull.Value, so I had to get creative.
-        else return value;
     }
 }

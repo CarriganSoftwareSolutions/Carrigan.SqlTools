@@ -22,7 +22,7 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1, null),
+            new Parameter("P1", 1),
         ]);
 
         string expected = $"@P1_1";
@@ -36,15 +36,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1, null),
-            new Parameter("P2", 2, null),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new Or (
             [
                 new Column < ColumnTable >("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 2, null)
+                new Parameter("PA", 2)
             ])
         ]);
 
@@ -60,15 +60,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1, null),
-            new Parameter("P2", 2, null),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
             new Column < ColumnTable >("Col1"),
             new Column < ColumnTable >("Col2"),
             new Or (
             [
                 new Column < ColumnTable >("ColA"),
                 new Column <ColumnTable>("ColB"),
-                new Parameter("PA", 2, null)
+                new Parameter("PA", 2)
             ])
         ]);
 
@@ -83,15 +83,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1, null),
-            new Parameter("P2", 2, null),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new Or (
             [
                 new Column<ColumnTable>("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 2, null)
+                new Parameter("PA", 2)
             ])
         ]);
 
@@ -106,15 +106,15 @@ public class AndTests
     {
         And and = new(
         [
-            new Parameter("P1", 1, SqlTypeDefinition.AsInt()),
-            new Parameter("P2", 2, SqlTypeDefinition.AsInt()),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new Or (
             [
                 new Column<ColumnTable>("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 3, SqlTypeDefinition.AsInt())
+                new Parameter("PA", 3)
             ])
         ]);
 
@@ -169,7 +169,7 @@ public class AndTests
     public void And_ContainsNullPredicate_ThrowsNullReferenceException() =>
     Assert.Throws<NullReferenceException>(() => new And(
     [
-        new Parameter("P1", 1, null),
+        new Parameter("P1", 1),
         null!,
     ]));
 }

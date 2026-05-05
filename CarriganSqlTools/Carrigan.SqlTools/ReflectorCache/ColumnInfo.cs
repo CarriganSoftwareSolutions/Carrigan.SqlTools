@@ -55,6 +55,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </remarks>
     internal readonly SqlTypeDefinition SqlType;
 
+    internal readonly FieldProperties SqlFieldProperties;
+
     /// <summary>
     /// The <see cref="System.Reflection.PropertyInfo"/> instance
     /// corresponding to the reflected property in the data model.
@@ -149,7 +151,9 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new(propertyInfo.PropertyType);
 
-        ParameterTag = new(parameterName, SqlType);
+        SqlFieldProperties = dialect.GetDefaultFieldPropertiesByClrType(propertyInfo.PropertyType);
+
+        ParameterTag = new(parameterName);
         AliasName = aliasName;
         SelectTag = new(ColumnTag, AliasTag.New(aliasName));
 

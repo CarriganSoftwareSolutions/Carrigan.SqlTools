@@ -1,9 +1,11 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -49,60 +51,37 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     [Fact]
     public void SqlDelete_NoJoins_WithPredicates_WithTableAttribute()
     {
-        Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3, SqlTypeDefinition.AsInt()));
+        Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3));
         SqlQuery query = _sqlGeneratorForColumnTable.Delete(null, id);
 
         string expectedSql = "DELETE FROM [ColumnTable] WHERE ([ColumnTable].[Col1] = @Col1_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Col1_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Col1_1", 3);
     }
 
     [Fact]
     public void SqlDelete_WithInnerJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3, SqlTypeDefinition.AsInt()));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
         Joins<JoinLeftTable> join = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(join, predicateId);
 
         string expectedSql = "DELETE FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 
     [Fact]
     public void SqlDelete_WithLeftJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3, null));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
         LeftJoin<JoinRightTable> join = new(joinId);
         JoinsBase relations = join.AsJoins<JoinLeftTable>();
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(relations, predicateId);
@@ -110,20 +89,8 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         string expectedSql = "DELETE FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 
     [Fact]
@@ -131,7 +98,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3, SqlTypeDefinition.AsInt()));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new(joinId1);
         LeftJoin<JoinLastTable> join2 = new(joinId2);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins<JoinLeftTable>(join1, join2), predicateId);
@@ -139,19 +106,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         string expectedSql = "DELETE FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 }

@@ -1,6 +1,7 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer, DateOnly, TimeOnly, XDocument, XmlDocument, lorem ipsum
 
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.SqlGenerators;
@@ -30,7 +31,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         await _fixture.ResetAsync();
 
         // 1) Build InsertAutoId and execute scalar to get the new identity value
-        SqlQuery insertQuery = _generator.InsertAutoId(toInsert);
+        SqlServerQuery insertQuery =(SqlServerQuery) _generator.InsertAutoId(toInsert);
 
         SqlConnection connection = new(_fixture.ConnectionString);
         object? insertedIdObj = await CommandsAsync.ExecuteScalarAsync(insertQuery, null, connection);
@@ -38,7 +39,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         Assert.NotNull(insertedId);
         // 2) Build SelectById and read the row back
         FieldsModel keyEntity = new() { Id = insertedId.Value };
-        SqlQuery selectById = _generator.SelectById(keyEntity);
+        SqlServerQuery selectById = (SqlServerQuery) _generator.SelectById(keyEntity);
 
         IEnumerable<FieldsModel> rows = await CommandsAsync.ExecuteReaderAsync<FieldsModel>(selectById, transaction: null, connection);
 

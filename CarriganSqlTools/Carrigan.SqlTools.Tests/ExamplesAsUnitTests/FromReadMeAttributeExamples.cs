@@ -1,6 +1,8 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
+using Carrigan.SqlTools.Tests.Helpers;
 
 
 //IGNORE SPELLING: dbo
@@ -27,10 +29,10 @@ public class FromReadMeAttributeExamples
         string expectedSql = "UPDATE [schema].[Phone] SET [CustomerId] = @CustomerId_1, [Phone] = @Phone_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
-        Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(2718, query.GetParameterValue<int>("@Id_3"));
-        Assert.Equal(3141, query.GetParameterValue<int>("@CustomerId_1"));
-        Assert.Equal("07700 900461", query.GetParameterValue<string>("@Phone_2"));
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_3", 2718);
+        SqlQueryTestHelper.AssertParameterValue(query, "@CustomerId_1", 3141);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Phone_2", "07700 900461");
     }
 
     [Fact]
@@ -47,10 +49,10 @@ public class FromReadMeAttributeExamples
         string expectedSql = "UPDATE [schema].[Email] SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
-        Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(10, query.GetParameterValue<int>("@Id_3"));
-        Assert.Equal(313, query.GetParameterValue<int>("@CustomerId_1"));
-        Assert.Equal("Exterminate@GenericTinCanLand.gov", query.GetParameterValue<string>("@Email_2"));
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@CustomerId_1", 313);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Exterminate@GenericTinCanLand.gov");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_3", 10);
     }
 
     [Fact]
@@ -65,7 +67,7 @@ public class FromReadMeAttributeExamples
         string expectedSql = "[schema].[UpdateThing]";
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
-        Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal("DangIt", query.GetParameterValue<string>("@SomeValue_1"));
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeValue_1", "DangIt");
     }
 }

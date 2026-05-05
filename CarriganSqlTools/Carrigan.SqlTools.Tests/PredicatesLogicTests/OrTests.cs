@@ -22,7 +22,7 @@ public class OrTests
     {
         And and = new(
         [
-                new Parameter("P1", 1, SqlTypeDefinition.AsInt()),
+                new Parameter("P1", 1),
         ]);
 
         string expected = $"@P1_1";
@@ -36,8 +36,8 @@ public class OrTests
     {
         Or or = new(
         [
-            new Parameter("P1", 1, SqlTypeDefinition.AsInt()),
-            new Parameter("P2", 2, null),
+            new Parameter("P1", 1),
+            new Parameter("P2", 2),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new And (
@@ -61,14 +61,14 @@ public class OrTests
         Or or = new(
         [
             new Parameter("P1", 1),
-            new Parameter("P2", 2, SqlTypeDefinition.AsInt()),
+            new Parameter("P2", 2),
             new Column<ColumnTable>("Col1"),
             new Column<ColumnTable>("Col2"),
             new And (
             [
                 new Column<ColumnTable>("ColA"),
                 new Column<ColumnTable>("ColB"),
-                new Parameter("PA", 2, null)
+                new Parameter("PA", 2)
             ])
         ]);
 
@@ -172,7 +172,7 @@ public class OrTests
     public void Or_ContainsNullPredicate_ThrowsNullReferenceException() =>
     Assert.Throws<NullReferenceException>(() => new Or(
     [
-        new Parameter("P1", 1, null),
+        new Parameter("P1", 1),
         null!,
     ]));
 

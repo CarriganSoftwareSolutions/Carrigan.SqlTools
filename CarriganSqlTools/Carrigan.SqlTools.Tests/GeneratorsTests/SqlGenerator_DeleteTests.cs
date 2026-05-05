@@ -1,6 +1,8 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -34,7 +36,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
+        string expectedSql = "DELETE FROM [Test] WHERE ([Test].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -51,12 +53,12 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
+        string expectedSql = "DELETE FROM [Test] WHERE ([Test].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        Assert.Single(query.Parameters);
-        Assert.Equal(new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"), query.Parameters.First().Value); // Id
-        Assert.Equal("@Id_1", query.Parameters.First().Key); // Id
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertSingleParameterValue(query, new Guid("74e147d0-bc8b-4a22-8582-3e7b38da1695"));
+        SqlQueryTestHelper.AssertSingleParameterName(query, "@Id_1");
     }
 
     [Fact]
@@ -74,7 +76,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
+        string expectedSql = "DELETE FROM [Test] WHERE ([Test].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.DoesNotContain("Name", query.QueryText);
@@ -82,12 +84,12 @@ public class SqlGenerator_DeleteTests
         Assert.DoesNotContain("HideTimeFlag", query.QueryText);
         Assert.DoesNotContain("When", query.QueryText);
         Assert.DoesNotContain("DateOf", query.QueryText);
-        Assert.Single(query.Parameters);
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "Name");
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "Where");
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "HideTimeFlag");
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "When");
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf");
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "Name");
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "Where");
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "HideTimeFlag");
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "When");
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "DateOf");
     }
 
     [Fact]
@@ -101,7 +103,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithoutTableAttribute.Delete(entityWithoutTableAttribute);
 
-        string expectedSql = "DELETE FROM [EntityWithoutTableAttribute] WHERE [Id] = @Id_1;";
+        string expectedSql = "DELETE FROM [EntityWithoutTableAttribute] WHERE ([EntityWithoutTableAttribute].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -116,7 +118,7 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithSchema.Delete(entityWithSchema);
 
-        string expectedSql = "DELETE FROM [myschema].[EntityWithSchema] WHERE [Id] = @Id_1;";
+        string expectedSql = "DELETE FROM [myschema].[EntityWithSchema] WHERE ([myschema].[EntityWithSchema].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -134,17 +136,17 @@ public class SqlGenerator_DeleteTests
 
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Delete(testEntity);
 
-        string expectedSql = "DELETE FROM [Test] WHERE [Id] = @Id_1;";
+        string expectedSql = "DELETE FROM [Test] WHERE ([Test].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
         Assert.DoesNotContain("Name", query.QueryText);
         Assert.DoesNotContain("DateOf", query.QueryText);
         Assert.DoesNotContain("When", query.QueryText);
         Assert.DoesNotContain("Address", query.QueryText);
-        Assert.Single(query.Parameters);
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "Name");
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "DateOf");
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "When");
-        Assert.DoesNotContain(query.Parameters, param => param.Key == "Address");
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "Name");
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "DateOf");
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "When");
+        SqlQueryTestHelper.AssertParameterDoesNotExist(query, "Address");
     }
 }

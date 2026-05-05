@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
@@ -6,6 +7,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -68,80 +70,44 @@ public class SqlGenerator_SelectTests
     [Fact]
     public void SqlSelect_NoJoins_WithPredicates_WithTableAttribute()
     {
-        PredicatesLogic.Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3, SqlTypeDefinition.AsInt()));
+        PredicatesLogic.Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3));
         SqlQuery query = _sqlGeneratorForColumnTable.Select(null, null, id, null, null);
 
         string expectedSql = "SELECT [ColumnTable].* FROM [ColumnTable] WHERE ([ColumnTable].[Col1] = @Col1_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Col1_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Col1_1" , 3);
     }
 
     [Fact]
     public void SqlSelect_WithInnerJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3, SqlTypeDefinition.AsInt()));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
         JoinsBase relation = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relation, predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 
     [Fact]
     public void SqlSelect_WithLeftJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3, SqlTypeDefinition.AsInt()));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
         JoinsBase relations = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, relations, predicateId, null, null);
 
         string expectedSql = "SELECT [Left].* FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 
     [Fact]
@@ -149,7 +115,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3, SqlTypeDefinition.AsInt()));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new(joinId1);
         LeftJoin<JoinLastTable> join2 = new(joinId2);
         Joins<JoinLeftTable> joins = new(join1, join2);
@@ -158,20 +124,8 @@ public class SqlGenerator_SelectTests
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Id_1)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 
     [Fact]
@@ -179,7 +133,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3, SqlTypeDefinition.AsInt()));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new(joinId1);
         LeftJoin<JoinLastTable> join2 = new(joinId2);
         JoinsBase joins = new Joins<JoinLeftTable>(join1, join2);
@@ -193,20 +147,8 @@ public class SqlGenerator_SelectTests
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Id_1) ORDER BY [Left].[Id] ASC, [Right].[Id] DESC, [Last].[Id] ASC OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 
 
@@ -215,7 +157,7 @@ public class SqlGenerator_SelectTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3, SqlTypeDefinition.AsInt()));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
         InnerJoin<JoinRightTable> join1 = new(joinId1);
         LeftJoin<JoinLastTable> join2 = new(joinId2);
         JoinsBase relation = new Joins<JoinLeftTable>(join1, join2);
@@ -226,19 +168,7 @@ public class SqlGenerator_SelectTests
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Id_1) ORDER BY [Left].[Id] ASC OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 1;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        string expectedParameter = "@Id_1";
-        string actualParameter = query.Parameters.AsEnumerable().Single().Key;
-
-        Assert.Equal(expectedParameter, actualParameter);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 3);
     }
 }

@@ -29,11 +29,11 @@ public partial class SqlGenerator<T>
     /// An <see cref="IEnumerable{SqlFragment}"/> representing the <c>VALUES</c> list for one row,
     /// for example <c>(@Column1, @Column2)</c> or <c>(@Column1_0, @Column2_0)</c>.
     /// </returns>
-    private IEnumerable<SqlFragment> GetInsertValueFragments(IEnumerable<ColumnInfo> columns, T entity, int? i = null) =>
+    private IEnumerable<SqlFragment> GetInsertValueFragments(IEnumerable<ColumnInfo> columns, T entity) =>
     [
         new SqlFragmentText("("),
         ..columns
-            .Select(column => new SqlFragmentParameter(GetSqlParameter(column, entity)))
+            .Select(column => GetSqlParameter(column, entity))
             .JoinFragments(new SqlFragmentText(", ")),
         new SqlFragmentText(")")
     ];
@@ -53,8 +53,8 @@ public partial class SqlGenerator<T>
     /// A <see cref="SqlFragmentGroup"/> representing the <c>VALUES</c> list for one row,
     /// for example <c>(@Column1, @Column2)</c> or <c>(@Column1_0, @Column2_0)</c>.
     /// </returns>
-    private SqlFragmentGroup GetEnumeratedInsertValueFragmentsGroup(IEnumerable<ColumnInfo> columns, T entity, int i) =>
-        new(GetInsertValueFragments(columns, entity, i));
+    private SqlFragmentGroup GetEnumeratedInsertValueFragmentsGroup(IEnumerable<ColumnInfo> columns, T entity) =>
+        new(GetInsertValueFragments(columns, entity));
 
     /// <summary>
     /// Builds the combined <c>VALUES</c> clause for a multi-row SQL <c>INSERT</c> statement,
@@ -70,7 +70,7 @@ public partial class SqlGenerator<T>
     /// An enumerable sequence of <see cref="SqlFragment"/> representing the combined <c>VALUES</c> clause for all entities.
     /// </returns>
     private IEnumerable<SqlFragment> GetEnumeratedInsertValueFragments(IEnumerable<ColumnInfo> columns, IEnumerable<T> entities) =>
-        entities.Select((entity, index) => GetEnumeratedInsertValueFragmentsGroup(columns, entity, index))
+        entities.Select((entity, index) => GetEnumeratedInsertValueFragmentsGroup(columns, entity))
             .JoinFragments(new SqlFragmentText(", "));
 
     /// <summary>
@@ -103,8 +103,11 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// INSERT INTO [Customer] ([Name], [Email], [Phone]) 
-    /// VALUES (@Name, @Email, @Phone);
+    /// DECLARE @OutputTable TABLE(Id INT NOT NULL);
+    /// INSERT INTO[Customer] ([Name], [Email], [Phone])
+    /// OUTPUT INSERTED.Id INTO @OutputTable
+    /// VALUES(@Name_1, @Email_2, @Phone_3);
+    /// SELECT Id FROM @OutputTable;
     /// ]]></code>
     /// </example>
     /// <example>

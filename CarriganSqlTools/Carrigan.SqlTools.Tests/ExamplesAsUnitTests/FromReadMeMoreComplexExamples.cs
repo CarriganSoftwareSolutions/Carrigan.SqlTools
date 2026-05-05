@@ -1,10 +1,12 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
+using Carrigan.SqlTools.Tests.Helpers;
 
 //IGNORE SPELLING: dbo
 
@@ -29,7 +31,7 @@ public class FromReadMeMoreComplexExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -49,7 +51,7 @@ public class FromReadMeMoreComplexExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -67,8 +69,8 @@ public class FromReadMeMoreComplexExamples
 
         Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "spam@example.com");
     }
 
     [Fact]
@@ -83,8 +85,8 @@ public class FromReadMeMoreComplexExamples
 
         Assert.Equal("SELECT COUNT([Order].*) FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
-        Assert.Equal(500m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 500m);
     }
 
     [Fact]
@@ -109,9 +111,9 @@ public class FromReadMeMoreComplexExamples
 
         Assert.Equal("UPDATE [Order] SET [Order].[Total] = @Total_1 FROM [Order] INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Customer].[Email] = @Email_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Equal(2, query.Parameters.Count);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
 
-        Assert.Equal(123.45m, (decimal)query.Parameters.Where(param => param.Key == "@Total_1").Single().Value);
-        Assert.Equal("spam@example.com", (string)query.Parameters.Where(param => param.Key == "@Email_2").Single().Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 123.45m);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "spam@example.com");
     }
 }

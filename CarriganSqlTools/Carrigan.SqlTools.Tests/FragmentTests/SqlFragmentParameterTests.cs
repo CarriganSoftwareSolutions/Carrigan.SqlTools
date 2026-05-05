@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -9,18 +8,8 @@ namespace Carrigan.SqlTools.Tests.FragmentTests;
 public class SqlFragmentParameterTests
 {
     [Fact]
-    public void Constructor_NullParameter_Exception() => 
+    public void Constructor_NullParameter_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new SqlFragmentParameter(null!));
-
-    [Fact]
-    public void Constructor_StoresSameInstance()
-    {
-        Parameter parameter = new("@Name", 123);
-
-        SqlFragmentParameter fragment = new(parameter);
-
-        Assert.Same(parameter, fragment.Parameter);
-    }
 
     [Fact]
     public void ToSql_DelegatesToParameter()
@@ -44,10 +33,12 @@ public class SqlFragmentParameterTests
             new SqlFragmentParameter(parameter)
         ];
 
-        Dictionary<ParameterTag, object> parameters = fragments.GetParameters(new SqlServerDialect());
+        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(new SqlServerDialect());
 
-        Assert.Single(parameters);
-        Assert.Same(DBNull.Value, parameters[new Parameter ("@Name_1", null).Name]);
+        SqlFragmentParameter actual = Assert.Single(parameters);
+
+        Assert.Equal("@Name_1", actual.ParameterTag.ToString());
+        Assert.Equal(null!, actual.Value); //value substitutions are now done late, in the SqlServerQuery. This should now be null instead of DBNull
     }
 
     [Fact]
@@ -58,16 +49,5 @@ public class SqlFragmentParameterTests
         string sql = fragment.ToSql();
 
         Assert.Equal("@Name", sql);
-    }
-
-    [Fact]
-    public void SqlFragmentParameter_GetParameters_ReturnsWrappedParameter()
-    {
-        Parameter parameter = new("Name", "Jonathan");
-        SqlFragmentParameter fragment = new(parameter);
-
-        Parameter actual = Assert.Single(fragment.GetParameters());
-
-        Assert.Same(parameter, actual);
     }
 }

@@ -1,7 +1,9 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
+using Carrigan.SqlTools.Tests.Helpers;
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
@@ -24,12 +26,14 @@ public class ColumnCollectionExamples
 
         Assert.Equal("UPDATE [Customer] SET [Name] = @Name_1, [Email] = @Email_2, [Phone] = @Phone_3 WHERE [Id] = @Id_4;", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Equal(4, query.Parameters.Count);
+        SqlQueryTestHelper.AssertParameterCount(query, 4);
 
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_4").Single().Value);
-        Assert.Equal("Hank", (string)query.Parameters.Where(param => param.Key == "@Name_1").Single().Value);
-        Assert.Equal("Hank@tx.gov", (string)query.Parameters.Where(param => param.Key == "@Email_2").Single().Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Where(param => param.Key == "@Phone_3").Single().Value);
+
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_4", 42);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Hank@tx.gov");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Phone_3", "+1(555)555-5555");
     }
 
     [Fact]
@@ -47,9 +51,9 @@ public class ColumnCollectionExamples
 
         Assert.Equal("UPDATE [Customer] SET [Email] = @Email_1 WHERE [Id] = @Id_2;", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Equal(2, query.Parameters.Count);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
 
-        Assert.Equal(42, (int)query.Parameters.Where(param => param.Key == "@Id_2").Single().Value);
-        Assert.Equal("Hank@example.gov", (string)query.Parameters.Where(param => param.Key == "@Email_1").Single().Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_2", 42);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "Hank@example.gov");
     }
 }

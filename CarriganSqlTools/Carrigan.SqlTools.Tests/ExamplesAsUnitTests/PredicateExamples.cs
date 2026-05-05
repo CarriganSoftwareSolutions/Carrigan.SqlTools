@@ -1,8 +1,10 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
+using Carrigan.SqlTools.Tests.Helpers;
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
@@ -25,11 +27,11 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (([Customer].[Name] = @Name_1) AND ([Customer].[Email] = @Email_2) AND ([Customer].[Phone] = @Phone_3))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Equal(3, query.Parameters.Count);
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
-        Assert.Equal("Hank@example.com", (string)query.Parameters.Single(param => param.Key == "@Email_2").Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Single(param => param.Key == "@Phone_3").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Hank@example.com");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Phone_3", "+1(555)555-5555");
     }
 
     [Fact]
@@ -41,10 +43,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
-        /// </summary>
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -55,9 +56,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -70,7 +71,7 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] LEFT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -83,9 +84,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -98,9 +99,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE CONTAINS([Customer].[Email], @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("@example.", (string)query.Parameters.Single(param => param.Key == "@Email_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "@example.");
     }
 
     [Fact]
@@ -113,9 +114,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -128,9 +129,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal(1776.00m, (decimal)query.Parameters.Single(param => param.Key == "@Total_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 1776.00m);
     }
 
     [Fact]
@@ -143,9 +144,10 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] >= @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        //Assert.Single(query.Parameters);
 
-        Assert.Equal(1776.00m, (decimal)query.Parameters.Single(param => param.Key == "@Total_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 1776.00m);
     }
 
     [Fact]
@@ -157,7 +159,7 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NOT NULL)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -169,7 +171,7 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NULL)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Empty(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
 
     [Fact]
@@ -182,9 +184,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] < @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal(1776.00m, (decimal)query.Parameters.Single(param => param.Key == "@Total_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 1776.00m);
     }
 
     [Fact]
@@ -197,9 +199,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] <= @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal(1776.00m, (decimal)query.Parameters.Single(param => param.Key == "@Total_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 1776.00m);
     }
 
     [Fact]
@@ -212,9 +214,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Email] LIKE @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("%@example.com", (string)query.Parameters.Single(param => param.Key == "@Email_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "%@example.com");
     }
 
     [Fact]
@@ -228,9 +230,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (NOT ([Customer].[Name] = @Name_1))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -243,9 +245,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] <> @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -260,11 +262,11 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (([Customer].[Name] = @Name_1) OR ([Customer].[Email] = @Email_2) OR ([Customer].[Phone] = @Phone_3))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Equal(3, query.Parameters.Count);
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
-        Assert.Equal("Hank@example.com", (string)query.Parameters.Single(param => param.Key == "@Email_2").Value);
-        Assert.Equal("+1(555)555-5555", (string)query.Parameters.Single(param => param.Key == "@Phone_3").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Hank@example.com");;
+        SqlQueryTestHelper.AssertParameterValue(query, "@Phone_3", "+1(555)555-5555");
     }
 
     [Fact]
@@ -279,9 +281,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
     [Fact]
@@ -294,9 +296,9 @@ public class PredicateExamples
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        Assert.Single(query.Parameters);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
 
-        Assert.Equal("Hank", (string)query.Parameters.Single(param => param.Key == "@Name_1").Value);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
 
 }

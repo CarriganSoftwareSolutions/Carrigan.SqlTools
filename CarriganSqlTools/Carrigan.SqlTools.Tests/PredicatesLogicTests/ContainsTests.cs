@@ -11,7 +11,7 @@ public class ContainsTests
     [Fact]
     public void ContainsTest()
     {
-        Contains<ColumnTable> contains = new(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("Col1", "test", null));
+        Contains<ColumnTable> contains = new(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("Col1", "test"));
 
         string expected = "CONTAINS([ColumnTable].[Col1], @Col1_1)";
         string actual = contains.ToSqlFragments().ToSql(new SqlServerDialect());
@@ -22,7 +22,7 @@ public class ContainsTests
     [Fact]
     public void Contains_NullColumn_ThrowsNullReferenceException() =>
     Assert.Throws<NullReferenceException>(() =>
-        new Contains<ColumnTable>(null!, new Parameter("Col1", "test", null)));
+        new Contains<ColumnTable>(null!, new Parameter("Col1", "test")));
 
     [Fact]
     public void Contains_NullParameter_ThrowsNullReferenceException() =>

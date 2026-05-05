@@ -51,6 +51,6 @@ public sealed class SqlFloatAttributeTests
     [InlineData((byte)0)]
     [InlineData((byte)54)]
     [InlineData((byte)100)]
-    public void Constructor_WithPrecision_Exception(byte precision) => 
+    public void Constructor_WithPrecision_Exception(byte precision) =>
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlFloatAttribute(precision));
 }

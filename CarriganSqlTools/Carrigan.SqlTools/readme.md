@@ -190,7 +190,7 @@ Customer entity = new()
 };
 SqlQuery query = customerGenerator.InsertAutoId(entity);
 
-// DECLARE @OutputTable TABLE (InsertedId INT);
+// DECLARE @OutputTable TABLE (InsertedId INT NOT NULL);
 // INSERT INTO [Customer] ([Name], [Email], [Phone]) 
 // VALUES (@Name, @Email, @Phone);
 // OUTPUT INSERTED.Id INTO @OutputTable
@@ -240,7 +240,7 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.Delete(entity);
-// DELETE FROM [Customer] WHERE [Id] = @Id;
+// DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)
 ```
 
 [Table of Contents](#table-of-contents)

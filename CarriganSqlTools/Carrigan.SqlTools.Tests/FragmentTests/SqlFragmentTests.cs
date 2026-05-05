@@ -1,8 +1,7 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.FragmentTests;
 
@@ -28,8 +27,9 @@ public class SqlFragmentTests
         internal override string ToSql() =>
             _sql;
 
-        internal override IEnumerable<Parameter> GetParameters() =>
+        internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
             [];
+
         internal override IEnumerable<SqlFragment> Flaten() => [this];
     }
 
@@ -47,10 +47,10 @@ public class SqlFragmentTests
             new SqlFragmentParameter(parameter2)
         ];
 
-        Dictionary<ParameterTag, object> parameters = fragments.GetParameters(new SqlServerDialect());
+        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(new SqlServerDialect());
 
-        Assert.Equal(2, parameters.Count);
-        Assert.Equal("Jonathan", parameters[new Parameter("@Name_1", "Jonathan").Name]);
-        Assert.Equal(42, parameters[new Parameter("@Age_2", 42).Name]);
+        Assert.Equal(2, parameters.Count());
+        SqlQueryTestHelper.AssertParameterValue(parameters, "@Name_1", "Jonathan");
+        SqlQueryTestHelper.AssertParameterValue(parameters, "@Age_2", 42);
     }
 }

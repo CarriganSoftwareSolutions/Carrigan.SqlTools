@@ -50,7 +50,7 @@ namespace Carrigan.SqlTools.Tags;
 /// [schema].[UpdateThing]
 /// ]]></code>
 /// </example>
-internal class ProcedureTag : StringWrapper
+public class ProcedureTag : StringWrapper
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ProcedureTag"/> class.

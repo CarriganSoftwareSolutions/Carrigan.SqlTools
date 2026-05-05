@@ -45,7 +45,10 @@ public class SqlFragmentExtensionsTests
     {
         IEnumerable<SqlFragment> sqlFragments = null!;
 
-        Assert.Throws<ArgumentNullException>(() => sqlFragments.GetParameters(new SqlServerDialect()));
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            _ = sqlFragments.GetSqlFragmentParameters(new SqlServerDialect());
+        });
     }
 
     [Fact]

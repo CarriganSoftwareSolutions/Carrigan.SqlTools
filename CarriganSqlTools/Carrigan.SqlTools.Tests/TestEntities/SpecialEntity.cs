@@ -24,6 +24,6 @@ public class SpecialEntity
     // should convert it to the corresponding enum value.
     public TestEnum EnumValueInt { get; set; }
 
-    // Nullable enum conversion should handle null or DBNull.Value.
+    // Nullable enum conversion should handle null or null!.
     public TestEnum? NullableEnumValue { get; set; }
 }

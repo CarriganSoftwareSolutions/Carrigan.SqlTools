@@ -34,8 +34,8 @@ public class SqlFragmentGroup : SqlFragment
     /// Retrieves the collection of parameters from all SQL fragments contained within the group. This method aggregates
     /// </summary>
     /// <returns></returns>
-    internal override IEnumerable<Parameter> GetParameters() =>
-        sqlFragments.SelectMany(f => f.GetParameters());
+    internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        sqlFragments.SelectMany(f => f.GetSqlFragmentParameters());
 
     /// <summary>
     /// Returns a flattened sequence of all SQL fragments contained within this fragment and its descendants.

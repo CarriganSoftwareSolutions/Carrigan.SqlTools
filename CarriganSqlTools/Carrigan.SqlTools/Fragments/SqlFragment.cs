@@ -25,8 +25,8 @@ public abstract class SqlFragment
     /// <summary>
     /// Gets the parameters that are referenced by this fragment.
     /// </summary>
-    /// <returns>An enumerable collection of <see cref="Parameter"/> objects referenced by this fragment.</returns>
-    internal abstract IEnumerable<Parameter> GetParameters();
+    /// <returns>An enumerable collection of <see cref="SqlFragmentParameter"/> objects referenced by this fragment.</returns>
+    internal abstract IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters();
 
     /// <summary>
     /// Returns an enumerable sequence containing the specified SQL fragments in order.

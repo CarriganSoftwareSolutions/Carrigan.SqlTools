@@ -2,7 +2,11 @@
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Dialects.SqlServer;
 
@@ -72,37 +76,7 @@ public class SqlServerDialect : ISqlDialects
             .Append(new SqlFragmentText($"{Environment.NewLine}"))
             .Append(new SqlFragmentText(ReturnSelectOutput<T>(columnInfo)));
 
-    /// <summary>
-    /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
-    /// </summary>
-    /// <param name="offset">The number of rows to skip before starting to return rows. Must be greater than or equal to 0.</param>
-    /// <param name="fetch">The maximum number of rows to return. Must be greater than 0.</param>
-    /// <returns>A string containing the SQL paging clause corresponding to the specified offset and fetch values.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
-    public string RenderPaging(int offset, int fetch) => throw new NotImplementedException();
-
-
-    /// <summary>
-    /// Generates a unique parameter name by appending the specified index to the base parameter name, ensuring the
-    /// result is prefixed with '@'.
-    /// </summary>
-    /// <remarks>If the base parameter name already starts with '@', the prefix is preserved and the index is
-    /// appended after removing the initial '@'. This method is useful for generating unique parameter names in
-    /// scenarios such as SQL command construction.</remarks>
-    /// <param name="baseParameterName">The base name of the parameter. May optionally begin with '@'.</param>
-    /// <param name="parameterIndex">The index to append to the parameter name to ensure uniqueness.</param>
-    /// <returns>A string representing the final parameter name, prefixed with '@' and suffixed with the specified index.</returns>
-    public string RenderFinalParameterName(string baseParameterName, int parameterIndex)
-    {
-        if (baseParameterName[0] == '@')
-        {
-            return $"@{baseParameterName[1..]}_{parameterIndex}";
-        }
-        else
-        {
-            return $"@{baseParameterName}_{parameterIndex}";
-        }
-    }
+    #region GetInsertReturningFragments private helper methods
 
     /// <summary>
     /// Generates SQL to declare an output table used to capture inserted values
@@ -114,8 +88,8 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>
     /// A SQL statement that declares <c>@OutputTable</c> with one column per entry in <paramref name="columnInfo"/>.
     /// </returns>
-    private static string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
-        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {column.SqlType.TypeDeclaration}"))});{Environment.NewLine}";
+    private string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
+        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {RenderFieldProperties(column.SqlFieldProperties)}"))});{Environment.NewLine}";
 
     /// <summary>
     /// Generates SQL to output the inserted column values into <c>@OutputTable</c>.
@@ -164,4 +138,129 @@ public class SqlServerDialect : ISqlDialects
     /// </returns>
     private static string ReturnSelectOutput<T>(IEnumerable<ColumnInfo> columnInfo) =>
         $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName<T>(column)))} FROM @OutputTable;{Environment.NewLine}";
+    #endregion
+
+    /// <summary>
+    /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
+    /// </summary>
+    /// <param name="offset">The number of rows to skip before starting to return rows. Must be greater than or equal to 0.</param>
+    /// <param name="fetch">The maximum number of rows to return. Must be greater than 0.</param>
+    /// <returns>A string containing the SQL paging clause corresponding to the specified offset and fetch values.</returns>
+    /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
+    public string RenderPaging(int offset, int fetch) => throw new NotImplementedException();
+
+
+    /// <summary>
+    /// Generates a unique parameter name by appending the specified index to the base parameter name, ensuring the
+    /// result is prefixed with '@'.
+    /// </summary>
+    /// <remarks>If the base parameter name already starts with '@', the prefix is preserved and the index is
+    /// appended after removing the initial '@'. This method is useful for generating unique parameter names in
+    /// scenarios such as SQL command construction.</remarks>
+    /// <param name="baseParameterName">The base name of the parameter. May optionally begin with '@'.</param>
+    /// <param name="parameterIndex">The index to append to the parameter name to ensure uniqueness.</param>
+    /// <returns>A string representing the final parameter name, prefixed with '@' and suffixed with the specified index.</returns>
+    public string RenderFinalParameterName(string baseParameterName, int parameterIndex)
+    {
+        if (baseParameterName[0] == '@')
+        {
+            return $"@{baseParameterName[1..]}_{parameterIndex}";
+        }
+        else
+        {
+            return $"@{baseParameterName}_{parameterIndex}";
+        }
+    }
+
+    /// <summary>
+    /// Returns the default SQL Server field properties for a given CLR type, as determined by the SqlServerTypesProvider.
+    /// </summary>
+    /// <param name="type">
+    /// The CLR type for which to retrieve the default SQL Server field properties. Cannot be null.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance containing the default SQL Server field properties
+    /// corresponding to the specified CLR type.
+    /// </returns>
+    public FieldProperties GetDefaultFieldPropertiesByClrType(Type type) =>
+        SqlServerTypesProvider.FromClrType(type);
+
+
+    /// <summary>
+    /// Generates the SQL declaration for a field based on the provided <see cref="FieldProperties"/>.
+    /// This includes the provider type name,
+    /// </summary>
+    /// <param name="fieldProperties">The field properties for which to generate the SQL declaration.</param>
+    /// <returns>A string representing the SQL declaration for the specified field properties.</returns>
+    /// 
+    public string RenderFieldProperties(FieldProperties fieldProperties)
+    {
+        if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
+        {
+            return string.Empty;
+        }
+        else
+        {
+            bool RequiresLengthDeclaration() =>
+                fieldProperties.ProviderTypeName is "CHAR" or "VARCHAR" or "NCHAR" or "NVARCHAR" or "BINARY" or "VARBINARY" or "VECTOR";
+
+
+            string declaration = fieldProperties.ProviderTypeName.ToUpperInvariant();
+
+            if (declaration == "VECTOR" && fieldProperties.Length is not null && fieldProperties.BaseType.IsNotNullOrWhiteSpace())
+            {
+                declaration += $"({fieldProperties.Length}, {fieldProperties.BaseType.ToUpperInvariant()})";
+            }
+            else if (fieldProperties.IsMax == true)
+            {
+                declaration += "(MAX)";
+            }
+            else if (fieldProperties.Precision is not null && fieldProperties.Scale is not null)
+            {
+                declaration += $"({fieldProperties.Precision}, {fieldProperties.Scale})";
+            }
+            else if (fieldProperties.Precision is not null)
+            {
+                declaration += $"({fieldProperties.Precision})";
+            }
+            else if (fieldProperties.FractionalSecondsPrecision is not null)
+            {
+                declaration += $"({fieldProperties.FractionalSecondsPrecision})";
+            }
+            else if (fieldProperties.Length is not null && RequiresLengthDeclaration())
+            {
+                declaration += $"({fieldProperties.Length})";
+            }
+
+            return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
+        }
+    }
+
+    public SqlQuery RenderSqlQuery(IEnumerable<SqlFragment> sqlFragments) =>
+        new SqlServerQuery(this, sqlFragments);
+
+    public SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag) =>
+        new SqlServerQuery(this, sqlFragments, procedureTag);
+
+    /// <summary>
+    /// Performs the necessary conversions for a parameter value
+    /// before it is passed to the database.
+    /// </summary>
+    /// <param name="value">
+    /// The value to convert. A <c>null</c> value is converted to
+    /// <see cref="DBNull.Value"/>.
+    /// </param>
+    /// <returns>
+    /// The converted value suitable for database operations.
+    /// </returns>
+    public object ValueConversion(object? value)
+    {
+        if (value == null)
+            return DBNull.Value;
+        else if (value is XDocument xDocument)
+            return xDocument.ToString();
+        else if (value is XmlDocument xmlDocument)
+            return ((object?)xmlDocument.OuterXml) ?? DBNull.Value; //the compiler didn't like xmlDocument.ToString() ?? DBNull.Value, so I had to get creative.
+        else return value;
+    }
 }

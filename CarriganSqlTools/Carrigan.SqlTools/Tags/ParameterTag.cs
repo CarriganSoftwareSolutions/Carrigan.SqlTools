@@ -54,50 +54,10 @@ namespace Carrigan.SqlTools.Tags;
 /// </example>
 public class ParameterTag : StringWrapper
 {
-    /// <summary>
-    /// The base (core) parameter name. This value must not be <c>null</c>, empty, or whitespace.
-    /// </summary>
-    internal readonly string BaseName;
-
-    /// <summary>
-    /// Represents the SQL type definition associated with this parameter, when known.
-    /// </summary>
-    /// <remarks>
-    /// This value may be inferred from a runtime value (including <c>null</c>, which infers <see cref="SqlDbType.Variant"/>),
-    /// or copied from the owning <see cref="ColumnInfo"/>. It is used when materializing <see cref="IDbDataParameter"/>
-    /// instances for the generated SQL.
-    /// </remarks>
-    public SqlTypeDefinition? SqlType { get; private set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ParameterTag"/> class.
-    /// </summary>
-    /// <param name="baseName">The base parameter name. Must not be <c>null</c>, empty, or whitespace.</param>
-    /// <param name="sqlType">The optional SQL type definition associated with this parameter.</param>
-    /// 
-    /// 
-    /// <exception cref="InvalidParameterIdentifierException">
-    /// Thrown when <paramref name="baseName"/> or the combined result is invalid per SQL identifier rules.
-    /// </exception>
-    internal ParameterTag(string baseName, SqlTypeDefinition? sqlType) :
+    internal ParameterTag(string baseName) :
         base(baseName, StringComparison.OrdinalIgnoreCase)
     {
         if (SqlParameterPattern.Fails(baseName))
             throw new InvalidParameterIdentifierException(baseName);
-
-        BaseName = baseName;
-        SqlType = sqlType;
-
-        if (SqlParameterPattern.Fails(ToString()))
-            throw new InvalidParameterIdentifierException(ToString());
-    }
-
-    /// <summary>
-    /// Deeper copy constructor for the parameter tag.
-    /// </summary>
-    /// <param name="parameter">The parameter tag to clone.</param>
-    internal ParameterTag(ParameterTag parameter, object? value)
-        : this(parameter?.BaseName ?? throw new InvalidParameterIdentifierException("null"), parameter.SqlType ?? new SqlTypeDefinition(value))
-    {
     }
 }

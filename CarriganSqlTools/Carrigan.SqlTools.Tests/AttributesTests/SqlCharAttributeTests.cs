@@ -78,7 +78,7 @@ public sealed class SqlCharAttributeTests
     // Unicode, variable-length NVARCHAR: valid 1–4000
     [InlineData(EncodingEnum.Unicode, StorageTypeEnum.Var, 0)]
     [InlineData(EncodingEnum.Unicode, StorageTypeEnum.Var, 4001)]
-    public void Constructor_WithSize_OutOfRange_Exception(EncodingEnum encoding, StorageTypeEnum storageTypeEnum, int size) => 
+    public void Constructor_WithSize_OutOfRange_Exception(EncodingEnum encoding, StorageTypeEnum storageTypeEnum, int size) =>
         Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlCharAttribute(encoding, storageTypeEnum, size));
 
     [Fact]

@@ -1,10 +1,12 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -37,25 +39,10 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
         string expectedSql = "UPDATE [Left] SET [Left].[Col1] = @Col1_1, [Left].[Col2] = @Col2_2 FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_3)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 3;
-        int actualCount = query.Parameters.Count;
-
-        Assert.Equal(expectedCount, actualCount);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Id_3").Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
-
-        string expectedStringValue = "Hello";
-        string actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Col1_1").Single().Value;
-
-        Assert.Equal(expectedStringValue, actualStringValue);
-
-        expectedStringValue = "World";
-        actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Col2_2").Single().Value;
-
-        Assert.Equal(expectedStringValue, actualStringValue);
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_3", 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Col1_1", "Hello");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Col2_2", "World");
     }
 
     [Fact]
@@ -78,25 +65,11 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
         string expectedSql = "UPDATE [Left] SET [Left].[Col1] = @Col1_1, [Left].[Col2] = @Col2_2 FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Id_3)";
         Assert.Equal(expectedSql, query.QueryText);
 
-        int expectedCount = 3;
-        int actualCount = query.Parameters.Count;
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
 
-        Assert.Equal(expectedCount, actualCount);
-
-        int expectedValue = 3;
-        int actualValue = (int)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Id_3").Single().Value;
-
-        Assert.Equal(expectedValue, actualValue);
-
-        string expectedStringValue = "Hello";
-        string actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Col1_1").Single().Value;
-
-        Assert.Equal(expectedStringValue, actualStringValue);
-
-        expectedStringValue = "World";
-        actualStringValue = (string)query.Parameters.AsEnumerable().Where(parameter => parameter.Key == "@Col2_2").Single().Value;
-
-        Assert.Equal(expectedStringValue, actualStringValue);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_3", 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Col1_1", "Hello");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Col2_2", "World");
     }
 
 

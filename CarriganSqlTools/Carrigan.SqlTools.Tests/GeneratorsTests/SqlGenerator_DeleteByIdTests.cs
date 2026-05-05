@@ -1,7 +1,9 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -54,17 +56,12 @@ public class SqlGenerator_DeleteByIdTests
         Assert.Equal(expectedSql, query.QueryText);
 
         int expectedCount = 2;
-        int actualCount = query.Parameters.Count;
 
-        Assert.Equal(expectedCount, actualCount);
+        SqlQueryTestHelper.AssertParameterCount(query, expectedCount);
 
-        int expectedValue = 1;
-        int actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id1_1").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id1_1", 1);
 
-        expectedValue = 2;
-        actualValue = (int)query.Parameters.Where(parameter => parameter.Key == "@Id2_2").Single().Value;
-        Assert.Equal(expectedValue, actualValue);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id2_2", 2);
     }
 
     [Fact]

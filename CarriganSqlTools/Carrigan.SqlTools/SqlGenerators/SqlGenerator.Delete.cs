@@ -39,20 +39,18 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer] WHERE [Id] = @Id;
+    /// DELETE FROM [Customer] ([Customer].[Id] = @Id_1)
     /// ]]></code>
     /// </example>
     public SqlQuery Delete(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        IEnumerable<SqlFragment> queryFragments =
-            KeyColumnInfo
-                .Select(column => new SqlFragmentGroup([new SqlFragmentText($"[{column.ColumnName}] = "), new SqlFragmentParameter(GetSqlParameter(column, entity))]))
-                .JoinFragments(new SqlFragmentText(" and "));
-        queryFragments = new SqlFragmentText($"DELETE FROM {Table} WHERE ").Concat(queryFragments).Append(new SqlFragmentText(";"));
-
-        return queryFragments.ToSqlQuery(Dialect);
+        Predicates predicates = new And
+        (
+            KeyColumnInfo.Select(columnInfo => new ColumnValue<T>(columnInfo.PropertyName, columnInfo.PropertyInfo.GetValue(entity)))
+        );
+        return Delete(null, predicates);
     }
 
     /// <summary>
@@ -74,12 +72,10 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Customer];
     /// ]]></code>
     /// </example>
-    public SqlQuery DeleteAll() => new()
-    {
-        Parameters = [],
-        QueryText = $"DELETE FROM {Table};",
-        CommandType = CommandType.Text
-    };
+    public SqlQuery DeleteAll() =>
+        new SqlFragmentText($"DELETE FROM {Table};")
+            .AsEnumerable()
+            .ToSqlQuery(Dialect);
 
     /// <summary>
     /// Generates a SQL <c>DELETE</c> statement that deletes rows by primary key values.

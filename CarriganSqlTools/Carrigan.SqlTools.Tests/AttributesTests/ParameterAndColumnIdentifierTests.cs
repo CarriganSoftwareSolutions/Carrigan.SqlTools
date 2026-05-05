@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -76,11 +77,11 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.Delete(_tacEntity);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE [SomeId] = @SomeIdParameter_1;";
+        string expected = "DELETE FROM [SomeSchema].[SomeTable] WHERE ([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_1)";
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_1"));
     }
     [Fact]
     public void DeleteAllTest()
@@ -105,8 +106,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_1"));
-        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_2"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_1"));
+        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_2"));
     }
 
     [Fact]
@@ -118,8 +119,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_1"));
-        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_2"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_1"));
+        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_2"));
     }
 
     [Fact]
@@ -130,7 +131,7 @@ public class ParameterAndColumnIdentifierTests
         string expected = ModifyInsertQueryWithReturn("INSERT INTO [SomeSchema].[SomeTable] ([SomeColumn])", "VALUES (@SomeColumnParameter_1)", "UNIQUEIDENTIFIER");
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_1"));
+        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_1"));
     }
 
     [Fact]
@@ -142,8 +143,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_2"));
-        Assert.Equal(3, query.GetParameterValue<int>("@SomeColumnParameter_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_2"));
+        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_1"));
     }
 
     [Fact]
@@ -155,9 +156,9 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@SomeIdParameter_2"));
-        Assert.Equal(6, query.GetParameterValue<int>("@SomeIdParameter_3"));
-        Assert.Equal(13, query.GetParameterValue<int>("@SomeColumnParameter_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_2"));
+        Assert.Equal(6, (int?)query.GetParameterValue("@SomeIdParameter_3"));
+        Assert.Equal(13, (int?)query.GetParameterValue("@SomeColumnParameter_1"));
     }
 
     [Fact]
@@ -213,9 +214,9 @@ public class ParameterAndColumnIdentifierTests
     public void AndTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new(new ParameterTag("p1", SqlTypeDefinition.AsInt()), 1);
+        Parameter parameter1 = new(new ParameterTag("p1"), 1);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new(new ParameterTag("@p2", SqlTypeDefinition.AsInt()), 2);
+        Parameter parameter2 = new(new ParameterTag("@p2"), 2);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         And and = new(equal1, equal2);
@@ -227,8 +228,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
-        Assert.Equal(2, query.GetParameterValue<int>("@p2_2"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        Assert.Equal(2, (int?)query.GetParameterValue("@p2_2"));
     }
 
     [Fact]
@@ -249,7 +250,7 @@ public class ParameterAndColumnIdentifierTests
     public void ColumnTest()
     {
         Column<ColumnIdentifiers> identifierOverrideColumn = new(nameof(ColumnIdentifiers.IdentifierOverrideName));
-        Parameter parameter = new(new ParameterTag("@p1", SqlTypeDefinition.AsInt()), 1);
+        Parameter parameter = new(new ParameterTag("@p1"), 1);
         Equal equal = new(identifierOverrideColumn, parameter);
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);
@@ -259,7 +260,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
@@ -272,14 +273,14 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@IdParameter_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@IdParameter_1"));
     }
 
     [Fact]
     public void ContainsTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1, null);
+        Parameter parameter = new("p1", 1);
         Contains<ColumnIdentifiers> contains = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, contains, null, null);
@@ -288,14 +289,14 @@ public class ParameterAndColumnIdentifierTests
 
         Assert.Equal(expected, actual);
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
     public void EqualTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1, null);
+        Parameter parameter = new("p1", 1);
         Equal equal = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, equal, null, null);
@@ -305,14 +306,14 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
     public void GreaterThanEqualsTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1, null);
+        Parameter parameter = new("p1", 1);
         GreaterThanEqual op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -322,14 +323,14 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
     public void GreaterThanTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1, null);
+        Parameter parameter = new("p1", 1);
         GreaterThan op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -339,7 +340,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
@@ -378,7 +379,7 @@ public class ParameterAndColumnIdentifierTests
     public void LessThanEqualsTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1, null);
+        Parameter parameter = new("p1", 1);
         LessThanEqual op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -388,14 +389,14 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
     public void LessThanTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1, null);
+        Parameter parameter = new("p1", 1);
         LessThan op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -405,14 +406,14 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
     public void NotEqualTest()
     {
         Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter = new("p1", 1, null);
+        Parameter parameter = new("p1", 1);
         NotEqual op = new(column, parameter);
 
         SqlQuery query = _generator.Select(null, null, op, null, null);
@@ -422,7 +423,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
     }
 
     [Fact]
@@ -444,9 +445,9 @@ public class ParameterAndColumnIdentifierTests
     public void OrTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new("p1", 1, null);
+        Parameter parameter1 = new("p1", 1);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new("p2", 2, null);
+        Parameter parameter2 = new("p2", 2);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         Or or = new(equal1, equal2);
@@ -458,17 +459,17 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
-        Assert.Equal(2, query.GetParameterValue<int>("@p2_2"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        Assert.Equal(2, (int?)query.GetParameterValue("@p2_2"));
     }
 
     [Fact]
     public void XOrTest()
     {
         Column<ColumnIdentifiers> identifierColumn = new(nameof(ColumnIdentifiers.IdentifierName));
-        Parameter parameter1 = new("p1", 1, null);
+        Parameter parameter1 = new("p1", 1);
         Column<ColumnIdentifiers> columnColumn = new(nameof(ColumnIdentifiers.ColumnName));
-        Parameter parameter2 = new("p2", 2, null);
+        Parameter parameter2 = new("p2", 2);
         Equal equal1 = new(identifierColumn, parameter1);
         Equal equal2 = new(columnColumn, parameter2);
         Xor xor = new(equal1, equal2);
@@ -480,8 +481,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@p1_1"));
-        Assert.Equal(2, query.GetParameterValue<int>("@p2_2"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        Assert.Equal(2, (int?)query.GetParameterValue("@p2_2"));
     }
 
     [Fact]
@@ -495,10 +496,10 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(5, query.GetParameterCount());
-        Assert.Equal(1, query.GetParameterValue<int>("@IdParameter_1"));
-        Assert.Equal(2, query.GetParameterValue<int>("@PropertyParameter_2"));
-        Assert.Equal(3, query.GetParameterValue<int>("@ColumnParameter_3"));
-        Assert.Equal(4, query.GetParameterValue<int>("@IdentifierParameter_4"));
-        Assert.Equal(5, query.GetParameterValue<int>("@IdentifierOverrideParameter_5"));
+        Assert.Equal(1, (int?)query.GetParameterValue("@IdParameter_1"));
+        Assert.Equal(2, (int?)query.GetParameterValue("@PropertyParameter_2"));
+        Assert.Equal(3, (int?)query.GetParameterValue("@ColumnParameter_3"));
+        Assert.Equal(4, (int?)query.GetParameterValue("@IdentifierParameter_4"));
+        Assert.Equal(5, (int?)query.GetParameterValue("@IdentifierOverrideParameter_5"));
     }
 }

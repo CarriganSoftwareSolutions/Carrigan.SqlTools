@@ -18,10 +18,10 @@ public class IsNotNullTests
     private readonly PredicatesLogic.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f, null);
+    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f);
     private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337, null);
+    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337);
     private readonly string ParameterEliteSql = "@Elite_1";
 
     private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");

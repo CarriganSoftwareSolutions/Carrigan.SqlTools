@@ -70,49 +70,4 @@ public sealed class FieldProperties
     /// </example>
     public string? BaseType { get; init; }
 
-    /// <summary>
-    /// Returns the SQL Server declaration for the field type.
-    /// </summary>
-    public override string ToString()
-    {
-        if (string.IsNullOrWhiteSpace(ProviderTypeName))
-        {
-            return string.Empty;
-        }
-
-        string declaration = ProviderTypeName.ToUpperInvariant();
-
-        if (declaration == "VECTOR" && Length is not null && !string.IsNullOrWhiteSpace(BaseType))
-        {
-            declaration += $"({Length}, {BaseType.ToUpperInvariant()})";
-        }
-        else if (IsMax == true)
-        {
-            declaration += "(MAX)";
-        }
-        else if (Precision is not null && Scale is not null)
-        {
-            declaration += $"({Precision}, {Scale})";
-        }
-        else if (Precision is not null)
-        {
-            declaration += $"({Precision})";
-        }
-        else if (FractionalSecondsPrecision is not null)
-        {
-            declaration += $"({FractionalSecondsPrecision})";
-        }
-        else if (Length is not null && RequiresLengthDeclaration(declaration))
-        {
-            declaration += $"({Length})";
-        }
-
-        return $"{declaration} {(IsNullable ? "NULL" : "NOT NULL")}";
-    }
-
-    /// <summary>
-    /// Determines whether the supplied SQL Server type name should include a length declaration.
-    /// </summary>
-    private static bool RequiresLengthDeclaration(string providerTypeName) =>
-        providerTypeName is "CHAR" or "VARCHAR" or "NCHAR" or "NVARCHAR" or "BINARY" or "VARBINARY" or "VECTOR";
 }
