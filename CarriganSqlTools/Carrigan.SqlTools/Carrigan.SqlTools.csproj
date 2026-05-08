@@ -65,4 +65,9 @@
     <None Include="readme.md" Pack="true" PackagePath="\" />
     <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="OffsetNexts\" />
+  </ItemGroup>
 </Project>

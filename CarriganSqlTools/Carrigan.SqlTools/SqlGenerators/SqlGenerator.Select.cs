@@ -2,8 +2,8 @@
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
@@ -180,7 +180,7 @@ public partial class SqlGenerator<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates, OrderByBase? orderBy, OffsetNext? offsetNext)
+    public SqlQuery Select(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
@@ -198,7 +198,7 @@ public partial class SqlGenerator<T>
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);
 
-        if (offsetNext is not null)
+        if (paging is not null)
         {
             // add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server
             // that has unexpected behavior if the order by values are not unique
@@ -230,8 +230,8 @@ public partial class SqlGenerator<T>
             queryFragments = queryFragments.Append(new SqlFragmentText($" {orderBy.AsOrderBy().ToSql()}"));
 
 
-        if (offsetNext is not null)
-            queryFragments = queryFragments.Append(new SqlFragmentText($" {offsetNext.ToSql()}"));
+        if (paging is not null)
+            queryFragments = queryFragments.Concat([SqlFragment.Space, Dialect.RenderPaging(paging)]);
 
         return queryFragments.ToSqlQuery(Dialect);
     }

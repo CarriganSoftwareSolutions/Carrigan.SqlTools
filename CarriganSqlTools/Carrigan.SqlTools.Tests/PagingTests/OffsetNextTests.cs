@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.OffsetNexts;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Paging;
 
 namespace Carrigan.SqlTools.Tests.OffsetNextTests;
 
@@ -16,10 +17,10 @@ public class OffsetNextTests
     public void ToSql_ReturnsExpectedSql(uint offset, uint next, string expectedSql)
     {
         // Arrange
-        OffsetNext offsetNext = new(offset, next);
+        OffsetFetchNext offsetNext = new(offset, next);
 
         // Act
-        string actualSql = offsetNext.ToSql();
+        string actualSql = (new SqlServerDialect()).RenderPaging(offsetNext).ToSql();
 
         // Assert
         Assert.Equal(expectedSql, actualSql);
@@ -35,11 +36,11 @@ public class OffsetNextTests
         //   Offset = (4 - 1) * 25 = 75, and Next = 25.
         uint pageNumber = 4;
         uint pageSize = 25;
-        OffsetNext offsetNext = new DefinePage(pageNumber, pageSize);
+        PagingBase offsetNext = new DefinePage(pageNumber, pageSize);
 
         // Also verify the SQL string generated.
         string expectedSql = $"OFFSET {75} ROWS FETCH NEXT {25} ROWS ONLY";
 
-        Assert.Equal(expectedSql, offsetNext.ToSql());
+        Assert.Equal(expectedSql, (new SqlServerDialect()).RenderPaging(offsetNext).ToSql());
     }
 }

@@ -1,12 +1,12 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
 using Carrigan.SqlTools.Tests.Helpers;
+using Carrigan.SqlTools.Paging;
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
@@ -93,7 +93,7 @@ public class SqlGeneratorSelectExamples
     [Fact]
     public void SelectWithOffsetNext()
     {
-        OffsetNext offsetNext = new(50, 25);
+        OffsetFetchNext offsetNext = new(50, 25);
         SqlQuery query = customerGenerator.Select(null, null, null, null, offsetNext);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);

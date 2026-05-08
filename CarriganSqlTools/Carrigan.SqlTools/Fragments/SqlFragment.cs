@@ -16,6 +16,9 @@ namespace Carrigan.SqlTools.Fragments;
 /// </remarks>
 public abstract class SqlFragment
 {
+    internal static readonly SqlFragment Space = new SqlFragmentText(" ");
+    internal static readonly SqlFragment NewLine = new SqlFragmentText(Environment.NewLine);
+
     /// <summary>
     /// Converts this fragment into its SQL representation.
     /// </summary>

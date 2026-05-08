@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.OffsetNexts;
+﻿using Carrigan.SqlTools.Paging;
 
 namespace Carrigan.SqlTools.Tests.OffsetNextTests;
 

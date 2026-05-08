@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.OffsetNexts;
+﻿namespace Carrigan.SqlTools.Paging;
 
 /// <summary>
 /// Represents SQL Server’s <c>OFFSET … FETCH NEXT</c> paging feature,
@@ -7,7 +7,7 @@
 /// <remarks>
 /// <para>
 /// This class only defines paging behavior and does not modify SQL directly.
-/// When an <see cref="OffsetNext"/> (or a derived type such as <see cref="DefinePage"/>) is passed to the SQL generator,
+/// When an <see cref="OffsetFetchNext"/> (or a derived type such as <see cref="DefinePage"/>) is passed to the SQL generator,
 /// the generator automatically appends an additional <c>ORDER BY</c> criterion for key columns (if not already present)
 /// to ensure deterministic paging results.
 /// </para>
@@ -43,48 +43,14 @@
 /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
-public class OffsetNext
+public class OffsetFetchNext : PagingBase
 {
     /// <summary>
-    /// Gets or sets the SQL <c>OFFSET</c> value, representing the number of rows to skip before returning results.
-    /// </summary>
-    public uint Offset { get; protected set; }
-
-    /// <summary>
-    /// Gets or sets the SQL <c>FETCH NEXT</c> value, representing the number of rows to return after the offset.
-    /// </summary>
-    public uint Next { get; protected set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="OffsetNext"/> class for use by derived types.
-    /// </summary>
-    protected OffsetNext() 
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="OffsetNext"/> class,
+    /// Initializes a new instance of the <see cref="OffsetFetchNext"/> class,
     /// defining both the SQL <c>OFFSET</c> and <c>FETCH NEXT</c> values.
     /// </summary>
     /// <param name="offset">The number of rows to skip before starting to return results.</param>
     /// <param name="next">The number of rows to return after the offset.</param>
-    public OffsetNext(uint offset, uint next)
-    {
-        Offset = offset;
-        Next = next;
-    }
-
-    /// <summary>
-    /// Generates the SQL fragment representing the <c>OFFSET</c> and <c>FETCH NEXT</c> clauses.
-    /// </summary>
-    /// <returns>
-    /// A SQL string containing the <c>OFFSET</c> and <c>FETCH NEXT</c> clauses, or an empty string if both
-    /// <see cref="Offset"/> and <see cref="Next"/> are zero.
-    /// </returns>
-    internal string ToSql() =>
-        (Offset, Next) switch
-        {
-            (0u, 0u) => string.Empty,
-            (_, 0u) => $"OFFSET {Offset}",
-            _ => $"OFFSET {Offset} ROWS FETCH NEXT {Next} ROWS ONLY"
-        };
+    public OffsetFetchNext(uint offset, uint next) : base(offset, next)
+    { }
 }

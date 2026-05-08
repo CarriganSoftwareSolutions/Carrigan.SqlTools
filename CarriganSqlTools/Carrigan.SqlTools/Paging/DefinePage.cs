@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.OffsetNexts;
+﻿namespace Carrigan.SqlTools.Paging;
 
 /// <summary>
 /// Represents SQL Server’s <c>OFFSET … FETCH NEXT</c> paging feature,
@@ -36,8 +36,17 @@
 /// OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
-public class DefinePage : OffsetNext
+public class DefinePage : PagingBase
 {
+    /// <summary>
+    /// Gets the 1-based page number to retrieve. Must be greater than zero.
+    /// </summary>
+    public int PageNumber { get; protected set; }
+    /// <summary>
+    /// Gets the number of rows to include in each page. Must be greater than zero.
+    /// </summary>
+    public int PageSize { get; protected set; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DefinePage"/> class,
     /// representing a single results page based on SQL Server’s

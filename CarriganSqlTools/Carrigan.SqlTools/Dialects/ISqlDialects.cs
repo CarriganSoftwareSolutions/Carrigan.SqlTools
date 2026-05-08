@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -73,12 +74,11 @@ public interface ISqlDialects
     /// <returns>A string representing the final parameter name, formed by combining the base name and the index.</returns>
     string RenderFinalParameterName(string baseParameterName, int parameterIndex);
     /// <summary>
-    /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
+    /// Generates a paging clause for a SQL query based on the specified offset and fetch next values aka limit offset.
     /// </summary>
-    /// <param name="offset">The number of rows to skip before starting to return rows. Must be greater than or equal to 0.</param>
-    /// <param name="fetch">The maximum number of rows to return. Must be greater than 0.</param>
-    /// <returns>A string containing the SQL paging clause representing the specified offset and fetch values.</returns>
-    string RenderPaging(int offset, int fetch);
+    /// <param name="paging">The <see cref="PagingBase"/> object containing the offset and fetch next values aka limit and offset values.</param>
+    /// <returns>A string containing the SQL paging clause representing the specified offset and fetch next values aka limit and offset.</returns>
+    SqlFragment RenderPaging(PagingBase paging);
 
     /// <summary>
     /// Returns the default <see cref="FieldProperties"/> for a given CLR type according to the SQL dialect's type mapping rules.

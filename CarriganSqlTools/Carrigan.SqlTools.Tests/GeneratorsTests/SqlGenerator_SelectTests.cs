@@ -1,13 +1,13 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OffsetNexts;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
 using Carrigan.SqlTools.Tests.Helpers;
+using Carrigan.SqlTools.Paging;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -141,7 +141,7 @@ public class SqlGenerator_SelectTests
         OrderByItem<JoinRightTable> orderByItem2 = new("Id", SortDirectionEnum.Descending);
         OrderByItem<JoinLastTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
         OrderByBase orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
-        OffsetNext offsetNext = new DefinePage(3, 50);
+        PagingBase offsetNext = new DefinePage(3, 50);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, joins, predicateId, orderBy, offsetNext);
 
         string expectedSql = "SELECT [Left].* FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Id_1) ORDER BY [Left].[Id] ASC, [Right].[Id] DESC, [Last].[Id] ASC OFFSET 100 ROWS FETCH NEXT 50 ROWS ONLY";

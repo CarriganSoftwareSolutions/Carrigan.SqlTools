@@ -1,12 +1,14 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Carrigan.SqlTools.Dialects.SqlServer;
 
@@ -140,15 +142,22 @@ public class SqlServerDialect : ISqlDialects
         $"SELECT {string.Join(", ", columnInfo.Select(column => ReturnSelectName<T>(column)))} FROM @OutputTable;{Environment.NewLine}";
     #endregion
 
-    /// <summary>
-    /// Generates a paging clause for a SQL query based on the specified offset and fetch values.
-    /// </summary>
-    /// <param name="offset">The number of rows to skip before starting to return rows. Must be greater than or equal to 0.</param>
-    /// <param name="fetch">The maximum number of rows to return. Must be greater than 0.</param>
-    /// <returns>A string containing the SQL paging clause corresponding to the specified offset and fetch values.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
-    public string RenderPaging(int offset, int fetch) => throw new NotImplementedException();
 
+    /// <summary>
+    /// Generates a SQL fragment representing the paging clause for a query based on the provided offset and fetch next values aka limit and offset.
+    /// </summary>
+    /// <param name="paging">The <see cref="PagingBase"/> object containing the offset and fetch next values aka limit and offset values.</param>
+    /// <returns>A <see cref="SqlFragment"/> representing the SQL paging clause.</returns>
+    public SqlFragment RenderPaging(PagingBase paging) =>
+        new SqlFragmentText
+        (
+            (paging.Offset, paging.Next) switch
+            {
+                (0u, 0u) => string.Empty,
+                (_, 0u) => $"OFFSET {paging.Offset}",
+                _ => $"OFFSET {paging.Offset} ROWS FETCH NEXT {paging.Next} ROWS ONLY"
+            }
+        );
 
     /// <summary>
     /// Generates a unique parameter name by appending the specified index to the base parameter name, ensuring the
