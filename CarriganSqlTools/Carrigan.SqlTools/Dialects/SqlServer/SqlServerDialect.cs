@@ -154,7 +154,7 @@ public class SqlServerDialect : ISqlDialects
             (paging.Offset, paging.Next) switch
             {
                 (0u, 0u) => string.Empty,
-                (_, 0u) => $"OFFSET {paging.Offset}",
+                (_, 0u) => $"OFFSET {paging.Offset} ROWS",
                 _ => $"OFFSET {paging.Offset} ROWS FETCH NEXT {paging.Next} ROWS ONLY"
             }
         );

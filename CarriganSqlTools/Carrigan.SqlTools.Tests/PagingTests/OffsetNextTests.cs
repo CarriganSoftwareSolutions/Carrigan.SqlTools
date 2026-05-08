@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Paging;
 
-namespace Carrigan.SqlTools.Tests.OffsetNextTests;
+namespace Carrigan.SqlTools.Tests.PagingTests;
 
 public class OffsetNextTests
 {

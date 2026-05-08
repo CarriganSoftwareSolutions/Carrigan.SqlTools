@@ -1,0 +1,97 @@
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Paging;
+using Xunit;
+
+namespace Carrigan.SqlTools.Tests.DialectTests.SqlServerTests;
+
+public partial class SqlServerDialectTests
+{
+    [Fact]
+    public void RenderPaging_OffsetFetchNextWithNoOffsetAndNoNext_ReturnsEmptyString()
+    {
+        SqlServerDialect dialect = new();
+        OffsetFetchNext paging = new(0, 0);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal(string.Empty, actual.ToString());
+    }
+
+    [Fact]
+    public void RenderPaging_OffsetFetchNextWithNextOnly_ReturnsOffsetZeroFetchNext()
+    {
+        SqlServerDialect dialect = new();
+        OffsetFetchNext paging = new(0, 10);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToString());
+    }
+
+    [Fact]
+    public void RenderPaging_OffsetFetchNextWithOffsetAndNext_ReturnsOffsetFetchNext()
+    {
+        SqlServerDialect dialect = new();
+        OffsetFetchNext paging = new(20, 10);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToString());
+    }
+
+    [Fact]
+    public void RenderPaging_OffsetFetchNextWithOffsetOnly_ReturnsOffsetRows()
+    {
+        SqlServerDialect dialect = new();
+        OffsetFetchNext paging = new(20, 0);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal("OFFSET 20 ROWS", actual.ToString());
+    }
+
+    [Fact]
+    public void RenderPaging_DefinePageFirstPage_ReturnsOffsetZeroFetchNextPageSize()
+    {
+        SqlServerDialect dialect = new();
+        DefinePage paging = new(1, 25);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToString());
+    }
+
+    [Fact]
+    public void RenderPaging_DefinePageSecondPage_ReturnsOffsetPageSizeFetchNextPageSize()
+    {
+        SqlServerDialect dialect = new();
+        DefinePage paging = new(2, 25);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal("OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToString());
+    }
+
+    [Fact]
+    public void RenderPaging_DefinePageThirdPage_ReturnsOffsetTwoPagesFetchNextPageSize()
+    {
+        SqlServerDialect dialect = new();
+        DefinePage paging = new(3, 25);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal("OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToString());
+    }
+
+    [Fact]
+    public void RenderPaging_LimitOffset_ReturnsEquivalentSqlServerOffsetFetchNext()
+    {
+        SqlServerDialect dialect = new();
+        LimitOffset paging = new(10, 20);
+
+        SqlFragment actual = dialect.RenderPaging(paging);
+
+        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToString());
+    }
+}
