@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.Exceptions;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -8,7 +9,7 @@ using System.Data.Common;
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
-/// Provides methods to execute various ADO.NET commands using <see cref="SqlServerQuery"/> asynchronously.
+/// Provides methods to execute various ADO.NET commands using <see cref="SqlQuery"/> asynchronously.
 /// </summary>
 public static class CommandsAsync
 {
@@ -36,14 +37,14 @@ public static class CommandsAsync
     }
 
     /// <summary>
-    /// Executes an ADO.NET non-query command (for example, INSERT/UPDATE/DELETE) using a <see cref="SqlServerQuery"/>.
+    /// Executes an ADO.NET non-query command (for example, INSERT/UPDATE/DELETE) using a <see cref="SqlQuery"/>.
     /// </summary>
     /// <param name="query">The query to execute.</param>
     /// <param name="transaction">The transaction (optional).</param>
     /// <param name="connection">The connection.</param>
     /// <returns>The number of rows affected.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static async Task<int> ExecuteNonQueryAsync(SqlServerQuery query, DbTransaction? transaction, DbConnection connection)
+    public static async Task<int> ExecuteNonQueryAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -73,14 +74,14 @@ public static class CommandsAsync
     }
 
     /// <summary>
-    /// Executes an ADO.NET scalar command using a <see cref="SqlServerQuery"/>.
+    /// Executes an ADO.NET scalar command using a <see cref="SqlQuery"/>.
     /// </summary>
     /// <param name="query">The query to execute.</param>
     /// <param name="transaction">The transaction (optional).</param>
     /// <param name="connection">The connection.</param>
     /// <returns>The first column of the first row in the result set, or <see langword="null"/> if the result set is empty.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static async Task<object?> ExecuteScalarAsync(SqlServerQuery query, DbTransaction? transaction, DbConnection connection)
+    public static async Task<object?> ExecuteScalarAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -110,7 +111,7 @@ public static class CommandsAsync
     }
 
     /// <summary>
-    /// Executes an ADO.NET reader command using a <see cref="SqlServerQuery"/> and materializes all records.
+    /// Executes an ADO.NET reader command using a <see cref="SqlQuery"/> and materializes all records.
     /// </summary>
     /// <param name="query">The query to execute.</param>
     /// <param name="transaction">The transaction (optional).</param>
@@ -124,7 +125,7 @@ public static class CommandsAsync
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
     /// <exception cref="DataReaderFailedException">Thrown when reading the data reader fails.</exception>
     /// <exception cref="RecordMaterializationException">Thrown when materializing a record into <typeparamref name="T"/> fails.</exception>
-    public static async Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlServerQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
+    public static async Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);

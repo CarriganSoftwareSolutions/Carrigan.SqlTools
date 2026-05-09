@@ -1,11 +1,9 @@
 using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Types;
 using System.Data;
 using Carrigan.SqlTools.Tests.Helpers;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
@@ -14,7 +12,7 @@ public sealed class SqlQueryTests
     [Fact]
     public void InternalConstructor()
     {
-        SqlServerQuery query = new(new SqlServerDialect(), []);
+        SqlQuery query = new(new SqlServerDialect(), []);
 
         Assert.Equal(string.Empty, query.QueryText);
         Assert.NotNull(query.Parameters);
@@ -24,11 +22,11 @@ public sealed class SqlQueryTests
 
     [Fact]
     public void Constructor_NullDialect_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new SqlServerQuery(null!, []));
+        Assert.Throws<ArgumentNullException>(() => new SqlQuery(null!, []));
 
     [Fact]
     public void Constructor_NullFragments_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new SqlServerQuery(new SqlServerDialect(), null!));
+        Assert.Throws<ArgumentNullException>(() => new SqlQuery(new SqlServerDialect(), null!));
 
     [Fact]
     public void GetParameterCount()
@@ -41,7 +39,7 @@ public sealed class SqlQueryTests
             new SqlFragmentParameter(new ParameterTag("@p1"), 1)
         ];
 
-        SqlQuery query = new SqlServerQuery(new SqlServerDialect(), sql);
+        SqlQuery query = new(new SqlServerDialect(), sql);
 
         Assert.Equal(2, query.GetParameterCount());
     }
@@ -57,7 +55,7 @@ public sealed class SqlQueryTests
             new SqlFragmentParameter(new ParameterTag("@p2"), 2)
         ];
 
-        SqlQuery query = new SqlServerQuery(new SqlServerDialect(), sql);
+        SqlQuery query = new(new SqlServerDialect(), sql);
 
         Assert.Equal(2, query.GetParameterCount());
 
@@ -75,7 +73,7 @@ public sealed class SqlQueryTests
             new SqlFragmentText(" "),
             new SqlFragmentParameter(new ParameterTag("@p2"), 2)
         ];
-        SqlQuery query = new SqlServerQuery(new SqlServerDialect(), sql);
+        SqlQuery query = new(new SqlServerDialect(), sql);
 
         Assert.Throws<KeyNotFoundException>(() => (int?)query.GetParameterValue("@missing"));
     }

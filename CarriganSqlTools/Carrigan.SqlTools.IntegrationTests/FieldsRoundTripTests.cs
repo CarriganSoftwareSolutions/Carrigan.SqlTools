@@ -31,7 +31,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         await _fixture.ResetAsync();
 
         // 1) Build InsertAutoId and execute scalar to get the new identity value
-        SqlServerQuery insertQuery =(SqlServerQuery) _generator.InsertAutoId(toInsert);
+        SqlQuery insertQuery =_generator.InsertAutoId(toInsert);
 
         SqlConnection connection = new(_fixture.ConnectionString);
         object? insertedIdObj = await CommandsAsync.ExecuteScalarAsync(insertQuery, null, connection);
@@ -39,7 +39,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         Assert.NotNull(insertedId);
         // 2) Build SelectById and read the row back
         FieldsModel keyEntity = new() { Id = insertedId.Value };
-        SqlServerQuery selectById = (SqlServerQuery) _generator.SelectById(keyEntity);
+        SqlQuery selectById = _generator.SelectById(keyEntity);
 
         IEnumerable<FieldsModel> rows = await CommandsAsync.ExecuteReaderAsync<FieldsModel>(selectById, transaction: null, connection);
 

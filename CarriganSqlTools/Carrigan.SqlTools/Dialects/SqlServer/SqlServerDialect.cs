@@ -8,7 +8,6 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Carrigan.SqlTools.Dialects.SqlServer;
 
@@ -246,10 +245,10 @@ public class SqlServerDialect : ISqlDialects
     }
 
     public SqlQuery RenderSqlQuery(IEnumerable<SqlFragment> sqlFragments) =>
-        new SqlServerQuery(this, sqlFragments);
+        new(this, sqlFragments);
 
     public SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag) =>
-        new SqlServerQuery(this, sqlFragments, procedureTag);
+        new(this, sqlFragments, procedureTag);
 
     /// <summary>
     /// Performs the necessary conversions for a parameter value

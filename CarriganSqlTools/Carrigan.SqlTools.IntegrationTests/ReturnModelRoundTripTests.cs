@@ -44,7 +44,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
         ColumnCollection<ReturnModel> returnColumns =
             new("Id1", "Id2", "DateTime", "Status", "DeletedFlag");
 
-        SqlServerQuery insertQuery = (SqlServerQuery)_generator.Insert(insertColumns, returnColumns, toInsert);
+        SqlQuery insertQuery = _generator.Insert(insertColumns, returnColumns, toInsert);
 
         SqlConnection connection = new(_fixture.ConnectionString);
 
@@ -72,7 +72,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
         }
 
         // Act 2: select the rows from the database and compare to insert results
-        SqlServerQuery selectQuery = (SqlServerQuery)_generator.SelectById(returnedRows);
+        SqlQuery selectQuery = _generator.SelectById(returnedRows);
 
         List<ReturnModel> dbRows = [.. (await CommandsAsync.ExecuteReaderAsync<ReturnModel>(selectQuery, transaction: null, connection))];
 

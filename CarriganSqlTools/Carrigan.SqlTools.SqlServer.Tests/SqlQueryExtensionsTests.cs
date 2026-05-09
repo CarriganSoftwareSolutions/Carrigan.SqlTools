@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
@@ -9,7 +9,7 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Carrigan.SqlTools.Tests.SqlServerTests;
+namespace Carrigan.SqlTools.SqlServer.Tests;
 
 public class SqlQueryExtensionsTests
 {
@@ -202,7 +202,7 @@ public class SqlQueryExtensionsTests
             ProviderTypeName = "NOT_A_REAL_TYPE"
         };
 
-        SqlServerQuery query = GetQuery("Value", "test", fieldProperties);
+        SqlQuery query = GetQuery("Value", "test", fieldProperties);
 
         Assert.Throws<ArgumentOutOfRangeException>(() => query.GetParameterCollection().ToList());
     }
@@ -210,12 +210,12 @@ public class SqlQueryExtensionsTests
     private static SqlParameter GetSingleParameter(string parameterName, object? value, FieldProperties fieldProperties) =>
         GetQuery(parameterName, value, fieldProperties).GetParameterCollection().Single();
 
-    private static SqlServerQuery GetQuery(string parameterName, object? value, FieldProperties fieldProperties)
+    private static SqlQuery GetQuery(string parameterName, object? value, FieldProperties fieldProperties)
     {
         Parameter parameter = new(parameterName, value);
         SqlFragmentParameter sqlFragmentParameter = new(new ParameterTag(parameterName), fieldProperties, value);
         SqlServerDialect dialect = new();
 
-        return (SqlServerQuery)dialect.RenderSqlQuery([sqlFragmentParameter]);
+        return (SqlQuery)dialect.RenderSqlQuery([sqlFragmentParameter]);
     }
 }

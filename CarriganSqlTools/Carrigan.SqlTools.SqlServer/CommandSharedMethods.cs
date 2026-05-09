@@ -3,6 +3,7 @@ using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Invocation;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.Exceptions;
 using System.Data;
 using System.Data.Common;
@@ -20,7 +21,7 @@ namespace Carrigan.SqlTools.SqlServer;
 /// <remarks>
 /// This type centralizes:
 /// <list type="bullet">
-///     <item><description>DbCommand construction from a <see cref="SqlServerQuery"/>.</description></item>
+///     <item><description>DbCommand construction from a <see cref="SqlQuery"/>.</description></item>
 ///     <item><description>Row-to-model materialization via <see cref="Invoker{T}"/>.</description></item>
 ///     <item><description>Post-processing such as field decryption.</description></item>
 /// </list>
@@ -28,7 +29,7 @@ namespace Carrigan.SqlTools.SqlServer;
 internal static class CommandSharedMethods
 {
     /// <summary>
-    /// Creates a <see cref="DbCommand"/> populated from a <see cref="SqlServerQuery"/>.
+    /// Creates a <see cref="DbCommand"/> populated from a <see cref="SqlQuery"/>.
     /// </summary>
     /// <param name="query">The query text, command type, and parameters to apply.</param>
     /// <param name="connection">The connection used to create the command.</param>
@@ -40,7 +41,7 @@ internal static class CommandSharedMethods
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="query"/> or <paramref name="connection"/> is <see langword="null"/>.
     /// </exception>
-    public static DbCommand CreateCommand(SqlServerQuery query, DbConnection connection, DbTransaction? transaction = null)
+    public static DbCommand CreateCommand(SqlQuery query, DbConnection connection, DbTransaction? transaction = null)
     {
         DbCommand command = connection.CreateCommand();
         if (transaction != null)

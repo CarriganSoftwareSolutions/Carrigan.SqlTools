@@ -10,8 +10,9 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// Represents a fully rendered SQL query, including the final command text with parameter placeholders,
 /// and the associated parameter values.
 /// </summary>
-public abstract class SqlQuery
+public class SqlQuery
 {
+    protected readonly ISqlDialects Dialect;
     /// <summary>
     /// Gets or sets the SQL command text.
     /// </summary>
@@ -21,7 +22,7 @@ public abstract class SqlQuery
     /// Gets or sets the parameter values for this command,
     /// keyed by <see cref="ParameterTag"/>.
     /// </summary>
-    public Dictionary<ParameterTag, object?> ParametersAsDictionary { get; protected set; }
+    public Dictionary<ParameterTag, object?> ParametersAsDictionary { get; protected set; } = [];
 
     public IEnumerable<SqlFragmentParameter> Parameters { get; protected set; } = [];
 
@@ -29,6 +30,49 @@ public abstract class SqlQuery
     /// Gets or sets the command type for this SQL query.
     /// </summary>
     public CommandType CommandType { get; protected init; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlQuery"/> class with the specified
+    /// </summary>
+    /// <param name="dialect">The SQL dialect to use for rendering the fragments.</param>
+    /// <param name="fragments">The sequence of SQL fragments to render.</param>
+    internal SqlQuery(ISqlDialects dialect, IEnumerable<SqlFragment> fragments)
+    {
+        ArgumentNullException.ThrowIfNull(fragments);
+        ArgumentNullException.ThrowIfNull(dialect);
+        Dialect = dialect;
+        QueryText = fragments.ToSql(dialect);
+        Parameters = fragments.GetSqlFragmentParameters(dialect);
+        CommandType = CommandType.Text;
+        ParametersAsDictionary = new
+        (
+            Parameters
+                .Select(parameter => new KeyValuePair<ParameterTag, object?>(parameter.ParameterTag, parameter.Value))
+        );
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlQuery"/> class for a stored procedure with the specified
+    /// </summary>
+    /// <param name="dialect">The SQL dialect to use for rendering the fragments.</param>
+    /// <param name="fragments">The sequence of SQL fragments representing the parameters.</param>
+    /// <param name="procedure">The stored procedure to execute.</param>
+    internal SqlQuery(ISqlDialects dialect, IEnumerable<SqlFragmentParameter> fragments, ProcedureTag procedure)
+    {
+        ArgumentNullException.ThrowIfNull(procedure);
+        ArgumentNullException.ThrowIfNull(dialect);
+        ArgumentNullException.ThrowIfNull(fragments);
+        Dialect = dialect;
+        QueryText = procedure;
+        Parameters = fragments.GetSqlFragmentParameters(dialect);
+        ParametersAsDictionary = new
+        (
+            Parameters
+                .Select(parameter => new KeyValuePair<ParameterTag, object?>(parameter.ParameterTag, parameter.Value))
+        );
+        CommandType = CommandType.StoredProcedure;
+    }
+
 
     /// <summary>
     /// Retrieves the value of a parameter by its name (for unit testing).

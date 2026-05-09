@@ -1,6 +1,7 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
@@ -11,11 +12,11 @@ namespace Carrigan.SqlTools.SqlServer;
 internal static class SqlQueryExtensions
 {
     /// <summary>
-    /// Converts the parameters in an <see cref="SqlServerQuery"/> into an
+    /// Converts the parameters in an <see cref="SqlQuery"/> into an
     /// <see cref="IEnumerable{SqlParameter}"/> for consumption by
     /// <see cref="Commands"/> or <see cref="CommandsAsync"/>.
     /// </summary>
-    /// <param name="query">The <see cref="SqlServerQuery"/> containing parameter metadata and values.</param>
+    /// <param name="query">The <see cref="SqlQuery"/> containing parameter metadata and values.</param>
     /// <returns>
     /// An <see cref="IEnumerable{SqlParameter}"/> mapping each <see cref="ParameterTag"/>
     /// in the query to a fully populated <see cref="SqlParameter"/> instance.
@@ -47,7 +48,7 @@ internal static class SqlQueryExtensions
     /// </list>
     /// </remarks>
 
-    internal static IEnumerable<SqlParameter> GetParameterCollection(this SqlServerQuery query)
+    internal static IEnumerable<SqlParameter> GetParameterCollection(this SqlQuery query)
     {
         static SqlParameter GetSqlParameter(SqlFragmentParameter parameter)
         {
