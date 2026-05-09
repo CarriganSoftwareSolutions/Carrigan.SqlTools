@@ -9,7 +9,7 @@ public class OffsetNextTests
     // Both Offset and Next are 0 → expect an empty SQL string.
     [InlineData(0u, 0u, "")]
     // Next is 0, but Offset is nonzero → expect "OFFSET {Offset}"
-    [InlineData(10u, 0u, "OFFSET 10")]
+    [InlineData(10u, 0u, "OFFSET 10 ROWS")]
     // Both Offset is zero and Next is nonzero → expect full OFFSET-FETCH clause.
     [InlineData(0u, 15u, "OFFSET 0 ROWS FETCH NEXT 15 ROWS ONLY")]
     // Both Offset and Next are nonzero → expect full OFFSET-FETCH clause.

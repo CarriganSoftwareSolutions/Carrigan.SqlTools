@@ -15,7 +15,7 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal(string.Empty, actual.ToString());
+        Assert.Equal(string.Empty, actual.ToSql());
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToString());
+        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql());
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToString());
+        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql());
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 20 ROWS", actual.ToString());
+        Assert.Equal("OFFSET 20 ROWS", actual.ToSql());
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToString());
+        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql());
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToString());
+        Assert.Equal("OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql());
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToString());
+        Assert.Equal("OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql());
     }
 
     [Fact]
@@ -92,6 +92,6 @@ public partial class SqlServerDialectTests
 
         SqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToString());
+        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql());
     }
 }
