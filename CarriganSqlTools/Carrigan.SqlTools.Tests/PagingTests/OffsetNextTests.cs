@@ -10,6 +10,14 @@ public class OffsetNextTests
     [InlineData(0u, 0u, "")]
     // Next is 0, but Offset is nonzero → expect "OFFSET {Offset}"
     [InlineData(10u, 0u, "OFFSET 10 ROWS")]
+    // OFFSET ROW Singular
+    [InlineData(1u, 0u, "OFFSET 1 ROW")]
+    // OFFSET FETCH NEXT ROW Singular
+    [InlineData(1u, 1u, "OFFSET 1 ROW FETCH NEXT 1 ROW ONLY")]
+    // OFFSET ROWS FETCH NEXT ROW Singular
+    [InlineData(5u, 1u, "OFFSET 5 ROWS FETCH NEXT 1 ROW ONLY")]
+    // OFFSET ROW Singular FETCH NEXT ROWs 
+    [InlineData(1u, 15u, "OFFSET 1 ROW FETCH NEXT 15 ROWS ONLY")]
     // Both Offset is zero and Next is nonzero → expect full OFFSET-FETCH clause.
     [InlineData(0u, 15u, "OFFSET 0 ROWS FETCH NEXT 15 ROWS ONLY")]
     // Both Offset and Next are nonzero → expect full OFFSET-FETCH clause.
