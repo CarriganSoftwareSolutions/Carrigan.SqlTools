@@ -17,6 +17,7 @@ namespace Carrigan.SqlTools.Fragments;
 public abstract class SqlFragment
 {
     internal static readonly SqlFragment Space = new SqlFragmentText(" ");
+    internal static readonly SqlFragment Semicolon = new SqlFragmentText(";");
     internal static readonly SqlFragment NewLine = new SqlFragmentText(Environment.NewLine);
 
     /// <summary>

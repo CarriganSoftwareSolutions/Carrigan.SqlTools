@@ -124,7 +124,7 @@ public partial class SqlGenerator<T>
                 .Concat(setFragments)
                 .Append(new SqlFragmentText($" WHERE "))
                 .Concat(whereFragments)
-                .Append(new SqlFragmentText(";"));
+                .Append(SqlFragment.Semicolon);
 
         return queryFragments.ToSqlQuery(Dialect);
     }

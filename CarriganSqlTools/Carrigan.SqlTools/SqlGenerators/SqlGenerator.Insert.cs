@@ -296,16 +296,17 @@ public partial class SqlGenerator<T>
         IEnumerable<SqlFragment> valuesFragments = entities.Count() switch //when there is only one record use the overload that doesn't add index counts to the parameters
         {
             1 => new SqlFragmentText($"VALUES ")
-                    .Concat(GetInsertValueFragments(insertTheseColumns, entities.Single()))
-                    .Append(new SqlFragmentText(";")),
+                    .Concat(GetInsertValueFragments(insertTheseColumns, entities.Single())),
             _ => new SqlFragmentText($"VALUES ")
-                    .Concat(GetEnumeratedInsertValueFragments(insertTheseColumns, entities))
-                    .Append(new SqlFragmentText(";")),
+                    .Concat(GetEnumeratedInsertValueFragments(insertTheseColumns, entities)),
         };
 
         IEnumerable<SqlFragment> queryFragments = returnColumns switch
         {
-            null => insertIntoFragments.Append(new SqlFragmentText(" ")).Concat(valuesFragments),
+            null => insertIntoFragments
+                .Append(new SqlFragmentText(" "))
+                .Concat(valuesFragments)
+                .Append(SqlFragment.Semicolon),
             _ => Dialect.GetInsertReturningFragments<T>(insertIntoFragments, valuesFragments, returnColumns.ColumnInfo),
         };
 

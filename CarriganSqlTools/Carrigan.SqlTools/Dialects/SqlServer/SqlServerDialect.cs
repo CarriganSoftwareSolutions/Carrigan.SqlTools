@@ -71,10 +71,11 @@ public class SqlServerDialect : ISqlDialects
     public IEnumerable<SqlFragment> GetInsertReturningFragments<T>(IEnumerable<SqlFragment> insertIntoFragments, IEnumerable<SqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo) =>
         new SqlFragmentText(ReturnTableDefinition(columnInfo))
             .Concat(insertIntoFragments)
-            .Append(new SqlFragmentText($"{Environment.NewLine}"))
+            .Append(SqlFragment.NewLine)
             .Append(new SqlFragmentText(ReturnOutputColumns(columnInfo)))
             .Concat(insertValuesFragments)
-            .Append(new SqlFragmentText($"{Environment.NewLine}"))
+            .Append(SqlFragment.Semicolon)
+            .Append(SqlFragment.NewLine)
             .Append(new SqlFragmentText(ReturnSelectOutput<T>(columnInfo)));
 
     #region GetInsertReturningFragments private helper methods
