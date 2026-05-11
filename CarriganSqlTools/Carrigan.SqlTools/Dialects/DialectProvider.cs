@@ -1,10 +1,6 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects.PostgreSql;
 using Carrigan.SqlTools.Dialects.SqlServer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Dialects;
 
@@ -14,6 +10,10 @@ namespace Carrigan.SqlTools.Dialects;
 /// </summary>
 internal static class DialectProvider
 {
+    /// <summary>
+    /// Represents the SQL dialect implementation for Microsoft SQL Server.
+    /// </summary>
+    private static readonly ISqlDialects PostgreSqlDialect = new PostgreSqlDialect();
     /// <summary>
     /// Represents the SQL dialect implementation for Microsoft SQL Server.
     /// </summary>
@@ -27,6 +27,7 @@ internal static class DialectProvider
     internal static ISqlDialects GetDialect(DialectEnum dialect) =>
         dialect switch
         {
+            DialectEnum.PostgreSql => PostgreSqlDialect,
             DialectEnum.SqlServer => SqlServerDialect, 
             _ => throw new NotImplementedException($"The {dialect} dialect is not implemented yet.")
         };
