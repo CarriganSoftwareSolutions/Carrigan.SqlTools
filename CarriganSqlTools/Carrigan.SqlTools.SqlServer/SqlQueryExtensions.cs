@@ -1,5 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -34,15 +33,15 @@ internal static class SqlQueryExtensions
     ///     <item>
     ///         <description>
     ///         Determines the correct SqlDbType using the associated
-    ///         <see cref="SqlTypeDefinition"/> if present, or derives one automatically
-    ///         via <see cref="SqlTypeDefinition"/> if no explicit SQL type was provided.
+    ///         <see cref="FieldProperties"/> if present, or derives one automatically
+    ///         via <see cref="SqlServerTypesProvider.FromClrType"/> if no explicit SQL type was provided.
     ///         </description>
     ///     </item>
     ///     <item>
     ///         <description>
     ///         Applies size, precision, scale, or <c>MAX</c> semantics based on the
-    ///         <see cref="SqlTypeDefinition"/> assigned to the corresponding
-    ///         <see cref="ParameterTag"/>.
+    ///         <see cref="FieldProperties"/> assigned to the corresponding
+    ///         <see cref="SqlFragmentParameter"/>.
     ///         </description>
     ///     </item>
     /// </list>

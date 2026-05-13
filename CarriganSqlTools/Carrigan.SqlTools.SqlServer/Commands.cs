@@ -1,7 +1,6 @@
 ﻿using Carrigan.Core.Interfaces;
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer.Exceptions;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
@@ -32,7 +31,7 @@ public static class Commands
         }
         catch (Exception exception)
         {
-            throw SqlToolsSqlServerErrorFactory.ConnectionFailed(friendlyName, exception);
+            throw SqlToolsErrorFactory.ConnectionFailed(friendlyName, exception);
         }
     }
 
@@ -62,9 +61,9 @@ public static class Commands
 
             return command.ExecuteNonQuery();
         }
-        catch (Exception exception) when (SqlToolsSqlServerErrorFactory.IsAlreadyWrapped(exception) is false)
+        catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsSqlServerErrorFactory.ExecutionFailed(nameof(ExecuteNonQuery), query, connection, transaction, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteNonQuery), query, exception);
         }
         finally
         {
@@ -99,9 +98,9 @@ public static class Commands
 
             return command.ExecuteScalar();
         }
-        catch (Exception exception) when (SqlToolsSqlServerErrorFactory.IsAlreadyWrapped(exception) is false)
+        catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsSqlServerErrorFactory.ExecutionFailed(nameof(ExecuteScalar), query, connection, transaction, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteScalar), query, exception);
         }
         finally
         {
@@ -132,7 +131,7 @@ public static class Commands
 
         if (ClientReflectorCache<T>.EncryptedProperties.Any() && decrypters is null)
         {
-            throw SqlToolsSqlServerErrorFactory.DecrypterNotProvided<T>();
+            throw SqlToolsErrorFactory.DecrypterNotProvided<T>();
         }
 
         List<T> results = [];
@@ -154,9 +153,9 @@ public static class Commands
                 results.Add(CommandSharedMethods.ReadRecord<T>(dataReader));
             }
         }
-        catch (Exception exception) when (SqlToolsSqlServerErrorFactory.IsAlreadyWrapped(exception) is false)
+        catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsSqlServerErrorFactory.ExecutionFailed(nameof(ExecuteReader), query, connection, transaction, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteReader), query, exception);
         }
         finally
         {

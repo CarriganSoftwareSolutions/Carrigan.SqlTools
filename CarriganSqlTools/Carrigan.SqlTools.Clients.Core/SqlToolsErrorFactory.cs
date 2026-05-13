@@ -1,17 +1,17 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Clients.Core.Exceptions;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer.Exceptions;
 using System.Data.Common;
 
-namespace Carrigan.SqlTools.SqlServer;
+namespace Carrigan.SqlTools.Clients.Core;
 
-internal static class SqlToolsSqlServerErrorFactory
+internal static class SqlToolsErrorFactory
 {
     internal static ConnectionFailedException ConnectionFailed(string friendlyName, Exception exception) =>
         new(friendlyName, exception);
 
-    internal static CommandExecutionFailedException ExecutionFailed(string operation, SqlQuery query, DbConnection connection, DbTransaction? transaction, Exception exception) =>
-        new(operation, query, connection, transaction, exception);
+    internal static CommandExecutionFailedException ExecutionFailed(string operation, SqlQuery query, Exception exception) =>
+        new(operation, query, exception);
 
     internal static DataReaderFailedException ReadFailed(Type modelType, int? ordinal, string? columnName, Exception exception) =>
         new(modelType, ordinal, columnName, exception);
@@ -29,5 +29,5 @@ internal static class SqlToolsSqlServerErrorFactory
         new(keyVersion, propertyName, exception);
 
     internal static bool IsAlreadyWrapped(Exception exception) =>
-        exception is SqlToolsSqlServerException;
+        exception is SqlToolsQueryException;
 }

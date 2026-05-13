@@ -1,11 +1,10 @@
 ﻿using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.SqlGenerators;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 using System.Data;
-using System.Data.Common;
 
-namespace Carrigan.SqlTools.SqlServer;
+namespace Carrigan.SqlTools.Clients.PostgreSql;
 
 /// <summary>
 /// Provides methods to execute various ADO.NET commands using <see cref="SqlQuery"/> asynchronously.
@@ -25,7 +24,7 @@ public static class CommandsAsync
 
         try
         {
-            using SqlConnection connection = new(connectionString);
+            using NpgsqlConnection connection = new(connectionString);
             await connection.OpenAsync().ConfigureAwait(false);
             await connection.CloseAsync().ConfigureAwait(false);
         }
@@ -43,7 +42,7 @@ public static class CommandsAsync
     /// <param name="connection">The connection.</param>
     /// <returns>The number of rows affected.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static async Task<int> ExecuteNonQueryAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
+    public static async Task<int> ExecuteNonQueryAsync(SqlQuery query, NpgsqlTransaction? transaction, NpgsqlConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -57,7 +56,7 @@ public static class CommandsAsync
 
         try
         {
-            using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
+            using NpgsqlCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
 
             return await command.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
@@ -80,7 +79,7 @@ public static class CommandsAsync
     /// <param name="connection">The connection.</param>
     /// <returns>The first column of the first row in the result set, or <see langword="null"/> if the result set is empty.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static async Task<object?> ExecuteScalarAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
+    public static async Task<object?> ExecuteScalarAsync(SqlQuery query, NpgsqlTransaction? transaction, NpgsqlConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -94,7 +93,7 @@ public static class CommandsAsync
 
         try
         {
-            using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
+            using NpgsqlCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
 
             return await command.ExecuteScalarAsync().ConfigureAwait(false);
         }
@@ -118,13 +117,13 @@ public static class CommandsAsync
     /// <param name="decrypters">Optional decrypter provider used to decrypt properties marked as encrypted.</param>
     /// <returns>A sequence of records read from the database.</returns>
     /// <exception cref="DecrypterNotProvided{T}">Thrown when one or more encrypted properties exist, but no decrypter provider is supplied.</exception>
-    /// <exception cref="Carrigan.SqlTools.Exceptions.NoKeyVersionException{T}">Thrown when encrypted properties exist, but the type does not define a key-version property.</exception>
+    /// <exception cref="Exceptions.NoKeyVersionException{T}">Thrown when encrypted properties exist, but the type does not define a key-version property.</exception>
     /// <exception cref="MissingDecryptionKeyException{T}">Thrown when encrypted properties contain values, but no matching decryption key can be found.</exception>
     /// <exception cref="DecryptionFailedException{T}">Thrown when decryption fails for an encrypted property.</exception>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
     /// <exception cref="DataReaderFailedException">Thrown when reading the data reader fails.</exception>
     /// <exception cref="RecordMaterializationException">Thrown when materializing a record into <typeparamref name="T"/> fails.</exception>
-    public static async Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
+    public static async Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, NpgsqlTransaction? transaction, NpgsqlConnection connection, IDecrypters? decrypters = null) where T : class, new()
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -145,8 +144,8 @@ public static class CommandsAsync
 
         try
         {
-            using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
-            using DbDataReader dataReader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+            using NpgsqlCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
+            using NpgsqlDataReader dataReader = await command.ExecuteReaderAsync().ConfigureAwait(false);
 
             while (await dataReader.ReadAsync().ConfigureAwait(false))
             {

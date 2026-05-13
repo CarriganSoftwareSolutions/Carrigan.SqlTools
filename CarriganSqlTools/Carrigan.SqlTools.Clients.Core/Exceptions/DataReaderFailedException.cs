@@ -1,9 +1,9 @@
-﻿namespace Carrigan.SqlTools.SqlServer.Exceptions;
+﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when reading a record from a data reader fails.
 /// </summary>
-public sealed class DataReaderFailedException : SqlToolsSqlServerException
+public sealed class DataReaderFailedException : SqlToolsQueryException
 {
     public Type ModelType { get; }
     public int? Ordinal { get; }

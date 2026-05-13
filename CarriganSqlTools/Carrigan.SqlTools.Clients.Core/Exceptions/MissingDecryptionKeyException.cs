@@ -1,10 +1,10 @@
-﻿namespace Carrigan.SqlTools.SqlServer.Exceptions;
+﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when encrypted properties contain values but no matching decryption key can be found.
 /// </summary>
 /// <typeparam name="T">The model type being materialized.</typeparam>
-public sealed class MissingDecryptionKeyException<T> : SqlToolsSqlServerException
+public sealed class MissingDecryptionKeyException<T> : SqlToolsQueryException
 {
     /// <summary>
     /// Gets the key version required to decrypt the record.

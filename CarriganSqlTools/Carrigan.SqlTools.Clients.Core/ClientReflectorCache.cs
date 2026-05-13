@@ -3,7 +3,7 @@ using Carrigan.Core.ReflectionCaching;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace Carrigan.SqlTools.SqlServer;
+namespace Carrigan.SqlTools.Clients.Core;
 
 /// <summary>
 /// Reflection provider used when invoking new instances with values read from the database.

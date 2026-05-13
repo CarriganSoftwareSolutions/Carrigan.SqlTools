@@ -59,24 +59,6 @@ public partial class PostgreSqlTypesProviderTests
     }
 
     [Fact]
-    public void FromClrType_Generic_ReturnsExpectedType()
-    {
-        FieldProperties actual = PostgreSqlTypesProvider.FromClrType<int>();
-
-        AssertFieldProperties(actual, "INTEGER");
-    }
-
-    [Fact]
-    public void FromClrType_Ulong_ReturnsNumeric20Scale0()
-    {
-        FieldProperties actual = PostgreSqlTypesProvider.FromClrType<ulong>();
-
-        AssertFieldProperties(actual, "NUMERIC", precision: 20, scale: 0);
-    }
-
-    [Fact]
-    public void FromClrType_NullType_Exception()
-    {
+    public void FromClrType_NullType_Exception() => 
         Assert.Throws<ArgumentNullException>(() => PostgreSqlTypesProvider.FromClrType(null!));
-    }
 }

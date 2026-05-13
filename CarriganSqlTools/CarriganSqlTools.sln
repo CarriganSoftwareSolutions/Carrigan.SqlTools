@@ -33,6 +33,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.SqlServer
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{4A91D235-418D-49AC-9E8F-71ED65D6C2FC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{DCADBC00-36FF-468E-8CA9-6063F530A5E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Clients.PostgreSql", "Carrigan.SqlTools.Clients.PostgreSql\Carrigan.SqlTools.Clients.PostgreSql.csproj", "{DB61EAF6-6393-4876-ADFA-93FCFA46C269}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Clients.Core", "Carrigan.SqlTools.Clients.Core\Carrigan.SqlTools.Clients.Core.csproj", "{094ED0BE-833F-4B19-B159-D377EA46EF24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Clients.Core.Tests", "Carrigan.SqlTools.Clients.Core.Tests\Carrigan.SqlTools.Clients.Core.Tests.csproj", "{9107AE53-C3E1-4739-8E47-CA56F22F6595}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,14 +71,30 @@ Global
 		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32407DBD-8440-41B5-B8D3-7E360E59C2FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB61EAF6-6393-4876-ADFA-93FCFA46C269}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB61EAF6-6393-4876-ADFA-93FCFA46C269}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB61EAF6-6393-4876-ADFA-93FCFA46C269}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB61EAF6-6393-4876-ADFA-93FCFA46C269}.Release|Any CPU.Build.0 = Release|Any CPU
+		{094ED0BE-833F-4B19-B159-D377EA46EF24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{094ED0BE-833F-4B19-B159-D377EA46EF24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{094ED0BE-833F-4B19-B159-D377EA46EF24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{094ED0BE-833F-4B19-B159-D377EA46EF24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9107AE53-C3E1-4739-8E47-CA56F22F6595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9107AE53-C3E1-4739-8E47-CA56F22F6595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9107AE53-C3E1-4739-8E47-CA56F22F6595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9107AE53-C3E1-4739-8E47-CA56F22F6595}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{1410A1B9-3CB4-48D3-8D83-1A7F3532F27E} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
 		{31A66230-7525-4650-85AA-471ACFD05D5D} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
 		{615D61CB-B58C-49C3-8F31-8EBC4419836D} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
 		{32407DBD-8440-41B5-B8D3-7E360E59C2FB} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
+		{DB61EAF6-6393-4876-ADFA-93FCFA46C269} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
+		{094ED0BE-833F-4B19-B159-D377EA46EF24} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
+		{9107AE53-C3E1-4739-8E47-CA56F22F6595} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7E326BD-0E69-4927-9699-75A4A950E268}

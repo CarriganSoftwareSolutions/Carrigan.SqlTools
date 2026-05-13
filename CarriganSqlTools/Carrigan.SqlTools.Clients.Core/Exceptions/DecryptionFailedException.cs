@@ -1,9 +1,9 @@
-﻿namespace Carrigan.SqlTools.SqlServer.Exceptions;
+﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when a decryption operation fails.
 /// </summary>
-public sealed class DecryptionFailedException<T> : SqlToolsSqlServerException
+public sealed class DecryptionFailedException<T> : SqlToolsQueryException
 {
     /// <summary>
     /// Gets the key version used for decryption.

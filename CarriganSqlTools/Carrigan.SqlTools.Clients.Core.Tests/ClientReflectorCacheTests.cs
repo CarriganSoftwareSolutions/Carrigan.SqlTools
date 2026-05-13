@@ -1,9 +1,9 @@
 ﻿using Carrigan.Core.Attributes;
-using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Clients.Core.Exceptions;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
-namespace Carrigan.SqlTools.SqlServer.Tests;
+namespace Carrigan.SqlTools.Clients.Core.Tests;
 
 public class ClientReflectorCacheTests
 {
@@ -79,8 +79,8 @@ public class ClientReflectorCacheTests
 
     private static Type GetClosedCacheType()
     {
-        Assembly sqlServerAssembly = typeof(Commands).Assembly;
-        Type openGeneric = sqlServerAssembly.GetType("Carrigan.SqlTools.SqlServer.ClientReflectorCache`1")
+        Assembly sqlServerAssembly = typeof(SqlToolsQueryException).Assembly;
+        Type openGeneric = sqlServerAssembly.GetType("Carrigan.SqlTools.Clients.Core.ClientReflectorCache`1")
             ?? throw new InvalidOperationException("ClientReflectorCache`1 type not found.");
 
         return openGeneric.MakeGenericType(typeof(TestModel));

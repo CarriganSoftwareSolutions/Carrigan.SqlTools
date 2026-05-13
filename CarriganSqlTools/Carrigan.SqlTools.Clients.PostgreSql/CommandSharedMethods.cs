@@ -4,13 +4,14 @@ using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.SqlGenerators;
+using Npgsql;
 using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Reflection;
 using System.Xml;
 //IGNORE SPELLING: xml
 
-namespace Carrigan.SqlTools.SqlServer;
+namespace Carrigan.SqlTools.Clients.PostgreSql;
 
 /// <summary>
 /// Provides shared command functionality used by synchronous and asynchronous command executors, 
@@ -39,9 +40,9 @@ internal static class CommandSharedMethods
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="query"/> or <paramref name="connection"/> is <see langword="null"/>.
     /// </exception>
-    public static DbCommand CreateCommand(SqlQuery query, DbConnection connection, DbTransaction? transaction = null)
+    public static NpgsqlCommand CreateCommand(SqlQuery query, NpgsqlConnection connection, NpgsqlTransaction? transaction = null)
     {
-        DbCommand command = connection.CreateCommand();
+        NpgsqlCommand command = connection.CreateCommand();
         if (transaction != null)
         {
             command.Transaction = transaction;

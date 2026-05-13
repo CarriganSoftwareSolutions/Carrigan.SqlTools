@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.SqlServer.Exceptions;
+﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when one or more encrypted properties exist on <typeparamref name="T"/>, but no decrypter provider is supplied.
@@ -13,7 +13,7 @@
 /// A model type includes encrypted properties and you call <c>ExecuteReader&lt;T&gt;</c> without providing
 /// a decrypter provider. Because encrypted properties require decryption, this exception is thrown.
 /// </remarks>
-public class DecrypterNotProvided<T> : SqlToolsSqlServerException
+public class DecrypterNotProvided<T> : SqlToolsQueryException
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DecrypterNotProvided{T}"/> class.

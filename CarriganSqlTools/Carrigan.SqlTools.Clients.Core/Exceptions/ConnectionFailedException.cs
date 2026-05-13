@@ -1,9 +1,9 @@
-﻿namespace Carrigan.SqlTools.SqlServer.Exceptions;
+﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when a SQL Server connection cannot be established.
 /// </summary>
-public sealed class ConnectionFailedException : SqlToolsSqlServerException
+public sealed class ConnectionFailedException : SqlToolsQueryException
 {
     public string FriendlyName { get; }
 

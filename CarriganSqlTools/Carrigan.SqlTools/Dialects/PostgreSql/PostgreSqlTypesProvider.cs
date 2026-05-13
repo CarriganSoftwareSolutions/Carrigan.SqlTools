@@ -22,7 +22,8 @@ public static class PostgreSqlTypesProvider
 
     #region Helper Methods
 
-    private static FieldProperties Create(
+    private static FieldProperties Create
+    (
         string providerTypeName,
         int? length = null,
         bool? isMax = null,
@@ -32,29 +33,22 @@ public static class PostgreSqlTypesProvider
         byte? scale = null,
         byte? fractionalSecondsPrecision = null,
         string? baseType = null,
-        bool? nullable = null)
+        bool? nullable = null
+    )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(providerTypeName);
 
         if (length is <= 0)
-        {
             throw new ArgumentOutOfRangeException(nameof(length), length, "Length must be greater than zero when specified.");
-        }
 
         if (precision is 0)
-        {
             throw new ArgumentOutOfRangeException(nameof(precision), precision, "Precision must be greater than zero when specified.");
-        }
 
         if (scale is not null && precision is null)
-        {
             throw new ArgumentException("Scale cannot be specified without precision.", nameof(scale));
-        }
 
         if (scale is not null && precision is not null && scale > precision)
-        {
             throw new ArgumentOutOfRangeException(nameof(scale), scale, "Scale cannot be greater than precision.");
-        }
 
         return new FieldProperties
         {
@@ -131,9 +125,7 @@ public static class PostgreSqlTypesProvider
         ValidatePrecision(precision);
 
         if (scale > precision)
-        {
             throw new ArgumentOutOfRangeException(nameof(scale), scale, "Scale cannot be greater than precision.");
-        }
     }
 
     private static void ValidateFractionalSecondsPrecision(byte fractionalSecondsPrecision) =>
@@ -178,19 +170,40 @@ public static class PostgreSqlTypesProvider
 
     #region CLR Types
 
-    public static FieldProperties FromClrType(Type clrType) => Create(clrType);
+    public static FieldProperties FromClrType(Type clrType) => 
+        Create(clrType);
 
-    public static FieldProperties FromClrType<T>() => FromClrType(typeof(T));
-
-    public static FieldProperties FromNullableClrType(Type clrType) => Create(clrType, nullable: true);
-
-    public static FieldProperties FromNullableClrType<T>() => FromNullableClrType(typeof(T));
-
+    /// <summary>
+    /// Creates PostgreSQL <see cref="FieldProperties"/> from a CLR value.
+    /// </summary>
+    /// <param name="value">The CLR value whose runtime type should be mapped to a PostgreSQL provider type.</param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance representing the PostgreSQL type that corresponds
+    /// to the runtime type of <paramref name="value"/>, or PostgreSQL <c>UNKNOWN</c> when the value is null.
+    /// </returns>
+    /// <remarks>
+    /// <para>
+    /// When <paramref name="value"/> is <see langword="null"/> or <see cref="DBNull.Value"/>, this method returns
+    /// an unknown nullable PostgreSQL provider type. This allows PostgreSQL to infer the intended type from
+    /// the SQL context when possible.
+    /// </para>
+    /// <para>
+    /// Prefer explicit <see cref="FieldProperties"/> when the intended PostgreSQL type is known.
+    /// </para>
+    /// </remarks>
+    public static FieldProperties FromClrValue(object? value)
+    {
+        if (value is null || value == DBNull.Value)
+            return AsUnknown(nullable: true);
+        else
+            return Create(value.GetType());
+    }
     #endregion
 
     #region UUID
 
-    public static FieldProperties AsUuid(bool? nullable = null) => Create("UUID", nullable: nullable);
+    public static FieldProperties AsUuid(bool? nullable = null) => 
+        Create("UUID", nullable: nullable);
 
     #endregion
 
@@ -243,25 +256,31 @@ public static class PostgreSqlTypesProvider
 
     #region Boolean
 
-    public static FieldProperties AsBoolean(bool? nullable = null) => Create("BOOLEAN", nullable: nullable);
+    public static FieldProperties AsBoolean(bool? nullable = null) => 
+        Create("BOOLEAN", nullable: nullable);
 
     #endregion
 
     #region Integers
 
-    public static FieldProperties AsSmallInt(bool? nullable = null) => Create("SMALLINT", nullable: nullable);
+    public static FieldProperties AsSmallInt(bool? nullable = null) => 
+        Create("SMALLINT", nullable: nullable);
 
-    public static FieldProperties AsInteger(bool? nullable = null) => Create("INTEGER", nullable: nullable);
+    public static FieldProperties AsInteger(bool? nullable = null) => 
+        Create("INTEGER", nullable: nullable);
 
-    public static FieldProperties AsBigInt(bool? nullable = null) => Create("BIGINT", nullable: nullable);
+    public static FieldProperties AsBigInt(bool? nullable = null) => 
+        Create("BIGINT", nullable: nullable);
 
     #endregion
 
     #region Floating Points
 
-    public static FieldProperties AsReal(bool? nullable = null) => Create("REAL", nullable: nullable);
+    public static FieldProperties AsReal(bool? nullable = null) => 
+        Create("REAL", nullable: nullable);
 
-    public static FieldProperties AsDoublePrecision(bool? nullable = null) => Create("DOUBLE PRECISION", nullable: nullable);
+    public static FieldProperties AsDoublePrecision(bool? nullable = null) => 
+        Create("DOUBLE PRECISION", nullable: nullable);
 
     public static FieldProperties AsFloat(byte precision, bool? nullable = null)
     {
@@ -277,21 +296,27 @@ public static class PostgreSqlTypesProvider
 
     #region Numeric
 
-    public static FieldProperties AsNumeric(bool? nullable = null) => CreateNumericType(nullable);
+    public static FieldProperties AsNumeric(bool? nullable = null) =>
+        CreateNumericType(nullable);
 
-    public static FieldProperties AsNumeric(byte precision, bool? nullable = null) => CreateNumericType(precision, nullable);
+    public static FieldProperties AsNumeric(byte precision, bool? nullable = null) =>
+        CreateNumericType(precision, nullable);
 
-    public static FieldProperties AsNumeric(byte precision, byte scale, bool? nullable = null) => CreateNumericType(precision, scale, nullable);
+    public static FieldProperties AsNumeric(byte precision, byte scale, bool? nullable = null) => 
+        CreateNumericType(precision, scale, nullable);
 
-    public static FieldProperties AsMoney(bool? nullable = null) => Create("MONEY", nullable: nullable);
+    public static FieldProperties AsMoney(bool? nullable = null) => 
+        Create("MONEY", nullable: nullable);
 
     #endregion
 
     #region Date/Time
 
-    public static FieldProperties AsDate(bool? nullable = null) => Create("DATE", nullable: nullable);
+    public static FieldProperties AsDate(bool? nullable = null) =>
+        Create("DATE", nullable: nullable);
 
-    public static FieldProperties AsTime(bool? nullable = null) => Create("TIME", nullable: nullable);
+    public static FieldProperties AsTime(bool? nullable = null) => 
+        Create("TIME", nullable: nullable);
 
     public static FieldProperties AsTime(byte fractionalSecondsPrecision, bool? nullable = null)
     {
@@ -329,7 +354,8 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
-    public static FieldProperties AsTimestamp(bool? nullable = null) => Create("TIMESTAMP", nullable: nullable);
+    public static FieldProperties AsTimestamp(bool? nullable = null) =>
+        Create("TIMESTAMP", nullable: nullable);
 
     public static FieldProperties AsTimestamp(byte fractionalSecondsPrecision, bool? nullable = null)
     {
@@ -371,11 +397,14 @@ public static class PostgreSqlTypesProvider
 
     #region XML/JSON
 
-    public static FieldProperties AsXml(bool? nullable = null) => Create("XML", nullable: nullable);
+    public static FieldProperties AsXml(bool? nullable = null) => 
+        Create("XML", nullable: nullable);
 
-    public static FieldProperties AsJson(bool? nullable = null) => Create("JSON", nullable: nullable);
+    public static FieldProperties AsJson(bool? nullable = null) =>
+        Create("JSON", nullable: nullable);
 
-    public static FieldProperties AsJsonB(bool? nullable = null) => Create("JSONB", nullable: nullable);
+    public static FieldProperties AsJsonB(bool? nullable = null) =>
+        Create("JSONB", nullable: nullable);
 
     #endregion
 
@@ -417,6 +446,11 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    #endregion
+
+    #region Unknown
+    public static FieldProperties AsUnknown(bool? nullable) =>
+        Create("UNKNOWN", nullable: nullable);
     #endregion
 
     #region Provider Specific
