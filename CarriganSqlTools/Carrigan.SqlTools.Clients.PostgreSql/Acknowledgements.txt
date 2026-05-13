@@ -17,44 +17,16 @@ and upstream project repositories.
     https://github.com/dotnet/runtime/blob/main/LICENSE.TXT  
     https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT
 
-- coverlet.collector  
-    © Contributors  
-    Licensed under the MIT License  
-    https://github.com/coverlet-coverage/coverlet/tree/master
-    https://github.com/coverlet-coverage/coverlet/blob/master/LICENSE
-    https://github.com/coverlet-coverage/coverlet/blob/master/THIRD-PARTY-NOTICES.txt
-    
-- Microsoft.Data.SqlClient  
-    © Microsoft Corporation  
-    Licensed under the MIT License  
-    https://github.com/dotnet/SqlClient/
-    https://github.com/dotnet/SqlClient/blob/main/LICENSE
-    https://github.com/dotnet/SqlClient/blob/main/NOTICE.txt
+- Npgsql  
+    © Npgsl  
+    Licensed under the PostgreSQL License 
+    https://github.com/npgsql/npgsql
+    https://github.com/npgsql/npgsql/blob/main/LICENSE
 
-- Microsoft.NET.Test.Sdk  
-    © Microsoft Corporation  
-    Licensed under the MIT License  
-    https://github.com/microsoft/vstest/blob/main/
-    https://github.com/microsoft/vstest/blob/main/LICENSE
-    https://github.com/microsoft/vstest/blob/main/THIRD-PARTY-NOTICES.txt
-    
-- Respawn
-    @ Jimmy Bogard
-    Licensed under the Apache License, Version 2.0  
-    https://github.com/jbogard/Respawn/blob/main/
-    https://github.com/jbogard/Respawn/blob/master/LICENSE
-
-- xUnit.v3
-    © James Newkirk, Brad Wilson, and xUnit contributors  
-    Licensed under the Apache License, Version 2.0  
-    https://github.com/xunit/xunit/blob/main/
-    https://github.com/xunit/xunit/blob/main/LICENSE
-
-- xunit.runner.visualstudio  
-    © xUnit contributors  
-    Licensed under the Apache License, Version 2.0  
-    https://github.com/xunit/visualstudio.xunit/blob/main/
-    https://github.com/xunit/visualstudio.xunit/blob/main/License.txt
+- Microsoft.SourceLink.GitHub
+    © .NET Foundation and Contributors
+    Licensed under the MIT License
+    https://github.com/dotnet/sourcelink/blob/main/License.txt
 
 SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
 

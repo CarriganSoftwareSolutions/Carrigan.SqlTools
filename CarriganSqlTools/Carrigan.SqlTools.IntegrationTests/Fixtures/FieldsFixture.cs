@@ -1,43 +1,42 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
+using Carrigan.SqlTools.IntegrationTests.Models;
 using Microsoft.Data.SqlClient;
 using Respawn;
-using Carrigan.SqlTools.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.IntegrationTests.Fixtures;
 
 public sealed class FieldsFixture : IAsyncLifetime
 {
-    public string ConnectionString { get; private set; } =
+    private const string MasterConnectionString =
         "Server=(localdb)\\MSSQLLocalDB;Integrated Security=true;TrustServerCertificate=true;";
 
     private readonly string _dbName = "CarriganSqlToolsTestDb_" + Guid.CreateVersion7().ToString("N");
     private Respawner? _respawner;
 
-    public async Task InitializeAsync()
+    public string ConnectionString { get; private set; } = string.Empty;
+
+    public async ValueTask InitializeAsync()
     {
-        // Create database
-        SqlConnection masterConnection = new(ConnectionString);
+        ConnectionString = new SqlConnectionStringBuilder(MasterConnectionString)
+        {
+            InitialCatalog = _dbName
+        }.ConnectionString;
+
+        await using SqlConnection masterConnection = new(MasterConnectionString);
         await masterConnection.OpenAsync();
 
-        SqlCommand createDb = masterConnection.CreateCommand();
+        using SqlCommand createDb = masterConnection.CreateCommand();
         createDb.CommandText = $"CREATE DATABASE [{_dbName}]";
         await createDb.ExecuteNonQueryAsync();
-        createDb.Dispose();
 
-        // Point to new DB and create schema from model
-        ConnectionString += $";Initial Catalog={_dbName}";
         masterConnection.ChangeDatabase(_dbName);
 
-        SqlCommand createTable = masterConnection.CreateCommand();
+        using SqlCommand createTable = masterConnection.CreateCommand();
         createTable.CommandText = FieldsModel.CreateTableSql;
         await createTable.ExecuteNonQueryAsync();
-        createTable.Dispose();
 
-        masterConnection.Dispose();
-
-        // Prepare Respawner for fast resets
-        SqlConnection openForRespawn = new(ConnectionString);
+        await using SqlConnection openForRespawn = new(ConnectionString);
         await openForRespawn.OpenAsync();
 
         RespawnerOptions options = new()
@@ -48,7 +47,6 @@ public sealed class FieldsFixture : IAsyncLifetime
         };
 
         _respawner = await Respawner.CreateAsync(openForRespawn, options);
-        openForRespawn.Dispose();
     }
 
     /// <summary>Reset table rows to a pristine state between tests.</summary>
@@ -57,27 +55,25 @@ public sealed class FieldsFixture : IAsyncLifetime
         if (_respawner == null)
             throw new InvalidOperationException("Respawner has not been initialized.");
 
-        SqlConnection connection = new(ConnectionString);
+        await using SqlConnection connection = new(ConnectionString);
         await connection.OpenAsync();
         await _respawner.ResetAsync(connection);
-        connection.Dispose();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        // Drop the test database after all tests in this class complete
-        string masterCs = ConnectionString.Replace($";Initial Catalog={_dbName}", string.Empty);
-        SqlConnection connection = new(masterCs);
+        await using SqlConnection connection = new(MasterConnectionString);
         await connection.OpenAsync();
 
-        SqlCommand drop = connection.CreateCommand();
+        using SqlCommand drop = connection.CreateCommand();
         drop.CommandText = $"""
-            ALTER DATABASE [{_dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-            DROP DATABASE [{_dbName}];
+            IF DB_ID(N'{_dbName}') IS NOT NULL
+            BEGIN
+                ALTER DATABASE [{_dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                DROP DATABASE [{_dbName}];
+            END
             """;
-        await drop.ExecuteNonQueryAsync();
 
-        drop.Dispose();
-        connection.Dispose();
+        await drop.ExecuteNonQueryAsync();
     }
 }

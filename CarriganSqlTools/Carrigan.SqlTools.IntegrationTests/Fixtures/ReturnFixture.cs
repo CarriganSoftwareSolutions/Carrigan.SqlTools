@@ -1,36 +1,42 @@
-﻿using Microsoft.Data.SqlClient;
-using Respawn;
+﻿//IGNORE SPELLING: localdb respawner dbo
+
 using Carrigan.SqlTools.IntegrationTests.Models;
-//IGNORE SPELLING: localdb  respawner dbo
+using Microsoft.Data.SqlClient;
+using Respawn;
+
 namespace Carrigan.SqlTools.IntegrationTests.Fixtures;
 
 public sealed class ReturnFixture : IAsyncLifetime
 {
-    public string ConnectionString { get; private set; } =
+    private const string MasterConnectionString =
         "Server=(localdb)\\MSSQLLocalDB;Integrated Security=true;TrustServerCertificate=true;";
 
     private readonly string _dbName = "CarriganSqlToolsReturnDb_" + Guid.CreateVersion7().ToString("N");
     private Respawner? _respawner;
 
-    public async Task InitializeAsync()
+    public string ConnectionString { get; private set; } = string.Empty;
+
+    public async ValueTask InitializeAsync()
     {
-        using SqlConnection master = new(ConnectionString);
+        ConnectionString = new SqlConnectionStringBuilder(MasterConnectionString)
+        {
+            InitialCatalog = _dbName
+        }.ConnectionString;
+
+        await using SqlConnection master = new(MasterConnectionString);
         await master.OpenAsync();
 
-        SqlCommand createDb = master.CreateCommand();
+        using SqlCommand createDb = master.CreateCommand();
         createDb.CommandText = $"CREATE DATABASE [{_dbName}]";
         await createDb.ExecuteNonQueryAsync();
 
-        ConnectionString += $";Initial Catalog={_dbName}";
         master.ChangeDatabase(_dbName);
 
-        // Create ReturnModel table
-        SqlCommand createTable = master.CreateCommand();
+        using SqlCommand createTable = master.CreateCommand();
         createTable.CommandText = ReturnModel.CreateTableSql;
         await createTable.ExecuteNonQueryAsync();
 
-        // Prepare respawner
-        using SqlConnection conn = new(ConnectionString);
+        await using SqlConnection conn = new(ConnectionString);
         await conn.OpenAsync();
 
         _respawner = await Respawner.CreateAsync(conn, new RespawnerOptions
@@ -43,21 +49,28 @@ public sealed class ReturnFixture : IAsyncLifetime
 
     public async Task ResetAsync()
     {
-        using SqlConnection conn = new(ConnectionString);
+        if (_respawner == null)
+            throw new InvalidOperationException("Respawner has not been initialized.");
+
+        await using SqlConnection conn = new(ConnectionString);
         await conn.OpenAsync();
-        await _respawner!.ResetAsync(conn);
+        await _respawner.ResetAsync(conn);
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        using SqlConnection master = new(ConnectionString.Replace($";Initial Catalog={_dbName}", ""));
+        await using SqlConnection master = new(MasterConnectionString);
         await master.OpenAsync();
 
-        SqlCommand dropDb = master.CreateCommand();
-        dropDb.CommandText = $@"
-            ALTER DATABASE [{_dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-            DROP DATABASE [{_dbName}];
-        ";
+        using SqlCommand dropDb = master.CreateCommand();
+        dropDb.CommandText = $"""
+            IF DB_ID(N'{_dbName}') IS NOT NULL
+            BEGIN
+                ALTER DATABASE [{_dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                DROP DATABASE [{_dbName}];
+            END
+            """;
+
         await dropDb.ExecuteNonQueryAsync();
     }
 }
