@@ -49,7 +49,7 @@ namespace Carrigan.SqlTools.Attributes;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias]
+/// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias]
 /// FROM [AliasEntity]
 /// ]]></code>
 /// </example>

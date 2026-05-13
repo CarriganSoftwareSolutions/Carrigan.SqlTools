@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
@@ -43,8 +44,8 @@ public class SelectTags : SelectTagsBase
     /// Returns the SQL text for all select tags represented by this instance as a comma-separated list.
     /// </summary>
     /// <returns>A comma-separated list of the contained <see cref="SelectTag"/> SQL fragments.</returns>
-    public override string ToSql() =>
-        string.Join(", ", _selectTags);
+    public override string ToSql(ISqlDialects dialect) =>
+        string.Join(", ", _selectTags.Select(selectTag => selectTag.ToSql(dialect)));
 
     /// <summary>
     /// Gets all distinct <see cref="TableTag"/> values referenced by the contained select tags.

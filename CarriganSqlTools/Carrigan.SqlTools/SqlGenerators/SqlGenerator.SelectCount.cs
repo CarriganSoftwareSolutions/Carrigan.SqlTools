@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -119,14 +120,14 @@ public partial class SqlGenerator<T>
     /// <code><![CDATA[
     /// SELECT COUNT
     /// (
-    ///     [Customer].[Id] AS CustomerId, 
+    ///     [Customer].[Id] AS [CustomerId], 
     ///     [Customer].[Name], 
     ///     [Customer].[Email], 
     ///     [Customer].[Phone], 
-    ///     [Order].[Id] AS OrderId, 
+    ///     [Order].[Id] AS [OrderId], 
     ///     [Order].[OrderDate], 
     ///     [Order].[Total], 
-    ///     [PaymentMethod].[Id] AS PaymentMethodId, 
+    ///     [PaymentMethod].[Id] AS [PaymentMethodId], 
     ///     [PaymentMethod].[ZipCode]
     /// ) 
     /// FROM [Customer] 
@@ -157,7 +158,7 @@ public partial class SqlGenerator<T>
             throw new InvalidTableException(invalidTags);
 
         if (selects is not null && selects.Any())
-            queryFragments = new SqlFragmentText($"SELECT COUNT({selects.ToSql()}) FROM {Table}").AsEnumerable();
+            queryFragments = new SqlFragmentText($"SELECT COUNT({selects.ToSql(Dialect)}) FROM {Table}").AsEnumerable();
         else
             queryFragments = new SqlFragmentText($"SELECT COUNT({Table}.*) FROM {Table}").AsEnumerable();
 

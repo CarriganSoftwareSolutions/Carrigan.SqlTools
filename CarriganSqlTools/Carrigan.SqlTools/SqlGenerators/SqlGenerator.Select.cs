@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -214,9 +215,9 @@ public partial class SqlGenerator<T>
 
         IEnumerable<SqlFragment> queryFragments = [];
         if (selects is not null && selects.Any())
-            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {selects.ToSql()} FROM {Table}"));
+            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {selects.ToSql(Dialect)} FROM {Table}"));
         else if (HasAliasedColumns)
-            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {SelectTags.ToSql()} FROM {Table}"));
+            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {SelectTags.ToSql(Dialect)} FROM {Table}"));
         else
             queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {Table}.* FROM {Table}"));
 

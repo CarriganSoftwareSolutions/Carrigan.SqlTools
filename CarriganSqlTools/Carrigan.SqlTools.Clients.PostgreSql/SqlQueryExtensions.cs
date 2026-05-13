@@ -62,7 +62,6 @@ internal static class SqlQueryExtensions
             NpgsqlParameter sqlParameter = new()
             {
                 NpgsqlValue = valueToUse,
-                ParameterName = parameter.ParameterTag,
                 NpgsqlDbType = FieldPropertiesToNpgsqlDbType(fieldProperties),
                 IsNullable = fieldProperties.IsNullable,
 

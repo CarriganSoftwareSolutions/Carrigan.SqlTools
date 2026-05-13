@@ -280,7 +280,7 @@ public class SqlToolsReflectorCacheTests
         SelectTags selectTags = SqlToolsReflectorCache<AliasedModel>.SelectTags;
 
         Assert.Equal(2, selectTags.All().Count());
-        Assert.Equal("[AliasedModel].[Id], [AliasedModel].[Name] AS FullName", selectTags.ToSql());
+        Assert.Equal("[AliasedModel].[Id], [AliasedModel].[Name] AS [FullName]", selectTags.ToSql(new SqlServerDialect()));
     }
 
     [Fact]
@@ -289,6 +289,6 @@ public class SqlToolsReflectorCacheTests
         SelectTags selectTags = SqlToolsReflectorCache<NoAliasModel>.SelectTags;
 
         Assert.Equal(2, selectTags.All().Count());
-        Assert.Equal("[NoAliasModel].[Id], [NoAliasModel].[Name]", selectTags.ToSql());
+        Assert.Equal("[NoAliasModel].[Id], [NoAliasModel].[Name]", selectTags.ToSql(new SqlServerDialect()));
     }
 }

@@ -190,24 +190,23 @@ public class SelectTagTests
     [Theory]
     [InlineData(null, "SomeTable", "SomeColumn", null, "[SomeTable].[SomeColumn]")]
     [InlineData("dbo", "SomeTable", "SomeColumn", null, "[dbo].[SomeTable].[SomeColumn]")]
-    [InlineData(null, "SomeTable", "SomeColumn", "SomeAlias","[SomeTable].[SomeColumn] AS SomeAlias")]
-    [InlineData("dbo", "SomeTable", "SomeColumn", "SomeAlias","[dbo].[SomeTable].[SomeColumn] AS SomeAlias")]
+    [InlineData(null, "SomeTable", "SomeColumn", "SomeAlias","[SomeTable].[SomeColumn] AS [SomeAlias]")]
+    [InlineData("dbo", "SomeTable", "SomeColumn", "SomeAlias","[dbo].[SomeTable].[SomeColumn] AS [SomeAlias]")]
     public void Equality(string? schemaName, string tableName, string columnName, string? aliasName, string expectedSelect)
     {
         SelectTag select = New(schemaName, tableName, columnName, aliasName);
         SelectTag selectAlt = New(schemaName, tableName, columnName, aliasName);
 
-        Assert.Equal(expectedSelect, select);
-        Assert.Equal(expectedSelect, selectAlt);
-        Assert.Equal(expectedSelect, select.ToString());
-        Assert.Equal(expectedSelect, selectAlt.ToString());
+        Assert.Equal(expectedSelect, select.ToSql(new SqlServerDialect()));
+        Assert.Equal(expectedSelect, selectAlt.ToSql(new SqlServerDialect()));
+        Assert.Equal(expectedSelect, select.ToSql(new SqlServerDialect()));
+        Assert.Equal(expectedSelect, selectAlt.ToSql(new SqlServerDialect()));
         Assert.Equal(0, select.CompareTo(selectAlt));
         Assert.Equal(select, selectAlt);
         Assert.Equal(selectAlt, selectAlt);
-        Assert.Equal(expectedSelect.GetHashCode(), select.GetHashCode());
         Assert.True(select == selectAlt);
-        Assert.True(expectedSelect == selectAlt);
-        Assert.Equal(expectedSelect, select.ToSql());
+        Assert.True(expectedSelect == selectAlt.ToSql(new SqlServerDialect()));
+        Assert.Equal(expectedSelect, select.ToSql(new SqlServerDialect()));
         Assert.True(select.Any());
         Assert.False(select.Empty());
     }

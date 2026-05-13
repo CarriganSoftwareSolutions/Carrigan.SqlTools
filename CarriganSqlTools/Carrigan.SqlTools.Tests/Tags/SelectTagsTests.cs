@@ -21,8 +21,8 @@ public class SelectTagsTests
 
     private static readonly string aExpectedString = "[SomeTable].[SomeColumn]";
     private static readonly string bExpectedString = "[dbo].[SomeTable].[SomeColumn]";
-    private static readonly string cExpectedString = "[SomeTable].[SomeColumn] AS SomeAlias";
-    private static readonly string dExpectedString = "[dbo].[SomeTable].[SomeColumn] AS SomeAlias";
+    private static readonly string cExpectedString = "[SomeTable].[SomeColumn] AS [SomeAlias]";
+    private static readonly string dExpectedString = "[dbo].[SomeTable].[SomeColumn] AS [SomeAlias]";
 
     [Fact]
     public void ResultColumnNames() 
@@ -60,7 +60,7 @@ public class SelectTagsTests
         Assert.True(selectTags.Any());
         Assert.Single(selectTags.All());
 
-        Assert.Equal(dExpectedString, selectTags.ToSql());
+        Assert.Equal(dExpectedString, selectTags.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[dbo].[SomeTable]", selectTags.GetTableTags().Single());
     }
@@ -79,7 +79,7 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal("[Order].[Id] AS Override", selectTagsAlpha.ToSql());
+        Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single());
     }
@@ -98,7 +98,7 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal("[Order].[Id] AS Override", selectTagsAlpha.ToSql());
+        Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single());
     }
@@ -117,7 +117,7 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal(aExpectedString, selectTagsAlpha.ToSql());
+        Assert.Equal(aExpectedString, selectTagsAlpha.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().Single());;
     }
@@ -137,7 +137,7 @@ public class SelectTagsTests
         Assert.True(selectTagsAlpha.Any());
         Assert.Equal(4, selectTagsAlpha.All().Count());
 
-        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.ToSql());
+        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(0));
         Assert.Equal("[dbo].[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(1));
@@ -160,7 +160,7 @@ public class SelectTagsTests
 
         Assert.Equal(4, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.ToSql());
+        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(0));
         Assert.Equal("[dbo].[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(1));
@@ -183,7 +183,7 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql());
+        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
     }
@@ -212,7 +212,7 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id] AS Override, [Order].[CustomerId] AS Override2, [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql());
+        Assert.Equal($"[Order].[Id] AS [Override], [Order].[CustomerId] AS [Override2], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
     }
@@ -237,7 +237,7 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql());
+        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(new SqlServerDialect()));
 
         Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
     }

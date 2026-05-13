@@ -73,14 +73,14 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// SELECT
-///     [Customer].[Id] AS CustomerId,
+///     [Customer].[Id] AS [CustomerId],
 ///     [Customer].[Name],
 ///     [Customer].[Email],
 ///     [Customer].[Phone],
-///     [Order].[Id] AS OrderId,
+///     [Order].[Id] AS [OrderId],
 ///     [Order].[OrderDate],
 ///     [Order].[Total],
-///     [PaymentMethod].[Id] AS PaymentMethodId,
+///     [PaymentMethod].[Id] AS [PaymentMethodId],
 ///     [PaymentMethod].[ZipCode]
 /// FROM [Customer]
 /// INNER JOIN [Order]

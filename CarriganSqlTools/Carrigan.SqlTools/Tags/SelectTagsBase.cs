@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.Dialects;
+
+namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
 /// Base type for SELECT projection containers.
@@ -24,7 +26,7 @@ public abstract class SelectTagsBase
     /// For a collection, tags are typically joined by <c>", "</c>.
     /// </remarks>
     /// <returns>The SQL text represented by this instance.</returns>
-    public abstract string ToSql();
+    public abstract string ToSql(ISqlDialects dialect);
 
     /// <summary>
     /// Gets all distinct <see cref="TableTag"/> values referenced by the select tags in this instance.

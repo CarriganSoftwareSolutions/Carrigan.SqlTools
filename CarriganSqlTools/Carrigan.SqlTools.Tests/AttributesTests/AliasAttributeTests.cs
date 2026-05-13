@@ -41,9 +41,9 @@ public class AliasAttributeTests
             nameof(AliasEntity.TestColumn),
             nameof(AliasEntity.NoAlias)
         );
-        string expected = "[AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias]";
+        string expected = "[AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias]";
 
-        Assert.Equal(expected, tags.ToSql());
+        Assert.Equal(expected, tags.ToSql(new SqlServerDialect()));
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class AliasAttributeTests
 
         SqlGenerator<AliasEntity> generator = new();
 
-        string expected = "SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS AnAlias, [AliasEntity].[NoAlias] FROM [AliasEntity]";
+        string expected = "SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias] FROM [AliasEntity]";
         SqlQuery query = generator.Select(tags, null, null, null, null);
 
         Assert.Equal(expected, query.QueryText);

@@ -82,7 +82,7 @@ public class SqlGeneratorSelectCountExamples
 
         SqlQuery query = customerGenerator.SelectCount(selectTags, joins, null);
 
-        Assert.Equal("SELECT COUNT([Customer].[Id] AS CustomerId, [Customer].[Name], [Customer].[Email], [Customer].[Phone], [Order].[Id] AS OrderId, [Order].[OrderDate], [Order].[Total], [PaymentMethod].[Id] AS PaymentMethodId, [PaymentMethod].[ZipCode]) FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
+        Assert.Equal("SELECT COUNT([Customer].[Id] AS [CustomerId], [Customer].[Name], [Customer].[Email], [Customer].[Phone], [Order].[Id] AS [OrderId], [Order].[OrderDate], [Order].[Total], [PaymentMethod].[Id] AS [PaymentMethodId], [PaymentMethod].[ZipCode]) FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
     }

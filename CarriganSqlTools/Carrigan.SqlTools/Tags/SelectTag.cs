@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
@@ -278,8 +279,8 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// For a single <see cref="SelectTag"/>, this is simply its own SQL text.
     /// </summary>
     /// <returns>The SQL text represented by this instance.</returns>
-    public override string ToSql() =>
-        _selectTag;
+    public override string ToSql(ISqlDialects dialect) =>
+        AliasTag is null ? ColumnTag : $"{ColumnTag} AS {dialect.QuoteIdentifier(AliasTag)}";
 
     /// <summary>
     /// Gets all distinct <see cref="TableTag"/> values referenced by this select tag.

@@ -155,6 +155,11 @@ public static class Invoker<T> where T : class, new()
             else
                 return Enum.ToObject(underlyingTargetType, databaseValue);
         }
+        else if(databaseValue is short shortValue && underlyingTargetType == typeof(byte))
+        {
+            return (byte)shortValue;
+        }
+
 
         return databaseValue;
     }
