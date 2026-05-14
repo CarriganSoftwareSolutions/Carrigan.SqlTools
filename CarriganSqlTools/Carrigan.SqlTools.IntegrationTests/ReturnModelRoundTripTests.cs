@@ -46,7 +46,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 
         SqlQuery insertQuery = _generator.Insert(insertColumns, returnColumns, toInsert);
 
-        SqlConnection connection = new(_fixture.ConnectionString);
+        SqlConnection connection = new(_fixture.UnitTestsConnectionString);
 
         // Act 1: execute INSERT and capture returned values
         List<ReturnModel> returnedRows =
