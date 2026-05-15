@@ -1,14 +1,11 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Microsoft.Data.SqlClient;
-using System.Data;
 
 namespace Carrigan.SqlTools.IntegrationTests;
 
@@ -46,7 +43,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 
         SqlQuery insertQuery = _generator.Insert(insertColumns, returnColumns, toInsert);
 
-        SqlConnection connection = new(_fixture.UnitTestsConnectionString);
+        SqlConnection connection = new(_fixture.UnitTestConnectionString);
 
         // Act 1: execute INSERT and capture returned values
         List<ReturnModel> returnedRows =

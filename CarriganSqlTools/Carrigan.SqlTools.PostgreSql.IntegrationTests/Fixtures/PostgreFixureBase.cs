@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Dialects.PostgreSql;
+﻿using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Dialects.PostgreSql;
+using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
 using Respawn;
 using Xunit;
@@ -13,16 +15,12 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
 
     private readonly string MaintenanceConnectionString;
     private readonly string DatabaseName = "CarriganSqlToolsTestDb_" + Guid.CreateVersion7().ToString("N");
-    private readonly string TableDefinition;
+    private readonly IEnumerable<string> TableDefinitions;
+    private readonly IEnumerable<SqlQuery> DatabaseSetups;
 
     private Respawner? _respawner;
 
-    protected PostgreSqlFixtureBase(string tableDefinition)
-        : this(Configurations.MaintenanceDbConnectionString, tableDefinition)
-    {
-    }
-
-    internal string TestsConnectionString
+    internal string UnitTestConnectionString
     {
         get
         {
@@ -34,11 +32,26 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
             return builder.ConnectionString;
         }
     }
-
-    protected PostgreSqlFixtureBase(string maintenanceConnectionString, string tableDefinition)
+    private void ExecuteDatabaseSetups(NpgsqlConnection connection)
     {
-        MaintenanceConnectionString = maintenanceConnectionString;
-        TableDefinition = tableDefinition;
+        foreach (SqlQuery query in DatabaseSetups)
+        {
+            Commands.ExecuteNonQuery(query, null, connection);
+        }
+    }
+
+    protected PostgreSqlFixtureBase(IEnumerable<string> tableDefinition)
+    {
+        MaintenanceConnectionString = Configurations.MaintenanceDbConnectionString;
+        TableDefinitions = tableDefinition;
+        DatabaseSetups = [];
+    }
+
+    protected PostgreSqlFixtureBase(IEnumerable<string> tableDefinition, IEnumerable<SqlQuery> databaseSetups)
+    {
+        MaintenanceConnectionString = Configurations.MaintenanceDbConnectionString;
+        TableDefinitions = tableDefinition;
+        DatabaseSetups = databaseSetups;
     }
 
     public async ValueTask InitializeAsync()
@@ -52,23 +65,28 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
         createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
         await createDb.ExecuteNonQueryAsync();
 
-        await using NpgsqlConnection testConnection = new(TestsConnectionString);
-        await testConnection.OpenAsync();
+        await using NpgsqlConnection unitTestConnection = new(UnitTestConnectionString);
+        await unitTestConnection.OpenAsync();
 
-        await using NpgsqlCommand createExtension = testConnection.CreateCommand();
+        await using NpgsqlCommand createExtension = unitTestConnection.CreateCommand();
         createExtension.CommandText = "CREATE EXTENSION IF NOT EXISTS pgcrypto;";
         await createExtension.ExecuteNonQueryAsync();
 
-        await using NpgsqlCommand createTable = testConnection.CreateCommand();
-        createTable.CommandText = TableDefinition;
-        await createTable.ExecuteNonQueryAsync();
+        foreach (string tableDefinition in TableDefinitions)
+        {
+            await using NpgsqlCommand createTable = unitTestConnection.CreateCommand();
+            createTable.CommandText = tableDefinition;
+            await createTable.ExecuteNonQueryAsync();
+        }
 
-        _respawner = await Respawner.CreateAsync(testConnection, new RespawnerOptions
+        _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
         {
             DbAdapter = DbAdapter.Postgres,
             SchemasToInclude = [SchemaName],
             WithReseed = true
         });
+
+        ExecuteDatabaseSetups(unitTestConnection);
     }
 
     public async Task ResetAsync()
@@ -76,10 +94,12 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
         if (_respawner == null)
             throw new InvalidOperationException($"{DatabaseName} Respawner has not been initialized.");
 
-        await using NpgsqlConnection connection = new(TestsConnectionString);
-        await connection.OpenAsync();
+        await using NpgsqlConnection unitTestConnection = new(UnitTestConnectionString);
+        await unitTestConnection.OpenAsync();
 
-        await _respawner.ResetAsync(connection);
+        await _respawner.ResetAsync(unitTestConnection);
+
+        ExecuteDatabaseSetups(unitTestConnection);
     }
 
     public async ValueTask DisposeAsync()

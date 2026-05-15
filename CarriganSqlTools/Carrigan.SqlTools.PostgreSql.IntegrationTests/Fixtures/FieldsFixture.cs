@@ -7,7 +7,7 @@ namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 public sealed class FieldsFixture : PostgreSqlFixtureBase
 {
     public FieldsFixture()
-        : base(FieldsModel.CreateTableSql)
+        : base([FieldsModel.CreateTableSql])
     {
     }
 }

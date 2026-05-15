@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.IntegrationTests.Fixtures;
 public sealed class FieldsFixture : SqlFixtureBase
 {
     public FieldsFixture()
-        : base(FieldsModel.CreateTableSql)
+        : base([FieldsModel.CreateTableSql])
     {
     }
 }

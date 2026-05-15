@@ -45,7 +45,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 
         SqlQuery insertQuery = _generator.Insert(insertColumns, returnColumns, toInsert);
 
-        NpgsqlConnection connection = new(_fixture.TestsConnectionString);
+        NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
 
         // Act 1: execute INSERT and capture returned values
         List<ReturnModel> returnedRows =

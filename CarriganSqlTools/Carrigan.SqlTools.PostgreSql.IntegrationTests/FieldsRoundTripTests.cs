@@ -31,7 +31,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
         // 1) Build InsertAutoId and execute scalar to get the new identity value
         SqlQuery insertQuery = _generator.InsertAutoId(toInsert);
 
-        NpgsqlConnection connection = new(_fixture.TestsConnectionString);
+        NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         object? insertedIdObj = await CommandsAsync.ExecuteScalarAsync(insertQuery, null, connection);
         Guid? insertedId = (Guid?)insertedIdObj;
         Assert.NotNull(insertedId);

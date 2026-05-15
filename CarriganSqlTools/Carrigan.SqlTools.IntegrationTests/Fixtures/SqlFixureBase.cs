@@ -1,5 +1,7 @@
 ﻿using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.IntegrationTests;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Microsoft.Data.SqlClient;
 using Respawn;
 using Xunit;
@@ -16,22 +18,25 @@ public abstract class SqlFixtureBase : IAsyncLifetime
 
     private readonly string MaintenanceConnectionString;
     private readonly string DatabaseName = "CarriganSqlToolsTestDb_" + Guid.CreateVersion7().ToString("N");
-    private readonly string TableDefinition;
+    private readonly IEnumerable<string> TableDefinitions;
+    private readonly IEnumerable<SqlQuery> DatabaseSetups;
 
     private Respawner? _respawner;
 
-    protected SqlFixtureBase(string tableDefinition)
-        : this(Configurations.MaintenanceDbConnectionString, tableDefinition)
+    protected SqlFixtureBase(IEnumerable<string> tableDefinition)
     {
+        MaintenanceConnectionString = Configurations.MaintenanceDbConnectionString;
+        TableDefinitions = tableDefinition;
+        DatabaseSetups = [];
+    }
+    protected SqlFixtureBase(IEnumerable<string> tableDefinition, IEnumerable<SqlQuery> databaseSetups)
+    {
+        MaintenanceConnectionString = Configurations.MaintenanceDbConnectionString;
+        TableDefinitions = tableDefinition;
+        DatabaseSetups = databaseSetups;
     }
 
-    protected SqlFixtureBase(string maintenanceConnectionString, string tableDefinition)
-    {
-        MaintenanceConnectionString = maintenanceConnectionString;
-        TableDefinition = tableDefinition;
-    }
-
-    internal string UnitTestsConnectionString
+    internal string UnitTestConnectionString
     {
         get
         {
@@ -41,6 +46,13 @@ public abstract class SqlFixtureBase : IAsyncLifetime
             };
 
             return builder.ConnectionString;
+        }
+    }
+    private void ExecuteDatabaseSetups(SqlConnection connection)
+    {
+        foreach (SqlQuery query in DatabaseSetups)
+        {
+            Commands.ExecuteNonQuery(query, null, connection);
         }
     }
 
@@ -55,12 +67,15 @@ public abstract class SqlFixtureBase : IAsyncLifetime
         createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
         await createDb.ExecuteNonQueryAsync();
 
-        await using SqlConnection unitTestConnection = new(UnitTestsConnectionString);
+        await using SqlConnection unitTestConnection = new(UnitTestConnectionString);
         await unitTestConnection.OpenAsync();
 
-        await using SqlCommand createTable = unitTestConnection.CreateCommand();
-        createTable.CommandText = TableDefinition;
-        await createTable.ExecuteNonQueryAsync();
+        foreach(string tableDefinition in TableDefinitions)
+        {
+            await using SqlCommand createTable = unitTestConnection.CreateCommand();
+            createTable.CommandText = tableDefinition;
+            await createTable.ExecuteNonQueryAsync();
+        }
 
         _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
         {
@@ -68,6 +83,8 @@ public abstract class SqlFixtureBase : IAsyncLifetime
             SchemasToInclude = [SchemaName],
             WithReseed = true
         });
+
+        ExecuteDatabaseSetups(unitTestConnection);
     }
 
     public async Task ResetAsync()
@@ -75,10 +92,12 @@ public abstract class SqlFixtureBase : IAsyncLifetime
         if (_respawner == null)
             throw new InvalidOperationException($"{DatabaseName} Respawner has not been initialized.");
 
-        await using SqlConnection connection = new(UnitTestsConnectionString);
-        await connection.OpenAsync();
+        await using SqlConnection unitTestConnection = new(UnitTestConnectionString);
+        await unitTestConnection.OpenAsync();
 
-        await _respawner.ResetAsync(connection);
+        await _respawner.ResetAsync(unitTestConnection);
+
+        ExecuteDatabaseSetups(unitTestConnection);
     }
 
     public async ValueTask DisposeAsync()
