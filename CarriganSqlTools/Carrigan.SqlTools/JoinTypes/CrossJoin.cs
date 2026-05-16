@@ -13,7 +13,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// JoinsBase join = Joins<Customer>.CrossJoin<Order>();
+/// CrossJoin<Order> join = new();
 /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>

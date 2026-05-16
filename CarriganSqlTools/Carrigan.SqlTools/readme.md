@@ -302,7 +302,7 @@ public SqlGenerator<Customer> customerGenerator = new();
 `OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+InnerJoin<Order> join = new(predicate);
 
 OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
@@ -325,7 +325,7 @@ SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, nu
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+InnerJoin<Order> join = new(predicate);
 
 OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
@@ -350,7 +350,7 @@ SqlQuery query = customerGenerator.Select(null, join, null, orderBy, null);
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
+InnerJoin<Customer> join = new(predicate);
 
 ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
@@ -398,7 +398,7 @@ ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
 
 ColumnEqualsColumn<Order, Customer> predicate = new(nameof(Order.CustomerId), nameof(Customer.Id));
 
-Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
+InnerJoin<Customer> join = new(predicate);
 
 ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 

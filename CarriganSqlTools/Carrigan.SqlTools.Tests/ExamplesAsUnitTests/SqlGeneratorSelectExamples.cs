@@ -41,7 +41,7 @@ public class SqlGeneratorSelectExamples
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+        InnerJoin<Order> join = new (predicate);
 
         SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 
@@ -56,7 +56,7 @@ public class SqlGeneratorSelectExamples
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+        InnerJoin<Order> join = new(predicate);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
@@ -74,7 +74,7 @@ public class SqlGeneratorSelectExamples
         //Note: Columns<Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+        InnerJoin<Order> join = new(predicate);
 
         Column<Order> totalCol = new(nameof(Order.Total));
         Parameter minTotal = new("Total", 500m);

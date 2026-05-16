@@ -104,7 +104,7 @@ public class SqlGeneratorUpdatesExamples
         Column<Customer> customerId = new(nameof(Customer.Id));
         Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
         Equal customerIdsEquals = new(orderCustomerId, customerId);
-        Joins<Order> joinOnCustomerId = Joins<Order>.InnerJoin<Customer>(customerIdsEquals);
+        InnerJoin<Customer> joinOnCustomerId = new(customerIdsEquals);
 
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 

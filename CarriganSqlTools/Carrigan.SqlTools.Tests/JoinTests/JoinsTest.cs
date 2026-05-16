@@ -303,7 +303,7 @@ public class JoinsTest
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
         TableTag expected = new(new SqlServerDialect(), null, "Left");
-        Assert.Equal(expected, relation.TableTag);
+        Assert.Equal(expected, Joins<JoinLeftTable>.TableTag);
     }
 
     [Fact]

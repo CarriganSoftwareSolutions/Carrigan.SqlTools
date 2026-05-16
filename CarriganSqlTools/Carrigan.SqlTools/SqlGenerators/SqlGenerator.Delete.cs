@@ -121,7 +121,7 @@ public partial class SqlGenerator<T>
     /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
     /// <param name="joins">
-    /// Optional <see cref="JoinsBase"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
@@ -163,7 +163,7 @@ public partial class SqlGenerator<T>
     /// <para>Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
+    /// InnerJoin<Customer> join = new(predicate);
     /// 
     /// SqlQuery query = orderGenerator.Delete(join, null);
     /// ]]></code>
@@ -179,7 +179,7 @@ public partial class SqlGenerator<T>
     /// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
+    /// InnerJoin<Customer> join = new(predicate);
     /// 
     /// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
     /// 
@@ -193,7 +193,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete(JoinsBase? joins, Predicates? predicates)
+    public SqlQuery Delete(Joins<T>? joins, Predicates? predicates)
     {
         if (predicates is null && joins.IsNullOrEmpty())
         {

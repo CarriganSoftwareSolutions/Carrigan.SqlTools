@@ -17,7 +17,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// JoinsBase join = Joins<Customer>.LeftJoin<Order>(predicate);
+/// LeftJoin<Order> join = new(predicate);
 ///
 /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 /// ]]></code>

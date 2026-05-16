@@ -61,7 +61,7 @@ public class CrossJoinTest
     public void CrossJoin_NotEmpty()
     {
         CrossJoin<Customer> join = new();
-        JoinsBase? joins = new Joins<Order>(join);
+        Joins<Order>? joins = new (join);
         Assert.False(joins.IsNullOrEmpty());
     }
 }

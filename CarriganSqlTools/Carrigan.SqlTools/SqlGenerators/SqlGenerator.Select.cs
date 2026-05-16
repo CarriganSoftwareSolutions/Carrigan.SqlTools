@@ -105,7 +105,7 @@ public partial class SqlGenerator<T>
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+    /// InnerJoin<Order> join = new (predicate);
     /// 
     /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
     /// ]]></code>
@@ -124,7 +124,7 @@ public partial class SqlGenerator<T>
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+    /// InnerJoin<Order> join = new(predicate);
     /// 
     /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
@@ -148,7 +148,7 @@ public partial class SqlGenerator<T>
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+    /// InnerJoin<Order> join = new(predicate);
     /// 
     /// Column<Order> totalCol = new(nameof(Order.Total));
     /// Parameter minTotal = new("Total", 500m);
@@ -181,7 +181,7 @@ public partial class SqlGenerator<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
+    public SqlQuery Select(SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];

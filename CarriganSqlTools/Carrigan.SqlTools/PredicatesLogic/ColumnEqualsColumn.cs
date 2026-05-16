@@ -1,6 +1,9 @@
-﻿using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.Core.Interfaces.IModels;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -20,8 +23,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
-/// Joins<Customer> joins = LeftJoin<Order>.Joins<Customer>(columnValue);
-/// SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
+/// LeftJoin<Order> join = new(columnValue);
+/// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

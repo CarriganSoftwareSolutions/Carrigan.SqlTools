@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
@@ -89,12 +90,12 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
-public class Joins<leftT> : JoinsBase
+public class Joins<leftT>
 {
     /// <summary>
     /// The collection of join operations represented by this instance.
     /// </summary>
-    protected override IEnumerable<JoinBase> Joints { get; set; }
+    protected IEnumerable<JoinBase> Joints { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Joins{leftT}"/> class from one or more join definitions.
@@ -150,6 +151,24 @@ public class Joins<leftT> : JoinsBase
 
         Joints = joints;
     }
+
+
+    /// <summary>
+    /// Enumerates all <see cref="TableTag"/> objects included in the current join sequence,
+    /// including the base (left-most) table.
+    /// </summary>
+    /// <remarks>
+    /// This provides a quick way to determine whether a given table participates in
+    /// any join operation within this <see cref="Joins"/> instance.
+    /// </remarks>
+    /// <returns>
+    /// An enumeration of all <see cref="TableTag"/> instances involved in the join sequence.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
+    internal IEnumerable<TableTag> TableTags =>
+        ValidatedJoints.Select(static join => join.TableTag).Append(TableTag);
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
@@ -225,6 +244,56 @@ public class Joins<leftT> : JoinsBase
     /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.
     /// </summary>
-    internal override TableTag TableTag =>
+    internal static TableTag TableTag =>
         SqlToolsReflectorCache<leftT>.Table;
+
+
+    /// <summary>
+    /// Generates the SQL fragments for all <c>JOIN</c> clauses
+    /// represented by this <see cref="Joins"/> instance.
+    /// </summary>
+    /// <returns>
+    /// An <see cref="IEnumerable{SqlFragment}"/> representing the <c>JOIN</c> clauses in sequence.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
+    /// <remarks>
+    /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
+    /// </remarks>
+    internal IEnumerable<SqlFragment> ToSqlFragments()
+    {
+        if (ValidatedJoints.Count() == 1)
+            return ValidatedJoints.SelectMany(join => join.ToSqlFragments("Join"));
+        else
+            return ValidatedJoints.SelectMany((join, i) => join.ToSqlFragments($"Joins{i}"));
+    }
+
+    /// <summary>
+    /// Determines whether this <see cref="Joins"/> instance contains any join definitions.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if no joins are defined; otherwise, <see langword="false"/>.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
+    internal bool IsEmpty() =>
+        ValidatedJoints.None();
+
+    private IEnumerable<JoinBase> ValidatedJoints
+    {
+        get
+        {
+            IEnumerable<JoinBase>? joints = Joints ?? throw new InvalidOperationException($"{GetType().Name}.{nameof(Joints)} returned null.");
+            JoinBase[] materialized = joints as JoinBase[] ?? [.. joints];
+
+            if (materialized.Any(static j => j is null))
+                throw new InvalidOperationException($"{GetType().Name}.{nameof(Joints)} contains null join entries.");
+
+            return materialized;
+        }
+    }
+
+    public static implicit operator Joins<leftT>(JoinBase joins) => new (joins);
 }

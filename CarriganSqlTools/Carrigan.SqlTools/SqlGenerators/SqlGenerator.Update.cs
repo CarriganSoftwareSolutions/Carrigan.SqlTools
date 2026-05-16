@@ -228,7 +228,7 @@ public partial class SqlGenerator<T>
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
     /// <param name="joins">
-    /// Optional <see cref="JoinsBase"/> describing tables to join for the update.
+    /// Optional <see cref="Joins"/> describing tables to join for the update.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
@@ -268,7 +268,7 @@ public partial class SqlGenerator<T>
     /// Column<Customer> customerId = new(nameof(Customer.Id));
     /// Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
     /// Equal customerIdsEquals = new(orderCustomerId, customerId);
-    /// Joins<Order> joinOnCustomerId = Joins<Order>.InnerJoin<Customer>(customerIdsEquals);
+    /// InnerJoin<Customer> joinOnCustomerId = new(customerIdsEquals);
     /// 
     /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
     /// 
@@ -307,7 +307,7 @@ public partial class SqlGenerator<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, ColumnCollection<T>? columns, JoinsBase? joins, Predicates? predicates)
+    public SqlQuery Update(T entity, ColumnCollection<T>? columns, Joins<T>? joins, Predicates? predicates)
     {
         ArgumentNullException.ThrowIfNull(entity);
 

@@ -23,7 +23,7 @@ public class FromReadMeMoreComplexExamples
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+        InnerJoin<Order> join = new(predicate);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
@@ -41,7 +41,7 @@ public class FromReadMeMoreComplexExamples
         //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-        Joins<Customer> join = Joins<Customer>.InnerJoin<Order>(predicate);
+        InnerJoin<Order> join = new(predicate);
 
         OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
         OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
@@ -61,7 +61,7 @@ public class FromReadMeMoreComplexExamples
         //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-        Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
+        InnerJoin<Customer> join = new(predicate);
 
         ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
@@ -102,7 +102,7 @@ public class FromReadMeMoreComplexExamples
 
         ColumnEqualsColumn<Order, Customer> predicate = new(nameof(Order.CustomerId), nameof(Customer.Id));
 
-        Joins<Order> join = Joins<Order>.InnerJoin<Customer>(predicate);
+        InnerJoin<Customer> join = new(predicate);
 
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 

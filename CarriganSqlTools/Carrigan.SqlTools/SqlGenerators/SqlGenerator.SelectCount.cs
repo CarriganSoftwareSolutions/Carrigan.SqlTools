@@ -80,9 +80,9 @@ public partial class SqlGenerator<T>
     /// GreaterThan greaterThan = new(totalCol, minTotal);
     /// 
     /// ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
-    /// Joins<Order> joins = Joins<Order>.Join<Customer>(columnCompare);
+    /// Join<Customer> join = new(columnCompare);
     /// 
-    /// SqlQuery query = orderGenerator.SelectCount(null, joins, greaterThan);
+    /// SqlQuery query = orderGenerator.SelectCount(null, join, greaterThan);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -137,7 +137,7 @@ public partial class SqlGenerator<T>
     /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectCount(SelectTagsBase? selects, JoinsBase? joins, Predicates? predicates)
+    public SqlQuery SelectCount(SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
 
