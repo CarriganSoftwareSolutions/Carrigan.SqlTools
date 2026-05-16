@@ -4,10 +4,13 @@ using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Tags;
 using Microsoft.Data.SqlClient;
 
 namespace Carrigan.SqlTools.IntegrationTests;
@@ -299,14 +302,101 @@ public sealed class SelectTests : IClassFixture<SampleDataFixture>
         BookDataSet.Validate(books, 6);
     }
 
-    //[Fact]
-    //public async Task SelectJoin()
-    //{
-    //    ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
-    //    JoinBase join = new Join<BookStats>(joinPredicate);
-    //    Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
-    //    Parameter ratingParameter = new("Rating", 4.7m);
-    //    Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
-    //    SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, null, null);
-    //}
+    [Fact]
+    public async Task SelectJoin()
+    {
+        ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
+        JoinBase join = new Join<BookStats>(joinPredicate);
+        Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
+        Parameter ratingParameter = new("Rating", 4.6m);
+        Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
+        SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, null, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Equal(3, books.Count());
+        BookDataSet.Validate(books, 1);
+        BookDataSet.Validate(books, 4);
+        BookDataSet.Validate(books, 10);
+    }
+
+    [Fact]
+    public async Task SelectJoinWithOrderBys()
+    {
+        ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
+        JoinBase join = new Join<BookStats>(joinPredicate);
+        Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
+        Parameter ratingParameter = new("Rating", 4.5m);
+        Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
+        OrderByBase orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
+        SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, orderBy, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Equal(5, books.Count());
+        BookDataSet.Validate(books.ElementAt(0), 5);
+        BookDataSet.Validate(books.ElementAt(1), 2);
+        BookDataSet.Validate(books.ElementAt(2), 10);
+        BookDataSet.Validate(books.ElementAt(3), 1);
+        BookDataSet.Validate(books.ElementAt(4), 4);
+    }
+
+    [Fact]
+    public async Task SelectJoinWithOrderBysAndPaging()
+    {
+        ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
+        JoinBase join = new Join<BookStats>(joinPredicate);
+        Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
+        Parameter ratingParameter = new("Rating", 4.3m);
+        Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
+        OrderByBase orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
+        PagingBase paging = new DefinePage(2, 3);
+        SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, orderBy, paging);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Equal(3, books.Count());
+        BookDataSet.Validate(books.ElementAt(0), 5);
+        BookDataSet.Validate(books.ElementAt(1), 2);
+        BookDataSet.Validate(books.ElementAt(2), 10);
+    }
+
+    [Fact]
+    public async Task SelectJoinWithOrderBysAndPagingAndSelectTags()
+    {
+        ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
+        JoinBase join = new Join<BookStats>(joinPredicate);
+
+        Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
+        Parameter ratingParameter = new("Rating", 4.3m);
+        Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
+
+        OrderByBase orderBy = new OrderBy
+        (
+            new OrderByItem<BookStats>(nameof(BookStats.AverageReview)),
+            new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending)
+        );
+
+        PagingBase paging = new DefinePage(2, 3);
+
+        SelectTags selectTags = SelectTags.GetMany<Book>
+        (
+            nameof(Book.Title),
+            nameof(Book.Author)
+        ).Append<BookStats>(nameof(BookStats.AverageReview));
+
+        SqlQuery query = BookSqlGenerator.Select(selectTags, join, wherePredicate, orderBy, paging);
+
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        //How to do this final projection needs more visible documentation
+        IEnumerable<BookStatsSelects> books = await CommandsAsync.ExecuteReaderAsync<BookStatsSelects>(query, null, unitTestConnection);
+
+        Assert.Equal(3, books.Count());
+
+        BookStatsSelects book = books.ElementAt(1);
+        Assert.Equal("Moby-Dick", book.Title);
+        Assert.Equal("Herman Melville", book.Author);
+        Assert.InRange(book.AverageReview, 4.599, 4.601);
+        Assert.Equal(string.Empty, book.Description);
+    }
 }

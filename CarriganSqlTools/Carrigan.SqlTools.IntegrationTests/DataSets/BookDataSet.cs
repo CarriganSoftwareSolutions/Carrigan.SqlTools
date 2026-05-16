@@ -8,10 +8,14 @@ namespace Carrigan.SqlTools.IntegrationTests.DataSets;
 
 public static class BookDataSet
 {
-    public static void Validate(IEnumerable<Book> actualBooks, int id)
+    public static void Validate(IEnumerable<Book> actualBooks, int expectedId)
     {
-        Book expected = Data.Where(book => book.Id == id).Single();
-        Book actual = actualBooks.Where(book => book.Id == id).Single();
+        Book actual = actualBooks.Where(book => book.Id == expectedId).Single();
+        Validate(actual, expectedId);
+    }
+    public static void Validate(Book actual, int expectedId)
+    {
+        Book expected = Data.Where(book => book.Id == expectedId).Single();
 
         Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.Title, actual.Title);
