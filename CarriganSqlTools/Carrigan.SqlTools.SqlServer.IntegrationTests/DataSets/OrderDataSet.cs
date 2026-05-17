@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.IntegrationTests.Models;
 
-namespace Carrigan.SqlTools.IntegrationTests.DataSets;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.DataSets;
 
 public static class OrderDataSet
 {

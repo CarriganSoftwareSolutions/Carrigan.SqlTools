@@ -1,12 +1,10 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
-using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.SqlGenerators;
-using Microsoft.Data.SqlClient;
-using Respawn;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.DataSets;
 
-namespace Carrigan.SqlTools.IntegrationTests.Fixtures;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 
 public sealed class JoinsFixture : SqlFixtureBase
 {

@@ -1,13 +1,12 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
-using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Microsoft.Data.SqlClient;
 
-namespace Carrigan.SqlTools.IntegrationTests;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests;
 
 public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 {

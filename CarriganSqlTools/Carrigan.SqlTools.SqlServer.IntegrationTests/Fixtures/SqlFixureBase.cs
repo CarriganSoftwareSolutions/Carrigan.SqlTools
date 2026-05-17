@@ -1,14 +1,11 @@
 ﻿using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.IntegrationTests;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
 using Microsoft.Data.SqlClient;
 using Respawn;
-using Xunit;
 
 // Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
-namespace Carrigan.SqlTools.IntegrationTests.Fixtures;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 
 public abstract class SqlFixtureBase : IAsyncLifetime
 {
