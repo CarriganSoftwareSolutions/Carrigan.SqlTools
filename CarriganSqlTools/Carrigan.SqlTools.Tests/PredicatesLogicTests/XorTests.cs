@@ -45,6 +45,7 @@ public class XorThanTests
 
         Assert.Equal(expectedValue, actualValue);
     }
+
     [Fact]
     public void Xor_1_ParameterCount()
     {

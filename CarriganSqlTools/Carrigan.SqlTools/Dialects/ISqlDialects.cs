@@ -5,15 +5,6 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Dialects;
 
@@ -115,5 +106,21 @@ public interface ISqlDialects
     /// <returns>
     /// The converted value suitable for database operations.
     /// </returns>
-    public object ValueConversion(object? value);
+    object ValueConversion(object? value);
+
+    /// <summary>
+    /// Returns the character used by the SQL dialect to represent Xor operations, such as in WHERE clauses.
+    /// </summary>
+    /// <returns></returns>
+    SqlFragment GetXOrSymbol();
+
+    /// <summary>
+    /// Generates the appropriate SQL fragment for a LIKE operator in the SQL dialect, optionally considering case sensitivity.
+    /// </summary>
+    /// <param name="isCaseSensitive">
+    /// Indicates whether the LIKE operation should be case-sensitive. 
+    /// If null, the default behavior of the dialect is used.
+    /// </param>
+    /// <returns>A <see cref="SqlFragment"/> representing the LIKE operation in the SQL dialect.</returns>
+    SqlFragment GetDialectLike(bool? isCaseSensitive = null);
 }

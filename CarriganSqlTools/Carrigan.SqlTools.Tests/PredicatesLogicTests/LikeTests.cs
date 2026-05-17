@@ -45,6 +45,41 @@ public class LikeTests
 
         Assert.Equal(expectedValue, actualValue);
     }
+
+    [Fact]
+    public void Like_CaseSensitive_ToSql()
+    {
+        Predicates left = ColumnTastyPizza;
+        string leftSql = ColumnTastyPizzaExpectedSql;
+
+        Predicates right = ColumnDestructCode;
+        string rightSql = ColumnDestructCodeSql;
+
+        Predicates predicate = new Like(left, right, true);
+
+        string expectedValue = $"({leftSql} COLLATE SQL_Latin1_General_CP1_CS_AS LIKE {rightSql})";
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
+
+        Assert.Equal(expectedValue, actualValue);
+    }
+
+    [Fact]
+    public void Like_CaseInsensitive_ToSql()
+    {
+        Predicates left = ColumnTastyPizza;
+        string leftSql = ColumnTastyPizzaExpectedSql;
+
+        Predicates right = ColumnDestructCode;
+        string rightSql = ColumnDestructCodeSql;
+
+        Predicates predicate = new Like(left, right, false);
+
+        string expectedValue = $"({leftSql} COLLATE SQL_Latin1_General_CP1_CI_AS LIKE {rightSql})";
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
+
+        Assert.Equal(expectedValue, actualValue);
+    }
+
     [Fact]
     public void Like_1_ParameterCount()
     {

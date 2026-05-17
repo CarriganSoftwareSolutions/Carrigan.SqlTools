@@ -224,6 +224,56 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     }
 
     [Fact]
+    public async Task SelectLikeCaseSensitive_Match()
+    {
+        Column<Book> title = new(nameof(Book.Title));
+        Parameter value = new("Title", "%of%");
+        Predicates predicates = new Like(title, value, true);
+
+        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Equal(4, books.Count());
+        BookDataSet.Validate(books, 3);
+        BookDataSet.Validate(books, 5);
+        BookDataSet.Validate(books, 9);
+        BookDataSet.Validate(books, 10);
+    }
+
+    [Fact]
+    public async Task SelectLikeCaseInsensitive_Match()
+    {
+        Column<Book> title = new(nameof(Book.Title));
+        Parameter value = new("Title", "%oF%");
+        Predicates predicates = new Like(title, value, false);
+
+        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Equal(4, books.Count());
+        BookDataSet.Validate(books, 3);
+        BookDataSet.Validate(books, 5);
+        BookDataSet.Validate(books, 9);
+        BookDataSet.Validate(books, 10);
+    }
+
+    [Fact]
+    public async Task SelectLikeCaseSensitive_Miss()
+    {
+        Column<Book> title = new(nameof(Book.Title));
+        Parameter value = new("Title", "%oF%");
+        Predicates predicates = new Like(title, value, true);
+
+        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Empty(books);
+    }
+
+    [Fact]
     public async Task SelectNotLessThan()
     {
         Column<Book> year = new(nameof(Book.YearPublished));

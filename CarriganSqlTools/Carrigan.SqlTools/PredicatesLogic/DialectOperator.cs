@@ -1,0 +1,40 @@
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Tags;
+
+namespace Carrigan.SqlTools.PredicatesLogic;
+
+/// <summary>
+/// Base class for SQL Dialect predicates (e.g., <c>=</c>, <c>&lt;&gt;</c>, <c>&gt;</c>, <c>&lt;</c>, etc.).
+/// Combines two child <see cref="Predicates"/> nodes with a SQL Dialect operator and
+/// participates in recursive SQL/parameter generation.
+/// </summary>
+public abstract class DialectOperator : Predicates
+{
+    /// <summary>
+    /// The left-side predicate of the Dialect operator.
+    /// </summary>
+    protected readonly Predicates _left;
+
+    /// <summary>
+    /// The right-side predicate of the Dialect operator.
+    /// </summary>
+    protected readonly Predicates _right;
+
+    /// <summary>
+    /// Base constructor for Dialect operators.
+    /// </summary>
+    /// <param name="left">The left-side predicate.</param>
+    /// <param name="right">The right-side predicate.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="left"/> or <paramref name="right"/> or <paramref name="op"/> is <c>null</c>.
+    /// </exception>
+    public DialectOperator(Predicates left, Predicates right) : base([left, right])
+    {
+        ArgumentNullException.ThrowIfNull(left, nameof(left));
+        ArgumentNullException.ThrowIfNull(right, nameof(right));
+
+        _left = left;
+        _right = right;
+    }
+}

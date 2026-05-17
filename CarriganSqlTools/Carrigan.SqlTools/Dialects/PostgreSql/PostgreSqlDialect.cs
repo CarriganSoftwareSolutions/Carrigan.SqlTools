@@ -205,4 +205,15 @@ public class PostgreSqlDialect : ISqlDialects
             return value;
         }
     }
+
+    public SqlFragment GetXOrSymbol() =>
+        new SqlFragmentText("#");
+
+    public SqlFragment GetDialectLike(bool? isCaseSensitive = null)
+    {
+        if (isCaseSensitive is null || isCaseSensitive.Value)
+            return new SqlFragmentText("LIKE");
+        else
+            return new SqlFragmentText("ILIKE");
+    }
 }

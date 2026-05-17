@@ -272,4 +272,16 @@ public class SqlServerDialect : ISqlDialects
             return ((object?)xmlDocument.OuterXml) ?? DBNull.Value; //the compiler didn't like xmlDocument.ToString() ?? DBNull.Value, so I had to get creative.
         else return value;
     }
+
+    public SqlFragment GetXOrSymbol() =>
+        new SqlFragmentText("^");
+    public SqlFragment GetDialectLike(bool? isCaseSensitive = null)
+    {
+        if (isCaseSensitive is null)
+            return new SqlFragmentText("LIKE");
+        else if (isCaseSensitive.Value)
+            return new SqlFragmentText("COLLATE SQL_Latin1_General_CP1_CS_AS LIKE");
+        else
+            return new SqlFragmentText("COLLATE SQL_Latin1_General_CP1_CI_AS LIKE");
+    }
 }

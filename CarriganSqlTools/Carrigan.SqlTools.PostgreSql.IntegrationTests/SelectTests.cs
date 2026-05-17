@@ -225,6 +225,59 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     }
 
     [Fact]
+    //Note: Like is case sensitive in PostgreSql.
+    public async Task SelectLikeCaseSensitive_Match()
+    {
+        Column<Book> title = new(nameof(Book.Title));
+        Parameter value = new("Title", "%of%");
+        Predicates predicates = new Like(title, value, true);
+
+        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Equal(4, books.Count());
+        BookDataSet.Validate(books, 3);
+        BookDataSet.Validate(books, 5);
+        BookDataSet.Validate(books, 9);
+        BookDataSet.Validate(books, 10);
+    }
+
+    [Fact]
+    //Note: Like is case sensitive in PostgreSql.
+    public async Task SelectLikeCaseSensitive_Miss()
+    {
+        Column<Book> title = new(nameof(Book.Title));
+        Parameter value = new("Title", "%oF%");
+        Predicates predicates = new Like(title, value, true);
+
+        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Empty(books);
+    }
+
+    [Fact]
+    //Note: Like is case sensitive in PostgreSql.
+    public async Task SelectLike_CaseInsensitive()
+    {
+        Column<Book> title = new(nameof(Book.Title));
+        Parameter value = new("Title", "%oF%");
+        Predicates predicates = new Like(title, value, false);
+
+        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        Assert.Equal(4, books.Count());
+        BookDataSet.Validate(books, 3);
+        BookDataSet.Validate(books, 5);
+        BookDataSet.Validate(books, 9);
+        BookDataSet.Validate(books, 10);
+    }
+
+    [Fact]
     public async Task SelectNotLessThan()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
