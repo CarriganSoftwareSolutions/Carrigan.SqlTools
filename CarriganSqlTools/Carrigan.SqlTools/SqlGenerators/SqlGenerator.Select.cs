@@ -222,10 +222,10 @@ public partial class SqlGenerator<T>
             queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {Table}.* FROM {Table}"));
 
         if (joins?.IsNotNullOrEmpty() ?? false)
-            queryFragments = queryFragments.Concat(joins.ToSqlFragments());
+            queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect));
 
         if (predicates is not null)
-            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicates.ToSqlFragments());
+            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicates.ToSqlFragments(Dialect));
 
         if (orderBy.IsNotNullOrEmpty())
             queryFragments = queryFragments.Append(new SqlFragmentText($" {orderBy.AsOrderBy().ToSql()}"));

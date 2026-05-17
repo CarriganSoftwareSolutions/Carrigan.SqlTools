@@ -163,10 +163,10 @@ public partial class SqlGenerator<T>
             queryFragments = new SqlFragmentText($"SELECT COUNT({Table}.*) FROM {Table}").AsEnumerable();
 
         if (joins?.IsNotNullOrEmpty() ?? false)
-            queryFragments = queryFragments.Concat(joins.ToSqlFragments());
+            queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect));
 
         if (predicates is not null)
-            queryFragments = queryFragments.Append(new SqlFragmentText(" WHERE ")).Concat(predicates.ToSqlFragments());
+            queryFragments = queryFragments.Append(new SqlFragmentText(" WHERE ")).Concat(predicates.ToSqlFragments(Dialect));
 
         return queryFragments.ToSqlQuery(Dialect);
     }

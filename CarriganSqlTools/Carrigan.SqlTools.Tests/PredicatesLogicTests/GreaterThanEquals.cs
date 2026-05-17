@@ -9,6 +9,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class GreaterThanEqualsTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     private readonly Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
@@ -40,7 +42,7 @@ public class GreaterThanEqualsTests
         Predicates predicate = new GreaterThanEqual(left, right);
 
         string expectedValue = $"({leftSql} >= {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -71,7 +73,7 @@ public class GreaterThanEqualsTests
         Predicates predicate = new GreaterThanEqual(left, right);
 
         string expectedValue = $"({leftSql} >= {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -121,7 +123,7 @@ public class GreaterThanEqualsTests
         Predicates predicate = new GreaterThanEqual(left, right);
 
         string expectedValue = $"({leftSql} >= {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -158,7 +160,7 @@ public class GreaterThanEqualsTests
         Predicates predicate = new GreaterThanEqual(left, right);
 
         string expectedValue = $"({leftSql} >= {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }

@@ -11,6 +11,8 @@ namespace Carrigan.SqlTools.Tests.AttributesTests;
 
 public class AliasAttributeTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void GetCustomAttribute()
     {
@@ -43,7 +45,7 @@ public class AliasAttributeTests
         );
         string expected = "[AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias]";
 
-        Assert.Equal(expected, tags.ToSql(new SqlServerDialect()));
+        Assert.Equal(expected, tags.ToSql(Dialect));
     }
 
     [Fact]

@@ -11,6 +11,8 @@ using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;
 public class SqlToolsReflectorCacheTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     #region test models
 
     private sealed class NoAliasModel
@@ -127,11 +129,11 @@ public class SqlToolsReflectorCacheTests
     public void KeyColumnInfoSingleCompare()
     {   //This test makes sure that the KeyColumnInfo gets a correct ColunmInfo to a more manually built single item.
         ColumnInfo column = SqlToolsReflectorCache<ColumnIdentifiers>.KeyColumnInfo.Single();
-        Assert.Equal(new ColumnTag(new TableTag(new SqlServerDialect(), null, new TableName("ColumnIdentifiers")), new ColumnName("Id")), column.ColumnTag);
+        Assert.Equal(new ColumnTag(new TableTag(Dialect, null, new TableName("ColumnIdentifiers")), new ColumnName("Id")), column.ColumnTag);
         Assert.Equal(new ColumnName("Id"), column.ColumnName);
         Assert.Equal(new PropertyName("Id"), column.PropertyName);
         Assert.Equal("Id", column.PropertyInfo.Name);
-        Assert.Equal(new ColumnTag(new TableTag(new SqlServerDialect(), null, new TableName("ColumnIdentifiers")), new ColumnName("Id")), column.SelectTag.ColumnTag);
+        Assert.Equal(new ColumnTag(new TableTag(Dialect, null, new TableName("ColumnIdentifiers")), new ColumnName("Id")), column.SelectTag.ColumnTag);
         Assert.Null(column.SelectTag.AliasTag);
         Assert.True(column.IsKeyPart);
         Assert.False(column.IsEncrypted);
@@ -189,14 +191,14 @@ public class SqlToolsReflectorCacheTests
     [Fact]
     public void TableTag()
     {
-        Assert.Equal(new TableTag(new SqlServerDialect(), null, new TableName("ColumnIdentifiers")), SqlToolsReflectorCache<ColumnIdentifiers>.Table);
-        Assert.Equal(new TableTag(new SqlServerDialect(), null, new TableName("EntityName")), SqlToolsReflectorCache<EntityName>.Table);
-        Assert.Equal(new TableTag(new SqlServerDialect(), new SchemaName("Table"), new TableName("TableNameSchemaTable")), SqlToolsReflectorCache<TableNameSchema>.Table);
-        Assert.Equal(new TableTag(new SqlServerDialect(), null, new TableName("IdentifierNameOverrideTable")), SqlToolsReflectorCache<IdentifierNameOverride>.Table);
-        Assert.Equal(new TableTag(new SqlServerDialect(), new SchemaName("Identifier"), new TableName("IdentifierNameOverrideSchemaTable")), SqlToolsReflectorCache<IdentifierNameOverrideSchema>.Table);
-        Assert.Equal(new TableTag(new SqlServerDialect(), new SchemaName("Identifier"), new TableName("IdentifierNameOverrideSchemaOverrideTable")), SqlToolsReflectorCache<IdentifierNameOverrideSchemaOverride>.Table);
-        Assert.Equal(new TableTag(new SqlServerDialect(), new SchemaName("Identifier"), new TableName("IdentifierNameSchemaTable")), SqlToolsReflectorCache<IdentifierNameSchema>.Table);
-        Assert.Equal(new TableTag(new SqlServerDialect(), null, new TableName("TableNameTable")), SqlToolsReflectorCache<TableNameClass>.Table);
+        Assert.Equal(new TableTag(Dialect, null, new TableName("ColumnIdentifiers")), SqlToolsReflectorCache<ColumnIdentifiers>.Table);
+        Assert.Equal(new TableTag(Dialect, null, new TableName("EntityName")), SqlToolsReflectorCache<EntityName>.Table);
+        Assert.Equal(new TableTag(Dialect, new SchemaName("Table"), new TableName("TableNameSchemaTable")), SqlToolsReflectorCache<TableNameSchema>.Table);
+        Assert.Equal(new TableTag(Dialect, null, new TableName("IdentifierNameOverrideTable")), SqlToolsReflectorCache<IdentifierNameOverride>.Table);
+        Assert.Equal(new TableTag(Dialect, new SchemaName("Identifier"), new TableName("IdentifierNameOverrideSchemaTable")), SqlToolsReflectorCache<IdentifierNameOverrideSchema>.Table);
+        Assert.Equal(new TableTag(Dialect, new SchemaName("Identifier"), new TableName("IdentifierNameOverrideSchemaOverrideTable")), SqlToolsReflectorCache<IdentifierNameOverrideSchemaOverride>.Table);
+        Assert.Equal(new TableTag(Dialect, new SchemaName("Identifier"), new TableName("IdentifierNameSchemaTable")), SqlToolsReflectorCache<IdentifierNameSchema>.Table);
+        Assert.Equal(new TableTag(Dialect, null, new TableName("TableNameTable")), SqlToolsReflectorCache<TableNameClass>.Table);
     }
 
     [Fact]
@@ -280,7 +282,7 @@ public class SqlToolsReflectorCacheTests
         SelectTags selectTags = SqlToolsReflectorCache<AliasedModel>.SelectTags;
 
         Assert.Equal(2, selectTags.All().Count());
-        Assert.Equal("[AliasedModel].[Id], [AliasedModel].[Name] AS [FullName]", selectTags.ToSql(new SqlServerDialect()));
+        Assert.Equal("[AliasedModel].[Id], [AliasedModel].[Name] AS [FullName]", selectTags.ToSql(Dialect));
     }
 
     [Fact]
@@ -289,6 +291,6 @@ public class SqlToolsReflectorCacheTests
         SelectTags selectTags = SqlToolsReflectorCache<NoAliasModel>.SelectTags;
 
         Assert.Equal(2, selectTags.All().Count());
-        Assert.Equal("[NoAliasModel].[Id], [NoAliasModel].[Name]", selectTags.ToSql(new SqlServerDialect()));
+        Assert.Equal("[NoAliasModel].[Id], [NoAliasModel].[Name]", selectTags.ToSql(Dialect));
     }
 }

@@ -11,6 +11,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public  class ColumnsTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_Null() =>
         Assert.Throws<ArgumentNullException>(() => new Column<ColumnTable>(null!));
@@ -60,7 +62,7 @@ public  class ColumnsTests
     {
         Column<ColumnTable> cv = new(propertyName);
 
-        string actual = cv?.ToSqlFragments()?.ToSql(new SqlServerDialect()) ?? string.Empty ;
+        string actual = cv?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty ;
 
         Assert.Equal(expectedColumnName, actual);
     }

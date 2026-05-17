@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -69,11 +70,11 @@ public class IsNotNull : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSqlFragments()
+    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("(");
 
-        foreach (SqlFragment fragment in _someValue.ToSqlFragments())
+        foreach (SqlFragment fragment in _someValue.ToSqlFragments(dialect))
             yield return fragment;
 
         yield return new SqlFragmentText(" IS NOT NULL)");

@@ -9,6 +9,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class IsNullTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     private readonly Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
@@ -37,7 +39,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -63,7 +65,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -89,7 +91,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -116,7 +118,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -159,7 +161,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -205,7 +207,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValue = $"({innerSql} IS NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -244,7 +246,7 @@ public class IsNullTests
         string andSql = $"((@Elite_1 IS NULL) AND (@HelloWorld_2 IS NULL) AND ({ColumnFutureCitySql} IS NULL) AND ({ColumnDestructCodeSql} IS NULL))";
 
         string expectedValue = andSql;
-        string actualValue = and.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = and.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }

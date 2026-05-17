@@ -9,11 +9,13 @@ using System.Collections.Generic;
 namespace Carrigan.SqlTools.Tests.Tags;
 public class SelectTagTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     //IGNORE SPELLING: dbo
     private static SelectTag New(string? schemaName, string tableName, string columnName, string? aliasName) =>
         New(SchemaName.New(schemaName), new TableName(tableName), new ColumnName(columnName), AliasName.New(aliasName));
     private static SelectTag New(SchemaName? schemaName, TableName tableName, ColumnName columnName, AliasName? aliasName) =>
-        new (new ColumnTag(new TableTag(new SqlServerDialect(), schemaName, tableName), columnName), AliasTag.New(aliasName));
+        new (new ColumnTag(new TableTag(Dialect, schemaName, tableName), columnName), AliasTag.New(aliasName));
 
     private static readonly SelectTag a = New(null, "SomeTable", "SomeColumn", null);
     private static readonly SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);
@@ -197,16 +199,16 @@ public class SelectTagTests
         SelectTag select = New(schemaName, tableName, columnName, aliasName);
         SelectTag selectAlt = New(schemaName, tableName, columnName, aliasName);
 
-        Assert.Equal(expectedSelect, select.ToSql(new SqlServerDialect()));
-        Assert.Equal(expectedSelect, selectAlt.ToSql(new SqlServerDialect()));
-        Assert.Equal(expectedSelect, select.ToSql(new SqlServerDialect()));
-        Assert.Equal(expectedSelect, selectAlt.ToSql(new SqlServerDialect()));
+        Assert.Equal(expectedSelect, select.ToSql(Dialect));
+        Assert.Equal(expectedSelect, selectAlt.ToSql(Dialect));
+        Assert.Equal(expectedSelect, select.ToSql(Dialect));
+        Assert.Equal(expectedSelect, selectAlt.ToSql(Dialect));
         Assert.Equal(0, select.CompareTo(selectAlt));
         Assert.Equal(select, selectAlt);
         Assert.Equal(selectAlt, selectAlt);
         Assert.True(select == selectAlt);
-        Assert.True(expectedSelect == selectAlt.ToSql(new SqlServerDialect()));
-        Assert.Equal(expectedSelect, select.ToSql(new SqlServerDialect()));
+        Assert.True(expectedSelect == selectAlt.ToSql(Dialect));
+        Assert.Equal(expectedSelect, select.ToSql(Dialect));
         Assert.True(select.Any());
         Assert.False(select.Empty());
     }

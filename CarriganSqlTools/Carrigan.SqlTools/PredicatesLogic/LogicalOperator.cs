@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 
@@ -85,13 +86,13 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSqlFragments()
+    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         int index = 0;
 
         if (ChildNodes.Count() == 1)
         {
-            foreach (SqlFragment fragment in ChildNodes.Single().ToSqlFragments())
+            foreach (SqlFragment fragment in ChildNodes.Single().ToSqlFragments(dialect))
                 yield return fragment;
 
             yield break;
@@ -102,7 +103,7 @@ public abstract class LogicalOperator : Predicates
         {
             if (index > 0)
                 yield return new SqlFragmentText($" {_operator} ");
-                foreach (SqlFragment fragment in predicate.ToSqlFragments())
+                foreach (SqlFragment fragment in predicate.ToSqlFragments(dialect))
                 yield return fragment;
                 index++;
         }

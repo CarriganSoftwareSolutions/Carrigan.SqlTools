@@ -1,18 +1,21 @@
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.Tags;
-using System.Data;
-using Carrigan.SqlTools.Tests.Helpers;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Tests.Helpers;
+using System.Data;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
 public sealed class SqlQueryTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void InternalConstructor()
     {
-        SqlQuery query = new(new SqlServerDialect(), []);
+        SqlQuery query = new(Dialect, []);
 
         Assert.Equal(string.Empty, query.QueryText);
         Assert.NotNull(query.Parameters);
@@ -26,7 +29,7 @@ public sealed class SqlQueryTests
 
     [Fact]
     public void Constructor_NullFragments_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new SqlQuery(new SqlServerDialect(), null!));
+        Assert.Throws<ArgumentNullException>(() => new SqlQuery(Dialect, null!));
 
     [Fact]
     public void GetParameterCount()
@@ -39,7 +42,7 @@ public sealed class SqlQueryTests
             new SqlFragmentParameter(new ParameterTag("@p1"), 1)
         ];
 
-        SqlQuery query = new(new SqlServerDialect(), sql);
+        SqlQuery query = new(Dialect, sql);
 
         Assert.Equal(2, query.GetParameterCount());
     }
@@ -55,7 +58,7 @@ public sealed class SqlQueryTests
             new SqlFragmentParameter(new ParameterTag("@p2"), 2)
         ];
 
-        SqlQuery query = new(new SqlServerDialect(), sql);
+        SqlQuery query = new(Dialect, sql);
 
         Assert.Equal(2, query.GetParameterCount());
 
@@ -73,7 +76,7 @@ public sealed class SqlQueryTests
             new SqlFragmentText(" "),
             new SqlFragmentParameter(new ParameterTag("@p2"), 2)
         ];
-        SqlQuery query = new(new SqlServerDialect(), sql);
+        SqlQuery query = new(Dialect, sql);
 
         Assert.Throws<KeyNotFoundException>(() => (int?)query.GetParameterValue("@missing"));
     }

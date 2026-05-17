@@ -10,13 +10,15 @@ namespace Carrigan.SqlTools.Tests.JoinTests;
 
 public class LeftJoinTest
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void NewJoinsNewLeftJoin()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinRightTable> join = new(id);
 
-        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -28,7 +30,7 @@ public class LeftJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinRightTable> join = new(id);
 
-        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -39,7 +41,7 @@ public class LeftJoinTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(id).ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -51,7 +53,7 @@ public class LeftJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinRightTable> join = new(id);
 
-        TableTag expected = new(new SqlServerDialect(), null, "Right");
+        TableTag expected = new(Dialect, null, "Right");
 
         Assert.Equal(expected, join.TableTag);
     }
@@ -69,7 +71,7 @@ public class LeftJoinTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -81,6 +83,6 @@ public class LeftJoinTest
         Predicates id = new EmptyPredicate();
         LeftJoin<JoinRightTable> join = new(id);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments("Join").ToSql(new SqlServerDialect()));
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect, "Join").ToSql(Dialect));
     }
 }

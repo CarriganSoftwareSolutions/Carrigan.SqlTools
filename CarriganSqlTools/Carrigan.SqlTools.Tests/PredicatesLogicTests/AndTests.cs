@@ -9,6 +9,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class AndTests
 {
+    private static readonly SqlServerDialect Dialect = new ();
+
     [Fact]
     public void And_Empty_ToSql() =>
         Assert.Throws<ArgumentException>(() => new And([]));
@@ -26,7 +28,7 @@ public class AndTests
         ]);
 
         string expected = $"@P1_1";
-        string actual = and.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = and.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
     }
@@ -49,7 +51,7 @@ public class AndTests
         ]);
 
         string expected = $"(@P1_1 AND @P2_2 AND [ColumnTable].[Col1] AND [ColumnTable].[Col2] AND ([ColumnTable].[ColA] OR [ColumnTable].[ColB] OR @PA_3))";
-        string actual = and.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = and.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
 

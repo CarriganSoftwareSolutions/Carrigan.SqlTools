@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -130,9 +131,9 @@ public class ColumnValue<T> : Predicates
     /// <returns>
     /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
     /// </returns>
-    internal override IEnumerable<SqlFragment> ToSqlFragments()
+    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
-        foreach (SqlFragment fragment in value.ToSqlFragments())
+        foreach (SqlFragment fragment in value.ToSqlFragments(dialect))
             yield return fragment;
     }
 }

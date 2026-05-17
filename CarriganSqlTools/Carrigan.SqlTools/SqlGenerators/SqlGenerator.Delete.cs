@@ -211,9 +211,9 @@ public partial class SqlGenerator<T>
                 throw new InvalidTableException(invalidTags);
 
             if (joins?.IsNotNullOrEmpty() ?? false)
-                queryFragments = queryFragments.Concat(joins.ToSqlFragments());
+                queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect));
 
-            IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments() ?? [];
+            IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments(Dialect) ?? [];
             if (predicates is not null)
                 queryFragments = queryFragments
                     .Append(new SqlFragmentText(" WHERE ")) 

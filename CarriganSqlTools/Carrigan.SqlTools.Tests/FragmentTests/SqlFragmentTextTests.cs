@@ -1,10 +1,13 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.Tests.FragmentTests;
 
 public class SqlFragmentTextTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void Constructor_NullText_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new SqlFragmentText(null!));
@@ -28,7 +31,7 @@ public class SqlFragmentTextTests
             new SqlFragmentText("1")
         ];
 
-        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(new SqlServerDialect());
+        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(Dialect);
 
         Assert.Empty(parameters);
     }

@@ -12,6 +12,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class ColumnValueTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void ByColumnValue_ConstructorSimple_InValid_BadCol() =>
         Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new ColumnValue<ColumnTable>("ilsabasbdyas", "1"));
@@ -81,7 +83,7 @@ public class ColumnValueTests
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         string expectedString = "([ColumnTable].[Col1] = @Col1_1)";
-        string actualString = byColumnValues.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualString = byColumnValues.ToSqlFragments(Dialect).ToSql(Dialect);
         Assert.Equal(expectedString, actualString);
     }
 

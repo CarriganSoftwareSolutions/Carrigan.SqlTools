@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
@@ -87,9 +88,7 @@ public class RightJoin<rightT> : JoinBase
     /// <summary>
     /// Converts the current <see cref="RightJoin{rightT}"/> instance to its <see cref="SqlFragment"/> representation.
     /// </summary>
-    /// <param name="branchPrefix">
-    /// The branch prefix used to distinguish parameters in the join predicates from the main where clause.
-    /// </param>
+    /// <param name="dialect"></param>
     /// <returns>
     /// A <see cref="SqlFragment"/> representing the <c>RIGHT JOIN</c> clause.
     /// </returns>
@@ -99,11 +98,14 @@ public class RightJoin<rightT> : JoinBase
     /// <remarks>
     /// Any exception thrown while rendering the predicate tree or while resolving <see cref="TableTag"/> will be propagated to the caller.
     /// </remarks>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix)
+    /// <param name="branchPrefix">
+    /// The branch prefix used to distinguish parameters in the join predicates from the main where clause.
+    /// </param>
+    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
     {
         if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("RIGHT JOIN requires at least one predicate for the ON clause.");
 
-        return _predicates.ToSqlFragments().Prepend(new SqlFragmentText($" RIGHT JOIN {TableTag} ON "));
+        return _predicates.ToSqlFragments(dialect).Prepend(new SqlFragmentText($" RIGHT JOIN {TableTag} ON "));
     }
 }

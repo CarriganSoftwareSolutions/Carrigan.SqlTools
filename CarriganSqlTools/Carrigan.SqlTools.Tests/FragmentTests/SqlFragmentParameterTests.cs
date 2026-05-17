@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -7,6 +8,8 @@ namespace Carrigan.SqlTools.Tests.FragmentTests;
 
 public class SqlFragmentParameterTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void Constructor_NullParameter_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new SqlFragmentParameter(null!));
@@ -33,7 +36,7 @@ public class SqlFragmentParameterTests
             new SqlFragmentParameter(parameter)
         ];
 
-        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(new SqlServerDialect());
+        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(Dialect);
 
         SqlFragmentParameter actual = Assert.Single(parameters);
 

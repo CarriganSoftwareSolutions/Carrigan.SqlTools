@@ -9,6 +9,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class IsNotNullTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     private readonly PredicatesLogic.Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
@@ -37,7 +39,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -63,7 +65,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -89,7 +91,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -116,7 +118,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -159,7 +161,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -201,7 +203,7 @@ public class IsNotNullTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         string expectedValue = $"({innerSql} IS NOT NULL)";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -240,7 +242,7 @@ public class IsNotNullTests
         string andSql = $"((@Elite_1 IS NOT NULL) AND (@HelloWorld_2 IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
 
         string expectedValue = andSql;
-        string actualValue = and.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = and.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }

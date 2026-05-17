@@ -9,12 +9,14 @@ namespace Carrigan.SqlTools.Tests.JoinTests;
 
 public class CrossJoinTest
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void NewJoinsNewCrossJoin()
     {
         CrossJoin<JoinRightTable> join = new();
 
-        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
@@ -25,7 +27,7 @@ public class CrossJoinTest
     {
         CrossJoin<JoinRightTable> join = new();
 
-        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
@@ -43,7 +45,7 @@ public class CrossJoinTest
     public void TableTag()
     {
         CrossJoin<JoinRightTable> join = new();
-        TableTag expected = new(new SqlServerDialect(), null, "Right");
+        TableTag expected = new(Dialect, null, "Right");
 
         Assert.Equal(expected, join.TableTag);
     }
@@ -51,7 +53,7 @@ public class CrossJoinTest
     [Fact]
     public void CrossJoin_JoinsFactoryMethod()
     {
-        string actual = CrossJoin<JoinRightTable>.Joins<JoinLeftTable>().ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = CrossJoin<JoinRightTable>.Joins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);

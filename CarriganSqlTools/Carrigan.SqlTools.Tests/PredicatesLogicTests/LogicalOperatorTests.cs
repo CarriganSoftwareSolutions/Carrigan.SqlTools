@@ -7,6 +7,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class LogicalOperatorTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     private sealed class TestLogicalOperator : LogicalOperator
     {
         public TestLogicalOperator(string op, params IEnumerable<Predicates> predicates) : base(op, predicates)
@@ -38,7 +40,7 @@ public class LogicalOperatorTests
         ]);
 
         string expected = "@P1_1";
-        string actual = op.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = op.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
     }
@@ -53,7 +55,7 @@ public class LogicalOperatorTests
         ]);
 
         string expected = "(@P1_1 AND @P2_2)";
-        string actual = op.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = op.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
     }

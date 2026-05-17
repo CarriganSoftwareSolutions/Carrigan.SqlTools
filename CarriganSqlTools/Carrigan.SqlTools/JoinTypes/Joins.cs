@@ -1,4 +1,5 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -261,12 +262,12 @@ public class Joins<leftT>
     /// <remarks>
     /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
     /// </remarks>
-    internal IEnumerable<SqlFragment> ToSqlFragments()
+    internal IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (ValidatedJoints.Count() == 1)
-            return ValidatedJoints.SelectMany(join => join.ToSqlFragments("Join"));
+            return ValidatedJoints.SelectMany(join => join.ToSqlFragments(dialect, "Join"));
         else
-            return ValidatedJoints.SelectMany((join, i) => join.ToSqlFragments($"Joins{i}"));
+            return ValidatedJoints.SelectMany((join, i) => join.ToSqlFragments(dialect, $"Joins{i}"));
     }
 
     /// <summary>

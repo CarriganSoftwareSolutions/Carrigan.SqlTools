@@ -341,11 +341,11 @@ public partial class SqlGenerator<T>
             .Append(new SqlFragmentText($" FROM {Table}"));
 
         if (joins?.IsNotNullOrEmpty() ?? false)
-            queryFragments = queryFragments.Concat(joins.ToSqlFragments()); 
+            queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect)); 
 
         if (predicates is not null)
         {
-            IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments()];
+            IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments(Dialect)];
             queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicateSqlFragments);
         }
 

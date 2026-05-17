@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -104,7 +105,7 @@ public class Column<T> : ColumnBase
     /// <returns>
     /// The SQL-escaped column identifier (e.g., <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>).
     /// </returns>
-    internal override IEnumerable<SqlFragment> ToSqlFragments()
+    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText(ColumnInfo);
     }

@@ -9,6 +9,8 @@ namespace Carrigan.SqlTools.Tests.JoinTests;
 
 public class JoinBaseTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void Join_NullPredicate_ThrowsArgumentNullException()
     {
@@ -49,7 +51,7 @@ public class JoinBaseTests
 
         TableTag[] actual = [.. join.JoinsOn];
 
-        Assert.Contains(new TableTag(new SqlServerDialect(), null, "Left"), actual);
-        Assert.Contains(new TableTag(new SqlServerDialect(), null, "Right"), actual);
+        Assert.Contains(new TableTag(Dialect, null, "Left"), actual);
+        Assert.Contains(new TableTag(Dialect, null, "Right"), actual);
     }
 }

@@ -10,6 +10,8 @@ using System.Reflection;
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;
 public class ColumnInfoTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Theory]
     [InlineData(null, "ColumnIdentifiersTable", typeof(ColumnIdentifiers), "Id", new[] { "Id" },
         "[ColumnIdentifiersTable].[Id]", "Id", "Id", 
@@ -90,7 +92,7 @@ public class ColumnInfoTests
         TableName table = new(tableName);
         PropertyInfo? property = type.GetProperty(propertyName);
         Assert.NotNull(property);
-        ColumnInfo columnInfo = new(new SqlServerDialect(), schema, table, property, keys);
+        ColumnInfo columnInfo = new(Dialect, schema, table, property, keys);
         string implicitString = columnInfo;
         string explicitString = columnInfo.ToString();
         int hashCode = columnInfo.GetHashCode();
@@ -143,7 +145,7 @@ public class ColumnInfoTests
             TableName table = new("ColumnIdentifiersTable");
             PropertyInfo? property = type.GetProperty(propertyName);
             Assert.NotNull(property);
-            return new(new SqlServerDialect(), schema, table, property, keys);
+            return new(Dialect, schema, table, property, keys);
         }
         ColumnInfo a = New("Id");
         ColumnInfo aAlt = New("Id");
@@ -180,7 +182,7 @@ public class ColumnInfoTests
             TableName table = new("ColumnIdentifiersTable");
             PropertyInfo? property = type.GetProperty(propertyName);
             Assert.NotNull(property);
-            return new(new SqlServerDialect(), schema, table, property, keys);
+            return new(Dialect, schema, table, property, keys);
         }
         ColumnInfo a = New("Id");
         ColumnInfo aAlt = New("Id");
@@ -303,7 +305,7 @@ public class ColumnInfoTests
         TableName table = new(tableName);
         PropertyInfo? property = type.GetProperty(propertyName);
         Assert.NotNull(property);
-        ColumnInfo columnInfo = new(new SqlServerDialect(), schema, table, property, keys);
+        ColumnInfo columnInfo = new(Dialect, schema, table, property, keys);
 
         Assert.Equal(expectedSqlType, columnInfo.SqlType.Type);
         Assert.Equal(expectedSqlDeclarationType, columnInfo.SqlType.TypeDeclaration);
@@ -349,7 +351,7 @@ public class ColumnInfoTests
         PropertyInfo? property = type.GetProperty(propertyName);
         Assert.NotNull(property);
 
-        ColumnInfo columnInfo = new(new SqlServerDialect(), schema, table, property, keys);
+        ColumnInfo columnInfo = new(Dialect, schema, table, property, keys);
 
         Assert.Equal(expectedSqlType, columnInfo.SqlType.Type);
         Assert.Equal(expectedSqlDeclarationType, columnInfo.SqlType.TypeDeclaration);
@@ -365,7 +367,7 @@ public class ColumnInfoTests
         PropertyInfo property = type.GetProperty("Id")!;
         IEnumerable<PropertyInfo> keys = [property];
 
-        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(new SqlServerDialect(), null, null!, property, keys));
+        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(Dialect, null, null!, property, keys));
     }
 
     [Fact]
@@ -374,7 +376,7 @@ public class ColumnInfoTests
         Type type = typeof(ColumnIdentifiers);
         IEnumerable<PropertyInfo> keys = [type.GetProperty("Id")!];
 
-        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(new SqlServerDialect(), null, new("ColumnIdentifiersTable"), null!, keys));
+        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(Dialect, null, new("ColumnIdentifiersTable"), null!, keys));
     }
 
     [Fact]
@@ -383,7 +385,7 @@ public class ColumnInfoTests
         Type type = typeof(ColumnIdentifiers);
         PropertyInfo property = type.GetProperty("Id")!;
 
-        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(new SqlServerDialect(), null, new("ColumnIdentifiersTable"), property, null!));
+        Assert.Throws<ArgumentNullException>(() => new ColumnInfo(Dialect, null, new("ColumnIdentifiersTable"), property, null!));
     }
 
     [Fact]

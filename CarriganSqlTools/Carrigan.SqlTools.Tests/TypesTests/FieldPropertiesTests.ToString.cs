@@ -7,7 +7,8 @@ namespace Carrigan.SqlTools.Tests.TypesTests;
 //IGNORE SPELLING: bigint
 public class FieldPropertiesTests
 {
-    private readonly ISqlDialects Dialect = new SqlServerDialect();
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void ToString_ReturnsEmptyString_WhenProviderTypeNameIsNull() =>
         Assert.Equal(string.Empty, Dialect.RenderFieldProperties(new FieldProperties()));

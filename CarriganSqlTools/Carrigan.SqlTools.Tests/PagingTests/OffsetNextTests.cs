@@ -1,10 +1,13 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Paging;
 
 namespace Carrigan.SqlTools.Tests.PagingTests;
 
 public class OffsetNextTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Theory]
     // Both Offset and Next are 0 → expect an empty SQL string.
     [InlineData(0u, 0u, "")]
@@ -28,7 +31,7 @@ public class OffsetNextTests
         OffsetFetchNext offsetNext = new(offset, next);
 
         // Act
-        string actualSql = (new SqlServerDialect()).RenderPaging(offsetNext).ToSql();
+        string actualSql = (Dialect).RenderPaging(offsetNext).ToSql();
 
         // Assert
         Assert.Equal(expectedSql, actualSql);
@@ -49,6 +52,6 @@ public class OffsetNextTests
         // Also verify the SQL string generated.
         string expectedSql = $"OFFSET {75} ROWS FETCH NEXT {25} ROWS ONLY";
 
-        Assert.Equal(expectedSql, (new SqlServerDialect()).RenderPaging(offsetNext).ToSql());
+        Assert.Equal(expectedSql, (Dialect).RenderPaging(offsetNext).ToSql());
     }
 }

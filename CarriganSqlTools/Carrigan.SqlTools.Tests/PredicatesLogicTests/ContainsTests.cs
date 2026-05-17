@@ -8,13 +8,15 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class ContainsTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void ContainsTest()
     {
         Contains<ColumnTable> contains = new(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("Col1", "test"));
 
         string expected = "CONTAINS([ColumnTable].[Col1], @Col1_1)";
-        string actual = contains.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actual = contains.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
     }

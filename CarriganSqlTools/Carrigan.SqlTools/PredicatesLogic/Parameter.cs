@@ -1,5 +1,6 @@
 ﻿using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.ReflectorCache;
@@ -112,7 +113,7 @@ public class Parameter : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSqlFragments()
+    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentParameter(this);
     }

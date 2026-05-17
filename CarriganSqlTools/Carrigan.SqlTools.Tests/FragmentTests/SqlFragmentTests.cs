@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tests.Helpers;
@@ -7,6 +8,8 @@ namespace Carrigan.SqlTools.Tests.FragmentTests;
 
 public class SqlFragmentTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void ToString_DelegatesToToSql()
     {
@@ -47,7 +50,7 @@ public class SqlFragmentTests
             new SqlFragmentParameter(parameter2)
         ];
 
-        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(new SqlServerDialect());
+        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(Dialect);
 
         Assert.Equal(2, parameters.Count());
         SqlQueryTestHelper.AssertParameterValue(parameters, "@Name_1", "Jonathan");

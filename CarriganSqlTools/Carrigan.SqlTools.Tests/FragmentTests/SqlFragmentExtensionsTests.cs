@@ -7,12 +7,14 @@ namespace Carrigan.SqlTools.Tests.FragmentTests;
 
 public class SqlFragmentExtensionsTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     [Fact]
     public void ToSql_Empty_ReturnsEmptyString()
     {
         IEnumerable<SqlFragment> sqlFragments = [];
 
-        string actualValue = sqlFragments.ToSql(new SqlServerDialect());
+        string actualValue = sqlFragments.ToSql(Dialect);
 
         Assert.Equal(string.Empty, actualValue);
     }
@@ -27,7 +29,7 @@ public class SqlFragmentExtensionsTests
                 new SqlFragmentText(";")
             ];
 
-        string actualValue = sqlFragments.ToSql(new SqlServerDialect());
+        string actualValue = sqlFragments.ToSql(Dialect);
 
         Assert.Equal("SELECT 1;", actualValue);
     }
@@ -37,7 +39,7 @@ public class SqlFragmentExtensionsTests
     {
         IEnumerable<SqlFragment> sqlFragments = null!;
 
-        Assert.Throws<ArgumentNullException>(() => sqlFragments.ToSql(new SqlServerDialect()));
+        Assert.Throws<ArgumentNullException>(() => sqlFragments.ToSql(Dialect));
     }
 
     [Fact]
@@ -47,7 +49,7 @@ public class SqlFragmentExtensionsTests
 
         Assert.Throws<ArgumentNullException>(() =>
         {
-            _ = sqlFragments.GetSqlFragmentParameters(new SqlServerDialect());
+            _ = sqlFragments.GetSqlFragmentParameters(Dialect);
         });
     }
 
@@ -63,7 +65,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragments
             .JoinFragments()
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal("ABC", sql);
     }
@@ -80,7 +82,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragments
             .JoinFragments(new SqlFragmentText(", "))
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal("A, B, C", sql);
     }
@@ -95,7 +97,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragments
             .JoinFragments(new SqlFragmentText(", "))
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal("A", sql);
     }
@@ -107,7 +109,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragments
             .JoinFragments(new SqlFragmentText(", "))
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal(string.Empty, sql);
     }
@@ -131,7 +133,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragment1
             .Append(fragment2)
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal("AB", sql);
     }
@@ -149,7 +151,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragment1
             .Concat(fragments)
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal("ABC", sql);
     }
@@ -163,7 +165,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragment1
             .Concat(fragments)
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal("A", sql);
     }
@@ -187,7 +189,7 @@ public class SqlFragmentExtensionsTests
 
         string sql = fragments
             .JoinFragments(separator)
-            .ToSql(new SqlServerDialect());
+            .ToSql(Dialect);
 
         Assert.Equal("A AND B AND C", sql);
     }

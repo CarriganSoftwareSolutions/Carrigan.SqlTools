@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 using System.Collections.Generic;
 
@@ -14,5 +15,5 @@ internal class EmptyPredicate : Predicates
     {
     }
 
-    internal override IEnumerable<SqlFragment> ToSqlFragments() => [];
+    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect) => [];
 }

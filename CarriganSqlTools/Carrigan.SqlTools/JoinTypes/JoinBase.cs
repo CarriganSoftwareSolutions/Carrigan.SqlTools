@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 
@@ -54,11 +55,12 @@ public abstract class JoinBase
     /// <summary>
     /// Generates a sequence of SQL fragments that represent the current object.
     /// </summary>
+    /// <param name="dialect"></param>
+    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
+    /// instance.</returns>
     /// <param name="branchPrefix"> 
     /// The branch name used when generating predicate SQL and parameter tags via
     /// <see cref="Predicates.ToSqlFragments()"/>.
     /// </param>
-    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
-    /// instance.</returns>
-    internal abstract IEnumerable<SqlFragment> ToSqlFragments(string branchPrefix);
+    internal abstract IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix);
 }

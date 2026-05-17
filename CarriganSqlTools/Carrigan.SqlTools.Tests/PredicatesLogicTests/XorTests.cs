@@ -8,6 +8,8 @@ namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 
 public class XorThanTests
 {
+    private static readonly SqlServerDialect Dialect = new();
+
     private static readonly PredicatesLogic.Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
     private static readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
@@ -39,7 +41,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -70,7 +72,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -119,7 +121,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -156,7 +158,7 @@ public class XorThanTests
         PredicatesLogic.Predicates predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
-        string actualValue = predicate.ToSqlFragments().ToSql(new SqlServerDialect());
+        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
