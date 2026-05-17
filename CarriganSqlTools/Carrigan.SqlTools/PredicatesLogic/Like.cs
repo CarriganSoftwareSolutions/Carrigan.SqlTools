@@ -46,6 +46,12 @@ public class Like : DialectOperator
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.
     /// </exception>
+    /// <remarks>
+    /// When <c>isCaseSensitive</c> is not specified, the dialect's default comparison behavior is used.
+    /// For SQL Server, case sensitivity is determined by the applicable server, database, column, or
+    /// expression-level collation.
+    /// For PostgreSQL, the default is <c>LIKE</c>, which performs a case-sensitive comparison.
+    /// </remarks>
     public Like(Predicates left, Predicates right, bool? isCaseSensitive = null) : base(left, right) => 
         IsCaseSensitive = isCaseSensitive;
     /// <summary>
