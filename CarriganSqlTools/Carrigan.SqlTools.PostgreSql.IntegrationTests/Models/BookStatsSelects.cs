@@ -1,12 +1,9 @@
-﻿using Carrigan.SqlTools.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Carrigan.SqlTools.Attributes;
 
-namespace Carrigan.SqlTools.IntegrationTests.Models;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 
+[Dialect(DialectEnum.PostgreSql)]
 internal class BookStatsSelects
 {
     public int Id { get; set; }

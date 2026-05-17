@@ -1,19 +1,19 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
-using Carrigan.SqlTools.IntegrationTests.DataSets;
-using Carrigan.SqlTools.IntegrationTests.Fixtures;
-using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Tags;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 
-namespace Carrigan.SqlTools.IntegrationTests;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
 
 public sealed class SelectTests : IClassFixture<SelectsFixture>
 {
@@ -29,7 +29,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectAll()
     {
         SqlQuery query = BookSqlGenerator.SelectAll();
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(11, books.Count());
@@ -43,7 +43,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectById()
     {
         SqlQuery query = BookSqlGenerator.SelectById(new Book() { Id = 5 });
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
@@ -58,7 +58,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates and = new And(year, price);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, and, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
@@ -71,7 +71,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new ColumnValue<Book>(nameof(Book.YearPublished), 1865);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
@@ -89,7 +89,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new Equal(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
@@ -104,7 +104,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new GreaterThan(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(6, books.Count());
@@ -124,7 +124,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new GreaterThanEqual(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(7, books.Count());
@@ -144,7 +144,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new IsNotNull(price);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
 
@@ -162,7 +162,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new IsNull(price);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
 
@@ -178,7 +178,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new LessThan(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(3, books.Count());
@@ -195,7 +195,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new LessThanEqual(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
@@ -206,14 +206,15 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     }
 
     [Fact]
+    //Note: Like is case sensitive in PostgreSql.
     public async Task SelectLike()
     {
         Column<Book> title = new(nameof(Book.Title));
-        Parameter value = new("Title", "%oF%");
+        Parameter value = new("Title", "%of%");
         Predicates predicates = new Like(title, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
@@ -232,7 +233,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
 
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(2, books.Count());
@@ -249,7 +250,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
 
 
         SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(10, books.Count());
@@ -275,7 +276,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates or = new Or(predicate1, predicate2, predicate3, predicate4);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, or, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
@@ -288,6 +289,8 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     [Fact]
     public async Task SelectXOr()
     {
+        //TODO: Postgre uses # instead of ^ for xor. ^ is exponentiation. This is unit test is failing because of that difference.
+        // WE need to address the underlying difference in the project.
         Column<Book> id = new(nameof(Book.Id));
         Parameter value1 = new("valueOne", 5);
         Parameter value2 = new("valueTwo", 3);
@@ -295,7 +298,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Equal equal = new(id, xor);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, equal, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
@@ -311,7 +314,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter ratingParameter = new("Rating", 4.6m);
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
         SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, null, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(3, books.Count());
@@ -330,7 +333,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
         OrderByBase orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
         SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, orderBy, null);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(5, books.Count());
@@ -352,7 +355,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         OrderByBase orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
         PagingBase paging = new DefinePage(2, 3);
         SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, orderBy, paging);
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(3, books.Count());
@@ -387,7 +390,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
 
         SqlQuery query = BookSqlGenerator.Select(selectTags, join, wherePredicate, orderBy, paging);
 
-        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         //How to do this final projection needs more visible documentation
         IEnumerable<BookStatsSelects> books = await CommandsAsync.ExecuteReaderAsync<BookStatsSelects>(query, null, unitTestConnection);
 

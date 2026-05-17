@@ -8,9 +8,9 @@ using Respawn;
 
 namespace Carrigan.SqlTools.IntegrationTests.Fixtures;
 
-public sealed class SampleDataFixture : SqlFixtureBase
+public sealed class JoinsFixture : SqlFixtureBase
 {
-    public SampleDataFixture()
+    public JoinsFixture()
         : base
         (
             [

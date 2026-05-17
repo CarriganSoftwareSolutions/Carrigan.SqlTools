@@ -3,7 +3,6 @@ using Carrigan.SqlTools.Dialects.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
 using Respawn;
-using Xunit;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 

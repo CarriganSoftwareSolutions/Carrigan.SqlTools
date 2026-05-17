@@ -1,12 +1,16 @@
+using Carrigan.SqlTools.Attributes;
+
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 
+[Dialect(DialectEnum.PostgreSql)]
 public sealed class Book
 {
+    [PrimaryKey]
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Author { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public decimal Price { get; set; }
+    public decimal? Price { get; set; }
     public int Pages { get; set; }
     public int YearPublished { get; set; }
 
@@ -18,7 +22,7 @@ public sealed class Book
             "Title" VARCHAR(200) NOT NULL,
             "Author" VARCHAR(150) NOT NULL,
             "Description" VARCHAR(1000) NOT NULL,
-            "Price" NUMERIC(10,2) NOT NULL,
+            "Price" NUMERIC(10,2) NULL,
             "Pages" INTEGER NOT NULL,
             "YearPublished" INTEGER NOT NULL,
             CONSTRAINT "PK_Book" PRIMARY KEY ("Id")

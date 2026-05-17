@@ -8,7 +8,25 @@ namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
 
 public static class BookDataSet
 {
-    public static IEnumerable<Book> Data =>
+    public static void Validate(IEnumerable<Book> actualBooks, int expectedId)
+    {
+        Book actual = actualBooks.Where(book => book.Id == expectedId).Single();
+        Validate(actual, expectedId);
+    }
+    public static void Validate(Book actual, int expectedId)
+    {
+        Book expected = Data.Where(book => book.Id == expectedId).Single();
+
+        Assert.Equal(expected.Id, actual.Id);
+        Assert.Equal(expected.Title, actual.Title);
+        Assert.Equal(expected.Author, actual.Author);
+        Assert.Equal(expected.Description, actual.Description);
+        Assert.Equal(expected.Price, actual.Price);
+        Assert.Equal(expected.Pages, actual.Pages);
+        Assert.Equal(expected.YearPublished, actual.YearPublished);
+    }
+
+    public static readonly IEnumerable<Book> Data =
     [
         new()
         {
@@ -109,6 +127,16 @@ public static class BookDataSet
             Price = 19.99m,
             Pages = 1276,
             YearPublished = 1844,
+        },
+        new()
+        {
+            Id = 11,
+            Title = "The Scarlet Pimpernel",
+            Author = "Baroness Orczy",
+            Description = "A public domain adventure novel about a mysterious English nobleman who rescues French aristocrats during the Reign of Terror.",
+            Price = null,
+            Pages = 320,
+            YearPublished = 1905,
         }
     ];
 

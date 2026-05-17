@@ -1,5 +1,8 @@
+using Carrigan.SqlTools.Attributes;
+
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 
+[Dialect(DialectEnum.PostgreSql)]
 public sealed class Address
 {
     public int Id { get; set; }

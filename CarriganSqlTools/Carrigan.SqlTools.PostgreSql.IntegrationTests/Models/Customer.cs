@@ -1,7 +1,9 @@
+using Carrigan.SqlTools.Attributes;
 using System;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 
+[Dialect(DialectEnum.PostgreSql)]
 public sealed class Customer
 {
     public int Id { get; set; }
