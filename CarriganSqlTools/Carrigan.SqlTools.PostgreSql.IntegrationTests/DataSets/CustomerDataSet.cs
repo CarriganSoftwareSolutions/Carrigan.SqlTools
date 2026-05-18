@@ -169,6 +169,46 @@ public static class CustomerDataSet
             LastName = "Martin",
             Age = 22,
             Gender = 'M',
+        },
+        new()
+        {
+            Id = 21,
+            FirstName = "Charles",
+            LastName = "Thompson",
+            Age = 54,
+            Gender = 'M',
+        },
+        new()
+        {
+            Id = 22,
+            FirstName = "Karen",
+            LastName = "White",
+            Age = 46,
+            Gender = 'F',
+        },
+        new()
+        {
+            Id = 23,
+            FirstName = "Christopher",
+            LastName = "Harris",
+            Age = 33,
+            Gender = 'M',
+        },
+        new()
+        {
+            Id = 24,
+            FirstName = "Nancy",
+            LastName = "Clark",
+            Age = 69,
+            Gender = 'F',
+        },
+        new()
+        {
+            Id = 25,
+            FirstName = "Daniel",
+            LastName = "Lewis",
+            Age = 41,
+            Gender = 'M',
         }
     ];
 
