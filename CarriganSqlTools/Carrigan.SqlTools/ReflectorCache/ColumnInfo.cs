@@ -155,7 +155,10 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         ParameterTag = new(parameterName);
         AliasName = aliasName;
-        SelectTag = new(ColumnTag, AliasTag.New(aliasName));
+
+        SelectTagAttribute? selectTagAttribute = SelectTagAttribute.GetAttribute(propertyInfo);
+
+        SelectTag = selectTagAttribute?.SelectTag ?? new(ColumnTag, AliasTag.New(aliasName));
 
         IsKeyPart = keys.Contains(propertyInfo);
         IsEncrypted = propertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;

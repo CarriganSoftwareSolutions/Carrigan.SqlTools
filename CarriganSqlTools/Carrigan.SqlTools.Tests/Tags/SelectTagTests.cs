@@ -290,5 +290,4 @@ public class SelectTagTests
     [Fact]
     public void ValidGetMany_FromString() =>
         _ = SelectTag.Get<TableNameSchema>("Id", "Text");
-
 }

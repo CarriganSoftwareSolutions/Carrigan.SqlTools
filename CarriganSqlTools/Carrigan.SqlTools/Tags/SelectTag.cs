@@ -1,10 +1,8 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -73,7 +71,7 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// using the provided alias if supplied; otherwise defaults to the property's alias attribute (if any).
     /// </summary>
     /// <typeparam name="T">The entity/model type containing the property.</typeparam>
-    /// <param name="property">The name of the property to project.</param>
+    /// <param name="propertyName">The name of the property to project.</param>
     /// <param name="aliasName">
     /// An optional alias name override. If provided, it must be a valid SQL identifier.
     /// </param>
@@ -81,28 +79,20 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// A new <see cref="SelectTag"/> representing the requested property projection.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
+    /// Thrown when <paramref name="propertyName"/> is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
-    public static SelectTag Get<T>(PropertyName property, AliasName? aliasName = null)
-    {
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
-            throw new InvalidSqlIdentifierException(aliasName);
-        ColumnInfo columnInfo =
-            SqlToolsReflectorCache<T>
-                .GetColumnsFromProperties(property)
-                .FirstOrDefault() ?? throw new InvalidPropertyException<T>(property);
-        return new(columnInfo.ColumnTag, AliasTag.New(aliasName ?? columnInfo.AliasName));
-    }
+    public static SelectTag Get<T>(PropertyName propertyName, AliasName? aliasName = null) =>
+        SqlToolsReflectorCache<T>.GetSelectTag(propertyName, aliasName);
 
     /// <summary>
     /// Creates a new <see cref="SelectTag"/> for the specified property on <typeparamref name="T"/>,
     /// using the provided alias if supplied; otherwise defaults to the property's alias attribute (if any).
     /// </summary>
     /// <typeparam name="T">The entity/model type containing the property.</typeparam>
-    /// <param name="property">The property name to project.</param>
+    /// <param name="propertyName">The property name to project.</param>
     /// <param name="aliasName">
     /// An optional alias name override. If provided, it must be a valid SQL identifier.
     /// </param>
@@ -110,17 +100,17 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// A new <see cref="SelectTag"/> representing the requested property projection.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
+    /// Thrown when <paramref name="propertyName"/> is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
     [ExternalOnly]
-    public static SelectTag Get<T>(string property, string? aliasName = null)
+    public static SelectTag Get<T>(string propertyName, string? aliasName = null)
     {
         AliasName? alias = AliasName.New(aliasName);
 
-        return Get<T>(new PropertyName(property), alias);
+        return Get<T>(new PropertyName(propertyName), alias);
     }
 
     /// <summary>

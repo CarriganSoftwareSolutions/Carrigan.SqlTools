@@ -3,9 +3,7 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.RegularExpressions;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -95,14 +93,8 @@ public class SelectTags
     /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
     [ExternalOnly]
-    public SelectTags Append<T>(string property, string? aliasName = null)
-    {
-        AliasName? alias = AliasName.New(aliasName);
-        if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
-            throw new InvalidSqlIdentifierException(alias);
-
-        return Append<T>(new PropertyName(property), alias);
-    }
+    public SelectTags Append<T>(string property, string? aliasName = null) =>
+        Append<T>(new PropertyName(property), AliasName.New(aliasName));
 
     /// <summary>
     /// Return a new <see cref="SelectTags"/> with <paramref name="selectTags"/> concatenated.
@@ -158,62 +150,43 @@ public class SelectTags
 
     /// <summary>
     /// Creates a new <see cref="SelectTags"/> containing a single <see cref="SelectTag"/> built from
-    /// the specified <paramref name="properties"/> and optional <paramref name="aliasName"/>.
+    /// the specified <paramref name="propertyName"/> and optional <paramref name="aliasName"/>.
     /// </summary>
-    /// <typeparam name="T">The entity/model type that defines <paramref name="properties"/>.</typeparam>
-    /// <param name="properties">The property to project.</param>
+    /// <typeparam name="T">The entity/model type that defines <paramref name="propertyName"/>.</typeparam>
+    /// <param name="propertyName">The property to project.</param>
     /// <param name="aliasName">An optional alias override; if provided, it must be a valid SQL identifier.</param>
     /// <returns>
-    /// A new <see cref="SelectTags"/> containing a single projection for <paramref name="properties"/>.
+    /// A new <see cref="SelectTags"/> containing a single projection for <paramref name="propertyName"/>.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when <paramref name="properties"/> is not a valid, mappable column property for <typeparamref name="T"/>.
+    /// Thrown when <paramref name="propertyName"/> is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
-    public static SelectTags Get<T>(PropertyName properties, AliasName? aliasName = null)
-    {
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
-            throw new InvalidSqlIdentifierException(aliasName); 
-        return new
-        (
-            new SelectTag
-            (
-                SqlToolsReflectorCache<T>
-                    .GetColumnsFromProperties(properties)
-                    .FirstOrDefault()
-                    ?.ColumnTag ?? throw new InvalidPropertyException<T>(properties),
-                aliasName is not null ? new AliasTag(aliasName) : null
-            )
-        );
-    }
+    public static SelectTags Get<T>(PropertyName propertyName, AliasName? aliasName = null) =>
+        SqlToolsReflectorCache<T>
+            .GetSelectTag(propertyName, aliasName);
 
     /// <summary>
     /// Creates a new <see cref="SelectTags"/> containing a single <see cref="SelectTag"/> built from
-    /// the specified <paramref name="property"/> and optional <paramref name="aliasName"/>.
+    /// the specified <paramref name="propertyName"/> and optional <paramref name="aliasName"/>.
     /// </summary>
-    /// <typeparam name="T">The entity/model type that defines <paramref name="property"/>.</typeparam>
-    /// <param name="property">The property name to project.</param>
+    /// <typeparam name="T">The entity/model type that defines <paramref name="propertyName"/>.</typeparam>
+    /// <param name="propertyName">The property name to project.</param>
     /// <param name="aliasName">An optional alias override; if provided, it must be a valid SQL identifier.</param>
     /// <returns>
-    /// A new <see cref="SelectTags"/> containing a single projection for <paramref name="property"/>.
+    /// A new <see cref="SelectTags"/> containing a single projection for <paramref name="propertyName"/>.
     /// </returns>
     /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when <paramref name="property"/> is not a valid, mappable column property for <typeparamref name="T"/>.
+    /// Thrown when <paramref name="propertyName"/> is not a valid, mappable column property for <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
     /// </exception>
     [ExternalOnly]
-    public static SelectTags Get<T>(string property, string? aliasName = null)
-    {
-        AliasName? alias = AliasName.New(aliasName);
-        if (alias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(alias))
-            throw new InvalidSqlIdentifierException(alias); 
-
-        return Get<T>(new PropertyName(property), alias);
-    }
+    public static SelectTags Get<T>(string propertyName, string? aliasName = null) =>
+        Get<T>(new PropertyName(propertyName), AliasName.New(aliasName));
 
     /// <summary>
     /// Creates a new <see cref="SelectTags"/> containing the existing <see cref="SelectTag"/> values
