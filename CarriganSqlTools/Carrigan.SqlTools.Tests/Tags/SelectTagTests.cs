@@ -209,8 +209,6 @@ public class SelectTagTests
         Assert.True(select == selectAlt);
         Assert.True(expectedSelect == selectAlt.ToSql(Dialect));
         Assert.Equal(expectedSelect, select.ToSql(Dialect));
-        Assert.True(select.Any());
-        Assert.False(select.Empty());
     }
 
     [Fact]
@@ -293,19 +291,4 @@ public class SelectTagTests
     public void ValidGetMany_FromString() =>
         _ = SelectTag.Get<TableNameSchema>("Id", "Text");
 
-    [Fact]
-    public void All()
-    {
-        SelectTag a = New(null, "SomeTable", "SomeColumn", null);
-        Assert.Equal(a, a.All().Single());
-    }
-
-    [Fact]
-    public void GetTableTags()
-    {
-        Assert.Equal("[SomeTable]", a.GetTableTags().Single());
-        Assert.Equal("[dbo].[SomeTable]", b.GetTableTags().Single());
-        Assert.Equal("[SomeTable]", c.GetTableTags().Single());
-        Assert.Equal("[dbo].[SomeTable]", d.GetTableTags().Single());
-    }
 }

@@ -24,7 +24,7 @@ namespace Carrigan.SqlTools.Tags;
 /// and <see cref="IEqualityComparer{SelectTag}"/> for use in ordered and hashed collections.
 /// </para>
 /// </remarks>
-public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>
+public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>
 {
     /// <summary>
     /// The SQL text of the select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c>.
@@ -279,38 +279,6 @@ public class SelectTag : SelectTagsBase, IComparable<SelectTag>, IEquatable<Sele
     /// For a single <see cref="SelectTag"/>, this is simply its own SQL text.
     /// </summary>
     /// <returns>The SQL text represented by this instance.</returns>
-    public override string ToSql(ISqlDialects dialect) =>
+    public string ToSql(ISqlDialects dialect) =>
         AliasTag is null ? ColumnTag : $"{ColumnTag} AS {dialect.QuoteIdentifier(AliasTag)}";
-
-    /// <summary>
-    /// Gets all distinct <see cref="TableTag"/> values referenced by this select tag.
-    /// For a single <see cref="SelectTag"/>, this returns its table tag.
-    /// </summary>
-    /// <returns>An enumeration containing the single <see cref="TableTag"/> used by this instance.</returns>
-    internal override IEnumerable<TableTag> GetTableTags() => 
-        [ColumnTag.TableTag];
-
-    /// <summary>
-    /// Indicates whether this instance represents any select tags.
-    /// For a single <see cref="SelectTag"/>, this always returns <c>true</c>.
-    /// </summary>
-    /// <returns><c>true</c>.</returns>
-    public override bool Any() =>
-        true;
-
-    /// <summary>
-    /// Indicates whether this instance represents no select tags.
-    /// For a single <see cref="SelectTag"/>, this always returns <c>false</c>.
-    /// </summary>
-    /// <returns><c>false</c>.</returns>
-    public override bool Empty() =>
-        false;
-
-    /// <summary>
-    /// Returns all select tags represented by this instance.
-    /// For a single <see cref="SelectTag"/>, this returns itself.
-    /// </summary>
-    /// <returns>An enumeration containing this <see cref="SelectTag"/>.</returns>
-    public override IEnumerable<SelectTag> All() =>
-        [this];
 }

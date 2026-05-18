@@ -246,25 +246,25 @@ public class SelectTagsTests
 
     [Fact]
     public void AppendInvalidPropertyStringException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Append<Order>("InvalidColumn"));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>("InvalidColumn")));
     [Fact]
     public void AppendInvalidAliasStringException() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => (new SelectTags()).Append<Order>("Id", "123Invalid"));
+        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>("Id", "123Invalid")));
 
     [Fact]
     public void AppendInvalidPropertyNameException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Append<Order>(new("InvalidColumn")));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>(new("InvalidColumn"))));
     [Fact]
     public void AppendInvalidAliasNameException() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => (new SelectTags()).Append<Order>(new("Id"), new("123Invalid")));
+        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>(new("Id"), new("123Invalid"))));
 
 
     [Fact]
     public void ConcatInvalidPropertyStringException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Concat<Order>("InvalidColumn"));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Concat<Order>("InvalidColumn")));
     [Fact]
     public void ConcatInvalidPropertyNameException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => (new SelectTags()).Concat<Order>(new PropertyName("InvalidColumn")));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Concat<Order>(new PropertyName("InvalidColumn"))));
 
 
     [Fact]

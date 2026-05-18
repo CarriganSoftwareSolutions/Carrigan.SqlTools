@@ -137,7 +137,7 @@ public partial class SqlGenerator<T>
     /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectCount(SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates)
+    public SqlQuery SelectCount(SelectTags? selects, Joins<T>? joins, Predicates? predicates)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
 

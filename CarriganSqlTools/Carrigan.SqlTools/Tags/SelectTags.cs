@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 
@@ -12,7 +13,7 @@ namespace Carrigan.SqlTools.Tags;
 /// Represents a collection of <see cref="SelectTag"/> items, providing utilities to
 /// append, concatenate, and render them for a SELECT list.
 /// </summary>
-public class SelectTags : SelectTagsBase
+public class SelectTags
 {
 
     private readonly IEnumerable<SelectTag> _selectTags;
@@ -29,7 +30,7 @@ public class SelectTags : SelectTagsBase
     /// For <see cref="SelectTags"/>, this returns <c>true</c> when the underlying enumeration is not empty.
     /// </summary>
     /// <returns><c>true</c> if one or more items exist; otherwise, <c>false</c>.</returns>
-    public override bool Any() =>
+    public bool Any() =>
         _selectTags.Any();
 
     /// <summary>
@@ -37,23 +38,23 @@ public class SelectTags : SelectTagsBase
     /// For <see cref="SelectTags"/>, this returns <c>true</c> when the underlying enumeration is empty.
     /// </summary>
     /// <returns><c>true</c> if no items exist; otherwise, <c>false</c>.</returns>
-    public override bool Empty() =>
+    public bool Empty() =>
         Any() is false;
 
     /// <summary>
     /// Returns the SQL text for all select tags represented by this instance as a comma-separated list.
     /// </summary>
     /// <returns>A comma-separated list of the contained <see cref="SelectTag"/> SQL fragments.</returns>
-    public override string ToSql(ISqlDialects dialect) =>
+    public string ToSql(ISqlDialects dialect) =>
         string.Join(", ", _selectTags.Select(selectTag => selectTag.ToSql(dialect)));
 
     /// <summary>
     /// Gets all distinct <see cref="TableTag"/> values referenced by the contained select tags.
     /// </summary>
     /// <returns>An enumeration of unique <see cref="TableTag"/> values.</returns>
-    internal override IEnumerable<TableTag> GetTableTags() =>
+    internal IEnumerable<TableTag> GetTableTags() =>
         _selectTags
-            .SelectMany(select => select.GetTableTags())
+            .Select(select => select.ColumnTag.TableTag)
             .Distinct();
 
     /// <summary>
@@ -114,7 +115,7 @@ public class SelectTags : SelectTagsBase
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when the property name provided does not exist for T or is ineligible to model a column.
     /// </exception>
-    public SelectTags Concat(params IEnumerable<SelectTagsBase> selectTags) =>
+    public SelectTags Concat(params IEnumerable<SelectTags> selectTags) =>
         new (_selectTags.Concat(selectTags.SelectMany(selects => selects.All())));
 
 
@@ -248,6 +249,9 @@ public class SelectTags : SelectTagsBase
     /// Returns all <see cref="SelectTag"/> items contained in this instance.
     /// </summary>
     /// <returns>An enumeration of <see cref="SelectTag"/> values.</returns>
-    public override IEnumerable<SelectTag> All() => 
+    public IEnumerable<SelectTag> All() => 
         _selectTags;
+
+
+    public static implicit operator SelectTags(SelectTag join) => new(join);
 }

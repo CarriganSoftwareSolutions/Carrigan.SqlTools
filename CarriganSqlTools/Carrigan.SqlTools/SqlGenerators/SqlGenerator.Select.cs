@@ -181,7 +181,7 @@ public partial class SqlGenerator<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
+    public SqlQuery Select(SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
     {
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
