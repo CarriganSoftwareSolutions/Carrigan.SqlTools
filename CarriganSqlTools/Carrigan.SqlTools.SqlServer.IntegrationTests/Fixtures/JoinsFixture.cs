@@ -17,7 +17,9 @@ public sealed class JoinsFixture : SqlFixtureBase
                 Customer.CreateTableSql,
                 BookStats.CreateTableSql,
                 Order.CreateTableSql,
-                OrderedItem.CreateTableSql
+                OrderedItem.CreateTableSql,
+                Left.CreateTableSql,
+                Right.CreateTableSql
             ],
 
             AddressDataSet.InsertStatement
@@ -26,6 +28,8 @@ public sealed class JoinsFixture : SqlFixtureBase
                 .Concat(BookStatsDataSet.InsertStatement)
                 .Concat(OrderDataSet.InsertStatement)
                 .Concat(OrderedItemDataSet.InsertStatement)
+                .Concat(LeftDataSet.InsertStatement)
+                .Concat(RightDataSet.InsertStatement)
         )
     {
     }

@@ -16,6 +16,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
 
     private readonly SqlGenerator<Customer> CustomerSqlGenerator = new();
     private readonly SqlGenerator<Order> OrderSqlGenerator = new();
+    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
 
     public JoinsTests(JoinsFixture fixture) =>
         _fixture = fixture;
@@ -32,42 +33,42 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
         Assert.Equal(36, customerOrders.Count());
-        ValidateJoin(customerOrders, 1, 1);
-        ValidateJoin(customerOrders, 1, 2);
-        ValidateJoin(customerOrders, 1, 3);
-        ValidateJoin(customerOrders, 1, 4);
-        ValidateJoin(customerOrders, 1, 5);
-        ValidateJoin(customerOrders, 2, 6);
-        ValidateJoin(customerOrders, 2, 7);
-        ValidateJoin(customerOrders, 2, 8);
-        ValidateJoin(customerOrders, 2, 9);
-        ValidateJoin(customerOrders, 3, 10);
-        ValidateJoin(customerOrders, 3, 11);
-        ValidateJoin(customerOrders, 3, 12);
-        ValidateJoin(customerOrders, 4, 13);
-        ValidateJoin(customerOrders, 4, 14);
-        ValidateJoin(customerOrders, 4, 15);
-        ValidateJoin(customerOrders, 5, 16);
-        ValidateJoin(customerOrders, 5, 17);
-        ValidateJoin(customerOrders, 6, 18);
-        ValidateJoin(customerOrders, 6, 19);
-        ValidateJoin(customerOrders, 7, 20);
-        ValidateJoin(customerOrders, 7, 21);
-        ValidateJoin(customerOrders, 8, 22);
-        ValidateJoin(customerOrders, 8, 23);
-        ValidateJoin(customerOrders, 9, 24);
-        ValidateJoin(customerOrders, 9, 25);
-        ValidateJoin(customerOrders, 10, 26);
-        ValidateJoin(customerOrders, 11, 27);
-        ValidateJoin(customerOrders, 12, 28);
-        ValidateJoin(customerOrders, 13, 29);
-        ValidateJoin(customerOrders, 14, 30);
-        ValidateJoin(customerOrders, 15, 31);
-        ValidateJoin(customerOrders, 16, 32);
-        ValidateJoin(customerOrders, 17, 33);
-        ValidateJoin(customerOrders, 18, 34);
-        ValidateJoin(customerOrders, 19, 35);
-        ValidateJoin(customerOrders, 20, 36);
+        ValidateCustomerOrderJoin(customerOrders, 1, 1);
+        ValidateCustomerOrderJoin(customerOrders, 1, 2);
+        ValidateCustomerOrderJoin(customerOrders, 1, 3);
+        ValidateCustomerOrderJoin(customerOrders, 1, 4);
+        ValidateCustomerOrderJoin(customerOrders, 1, 5);
+        ValidateCustomerOrderJoin(customerOrders, 2, 6);
+        ValidateCustomerOrderJoin(customerOrders, 2, 7);
+        ValidateCustomerOrderJoin(customerOrders, 2, 8);
+        ValidateCustomerOrderJoin(customerOrders, 2, 9);
+        ValidateCustomerOrderJoin(customerOrders, 3, 10);
+        ValidateCustomerOrderJoin(customerOrders, 3, 11);
+        ValidateCustomerOrderJoin(customerOrders, 3, 12);
+        ValidateCustomerOrderJoin(customerOrders, 4, 13);
+        ValidateCustomerOrderJoin(customerOrders, 4, 14);
+        ValidateCustomerOrderJoin(customerOrders, 4, 15);
+        ValidateCustomerOrderJoin(customerOrders, 5, 16);
+        ValidateCustomerOrderJoin(customerOrders, 5, 17);
+        ValidateCustomerOrderJoin(customerOrders, 6, 18);
+        ValidateCustomerOrderJoin(customerOrders, 6, 19);
+        ValidateCustomerOrderJoin(customerOrders, 7, 20);
+        ValidateCustomerOrderJoin(customerOrders, 7, 21);
+        ValidateCustomerOrderJoin(customerOrders, 8, 22);
+        ValidateCustomerOrderJoin(customerOrders, 8, 23);
+        ValidateCustomerOrderJoin(customerOrders, 9, 24);
+        ValidateCustomerOrderJoin(customerOrders, 9, 25);
+        ValidateCustomerOrderJoin(customerOrders, 10, 26);
+        ValidateCustomerOrderJoin(customerOrders, 11, 27);
+        ValidateCustomerOrderJoin(customerOrders, 12, 28);
+        ValidateCustomerOrderJoin(customerOrders, 13, 29);
+        ValidateCustomerOrderJoin(customerOrders, 14, 30);
+        ValidateCustomerOrderJoin(customerOrders, 15, 31);
+        ValidateCustomerOrderJoin(customerOrders, 16, 32);
+        ValidateCustomerOrderJoin(customerOrders, 17, 33);
+        ValidateCustomerOrderJoin(customerOrders, 18, 34);
+        ValidateCustomerOrderJoin(customerOrders, 19, 35);
+        ValidateCustomerOrderJoin(customerOrders, 20, 36);
     }
 
     [Fact]
@@ -81,42 +82,42 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
         Assert.Equal(36, customerOrders.Count());
-        ValidateJoin(customerOrders, 1, 1);
-        ValidateJoin(customerOrders, 1, 2);
-        ValidateJoin(customerOrders, 1, 3);
-        ValidateJoin(customerOrders, 1, 4);
-        ValidateJoin(customerOrders, 1, 5);
-        ValidateJoin(customerOrders, 2, 6);
-        ValidateJoin(customerOrders, 2, 7);
-        ValidateJoin(customerOrders, 2, 8);
-        ValidateJoin(customerOrders, 2, 9);
-        ValidateJoin(customerOrders, 3, 10);
-        ValidateJoin(customerOrders, 3, 11);
-        ValidateJoin(customerOrders, 3, 12);
-        ValidateJoin(customerOrders, 4, 13);
-        ValidateJoin(customerOrders, 4, 14);
-        ValidateJoin(customerOrders, 4, 15);
-        ValidateJoin(customerOrders, 5, 16);
-        ValidateJoin(customerOrders, 5, 17);
-        ValidateJoin(customerOrders, 6, 18);
-        ValidateJoin(customerOrders, 6, 19);
-        ValidateJoin(customerOrders, 7, 20);
-        ValidateJoin(customerOrders, 7, 21);
-        ValidateJoin(customerOrders, 8, 22);
-        ValidateJoin(customerOrders, 8, 23);
-        ValidateJoin(customerOrders, 9, 24);
-        ValidateJoin(customerOrders, 9, 25);
-        ValidateJoin(customerOrders, 10, 26);
-        ValidateJoin(customerOrders, 11, 27);
-        ValidateJoin(customerOrders, 12, 28);
-        ValidateJoin(customerOrders, 13, 29);
-        ValidateJoin(customerOrders, 14, 30);
-        ValidateJoin(customerOrders, 15, 31);
-        ValidateJoin(customerOrders, 16, 32);
-        ValidateJoin(customerOrders, 17, 33);
-        ValidateJoin(customerOrders, 18, 34);
-        ValidateJoin(customerOrders, 19, 35);
-        ValidateJoin(customerOrders, 20, 36);
+        ValidateCustomerOrderJoin(customerOrders, 1, 1);
+        ValidateCustomerOrderJoin(customerOrders, 1, 2);
+        ValidateCustomerOrderJoin(customerOrders, 1, 3);
+        ValidateCustomerOrderJoin(customerOrders, 1, 4);
+        ValidateCustomerOrderJoin(customerOrders, 1, 5);
+        ValidateCustomerOrderJoin(customerOrders, 2, 6);
+        ValidateCustomerOrderJoin(customerOrders, 2, 7);
+        ValidateCustomerOrderJoin(customerOrders, 2, 8);
+        ValidateCustomerOrderJoin(customerOrders, 2, 9);
+        ValidateCustomerOrderJoin(customerOrders, 3, 10);
+        ValidateCustomerOrderJoin(customerOrders, 3, 11);
+        ValidateCustomerOrderJoin(customerOrders, 3, 12);
+        ValidateCustomerOrderJoin(customerOrders, 4, 13);
+        ValidateCustomerOrderJoin(customerOrders, 4, 14);
+        ValidateCustomerOrderJoin(customerOrders, 4, 15);
+        ValidateCustomerOrderJoin(customerOrders, 5, 16);
+        ValidateCustomerOrderJoin(customerOrders, 5, 17);
+        ValidateCustomerOrderJoin(customerOrders, 6, 18);
+        ValidateCustomerOrderJoin(customerOrders, 6, 19);
+        ValidateCustomerOrderJoin(customerOrders, 7, 20);
+        ValidateCustomerOrderJoin(customerOrders, 7, 21);
+        ValidateCustomerOrderJoin(customerOrders, 8, 22);
+        ValidateCustomerOrderJoin(customerOrders, 8, 23);
+        ValidateCustomerOrderJoin(customerOrders, 9, 24);
+        ValidateCustomerOrderJoin(customerOrders, 9, 25);
+        ValidateCustomerOrderJoin(customerOrders, 10, 26);
+        ValidateCustomerOrderJoin(customerOrders, 11, 27);
+        ValidateCustomerOrderJoin(customerOrders, 12, 28);
+        ValidateCustomerOrderJoin(customerOrders, 13, 29);
+        ValidateCustomerOrderJoin(customerOrders, 14, 30);
+        ValidateCustomerOrderJoin(customerOrders, 15, 31);
+        ValidateCustomerOrderJoin(customerOrders, 16, 32);
+        ValidateCustomerOrderJoin(customerOrders, 17, 33);
+        ValidateCustomerOrderJoin(customerOrders, 18, 34);
+        ValidateCustomerOrderJoin(customerOrders, 19, 35);
+        ValidateCustomerOrderJoin(customerOrders, 20, 36);
     }
 
     [Fact]
@@ -130,48 +131,48 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
         Assert.Equal(41, customerOrders.Count());
-        ValidateJoin(customerOrders, 1, 1);
-        ValidateJoin(customerOrders, 1, 2);
-        ValidateJoin(customerOrders, 1, 3);
-        ValidateJoin(customerOrders, 1, 4);
-        ValidateJoin(customerOrders, 1, 5);
-        ValidateJoin(customerOrders, 2, 6);
-        ValidateJoin(customerOrders, 2, 7);
-        ValidateJoin(customerOrders, 2, 8);
-        ValidateJoin(customerOrders, 2, 9);
-        ValidateJoin(customerOrders, 3, 10);
-        ValidateJoin(customerOrders, 3, 11);
-        ValidateJoin(customerOrders, 3, 12);
-        ValidateJoin(customerOrders, 4, 13);
-        ValidateJoin(customerOrders, 4, 14);
-        ValidateJoin(customerOrders, 4, 15);
-        ValidateJoin(customerOrders, 5, 16);
-        ValidateJoin(customerOrders, 5, 17);
-        ValidateJoin(customerOrders, 6, 18);
-        ValidateJoin(customerOrders, 6, 19);
-        ValidateJoin(customerOrders, 7, 20);
-        ValidateJoin(customerOrders, 7, 21);
-        ValidateJoin(customerOrders, 8, 22);
-        ValidateJoin(customerOrders, 8, 23);
-        ValidateJoin(customerOrders, 9, 24);
-        ValidateJoin(customerOrders, 9, 25);
-        ValidateJoin(customerOrders, 10, 26);
-        ValidateJoin(customerOrders, 11, 27);
-        ValidateJoin(customerOrders, 12, 28);
-        ValidateJoin(customerOrders, 13, 29);
-        ValidateJoin(customerOrders, 14, 30);
-        ValidateJoin(customerOrders, 15, 31);
-        ValidateJoin(customerOrders, 16, 32);
-        ValidateJoin(customerOrders, 17, 33);
-        ValidateJoin(customerOrders, 18, 34);
-        ValidateJoin(customerOrders, 19, 35);
-        ValidateJoin(customerOrders, 20, 36);
+        ValidateCustomerOrderJoin(customerOrders, 1, 1);
+        ValidateCustomerOrderJoin(customerOrders, 1, 2);
+        ValidateCustomerOrderJoin(customerOrders, 1, 3);
+        ValidateCustomerOrderJoin(customerOrders, 1, 4);
+        ValidateCustomerOrderJoin(customerOrders, 1, 5);
+        ValidateCustomerOrderJoin(customerOrders, 2, 6);
+        ValidateCustomerOrderJoin(customerOrders, 2, 7);
+        ValidateCustomerOrderJoin(customerOrders, 2, 8);
+        ValidateCustomerOrderJoin(customerOrders, 2, 9);
+        ValidateCustomerOrderJoin(customerOrders, 3, 10);
+        ValidateCustomerOrderJoin(customerOrders, 3, 11);
+        ValidateCustomerOrderJoin(customerOrders, 3, 12);
+        ValidateCustomerOrderJoin(customerOrders, 4, 13);
+        ValidateCustomerOrderJoin(customerOrders, 4, 14);
+        ValidateCustomerOrderJoin(customerOrders, 4, 15);
+        ValidateCustomerOrderJoin(customerOrders, 5, 16);
+        ValidateCustomerOrderJoin(customerOrders, 5, 17);
+        ValidateCustomerOrderJoin(customerOrders, 6, 18);
+        ValidateCustomerOrderJoin(customerOrders, 6, 19);
+        ValidateCustomerOrderJoin(customerOrders, 7, 20);
+        ValidateCustomerOrderJoin(customerOrders, 7, 21);
+        ValidateCustomerOrderJoin(customerOrders, 8, 22);
+        ValidateCustomerOrderJoin(customerOrders, 8, 23);
+        ValidateCustomerOrderJoin(customerOrders, 9, 24);
+        ValidateCustomerOrderJoin(customerOrders, 9, 25);
+        ValidateCustomerOrderJoin(customerOrders, 10, 26);
+        ValidateCustomerOrderJoin(customerOrders, 11, 27);
+        ValidateCustomerOrderJoin(customerOrders, 12, 28);
+        ValidateCustomerOrderJoin(customerOrders, 13, 29);
+        ValidateCustomerOrderJoin(customerOrders, 14, 30);
+        ValidateCustomerOrderJoin(customerOrders, 15, 31);
+        ValidateCustomerOrderJoin(customerOrders, 16, 32);
+        ValidateCustomerOrderJoin(customerOrders, 17, 33);
+        ValidateCustomerOrderJoin(customerOrders, 18, 34);
+        ValidateCustomerOrderJoin(customerOrders, 19, 35);
+        ValidateCustomerOrderJoin(customerOrders, 20, 36);
 
-        ValidateJoin(customerOrders, 21, null);
-        ValidateJoin(customerOrders, 22, null);
-        ValidateJoin(customerOrders, 23, null);
-        ValidateJoin(customerOrders, 24, null);
-        ValidateJoin(customerOrders, 25, null);
+        ValidateCustomerOrderJoin(customerOrders, 21, null);
+        ValidateCustomerOrderJoin(customerOrders, 22, null);
+        ValidateCustomerOrderJoin(customerOrders, 23, null);
+        ValidateCustomerOrderJoin(customerOrders, 24, null);
+        ValidateCustomerOrderJoin(customerOrders, 25, null);
     }
 
     [Fact]
@@ -185,51 +186,115 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
         Assert.Equal(41, customerOrders.Count());
-        ValidateJoin(customerOrders, 1, 1);
-        ValidateJoin(customerOrders, 1, 2);
-        ValidateJoin(customerOrders, 1, 3);
-        ValidateJoin(customerOrders, 1, 4);
-        ValidateJoin(customerOrders, 1, 5);
-        ValidateJoin(customerOrders, 2, 6);
-        ValidateJoin(customerOrders, 2, 7);
-        ValidateJoin(customerOrders, 2, 8);
-        ValidateJoin(customerOrders, 2, 9);
-        ValidateJoin(customerOrders, 3, 10);
-        ValidateJoin(customerOrders, 3, 11);
-        ValidateJoin(customerOrders, 3, 12);
-        ValidateJoin(customerOrders, 4, 13);
-        ValidateJoin(customerOrders, 4, 14);
-        ValidateJoin(customerOrders, 4, 15);
-        ValidateJoin(customerOrders, 5, 16);
-        ValidateJoin(customerOrders, 5, 17);
-        ValidateJoin(customerOrders, 6, 18);
-        ValidateJoin(customerOrders, 6, 19);
-        ValidateJoin(customerOrders, 7, 20);
-        ValidateJoin(customerOrders, 7, 21);
-        ValidateJoin(customerOrders, 8, 22);
-        ValidateJoin(customerOrders, 8, 23);
-        ValidateJoin(customerOrders, 9, 24);
-        ValidateJoin(customerOrders, 9, 25);
-        ValidateJoin(customerOrders, 10, 26);
-        ValidateJoin(customerOrders, 11, 27);
-        ValidateJoin(customerOrders, 12, 28);
-        ValidateJoin(customerOrders, 13, 29);
-        ValidateJoin(customerOrders, 14, 30);
-        ValidateJoin(customerOrders, 15, 31);
-        ValidateJoin(customerOrders, 16, 32);
-        ValidateJoin(customerOrders, 17, 33);
-        ValidateJoin(customerOrders, 18, 34);
-        ValidateJoin(customerOrders, 19, 35);
-        ValidateJoin(customerOrders, 20, 36);
+        ValidateCustomerOrderJoin(customerOrders, 1, 1);
+        ValidateCustomerOrderJoin(customerOrders, 1, 2);
+        ValidateCustomerOrderJoin(customerOrders, 1, 3);
+        ValidateCustomerOrderJoin(customerOrders, 1, 4);
+        ValidateCustomerOrderJoin(customerOrders, 1, 5);
+        ValidateCustomerOrderJoin(customerOrders, 2, 6);
+        ValidateCustomerOrderJoin(customerOrders, 2, 7);
+        ValidateCustomerOrderJoin(customerOrders, 2, 8);
+        ValidateCustomerOrderJoin(customerOrders, 2, 9);
+        ValidateCustomerOrderJoin(customerOrders, 3, 10);
+        ValidateCustomerOrderJoin(customerOrders, 3, 11);
+        ValidateCustomerOrderJoin(customerOrders, 3, 12);
+        ValidateCustomerOrderJoin(customerOrders, 4, 13);
+        ValidateCustomerOrderJoin(customerOrders, 4, 14);
+        ValidateCustomerOrderJoin(customerOrders, 4, 15);
+        ValidateCustomerOrderJoin(customerOrders, 5, 16);
+        ValidateCustomerOrderJoin(customerOrders, 5, 17);
+        ValidateCustomerOrderJoin(customerOrders, 6, 18);
+        ValidateCustomerOrderJoin(customerOrders, 6, 19);
+        ValidateCustomerOrderJoin(customerOrders, 7, 20);
+        ValidateCustomerOrderJoin(customerOrders, 7, 21);
+        ValidateCustomerOrderJoin(customerOrders, 8, 22);
+        ValidateCustomerOrderJoin(customerOrders, 8, 23);
+        ValidateCustomerOrderJoin(customerOrders, 9, 24);
+        ValidateCustomerOrderJoin(customerOrders, 9, 25);
+        ValidateCustomerOrderJoin(customerOrders, 10, 26);
+        ValidateCustomerOrderJoin(customerOrders, 11, 27);
+        ValidateCustomerOrderJoin(customerOrders, 12, 28);
+        ValidateCustomerOrderJoin(customerOrders, 13, 29);
+        ValidateCustomerOrderJoin(customerOrders, 14, 30);
+        ValidateCustomerOrderJoin(customerOrders, 15, 31);
+        ValidateCustomerOrderJoin(customerOrders, 16, 32);
+        ValidateCustomerOrderJoin(customerOrders, 17, 33);
+        ValidateCustomerOrderJoin(customerOrders, 18, 34);
+        ValidateCustomerOrderJoin(customerOrders, 19, 35);
+        ValidateCustomerOrderJoin(customerOrders, 20, 36);
 
-        ValidateJoin(customerOrders, 21, null);
-        ValidateJoin(customerOrders, 22, null);
-        ValidateJoin(customerOrders, 23, null);
-        ValidateJoin(customerOrders, 24, null);
-        ValidateJoin(customerOrders, 25, null);
+        ValidateCustomerOrderJoin(customerOrders, 21, null);
+        ValidateCustomerOrderJoin(customerOrders, 22, null);
+        ValidateCustomerOrderJoin(customerOrders, 23, null);
+        ValidateCustomerOrderJoin(customerOrders, 24, null);
+        ValidateCustomerOrderJoin(customerOrders, 25, null);
     }
 
-    private static void ValidateJoin(IEnumerable<CustomerOrder> actualRecords, int? expectedCustomerId, int? expectedOrderId)
+    [Fact]
+    public async Task FullJoin()
+    {
+        ColumnEqualsColumn<Left, Right> joinPredicate = new(nameof(Left.Id), nameof(Right.Id));
+        JoinBase join = new FullJoin<Right>(joinPredicate);
+        SelectTags selectTags = new(SelectTag.GetAll<LeftRight>());
+        SqlQuery query = LeftSqlGenerator.Select(selectTags, join, null, null, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
+
+        Assert.Equal(8, leftRights.Count());
+
+        ValidateLeftRightJoin(leftRights, 1, null);
+        ValidateLeftRightJoin(leftRights, 2, null);
+        ValidateLeftRightJoin(leftRights, 3, null);
+        ValidateLeftRightJoin(leftRights, 4, 4);
+        ValidateLeftRightJoin(leftRights, 5, 5);
+        ValidateLeftRightJoin(leftRights, null, 6);
+        ValidateLeftRightJoin(leftRights, null, 7);
+        ValidateLeftRightJoin(leftRights, null, 8);
+    }
+
+    [Fact]
+    public async Task CrossJoin()
+    {
+        JoinBase join = new CrossJoin<Right>();
+        SelectTags selectTags = new(SelectTag.GetAll<LeftRight>());
+        SqlQuery query = LeftSqlGenerator.Select(selectTags, join, null, null, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
+
+        Assert.Equal(25, leftRights.Count());
+
+        ValidateLeftRightJoin(leftRights, 1, 4);
+        ValidateLeftRightJoin(leftRights, 1, 5);
+        ValidateLeftRightJoin(leftRights, 1, 6);
+        ValidateLeftRightJoin(leftRights, 1, 7);
+        ValidateLeftRightJoin(leftRights, 1, 8);
+
+        ValidateLeftRightJoin(leftRights, 2, 4);
+        ValidateLeftRightJoin(leftRights, 2, 5);
+        ValidateLeftRightJoin(leftRights, 2, 6);
+        ValidateLeftRightJoin(leftRights, 2, 7);
+        ValidateLeftRightJoin(leftRights, 2, 8);
+
+        ValidateLeftRightJoin(leftRights, 3, 4);
+        ValidateLeftRightJoin(leftRights, 3, 5);
+        ValidateLeftRightJoin(leftRights, 3, 6);
+        ValidateLeftRightJoin(leftRights, 3, 7);
+        ValidateLeftRightJoin(leftRights, 3, 8);
+
+        ValidateLeftRightJoin(leftRights, 4, 4);
+        ValidateLeftRightJoin(leftRights, 4, 5);
+        ValidateLeftRightJoin(leftRights, 4, 6);
+        ValidateLeftRightJoin(leftRights, 4, 7);
+        ValidateLeftRightJoin(leftRights, 4, 8);
+
+        ValidateLeftRightJoin(leftRights, 5, 4);
+        ValidateLeftRightJoin(leftRights, 5, 5);
+        ValidateLeftRightJoin(leftRights, 5, 6);
+        ValidateLeftRightJoin(leftRights, 5, 7);
+        ValidateLeftRightJoin(leftRights, 5, 8);
+    }
+
+    private static void ValidateCustomerOrderJoin(IEnumerable<CustomerOrder> actualRecords, int? expectedCustomerId, int? expectedOrderId)
     {
         CustomerOrder actual = actualRecords
             .Where(record => (record.CustomerId == expectedCustomerId && record.OrderId == expectedOrderId))
@@ -290,6 +355,61 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             Assert.Equal(actual.AddressId, expected.AddressId);
             Assert.Equal(actual.Date, expected.Date);
             Assert.Equal(actual.SalesTaxPercent, expected.SalesTaxPercent);
+        }
+    }
+
+    private static void ValidateLeftRightJoin(IEnumerable<LeftRight> actualRecords, int? expectedLeftId, int? expectedRightId)
+    {
+        LeftRight actual = actualRecords
+            .Where(record => record.LeftId == expectedLeftId && record.RightId == expectedRightId)
+            .Single();
+
+        Left? expectedLeft = null;
+        Right? expectedRight = null;
+
+        if (expectedLeftId is not null)
+        {
+            expectedLeft = LeftDataSet
+                .Data
+                .Where(left => left.Id == expectedLeftId)
+                .Single();
+        }
+
+        if (expectedRightId is not null)
+        {
+            expectedRight = RightDataSet
+                .Data
+                .Where(right => right.Id == expectedRightId)
+                .Single();
+        }
+
+        ValidateLeft(actual, expectedLeft);
+        ValidateRight(actual, expectedRight);
+    }
+    private static void ValidateLeft(LeftRight actual, Left? expected)
+    {
+        if (expected is null)
+        {
+            Assert.Null(actual.LeftId);
+            Assert.Null(actual.LeftWord);
+        }
+        else
+        {
+            Assert.Equal(expected.Id, actual.LeftId);
+            Assert.Equal(expected.LeftWord, actual.LeftWord);
+        }
+    }
+    private static void ValidateRight(LeftRight actual, Right? expected)
+    {
+        if (expected is null)
+        {
+            Assert.Null(actual.RightId);
+            Assert.Null(actual.RightWord);
+        }
+        else
+        {
+            Assert.Equal(expected.Id, actual.RightId);
+            Assert.Equal(expected.RightWord, actual.RightWord);
         }
     }
 }
