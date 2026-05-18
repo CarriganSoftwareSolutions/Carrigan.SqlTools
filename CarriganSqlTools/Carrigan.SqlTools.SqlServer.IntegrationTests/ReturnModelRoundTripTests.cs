@@ -1,9 +1,9 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
-using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 using Microsoft.Data.SqlClient;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests;

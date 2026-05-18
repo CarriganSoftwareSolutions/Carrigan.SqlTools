@@ -1,6 +1,6 @@
 ﻿//IGNORE SPELLING: localdb respawner dbo
 
-using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 

@@ -1,7 +1,7 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
-using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.DataSets;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 

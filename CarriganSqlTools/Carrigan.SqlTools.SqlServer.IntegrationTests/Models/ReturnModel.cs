@@ -1,7 +1,6 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using System.ComponentModel.DataAnnotations;
 //IGNORE SPELLING: newid
-namespace Carrigan.SqlTools.IntegrationTests.Models;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 
 [Identifier("ReturnModel")]
 internal class ReturnModel

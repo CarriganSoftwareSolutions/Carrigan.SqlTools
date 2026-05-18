@@ -2,7 +2,7 @@
 
 using Carrigan.SqlTools.Attributes;
 
-namespace Carrigan.SqlTools.IntegrationTests.Models;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 
 [Identifier("Fields")]
 public class FieldsModel

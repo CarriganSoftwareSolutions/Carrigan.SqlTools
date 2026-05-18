@@ -1,4 +1,4 @@
-namespace Carrigan.SqlTools.IntegrationTests.Models;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 
 public sealed class OrderedItem
 {

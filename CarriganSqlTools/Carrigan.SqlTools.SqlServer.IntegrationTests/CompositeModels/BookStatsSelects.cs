@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carrigan.SqlTools.IntegrationTests.Models;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.CompositeModels;
 
 internal class BookStatsSelects
 {
