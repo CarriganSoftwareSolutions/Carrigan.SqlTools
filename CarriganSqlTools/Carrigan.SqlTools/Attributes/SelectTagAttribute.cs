@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.Attributes;
 
-internal abstract class SelectTagAttribute : Attribute
+public abstract class SelectTagAttribute : Attribute
 {
     internal SelectTag? SelectTag { get; init; }
 
@@ -16,19 +16,19 @@ internal abstract class SelectTagAttribute : Attribute
             .OfType<SelectTagAttribute>()
             .FirstOrDefault(attribute =>
                 attribute.GetType().IsGenericType &&
-                attribute.GetType().GetGenericTypeDefinition() == typeof(SelectAttribute<>));
+                attribute.GetType().GetGenericTypeDefinition() == typeof(SelectTagAttribute<>));
 }
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-internal class SelectAttribute<T> : SelectTagAttribute
+public class SelectTagAttribute<T> : SelectTagAttribute
 {
     [ExternalOnly]
-    public SelectAttribute(string propertyName, string? aliasName = null) :
+    public SelectTagAttribute(string propertyName, string? aliasName = null) :
         this(new(propertyName), AliasName.New(aliasName))
     {
     }
 
-    internal SelectAttribute(PropertyName propertyName, AliasName? aliasName = null) =>
+    internal SelectTagAttribute(PropertyName propertyName, AliasName? aliasName = null) =>
         SelectTag = SqlToolsReflectorCache<T>
             .GetSelectTag(propertyName, aliasName);
 }

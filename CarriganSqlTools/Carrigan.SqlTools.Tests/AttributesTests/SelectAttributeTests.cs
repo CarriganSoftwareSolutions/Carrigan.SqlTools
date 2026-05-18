@@ -6,13 +6,13 @@ using System.Reflection;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 
-public sealed class SelectAttributeTests
+public sealed class SelectTagAttributeTests
 {
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
     [Fact]
-    public void GetAttribute_ReturnsAttribute_WhenPropertyHasGenericSelectAttribute()
+    public void GetAttribute_ReturnsAttribute_WhenPropertyHasGenericSelectTagAttribute()
     {
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributes), nameof(ModelWithSelectAttributes.Id));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributes), nameof(ModelWithSelectTagAttributes.Id));
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
@@ -20,9 +20,9 @@ public sealed class SelectAttributeTests
     }
 
     [Fact]
-    public void GetAttribute_ReturnsSelectTag_WhenPropertyHasGenericSelectAttribute()
+    public void GetAttribute_ReturnsSelectTag_WhenPropertyHasGenericSelectTagAttribute()
     {
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributes), nameof(ModelWithSelectAttributes.Id));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributes), nameof(ModelWithSelectTagAttributes.Id));
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
@@ -33,18 +33,18 @@ public sealed class SelectAttributeTests
     [Fact]
     public void GetAttribute_ReturnsAttribute_WhenGenericTypeIsNotKnownAtCallSite()
     {
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributes), nameof(ModelWithSelectAttributes.Name));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributes), nameof(ModelWithSelectTagAttributes.Name));
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
         Assert.NotNull(attribute);
-        Assert.Equal(typeof(SelectAttribute<SelectSource>), attribute.GetType());
+        Assert.Equal(typeof(SelectTagAttribute<SelectSource>), attribute.GetType());
     }
 
     [Fact]
     public void GetAttribute_ReturnsAttribute_WithExpectedGenericArgument()
     {
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributes), nameof(ModelWithSelectAttributes.Name));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributes), nameof(ModelWithSelectTagAttributes.Name));
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
@@ -53,14 +53,14 @@ public sealed class SelectAttributeTests
         Type attributeType = attribute.GetType();
 
         Assert.True(attributeType.IsGenericType);
-        Assert.Equal(typeof(SelectAttribute<>), attributeType.GetGenericTypeDefinition());
+        Assert.Equal(typeof(SelectTagAttribute<>), attributeType.GetGenericTypeDefinition());
         Assert.Equal(typeof(SelectSource), attributeType.GetGenericArguments()[0]);
     }
 
     [Fact]
-    public void GetAttribute_ReturnsNull_WhenPropertyDoesNotHaveSelectAttribute()
+    public void GetAttribute_ReturnsNull_WhenPropertyDoesNotHaveSelectTagAttribute()
     {
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributes), nameof(ModelWithSelectAttributes.PlainValue));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributes), nameof(ModelWithSelectTagAttributes.PlainValue));
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
@@ -71,7 +71,7 @@ public sealed class SelectAttributeTests
     public void GetAttribute_ReturnsNull_WhenPropertyHasDifferentAttribute()
     {
 #pragma warning disable CS0612 // Type or member is obsolete
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributes), nameof(ModelWithSelectAttributes.ObsoleteValue));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributes), nameof(ModelWithSelectTagAttributes.ObsoleteValue));
 #pragma warning restore CS0612 // Type or member is obsolete
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
@@ -82,7 +82,7 @@ public sealed class SelectAttributeTests
     [Fact]
     public void GetAttribute_ValidateTagNames()
     {
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributes), nameof(ModelWithSelectAttributes.Name));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributes), nameof(ModelWithSelectTagAttributes.Name));
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
@@ -99,7 +99,7 @@ public sealed class SelectAttributeTests
     [Fact]
     public void GetAttribute_WithIdentifiers_ValidateTagNames()
     {
-        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectAttributesIdentifier), nameof(ModelWithSelectAttributesIdentifier.Name));
+        PropertyInfo propertyInfo = GetProperty(typeof(ModelWithSelectTagAttributesIdentifier), nameof(ModelWithSelectTagAttributesIdentifier.Name));
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
@@ -133,12 +133,12 @@ public sealed class SelectAttributeTests
         public string Name { get; set; } = string.Empty;
     }
 
-    private sealed class ModelWithSelectAttributes
+    private sealed class ModelWithSelectTagAttributes
     {
-        [Select<SelectSource>(nameof(SelectSource.Id))]
+        [SelectTag<SelectSource>(nameof(SelectSource.Id))]
         public Guid Id { get; set; }
 
-        [Select<SelectSource>(nameof(SelectSource.Name), "SourceName")]
+        [SelectTag<SelectSource>(nameof(SelectSource.Name), "SourceName")]
         public string Name { get; set; } = string.Empty;
 
         public string PlainValue { get; set; } = string.Empty;
@@ -147,12 +147,12 @@ public sealed class SelectAttributeTests
         public string ObsoleteValue { get; set; } = string.Empty;
     }
 
-    private sealed class ModelWithSelectAttributesIdentifier
+    private sealed class ModelWithSelectTagAttributesIdentifier
     {
-        [Select<SelectSourceIdentifier>(nameof(SelectSourceIdentifier.Id))]
+        [SelectTag<SelectSourceIdentifier>(nameof(SelectSourceIdentifier.Id))]
         public Guid Id { get; set; }
 
-        [Select<SelectSourceIdentifier>(nameof(SelectSourceIdentifier.Name), "SourceName")]
+        [SelectTag<SelectSourceIdentifier>(nameof(SelectSourceIdentifier.Name), "SourceName")]
         public string Name { get; set; } = string.Empty;
     }
 }
