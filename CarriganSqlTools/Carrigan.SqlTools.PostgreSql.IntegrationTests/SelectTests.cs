@@ -35,7 +35,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Assert.Equal(11, books.Count());
         for (int i = 1; i < 12; i++)
         {
-            BookDataSet.Validate(books, i);
+            BookDataSet.ValidateBookById(books, i);
         }
     }
 
@@ -47,7 +47,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 5);
+        BookDataSet.ValidateBookById(books, 5);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 9);
+        BookDataSet.ValidateBookById(books, 9);
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 4);
+        BookDataSet.ValidateBookById(books, 4);
     }
 
     //TODO: we need a integration unit test for contains, but are being limited by our current local db server instance.
@@ -93,7 +93,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 4);
+        BookDataSet.ValidateBookById(books, 4);
     }
 
     [Fact]
@@ -108,12 +108,12 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(6, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 7);
-        BookDataSet.Validate(books, 8);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 7);
+        BookDataSet.ValidateBookById(books, 8);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -128,13 +128,13 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(7, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 7);
-        BookDataSet.Validate(books, 8);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 7);
+        BookDataSet.ValidateBookById(books, 8);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Assert.Equal(10, books.Count());
         for (int i = 1; i < 11; i++)
         {
-            BookDataSet.Validate(books, i);
+            BookDataSet.ValidateBookById(books, i);
         }
     }
 
@@ -167,7 +167,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
 
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -182,9 +182,9 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(3, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -199,10 +199,10 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 2);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 2);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -218,10 +218,10 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -237,10 +237,10 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -271,10 +271,10 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -290,8 +290,8 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(2, books.Count());
-        BookDataSet.Validate(books, 7);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 7);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -307,16 +307,16 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(10, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 2);
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 8);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 2);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 8);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -333,10 +333,10 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 8);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 8);
     }
 
     [Fact]
@@ -355,7 +355,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 6);
+        BookDataSet.ValidateBookById(books, 6);
     }
 
     [Fact]
@@ -371,9 +371,9 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(3, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]

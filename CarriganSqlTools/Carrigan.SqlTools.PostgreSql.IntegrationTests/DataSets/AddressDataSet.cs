@@ -1,4 +1,3 @@
-
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 

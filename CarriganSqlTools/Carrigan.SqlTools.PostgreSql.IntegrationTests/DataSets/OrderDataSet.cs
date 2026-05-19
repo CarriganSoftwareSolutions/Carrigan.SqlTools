@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 

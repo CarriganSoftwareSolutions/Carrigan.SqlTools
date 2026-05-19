@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 
@@ -8,22 +5,52 @@ namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
 
 public static class BookDataSet
 {
-    public static void Validate(IEnumerable<Book> actualBooks, int expectedId)
+    public static void ValidateBookById(IEnumerable<Book> actualBooks, int expectedId)
     {
         Book actual = actualBooks.Where(book => book.Id == expectedId).Single();
         Validate(actual, expectedId);
     }
-    public static void Validate(Book actual, int expectedId)
-    {
-        Book expected = Data.Where(book => book.Id == expectedId).Single();
 
-        Assert.Equal(expected.Id, actual.Id);
-        Assert.Equal(expected.Title, actual.Title);
-        Assert.Equal(expected.Author, actual.Author);
-        Assert.Equal(expected.Description, actual.Description);
-        Assert.Equal(expected.Price, actual.Price);
-        Assert.Equal(expected.Pages, actual.Pages);
-        Assert.Equal(expected.YearPublished, actual.YearPublished);
+    public static void ValidateAtIndex(IEnumerable<Book> actualBooks, int index, int? expectedId)
+    {
+        Book actual = actualBooks.ElementAt(index);
+
+        Assert.Equal(expectedId, actual.Id);
+
+        Validate(actual, expectedId);
+    }
+    public static void ValidateByIndexRange(IEnumerable<Book> actualBooks, int indexFirst, int indexLast, int expectedId)
+    {
+        for (int index = indexFirst; index <= indexLast; index++)
+        {
+            ValidateAtIndex(actualBooks, index, expectedId);
+        }
+    }
+
+    public static void Validate(Book actual, int? expectedId)
+    {
+        if (expectedId is null)
+        {
+            Assert.Null(actual.Id);
+            Assert.Null(actual.Title);
+            Assert.Null(actual.Author);
+            Assert.Null(actual.Description);
+            Assert.Null(actual.Price);
+            Assert.Null(actual.Pages);
+            Assert.Null(actual.YearPublished);
+        }
+        else
+        {
+            Book expected = Data.Where(book => book.Id == expectedId).Single();
+
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Title, actual.Title);
+            Assert.Equal(expected.Author, actual.Author);
+            Assert.Equal(expected.Description, actual.Description);
+            Assert.Equal(expected.Price, actual.Price);
+            Assert.Equal(expected.Pages, actual.Pages);
+            Assert.Equal(expected.YearPublished, actual.YearPublished);
+        }
     }
 
     public static readonly IEnumerable<Book> Data =
