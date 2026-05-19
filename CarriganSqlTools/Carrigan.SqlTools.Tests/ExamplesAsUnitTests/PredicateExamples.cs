@@ -23,7 +23,7 @@ public class PredicateExamples
         ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
         And and = new(equalName, equalEmail, equalPhone);
 
-        SqlQuery query = customerGenerator.Select(null, null, and, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, and, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (([Customer].[Name] = @Name_1) AND ([Customer].[Email] = @Email_2) AND ([Customer].[Phone] = @Phone_3))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -39,7 +39,7 @@ public class PredicateExamples
     {
         ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
         And and = new(equalName);
-        SqlQuery query = customerGenerator.Select(null, null, and, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, and, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -52,7 +52,7 @@ public class PredicateExamples
     public void PredicateColumnValues()
     {
         ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
-        SqlQuery query = customerGenerator.Select(null, null, columnValue, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, columnValue, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -67,7 +67,7 @@ public class PredicateExamples
         //Note: ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
         LeftJoin<Order> join = new (columnValue);
-        SqlQuery query = customerGenerator.Select(null, join, null, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, join, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] LEFT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -80,7 +80,7 @@ public class PredicateExamples
         Parameter parameterName = new("Name", "Hank");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equalName = new(columnName, parameterName);
-        SqlQuery query = customerGenerator.Select(null, null, equalName, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, equalName, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -95,7 +95,7 @@ public class PredicateExamples
         Parameter parameterEmail = new("Email", "@example.");
         Column<Customer> columnEmail = new(nameof(Customer.Email));
         Contains<Customer> predicate = new(columnEmail, parameterEmail);
-        SqlQuery query = customerGenerator.Select(null, null, predicate, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, predicate, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE CONTAINS([Customer].[Email], @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -110,7 +110,7 @@ public class PredicateExamples
         Parameter parameterName = new("Name", "Hank");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equalName = new(columnName, parameterName);
-        SqlQuery query = customerGenerator.Select(null, null, equalName, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, equalName, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -125,7 +125,7 @@ public class PredicateExamples
         Parameter parameterTotal = new("Total", 1776.00m);
         Column<Order> columnTotal = new(nameof(Order.Total));
         GreaterThan predicate = new(columnTotal, parameterTotal);
-        SqlQuery query = orderGenerator.Select(null, null, predicate, null, null);
+        SqlQuery query = orderGenerator.Select(null, null, null, predicate, null, null);
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -140,7 +140,7 @@ public class PredicateExamples
         Parameter parameterTotal = new("Total", 1776.00m);
         Column<Order> columnTotal = new(nameof(Order.Total));
         GreaterThanEqual predicate = new(columnTotal, parameterTotal);
-        SqlQuery query = orderGenerator.Select(null, null, predicate, null, null);
+        SqlQuery query = orderGenerator.Select(null, null, null, predicate, null, null);
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] >= @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -155,7 +155,7 @@ public class PredicateExamples
     {
         Column<Customer> columnName = new(nameof(Customer.Name));
         IsNotNull notNull = new(columnName);
-        SqlQuery query = customerGenerator.Select(null, null, notNull, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, notNull, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NOT NULL)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -167,7 +167,7 @@ public class PredicateExamples
     {
         Column<Customer> columnName = new(nameof(Customer.Name));
         IsNull isNull = new(columnName);
-        SqlQuery query = customerGenerator.Select(null, null, isNull, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, isNull, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NULL)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -180,7 +180,7 @@ public class PredicateExamples
         Parameter parameterTotal = new("Total", 1776.00m);
         Column<Order> columnTotal = new(nameof(Order.Total));
         LessThan predicate = new(columnTotal, parameterTotal);
-        SqlQuery query = orderGenerator.Select(null, null, predicate, null, null);
+        SqlQuery query = orderGenerator.Select(null, null, null, predicate, null, null);
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] < @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -195,7 +195,7 @@ public class PredicateExamples
         Parameter parameterTotal = new("Total", 1776.00m);
         Column<Order> columnTotal = new(nameof(Order.Total));
         LessThanEqual predicate = new(columnTotal, parameterTotal);
-        SqlQuery query = orderGenerator.Select(null, null, predicate, null, null);
+        SqlQuery query = orderGenerator.Select(null, null, null, predicate, null, null);
 
         Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] <= @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -210,7 +210,7 @@ public class PredicateExamples
         Parameter parameterEmail = new("Email", "%@example.com");
         Column<Customer> columnEmail = new(nameof(Customer.Email));
         Like predicate = new(columnEmail, parameterEmail);
-        SqlQuery query = customerGenerator.Select(null, null, predicate, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, predicate, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Email] LIKE @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -226,7 +226,7 @@ public class PredicateExamples
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equal = new(columnName, parameterName);
         Not not = new(equal);
-        SqlQuery query = customerGenerator.Select(null, null, not, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, not, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (NOT ([Customer].[Name] = @Name_1))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -241,7 +241,7 @@ public class PredicateExamples
         Parameter parameterName = new("Name", "Hank");
         Column<Customer> columnName = new(nameof(Customer.Name));
         NotEqual predicate = new(columnName, parameterName);
-        SqlQuery query = customerGenerator.Select(null, null, predicate, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, predicate, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] <> @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -258,7 +258,7 @@ public class PredicateExamples
         ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
         Or or = new(equalName, equalEmail, equalPhone);
 
-        SqlQuery query = customerGenerator.Select(null, null, or, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, or, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (([Customer].[Name] = @Name_1) OR ([Customer].[Email] = @Email_2) OR ([Customer].[Phone] = @Phone_3))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -277,7 +277,7 @@ public class PredicateExamples
 
         ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
         Or or = new(equalName);
-        SqlQuery query = customerGenerator.Select(null, null, or, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, or, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -292,7 +292,7 @@ public class PredicateExamples
         Parameter parameterName = new("Name", "Hank");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equalName = new(columnName, parameterName);
-        SqlQuery query = customerGenerator.Select(null, null, equalName, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, equalName, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

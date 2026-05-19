@@ -35,7 +35,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Assert.Equal(11, books.Count());
         for (int i = 1; i < 12; i++)
         {
-            BookDataSet.Validate(books, i);
+            BookDataSet.ValidateBookById(books, i);
         }
     }
 
@@ -47,7 +47,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 5);
+        BookDataSet.ValidateBookById(books, 5);
     }
 
     [Fact]
@@ -57,12 +57,12 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates price = new ColumnValue<Book>(nameof(Book.Price), 10.99m);
         Predicates and = new And(year, price);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, and, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, and, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 9);
+        BookDataSet.ValidateBookById(books, 9);
     }
 
     [Fact]
@@ -70,12 +70,12 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     {
         Predicates predicates = new ColumnValue<Book>(nameof(Book.YearPublished), 1865);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 4);
+        BookDataSet.ValidateBookById(books, 4);
     }
 
     //TODO: we need a integration unit test for contains, but are being limited by our current local db server instance.
@@ -88,12 +88,12 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("YearPublished", 1865);
         Predicates predicates = new Equal(year, value);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 4);
+        BookDataSet.ValidateBookById(books, 4);
     }
 
     [Fact]
@@ -103,17 +103,17 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("YearPublished", 1865);
         Predicates predicates = new GreaterThan(year, value);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(6, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 7);
-        BookDataSet.Validate(books, 8);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 7);
+        BookDataSet.ValidateBookById(books, 8);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -123,18 +123,18 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("YearPublished", 1865);
         Predicates predicates = new GreaterThanEqual(year, value);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(7, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 7);
-        BookDataSet.Validate(books, 8);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 7);
+        BookDataSet.ValidateBookById(books, 8);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Column<Book> price = new(nameof(Book.Price));
         Predicates predicates = new IsNotNull(price);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
@@ -151,7 +151,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Assert.Equal(10, books.Count());
         for (int i = 1; i < 11; i++)
         {
-            BookDataSet.Validate(books, i);
+            BookDataSet.ValidateBookById(books, i);
         }
     }
 
@@ -161,13 +161,13 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Column<Book> price = new(nameof(Book.Price));
         Predicates predicates = new IsNull(price);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -177,14 +177,14 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("YearPublished", 1851);
         Predicates predicates = new LessThan(year, value);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(3, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -194,15 +194,15 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("YearPublished", 1851);
         Predicates predicates = new LessThanEqual(year, value);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 2);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 2);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -212,15 +212,15 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("Title", "%oF%");
         Predicates predicates = new Like(title, value);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -230,15 +230,15 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("Title", "%of%");
         Predicates predicates = new Like(title, value, true);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -248,15 +248,15 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("Title", "%oF%");
         Predicates predicates = new Like(title, value, false);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -266,7 +266,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter value = new("Title", "%oF%");
         Predicates predicates = new Like(title, value, true);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
@@ -281,13 +281,13 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new Not(new LessThan(year, value));
 
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(2, books.Count());
-        BookDataSet.Validate(books, 7);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 7);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -298,21 +298,21 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicates = new NotEqual(year, value);
 
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, predicates, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, predicates, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(10, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 2);
-        BookDataSet.Validate(books, 3);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 5);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 8);
-        BookDataSet.Validate(books, 9);
-        BookDataSet.Validate(books, 10);
-        BookDataSet.Validate(books, 11);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 2);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 8);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
+        BookDataSet.ValidateBookById(books, 11);
     }
 
     [Fact]
@@ -324,15 +324,15 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates predicate4 = new ColumnValue<Book>(nameof(Book.Id), 8);
         Predicates or = new Or(predicate1, predicate2, predicate3, predicate4);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, or, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, or, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(4, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 6);
-        BookDataSet.Validate(books, 8);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 8);
     }
 
     [Fact]
@@ -344,12 +344,12 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Xor xor = new(value1, value2);
         Equal equal = new(id, xor);
 
-        SqlQuery query = BookSqlGenerator.Select(null, null, equal, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, null, equal, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Single(books);
-        BookDataSet.Validate(books, 6);
+        BookDataSet.ValidateBookById(books, 6);
     }
 
     [Fact]
@@ -360,14 +360,14 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
         Parameter ratingParameter = new("Rating", 4.6m);
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
-        SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, null, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, join, wherePredicate, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(3, books.Count());
-        BookDataSet.Validate(books, 1);
-        BookDataSet.Validate(books, 4);
-        BookDataSet.Validate(books, 10);
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     [Fact]
@@ -379,7 +379,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter ratingParameter = new("Rating", 4.5m);
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
         OrderByBase orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
-        SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, orderBy, null);
+        SqlQuery query = BookSqlGenerator.Select(null, null, join, wherePredicate, orderBy, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
@@ -401,7 +401,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
         OrderByBase orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
         PagingBase paging = new DefinePage(2, 3);
-        SqlQuery query = BookSqlGenerator.Select(null, join, wherePredicate, orderBy, paging);
+        SqlQuery query = BookSqlGenerator.Select(null, null, join, wherePredicate, orderBy, paging);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
@@ -435,7 +435,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
             nameof(Book.Author)
         ).Append<BookStats>(nameof(BookStats.AverageReview));
 
-        SqlQuery query = BookSqlGenerator.Select(selectTags, join, wherePredicate, orderBy, paging);
+        SqlQuery query = BookSqlGenerator.Select(null, selectTags, join, wherePredicate, orderBy, paging);
 
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         //How to do this final projection needs more visible documentation

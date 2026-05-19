@@ -332,4 +332,131 @@ public class JoinsTest
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Append_NewJoin_AddsJoinToEnd()
+    {
+        Joins<JoinLeftTable> relation = new Joins<JoinLeftTable>(new InnerJoin<JoinRightTable>(RightOnLeftPredicate))
+            .Append(new LeftJoin<JoinLastTable>(LastOnRightPredicate));
+
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+
+        Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Append_NewJoin_ReturnsNewJoinsAndDoesNotModifyOriginal()
+    {
+        Joins<JoinLeftTable> original = new(new Join<JoinRightTable>(RightOnLeftPredicate));
+        Joins<JoinLeftTable> actual = original.Append(new FullJoin<JoinLastTable>(LastOnRightPredicate));
+
+        string originalExpected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string actualExpected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+
+        Assert.NotSame(original, actual);
+        Assert.Equal(originalExpected, original.ToSqlFragments(Dialect).ToSql(Dialect));
+        Assert.Equal(actualExpected, actual.ToSqlFragments(Dialect).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Append_NullJoin_ThrowsArgumentNullException()
+    {
+        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+
+        Assert.Throws<ArgumentNullException>(() => relation.Append(null!));
+    }
+
+    [Fact]
+    public void Append_InvalidJoinOrder_ThrowsInvalidTableException()
+    {
+        Joins<JoinLeftTable> relation = new();
+
+        Assert.Throws<InvalidTableException>(() => relation.Append(new LeftJoin<JoinLastTable>(LastOnRightPredicate)));
+    }
+
+    [Fact]
+    public void Concat_JoinBaseEnumerable_AddsJoinsToEnd()
+    {
+        Joins<JoinLeftTable> relation = new Joins<JoinLeftTable>(new InnerJoin<JoinRightTable>(RightOnLeftPredicate))
+            .Concat([new RightJoin<JoinLastTable>(LastOnRightPredicate)]);
+
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) RIGHT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+
+        Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Concat_JoinBaseEnumerable_ReturnsNewJoinsAndDoesNotModifyOriginal()
+    {
+        Joins<JoinLeftTable> original = new(new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins<JoinLeftTable> actual = original.Concat([new Join<JoinLastTable>(LastOnRightPredicate)]);
+
+        string originalExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string actualExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+
+        Assert.NotSame(original, actual);
+        Assert.Equal(originalExpected, original.ToSqlFragments(Dialect).ToSql(Dialect));
+        Assert.Equal(actualExpected, actual.ToSqlFragments(Dialect).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Concat_JoinBaseEnumerable_NullEnumerable_ThrowsArgumentNullException()
+    {
+        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+
+        Assert.Throws<ArgumentNullException>(() => relation.Concat((IEnumerable<JoinBase>)null!));
+    }
+
+    [Fact]
+    public void Concat_JoinBaseEnumerable_NullJoinEntry_ThrowsArgumentNullException()
+    {
+        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+
+        Assert.Throws<ArgumentNullException>(() => relation.Concat([null!]));
+    }
+
+    [Fact]
+    public void Concat_JoinBaseEnumerable_InvalidJoinOrder_ThrowsInvalidTableException()
+    {
+        Joins<JoinLeftTable> relation = new();
+
+        Assert.Throws<InvalidTableException>(() => relation.Concat([new LeftJoin<JoinLastTable>(LastOnRightPredicate)]));
+    }
+
+    [Fact]
+    public void Concat_Joins_AddsJoinsToEnd()
+    {
+        Joins<JoinLeftTable> existingJoins = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins<JoinRightTable> newJoins = new(new FullJoin<JoinLastTable>(LastOnRightPredicate));
+
+        Joins<JoinLeftTable> relation = existingJoins.Concat(newJoins);
+
+        string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+
+        Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Concat_Joins_ReturnsNewJoinsAndDoesNotModifyOriginal()
+    {
+        Joins<JoinLeftTable> original = new(new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins<JoinRightTable> newJoins = new(new InnerJoin<JoinLastTable>(LastOnRightPredicate));
+
+        Joins<JoinLeftTable> actual = original.Concat(newJoins);
+
+        string originalExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string actualExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
+
+        Assert.NotSame(original, actual);
+        Assert.Equal(originalExpected, original.ToSqlFragments(Dialect).ToSql(Dialect));
+        Assert.Equal(actualExpected, actual.ToSqlFragments(Dialect).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Concat_Joins_NullJoins_ThrowsArgumentNullException()
+    {
+        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+
+        Assert.Throws<NullReferenceException>(() => relation.Concat<JoinRightTable>(null!));
+    }
 }

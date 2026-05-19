@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.CompositeModels;
@@ -28,7 +29,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new Join<Order>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = CustomerSqlGenerator.Select(selectTags, join, null, null, null);
+        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -77,7 +78,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new InnerJoin<Order>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = CustomerSqlGenerator.Select(selectTags, join, null, null, null);
+        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -126,7 +127,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new LeftJoin<Order>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = CustomerSqlGenerator.Select(selectTags, join, null, null, null);
+        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -181,7 +182,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new RightJoin<Customer>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = OrderSqlGenerator.Select(selectTags, join, null, null, null);
+        SqlQuery query = OrderSqlGenerator.Select(null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -236,7 +237,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Left, Right> joinPredicate = new(nameof(Left.Id), nameof(Right.Id));
         JoinBase join = new FullJoin<Right>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<LeftRight>());
-        SqlQuery query = LeftSqlGenerator.Select(selectTags, join, null, null, null);
+        SqlQuery query = LeftSqlGenerator.Select(null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
 
@@ -257,7 +258,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     {
         JoinBase join = new CrossJoin<Right>();
         SelectTags selectTags = new(SelectTag.GetAll<LeftRight>());
-        SqlQuery query = LeftSqlGenerator.Select(selectTags, join, null, null, null);
+        SqlQuery query = LeftSqlGenerator.Select(null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
 
@@ -292,6 +293,66 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ValidateLeftRightJoin(leftRights, 5, 6);
         ValidateLeftRightJoin(leftRights, 5, 7);
         ValidateLeftRightJoin(leftRights, 5, 8);
+    }
+
+    [Fact]
+    public async Task ChainedJoins()
+    {
+
+        ColumnEqualsColumn<Customer, Order> customerOrderPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        ColumnEqualsColumn<Order, OrderedItem> orderOrderedItemPredicate = new(nameof(Order.Id), nameof(OrderedItem.OrderId));
+        ColumnEqualsColumn<OrderedItem, Book> orderedItemBookPredicate = new(nameof(OrderedItem.BookId), nameof(Book.Id));
+        Joins<Customer> joins = new Joins<Customer>(new Join<Order>(customerOrderPredicate))
+            .Append(new Join<OrderedItem>(orderOrderedItemPredicate))
+            .Append(new Join<Book>(orderedItemBookPredicate));
+        SelectTags selectTags = new(SelectTag.GetAll<Book>());
+        OrderByItem<Book> orderByItems = new (nameof(Book.Id));
+        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, joins, null, orderByItems, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+        Assert.Equal(54, books.Count());
+
+        BookDataSet.ValidateByIndexRange(books, 0, 2, 1);
+        BookDataSet.ValidateByIndexRange(books, 3, 6, 2);
+        BookDataSet.ValidateByIndexRange(books, 7, 10, 3);
+        BookDataSet.ValidateByIndexRange(books, 11, 17, 4);
+        BookDataSet.ValidateByIndexRange(books, 18, 23, 5);
+        BookDataSet.ValidateByIndexRange(books, 24, 30, 6);
+        BookDataSet.ValidateByIndexRange(books, 31, 36, 7);
+        BookDataSet.ValidateByIndexRange(books, 37, 42, 8);
+        BookDataSet.ValidateByIndexRange(books, 43, 47, 9);
+        BookDataSet.ValidateByIndexRange(books, 48, 53, 10);
+    }
+
+    [Fact]
+    public async Task DistinctChainedJoins()
+    {
+
+        ColumnEqualsColumn<Customer, Order> customerOrderPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        ColumnEqualsColumn<Order, OrderedItem> orderOrderedItemPredicate = new(nameof(Order.Id), nameof(OrderedItem.OrderId));
+        ColumnEqualsColumn<OrderedItem, Book> orderedItemBookPredicate = new(nameof(OrderedItem.BookId), nameof(Book.Id));
+        Joins<Customer> joins = new Joins<Customer>(new Join<Order>(customerOrderPredicate))
+            .Append(new Join<OrderedItem>(orderOrderedItemPredicate))
+            .Append(new Join<Book>(orderedItemBookPredicate));
+        SelectTags selectTags = new(SelectTag.GetAll<Book>());
+        OrderByItem<Book> orderByItems = new(nameof(Book.Id));
+        SqlQuery query = CustomerSqlGenerator.Select(true, selectTags, joins, null, orderByItems, null);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+        Assert.Equal(10, books.Count());
+
+        BookDataSet.ValidateBookById(books, 1);
+        BookDataSet.ValidateBookById(books, 2);
+        BookDataSet.ValidateBookById(books, 3);
+        BookDataSet.ValidateBookById(books, 4);
+        BookDataSet.ValidateBookById(books, 5);
+        BookDataSet.ValidateBookById(books, 6);
+        BookDataSet.ValidateBookById(books, 7);
+        BookDataSet.ValidateBookById(books, 8);
+        BookDataSet.ValidateBookById(books, 9);
+        BookDataSet.ValidateBookById(books, 10);
     }
 
     private static void ValidateCustomerOrderJoin(IEnumerable<CustomerOrder> actualRecords, int? expectedCustomerId, int? expectedOrderId)

@@ -111,7 +111,7 @@ public class Joins<leftT>
     /// <exception cref="TypeInitializationException">
     /// Thrown when the SQL reflection cache for <typeparamref name="leftT"/> fails to initialize.
     /// </exception>
-    public Joins(params JoinBase[] joins)
+    public Joins(params IEnumerable<JoinBase> joins)
     {
         ArgumentNullException.ThrowIfNull(joins);
 
@@ -153,6 +153,34 @@ public class Joins<leftT>
         Joints = joints;
     }
 
+    /// <summary>
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
+    /// plus the addition join provided.
+    /// </summary>
+    /// <typeparam name="leftT">The data model representing the left-side table being joined.</typeparam>
+    /// <param name="newJoin">The join operation to append.</param>
+    /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional join.</returns>
+    public Joins<leftT> Append(JoinBase newJoin) =>
+        new(Joints.Append(newJoin));
+
+    /// <summary>
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
+    /// plus the additional joins provided.
+    /// </summary>
+    /// <param name="newJoins">The additional join operations to include.</param>
+    /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional joins.</returns>
+    public Joins<leftT> Concat(IEnumerable<JoinBase> newJoins) =>
+        new(Joints.Concat(newJoins));
+
+    /// <summary>
+    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
+    /// plus the additional joins provided.
+    /// </summary>
+    /// <typeparam name="rightTs"></typeparam>
+    /// <param name="newJoins">The additional join operations to include.</param>
+    /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional joins.</returns>
+    public Joins<leftT> Concat<rightTs>(Joins<rightTs> newJoins) =>
+        new(Joints.Concat(newJoins.Joints));
 
     /// <summary>
     /// Enumerates all <see cref="TableTag"/> objects included in the current join sequence,

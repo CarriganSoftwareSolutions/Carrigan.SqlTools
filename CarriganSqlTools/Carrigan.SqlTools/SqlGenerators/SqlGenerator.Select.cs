@@ -55,7 +55,7 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// </example>
     public SqlQuery SelectAll(OrderByBase? orderBy = null) =>
-        Select(null, null, null, orderBy, null);
+        Select(null, null, null, null, orderBy, null);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
@@ -181,8 +181,46 @@ public partial class SqlGenerator<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
+    public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
     {
+        IEnumerable<SqlFragment> GetFragments()
+        {
+            if(distinct ?? false)
+                yield return new SqlFragmentText($"SELECT DISTINCT ");
+            else
+                yield return new SqlFragmentText($"SELECT ");
+            if (selects is not null && selects.Any())
+                yield return new SqlFragmentText($"{selects.ToSql(Dialect)} FROM {Table}");
+            else if (HasAliasedColumns)
+                yield return new SqlFragmentText($"{SelectTags.ToSql(Dialect)} FROM {Table}");
+            else
+                yield return new SqlFragmentText($"{Table}.* FROM {Table}");
+
+            if (joins?.IsNotNullOrEmpty() ?? false)
+            {
+                foreach (SqlFragment fragment in joins.ToSqlFragments(Dialect))
+                    yield return fragment;
+            }
+
+            if (predicates is not null)
+            {
+                yield return new SqlFragmentText($" WHERE ");
+
+                foreach (SqlFragment fragment in predicates.ToSqlFragments(Dialect))
+                    yield return fragment;
+            }
+
+            if (orderBy.IsNotNullOrEmpty())
+                    yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql()}");
+
+
+            if (paging is not null)
+            {
+                yield return SqlFragment.Space;
+                yield return Dialect.RenderPaging(paging);
+            }
+
+        }
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
@@ -213,28 +251,7 @@ public partial class SqlGenerator<T>
             orderBy = orderBy.WithConcat(orderByKeyItems);
         }
 
-        IEnumerable<SqlFragment> queryFragments = [];
-        if (selects is not null && selects.Any())
-            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {selects.ToSql(Dialect)} FROM {Table}"));
-        else if (HasAliasedColumns)
-            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {SelectTags.ToSql(Dialect)} FROM {Table}"));
-        else
-            queryFragments = queryFragments.Append(new SqlFragmentText($"SELECT {Table}.* FROM {Table}"));
-
-        if (joins?.IsNotNullOrEmpty() ?? false)
-            queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect));
-
-        if (predicates is not null)
-            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicates.ToSqlFragments(Dialect));
-
-        if (orderBy.IsNotNullOrEmpty())
-            queryFragments = queryFragments.Append(new SqlFragmentText($" {orderBy.AsOrderBy().ToSql()}"));
-
-
-        if (paging is not null)
-            queryFragments = queryFragments.Concat([SqlFragment.Space, Dialect.RenderPaging(paging)]);
-
-        return queryFragments.ToSqlQuery(Dialect);
+        return GetFragments().ToSqlQuery(Dialect);
     }
 
     /// <summary>
@@ -282,6 +299,6 @@ public partial class SqlGenerator<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return Select(null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
+            return Select(null, null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
     }
 }
