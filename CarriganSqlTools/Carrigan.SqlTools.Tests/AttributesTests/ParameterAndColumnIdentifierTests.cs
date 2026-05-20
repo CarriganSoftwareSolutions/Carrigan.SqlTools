@@ -167,7 +167,7 @@ public class ParameterAndColumnIdentifierTests
         LeftJoin<JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
         SqlQuery query = _generator.Delete(join.AsJoins<ColumnIdentifiers>(), null);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+        string expected = "DELETE [ColumnIdentifiers] FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
         Assert.Equal(expected, actual);
 
         Assert.Equal(0, query.GetParameterCount());
@@ -179,7 +179,7 @@ public class ParameterAndColumnIdentifierTests
         LeftJoin<JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
         SqlQuery query = _generator.Delete(join.AsJoins<ColumnIdentifiers>(), null);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+        string expected = "DELETE [ColumnIdentifiers] FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
         Assert.Equal(expected, actual);
 
         Assert.Equal(0, query.GetParameterCount());
@@ -192,7 +192,7 @@ public class ParameterAndColumnIdentifierTests
         Joins<ColumnIdentifiers> joins = join.AsJoins<ColumnIdentifiers>();
         SqlQuery query = _generator.Delete(joins, null);
         string actual = query.QueryText;
-        string expected = "DELETE FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
+        string expected = "DELETE [ColumnIdentifiers] FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
         Assert.Equal(expected, actual);
 
         Assert.Equal(0, query.GetParameterCount());

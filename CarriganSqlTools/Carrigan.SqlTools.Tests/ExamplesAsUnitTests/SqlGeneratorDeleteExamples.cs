@@ -79,7 +79,7 @@ public class SqlGeneratorDeleteExamples
 
         SqlQuery query = orderGenerator.Delete(join, null);
 
-        Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
+        Assert.Equal("DELETE [Order] FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
@@ -96,7 +96,7 @@ public class SqlGeneratorDeleteExamples
 
         SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
-        Assert.Equal("DELETE FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Email_1)", query.QueryText);
+        Assert.Equal("DELETE [Order] FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "spam@example.com");

@@ -32,7 +32,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         Joins<JoinLeftTable> join = (new InnerJoin<JoinRightTable>(id)).AsJoins<JoinLeftTable>();
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(join, null);
 
-        string expectedSql = "DELETE FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string expectedSql = "DELETE [Left] FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expectedSql, query.QueryText);
     }
 
@@ -43,7 +43,7 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         Joins<JoinLeftTable> relations = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(id);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(relations, null);
 
-        string expectedSql = "DELETE FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
+        string expectedSql = "DELETE [Left] FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expectedSql, query.QueryText);
 
     }
@@ -70,7 +70,11 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         Joins<JoinLeftTable> join = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(join, predicateId);
 
+<<<<<<< HEAD
         string expectedSql = "DELETE FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)";
+=======
+        string expectedSql = "DELETE [Left] FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
+>>>>>>> fix-joined-delete-syntax-issue
         Assert.Equal(expectedSql, query.QueryText);
 
         SqlQueryTestHelper.AssertParameterCount(query, 1);
@@ -86,7 +90,11 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         Joins<JoinLeftTable> relations = join.AsJoins<JoinLeftTable>();
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(relations, predicateId);
 
+<<<<<<< HEAD
         string expectedSql = "DELETE FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)";
+=======
+        string expectedSql = "DELETE [Left] FROM [Left] LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Parameter_Id)";
+>>>>>>> fix-joined-delete-syntax-issue
         Assert.Equal(expectedSql, query.QueryText);
 
         SqlQueryTestHelper.AssertParameterCount(query, 1);
@@ -103,7 +111,11 @@ public class SqlGenerator_DeleteJoinsAndPredicatesTests
         LeftJoin<JoinLastTable> join2 = new(joinId2);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Delete(new Joins<JoinLeftTable>(join1, join2), predicateId);
 
+<<<<<<< HEAD
         string expectedSql = "DELETE FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Id_1)";
+=======
+        string expectedSql = "DELETE [Left] FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id]) WHERE ([Last].[Id] = @Parameter_Id)";
+>>>>>>> fix-joined-delete-syntax-issue
         Assert.Equal(expectedSql, query.QueryText);
 
         SqlQueryTestHelper.AssertParameterCount(query, 1);

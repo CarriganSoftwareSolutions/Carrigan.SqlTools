@@ -356,7 +356,8 @@ ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.
 
 SqlQuery query = orderGenerator.Delete(join, customerEmail);
 
-// DELETE FROM [Order]
+// DELETE [Order] 
+// FROM [Order]
 // INNER JOIN [Customer]
 // ON ([Customer].[Id] = [Order].[CustomerId])
 // WHERE ([Customer].[Email] = @Parameter_Email)
