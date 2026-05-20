@@ -68,21 +68,21 @@ public class CrossJoin<rightT> : JoinBase
         SqlToolsReflectorCache<rightT>.Table;
 
     /// <summary>
-    /// Converts the current <see cref="CrossJoin{rightT}"/> instance to its <see cref="SqlFragment"/> representation.
+    /// Converts the current <see cref="CrossJoin{rightT}"/> instance to its <see cref="ISqlFragment"/> representation.
     /// </summary>
     /// <param name="dialect"></param>
     /// <returns>
-    /// A <see cref="SqlFragment"/> representing the <c>CROSS JOIN</c> clause.
-    /// </returns><see cref="SqlFragment"/>
+    /// A <see cref="ISqlFragment"/> representing the <c>CROSS JOIN</c> clause.
+    /// </returns><see cref="ISqlFragment"/>
     /// <summary>
     /// Generates the SQL fragments representing the <c>CROSS JOIN</c> operation.
     /// </summary>
-    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects that compose the SQL representation of this
+    /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
     /// <param name="branchPrefix">
     /// The branch prefix used to distinguish parameters in join predicates from the main where clause.
     /// This value is ignored for <c>CROSS JOIN</c> because no <c>ON</c> clause is emitted.
     /// </param>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix) =>
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix) =>
         [new SqlFragmentText($" CROSS JOIN {TableTag}")];
 }

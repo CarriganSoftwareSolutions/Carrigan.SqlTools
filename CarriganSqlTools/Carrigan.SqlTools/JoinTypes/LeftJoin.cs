@@ -86,11 +86,11 @@ public class LeftJoin<rightT> : JoinBase
         SqlToolsReflectorCache<rightT>.Table;
 
     /// <summary>
-    /// Converts the current <see cref="LeftJoin{rightT}"/> instance to its <see cref="SqlFragment"/> representation.
+    /// Converts the current <see cref="LeftJoin{rightT}"/> instance to its <see cref="ISqlFragment"/> representation.
     /// </summary>
     /// <param name="dialect"></param>
     /// <returns>
-    /// A <see cref="SqlFragment"/> representing the <c>LEFT JOIN</c> clause.
+    /// A <see cref="ISqlFragment"/> representing the <c>LEFT JOIN</c> clause.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the join predicates render to an empty SQL expression, because <c>LEFT JOIN</c> requires an <c>ON</c> clause.
@@ -101,7 +101,7 @@ public class LeftJoin<rightT> : JoinBase
     /// <param name="branchPrefix">
     /// The branch prefix used to distinguish parameters in the join predicates from the main where clause.
     /// </param>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
     {
         if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("LEFT JOIN requires at least one predicate for the ON clause.");

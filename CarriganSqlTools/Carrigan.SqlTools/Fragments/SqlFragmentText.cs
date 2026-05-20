@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.Fragments;
 /// <remarks>
 /// This fragment is used for SQL tokens that are not parameters, such as keywords, punctuation, or whitespace.
 /// </remarks>
-public class SqlFragmentText : SqlFragment
+public class SqlFragmentText : ISqlFragment
 {
     /// <summary>
     /// The literal SQL text represented by this fragment.
@@ -30,19 +30,19 @@ public class SqlFragmentText : SqlFragment
     /// Converts this fragment into its SQL representation.
     /// </summary>
     /// <returns>The literal SQL text for this fragment.</returns>
-    internal override string ToSql() =>
+    public string ToSql(ISqlDialects dialect) =>
         SqlText;
 
     /// <summary>
     /// Gets the parameters contained in this fragment. Since this fragment represents literal SQL text, it does not contain any parameters.
     /// </summary>
     /// <returns>An empty enumerable collection, as this fragment does not contain any parameters.</returns>
-    internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         [];
 
     /// <summary>
     /// Returns an enumerable collection containing the current SQL fragment instance.
     /// </summary>
     /// <returns>An <see cref="IEnumerable{SqlFragment}"/> that contains only this instance.</returns>
-    internal override IEnumerable<SqlFragment> Flatten() => [this];
+    public IEnumerable<ISqlFragment> Flatten() => [this];
 }

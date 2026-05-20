@@ -63,18 +63,18 @@ public abstract class ComparisonOperator : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="dialect"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         ArgumentNullException.ThrowIfNull(dialect);
 
         yield return new SqlFragmentText("(");
 
-        foreach (SqlFragment fragment in _left.ToSqlFragments(dialect))
+        foreach (ISqlFragment fragment in _left.ToSqlFragments(dialect))
             yield return fragment;
 
         yield return new SqlFragmentText($" {_operator} ");
 
-        foreach (SqlFragment fragment in _right.ToSqlFragments(dialect))
+        foreach (ISqlFragment fragment in _right.ToSqlFragments(dialect))
             yield return fragment;
 
         yield return new SqlFragmentText(")");

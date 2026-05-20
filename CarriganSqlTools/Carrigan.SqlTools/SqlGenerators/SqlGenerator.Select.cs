@@ -183,7 +183,7 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
     {
-        IEnumerable<SqlFragment> GetFragments()
+        IEnumerable<ISqlFragment> GetFragments()
         {
             if(distinct ?? false)
                 yield return new SqlFragmentText($"SELECT DISTINCT ");
@@ -198,7 +198,7 @@ public partial class SqlGenerator<T>
 
             if (joins?.IsNotNullOrEmpty() ?? false)
             {
-                foreach (SqlFragment fragment in joins.ToSqlFragments(Dialect))
+                foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
                     yield return fragment;
             }
 
@@ -206,7 +206,7 @@ public partial class SqlGenerator<T>
             {
                 yield return new SqlFragmentText($" WHERE ");
 
-                foreach (SqlFragment fragment in predicates.ToSqlFragments(Dialect))
+                foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
                     yield return fragment;
             }
 
@@ -216,7 +216,7 @@ public partial class SqlGenerator<T>
 
             if (paging is not null)
             {
-                yield return SqlFragment.Space;
+                yield return ISqlFragment.Space;
                 yield return Dialect.RenderPaging(paging);
             }
 

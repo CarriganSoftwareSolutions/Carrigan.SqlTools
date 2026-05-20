@@ -6,20 +6,20 @@ namespace Carrigan.SqlTools.Fragments;
 /// <summary>
 /// A SqlFragment that is made up of multiple other SqlFragments. This is used to combine multiple fragments into one.
 /// </summary>
-public class SqlFragmentGroup : SqlFragment
+public class SqlFragmentGroup : ISqlFragment
 {
     /// <summary>
     /// Represents the collection of SQL fragments associated with the current instance.
     /// </summary>
     /// <remarks>This collection is intended to be used by derived classes to build or manipulate SQL
     /// statements. The contents of the collection may affect the resulting SQL output or query behavior.</remarks>
-    protected readonly IEnumerable<SqlFragment> sqlFragments;
+    protected readonly IEnumerable<ISqlFragment> sqlFragments;
 
     /// <summary>
     /// Initializes a new instance of the SqlFragmentGroup class with the specified collection of SQL fragments.
     /// </summary>
     /// <param name="sqlFragments">The collection of SQL fragments to include in the group. Cannot be null.</param>
-    internal SqlFragmentGroup(params IEnumerable<SqlFragment> sqlFragments) =>
+    internal SqlFragmentGroup(params IEnumerable<ISqlFragment> sqlFragments) =>
         this.sqlFragments = sqlFragments;
 
     /// <summary>
@@ -27,14 +27,14 @@ public class SqlFragmentGroup : SqlFragment
     /// </summary>
     /// <returns>A string containing the complete SQL statement formed by joining all SQL fragments. The string may be empty if
     /// there are no fragments.</returns>
-    internal override string ToSql() =>
-        string.Join("", sqlFragments.Select(f => f.ToSql()));
+    public string ToSql(ISqlDialects dialect) =>
+        string.Join("", sqlFragments.Select(f => f.ToSql(dialect)));
 
     /// <summary>
     /// Retrieves the collection of parameters from all SQL fragments contained within the group. This method aggregates
     /// </summary>
     /// <returns></returns>
-    internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         sqlFragments.SelectMany(f => f.GetSqlFragmentParameters());
 
     /// <summary>
@@ -42,8 +42,8 @@ public class SqlFragmentGroup : SqlFragment
     /// </summary>
     /// <remarks>Use this method to enumerate all SQL fragments in a hierarchical structure as a flat list,
     /// which can simplify processing or analysis of complex fragment trees.</remarks>
-    /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects representing all nested fragments in a single,
+    /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects representing all nested fragments in a single,
     /// flat sequence.</returns>
-    internal override IEnumerable<SqlFragment> Flatten() => 
+    public IEnumerable<ISqlFragment> Flatten() => 
         sqlFragments.SelectMany(element => element.Flatten());
 }

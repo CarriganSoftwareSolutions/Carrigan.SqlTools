@@ -21,7 +21,7 @@ public class SqlFragmentParameterTests
         SqlFragmentParameter fragment = new(parameter);
 
         string expectedValue = parameter.ToSql();
-        string actualValue = fragment.ToSql();
+        string actualValue = fragment.ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -31,7 +31,7 @@ public class SqlFragmentParameterTests
     {
         Parameter parameter = new("Name", null);
 
-        IEnumerable<SqlFragment> fragments =
+        IEnumerable<ISqlFragment> fragments =
         [
             new SqlFragmentParameter(parameter)
         ];
@@ -49,7 +49,7 @@ public class SqlFragmentParameterTests
     {
         SqlFragmentParameter fragment = new(new Parameter("@Name", "Jonathan"));
 
-        string sql = fragment.ToSql();
+        string sql = fragment.ToSql(Dialect);
 
         Assert.Equal("@Name", sql);
     }

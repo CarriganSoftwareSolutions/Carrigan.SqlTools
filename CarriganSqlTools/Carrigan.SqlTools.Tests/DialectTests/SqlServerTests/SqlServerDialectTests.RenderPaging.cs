@@ -13,9 +13,9 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         OffsetFetchNext paging = new(0, 0);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal(string.Empty, actual.ToSql());
+        Assert.Equal(string.Empty, actual.ToSql(dialect));
     }
 
     [Fact]
@@ -24,9 +24,9 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         OffsetFetchNext paging = new(0, 10);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql());
+        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql(dialect));
     }
 
     [Fact]
@@ -35,9 +35,9 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         OffsetFetchNext paging = new(20, 10);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql());
+        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql(dialect));
     }
 
     [Fact]
@@ -46,9 +46,9 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         OffsetFetchNext paging = new(20, 0);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 20 ROWS", actual.ToSql());
+        Assert.Equal("OFFSET 20 ROWS", actual.ToSql(dialect));
     }
 
     [Fact]
@@ -57,9 +57,9 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         DefinePage paging = new(1, 25);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql());
+        Assert.Equal("OFFSET 0 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql(dialect));
     }
 
     [Fact]
@@ -68,9 +68,9 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         DefinePage paging = new(2, 25);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql());
+        Assert.Equal("OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql(dialect));
     }
 
     [Fact]
@@ -79,9 +79,9 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         DefinePage paging = new(3, 25);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql());
+        Assert.Equal("OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql(dialect));
     }
 
     [Fact]
@@ -90,8 +90,8 @@ public partial class SqlServerDialectTests
         SqlServerDialect dialect = new();
         LimitOffset paging = new(10, 20);
 
-        SqlFragment actual = dialect.RenderPaging(paging);
+        ISqlFragment actual = dialect.RenderPaging(paging);
 
-        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql());
+        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql(dialect));
     }
 }

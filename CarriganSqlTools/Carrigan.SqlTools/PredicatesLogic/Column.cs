@@ -105,7 +105,7 @@ public class Column<T> : ColumnBase
     /// <returns>
     /// The SQL-escaped column identifier (e.g., <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>).
     /// </returns>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText(ColumnInfo);
     }

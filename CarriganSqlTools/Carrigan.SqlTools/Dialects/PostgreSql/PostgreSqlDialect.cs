@@ -50,7 +50,7 @@ public class PostgreSqlDialect : ISqlDialects
     /// Generates SQL fragments for an INSERT statement that returns inserted values
     /// by appending PostgreSQL's RETURNING clause.
     /// </summary>
-    public IEnumerable<SqlFragment> GetInsertReturningFragments<T>(IEnumerable<SqlFragment> insertIntoFragments, IEnumerable<SqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo)
+    public IEnumerable<ISqlFragment> GetInsertReturningFragments<T>(IEnumerable<ISqlFragment> insertIntoFragments, IEnumerable<ISqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo)
     {
         ArgumentNullException.ThrowIfNull(insertIntoFragments);
         ArgumentNullException.ThrowIfNull(insertValuesFragments);
@@ -58,20 +58,20 @@ public class PostgreSqlDialect : ISqlDialects
 
         ColumnInfo[] columns = [.. columnInfo];
 
-        IEnumerable<SqlFragment> fragments = insertIntoFragments
-            .Append(SqlFragment.NewLine)
+        IEnumerable<ISqlFragment> fragments = insertIntoFragments
+            .Append(ISqlFragment.NewLine)
             .Concat(insertValuesFragments);
 
         if (columns.Length == 0)
         {
-            return fragments.Concat([SqlFragment.Semicolon, SqlFragment.NewLine]);
+            return fragments.Concat([ISqlFragment.Semicolon, ISqlFragment.NewLine]);
         }
         else
         {
             return fragments
-                .Append(SqlFragment.NewLine)
+                .Append(ISqlFragment.NewLine)
                 .Append(new SqlFragmentText(ReturningColumns<T>(columns)))
-                .Concat([SqlFragment.Semicolon, SqlFragment.NewLine]);
+                .Concat([ISqlFragment.Semicolon, ISqlFragment.NewLine]);
         }
     }
 
@@ -94,7 +94,7 @@ public class PostgreSqlDialect : ISqlDialects
     /// <summary>
     /// Generates a PostgreSQL LIMIT/OFFSET paging clause.
     /// </summary>
-    public SqlFragment RenderPaging(PagingBase paging) =>
+    public ISqlFragment RenderPaging(PagingBase paging) =>
         new SqlFragmentText
         (
             (paging.Offset, paging.Next) switch
@@ -177,7 +177,7 @@ public class PostgreSqlDialect : ISqlDialects
             _ => $"{declaration}({fractionalSecondsPrecision})"
         };
 
-    public SqlQuery RenderSqlQuery(IEnumerable<SqlFragment> sqlFragments) =>
+    public SqlQuery RenderSqlQuery(IEnumerable<ISqlFragment> sqlFragments) =>
         new(this, sqlFragments);
 
     public SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag) =>
@@ -206,10 +206,10 @@ public class PostgreSqlDialect : ISqlDialects
         }
     }
 
-    public SqlFragment GetXOrSymbol() =>
+    public ISqlFragment GetXOrSymbol() =>
         new SqlFragmentText("#");
 
-    public SqlFragment GetDialectLike(bool? isCaseSensitive = null)
+    public ISqlFragment GetDialectLike(bool? isCaseSensitive = null)
     {
         if (isCaseSensitive is null || isCaseSensitive.Value)
             return new SqlFragmentText("LIKE");

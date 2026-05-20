@@ -15,5 +15,5 @@ internal class EmptyPredicate : Predicates
     {
     }
 
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect) => [];
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) => [];
 }

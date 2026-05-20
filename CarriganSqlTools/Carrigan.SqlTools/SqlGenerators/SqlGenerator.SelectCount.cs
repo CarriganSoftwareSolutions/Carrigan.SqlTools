@@ -149,7 +149,7 @@ public partial class SqlGenerator<T>
 
         IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
 
-        IEnumerable<SqlFragment> queryFragments;
+        IEnumerable<ISqlFragment> queryFragments;
         AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
         if (ambiguousResultColumns is not null)
             throw ambiguousResultColumns;

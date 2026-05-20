@@ -12,7 +12,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void ToSql_Empty_ReturnsEmptyString()
     {
-        IEnumerable<SqlFragment> sqlFragments = [];
+        IEnumerable<ISqlFragment> sqlFragments = [];
 
         string actualValue = sqlFragments.ToSql(Dialect);
 
@@ -22,7 +22,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void ToSql_MultipleFragments_ConcatenatesInOrder()
     {
-        IEnumerable<SqlFragment> sqlFragments =
+        IEnumerable<ISqlFragment> sqlFragments =
             [
                 new SqlFragmentText("SELECT "),
                 new SqlFragmentText("1"),
@@ -37,7 +37,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void ToSql_NullSource_Exception()
     {
-        IEnumerable<SqlFragment> sqlFragments = null!;
+        IEnumerable<ISqlFragment> sqlFragments = null!;
 
         Assert.Throws<ArgumentNullException>(() => sqlFragments.ToSql(Dialect));
     }
@@ -45,7 +45,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void GetParameters_NullSource_Exception()
     {
-        IEnumerable<SqlFragment> sqlFragments = null!;
+        IEnumerable<ISqlFragment> sqlFragments = null!;
 
         Assert.Throws<ArgumentNullException>(() =>
         {
@@ -56,7 +56,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void JoinFragments_WithNullSeparator_ReturnsFragmentsWithoutSeparator()
     {
-        SqlFragment[] fragments =
+        ISqlFragment[] fragments =
         [
             new SqlFragmentText("A"),
             new SqlFragmentText("B"),
@@ -73,7 +73,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void JoinFragments_WithTextSeparator_InsertsSeparatorBetweenFragments()
     {
-        SqlFragment[] fragments =
+        ISqlFragment[] fragments =
         [
             new SqlFragmentText("A"),
             new SqlFragmentText("B"),
@@ -90,7 +90,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void JoinFragments_WithSingleFragment_ReturnsSingleFragment()
     {
-        SqlFragment[] fragments =
+        ISqlFragment[] fragments =
         [
             new SqlFragmentText("A")
         ];
@@ -105,7 +105,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void JoinFragments_WithEmptySequence_ReturnsEmptySql()
     {
-        SqlFragment[] fragments = [];
+        ISqlFragment[] fragments = [];
 
         string sql = fragments
             .JoinFragments(new SqlFragmentText(", "))
@@ -117,7 +117,7 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void JoinFragments_WhenFragmentsIsNull_ThrowsArgumentNullException()
     {
-        IEnumerable<SqlFragment>? fragments = null;
+        IEnumerable<ISqlFragment>? fragments = null;
 
         Assert.Throws<ArgumentNullException>(() =>
             fragments!.JoinFragments(new SqlFragmentText(", ")).ToList());
@@ -128,8 +128,8 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void Append_ReturnsBothFragmentsInOrder()
     {
-        SqlFragment fragment1 = new SqlFragmentText("A");
-        SqlFragment fragment2 = new SqlFragmentText("B");
+        ISqlFragment fragment1 = new SqlFragmentText("A");
+        ISqlFragment fragment2 = new SqlFragmentText("B");
 
         string sql = fragment1
             .Append(fragment2)
@@ -141,9 +141,9 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void Concat_ReturnsFragmentThenSequenceInOrder()
     {
-        SqlFragment fragment1 = new SqlFragmentText("A");
+        ISqlFragment fragment1 = new SqlFragmentText("A");
 
-        SqlFragment[] fragments =
+        ISqlFragment[] fragments =
         [
             new SqlFragmentText("B"),
             new SqlFragmentText("C")
@@ -159,9 +159,9 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void Concat_WithEmptySequence_ReturnsOnlyFirstFragment()
     {
-        SqlFragment fragment1 = new SqlFragmentText("A");
+        ISqlFragment fragment1 = new SqlFragmentText("A");
 
-        SqlFragment[] fragments = [];
+        ISqlFragment[] fragments = [];
 
         string sql = fragment1
             .Concat(fragments)
@@ -180,7 +180,7 @@ public class SqlFragmentExtensionsTests
             new SqlFragmentText(" ")
         ]);
 
-        IEnumerable<SqlFragment> fragments =
+        IEnumerable<ISqlFragment> fragments =
         [
             new SqlFragmentText("A"),
             new SqlFragmentText("B"),
@@ -197,10 +197,10 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void Append_ReturnsSameFragmentInstancesInOrder()
     {
-        SqlFragment fragment1 = new SqlFragmentText("A");
-        SqlFragment fragment2 = new SqlFragmentText("B");
+        ISqlFragment fragment1 = new SqlFragmentText("A");
+        ISqlFragment fragment2 = new SqlFragmentText("B");
 
-        SqlFragment[] fragments = fragment1.Append(fragment2).ToArray();
+        ISqlFragment[] fragments = fragment1.Append(fragment2).ToArray();
 
         Assert.Equal([fragment1, fragment2], fragments);
     }
@@ -208,11 +208,11 @@ public class SqlFragmentExtensionsTests
     [Fact]
     public void Concat_ReturnsSameFragmentInstancesInOrder()
     {
-        SqlFragment fragment1 = new SqlFragmentText("A");
-        SqlFragment fragment2 = new SqlFragmentText("B");
-        SqlFragment fragment3 = new SqlFragmentText("C");
+        ISqlFragment fragment1 = new SqlFragmentText("A");
+        ISqlFragment fragment2 = new SqlFragmentText("B");
+        ISqlFragment fragment3 = new SqlFragmentText("C");
 
-        SqlFragment[] fragments = fragment1
+        ISqlFragment[] fragments = fragment1
             .Concat([fragment2, fragment3])
             .ToArray();
 

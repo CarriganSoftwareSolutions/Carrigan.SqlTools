@@ -290,7 +290,7 @@ public class Joins<leftT>
     /// <remarks>
     /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
     /// </remarks>
-    internal IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
+    internal IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (ValidatedJoints.Count() == 1)
             return ValidatedJoints.SelectMany(join => join.ToSqlFragments(dialect, "Join"));

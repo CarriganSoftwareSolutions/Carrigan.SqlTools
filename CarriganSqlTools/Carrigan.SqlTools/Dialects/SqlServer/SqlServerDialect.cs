@@ -68,14 +68,14 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="insertValuesFragments">The SQL fragments representing the VALUES clause for the INSERT statement.</param>
     /// <param name="columnInfo">A collection of column metadata specifying which columns should be included in the OUTPUT clause.</param>
     /// <returns></returns>
-    public IEnumerable<SqlFragment> GetInsertReturningFragments<T>(IEnumerable<SqlFragment> insertIntoFragments, IEnumerable<SqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo) =>
+    public IEnumerable<ISqlFragment> GetInsertReturningFragments<T>(IEnumerable<ISqlFragment> insertIntoFragments, IEnumerable<ISqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo) =>
         new SqlFragmentText(ReturnTableDefinition(columnInfo))
             .Concat(insertIntoFragments)
-            .Append(SqlFragment.NewLine)
+            .Append(ISqlFragment.NewLine)
             .Append(new SqlFragmentText(ReturnOutputColumns(columnInfo)))
             .Concat(insertValuesFragments)
-            .Append(SqlFragment.Semicolon)
-            .Append(SqlFragment.NewLine)
+            .Append(ISqlFragment.Semicolon)
+            .Append(ISqlFragment.NewLine)
             .Append(new SqlFragmentText(ReturnSelectOutput<T>(columnInfo)));
 
     #region GetInsertReturningFragments private helper methods
@@ -147,8 +147,8 @@ public class SqlServerDialect : ISqlDialects
     /// Generates a SQL fragment representing the paging clause for a query based on the provided offset and fetch next values aka limit and offset.
     /// </summary>
     /// <param name="paging">The <see cref="PagingBase"/> object containing the offset and fetch next values aka limit and offset values.</param>
-    /// <returns>A <see cref="SqlFragment"/> representing the SQL paging clause.</returns>
-    public SqlFragment RenderPaging(PagingBase paging) =>
+    /// <returns>A <see cref="ISqlFragment"/> representing the SQL paging clause.</returns>
+    public ISqlFragment RenderPaging(PagingBase paging) =>
         new SqlFragmentText
         (
             (paging.Offset, paging.Next) switch
@@ -245,7 +245,7 @@ public class SqlServerDialect : ISqlDialects
         }
     }
 
-    public SqlQuery RenderSqlQuery(IEnumerable<SqlFragment> sqlFragments) =>
+    public SqlQuery RenderSqlQuery(IEnumerable<ISqlFragment> sqlFragments) =>
         new(this, sqlFragments);
 
     public SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag) =>
@@ -273,9 +273,9 @@ public class SqlServerDialect : ISqlDialects
         else return value;
     }
 
-    public SqlFragment GetXOrSymbol() =>
+    public ISqlFragment GetXOrSymbol() =>
         new SqlFragmentText("^");
-    public SqlFragment GetDialectLike(bool? isCaseSensitive = null)
+    public ISqlFragment GetDialectLike(bool? isCaseSensitive = null)
     {
         if (isCaseSensitive is null)
             return new SqlFragmentText("LIKE");

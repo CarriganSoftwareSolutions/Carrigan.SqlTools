@@ -131,9 +131,9 @@ public class ColumnValue<T> : Predicates
     /// <returns>
     /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
     /// </returns>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
-        foreach (SqlFragment fragment in value.ToSqlFragments(dialect))
+        foreach (ISqlFragment fragment in value.ToSqlFragments(dialect))
             yield return fragment;
     }
 }

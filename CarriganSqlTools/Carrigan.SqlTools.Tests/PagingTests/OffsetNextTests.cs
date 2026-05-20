@@ -31,7 +31,7 @@ public class OffsetNextTests
         OffsetFetchNext offsetNext = new(offset, next);
 
         // Act
-        string actualSql = (Dialect).RenderPaging(offsetNext).ToSql();
+        string actualSql = (Dialect).RenderPaging(offsetNext).ToSql(Dialect);
 
         // Assert
         Assert.Equal(expectedSql, actualSql);
@@ -52,6 +52,6 @@ public class OffsetNextTests
         // Also verify the SQL string generated.
         string expectedSql = $"OFFSET {75} ROWS FETCH NEXT {25} ROWS ONLY";
 
-        Assert.Equal(expectedSql, (Dialect).RenderPaging(offsetNext).ToSql());
+        Assert.Equal(expectedSql, (Dialect).RenderPaging(offsetNext).ToSql(Dialect));
     }
 }

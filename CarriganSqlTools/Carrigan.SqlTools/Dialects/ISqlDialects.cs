@@ -55,7 +55,7 @@ public interface ISqlDialects
     /// <param name="columnInfo">A collection of column metadata specifying which columns should be included in the RETURNING clause.</param>
     /// <returns>An enumerable collection of SQL fragments that, when combined, form a complete INSERT statement with a RETURNING
     /// clause for the specified columns.</returns>
-    IEnumerable<SqlFragment> GetInsertReturningFragments<T>(IEnumerable<SqlFragment> insertIntoFragments, IEnumerable<SqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo);
+    IEnumerable<ISqlFragment> GetInsertReturningFragments<T>(IEnumerable<ISqlFragment> insertIntoFragments, IEnumerable<ISqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo);
 
     /// <summary>
     /// Generates the final parameter name a dialect specific parameter delimiter, parameter index and base name if applicable in the dialect.
@@ -69,7 +69,7 @@ public interface ISqlDialects
     /// </summary>
     /// <param name="paging">The <see cref="PagingBase"/> object containing the offset and fetch next values aka limit and offset values.</param>
     /// <returns>A string containing the SQL paging clause representing the specified offset and fetch next values aka limit and offset.</returns>
-    SqlFragment RenderPaging(PagingBase paging);
+    ISqlFragment RenderPaging(PagingBase paging);
 
     /// <summary>
     /// Returns the default <see cref="FieldProperties"/> for a given CLR type according to the SQL dialect's type mapping rules.
@@ -90,7 +90,7 @@ public interface ISqlDialects
     /// 
     string RenderFieldProperties(FieldProperties fieldProperties);
 
-    SqlQuery RenderSqlQuery(IEnumerable<SqlFragment> sqlFragments);
+    SqlQuery RenderSqlQuery(IEnumerable<ISqlFragment> sqlFragments);
 
     SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag);
 
@@ -112,7 +112,7 @@ public interface ISqlDialects
     /// Returns the character used by the SQL dialect to represent Xor operations, such as in WHERE clauses.
     /// </summary>
     /// <returns></returns>
-    SqlFragment GetXOrSymbol();
+    ISqlFragment GetXOrSymbol();
 
     /// <summary>
     /// Generates the appropriate SQL fragment for a LIKE operator in the SQL dialect, optionally considering case sensitivity.
@@ -121,6 +121,6 @@ public interface ISqlDialects
     /// Indicates whether the LIKE operation should be case-sensitive. 
     /// If null, the default behavior of the dialect is used.
     /// </param>
-    /// <returns>A <see cref="SqlFragment"/> representing the LIKE operation in the SQL dialect.</returns>
-    SqlFragment GetDialectLike(bool? isCaseSensitive = null);
+    /// <returns>A <see cref="ISqlFragment"/> representing the LIKE operation in the SQL dialect.</returns>
+    ISqlFragment GetDialectLike(bool? isCaseSensitive = null);
 }

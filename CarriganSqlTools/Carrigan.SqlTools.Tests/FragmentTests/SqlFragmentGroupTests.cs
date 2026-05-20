@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
@@ -11,6 +12,7 @@ namespace Carrigan.SqlTools.Tests.FragmentTests;
 
 public class SqlFragmentGroupTests
 {
+    private readonly ISqlDialects Dialect = new SqlServerDialect();
     [Fact]
     public void SqlFragmentGroup_ToSql_ConcatenatesChildFragments()
     {
@@ -21,7 +23,7 @@ public class SqlFragmentGroupTests
             new SqlFragmentText("FROM Users")
         ]);
 
-        string sql = group.ToSql();
+        string sql = group.ToSql(Dialect);
 
         Assert.Equal("SELECT * FROM Users", sql);
     }

@@ -101,7 +101,7 @@ public abstract class Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="branchName"/> is <c>null</c>.
     /// </exception>
-    internal abstract IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect);
+    internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 
     private static IEnumerable<Predicates> GetAllDescendantPredicates(IEnumerable<Predicates> predicates)
     {

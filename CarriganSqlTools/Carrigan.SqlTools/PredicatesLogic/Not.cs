@@ -71,11 +71,11 @@ public class Not : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("(NOT ");
 
-        foreach (SqlFragment fragment in _someValue.ToSqlFragments(dialect))
+        foreach (ISqlFragment fragment in _someValue.ToSqlFragments(dialect))
             yield return fragment;
 
         yield return new SqlFragmentText(")");

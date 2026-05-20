@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.Fragments;
 /// This fragment wraps a <see cref="Parameter"/> so it can participate in fragment concatenation
 /// while preserving access to the parameter’s tag and bound value for later materialization.
 /// </remarks>
-public class SqlFragmentParameter : SqlFragment
+public class SqlFragmentParameter : ISqlFragment
 {
     public readonly ParameterTag ParameterTag;
     public readonly FieldProperties? FieldProperties;
@@ -83,14 +83,14 @@ public class SqlFragmentParameter : SqlFragment
     /// <remarks>
     /// Any exception thrown by <see cref="Parameter.ParameterTag"/> will be propagated to the caller.
     /// </remarks>
-    internal override string ToSql() =>
+    public string ToSql(ISqlDialects dialect) =>
         ParameterTag;
 
     /// <summary>
     /// Retrieves the parameters contained within this fragment for later materialization.
     /// </summary>
     /// <returns>An enumerable collection containing the single <see cref="Parameter"/> wrapped by this fragment.</returns>
-    internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters()
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters()
     {
         yield return this;
     }
@@ -99,5 +99,5 @@ public class SqlFragmentParameter : SqlFragment
     /// Returns a flattened sequence of all SQL fragments contained within this fragment and its descendants.
     /// </summary>
     /// <returns>An enumerable collection containing this fragment as a single element.</returns>
-    internal override IEnumerable<SqlFragment> Flatten() => [this];
+    public IEnumerable<ISqlFragment> Flatten() => [this];
 }

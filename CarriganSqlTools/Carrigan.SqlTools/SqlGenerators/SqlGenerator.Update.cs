@@ -93,7 +93,7 @@ public partial class SqlGenerator<T>
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
 
-        IEnumerable<SqlFragment> setFragments =
+        IEnumerable<ISqlFragment> setFragments =
             updateTheseColumns
                 .Select
                 (
@@ -106,7 +106,7 @@ public partial class SqlGenerator<T>
                 )
                 .JoinFragments(new SqlFragmentText(", "));
 
-        IEnumerable<SqlFragment> whereFragments =
+        IEnumerable<ISqlFragment> whereFragments =
             KeyColumnInfo
                 .Select
                 (
@@ -119,12 +119,12 @@ public partial class SqlGenerator<T>
                 )
                 .JoinFragments(new SqlFragmentText(" AND "));
 
-        IEnumerable<SqlFragment> queryFragments =
+        IEnumerable<ISqlFragment> queryFragments =
                 new SqlFragmentText($"UPDATE {Table} SET ")
                 .Concat(setFragments)
                 .Append(new SqlFragmentText($" WHERE "))
                 .Concat(whereFragments)
-                .Append(SqlFragment.Semicolon);
+                .Append(ISqlFragment.Semicolon);
 
         return queryFragments.ToSqlQuery(Dialect);
     }
@@ -323,7 +323,7 @@ public partial class SqlGenerator<T>
             throw new InvalidTableException(invalidTags);
         }
 
-        IEnumerable <SqlFragment> setFragments =
+        IEnumerable <ISqlFragment> setFragments =
             updateTheseColumns
                 .Select
                 (
@@ -336,7 +336,7 @@ public partial class SqlGenerator<T>
                 )
                 .JoinFragments(new SqlFragmentText(", "));
 
-        IEnumerable<SqlFragment> queryFragments = new SqlFragmentText($"UPDATE {Table} SET ")
+        IEnumerable<ISqlFragment> queryFragments = new SqlFragmentText($"UPDATE {Table} SET ")
             .Concat(setFragments)
             .Append(new SqlFragmentText($" FROM {Table}"));
 
@@ -345,7 +345,7 @@ public partial class SqlGenerator<T>
 
         if (predicates is not null)
         {
-            IEnumerable<SqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments(Dialect)];
+            IEnumerable<ISqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments(Dialect)];
             queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicateSqlFragments);
         }
 

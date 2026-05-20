@@ -36,7 +36,7 @@ public class SqlQuery
     /// </summary>
     /// <param name="dialect">The SQL dialect to use for rendering the fragments.</param>
     /// <param name="fragments">The sequence of SQL fragments to render.</param>
-    internal SqlQuery(ISqlDialects dialect, IEnumerable<SqlFragment> fragments)
+    internal SqlQuery(ISqlDialects dialect, IEnumerable<ISqlFragment> fragments)
     {
         ArgumentNullException.ThrowIfNull(fragments);
         ArgumentNullException.ThrowIfNull(dialect);

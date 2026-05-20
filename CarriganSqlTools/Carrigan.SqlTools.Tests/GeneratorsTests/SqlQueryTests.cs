@@ -34,7 +34,7 @@ public sealed class SqlQueryTests
     [Fact]
     public void GetParameterCount()
     {
-        List<SqlFragment> sql =
+        List<ISqlFragment> sql =
         [
             new SqlFragmentText("SELECT "),
             new SqlFragmentParameter(new ParameterTag("@p1"), 1),
@@ -50,7 +50,7 @@ public sealed class SqlQueryTests
     [Fact]
     public void GetParameterValue()
     {
-        List<SqlFragment> sql =
+        List<ISqlFragment> sql =
         [
             new SqlFragmentText("SELECT "),
             new SqlFragmentParameter(new ParameterTag("@p1"), 1),
@@ -69,7 +69,7 @@ public sealed class SqlQueryTests
     [Fact]
     public void GetParameterValue_NotFound_Exception()
     {
-        List<SqlFragment> sql =
+        List<ISqlFragment> sql =
         [
             new SqlFragmentText("SELECT "),
             new SqlFragmentParameter(new ParameterTag("@p1"), 1),

@@ -17,8 +17,8 @@ public partial class PostgreSqlDialectTests
     [Fact]
     public void GetInsertReturningFragments_ReturningOneColumn_AppendsReturningClause()
     {
-        SqlFragment[] insertIntoFragments = [new SqlFragmentText("INSERT INTO \"Customer\" (\"Name\")")];
-        SqlFragment[] insertValuesFragments = [new SqlFragmentText("VALUES ($1)")];
+        ISqlFragment[] insertIntoFragments = [new SqlFragmentText("INSERT INTO \"Customer\" (\"Name\")")];
+        ISqlFragment[] insertValuesFragments = [new SqlFragmentText("VALUES ($1)")];
         ColumnInfo[] columnInfo = [CreateColumnInfo<InsertCustomerModel>(nameof(InsertCustomerModel.Id))];
 
         string actual = Dialect.GetInsertReturningFragments<InsertCustomerModel>(insertIntoFragments, insertValuesFragments, columnInfo).ToSql(Dialect);
@@ -34,8 +34,8 @@ public partial class PostgreSqlDialectTests
     [Fact]
     public void GetInsertReturningFragments_ReturningMultipleColumns_AppendsReturningClause()
     {
-        SqlFragment[] insertIntoFragments = [new SqlFragmentText("INSERT INTO \"Customer\" (\"Name\")")];
-        SqlFragment[] insertValuesFragments = [new SqlFragmentText("VALUES ($1)")];
+        ISqlFragment[] insertIntoFragments = [new SqlFragmentText("INSERT INTO \"Customer\" (\"Name\")")];
+        ISqlFragment[] insertValuesFragments = [new SqlFragmentText("VALUES ($1)")];
         ColumnInfo[] columnInfo =
         [
             CreateColumnInfo<InsertCustomerModel>(nameof(InsertCustomerModel.Id)),
@@ -55,8 +55,8 @@ public partial class PostgreSqlDialectTests
     [Fact]
     public void GetInsertReturningFragments_NoReturningColumns_ReturnsInsertStatementOnly()
     {
-        SqlFragment[] insertIntoFragments = [new SqlFragmentText("INSERT INTO \"Customer\" (\"Name\")")];
-        SqlFragment[] insertValuesFragments = [new SqlFragmentText("VALUES ($1)")];
+        ISqlFragment[] insertIntoFragments = [new SqlFragmentText("INSERT INTO \"Customer\" (\"Name\")")];
+        ISqlFragment[] insertValuesFragments = [new SqlFragmentText("VALUES ($1)")];
         ColumnInfo[] columnInfo = [];
 
         string actual = Dialect.GetInsertReturningFragments<InsertCustomerModel>(insertIntoFragments, insertValuesFragments, columnInfo).ToSql(Dialect);

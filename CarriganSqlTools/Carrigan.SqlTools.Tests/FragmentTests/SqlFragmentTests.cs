@@ -13,27 +13,27 @@ public class SqlFragmentTests
     [Fact]
     public void ToString_DelegatesToToSql()
     {
-        SqlFragment fragment = new TestFragment("SELECT 1");
+        ISqlFragment fragment = new TestFragment("SELECT 1");
 
-        string actual = fragment.ToSql();
+        string actual = fragment.ToSql(Dialect);
 
         Assert.Equal("SELECT 1", actual);
     }
 
-    private sealed class TestFragment : SqlFragment
+    private sealed class TestFragment : ISqlFragment
     {
         private readonly string _sql;
 
         public TestFragment(string sql) =>
             _sql = sql;
 
-        internal override string ToSql() =>
+        public string ToSql(ISqlDialects dialect) =>
             _sql;
 
-        internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
             [];
 
-        internal override IEnumerable<SqlFragment> Flatten() => [this];
+        public IEnumerable<ISqlFragment> Flatten() => [this];
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class SqlFragmentTests
         Parameter parameter1 = new("Name", "Jonathan");
         Parameter parameter2 = new("Age", 42);
 
-        IEnumerable<SqlFragment> fragments =
+        IEnumerable<ISqlFragment> fragments =
         [
             new SqlFragmentText("WHERE Name = "),
             new SqlFragmentParameter(parameter1),

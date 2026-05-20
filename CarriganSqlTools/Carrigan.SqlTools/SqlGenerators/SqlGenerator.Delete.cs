@@ -197,7 +197,7 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Delete(Joins<T>? joins, Predicates? predicates)
     {
-        IEnumerable<SqlFragment> GetFragments()
+        IEnumerable<ISqlFragment> GetFragments()
         {
             if (joins.IsNullOrEmpty())
                 yield return new SqlFragmentText($"DELETE FROM {Table}");
@@ -205,13 +205,13 @@ public partial class SqlGenerator<T>
                 yield return new SqlFragmentText($"DELETE {Table} FROM {Table}");
 
             if (joins?.IsNotNullOrEmpty() ?? false)
-                foreach (SqlFragment sqlFragment in joins.ToSqlFragments(Dialect))
+                foreach (ISqlFragment sqlFragment in joins.ToSqlFragments(Dialect))
                     yield return sqlFragment;
 
             if (predicates is not null)
             {
                 yield return new SqlFragmentText(" WHERE ");
-                foreach (SqlFragment sqlFragment in predicates.ToSqlFragments(Dialect))
+                foreach (ISqlFragment sqlFragment in predicates.ToSqlFragments(Dialect))
                     yield return sqlFragment;
             }
         }

@@ -86,13 +86,13 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<SqlFragment> ToSqlFragments(ISqlDialects dialect)
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         int index = 0;
 
         if (ChildNodes.Count() == 1)
         {
-            foreach (SqlFragment fragment in ChildNodes.Single().ToSqlFragments(dialect))
+            foreach (ISqlFragment fragment in ChildNodes.Single().ToSqlFragments(dialect))
                 yield return fragment;
 
             yield break;
@@ -103,7 +103,7 @@ public abstract class LogicalOperator : Predicates
         {
             if (index > 0)
                 yield return new SqlFragmentText($" {_operator} ");
-                foreach (SqlFragment fragment in predicate.ToSqlFragments(dialect))
+                foreach (ISqlFragment fragment in predicate.ToSqlFragments(dialect))
                 yield return fragment;
                 index++;
         }

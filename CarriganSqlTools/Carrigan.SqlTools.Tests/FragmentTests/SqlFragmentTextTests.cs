@@ -17,7 +17,7 @@ public class SqlFragmentTextTests
     {
         SqlFragmentText fragment = new("SELECT 1");
 
-        string actualValue = fragment.ToSql();
+        string actualValue = fragment.ToSql(Dialect);
 
         Assert.Equal("SELECT 1", actualValue);
     }
@@ -25,7 +25,7 @@ public class SqlFragmentTextTests
     [Fact]
     public void GetParameters_WithTextFragmentsOnly_ReturnsEmptyCollection()
     {
-        IEnumerable<SqlFragment> fragments =
+        IEnumerable<ISqlFragment> fragments =
         [
             new SqlFragmentText("SELECT "),
             new SqlFragmentText("1")
