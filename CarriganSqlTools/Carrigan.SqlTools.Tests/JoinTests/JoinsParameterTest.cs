@@ -84,7 +84,7 @@ public class JoinsParameterTest
 
         SqlQuery query = customerGenerator.Delete(new Joins<JoinLeftTable>(join1, join2), null);
         
-        Assert.Equal("DELETE FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Joins0Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Joins1Parameter_ZipCode)", query.QueryText);
+        Assert.Equal("DELETE [Customer] FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Joins0Parameter_Total) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @Joins1Parameter_ZipCode)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         Assert.Equal(2, query.GetParameterCount());
         Assert.Equal(1000m, query.GetParameterValue<decimal>("@Joins0Parameter_Total"));

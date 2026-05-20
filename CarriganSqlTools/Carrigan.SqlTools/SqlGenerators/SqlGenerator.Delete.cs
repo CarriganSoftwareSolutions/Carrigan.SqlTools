@@ -176,7 +176,8 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Order] 
+    /// DELETE [Order] 
+    /// FROM [Order] 
     /// INNER JOIN [Customer] 
     /// ON ([Customer].[Id] = [Order].[CustomerId])
     /// ]]></code>
@@ -194,7 +195,8 @@ public partial class SqlGenerator<T>
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Order] 
+    /// DELETE [Order]
+    /// FROM [Order] 
     /// INNER JOIN [Customer] 
     /// ON ([Customer].[Id] = [Order].[CustomerId]) 
     /// WHERE ([Customer].[Email] = @Parameter_Email)
@@ -212,7 +214,11 @@ public partial class SqlGenerator<T>
             IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
 
-            StringBuilder queryBuilder = new($"DELETE FROM {Table}");
+            StringBuilder queryBuilder;
+            if(joins.IsNullOrEmpty())
+                queryBuilder = new($"DELETE FROM {Table}");
+            else
+                queryBuilder = new($"DELETE {Table} FROM {Table}");
 
             if (invalidTags.Any())
             {
