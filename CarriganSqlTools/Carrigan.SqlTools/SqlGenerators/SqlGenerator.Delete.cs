@@ -197,6 +197,24 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Delete(Joins<T>? joins, Predicates? predicates)
     {
+        IEnumerable<SqlFragment> GetFragments()
+        {
+            if (joins.IsNullOrEmpty())
+                yield return new SqlFragmentText($"DELETE FROM {Table}");
+            else
+                yield return new SqlFragmentText($"DELETE {Table} FROM {Table}");
+
+            if (joins?.IsNotNullOrEmpty() ?? false)
+                foreach (SqlFragment sqlFragment in joins.ToSqlFragments(Dialect))
+                    yield return sqlFragment;
+
+            if (predicates is not null)
+            {
+                yield return new SqlFragmentText(" WHERE ");
+                foreach (SqlFragment sqlFragment in predicates.ToSqlFragments(Dialect))
+                    yield return sqlFragment;
+            }
+        }
         if (predicates is null && joins.IsNullOrEmpty())
         {
             return DeleteAll();
@@ -206,28 +224,10 @@ public partial class SqlGenerator<T>
             IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
             IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
-
-            IEnumerable<SqlFragment> queryFragments = [new SqlFragmentText($"DELETE FROM {Table}")];
-
-            if(joins.IsNullOrEmpty())
-                queryFragments = [new SqlFragmentText($"DELETE FROM {Table}")];
-            else
-                queryFragments = [new SqlFragmentText($"DELETE {Table} FROM {Table}")];
-
             if (invalidTags.Any())
                 throw new InvalidTableException(invalidTags);
-
-            if (joins?.IsNotNullOrEmpty() ?? false)
-                queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect));
-
-            IEnumerable<SqlFragment> predicateSqlFragments = predicates?.ToSqlFragments(Dialect) ?? [];
-            if (predicates is not null)
-                queryFragments = queryFragments
-                    .Append(new SqlFragmentText(" WHERE ")) 
-                    .Concat(predicateSqlFragments);
-
-
-            return queryFragments.ToSqlQuery(Dialect);
+            
+            return GetFragments().ToSqlQuery(Dialect);
         }
     }
 }
