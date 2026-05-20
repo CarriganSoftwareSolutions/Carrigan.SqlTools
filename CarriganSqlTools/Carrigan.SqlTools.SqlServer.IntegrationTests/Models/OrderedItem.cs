@@ -1,10 +1,14 @@
+using Carrigan.SqlTools.Attributes;
+
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 
 public sealed class OrderedItem
 {
-    public int OrderId { get; set; }
-    public int BookId { get; set; }
-    public decimal Price { get; set; }
+    [PrimaryKey]
+    public int? OrderId { get; set; }
+    [PrimaryKey]
+    public int? BookId { get; set; }
+    public decimal? Price { get; set; }
 
     public static string CreateTableSql => """
 CREATE TABLE [OrderedItem]

@@ -344,16 +344,16 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
         Assert.Equal(10, books.Count());
 
-        BookDataSet.ValidateBookById(books, 1);
-        BookDataSet.ValidateBookById(books, 2);
-        BookDataSet.ValidateBookById(books, 3);
-        BookDataSet.ValidateBookById(books, 4);
-        BookDataSet.ValidateBookById(books, 5);
-        BookDataSet.ValidateBookById(books, 6);
-        BookDataSet.ValidateBookById(books, 7);
-        BookDataSet.ValidateBookById(books, 8);
-        BookDataSet.ValidateBookById(books, 9);
-        BookDataSet.ValidateBookById(books, 10);
+        BookDataSet.ValidateById(books, 1);
+        BookDataSet.ValidateById(books, 2);
+        BookDataSet.ValidateById(books, 3);
+        BookDataSet.ValidateById(books, 4);
+        BookDataSet.ValidateById(books, 5);
+        BookDataSet.ValidateById(books, 6);
+        BookDataSet.ValidateById(books, 7);
+        BookDataSet.ValidateById(books, 8);
+        BookDataSet.ValidateById(books, 9);
+        BookDataSet.ValidateById(books, 10);
     }
 
     private static void ValidateCustomerOrderJoin(IEnumerable<CustomerOrder> actualRecords, int? expectedCustomerId, int? expectedOrderId)

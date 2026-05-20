@@ -5,7 +5,7 @@ namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
 
 public static class BookDataSet
 {
-    public static void ValidateBookById(IEnumerable<Book> actualBooks, int expectedId)
+    public static void ValidateById(IEnumerable<Book> actualBooks, int expectedId)
     {
         Book actual = actualBooks.Where(book => book.Id == expectedId).Single();
         Validate(actual, expectedId);
