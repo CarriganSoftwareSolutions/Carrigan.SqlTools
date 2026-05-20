@@ -44,5 +44,5 @@ public class SqlFragmentText : SqlFragment
     /// Returns an enumerable collection containing the current SQL fragment instance.
     /// </summary>
     /// <returns>An <see cref="IEnumerable{SqlFragment}"/> that contains only this instance.</returns>
-    internal override IEnumerable<SqlFragment> Flaten() => [this];
+    internal override IEnumerable<SqlFragment> Flatten() => [this];
 }

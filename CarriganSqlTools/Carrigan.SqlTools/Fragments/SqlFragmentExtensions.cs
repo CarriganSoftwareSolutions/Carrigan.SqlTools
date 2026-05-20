@@ -120,5 +120,5 @@ internal static class SqlFragmentExtensions
     /// <param name="fragments">The sequence of fragments to flatten.</param>
     /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects representing the flattened structure of the input sequence.</returns>
     internal static IEnumerable<SqlFragment> Flaten(this IEnumerable<SqlFragment> fragments) =>
-        fragments.SelectMany(element => element.Flaten());
+        fragments.SelectMany(element => element.Flatten());
 }

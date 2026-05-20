@@ -99,5 +99,5 @@ public class SqlFragmentParameter : SqlFragment
     /// Returns a flattened sequence of all SQL fragments contained within this fragment and its descendants.
     /// </summary>
     /// <returns>An enumerable collection containing this fragment as a single element.</returns>
-    internal override IEnumerable<SqlFragment> Flaten() => [this];
+    internal override IEnumerable<SqlFragment> Flatten() => [this];
 }

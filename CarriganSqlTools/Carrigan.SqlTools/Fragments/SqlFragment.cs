@@ -77,5 +77,5 @@ public abstract class SqlFragment
     /// of their original hierarchical structure.</remarks>
     /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects representing the flattened structure of this
     /// fragment. The collection may be empty if there are no child fragments.</returns>
-    internal abstract IEnumerable<SqlFragment> Flaten();
+    internal abstract IEnumerable<SqlFragment> Flatten();
 }

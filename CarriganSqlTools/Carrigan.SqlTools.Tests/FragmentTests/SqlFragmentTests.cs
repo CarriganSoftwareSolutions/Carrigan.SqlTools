@@ -33,7 +33,7 @@ public class SqlFragmentTests
         internal override IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
             [];
 
-        internal override IEnumerable<SqlFragment> Flaten() => [this];
+        internal override IEnumerable<SqlFragment> Flatten() => [this];
     }
 
     [Fact]

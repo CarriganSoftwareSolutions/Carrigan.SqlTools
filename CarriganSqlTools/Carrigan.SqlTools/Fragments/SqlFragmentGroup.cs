@@ -44,6 +44,6 @@ public class SqlFragmentGroup : SqlFragment
     /// which can simplify processing or analysis of complex fragment trees.</remarks>
     /// <returns>An enumerable collection of <see cref="SqlFragment"/> objects representing all nested fragments in a single,
     /// flat sequence.</returns>
-    internal override IEnumerable<SqlFragment> Flaten() => 
-        sqlFragments.SelectMany(element => element.Flaten());
+    internal override IEnumerable<SqlFragment> Flatten() => 
+        sqlFragments.SelectMany(element => element.Flatten());
 }
