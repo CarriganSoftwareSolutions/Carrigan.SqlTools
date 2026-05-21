@@ -283,33 +283,55 @@ public partial class SqlGenerator<T>
     /// </example>
     public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, ColumnCollection<T>? returnColumns, params IEnumerable<T> entities)
     {
-        IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? ColumnInfo;
-        IEnumerable<ISqlFragment> insertIntoFragments;
-
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
+        IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? ColumnInfo;
 
-        string columns = string.Join(", ", insertTheseColumns.Select(column => Dialect.QuoteIdentifier(column.ColumnName)));
-
-        insertIntoFragments = [new SqlFragmentText($"INSERT INTO {Table} ({columns})")];
-
-        IEnumerable<ISqlFragment> valuesFragments = entities.Count() switch //when there is only one record use the overload that doesn't add index counts to the parameters
+        IEnumerable<ISqlFragment> GetInsertIntoFragments()
         {
-            1 => new SqlFragmentText($"VALUES ")
-                    .Concat(GetInsertValueFragments(insertTheseColumns, entities.Single())),
-            _ => new SqlFragmentText($"VALUES ")
-                    .Concat(GetEnumeratedInsertValueFragments(insertTheseColumns, entities)),
-        };
+            IEnumerable<ISqlFragment> insertColumnFragments =
+                insertTheseColumns
+                    .Select(columnInfo => new SqlFragmentText(columnInfo.ColumnTag.ToSql(Dialect, false)))
+                    .JoinFragments(new SqlFragmentText(", "));
 
-        IEnumerable<ISqlFragment> queryFragments = returnColumns switch
+            yield return new SqlFragmentText("INSERT INTO ");
+            yield return Table;
+            yield return new SqlFragmentText(" (");
+            foreach (ISqlFragment fragment in insertColumnFragments)
+                yield return fragment;
+            yield return new SqlFragmentText(")");
+        }
+
+        IEnumerable<ISqlFragment> GetValuesFragments()
         {
-            null => insertIntoFragments
-                .Append(new SqlFragmentText(" "))
-                .Concat(valuesFragments)
-                .Append(ISqlFragment.Semicolon),
-            _ => Dialect.GetInsertReturningFragments<T>(insertIntoFragments, valuesFragments, returnColumns.ColumnInfo),
-        };
+            yield return new SqlFragmentText("VALUES ");
+            if (entities.Count() > 1)
+                foreach (ISqlFragment fragment in GetEnumeratedInsertValueFragments(insertTheseColumns, entities))
+                    yield return fragment;
+            else
+                foreach (ISqlFragment fragment in GetInsertValueFragments(insertTheseColumns, entities.Single()))
+                    yield return fragment;
+        }
 
-        return queryFragments.ToSqlQuery(Dialect);
+        IEnumerable<ISqlFragment> GetFinalFragments()
+        {
+            if (returnColumns.IsNotNullOrEmpty())
+            {
+                foreach (ISqlFragment fragment in Dialect.GetInsertReturningFragments<T>(GetInsertIntoFragments(), GetValuesFragments(), returnColumns.ColumnInfo))
+                    yield return fragment;
+            }
+            else
+            {
+
+                foreach (ISqlFragment fragment in GetInsertIntoFragments())
+                    yield return fragment;
+                yield return ISqlFragment.Space;
+                foreach (ISqlFragment fragment in GetValuesFragments())
+                    yield return fragment;
+                yield return ISqlFragment.Semicolon;
+            }
+        }
+
+        return GetFinalFragments().ToSqlQuery(Dialect);
     }
 }

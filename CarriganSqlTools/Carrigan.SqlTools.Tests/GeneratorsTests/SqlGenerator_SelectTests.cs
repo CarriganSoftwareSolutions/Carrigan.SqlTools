@@ -158,7 +158,7 @@ public class SqlGenerator_SelectTests
         OrderByItem<JoinLeftTable> orderByItem1 = new("Id", SortDirectionEnum.Ascending);
         OrderByItem<JoinRightTable> orderByItem2 = new("Id", SortDirectionEnum.Descending);
         OrderByItem<JoinLastTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
-        OrderByBase orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
+        OrderBy orderBy = new OrderBy(orderByItem1, orderByItem2, orderByItem3);
         PagingBase offsetNext = new DefinePage(3, 50);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Select(null, null, joins, predicateId, orderBy, offsetNext);
 

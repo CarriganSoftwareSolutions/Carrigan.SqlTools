@@ -23,11 +23,17 @@ public interface ISqlDialects
     /// <param name="identifier">The identifier to quote.</param>
     /// <returns>The quoted identifier.</returns>
     string QuoteIdentifier(string identifier);
+
     /// <summary>
+    /// Generates a string representation of the specified database procedure, optionally within a given schema.
+    /// </summary>
+    /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
+    /// <param name="procedureName">The name of the procedure tag to render. Cannot be null or empty.</param>
+    /// <returns>A string containing the rendered representation of the specified procedure.</returns>
+    string RenderProcedureTag(SchemaName? schemaName, ProcedureName procedureName);
+
     /// Generates a string representation of the specified database table, optionally within a given schema.
     /// </summary>
-    /// <remarks>If <paramref name="schema"/> is provided, the output includes the schema and table names. If
-    /// <paramref name="includeTable"/> is false, only the column name is rendered.</remarks>
     /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
     /// <param name="tableName">The name of the table to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified table.</returns>

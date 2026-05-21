@@ -1,4 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
@@ -9,13 +11,14 @@ namespace Carrigan.SqlTools.Tests.Tags;
 
 public class ProcedureTagTests
 {
+    private static readonly ISqlDialects Dialect =  new SqlServerDialect();
     [Theory]
     [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
     [InlineData(null, "Pizza", "[Pizza]")]
     [InlineData("", "Pizza", "[Pizza]")]
     public void Procedure_Tag_Tests(string? schemaName, string name, string expected)
     {
-        string actual = new ProcedureTag(schemaName, name);
+        string actual = new ProcedureTag(schemaName, name).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
     }
@@ -215,17 +218,17 @@ public class ProcedureTagTests
     public void Constructor_ValidWithoutSchema_ShouldReturnFormattedTag()
     {
         // Arrange
-        string ProcedureName = "ValidProcedure"; // passes pattern e.g. "^[A-Za-z_@#][A-Za-z0-9_@$#]*$"
+        string procedureName = "ValidProcedure"; // passes pattern e.g. "^[A-Za-z_@#][A-Za-z0-9_@$#]*$"
         string expected = "[ValidProcedure]";
 
         // Act
-        ProcedureTag ProcedureTag = new(null, ProcedureName);
+        ProcedureTag ProcedureTag = new(null, procedureName);
 
         // Assert
-        Assert.Equal(expected, ProcedureTag.ToString());
+        Assert.Equal(expected, ProcedureTag.ToSql(Dialect));
         // Test implicit conversion to string.
         string implicitString = ProcedureTag;
-        Assert.Equal(expected, implicitString);
+        Assert.Equal(procedureName, implicitString);
     }
 
     [Fact]
@@ -240,9 +243,9 @@ public class ProcedureTagTests
         ProcedureTag ProcedureTag = new(schemaName, ProcedureName);
 
         // Assert
-        Assert.Equal(expected, ProcedureTag.ToString());
+        Assert.Equal(expected, ProcedureTag.ToSql(Dialect));
         string implicitString = ProcedureTag;
-        Assert.Equal(expected, implicitString);
+        Assert.Equal($"{schemaName}.{ProcedureName}", implicitString);
     }
 
     [Theory]
@@ -287,7 +290,7 @@ public class ProcedureTagTests
         string expected = "[dbo].[ValidProcedure]";
 
         // Act
-        string result = ProcedureTag.ToString();
+        string result = ProcedureTag.ToSql(Dialect);
 
         // Assert
         Assert.Equal(expected, result);
@@ -303,7 +306,7 @@ public class ProcedureTagTests
         string expected = "[dbo].[ValidProcedure]";
 
         // Act
-        string result = ProcedureTag;  // Implicit conversion to string
+        string result = ProcedureTag.ToSql(Dialect);  // Implicit conversion to string
 
         // Assert
         Assert.Equal(expected, result);

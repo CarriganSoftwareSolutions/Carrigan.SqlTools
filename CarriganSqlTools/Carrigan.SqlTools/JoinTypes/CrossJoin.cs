@@ -83,6 +83,9 @@ public class CrossJoin<rightT> : JoinBase
     /// The branch prefix used to distinguish parameters in join predicates from the main where clause.
     /// This value is ignored for <c>CROSS JOIN</c> because no <c>ON</c> clause is emitted.
     /// </param>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix) =>
-        [new SqlFragmentText($" CROSS JOIN {TableTag}")];
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
+    {
+        yield return new SqlFragmentText(" CROSS JOIN ");
+        yield return TableTag;
+    }
 }

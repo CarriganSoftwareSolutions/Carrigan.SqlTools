@@ -1,16 +1,21 @@
-﻿using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 public class EmptyOrderByTests
 {
+    private readonly static ISqlDialects Dialect = new SqlServerDialect();
+
     [Fact]
     public void EmptyOrderByTests_ToSql()
     {
         OrderBy orderBy = OrderBy.Empty;
 
-        Assert.Equal(string.Empty, orderBy.ToSql());
+        Assert.Equal(string.Empty, orderBy.ToSql(Dialect));
     }
     [Fact]
     public void EmptyOrderByTests_TableTags()

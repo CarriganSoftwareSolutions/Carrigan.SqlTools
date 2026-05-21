@@ -14,7 +14,7 @@ public class SelectTagsTests
     private static SelectTag New(string? schemaName, string tableName, string columnName, string? aliasName) =>
         New(SchemaName.New(schemaName), new TableName(tableName), new ColumnName(columnName), AliasName.New(aliasName));
     private static SelectTag New(SchemaName? schemaName, TableName tableName, ColumnName columnName, AliasName? aliasName) =>
-        new (new ColumnTag(new TableTag(Dialect, schemaName, tableName), columnName), AliasTag.New(aliasName));
+        new (new ColumnTag(new TableTag(schemaName, tableName), columnName), AliasTag.New(aliasName));
 
     private static readonly SelectTag a = New(null, "SomeTable", "SomeColumn", null);
     private static readonly SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);
@@ -64,7 +64,7 @@ public class SelectTagsTests
 
         Assert.Equal(dExpectedString, selectTags.ToSql(Dialect));
 
-        Assert.Equal("[dbo].[SomeTable]", selectTags.GetTableTags().Single());
+        Assert.Equal("[dbo].[SomeTable]", selectTags.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class SelectTagsTests
 
         Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single());
+        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class SelectTagsTests
 
         Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single());
+        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class SelectTagsTests
 
         Assert.Equal(aExpectedString, selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().Single());;
+        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));;
     }
 
     [Fact]
@@ -141,8 +141,8 @@ public class SelectTagsTests
 
         Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(0));
-        Assert.Equal("[dbo].[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(1));
+        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(0).ToSql(Dialect));
+        Assert.Equal("[dbo].[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(1).ToSql(Dialect));
     }
 
     [Fact]
@@ -164,8 +164,8 @@ public class SelectTagsTests
 
         Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(0));
-        Assert.Equal("[dbo].[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(1));
+        Assert.Equal("[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(0).ToSql(Dialect));
+        Assert.Equal("[dbo].[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(1).ToSql(Dialect));
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public class SelectTagsTests
 
         Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
+        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -216,7 +216,7 @@ public class SelectTagsTests
 
         Assert.Equal($"[Order].[Id] AS [Override], [Order].[CustomerId] AS [Override2], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
+        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -241,7 +241,7 @@ public class SelectTagsTests
 
         Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single());
+        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]

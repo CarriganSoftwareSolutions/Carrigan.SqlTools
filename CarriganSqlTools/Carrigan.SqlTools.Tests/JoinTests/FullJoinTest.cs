@@ -53,7 +53,7 @@ public class FullJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         FullJoin<JoinRightTable> join = new(id);
 
-        TableTag expected = new(Dialect, null, "Right");
+        TableTag expected = new(null, "Right");
 
         Assert.Equal(expected, join.TableTag);
     }

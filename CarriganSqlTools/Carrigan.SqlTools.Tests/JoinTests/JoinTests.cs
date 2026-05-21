@@ -53,7 +53,7 @@ public class JoinTests
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Join<JoinLeftTable> join = new(id);
 
-        TableTag expected = new(Dialect, null, "Left");
+        TableTag expected = new(null, "Left");
 
         Assert.Equal(expected, join.TableTag);
     }

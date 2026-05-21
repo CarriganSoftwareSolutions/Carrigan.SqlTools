@@ -107,6 +107,6 @@ public class Column<T> : ColumnBase
     /// </returns>
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
-        yield return new SqlFragmentText(ColumnInfo);
+        yield return ColumnInfo.ColumnTag;
     }
 }

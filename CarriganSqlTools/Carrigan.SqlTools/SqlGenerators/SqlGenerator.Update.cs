@@ -7,6 +7,7 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Data;
+using System.Data.Common;
 using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -93,40 +94,33 @@ public partial class SqlGenerator<T>
         IEnumerable<ColumnInfo> updateTheseColumns =
             (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
 
-        IEnumerable<ISqlFragment> setFragments =
-            updateTheseColumns
-                .Select
-                (
-                    column =>
-                    new SqlFragmentGroup
-                    (
-                        new SqlFragmentText($"{column.ColumnTag.ToString(false)} = "),
-                        GetSqlParameter(column, entity)
-                    )
-                )
-                .JoinFragments(new SqlFragmentText(", "));
-
-        IEnumerable<ISqlFragment> whereFragments =
+        IEnumerable<ISqlFragment>GetWhereFragments() =>
             KeyColumnInfo
                 .Select
                 (
                     column =>
                     new SqlFragmentGroup
                     (
-                        new SqlFragmentText($"{column.ColumnTag.ToString(false)} = "),
+                        new SqlFragmentText($"{column.ColumnTag.ToSql(Dialect, false)} = "),
                         GetSqlParameter(column, entity)
                     )
                 )
                 .JoinFragments(new SqlFragmentText(" AND "));
 
-        IEnumerable<ISqlFragment> queryFragments =
-                new SqlFragmentText($"UPDATE {Table} SET ")
-                .Concat(setFragments)
-                .Append(new SqlFragmentText($" WHERE "))
-                .Concat(whereFragments)
-                .Append(ISqlFragment.Semicolon);
+        IEnumerable<ISqlFragment> GetFragments()
+        {
+            yield return new SqlFragmentText("UPDATE ");
+            yield return Table;
+            yield return new SqlFragmentText(" SET ");
+            foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, false))
+                yield return fragment;
+            yield return new SqlFragmentText($" WHERE ");
+            foreach (ISqlFragment fragment in GetWhereFragments())
+                yield return fragment;
+            yield return ISqlFragment.Semicolon;
+        }
 
-        return queryFragments.ToSqlQuery(Dialect);
+        return GetFragments().ToSqlQuery(Dialect);
     }
 
 
@@ -302,8 +296,7 @@ public partial class SqlGenerator<T>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
     /// UPDATE [Customer] 
-    /// SET [Customer].[Email] = @ParameterSet_Email 
-    /// FROM [Customer] 
+    /// SET [Email] = @ParameterSet_Email
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
@@ -323,33 +316,49 @@ public partial class SqlGenerator<T>
             throw new InvalidTableException(invalidTags);
         }
 
-        IEnumerable <ISqlFragment> setFragments =
-            updateTheseColumns
-                .Select
-                (
-                    column =>
-                    new SqlFragmentGroup
-                    (
-                        new SqlFragmentText($"{column.ColumnTag.ToString(true)} = "),
-                        GetSqlParameter(column, entity)
-                    )
-                )
-                .JoinFragments(new SqlFragmentText(", "));
-
-        IEnumerable<ISqlFragment> queryFragments = new SqlFragmentText($"UPDATE {Table} SET ")
-            .Concat(setFragments)
-            .Append(new SqlFragmentText($" FROM {Table}"));
-
-        if (joins?.IsNotNullOrEmpty() ?? false)
-            queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect)); 
-
-        if (predicates is not null)
+        IEnumerable<ISqlFragment> GetFragments()
         {
-            IEnumerable<ISqlFragment> predicateSqlFragments = [.. predicates.ToSqlFragments(Dialect)];
-            queryFragments = queryFragments.Append(new SqlFragmentText($" WHERE ")).Concat(predicateSqlFragments);
+            yield return new SqlFragmentText("UPDATE ");
+            yield return Table;
+            yield return new SqlFragmentText(" SET ");
+            foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, joins.IsNotNullOrEmpty()))
+                yield return fragment;
+            if(joins.IsNotNullOrEmpty())
+            {
+                yield return new SqlFragmentText(" FROM ");
+                yield return Table;
+                foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
+                    yield return fragment;
+            }
+            if(predicates is not null)
+            {
+                yield return new SqlFragmentText($" WHERE ");
+                foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
+                    yield return fragment;
+            }
         }
 
-
-        return queryFragments.ToSqlQuery(Dialect);
+        return GetFragments().ToSqlQuery(Dialect);
     }
+
+
+    /// <summary>
+    /// Generates the SQL fragments for the <c>SET</c> clause of an <c>UPDATE</c> statement,
+    /// </summary>
+    /// <param name="entity">the entity containing the values to be updated</param>
+    /// <param name="updateTheseColumns">the columns to be updated</param>
+    /// <param name="useTableTag">whether to use the table tag in the SQL fragments</param>
+    /// <returns></returns>
+    IEnumerable<ISqlFragment> GetSetFragments(T entity, IEnumerable<ColumnInfo> updateTheseColumns, bool useTableTag) =>
+        updateTheseColumns
+            .Select
+            (
+                column =>
+                new SqlFragmentGroup
+                (
+                    new SqlFragmentText($"{column.ColumnTag.ToSql(Dialect, useTableTag)} = "),
+                    GetSqlParameter(column, entity)
+                )
+            )
+            .JoinFragments(new SqlFragmentText(", "));
 }

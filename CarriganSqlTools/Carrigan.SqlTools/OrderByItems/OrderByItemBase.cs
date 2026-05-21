@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.ReflectorCache;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
@@ -6,7 +8,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// <summary>
 /// Represents a single-column specification within a SQL <c>ORDER BY</c> clause.
 /// </summary>
-public abstract class OrderByItemBase : OrderByBase, IEquatable<OrderByItemBase>
+public abstract class OrderByItemBase : ISqlFragment, IEquatable<OrderByItemBase>
 {
     /// <summary>
     /// Gets the <see cref="ColumnInfo"/> associated with this item.
@@ -50,17 +52,6 @@ public abstract class OrderByItemBase : OrderByBase, IEquatable<OrderByItemBase>
     }
 
     /// <summary>
-    /// Generates the SQL fragment for this order-by item (without the <c>ORDER BY</c> keyword).
-    /// </summary>
-    /// <remarks>
-    /// The containing <see cref="SqlGenerators.SqlGenerator{T}"/> is responsible for emitting the
-    /// <c>ORDER BY</c> keyword and for joining multiple items.
-    /// </remarks>
-    /// <returns>A SQL string representing this item, e.g., <c>[Order].[OrderDate] ASC</c>.</returns>
-    internal override string ToSql() =>
-        $"{ColumnInfo} {SortDirection.ToSql()}";
-
-    /// <summary>
     /// Determines whether the specified object is equal to the current instance.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
@@ -72,4 +63,25 @@ public abstract class OrderByItemBase : OrderByBase, IEquatable<OrderByItemBase>
     /// </summary>
     /// <returns>An integer hash code for the current object.</returns>
     public abstract override int GetHashCode();
+
+    public static implicit operator OrderBy(OrderByItemBase orderByItemBase) =>
+        new(orderByItemBase);
+
+
+    public IEnumerable<ISqlFragment> Flatten() =>
+        [this];
+
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        [];
+
+    /// <summary>
+    /// Generates the SQL fragment for this order-by item (without the <c>ORDER BY</c> keyword).
+    /// </summary>
+    /// <remarks>
+    /// The containing <see cref="SqlGenerators.SqlGenerator{T}"/> is responsible for emitting the
+    /// <c>ORDER BY</c> keyword and for joining multiple items.
+    /// </remarks>
+    /// <returns>A SQL string representing this item, e.g., <c>[Order].[OrderDate] ASC</c>.</returns>
+    public string ToSql(ISqlDialects dialect) =>
+        $"{ColumnInfo.ColumnTag.ToSql(dialect)} {SortDirection.ToSql()}";
 }

@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
@@ -6,6 +8,7 @@ namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 public class OrderByTests
 {
+    private readonly static ISqlDialects Dialect = new SqlServerDialect();
     [Fact]
     public void OrderByTests_Constructor()
     {
@@ -14,8 +17,7 @@ public class OrderByTests
 
 
         Assert.Single(orderBy.TableTags);
-        Assert.Equal("[Address]", orderBy.TableTags.Single());
-        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql());
+        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -26,8 +28,7 @@ public class OrderByTests
 
 
         Assert.Single(orderBy.TableTags);
-        Assert.Equal("[Address]", orderBy.TableTags.Single());
-        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql());
+        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -39,9 +40,7 @@ public class OrderByTests
 
 
         Assert.Equal(2, orderBy.TableTags.Count());
-        Assert.Equal("[Address]", orderBy.TableTags.First());
-        Assert.Equal("[Address]", orderBy.TableTags.Skip(1).First());
-        Assert.Equal("ORDER BY [Address].[City] ASC, [Address].[Street] DESC", orderBy.ToSql());
+        Assert.Equal("ORDER BY [Address].[City] ASC, [Address].[Street] DESC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -70,10 +69,7 @@ public class OrderByTests
 
 
         Assert.Equal(3, orderBy.TableTags.Count());
-        Assert.Equal("[Address]", orderBy.TableTags.First());
-        Assert.Equal("[ColumnTable]", orderBy.TableTags.Skip(1).First());
-        Assert.Equal("[BooleanColumnTable]", orderBy.TableTags.Skip(2).First());
-        Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000destruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql());
+        Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000destruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql(Dialect));
     }
     [Fact]
     public void WithAppend()
@@ -93,10 +89,9 @@ public class OrderByTests
         // TableTags should reflect the added item
         Assert.Empty(order.TableTags);
         Assert.Single(returned.TableTags);
-        Assert.Equal("[Address]", returned.TableTags.Single());
 
         // ToSql should produce ORDER BY clause
-        Assert.Equal("ORDER BY [Address].[Street] ASC", returned.ToSql());
+        Assert.Equal("ORDER BY [Address].[Street] ASC", returned.ToSql(Dialect));
     }
 
     [Fact]
@@ -121,30 +116,18 @@ public class OrderByTests
         Assert.Equal(3, newItems.Count);
 
         // Insertion order must be preserved
-        Assert.Equal(initial.ToSql(), oldItems[0].ToSql());
-        Assert.Equal(initial.ToSql(), newItems[0].ToSql());
-        Assert.Equal(more1.ToSql(), newItems[1].ToSql());
-        Assert.Equal(more2.ToSql(), newItems[2].ToSql());
-
-        // TableTags sequence likewise
-        List<TableTag> oldTags =
-            [.. order.TableTags];
-        Assert.Equal("[Address]", oldTags[0]);
-
-        // TableTags sequence likewise
-        List<TableTag> newTags =
-            [.. newOrder.TableTags];
-        Assert.Equal("[Address]", newTags[0]);
-        Assert.Equal("[Address]", newTags[1]);
-        Assert.Equal("[Address]", newTags[2]);
+        Assert.Equal(initial.ToSql(Dialect), oldItems[0].ToSql(Dialect));
+        Assert.Equal(initial.ToSql(Dialect), newItems[0].ToSql(Dialect));
+        Assert.Equal(more1.ToSql(Dialect), newItems[1].ToSql(Dialect));
+        Assert.Equal(more2.ToSql(Dialect), newItems[2].ToSql(Dialect));
 
         // ToSql must join all three
-        string expectedSql = string.Join(", ", oldItems.Select(i => i.ToSql()));
-        Assert.Equal($"ORDER BY {expectedSql}", order.ToSql());
+        string expectedSql = string.Join(", ", oldItems.Select(i => i.ToSql(Dialect)));
+        Assert.Equal($"ORDER BY {expectedSql}", order.ToSql(Dialect));
 
         // ToSql must join all three
-        expectedSql = string.Join(", ", newItems.Select(i => i.ToSql()));
-        Assert.Equal($"ORDER BY {expectedSql}", newOrder.ToSql());
+        expectedSql = string.Join(", ", newItems.Select(i => i.ToSql(Dialect)));
+        Assert.Equal($"ORDER BY {expectedSql}", newOrder.ToSql(Dialect));
     }
 
     [Fact]

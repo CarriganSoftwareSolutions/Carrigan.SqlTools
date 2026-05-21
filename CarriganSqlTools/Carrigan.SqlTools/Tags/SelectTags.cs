@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 
@@ -11,7 +12,7 @@ namespace Carrigan.SqlTools.Tags;
 /// Represents a collection of <see cref="SelectTag"/> items, providing utilities to
 /// append, concatenate, and render them for a SELECT list.
 /// </summary>
-public class SelectTags
+public class SelectTags: ISqlFragment
 {
 
     private readonly IEnumerable<SelectTag> _selectTags;
@@ -38,13 +39,6 @@ public class SelectTags
     /// <returns><c>true</c> if no items exist; otherwise, <c>false</c>.</returns>
     public bool Empty() =>
         Any() is false;
-
-    /// <summary>
-    /// Returns the SQL text for all select tags represented by this instance as a comma-separated list.
-    /// </summary>
-    /// <returns>A comma-separated list of the contained <see cref="SelectTag"/> SQL fragments.</returns>
-    public string ToSql(ISqlDialects dialect) =>
-        string.Join(", ", _selectTags.Select(selectTag => selectTag.ToSql(dialect)));
 
     /// <summary>
     /// Gets all distinct <see cref="TableTag"/> values referenced by the contained select tags.
@@ -227,4 +221,19 @@ public class SelectTags
 
 
     public static implicit operator SelectTags(SelectTag join) => new(join);
+
+    public IEnumerable<ISqlFragment> Flatten()
+    {
+        yield return this;
+    }
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        [];
+
+
+    /// <summary>
+    /// Returns the SQL text for all select tags represented by this instance as a comma-separated list.
+    /// </summary>
+    /// <returns>A comma-separated list of the contained <see cref="SelectTag"/> SQL fragments.</returns>
+    public string ToSql(ISqlDialects dialect) =>
+        string.Join(", ", _selectTags.Select(selectTag => selectTag.ToSql(dialect)));
 }

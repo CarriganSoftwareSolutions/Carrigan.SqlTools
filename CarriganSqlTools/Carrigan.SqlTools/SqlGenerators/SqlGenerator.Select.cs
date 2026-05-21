@@ -54,7 +54,7 @@ public partial class SqlGenerator<T>
     /// ORDER BY [Customer].[Email] ASC
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectAll(OrderByBase? orderBy = null) =>
+    public SqlQuery SelectAll(OrderBy? orderBy = null) =>
         Select(null, null, null, null, orderBy, null);
 
     /// <summary>
@@ -181,7 +181,7 @@ public partial class SqlGenerator<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderByBase? orderBy, Paging.PagingBase? paging)
+    public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBy? orderBy, Paging.PagingBase? paging)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
@@ -189,12 +189,18 @@ public partial class SqlGenerator<T>
                 yield return new SqlFragmentText($"SELECT DISTINCT ");
             else
                 yield return new SqlFragmentText($"SELECT ");
+
             if (selects is not null && selects.Any())
-                yield return new SqlFragmentText($"{selects.ToSql(Dialect)} FROM {Table}");
+                yield return selects;
             else if (HasAliasedColumns)
-                yield return new SqlFragmentText($"{SelectTags.ToSql(Dialect)} FROM {Table}");
+                yield return SelectTags;
             else
-                yield return new SqlFragmentText($"{Table}.* FROM {Table}");
+            {
+                yield return Table;
+                yield return new SqlFragmentText(".*");
+            }
+            yield return new SqlFragmentText(" FROM ");
+            yield return Table;
 
             if (joins?.IsNotNullOrEmpty() ?? false)
             {
@@ -211,7 +217,7 @@ public partial class SqlGenerator<T>
             }
 
             if (orderBy.IsNotNullOrEmpty())
-                    yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql()}");
+                    yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql(Dialect)}");
 
 
             if (paging is not null)
@@ -222,10 +228,13 @@ public partial class SqlGenerator<T>
 
         }
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
+
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
+
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
         IEnumerable<TableTag> invalidTags = invalidSelectedTags.Concat(invalidPredicateTags).Concat(invalidOrderByTags).Distinct();

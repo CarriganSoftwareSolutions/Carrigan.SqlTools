@@ -17,9 +17,9 @@ public class SqlGeneratorSelectCountExamples
     [Fact]
     public void SelectCountAll()
     {
-        SqlQuery query = orderGenerator.SelectCount(null, null, null);
+        SqlQuery query = orderGenerator.SelectCount(null, null, null, null);
 
-        Assert.Equal("SELECT COUNT([Order].*) FROM [Order]", query.QueryText);
+        Assert.Equal("SELECT COUNT([Order].[Id]) FROM [Order]", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
@@ -32,9 +32,9 @@ public class SqlGeneratorSelectCountExamples
         Parameter minTotal = new("Total", 500m);
         GreaterThan greaterThan = new(totalCol, minTotal);
 
-        SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
+        SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
 
-        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
+        Assert.Equal("SELECT COUNT([Order].[Id]) FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 500m);
@@ -52,9 +52,9 @@ public class SqlGeneratorSelectCountExamples
         ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
         Join<Customer> join = new (columnCompare);
 
-        SqlQuery query = orderGenerator.SelectCount(null, join, greaterThan);
+        SqlQuery query = orderGenerator.SelectCount(null, null, join, greaterThan);
 
-        Assert.Equal("SELECT COUNT([Order].*) FROM [Order] JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Total_1)", query.QueryText);
+        Assert.Equal("SELECT COUNT([Order].[Id]) FROM [Order] JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 500m);
@@ -64,13 +64,7 @@ public class SqlGeneratorSelectCountExamples
     public void SelectCountWithSelectsOnTheJoin()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
-        SelectTags selectTags =
-            SelectTags.Get<Customer>("Id", "CustomerId")
-                .Concat<Customer>(["Name", "Email", "Phone"])
-                .Append<Order>("Id", "OrderId")
-                .Concat<Order>(["OrderDate", "Total"])
-                .Append<PaymentMethod>("Id", "PaymentMethodId")
-                .Append<PaymentMethod>("ZipCode");
+        SelectTag selectTag = SelectTag.Get<Customer>("Id", "CustomerId");
 
         ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join1 = new(customerIdEquals);
@@ -80,9 +74,9 @@ public class SqlGeneratorSelectCountExamples
 
         Joins<Customer> joins = new(join1, join2);
 
-        SqlQuery query = customerGenerator.SelectCount(selectTags, joins, null);
+        SqlQuery query = customerGenerator.SelectCount(true, selectTag, joins, null);
 
-        Assert.Equal("SELECT COUNT([Customer].[Id] AS [CustomerId], [Customer].[Name], [Customer].[Email], [Customer].[Phone], [Order].[Id] AS [OrderId], [Order].[OrderDate], [Order].[Total], [PaymentMethod].[Id] AS [PaymentMethodId], [PaymentMethod].[ZipCode]) FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
+        Assert.Equal("SELECT COUNT(DISTINCT [Customer].[Id]) FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
     }

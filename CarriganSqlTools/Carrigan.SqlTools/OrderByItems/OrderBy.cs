@@ -1,18 +1,19 @@
 ﻿using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
 
 /// <summary>
-/// Concrete implementation of <see cref="OrderByBase"/> for an <c>ORDER BY</c>
+/// Concrete implementation of <see cref="OrderBy"/> for an <c>ORDER BY</c>
 /// clause that supports multiple columns.
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// OrderByItem<Customer> orderBy1 = new(nameof(Customer.Name));
-/// OrderByItem<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
+/// OrderByItemBase<Customer> orderBy1 = new(nameof(Customer.Name));
+/// OrderByItemBase<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
 /// OrderBy orderBy = new(orderBy1, orderBy2);
 /// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, null);
 /// ]]></code>
@@ -23,7 +24,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
 /// ]]></code>
 /// </example>
-public class OrderBy : OrderByBase
+public class OrderBy
 {
     /// <summary>
     /// Gets an empty <c>ORDER BY</c> clause.
@@ -69,7 +70,7 @@ public class OrderBy : OrderByBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
     /// </exception>
-    public override bool Contains(OrderByItemBase orderByItem)
+    public bool Contains(OrderByItemBase orderByItem)
     {
         ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
 
@@ -79,20 +80,8 @@ public class OrderBy : OrderByBase
     /// <summary>
     /// Enumerates all <see cref="TableTag"/> objects referenced in the <c>ORDER BY</c> clause.
     /// </summary>
-    internal override IEnumerable<TableTag> TableTags =>
+    internal IEnumerable<TableTag> TableTags =>
         _orderByItems.Select(static item => item.TableTag);
-
-    /// <summary>
-    /// Generates the SQL <c>ORDER BY</c> clause represented by this instance.
-    /// </summary>
-    /// <returns>
-    /// A SQL string for the <c>ORDER BY</c> clause, or <see cref="string.Empty"/>
-    /// if no ordering is defined.
-    /// </returns>
-    internal override string ToSql() =>
-        IsEmpty()
-            ? string.Empty
-            : $"ORDER BY {string.Join(", ", _orderByItems.Select(static item => item.ToSql()))}";
 
     /// <summary>
     /// Returns all contained <see cref="OrderByItemBase"/> objects.
@@ -100,13 +89,13 @@ public class OrderBy : OrderByBase
     /// <returns>
     /// An enumeration of all <see cref="OrderByItemBase"/> objects contained in this instance.
     /// </returns>
-    public virtual IEnumerable<OrderByItemBase> OrderByItemsAsEnumerable() =>
+    public IEnumerable<OrderByItemBase> OrderByItemBasesAsEnumerable() =>
         _orderByItems;
 
     /// <summary>
     /// Determines whether the <c>ORDER BY</c> clause is empty.
     /// </summary>
-    public override bool IsEmpty() =>
+    public bool IsEmpty() =>
         _orderByItems.IsNullOrEmpty();
 
     /// <summary>
@@ -122,7 +111,7 @@ public class OrderBy : OrderByBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
     /// </exception>
-    public override OrderBy WithAppend(OrderByItemBase orderByItem)
+    public OrderBy WithAppend(OrderByItemBase orderByItem)
     {
         ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
 
@@ -143,7 +132,7 @@ public class OrderBy : OrderByBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
     /// </exception>
-    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems)
+    public OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems)
     {
         ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
 
@@ -156,5 +145,20 @@ public class OrderBy : OrderByBase
     /// <returns>
     /// This instance as an <see cref="OrderBy"/> object.
     /// </returns>
-    public override OrderBy AsOrderBy() => this;
+    public OrderBy AsOrderBy() => this;
+
+    public IEnumerable<OrderByItemBase> OrderByItemsAsEnumerable() =>
+        _orderByItems;
+
+    /// <summary>
+    /// Generates the SQL <c>ORDER BY</c> clause represented by this instance.
+    /// </summary>
+    /// <returns>
+    /// A SQL string for the <c>ORDER BY</c> clause, or <see cref="string.Empty"/>
+    /// if no ordering is defined.
+    /// </returns>
+    internal string ToSql(ISqlDialects dialect) =>
+        IsEmpty()
+            ? string.Empty
+            : $"ORDER BY {string.Join(", ", _orderByItems.Select(item => item.ToSql(dialect)))}";
 }

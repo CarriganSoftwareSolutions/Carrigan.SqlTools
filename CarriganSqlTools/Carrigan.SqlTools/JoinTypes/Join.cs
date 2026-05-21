@@ -106,6 +106,10 @@ public class Join<rightT> : JoinBase
         if (_predicates == null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("JOIN requires at least one predicate for the ON clause.");
 
-        return _predicates.ToSqlFragments(dialect).Prepend(new SqlFragmentText($" JOIN {TableTag} ON "));
+        yield return new SqlFragmentText(" JOIN ");
+        yield return TableTag;
+        yield return new SqlFragmentText(" ON ");
+        foreach (ISqlFragment fragment in _predicates.ToSqlFragments(dialect))
+            yield return fragment;
     }
 }

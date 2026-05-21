@@ -298,7 +298,8 @@ public class IsNullTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Pizza").Single();
     }
 
     [Fact]
@@ -321,7 +322,8 @@ public class IsNullTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
     }
 
     [Fact]
@@ -344,7 +346,8 @@ public class IsNullTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
     }
 
     [Fact]
@@ -402,8 +405,10 @@ public class IsNullTests
     {
         Predicates and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[D000destruct0]").Single();
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo == "[ColumnTable].[Express]").Single();
+        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
+        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
+        _ = and.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
+        _ = and.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
     }
 
     [Fact]

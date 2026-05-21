@@ -2,6 +2,7 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using System.Reflection;
@@ -84,29 +85,27 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class TableTag : StringWrapper
+public class TableTag : StringWrapper, ISqlFragment
 {
-    /// <summary>
-    /// Gets or sets the SQL dialect configuration used for generating database queries.
-    /// </summary>
-    /// <remarks>Use this property to specify the SQL dialect that determines how queries are constructed and
-    /// formatted. Changing the dialect may affect compatibility with different database systems.</remarks>
-    internal readonly ISqlDialects Dialect;
-
+    private readonly SchemaName? SchemaName;
+    private readonly TableName TableName;
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>
-    /// <param name="dialect">The SQL dialect configuration used for generating database queries.</param>
     /// <param name="schemaName">
     /// The optional schema name. If <c>null</c> or empty, only the table name is used.
     /// </param>
+    /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
     /// <exception cref="Exceptions.InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
-    /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
-    internal TableTag(ISqlDialects dialect, SchemaName? schemaName, TableName tableName)
-        : base(dialect.RenderTable(schemaName, tableName), StringComparison.Ordinal) => 
-        Dialect = dialect;
+    /// 
+    internal TableTag(SchemaName? schemaName, TableName tableName)
+        : base(schemaName.IsNotNullOrEmpty() ? $"{ schemaName}.{tableName}" : tableName, StringComparison.Ordinal)
+    {
+        TableName = tableName;
+        SchemaName = schemaName;
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
@@ -114,17 +113,17 @@ public class TableTag : StringWrapper
     /// <remarks>
     /// Marked <see cref="ExternalOnlyAttribute"/> so unit tests can access it while keeping the API internal.
     /// </remarks>
-    /// <param name="dialect">The SQL dialect configuration used for generating database queries.</param>
     /// <param name="schemaName">
     /// The optional schema name. If <c>null</c> or empty, only the table name is used.
     /// </param>
+    /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
     /// <exception cref="Exceptions.InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
-    /// <param name="tableName">The table name. Must not be <c>null</c> or empty.</param>
+    /// 
     [ExternalOnly]//An external only marked as internal can still be used by the unit tests class.
-    internal TableTag(ISqlDialects dialect, string? schemaName, string tableName)
-        : this(dialect, SchemaName.New(schemaName), new(tableName))
+    internal TableTag(string? schemaName, string tableName)
+        : this(SchemaName.New(schemaName), new(tableName))
     {
     }
 
@@ -151,4 +150,12 @@ public class TableTag : StringWrapper
         return (TableTag?)tableTagProperty.GetValue(null)
             ?? throw new InvalidOperationException($"The property 'Table' on type '{cacheType.FullName}' returned null.");
     }
+    public IEnumerable<ISqlFragment> Flatten()
+    {
+        yield return this;
+    }
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        [];
+    public string ToSql(ISqlDialects dialect) =>
+        dialect.RenderTable(SchemaName, TableName);
 }

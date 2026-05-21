@@ -152,7 +152,7 @@ public class ParameterAndColumnIdentifierTests
     {
         SqlQuery query = _tacGenerator.UpdateByIds(_tacUpdateValues, null, _tacEntities);
         string actual = query.QueryText;
-        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeSchema].[SomeTable].[SomeColumn] = @SomeColumnParameter_1 FROM [SomeSchema].[SomeTable] WHERE (([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_2) OR ([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_3))";
+        string expected = "UPDATE [SomeSchema].[SomeTable] SET [SomeColumn] = @SomeColumnParameter_1 WHERE (([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_2) OR ([SomeSchema].[SomeTable].[SomeId] = @SomeIdParameter_3))";
         Assert.Equal(expected, actual);
 
         Assert.Equal(3, query.GetParameterCount());

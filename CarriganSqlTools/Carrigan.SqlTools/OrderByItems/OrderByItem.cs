@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 
 /// <summary>
 /// Represents a single-column specification within a SQL <c>ORDER BY</c> clause.
-/// Also implements <see cref="OrderByBase"/> to make single-column order-by usage convenient.
+/// Also implements <see cref="OrderBy"/> to make single-column order-by usage convenient.
 /// </summary>
 /// <typeparam name="T">
 /// The entity/model type that defines the table containing the column to order by.
@@ -69,10 +69,10 @@ public class OrderByItem<T> : OrderByItemBase
     internal override ColumnInfo ColumnInfo { get; }
 
     /// <summary>
-    /// Part of the <see cref="OrderByBase"/> implementation.
+    /// Part of the <see cref="OrderBy"/> implementation.
     /// Returns the single <see cref="TableTag"/> involved in this order-by item.
     /// </summary>
-    internal override IEnumerable<TableTag> TableTags =>
+    internal IEnumerable<TableTag> TableTags =>
         [TableTag];
 
     /// <summary>
@@ -95,75 +95,4 @@ public class OrderByItem<T> : OrderByItemBase
     /// </returns>
     public override int GetHashCode() =>
         HashCode.Combine(TableTag, ColumnInfo);
-
-    /// <summary>
-    /// Returns whether this single order-by item "contains" the specified item.
-    /// </summary>
-    /// <remarks>
-    /// Because <see cref="OrderByItem{T}"/> is modeled as a single-item sequence for interchangeability
-    /// with <see cref="OrderBy"/>, this is effectively an equality check against <paramref name="orderByItem"/>.
-    /// </remarks>
-    /// <param name="orderByItem">The order-by item to compare.</param>
-    /// <returns><c>true</c> if both items are equal; otherwise, <c>false</c>.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
-    /// </exception>
-    public override bool Contains(OrderByItemBase orderByItem)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
-
-        return EqualityComparer<OrderByItemBase>.Default.Equals(this, orderByItem);
-    }
-
-    /// <summary>
-    /// Determines whether this order-by item is empty.
-    /// </summary>
-    /// <returns>
-    /// <c>true</c> if the underlying column is considered empty; otherwise, <c>false</c>.
-    /// </returns>
-    public override bool IsEmpty() =>
-        ColumnInfo.IsEmpty();
-
-    /// <summary>
-    /// Creates a new <see cref="OrderBy"/> with this item followed by <paramref name="orderByItem"/>.
-    /// This operation is immutable; the current instance is not modified.
-    /// </summary>
-    /// <param name="orderByItem">The item to append (table/column/sort direction).</param>
-    /// <returns>
-    /// A new <see cref="OrderBy"/> that includes both this item and <paramref name="orderByItem"/>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
-    /// </exception>
-    public override OrderBy WithAppend(OrderByItemBase orderByItem)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
-
-        return new(new List<OrderByItemBase>([this, orderByItem]));
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="OrderBy"/> with this item followed by the specified sequence.
-    /// This operation is immutable; the current instance is not modified.
-    /// </summary>
-    /// <param name="orderByItems">The order-by items to append.</param>
-    /// <returns>
-    /// A new <see cref="OrderBy"/> that includes this item and all provided items.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
-    /// </exception>
-    public override OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
-
-        return new(orderByItems.Prepend(this));
-    }
-
-    /// <summary>
-    /// Returns a new <see cref="OrderBy"/> instance that represents this single item.
-    /// </summary>
-    /// <returns>A new <see cref="OrderBy"/> containing this item.</returns>
-    public override OrderBy AsOrderBy() =>
-        new(this);
 }

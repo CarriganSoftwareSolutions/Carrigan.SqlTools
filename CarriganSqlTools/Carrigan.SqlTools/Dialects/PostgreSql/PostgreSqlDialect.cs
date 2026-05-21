@@ -30,6 +30,17 @@ public class PostgreSqlDialect : ISqlDialects
     }
 
     /// <summary>
+    /// Generates a string representation of the specified database procedure, optionally within a given schema.
+    /// </summary>
+    /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
+    /// <param name="procedureName">The name of the procedure tag to render. Cannot be null or empty.</param>
+    /// <returns>A string containing the rendered representation of the specified procedure.</returns>
+    public string RenderProcedureTag(SchemaName? schemaName, ProcedureName procedureName) =>
+        schemaName.IsNotNullOrEmpty()
+            ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(procedureName)}"
+            : QuoteIdentifier(procedureName);
+
+    /// <summary>
     /// Generates a string representation of the specified PostgreSQL table,
     /// optionally qualified by schema.
     /// </summary>
@@ -43,7 +54,7 @@ public class PostgreSqlDialect : ISqlDialects
     /// </summary>
     public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
-            ? $"{tableTag}.{QuoteIdentifier(columnName)}"
+            ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName)}"
             : QuoteIdentifier(columnName);
 
     /// <summary>

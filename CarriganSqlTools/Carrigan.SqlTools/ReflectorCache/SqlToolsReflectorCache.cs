@@ -56,7 +56,7 @@ public class SqlToolsReflectorCache<T>
     /// the fully qualified table identifier for <typeparamref name="T"/>.
     /// </summary>
     internal static TableTag Table =>
-        new(Dialect, SchemaName, TableName);
+        new(SchemaName, TableName);
 
     /// <summary>
     /// The <see cref="IdentifierTypes.ProcedureName"/> associated

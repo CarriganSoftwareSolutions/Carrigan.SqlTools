@@ -90,10 +90,13 @@ public sealed class SelectTagAttributeTests
 
         Assert.NotNull(selectTag);
 
-        Assert.Equal("[SelectSource]", selectTag.ColumnTag.TableTag);
-        Assert.Equal("[SelectSource].[Name]", selectTag.ColumnTag);
+        Assert.Equal("[SelectSource]", selectTag.ColumnTag.TableTag.ToSql(Dialect));
+        Assert.Equal("SelectSource", selectTag.ColumnTag.TableTag);
+        Assert.Equal("[SelectSource].[Name]", selectTag.ColumnTag.ToSql(Dialect));
+        Assert.Equal("SelectSource.Name", selectTag.ColumnTag);
         Assert.NotNull(selectTag.AliasTag);
         Assert.Equal("[SelectSource].[Name] AS [SourceName]", selectTag.ToSql(Dialect));
+        Assert.Equal("SelectSource.Name AS SourceName", selectTag);
     }
 
     [Fact]
@@ -107,10 +110,14 @@ public sealed class SelectTagAttributeTests
 
         Assert.NotNull(selectTag);
 
-        Assert.Equal("[TableIdentifier]", selectTag.ColumnTag.TableTag);
-        Assert.Equal("[TableIdentifier].[ColumnIdentifier]", selectTag.ColumnTag);
-        Assert.NotNull(selectTag.AliasTag);
+        Assert.Equal("[TableIdentifier]", selectTag.ColumnTag.TableTag.ToSql(Dialect));
+        Assert.Equal("[TableIdentifier].[ColumnIdentifier]", selectTag.ColumnTag.ToSql(Dialect));
         Assert.Equal("[TableIdentifier].[ColumnIdentifier] AS [SourceName]", selectTag.ToSql(Dialect));
+
+        Assert.Equal("TableIdentifier", selectTag.ColumnTag.TableTag);
+        Assert.Equal("TableIdentifier.ColumnIdentifier", selectTag.ColumnTag);
+        Assert.NotNull(selectTag.AliasTag);
+        Assert.Equal("TableIdentifier.ColumnIdentifier AS SourceName", selectTag);
     }
 
     private static PropertyInfo GetProperty(Type type, string propertyName) =>

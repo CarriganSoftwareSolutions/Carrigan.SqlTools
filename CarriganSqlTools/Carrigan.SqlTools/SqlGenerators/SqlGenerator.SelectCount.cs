@@ -1,12 +1,11 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -17,15 +16,13 @@ public partial class SqlGenerator<T>
     /// <c>SELECT COUNT(...)</c> from the table represented by <typeparamref name="T"/>,
     /// with optional <c>SELECT</c> projection, <c>JOIN</c>, and <c>WHERE</c> clauses.
     /// </summary>
-    /// <param name="selects">
+    /// <param name="distinct"></param>
+    /// <param name="select">
     /// Optional result projection to be counted. If omitted or empty, the generator
     /// counts <c>{Table}.*</c>.
     /// </param>
     /// <param name="joins">
     /// Optional joins to include in the count query. Omit to count only rows from the base table.
-    /// </param>
-    /// <param name="predicates">
-    /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated count SQL and whose
@@ -36,19 +33,19 @@ public partial class SqlGenerator<T>
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="AmbiguousResultColumnException">
-    /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
+    /// Thrown when <paramref name="select"/> defines duplicate or ambiguous result column names.
     /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown when any table referenced by <paramref name="selects"/> or <paramref name="predicates"/> (or by their columns)
+    /// Thrown when any table referenced by <paramref name="select"/> or <paramref name="predicates"/> (or by their columns)
     /// is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     /// <example>
     /// <code language="csharp"><![CDATA[
-    /// SqlQuery query = orderGenerator.SelectCount(null, null, null);
+    /// SqlQuery query = orderGenerator.SelectCount(null, null, null, null);
     /// ]]></code>
     /// <para><see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code><![CDATA[
-    /// SELECT COUNT([Order].*) FROM [Order]
+    /// SELECT COUNT([Order].[Id]) FROM [Order]
     /// ]]></code>
     /// </example>
     /// <example>
@@ -60,11 +57,11 @@ public partial class SqlGenerator<T>
     /// Parameter minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
     /// 
-    /// SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
+    /// SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT COUNT([Order].*) 
+    /// SELECT COUNT([Order].[Id]) 
     /// FROM [Order] 
     /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ]]></code>
@@ -82,11 +79,11 @@ public partial class SqlGenerator<T>
     /// ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
     /// Join<Customer> join = new(columnCompare);
     /// 
-    /// SqlQuery query = orderGenerator.SelectCount(null, join, greaterThan);
+    /// SqlQuery query = orderGenerator.SelectCount(null, null, join, greaterThan);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT COUNT([Order].*) 
+    /// SELECT COUNT([Order].[Id]) 
     /// FROM [Order] 
     /// JOIN [Customer] 
     /// ON ([Order].[CustomerId] = [Customer].[Id]) 
@@ -98,13 +95,7 @@ public partial class SqlGenerator<T>
     /// <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if a property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
-    /// SelectTags selectTags =
-    ///  SelectTags.Get<Customer>("Id", "CustomerId")
-    ///      .Concat<Customer>(["Name", "Email", "Phone"])
-    ///      .Append<Order>("Id", "OrderId")
-    ///      .Concat<Order>(["OrderDate", "Total"])
-    ///      .Append<PaymentMethod>("Id", "PaymentMethodId")
-    ///      .Append<PaymentMethod>("ZipCode");
+    /// SelectTag selectTag = SelectTag.Get<Customer>("Id", "CustomerId");
     /// 
     /// ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join1 = new(customerIdEquals);
@@ -114,22 +105,11 @@ public partial class SqlGenerator<T>
     /// 
     /// Joins<Customer> joins = new(join1, join2);
     /// 
-    /// SqlQuery query = customerGenerator.SelectCount(selectTags, joins, null);
+    /// SqlQuery query = customerGenerator.SelectCount(true, selectTag, joins, null); 
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT COUNT
-    /// (
-    ///     [Customer].[Id] AS [CustomerId], 
-    ///     [Customer].[Name], 
-    ///     [Customer].[Email], 
-    ///     [Customer].[Phone], 
-    ///     [Order].[Id] AS [OrderId], 
-    ///     [Order].[OrderDate], 
-    ///     [Order].[Total], 
-    ///     [PaymentMethod].[Id] AS [PaymentMethodId], 
-    ///     [PaymentMethod].[ZipCode]
-    /// ) 
+    /// SELECT COUNT(DISTINCT Customer].[Id])
     /// FROM [Customer] 
     /// INNER JOIN [Order] 
     /// ON ([Customer].[Id] = [Order].[CustomerId]) 
@@ -137,37 +117,60 @@ public partial class SqlGenerator<T>
     /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectCount(SelectTags? selects, Joins<T>? joins, Predicates? predicates)
+    /// <param name="predicates">
+    /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
+    /// </param>
+    public SqlQuery SelectCount(bool? distinct, SelectTag? select, Joins<T>? joins, Predicates? predicates)
     {
+        IEnumerable<ISqlFragment> GetFragments()
+        {
+            if (distinct ?? false)
+                yield return new SqlFragmentText($"SELECT COUNT(DISTINCT ");
+            else
+                yield return new SqlFragmentText($"SELECT COUNT(");
+
+            if (select is not null)
+                yield return select.WithNoAlias();
+            else
+                yield return ColumnInfo.First().ColumnTag;
+
+            yield return new SqlFragmentText(") FROM ");
+            yield return Table;
+
+            if (joins?.IsNotNullOrEmpty() ?? false)
+            {
+                foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
+                    yield return fragment;
+            }
+
+            if (predicates is not null)
+            {
+                yield return new SqlFragmentText($" WHERE ");
+
+                foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
+                    yield return fragment;
+            }
+        }
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
 
-        IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
-        IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
+        TableTag selectedTableTag = select?.ColumnTag?.TableTag ?? Table;
+        IEnumerable<TableTag> invalidSelectedTags = new[] { selectedTableTag }.Except(selectableTableTags);
 
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
 
-        IEnumerable<ISqlFragment> queryFragments;
-        AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
-        if (ambiguousResultColumns is not null)
-            throw ambiguousResultColumns;
+        if (select is not null)
+        {
+            AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(select);
+            if (ambiguousResultColumns is not null)
+                throw ambiguousResultColumns;
+        }
 
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);
 
-        if (selects is not null && selects.Any())
-            queryFragments = new SqlFragmentText($"SELECT COUNT({selects.ToSql(Dialect)}) FROM {Table}").AsEnumerable();
-        else
-            queryFragments = new SqlFragmentText($"SELECT COUNT({Table}.*) FROM {Table}").AsEnumerable();
-
-        if (joins?.IsNotNullOrEmpty() ?? false)
-            queryFragments = queryFragments.Concat(joins.ToSqlFragments(Dialect));
-
-        if (predicates is not null)
-            queryFragments = queryFragments.Append(new SqlFragmentText(" WHERE ")).Concat(predicates.ToSqlFragments(Dialect));
-
-        return queryFragments.ToSqlQuery(Dialect);
+        return GetFragments().ToSqlQuery(Dialect);
     }
 }

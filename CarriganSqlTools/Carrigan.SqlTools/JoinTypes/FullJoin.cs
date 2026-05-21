@@ -107,6 +107,10 @@ public class FullJoin<rightT> : JoinBase
         if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("FULL JOIN requires at least one predicate for the ON clause.");
 
-        return _predicates.ToSqlFragments(dialect).Prepend(new SqlFragmentText($" FULL JOIN {TableTag} ON "));
+        yield return new SqlFragmentText(" FULL JOIN ");
+        yield return TableTag;
+        yield return new SqlFragmentText(" ON ");
+        foreach (ISqlFragment fragment in _predicates.ToSqlFragments(dialect))
+            yield return fragment;
     }
 }

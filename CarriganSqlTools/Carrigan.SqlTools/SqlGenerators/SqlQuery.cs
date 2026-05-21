@@ -63,7 +63,7 @@ public class SqlQuery
         ArgumentNullException.ThrowIfNull(dialect);
         ArgumentNullException.ThrowIfNull(fragments);
         Dialect = dialect;
-        QueryText = procedure;
+        QueryText = procedure.ToSql(dialect);
         Parameters = fragments.GetSqlFragmentParameters(dialect);
         ParametersAsDictionary = new
         (

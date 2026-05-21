@@ -10,7 +10,7 @@ public partial class SqlServerDialectTests
     public void RenderColumn_WithTable_ReturnsTableQualifiedColumnName()
     {
         SqlServerDialect dialect = new();
-        TableTag tableTag = new(dialect, "dbo", "Customer");
+        TableTag tableTag = new("dbo", "Customer");
 
         string actual = dialect.RenderColumn(tableTag, new ColumnName("Name"));
 
@@ -21,7 +21,7 @@ public partial class SqlServerDialectTests
     public void RenderColumn_WithoutTable_ReturnsColumnNameOnly()
     {
         SqlServerDialect dialect = new();
-        TableTag tableTag = new(dialect, "dbo", "Customer");
+        TableTag tableTag = new("dbo", "Customer");
 
         string actual = dialect.RenderColumn(tableTag, new ColumnName("Name"), false);
 

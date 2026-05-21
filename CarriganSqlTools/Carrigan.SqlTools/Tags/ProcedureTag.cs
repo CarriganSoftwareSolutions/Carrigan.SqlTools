@@ -1,6 +1,8 @@
 ﻿using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using System.Reflection;
@@ -50,8 +52,11 @@ namespace Carrigan.SqlTools.Tags;
 /// [schema].[UpdateThing]
 /// ]]></code>
 /// </example>
-public class ProcedureTag : StringWrapper
+public class ProcedureTag : StringWrapper, ISqlFragment
 {
+    private readonly SchemaName? SchemaName;
+    private readonly ProcedureName ProcedureName;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ProcedureTag"/> class.
     /// </summary>
@@ -62,8 +67,10 @@ public class ProcedureTag : StringWrapper
     /// The procedure name.
     /// </param>
     internal ProcedureTag(SchemaName? schemaName, ProcedureName procedureName)
-        : base(CreateProcedureTagString(schemaName, procedureName), StringComparison.Ordinal)
+        : base(schemaName.IsNotNullOrEmpty() ? $"{schemaName}.{procedureName}" : procedureName, StringComparison.Ordinal)
     {
+        SchemaName = schemaName;
+        ProcedureName = procedureName;
     }
 
     /// <summary>
@@ -110,11 +117,13 @@ public class ProcedureTag : StringWrapper
             ?? throw new InvalidOperationException($"The property 'ProcedureTag' on type '{cacheType.FullName}' returned null.");
     }
 
-    private static string CreateProcedureTagString(SchemaName? schemaName, ProcedureName procedureName)
+    public IEnumerable<ISqlFragment> Flatten()
     {
-        if (schemaName.IsNullOrEmpty())
-            return $"[{procedureName}]";
-        else
-            return $"[{schemaName}].[{procedureName}]";
+        yield return this;
     }
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        [];
+
+    public string ToSql(ISqlDialects dialect) =>
+        dialect.RenderProcedureTag(SchemaName, ProcedureName);
 }

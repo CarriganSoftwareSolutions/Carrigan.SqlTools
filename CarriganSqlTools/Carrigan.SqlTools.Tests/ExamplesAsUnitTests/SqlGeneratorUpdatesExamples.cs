@@ -76,7 +76,7 @@ public class SqlGeneratorUpdatesExamples
 
         SqlQuery query = customerGenerator.UpdateByIds(updateValues, updateColumns, customerIds);
 
-        Assert.Equal("UPDATE [Customer] SET [Customer].[Name] = @Name_1, [Customer].[Email] = @Email_2 FROM [Customer] WHERE (([Customer].[Id] = @Id_3) OR ([Customer].[Id] = @Id_4))", query.QueryText);
+        Assert.Equal("UPDATE [Customer] SET [Name] = @Name_1, [Email] = @Email_2 WHERE (([Customer].[Id] = @Id_3) OR ([Customer].[Id] = @Id_4))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 4);
 
@@ -134,7 +134,7 @@ public class SqlGeneratorUpdatesExamples
 
         SqlQuery query = customerGenerator.Update(entity, columnCollection, null, customerEmailEquals);
 
-        Assert.Equal("UPDATE [Customer] SET [Customer].[Email] = @Email_1 FROM [Customer] WHERE ([Customer].[Email] = @Email_2)", query.QueryText);
+        Assert.Equal("UPDATE [Customer] SET [Email] = @Email_1 WHERE ([Customer].[Email] = @Email_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 2);
 

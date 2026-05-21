@@ -1,5 +1,7 @@
 ﻿using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tags;
@@ -18,7 +20,7 @@ namespace Carrigan.SqlTools.Tags;
 /// <see cref="StringComparison"/> mode.
 /// </para>
 /// </remarks>
-public class AliasTag : StringWrapper
+public class AliasTag : StringWrapper, ISqlFragment
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasTag"/> class.
@@ -44,4 +46,13 @@ public class AliasTag : StringWrapper
         else
             return null;
     }
+
+    public IEnumerable<ISqlFragment> Flatten()
+    {
+        yield return this;
+    }
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        [];
+    public string ToSql(ISqlDialects dialect) =>
+        dialect.QuoteIdentifier(this);
 }

@@ -17,5 +17,5 @@ public enum SortDirectionEnum
     /// <summary>
     /// Sorts the results in descending order (<c>DESC</c>).
     /// </summary>
-    Descending = 1,
+    Descending = 1
 }

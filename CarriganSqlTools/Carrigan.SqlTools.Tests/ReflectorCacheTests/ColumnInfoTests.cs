@@ -65,7 +65,7 @@ public class ColumnInfoTests
 
     [InlineData("dbo", "TableWithAliases", typeof(TableWithAliases), "Id", new[] { "Id" },
         "[dbo].[TableWithAliases].[Id]", "Id", "Id",
-        "Id", "TableId", "[dbo].[TableWithAliases].[Id] AS TableId",
+        "Id", "TableId", "[dbo].[TableWithAliases].[Id] AS [TableId]",
         true, false, false, "[dbo].[TableWithAliases]", SqlDbType.Int, "INT")]
 
 
@@ -93,13 +93,10 @@ public class ColumnInfoTests
         PropertyInfo? property = type.GetProperty(propertyName);
         Assert.NotNull(property);
         ColumnInfo columnInfo = new(Dialect, schema, table, property, keys);
-        string implicitString = columnInfo;
-        string explicitString = columnInfo.ToString();
-        int hashCode = columnInfo.GetHashCode();
 
-        Assert.Equal(expectedColumnTag, columnInfo.ColumnTag);
+        Assert.Equal(expectedColumnTag, columnInfo.ColumnTag.ToSql(Dialect));
         Assert.Equal(expectedColumnName, columnInfo.ColumnName);
-        Assert.Equal(expectedTableTag, columnInfo.ColumnTag.TableTag);
+        Assert.Equal(expectedTableTag, columnInfo.ColumnTag.TableTag.ToSql(Dialect));
         Assert.Equal(expectedPropertyName, columnInfo.PropertyInfo.Name);
         Assert.Equal(expectedPropertyName, columnInfo.PropertyName);
         Assert.Equal(parameterTag, columnInfo.ParameterTag);
@@ -117,14 +114,10 @@ public class ColumnInfoTests
             Assert.Equal(expectedAliasName, columnInfo.SelectTag.AliasTag);
         }
 
-        Assert.Equal(expectedSelectTag, columnInfo.SelectTag);
+        Assert.Equal(expectedSelectTag, columnInfo.SelectTag.ToSql(Dialect));
         Assert.Equal(expectedIsKeyPart, columnInfo.IsKeyPart);
         Assert.Equal(expectedIsEncrypted, columnInfo.IsEncrypted);
         Assert.Equal(expectedIsKeyVersionProperty, columnInfo.IsKeyVersionProperty);
-
-        Assert.Equal(expectedColumnTag, implicitString);
-        Assert.Equal(expectedColumnTag, explicitString);
-        Assert.Equal(expectedColumnTag.GetHashCode(StringComparison.OrdinalIgnoreCase), columnInfo.GetHashCode());
 
         Assert.False(columnInfo.IsEmpty());
 

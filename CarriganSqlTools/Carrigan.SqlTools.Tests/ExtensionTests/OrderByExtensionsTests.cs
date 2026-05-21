@@ -16,14 +16,14 @@ public class OrderByExtensionsTests
     [Fact]
     public void OrderByExtension_IsNotNullOrEmpty_False_IsEmpty()
     {
-        OrderByBase order = OrderBy.Empty;
+        OrderBy order = OrderBy.Empty;
 
         Assert.False(order.IsNotNullOrEmpty());
     }
     [Fact]
     public void OrderByExtension_IsNotNullOrEmpty_False_IsNull()
     {
-        OrderByBase? order = null;
+        OrderBy? order = null;
 
         Assert.False(order.IsNotNullOrEmpty());
     }
@@ -32,7 +32,7 @@ public class OrderByExtensionsTests
     [Fact]
     public void OrderByExtension_IsNullOrEmpty_True_IsNull()
     {
-        OrderByBase? order = null;
+        OrderBy? order = null;
 
         Assert.True(order.IsNullOrEmpty());
     }
@@ -40,7 +40,7 @@ public class OrderByExtensionsTests
     [Fact]
     public void OrderByExtension_IsNullOrEmpty_True_IsEmpty()
     {
-        OrderByBase order = OrderBy.Empty;
+        OrderBy order = OrderBy.Empty;
 
         Assert.True(order.IsNullOrEmpty());
     }
@@ -48,7 +48,7 @@ public class OrderByExtensionsTests
     [Fact]
     public void OrderByExtension_IsNullOrEmpty_False()
     {
-        OrderByBase order = new OrderBy(new OrderByItem<ColumnTable>(nameof(ColumnTable.D000destruct0)));
+        OrderBy order = new OrderBy(new OrderByItem<ColumnTable>(nameof(ColumnTable.D000destruct0)));
 
         Assert.False(order.IsNullOrEmpty());
     }

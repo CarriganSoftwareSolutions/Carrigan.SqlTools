@@ -99,7 +99,7 @@ public abstract class LogicalOperator : Predicates
         }
 
         yield return new SqlFragmentText("(");
-            foreach (Predicates predicate in ChildNodes)
+        foreach (Predicates predicate in ChildNodes)
         {
             if (index > 0)
                 yield return new SqlFragmentText($" {_operator} ");

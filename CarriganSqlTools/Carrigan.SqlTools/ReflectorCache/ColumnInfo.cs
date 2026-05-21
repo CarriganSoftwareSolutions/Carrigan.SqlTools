@@ -144,7 +144,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         SqlTypeAttribute? sqlTypeAttribute = propertyInfo.GetCustomAttribute<SqlTypeAttribute>();
 
         ColumnName = new(columnName);
-        ColumnTag = new(new(dialect, schemaName, tableName), ColumnName);
+        ColumnTag = new(new(schemaName, tableName), ColumnName);
 
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);

@@ -1,6 +1,9 @@
-﻿using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 
@@ -22,12 +25,8 @@ namespace Carrigan.SqlTools.Tags;
 /// and <see cref="IEqualityComparer{SelectTag}"/> for use in ordered and hashed collections.
 /// </para>
 /// </remarks>
-public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualityComparer<SelectTag>
+public class SelectTag : StringWrapper, ISqlFragment
 {
-    /// <summary>
-    /// The SQL text of the select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c>.
-    /// </summary>
-    private readonly string _selectTag;
 
     /// <summary>
     /// The fully qualified column identifier for this select item.
@@ -47,13 +46,9 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
     /// <param name="aliasTag">
     /// The optional alias (i.e., <c>AS [Alias]</c>) to apply to the selected column.
     /// </param>
-    internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null)
+    internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null) 
+        : base(aliasTag.IsNullOrWhiteSpace() ? columnTag : $"{columnTag} AS {aliasTag}")
     {
-        if (aliasTag is null)
-            _selectTag = columnTag;
-        else
-            _selectTag = $"{columnTag} AS {aliasTag}";
-
         ColumnTag = columnTag;
         AliasTag = aliasTag;
     }
@@ -148,127 +143,16 @@ public class SelectTag : IComparable<SelectTag>, IEquatable<SelectTag>, IEqualit
             .ColumnInfo
             .Select(column => column.SelectTag);
 
-    /// <summary>
-    /// Implicitly converts a <see cref="SelectTag"/> to its SQL string representation.
-    /// </summary>
-    /// <param name="value">The <see cref="SelectTag"/> to convert.</param>
-    /// <returns>
-    /// The SQL text for this select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c> or <c>[Schema].[Table].[Column]</c>.
-    /// </returns>
-    public static implicit operator string(SelectTag value)
-        => value._selectTag;
-
-    /// <summary>
-    /// Returns the SQL string representation of this <see cref="SelectTag"/> instance.
-    /// </summary>
-    /// <returns>
-    /// The SQL text for this select item, e.g., <c>[Schema].[Table].[Column] AS [Alias]</c>.
-    /// </returns>
-    public override string ToString() => 
-        _selectTag;
-
-
-    /// <summary>
-    /// Compares this instance with another <see cref="SelectTag"/> to determine sort order.
-    /// </summary>
-    /// <param name="other">The other <see cref="SelectTag"/> to compare.</param>
-    /// <returns>
-    /// A signed integer: <c>0</c> if equal; less than <c>0</c> if this instance precedes
-    /// <paramref name="other"/>; greater than <c>0</c> if it follows.
-    /// </returns>
-    /// <remarks>Comparison is case-insensitive via <see cref="StringComparison.OrdinalIgnoreCase"/>.</remarks>
-    public int CompareTo(SelectTag? other)
+    public IEnumerable<ISqlFragment> Flatten()
     {
-        if (other is null) return 1;
-        return string.Compare(this, other, StringComparison.OrdinalIgnoreCase);
+        yield return this;
     }
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        [];
 
-    /// <summary>
-    /// Determines whether this instance is equal to another <see cref="SelectTag"/>.
-    /// </summary>
-    /// <param name="other">The other <see cref="SelectTag"/> to compare.</param>
-    /// <returns>
-    /// <c>true</c> if both represent the same SQL text (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    public bool Equals(SelectTag? other)
-    {
-        if (other is null) return false;
-        return string.Equals(this, other, StringComparison.OrdinalIgnoreCase);
-    }
-
-    /// <summary>
-    /// Determines whether the specified object is equal to this <see cref="SelectTag"/>.
-    /// </summary>
-    /// <param name="obj">The object to compare.</param>
-    /// <returns>
-    /// <c>true</c> if <paramref name="obj"/> is a <see cref="SelectTag"/> with equal SQL text (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    public override bool Equals(object? obj) =>
-        obj is SelectTag ct && Equals(ct);
-
-    /// <summary>
-    /// Returns a hash code for this <see cref="SelectTag"/> instance.
-    /// </summary>
-    /// <returns>
-    /// An integer hash code consistent with the case-insensitive equality semantics.
-    /// </returns>
-    public override int GetHashCode() =>
-        _selectTag.GetHashCode();
-
-    /// <summary>
-    /// Determines whether two <see cref="SelectTag"/> instances are equal.
-    /// </summary>
-    /// <param name="x">The first <see cref="SelectTag"/> to compare.</param>
-    /// <param name="y">The second <see cref="SelectTag"/> to compare.</param>
-    /// <returns>
-    /// <c>true</c> if both represent the same SQL text (case-insensitive); otherwise, <c>false</c>.
-    /// </returns>
-    public bool Equals(SelectTag? x, SelectTag? y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (x is null || y is null) return false;
-        return x.Equals(y);
-    }
-
-    /// <summary>
-    /// Returns a hash code for the specified <see cref="SelectTag"/> instance.
-    /// </summary>
-    /// <param name="obj">The <see cref="SelectTag"/> for which to compute a hash code.</param>
-    /// <returns>An integer hash code for <paramref name="obj"/>.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="obj"/> is <c>null</c>.</exception>
-    public int GetHashCode(SelectTag obj) =>
-        obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
-
-    /// <summary>
-    /// Determines whether two <see cref="SelectTag"/> instances are equal.
-    /// </summary>
-    /// <param name="left">The first <see cref="SelectTag"/> to compare.</param>
-    /// <param name="right">The second <see cref="SelectTag"/> to compare.</param>
-    /// <returns><c>true</c> if both are equal; otherwise, <c>false</c>.</returns>
-    public static bool operator ==(SelectTag? left, SelectTag? right)
-    {
-        if (ReferenceEquals(left, right)) return true;
-        if (left is null || right is null) return false;
-        return left.Equals(right);
-    }
-
-
-    /// <summary>
-    /// Determines whether two <see cref="SelectTag"/> instances are not equal.
-    /// </summary>
-    /// <param name="left">The first <see cref="SelectTag"/> to compare.</param>
-    /// <param name="right">The second <see cref="SelectTag"/> to compare.</param>
-    /// <returns><c>true</c> if they differ; otherwise, <c>false</c>.</returns>
-    public static bool operator !=(SelectTag? left, SelectTag? right)
-    {
-        return !(left == right);
-    }
-
-    /// <summary>
-    /// Returns the SQL text for all select tags represented by this instance.
-    /// For a single <see cref="SelectTag"/>, this is simply its own SQL text.
-    /// </summary>
-    /// <returns>The SQL text represented by this instance.</returns>
     public string ToSql(ISqlDialects dialect) =>
-        AliasTag is null ? ColumnTag : $"{ColumnTag} AS {dialect.QuoteIdentifier(AliasTag)}";
+        AliasTag is null ? ColumnTag.ToSql(dialect) : $"{ColumnTag.ToSql(dialect)} AS {AliasTag.ToSql(dialect)}";
+
+    public SelectTag WithNoAlias() =>
+        new (ColumnTag);
 }

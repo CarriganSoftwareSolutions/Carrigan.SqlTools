@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.PredicatesLogic;
 using System.Collections;
+using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -101,6 +102,17 @@ internal static class SqlFragmentExtensions
             first = false;
         }
     }
+    /// <summary>
+    /// Joins a sequence of SQL fragments with an optional separator.
+    /// </summary>
+    /// <param name="fragments">The sequence of fragments to join.</param>
+    /// <param name="separator">The optional separator to insert between fragments.</param>
+    /// <returns>An enumerable of <see cref="ISqlFragment"/> representing the joined fragments.</returns>
+    internal static IEnumerable<ISqlFragment> JoinFragments(this IEnumerable<ISqlFragment> fragments, string separator) =>
+        separator.IsNotNullOrEmpty()
+            ? fragments.JoinFragments()
+            : fragments.JoinFragments(new SqlFragmentText(separator));
+
 
     /// <summary>
     /// Converts a sequence of SQL fragments into a complete <see cref="SqlQuery"/> object, including the concatenated SQL text and the collected parameters.

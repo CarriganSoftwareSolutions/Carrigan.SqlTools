@@ -72,10 +72,17 @@ public partial class SqlGenerator<T>
     /// DELETE FROM [Customer];
     /// ]]></code>
     /// </example>
-    public SqlQuery DeleteAll() =>
-        new SqlFragmentText($"DELETE FROM {Table};")
-            .AsEnumerable()
+    public SqlQuery DeleteAll()
+    {
+        static IEnumerable<ISqlFragment> GetFragments()
+        {
+            yield return new SqlFragmentText("DELETE FROM ");
+            yield return Table;
+            yield return ISqlFragment.Semicolon;
+        }
+        return GetFragments()
             .ToSqlQuery(Dialect);
+    }
 
     /// <summary>
     /// Generates a SQL <c>DELETE</c> statement that deletes rows by primary key values.
@@ -199,10 +206,14 @@ public partial class SqlGenerator<T>
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
-            if (joins.IsNullOrEmpty())
-                yield return new SqlFragmentText($"DELETE FROM {Table}");
-            else
-                yield return new SqlFragmentText($"DELETE {Table} FROM {Table}");
+            yield return new SqlFragmentText("DELETE");
+            if (joins.IsNotNullOrEmpty())
+            {
+                yield return ISqlFragment.Space;
+                yield return Table;
+            }
+            yield return new SqlFragmentText(" FROM ");
+            yield return Table;
 
             if (joins?.IsNotNullOrEmpty() ?? false)
                 foreach (ISqlFragment sqlFragment in joins.ToSqlFragments(Dialect))

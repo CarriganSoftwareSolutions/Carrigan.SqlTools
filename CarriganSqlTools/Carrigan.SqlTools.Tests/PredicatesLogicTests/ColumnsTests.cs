@@ -75,7 +75,8 @@ public  class ColumnsTests
 
         foreach (string columnName in propertyNames)
         {
-            _ = columnValues.Single(col => col.ColumnInfo == $"[ColumnTable].[{columnName}]");
+            _ = columnValues.Single(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == $"[ColumnTable].[{columnName}]");
+            _ = columnValues.Single(col => col.ColumnInfo == $"ColumnTable.{columnName}");
         }
     }
     [Theory]
@@ -90,7 +91,9 @@ public  class ColumnsTests
     {
         Column<ColumnTable> column = new(propertyName);
 
-        Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnInfo);
+        Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnInfo.ColumnTag.ToSql(Dialect));
+        Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnInfo);
+        Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnInfo.ColumnTag);
     }
 
     [Fact]

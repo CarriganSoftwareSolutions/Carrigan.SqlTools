@@ -364,10 +364,10 @@ public class SqlGenerator_UpdateByIdTests
             NotKey2 = 8
         };
 
-        PredicatesLogic.Predicates predicateId = new Equal(new Column<JoinLeftTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinLeftTable>("Id"), new Parameter("Id", 3));
         SqlQuery query = _sqlGeneratorCompositeKeyTable.UpdateByIds(entity3, _leftCompositeKeyTable, entity1, entity2);
 
-        string expectedSql = "UPDATE [Ck] SET [Ck].[NotKey1] = @NotKey1_1, [Ck].[NotKey2] = @NotKey2_2 FROM [Ck] WHERE " +
+        string expectedSql = "UPDATE [Ck] SET [NotKey1] = @NotKey1_1, [NotKey2] = @NotKey2_2 WHERE " +
             "((([Ck].[Id1] = @Id1_3) AND ([Ck].[Id2] = @Id2_4)) OR (([Ck].[Id1] = @Id1_5) AND ([Ck].[Id2] = @Id2_6)))";
         Assert.Equal(expectedSql, query.QueryText);
 

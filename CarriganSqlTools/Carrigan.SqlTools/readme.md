@@ -377,7 +377,7 @@ GreaterThan greaterThan = new (totalCol, minTotal);
 
 SqlQuery query = orderGenerator.SelectCount(null, null, greaterThan);
 
-// SELECT COUNT([Order].*)
+// SELECT COUNT([Order].[Id])
 // FROM [Order]
 // WHERE ([Order].[Total] > @Parameter_Total)
 ```

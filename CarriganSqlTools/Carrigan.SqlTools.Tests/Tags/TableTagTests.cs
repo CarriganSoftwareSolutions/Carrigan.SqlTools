@@ -19,7 +19,7 @@ public class TableTagTests
     [InlineData("", "Pizza", "[Pizza]")]
     public void Table_Tag_Tests(string? schemaName, string tableName, string expected)
     {
-        string actual = new TableTag(Dialect, schemaName, tableName);
+        string actual = new TableTag(schemaName, tableName).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
     }
@@ -35,7 +35,7 @@ public class TableTagTests
     //However, this is now checked in the SqlGenerator's constructor.
     //I kept the tests, in case I forget I moved them on purpose.
     public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName) => 
-        _ = new TableTag(Dialect, schemaName, tableName!);
+        _ = new TableTag(schemaName, tableName!);
 
     [Theory]
     [InlineData("Franks", "Pizza", "Franks", "Pizza")]
@@ -45,8 +45,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_Comparisons(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(Dialect, schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(Dialect, schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -67,8 +67,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_Equals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(Dialect, schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(Dialect, schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -88,8 +88,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_EqualsObject(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(Dialect, schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(Dialect, schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -110,8 +110,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_EqualsEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(Dialect, schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(Dialect, schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -131,8 +131,8 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", null, null)]
     public void TableTag_NotEquals(string? schema1, string? table1, string? schema2, string? table2)
     {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(Dialect, schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(Dialect, schema2, table2) : null;
+        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
+        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
 
         string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
         string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
@@ -146,7 +146,7 @@ public class TableTagTests
     public void TableTag_Equals_BothNull_ReturnsTrue()
     {
         // Since the comparison methods are on TableTag itself, we just need an instance.
-        TableTag comparer = new(Dialect, "Schema", "Table");
+        TableTag comparer = new("Schema", "Table");
 
         bool result = comparer.Equals(null, null);
 
@@ -156,8 +156,8 @@ public class TableTagTests
     [Fact]
     public void TableTag__Equals_OneNullOneNonNull_ReturnsFalse()
     {
-        TableTag comparer = new(Dialect, "Schema", "Table");
-        TableTag nonNullTag = new(Dialect, "Schema", "Table");
+        TableTag comparer = new("Schema", "Table");
+        TableTag nonNullTag = new("Schema", "Table");
 
         bool result = comparer.Equals(null, nonNullTag);
 
@@ -167,9 +167,9 @@ public class TableTagTests
     [Fact]
     public void TableTag_Equals_SameValues_ReturnsTrue()
     {
-        TableTag comparer = new(Dialect, "Schema", "Table");
-        TableTag tag1 = new(Dialect, "Schema", "Table");
-        TableTag tag2 = new(Dialect, "Schema", "Table");
+        TableTag comparer = new("Schema", "Table");
+        TableTag tag1 = new("Schema", "Table");
+        TableTag tag2 = new("Schema", "Table");
 
         bool result = comparer.Equals(tag1, tag2);
 
@@ -179,9 +179,9 @@ public class TableTagTests
     [Fact]
     public void TableTag_Equals_DifferentValues_ReturnsFalse()
     {
-        TableTag comparer = new(Dialect, "Schema", "Table");
-        TableTag tag1 = new(Dialect, "SchemaA", "TableA");
-        TableTag tag2 = new(Dialect, "SchemaB", "TableB");
+        TableTag comparer = new("Schema", "Table");
+        TableTag tag1 = new("SchemaA", "TableA");
+        TableTag tag2 = new("SchemaB", "TableB");
 
         bool result = comparer.Equals(tag1, tag2);
 
@@ -191,9 +191,9 @@ public class TableTagTests
     [Fact]
     public void TableTag_GetHashCode_SameValues_ReturnsSameHash()
     {
-        TableTag comparer = new(Dialect, "Schema", "Table");
-        TableTag tag1 = new(Dialect, "MySchema", "MyTable");
-        TableTag tag2 = new(Dialect, "MySchema", "MyTable");
+        TableTag comparer = new("Schema", "Table");
+        TableTag tag1 = new("MySchema", "MyTable");
+        TableTag tag2 = new("MySchema", "MyTable");
 
         int hash1 = comparer.GetHashCode(tag1);
         int hash2 = comparer.GetHashCode(tag2);
@@ -204,16 +204,15 @@ public class TableTagTests
     [Fact]
     public void TableTag_GetHashCode_DifferentValues_ReturnsDifferentHash()
     {
-        TableTag comparer = new(Dialect, "Schema", "Table");
-        TableTag tag1 = new(Dialect, "Schema1", "Table1");
-        TableTag tag2 = new(Dialect, "Schema2", "Table2");
+        TableTag comparer = new("Schema", "Table");
+        TableTag tag1 = new("Schema1", "Table1");
+        TableTag tag2 = new("Schema2", "Table2");
 
         int hash1 = comparer.GetHashCode(tag1);
         int hash2 = comparer.GetHashCode(tag2);
 
         Assert.NotEqual(hash1, hash2);
     }
-
 
     [Fact]
     public void Constructor_ValidWithoutSchema_ShouldReturnFormattedTag()
@@ -223,7 +222,21 @@ public class TableTagTests
         string expected = "[ValidTable]";
 
         // Act
-        TableTag tableTag = new(Dialect, null, tableName);
+        TableTag tableTag = new(null, tableName);
+
+        // Assert
+        Assert.Equal(expected, tableTag.ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Constructor_ValidWithoutSchema_String()
+    {
+        // Arrange
+        string tableName = "ValidTable"; // passes pattern e.g. "^[A-Za-z_@#][A-Za-z0-9_@$#]*$"
+        string expected = "ValidTable";
+
+        // Act
+        TableTag tableTag = new(null, tableName);
 
         // Assert
         Assert.Equal(expected, tableTag.ToString());
@@ -241,13 +254,29 @@ public class TableTagTests
         string expected = "[dbo].[ValidTable]";
 
         // Act
-        TableTag tableTag = new(Dialect, schemaName, tableName);
+        TableTag tableTag = new(schemaName, tableName);
+
+        // Assert
+        Assert.Equal(expected, tableTag.ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Constructor_ValidWithSchema_String()
+    {
+        // Arrange
+        string schemaName = "dbo";
+        string tableName = "ValidTable";
+        string expected = "dbo.ValidTable";
+
+        // Act
+        TableTag tableTag = new(schemaName, tableName);
 
         // Assert
         Assert.Equal(expected, tableTag.ToString());
         string implicitString = tableTag;
         Assert.Equal(expected, implicitString);
     }
+
 
     [Theory]
     [InlineData("Invalid Table")]    // Contains space.
@@ -262,7 +291,7 @@ public class TableTagTests
         string schemaName = "dbo";
 
         // Act & Assert
-        _ = new TableTag(Dialect, schemaName, invalidTable);
+        _ = new TableTag(schemaName, invalidTable);
     }
 
     [Theory]
@@ -278,7 +307,7 @@ public class TableTagTests
         string tableName = "ValidTable";
 
         // Act & Assert
-        _ = new TableTag(Dialect, invalidSchema, tableName);
+        _ = new TableTag(invalidSchema, tableName);
     }
 
     [Fact]
@@ -287,8 +316,8 @@ public class TableTagTests
         // Arrange
         string schemaName = "dbo";
         string tableName = "ValidTable";
-        TableTag tableTag = new(Dialect, schemaName, tableName);
-        string expected = "[dbo].[ValidTable]";
+        TableTag tableTag = new(schemaName, tableName);
+        string expected = "dbo.ValidTable";
 
         // Act
         string result = tableTag.ToString();
@@ -298,13 +327,29 @@ public class TableTagTests
     }
 
     [Fact]
-    public void ImplicitConversionToString_ReturnsFormattedTag()
+    public void ReturnsFormattedTag()
     {
         // Arrange
         string schemaName = "dbo";
         string tableName = "ValidTable";
-        TableTag tableTag = new(Dialect, schemaName, tableName);
+        TableTag tableTag = new(schemaName, tableName);
         string expected = "[dbo].[ValidTable]";
+
+        // Act
+        string result = tableTag.ToSql(Dialect);  
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ImplicitConversionToString_String()
+    {
+        // Arrange
+        string schemaName = "dbo";
+        string tableName = "ValidTable";
+        TableTag tableTag = new(schemaName, tableName);
+        string expected = "dbo.ValidTable";
 
         // Act
         string result = tableTag;  // Implicit conversion to string
@@ -318,7 +363,7 @@ public class TableTagTests
     {
         // Arrange
         Type entityType = typeof(EntityWithSchema);
-        TableTag expectedTag = new(Dialect, "myschema", "EntityWithSchema");
+        TableTag expectedTag = new("myschema", "EntityWithSchema");
 
         // Act
         TableTag actualTag = TableTag.Get(entityType);

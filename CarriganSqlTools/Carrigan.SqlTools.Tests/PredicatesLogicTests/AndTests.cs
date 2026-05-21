@@ -161,10 +161,12 @@ public class AndTests
         ]);
 
         //if the column doesn't exist an exception will be throw and the test will fail
-        ColumnBase col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[ColA]").Single();
-        col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[ColB]").Single();
-        col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col1]").Single();
-        col = and.DescendantColumns.Where(c => c.ColumnInfo == "[ColumnTable].[Col2]").Single();
+        ColumnBase col = and.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[ColA]").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[ColB]").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Col1]").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Col2]").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag == "ColumnTable.Col2").Single();
+        col = and.DescendantColumns.Where(c => c.ColumnInfo == "ColumnTable.Col2").Single();
     }
 
     [Fact]

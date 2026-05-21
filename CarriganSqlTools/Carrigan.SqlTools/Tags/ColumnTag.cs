@@ -1,5 +1,7 @@
 ﻿using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tags;
@@ -88,7 +90,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-internal class ColumnTag : StringWrapper
+internal class ColumnTag : StringWrapper, ISqlFragment
 {
     /// <summary>
     /// The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.
@@ -106,27 +108,10 @@ internal class ColumnTag : StringWrapper
     /// <param name="tableTag">The <see cref="Tags.TableTag"/> representing the table containing the column.</param>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
     internal ColumnTag(TableTag tableTag, ColumnName columnName)
-        : base(tableTag.Dialect.RenderColumn(tableTag, columnName), StringComparison.OrdinalIgnoreCase)
+        : base($"{tableTag}.{columnName}", StringComparison.OrdinalIgnoreCase)
     {
         ColumnName = columnName;
         TableTag = tableTag;
-    }
-
-    /// <summary>
-    /// Returns the SQL string representation of this <see cref="ColumnTag"/>,
-    /// optionally including the table (and schema) prefix.
-    /// </summary>
-    /// <param name="useTableTag">
-    /// <c>true</c> to include <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>;
-    /// <c>false</c> to return only <c>[Column]</c>.
-    /// </param>
-    /// <returns>A SQL string representing the column identifier.</returns>
-    public string ToString(bool useTableTag)
-    {
-        if (useTableTag)
-            return ToString();
-        else
-            return TableTag.Dialect.RenderColumn(TableTag, ColumnName, false);
     }
 
     /// <summary>
@@ -137,4 +122,34 @@ internal class ColumnTag : StringWrapper
     /// </returns>
     public new bool IsEmpty() =>
         ColumnName.IsNullOrWhiteSpace();
+
+
+    public IEnumerable<ISqlFragment> Flatten()
+    {
+        yield return this;
+    }
+
+    /// <summary>
+    /// Returns an empty enumeration, as <see cref="ColumnTag"/> does not contain any parameters.
+    /// </summary>
+    /// <returns>an empty enumeration </returns>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        [];
+
+    /// <summary>
+    /// Renders the column tag as a SQL identifier, including the table tag if specified.
+    /// </summary>
+    /// <param name="dialect">a sql dialect</param>
+    /// <returns>the rendered SQL identifier</returns>
+    public string ToSql(ISqlDialects dialect) =>
+        ToSql(dialect, true);
+
+    /// <summary>
+    /// Renders the column tag as a SQL identifier, optionally including the table tag.
+    /// </summary>
+    /// <param name="dialect">a sql dialect</param>
+    /// <param name="useTableTag">a value indicating whether to include the table tag</param>
+    /// <returns>the rendered SQL identifier</returns>
+    public string ToSql(ISqlDialects dialect, bool useTableTag) =>
+        dialect.RenderColumn(TableTag, ColumnName, useTableTag);
 }

@@ -1,9 +1,12 @@
-﻿using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.OrderByItems;
 
 namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 public class OrderByBaseTests
 {
+    private readonly static ISqlDialects Dialect = new SqlServerDialect();
     [Fact]
     public void AsOrderBy_ReturnsSameInstanceForOrderBy()
     {
@@ -39,7 +42,7 @@ public class OrderByBaseTests
 
         OrderBy appended = orderBy.WithConcat(items);
 
-        string sql = appended.ToSql();
+        string sql = appended.ToSql(Dialect);
         Assert.Contains("[TestEntity].[Name]", sql);
         Assert.Contains("[TestEntity].[Id]", sql);
     }

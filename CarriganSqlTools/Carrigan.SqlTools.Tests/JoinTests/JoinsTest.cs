@@ -304,7 +304,7 @@ public class JoinsTest
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        TableTag expected = new(Dialect, null, "Left");
+        TableTag expected = new(null, "Left");
         Assert.Equal(expected, Joins<JoinLeftTable>.TableTag);
     }
 
