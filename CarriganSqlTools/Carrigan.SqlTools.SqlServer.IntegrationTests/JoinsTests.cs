@@ -8,6 +8,7 @@ using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 using Carrigan.SqlTools.Tags;
 using Microsoft.Data.SqlClient;
+using Carrigan.SqlTools.Generators.SqlServer;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests;
 

@@ -6,6 +6,7 @@ using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.SqlTypes;
 using Carrigan.SqlTools.Types;
 using System.Data;
 using System.Reflection;
+using Carrigan.SqlTools.Generators.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.ExceptionTests;
 

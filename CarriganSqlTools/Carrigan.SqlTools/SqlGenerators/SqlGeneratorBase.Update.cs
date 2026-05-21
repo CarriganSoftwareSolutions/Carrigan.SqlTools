@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
-public partial class SqlGenerator<T>
+public partial class SqlGeneratorBase<T>
 {
     /// <summary>
     /// Generates a SQL <c>UPDATE</c> statement that modifies a single row identified

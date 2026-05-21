@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
-public partial class SqlGenerator<T>
+public partial class SqlGeneratorBase<T>
 {
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns all rows
@@ -308,6 +308,6 @@ public partial class SqlGenerator<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return Select(null, null, null, new Or(entities.Select(entity => new And(SqlGenerator<T>.GetByKeyPredicates(entity)))), null, null);
+            return Select(null, null, null, new Or(entities.Select(entity => new And(SqlGeneratorBase<T>.GetByKeyPredicates(entity)))), null, null);
     }
 }

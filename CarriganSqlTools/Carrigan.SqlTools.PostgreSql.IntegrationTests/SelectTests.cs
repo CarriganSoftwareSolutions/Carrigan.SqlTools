@@ -1,5 +1,6 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
+using Carrigan.SqlTools.Generators.PostgreSql;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;

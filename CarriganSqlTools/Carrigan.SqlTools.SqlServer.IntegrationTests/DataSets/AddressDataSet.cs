@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Generators.SqlServer;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.DataSets;

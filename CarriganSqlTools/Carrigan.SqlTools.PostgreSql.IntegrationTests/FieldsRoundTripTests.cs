@@ -3,6 +3,7 @@
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Generators.PostgreSql;
 using Carrigan.SqlTools.Clients.PostgreSql;
 using System.Xml.Linq;
 using Npgsql;

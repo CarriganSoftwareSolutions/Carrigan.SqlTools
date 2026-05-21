@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
-public partial class SqlGenerator<T>
+public partial class SqlGeneratorBase<T>
 {
     /// <summary>
     /// Generates a SQL <c>DELETE</c> statement for the specified entity,
@@ -120,7 +120,7 @@ public partial class SqlGenerator<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return Delete(null, new Or(entities.Select(static entity => SqlGenerator<T>.GetByKeyPredicates(entity))));
+            return Delete(null, new Or(entities.Select(static entity => SqlGeneratorBase<T>.GetByKeyPredicates(entity))));
     }
 
     /// <summary>

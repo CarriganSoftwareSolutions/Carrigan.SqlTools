@@ -23,8 +23,8 @@ public class SqlFragmentParameter : ISqlFragment
     internal static SqlFragmentParameter GetEncryptedParameter<T>(IEncryption? encryption, ColumnInfo column, T entity) =>
         new(column.ParameterTag, encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
 
-    internal static SqlFragmentParameter GetParameter<T>(ColumnInfo column, T entity) =>
-        new(column, column.PropertyInfo.GetValue(entity));
+    internal static SqlFragmentParameter GetParameter<T>(ColumnInfo column, FieldProperties fieldProperties, T entity) =>
+        new(column, fieldProperties, column.PropertyInfo.GetValue(entity));
 
     internal SqlFragmentParameter(ParameterTag parameterTag, FieldProperties fieldProperties, object? value)
     {
@@ -39,10 +39,10 @@ public class SqlFragmentParameter : ISqlFragment
         Value = value;
     }
 
-    internal SqlFragmentParameter(ColumnInfo columnInfo, object? value)
+    internal SqlFragmentParameter(ColumnInfo columnInfo, FieldProperties fieldProperties, object? value)
     {
         ParameterTag = columnInfo.ParameterTag;
-        FieldProperties = columnInfo.SqlFieldProperties;
+        FieldProperties = fieldProperties;
         Value = value;
     }
 

@@ -6,6 +6,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.Helpers;
 using Carrigan.SqlTools.Tests.TestEntities;
 using System.Text;
+using Carrigan.SqlTools.Generators.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 

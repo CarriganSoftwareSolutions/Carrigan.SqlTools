@@ -71,6 +71,6 @@ public partial class PostgreSqlDialectTests
     private static ColumnInfo CreateColumnInfo<T>(string propertyName)
     {
         PropertyInfo propertyInfo = typeof(T).GetProperty(propertyName)!;
-        return new ColumnInfo(Dialect, null, new TableName("Customer"), propertyInfo, []);
+        return new ColumnInfo(null, new TableName("Customer"), propertyInfo, []);
     }
 }

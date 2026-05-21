@@ -35,11 +35,6 @@ public class SqlToolsReflectorCache<T>
     internal static readonly Type Type;
 
     /// <summary>
-    /// The SQL dialect configuration used for generating database queries.
-    /// </summary>
-    internal static readonly ISqlDialects Dialect;
-
-    /// <summary>
     /// The <see cref="IdentifierTypes.SchemaName"/> associated with
     /// the SQL schema for <typeparamref name="T"/> and its columns.
     /// </summary>
@@ -204,8 +199,6 @@ public class SqlToolsReflectorCache<T>
                 ?? tableAttribute?.Schema?.GetValueOrNull();
 
         DialectAttribute? dialectAttribute = Type.GetCustomAttribute<DialectAttribute>();
-        DialectEnum dialectEnum = dialectAttribute?.DialectEnum ?? DialectEnum.SqlServer;
-        Dialect = DialectProvider.GetDialect(dialectEnum);
 
         SchemaName = SchemaName.New(schemaName);
 
@@ -258,7 +251,7 @@ public class SqlToolsReflectorCache<T>
                 new Tuple<PropertyInfo, ColumnInfo>
                 (
                     property,
-                    new ColumnInfo(Dialect, SchemaName, TableName, property, keys)
+                    new ColumnInfo(SchemaName, TableName, property, keys)
                 ))
         );
 

@@ -8,6 +8,7 @@ using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Types;
 using Carrigan.SqlTools.Tests.Helpers;
 using Carrigan.SqlTools.Paging;
+using Carrigan.SqlTools.Generators.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 

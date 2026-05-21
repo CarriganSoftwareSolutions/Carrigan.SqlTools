@@ -1,6 +1,6 @@
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Generators.SqlServer;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;

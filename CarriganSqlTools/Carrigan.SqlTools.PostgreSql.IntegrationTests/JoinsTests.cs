@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Generators.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;

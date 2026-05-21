@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
-public partial class SqlGenerator<T>
+public partial class SqlGeneratorBase<T>
 {
     /// <summary>
     /// Builds the <c>VALUES</c> clause for a single SQL <c>INSERT</c> row,

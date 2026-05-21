@@ -2,6 +2,7 @@
 
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.PostgreSql;
+using Carrigan.SqlTools.Generators.PostgreSql;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 using Carrigan.SqlTools.SqlGenerators;

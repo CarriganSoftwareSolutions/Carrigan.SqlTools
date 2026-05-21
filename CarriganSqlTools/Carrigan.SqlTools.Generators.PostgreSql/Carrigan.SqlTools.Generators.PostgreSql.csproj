@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">True</GeneratePackageOnBuild>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+
+    <Description>
+      Carrigan.SqlTools.Generators.PostgreSql provides PostgreSQL-specific SQL generation support for Carrigan.SqlTools.
+
+      The package extends the core Carrigan.SqlTools query-building model with PostgreSQL dialect rules, including PostgreSQL identifier formatting, parameter formatting, data type generation, LIMIT/OFFSET paging syntax, joins, WHERE clauses, ORDER BY clauses, and CRUD statement generation.
+
+      It supports reflection-based generation of SELECT, INSERT, UPDATE, and DELETE statements while preserving the flexibility to build queries manually through a strongly typed, object-oriented SQL construction model.
+
+      Carrigan.SqlTools.PostgreSql is intended for developers who need safe, reusable PostgreSQL query generation without adopting a full ORM. It works with Carrigan.Core attributes and shared interfaces to support property-level metadata, custom encryption workflows, object mapping, and consistent SQL generation across application code.
+
+      This package focuses specifically on PostgreSQL dialect behavior and is designed to be used alongside the Carrigan.SqlTools core abstractions.
+    </Description>
+
+    <PackageTags>
+      sql;postgresql;postgres;pgsql;database;query-builder;sql-generator;
+      crud;select;insert;update;delete;joins;where;order-by;pagination;
+      limit;offset;reflection;attributes;object-mapping;strongly-typed;
+      orm-alternative;carrigan-sqltools
+    </PackageTags>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
+  </ItemGroup>
+
+</Project>

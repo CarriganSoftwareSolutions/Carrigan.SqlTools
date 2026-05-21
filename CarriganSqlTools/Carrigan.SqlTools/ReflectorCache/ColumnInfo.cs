@@ -51,11 +51,12 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     ///
     /// This value is used when generating SQL parameters and when constructing
     /// result sets when returning table values from
-    /// <see cref="SqlGenerators.SqlGenerator{T}.InsertAutoId(T)"/>.
+    /// <see cref="SqlGenerators.SqlGeneratorBase{T}.InsertAutoId(T)"/>.
     /// </remarks>
     internal readonly SqlTypeDefinition SqlType;
 
-    internal readonly FieldProperties SqlFieldProperties;
+    internal Type Type => 
+        PropertyInfo.PropertyType;
 
     /// <summary>
     /// The <see cref="System.Reflection.PropertyInfo"/> instance
@@ -108,7 +109,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// Initializes a new instance of the <see cref="ColumnInfo"/> class,
     /// caching the reflected column metadata for a specific property.
     /// </summary>
-    /// <param name="dialect">The SQL dialect configuration used for generating database queries.</param>
     /// <param name="schemaName">
     /// The <see cref="SchemaName"/> that identifies the schema for the data model.
     /// </param>
@@ -118,14 +118,15 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <param name="propertyInfo">
     /// The <see cref="PropertyInfo"/> representing the reflected property.
     /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="tableName"/>, <paramref name="propertyInfo"/>, or <paramref name="keys"/> is <c>null</c>.
-    /// </exception>
     /// <param name="keys">
     /// A collection of <see cref="System.Reflection.PropertyInfo"/> instances representing the key properties
     /// for the entity, used to determine the value of <see cref="IsKeyPart"/>.
     /// </param>
-    internal ColumnInfo(ISqlDialects dialect, SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="tableName"/>, <paramref name="propertyInfo"/>, or <paramref name="keys"/> is <c>null</c>.
+    /// </exception>
+    /// 
+    internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
         ArgumentNullException.ThrowIfNull(tableName, nameof(tableName));
         ArgumentNullException.ThrowIfNull(propertyInfo, nameof(propertyInfo));
@@ -150,8 +151,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         PropertyName = new(propertyInfo.Name);
 
         SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new(propertyInfo.PropertyType);
-
-        SqlFieldProperties = dialect.GetDefaultFieldPropertiesByClrType(propertyInfo.PropertyType);
 
         ParameterTag = new(parameterName);
         AliasName = aliasName;

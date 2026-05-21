@@ -6,6 +6,7 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -102,7 +103,7 @@ public class SqlServerDialect : ISqlDialects
     /// A SQL statement that declares <c>@OutputTable</c> with one column per entry in <paramref name="columnInfo"/>.
     /// </returns>
     private string ReturnTableDefinition(IEnumerable<ColumnInfo> columnInfo) =>
-        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {RenderFieldProperties(column.SqlFieldProperties)}"))});{Environment.NewLine}";
+        $"DECLARE @OutputTable TABLE ({string.Join(", ", columnInfo.Select(column => $"{column.ColumnName} {RenderFieldProperties(GetDefaultFieldPropertiesByClrType(column.Type))}"))});{Environment.NewLine}";
 
     /// <summary>
     /// Generates SQL to output the inserted column values into <c>@OutputTable</c>.

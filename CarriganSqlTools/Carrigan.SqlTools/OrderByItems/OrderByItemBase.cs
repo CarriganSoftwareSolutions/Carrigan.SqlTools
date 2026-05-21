@@ -78,7 +78,7 @@ public abstract class OrderByItemBase : ISqlFragment, IEquatable<OrderByItemBase
     /// Generates the SQL fragment for this order-by item (without the <c>ORDER BY</c> keyword).
     /// </summary>
     /// <remarks>
-    /// The containing <see cref="SqlGenerators.SqlGenerator{T}"/> is responsible for emitting the
+    /// The containing <see cref="SqlGenerators.SqlGeneratorBase{T}"/> is responsible for emitting the
     /// <c>ORDER BY</c> keyword and for joining multiple items.
     /// </remarks>
     /// <returns>A SQL string representing this item, e.g., <c>[Order].[OrderDate] ASC</c>.</returns>

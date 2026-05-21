@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Tests.Helpers;
+using Carrigan.SqlTools.Generators.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 

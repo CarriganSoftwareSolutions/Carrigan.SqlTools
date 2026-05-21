@@ -2,7 +2,9 @@
 using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -10,8 +12,6 @@ using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Reflection;
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Fragments;
 //IGNORE SPELLING: parameterization
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -27,8 +27,13 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// <typeparam name="T">
 /// The entity or data model type that defines the target table and columns.
 /// </typeparam>
-public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
+public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> where T : class
 {
+    /// <summary>
+    /// The SQL dialect configuration used for generating database queries.
+    /// </summary>
+    protected abstract ISqlDialects Dialect { get; init; }
+
     /// <summary>
     /// Stores the encryption service used for SQL generation,
     /// or <c>null</c> if encryption is not required or no encrypter was provided.
@@ -122,7 +127,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SqlGenerator{T}"/> class without an encrypter.
+    /// Initializes a new instance of the <see cref="SqlGeneratorBase{T}"/> class without an encrypter.
     /// </summary>
     /// <exception cref="AggregateException">
     /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
@@ -142,14 +147,14 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// <exception cref="MultipleKeyVersionsException{T}">
     /// if more than one key-version property is present.
     /// </exception>
-    public SqlGenerator()
+    public SqlGeneratorBase()
     {
         _Encryption = null;
         ValidationChecks();
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SqlGenerator{T}"/> class
+    /// Initializes a new instance of the <see cref="SqlGeneratorBase{T}"/> class
     /// using the specified encryption service.
     /// </summary>
     /// <param name="dialect"></param>
@@ -175,7 +180,7 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
     /// The <see cref="IEncryption"/> implementation used to encrypt and decrypt values.
     /// Must not be <c>null</c>.
     /// </param>
-    public SqlGenerator(IEncryption encryption)
+    public SqlGeneratorBase(IEncryption encryption)
     {
         _Encryption = encryption ?? throw new ArgumentNullException(nameof(encryption));
 
@@ -240,6 +245,6 @@ public partial class SqlGenerator<T> : SqlToolsReflectorCache<T> where T : class
         else if (_Encryption is not null && IsEncrypted(column))
             return SqlFragmentParameter.GetEncryptedParameter(_Encryption, column, entity);
         else
-            return SqlFragmentParameter.GetParameter(column, entity);
+            return SqlFragmentParameter.GetParameter(column, Dialect.GetDefaultFieldPropertiesByClrType(column.Type), entity);
     }
 }

@@ -9,7 +9,7 @@ using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
-public partial class SqlGenerator<T>
+public partial class SqlGeneratorBase<T>
 {
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized

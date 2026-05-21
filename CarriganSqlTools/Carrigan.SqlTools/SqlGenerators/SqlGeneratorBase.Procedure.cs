@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
-public partial class SqlGenerator<T>
+public partial class SqlGeneratorBase<T>
 {
     /// <summary>
     /// Creates an <see cref="SqlQuery"/> that represents a stored procedure call
@@ -21,7 +21,7 @@ public partial class SqlGenerator<T>
     /// <remarks>
     /// When creating a data model for a stored procedure, the key distinction from
     /// a table-based model is that you call <c>Procedure</c> rather than an
-    /// insert, update, or delete method on the <see cref="SqlGenerator{T}"/>.
+    /// insert, update, or delete method on the <see cref="SqlGeneratorBase{T}"/>.
     /// <br/><br/>
     /// Only properties that can be publicly read from accessible types are considered;
     /// members not visible outside their defining assembly are ignored.

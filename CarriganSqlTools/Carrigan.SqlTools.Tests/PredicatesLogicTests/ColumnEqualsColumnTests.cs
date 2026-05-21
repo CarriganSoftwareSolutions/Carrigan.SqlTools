@@ -6,6 +6,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Tests.Helpers;
+using Carrigan.SqlTools.Generators.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 public class ColumnEqualsColumnTests
@@ -49,7 +50,7 @@ public class ColumnEqualsColumnTests
     public void LeftRightSql()
     {
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
-        Joins<JoinLeftTable> relations = new Joins<JoinLeftTable>(new Join<JoinRightTable>(columnEqualsColumn));
+        Joins<JoinLeftTable> relations = new  (new Join<JoinRightTable>(columnEqualsColumn));
         SqlQuery query = leftGenerator.Select(null, null, relations, null, null, null);
 
         Assert.Equal("SELECT [Left].* FROM [Left] JOIN [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
