@@ -2,9 +2,10 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
+
 namespace Carrigan.SqlTools.Generators.PostgreSql;
 
-public class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
+public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
     /// The SQL dialect configuration used for generating database queries.

@@ -6,6 +6,52 @@ namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
 
 public static class OrderedItemDataSet
 {
+    public static void ValidateById(IEnumerable<OrderedItem> actualOrderedItems, int expectedOrderId, int expectedBookId)
+    {
+        OrderedItem actual = actualOrderedItems
+            .Where(orderedItem => orderedItem.OrderId == expectedOrderId && orderedItem.BookId == expectedBookId)
+            .Single();
+        Validate(actual, expectedOrderId, expectedBookId);
+    }
+
+    public static void ValidateAtIndex(IEnumerable<OrderedItem> actualOrderedItems, int index, int? expectedOrderId, int? expectedBookId)
+    {
+        OrderedItem actual = actualOrderedItems.ElementAt(index);
+
+        Assert.Equal(expectedOrderId, actual.OrderId);
+
+        Validate(actual, expectedOrderId, expectedBookId);
+    }
+
+    public static void ValidateByIndexRange
+        (IEnumerable<OrderedItem> actualOrderedItems, int indexFirst, int indexLast, int expectedOrderId, int expectedBookId)
+    {
+        for (int index = indexFirst; index <= indexLast; index++)
+        {
+            ValidateAtIndex(actualOrderedItems, index, expectedOrderId, expectedBookId);
+        }
+    }
+
+    public static void Validate(OrderedItem actual, int? expectedOrderId, int? expectedBookId)
+    {
+        if (expectedOrderId is null || expectedBookId is null)
+        {
+            Assert.Null(actual.OrderId);
+            Assert.Null(actual.BookId);
+            Assert.Null(actual.Price);
+        }
+        else
+        {
+            OrderedItem expected = Data
+                .Where(orderedItem => orderedItem.OrderId == expectedOrderId && orderedItem.BookId == expectedBookId)
+                .Single();
+
+            Assert.Equal(expected.OrderId, actual.OrderId);
+            Assert.Equal(expected.BookId, actual.BookId);
+            Assert.Equal(expected.Price, actual.Price);
+        }
+    }
+
     public static IEnumerable<OrderedItem> Data =>
     [
         new()

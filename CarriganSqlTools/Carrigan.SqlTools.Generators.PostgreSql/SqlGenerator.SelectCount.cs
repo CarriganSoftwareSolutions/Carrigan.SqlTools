@@ -4,12 +4,13 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
-namespace Carrigan.SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.Generators.PostgreSql;
 
-public abstract partial class SqlGeneratorBase<T>
+public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized
@@ -120,57 +121,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
     /// </param>
-    protected virtual SqlQuery BaseSelectCount(bool? distinct, SelectTag? select, Joins<T>? joins, Predicates? predicates)
-    {
-        IEnumerable<ISqlFragment> GetFragments()
-        {
-            if (distinct ?? false)
-                yield return new SqlFragmentText($"SELECT COUNT(DISTINCT ");
-            else
-                yield return new SqlFragmentText($"SELECT COUNT(");
-
-            if (select is not null)
-                yield return select.WithNoAlias();
-            else
-                yield return ColumnInfo.First().ColumnTag;
-
-            yield return new SqlFragmentText(") FROM ");
-            yield return Table;
-
-            if (joins?.IsNotNullOrEmpty() ?? false)
-            {
-                foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
-                    yield return fragment;
-            }
-
-            if (predicates is not null)
-            {
-                yield return new SqlFragmentText($" WHERE ");
-
-                foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
-                    yield return fragment;
-            }
-        }
-        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-
-        TableTag selectedTableTag = select?.ColumnTag?.TableTag ?? Table;
-        IEnumerable<TableTag> invalidSelectedTags = new[] { selectedTableTag }.Except(selectableTableTags);
-
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
-
-        IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
-
-        if (select is not null)
-        {
-            AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(select);
-            if (ambiguousResultColumns is not null)
-                throw ambiguousResultColumns;
-        }
-
-        if (invalidTags.Any())
-            throw new InvalidTableException(invalidTags);
-
-        return GetFragments().ToSqlQuery(Dialect);
-    }
+    public SqlQuery SelectCount(bool? distinct, SelectTag? select, Joins<T>? joins, Predicates? predicates) =>
+        base.BaseSelectCount(distinct, select, joins, predicates);
 }

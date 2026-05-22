@@ -27,7 +27,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202605030711" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202605201251" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

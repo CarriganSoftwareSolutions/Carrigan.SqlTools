@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
 namespace Carrigan.SqlTools.Generators.SqlServer;
 
-public class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
+public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
     /// The SQL dialect configuration used for generating database queries.

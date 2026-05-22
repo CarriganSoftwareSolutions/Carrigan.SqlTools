@@ -232,7 +232,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// <exception cref="ArgumentException">
     /// Thrown when an index is applied to a parameter that already has an index.
     /// </exception>
-    protected SqlFragmentParameter GetSqlParameter(ColumnInfo column, T entity)
+    private SqlFragmentParameter GetSqlParameter(ColumnInfo column, T entity)
     {
         ArgumentNullException.ThrowIfNull(column);
         ArgumentNullException.ThrowIfNull(entity);

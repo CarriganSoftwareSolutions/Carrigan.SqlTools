@@ -1,10 +1,11 @@
 ﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
-namespace Carrigan.SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.Generators.PostgreSql;
 
-public abstract partial class SqlGeneratorBase<T>
+public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
     /// Creates an <see cref="SqlQuery"/> that represents a stored procedure call
@@ -54,11 +55,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// [schema].[UpdateThing]
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseProcedure(T entity)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-        IEnumerable<SqlFragmentParameter> parameters = ColumnInfo.Select(column => GetSqlParameter(column, entity));
-
-        return parameters.ToStoredProcedureQuery(Dialect, ProcedureTag);
-    }
+    public SqlQuery Procedure(T entity) =>
+        Procedure(entity);
 }

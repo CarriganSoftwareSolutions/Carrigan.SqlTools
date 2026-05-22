@@ -5,14 +5,15 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Data.Common;
 using System.Text;
 
-namespace Carrigan.SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.Generators.SqlServer;
 
-public abstract partial class SqlGeneratorBase<T>
+public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
     /// Generates a SQL <c>UPDATE</c> statement that modifies a single row identified
@@ -84,44 +85,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE [Id] = @Id;
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseUpdateById(T entity, ColumnCollection<T>? columns = null)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-
-        if (HasKeyProperty is false)
-            throw new NoPrimaryKeyPropertyException<T>();
-
-        IEnumerable<ColumnInfo> updateTheseColumns =
-            (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
-
-        IEnumerable<ISqlFragment>GetWhereFragments() =>
-            KeyColumnInfo
-                .Select
-                (
-                    column =>
-                    new SqlFragmentGroup
-                    (
-                        new SqlFragmentText($"{column.ColumnTag.ToSql(Dialect, false)} = "),
-                        GetSqlParameter(column, entity)
-                    )
-                )
-                .JoinFragments(new SqlFragmentText(" AND "));
-
-        IEnumerable<ISqlFragment> GetFragments()
-        {
-            yield return new SqlFragmentText("UPDATE ");
-            yield return Table;
-            yield return new SqlFragmentText(" SET ");
-            foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, false))
-                yield return fragment;
-            yield return new SqlFragmentText($" WHERE ");
-            foreach (ISqlFragment fragment in GetWhereFragments())
-                yield return fragment;
-            yield return ISqlFragment.Semicolon;
-        }
-
-        return GetFragments().ToSqlQuery(Dialect);
-    }
+    public SqlQuery UpdateById(T entity, ColumnCollection<T>? columns = null) =>
+        base.BaseUpdateById(entity, columns);
 
 
     /// <summary>
@@ -187,28 +152,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseUpdateByIds(T valuesEntity, ColumnCollection<T>? columns, params IEnumerable<T> idEntities)
-    {
-        ArgumentNullException.ThrowIfNull(valuesEntity);
-
-        if (HasKeyProperty is false)
-            throw new NoPrimaryKeyPropertyException<T>();
-        else
-        {
-            Or or = new(
-                    idEntities.Select(entity => new And
-                    (
-                        KeyColumnInfo.Select(column => new Equal
-                            (
-                                new Column<T>(column.PropertyName),
-                                new Parameter(column.ParameterTag, column.PropertyInfo.GetValue(entity)))
-                            )
-                    ))
-            );
-
-            return BaseUpdate(valuesEntity, columns, null, or);
-        }
-    }
+    public SqlQuery UpdateByIds(T valuesEntity, ColumnCollection<T>? columns, params IEnumerable<T> idEntities) =>
+        base.BaseUpdateByIds(valuesEntity, columns, idEntities);
 
     /// <summary>
     /// Generates a SQL <c>UPDATE</c> statement that modifies one or more rows,
@@ -300,65 +245,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollection<T>? columns, Joins<T>? joins, Predicates? predicates)
-    {
-        ArgumentNullException.ThrowIfNull(entity);
-
-        IEnumerable<ColumnInfo> updateTheseColumns =
-            [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys)];
-
-        IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
-
-        if (invalidTags.Any())
-        {
-            throw new InvalidTableException(invalidTags);
-        }
-
-        IEnumerable<ISqlFragment> GetFragments()
-        {
-            yield return new SqlFragmentText("UPDATE ");
-            yield return Table;
-            yield return new SqlFragmentText(" SET ");
-            foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, joins.IsNotNullOrEmpty()))
-                yield return fragment;
-            if(joins.IsNotNullOrEmpty())
-            {
-                yield return new SqlFragmentText(" FROM ");
-                yield return Table;
-                foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
-                    yield return fragment;
-            }
-            if(predicates is not null)
-            {
-                yield return new SqlFragmentText($" WHERE ");
-                foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
-                    yield return fragment;
-            }
-        }
-
-        return GetFragments().ToSqlQuery(Dialect);
-    }
-
-
-    /// <summary>
-    /// Generates the SQL fragments for the <c>SET</c> clause of an <c>UPDATE</c> statement,
-    /// </summary>
-    /// <param name="entity">the entity containing the values to be updated</param>
-    /// <param name="updateTheseColumns">the columns to be updated</param>
-    /// <param name="useTableTag">whether to use the table tag in the SQL fragments</param>
-    /// <returns></returns>
-    private IEnumerable<ISqlFragment> GetSetFragments(T entity, IEnumerable<ColumnInfo> updateTheseColumns, bool useTableTag) =>
-        updateTheseColumns
-            .Select
-            (
-                column =>
-                new SqlFragmentGroup
-                (
-                    new SqlFragmentText($"{column.ColumnTag.ToSql(Dialect, useTableTag)} = "),
-                    GetSqlParameter(column, entity)
-                )
-            )
-            .JoinFragments(new SqlFragmentText(", "));
+    public SqlQuery Update(T entity, ColumnCollection<T>? columns, Joins<T>? joins, Predicates? predicates) =>
+        base.BaseUpdate(entity, columns, joins, predicates);
 }

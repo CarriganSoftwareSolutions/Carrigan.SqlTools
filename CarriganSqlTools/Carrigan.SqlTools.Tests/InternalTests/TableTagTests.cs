@@ -1,7 +1,6 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tests.TestEntities;
 using Carrigan.SqlTools.Generators.SqlServer;
 

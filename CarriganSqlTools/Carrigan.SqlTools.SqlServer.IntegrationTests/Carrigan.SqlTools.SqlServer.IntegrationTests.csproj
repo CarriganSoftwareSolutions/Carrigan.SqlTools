@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202605030711" />
-    <PackageReference Include="coverlet.collector" Version="10.0.0">
+    <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202605201251" />
+    <PackageReference Include="coverlet.collector" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools.Generators.SqlServer\Carrigan.SqlTools.Generators.SqlServer.csproj" />
+    <ProjectReference Include="..\Carrigan.SqlTools.IntegrationTests\Carrigan.SqlTools.IntegrationTests.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools.SqlServer\Carrigan.SqlTools.SqlServer.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
   </ItemGroup>

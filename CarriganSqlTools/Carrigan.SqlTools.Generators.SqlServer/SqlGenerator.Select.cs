@@ -6,13 +6,14 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Text;
 
-namespace Carrigan.SqlTools.SqlGenerators;
+namespace Carrigan.SqlTools.Generators.SqlServer;
 
-public abstract partial class SqlGeneratorBase<T>
+public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns all rows
@@ -54,8 +55,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// ORDER BY [Customer].[Email] ASC
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelectAll(OrderBy? orderBy = null) =>
-        BaseSelect(null, null, null, null, orderBy, null);
+    public SqlQuery SelectAll(OrderBy? orderBy = null) =>
+        base.BaseSelectAll(orderBy);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
@@ -181,87 +182,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelect(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBy? orderBy, Paging.PagingBase? paging)
-    {
-        IEnumerable<ISqlFragment> GetFragments()
-        {
-            if(distinct ?? false)
-                yield return new SqlFragmentText($"SELECT DISTINCT ");
-            else
-                yield return new SqlFragmentText($"SELECT ");
-
-            if (selects is not null && selects.Any())
-                yield return selects;
-            else if (HasAliasedColumns)
-                yield return SelectTags;
-            else
-            {
-                yield return Table;
-                yield return new SqlFragmentText(".*");
-            }
-            yield return new SqlFragmentText(" FROM ");
-            yield return Table;
-
-            if (joins?.IsNotNullOrEmpty() ?? false)
-            {
-                foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
-                    yield return fragment;
-            }
-
-            if (predicates is not null)
-            {
-                yield return new SqlFragmentText($" WHERE ");
-
-                foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
-                    yield return fragment;
-            }
-
-            if (orderBy.IsNotNullOrEmpty())
-                    yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql(Dialect)}");
-
-
-            if (paging is not null)
-            {
-                yield return ISqlFragment.Space;
-                yield return Dialect.RenderPaging(paging);
-            }
-
-        }
-        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
-
-        IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
-        IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
-
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
-
-        IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
-        IEnumerable<TableTag> invalidTags = invalidSelectedTags.Concat(invalidPredicateTags).Concat(invalidOrderByTags).Distinct();
-
-        AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
-        if (ambiguousResultColumns is not null)
-            throw ambiguousResultColumns;
-
-        if (invalidTags.Any())
-            throw new InvalidTableException(invalidTags);
-
-        if (paging is not null)
-        {
-            // add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server
-            // that has unexpected behavior if the order by values are not unique
-            orderBy ??= new OrderBy();
-            IEnumerable<OrderByItem<T>> orderByKeyItems =
-            [
-                .. KeyColumnInfo
-                    .Select(static key => new OrderByItem<T>(key.PropertyName, SortDirectionEnum.Ascending))
-                    .Where(item => orderBy.Contains(item) == false)
-            ];
-            orderBy = orderBy.WithConcat(orderByKeyItems);
-        }
-
-        return GetFragments().ToSqlQuery(Dialect);
-    }
+    public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBy? orderBy, PagingBase? paging) =>
+        base.BaseSelect(distinct, selects, joins, predicates, orderBy, paging);
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key
@@ -302,12 +224,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE ([Customer].[Id] = @Parameter_Id)
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelectById(params IEnumerable<T> entities)
-    {
-        ArgumentNullException.ThrowIfNull(entities);
-        if (HasKeyProperty is false)
-            throw new NoPrimaryKeyPropertyException<T>();
-        else
-            return BaseSelect(null, null, null, new Or(entities.Select(entity => new And(SqlGeneratorBase<T>.GetByKeyPredicates(entity)))), null, null);
-    }
+    public SqlQuery SelectById(params IEnumerable<T> entities) =>
+        base.BaseSelectById(entities);
 }
