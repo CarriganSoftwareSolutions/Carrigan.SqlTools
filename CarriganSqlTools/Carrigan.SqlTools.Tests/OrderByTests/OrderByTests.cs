@@ -12,8 +12,8 @@ public class OrderByTests
     [Fact]
     public void OrderByTests_Constructor()
     {
-        OrderByItem<Address> orderByItem = new("City", SortDirectionEnum.Ascending);
-        OrderBy orderBy = new(orderByItem);
+        OrderBy<Address> orderByItem = new("City", SortDirectionEnum.Ascending);
+        OrderBys orderBy = new(orderByItem);
 
 
         Assert.Single(orderBy.TableTags);
@@ -23,8 +23,8 @@ public class OrderByTests
     [Fact]
     public void OrderByTests_Constructor_With_Default_Ascending()
     {
-        OrderByItem<Address> orderByItem = new("City");
-        OrderBy orderBy = new(orderByItem);
+        OrderBy<Address> orderByItem = new("City");
+        OrderBys orderBy = new(orderByItem);
 
 
         Assert.Single(orderBy.TableTags);
@@ -34,9 +34,9 @@ public class OrderByTests
     [Fact]
     public void OrderByTests_Constructor_MultipleOrderByItems()
     {
-        OrderByItem<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
-        OrderByItem<Address> orderByItem2 = new("Street", SortDirectionEnum.Descending);
-        OrderBy orderBy = new (orderByItem1, orderByItem2);
+        OrderBy<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
+        OrderBy<Address> orderByItem2 = new("Street", SortDirectionEnum.Descending);
+        OrderBys orderBy = new (orderByItem1, orderByItem2);
 
 
         Assert.Equal(2, orderBy.TableTags.Count());
@@ -46,7 +46,7 @@ public class OrderByTests
     [Fact]
     public void OrderByTests_Empty_Constructor()
     {
-        OrderBy order = new();
+        OrderBys order = new();
 
         Assert.True(order.IsEmpty());
     }
@@ -54,7 +54,7 @@ public class OrderByTests
     [Fact]
     public void OrderByTests_Constructor_EmptyItemList()
     {
-        OrderBy order = new([]);
+        OrderBys order = new([]);
 
         Assert.True(order.IsEmpty());
     }
@@ -62,24 +62,24 @@ public class OrderByTests
     [Fact]
     public void OrderByTests_Constructor_MultipleTables()
     {
-        OrderByItem<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
-        OrderByItem<ColumnTable> orderByItem2 = new("D000destruct0", SortDirectionEnum.Descending);
-        OrderByItem<BooleanColumnTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
-        OrderBy orderBy = new (orderByItem1, orderByItem2, orderByItem3);
+        OrderBy<Address> orderByItem1 = new("City", SortDirectionEnum.Ascending);
+        OrderBy<ColumnTable> orderByItem2 = new("D000destruct0", SortDirectionEnum.Descending);
+        OrderBy<BooleanColumnTable> orderByItem3 = new("Id", SortDirectionEnum.Ascending);
+        OrderBys orderBy = new (orderByItem1, orderByItem2, orderByItem3);
 
 
         Assert.Equal(3, orderBy.TableTags.Count());
         Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000destruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql(Dialect));
     }
     [Fact]
-    public void WithAppend()
+    public void Append()
     {
-        OrderBy order = new ();                            // initially empty
-        OrderByItem<Address> item = new("Street");
+        OrderBys order = new ();                            // initially empty
+        OrderBy<Address> item = new("Street");
 
-        OrderBy returned = order.WithAppend(item);
+        OrderBys returned = order.Append(item);
 
-        // Add should be chain-able (same instance)
+        // Add should be chain-able
         Assert.NotSame(order, returned);
 
         // empty?
@@ -95,24 +95,22 @@ public class OrderByTests
     }
 
     [Fact]
-    public void WithConcat()
+    public void Concat()
     {
-        OrderByItem<Address> initial = new("City", SortDirectionEnum.Ascending);
-        OrderByItem<Address> more1 = new("Street", SortDirectionEnum.Descending);
-        OrderByItem<Address> more2 = new("City", SortDirectionEnum.Descending); // same column, different direction
+        OrderBy<Address> initial = new("City", SortDirectionEnum.Ascending);
+        OrderBy<Address> more1 = new("Street", SortDirectionEnum.Descending);
+        OrderBy<Address> more2 = new("City", SortDirectionEnum.Descending); // same column, different direction
 
-        OrderBy order = new(initial);
+        OrderBys order = new(initial);
 
-        OrderBy newOrder = order.WithConcat(more1, more2);
+        OrderBys newOrder = order.Concat(more1, more2);
 
         // Should have one items now
-        List<OrderByItemBase> oldItems =
-            [.. order.OrderByItemsAsEnumerable()];
+        List<OrderByBase> oldItems = [.. order.AsEnumerable()];
         Assert.Single(oldItems);
 
         // Should have three items now
-        List<OrderByItemBase> newItems =
-            [.. newOrder.OrderByItemsAsEnumerable()];
+        List<OrderByBase> newItems = [.. newOrder.AsEnumerable()];
         Assert.Equal(3, newItems.Count);
 
         // Insertion order must be preserved
@@ -133,8 +131,8 @@ public class OrderByTests
     [Fact]
     public void Contains_ReturnsTrue_ForExistingItemReference()
     {
-        OrderByItem<Address> item = new("City");
-        OrderBy order = new(item);
+        OrderBy<Address> item = new("City");
+        OrderBys order = new(item);
 
         Assert.True(order.Contains(item));
     }
@@ -142,11 +140,11 @@ public class OrderByTests
     [Fact]
     public void Contains_ReturnsTrue_ForDifferentInstanceWithSameTableAndColumn()
     {
-        OrderByItem<Address> original = new("City", SortDirectionEnum.Descending);
-        OrderBy order = new (original);
+        OrderBy<Address> original = new("City", SortDirectionEnum.Descending);
+        OrderBys order = new (original);
 
         // Different instance but same TableTag + ColumnTag
-        OrderByItem<Address> lookup = new("City", SortDirectionEnum.Ascending);
+        OrderBy<Address> lookup = new("City", SortDirectionEnum.Ascending);
 
         Assert.True(order.Contains(lookup));
     }
@@ -154,15 +152,15 @@ public class OrderByTests
     [Fact]
     public void Contains_ReturnsFalse_ForDifferentColumnOrTable()
     {
-        OrderByItem<Address> streetItem = new("Street");
-        OrderBy order = new (streetItem);
+        OrderBy<Address> streetItem = new("Street");
+        OrderBys order = new (streetItem);
 
         // Different column
-        OrderByItem<Address> notPresent = new("City");
+        OrderBy<Address> notPresent = new("City");
         Assert.False(order.Contains(notPresent));
 
         // Different table (using a different entity type)
-        OrderByItem<ColumnTable> otherTableItem = new("D000destruct0");
+        OrderBy<ColumnTable> otherTableItem = new("D000destruct0");
         Assert.False(order.Contains(otherTableItem));
     }
 }

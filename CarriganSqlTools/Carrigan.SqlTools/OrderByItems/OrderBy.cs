@@ -1,164 +1,98 @@
-﻿using Carrigan.Core.Enums;
-using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByItems;
 
 /// <summary>
-/// Concrete implementation of <see cref="OrderBy"/> for an <c>ORDER BY</c>
-/// clause that supports multiple columns.
+/// Represents a single-column specification within a SQL <c>ORDER BY</c> clause.
+/// Also implements <see cref="OrderBys"/> to make single-column order-by usage convenient.
 /// </summary>
+/// <typeparam name="T">
+/// The entity/model type that defines the table containing the column to order by.
+/// </typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// OrderByItemBase<Customer> orderBy1 = new(nameof(Customer.Name));
-/// OrderByItemBase<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
-/// OrderBy orderBy = new(orderBy1, orderBy2);
+/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
 /// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// SELECT [Customer].* 
 /// FROM [Customer] 
-/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC
+/// ORDER BY [Customer].[Name] ASC
 /// ]]></code>
 /// </example>
-public class OrderBy
+public class OrderBy<T> : OrderByBase
 {
     /// <summary>
-    /// Gets an empty <c>ORDER BY</c> clause.
+    /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
+    /// specifying the table type <typeparamref name="T"/>, the property name,
+    /// and the desired sort direction.
     /// </summary>
-    public static OrderBy Empty =>
-        new();
+    /// <param name="propertyName">The property representing the column to order by.</param>
+    /// <param name="sortDirection">The sort direction to apply.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the resolved column metadata does not contain exactly one match.
+    /// </exception>
+    public OrderBy(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
+        : base(sortDirection) =>
+        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
 
     /// <summary>
-    /// Holds all parts of the <c>ORDER BY</c> clause, with one <see cref="OrderByItemBase"/>
-    /// for each individual column.
+    /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
+    /// specifying the table type <typeparamref name="T"/>, the property name,
+    /// and the desired sort direction.
     /// </summary>
-    private readonly IEnumerable<OrderByItemBase> _orderByItems;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="OrderBy"/> class,
-    /// representing an <c>ORDER BY</c> clause.
-    /// </summary>
-    /// <param name="orderByItems">
-    /// The <see cref="OrderByItemBase"/> objects defining the columns and sort directions
-    /// for the <c>ORDER BY</c> clause.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
+    /// <param name="propertyName">The property representing the column to order by.</param>
+    /// <param name="sortDirection">The sort direction to apply.</param>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
     /// </exception>
-    /// <exception cref="NullReferenceException">
-    /// Thrown when <paramref name="orderByItems"/> contains disallowed <c>null</c> values.
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the resolved column metadata does not contain exactly one match.
     /// </exception>
-    public OrderBy(params IEnumerable<OrderByItemBase> orderByItems)
+    [ExternalOnly]
+    public OrderBy(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
+        : this(new PropertyName(propertyName), sortDirection)
     {
-        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
-
-        _orderByItems = orderByItems.Materialize(NullOptionsEnum.Exception);
     }
 
     /// <summary>
-    /// Determines whether the specified <paramref name="orderByItem"/> is present
-    /// in the <c>ORDER BY</c> clause.
+    /// The <see cref="Tags.ColumnInfo"/> that specifies the column being ordered.
     /// </summary>
-    /// <param name="orderByItem">The individual order-by item to check.</param>
-    /// <returns>
-    /// <c>true</c> if the item is contained in this <c>ORDER BY</c>; otherwise, <c>false</c>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
-    /// </exception>
-    public bool Contains(OrderByItemBase orderByItem)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
-
-        return _orderByItems.Contains(orderByItem);
-    }
+    internal override ColumnInfo ColumnInfo { get; }
 
     /// <summary>
-    /// Enumerates all <see cref="TableTag"/> objects referenced in the <c>ORDER BY</c> clause.
+    /// Part of the <see cref="OrderBys"/> implementation.
+    /// Returns the single <see cref="TableTag"/> involved in this order-by item.
     /// </summary>
     internal IEnumerable<TableTag> TableTags =>
-        _orderByItems.Select(static item => item.TableTag);
+        [TableTag];
 
     /// <summary>
-    /// Returns all contained <see cref="OrderByItemBase"/> objects.
+    /// Determines whether the specified object is equal to the current
+    /// <see cref="OrderByBase"/> instance.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="obj"/> is an <see cref="OrderByBase"/>
+    /// that represents the same table/column; otherwise, <c>false</c>.
+    /// </returns>
+    public override bool Equals(object? obj) =>
+        Equals(obj as OrderByBase);
+
+    /// <summary>
+    /// Serves as the default hash function for <see cref="OrderByBase"/>.
     /// </summary>
     /// <returns>
-    /// An enumeration of all <see cref="OrderByItemBase"/> objects contained in this instance.
+    /// An integer hash code computed from the <see cref="TableTag"/> and <see cref="ColumnInfo"/>.
     /// </returns>
-    public IEnumerable<OrderByItemBase> OrderByItemBasesAsEnumerable() =>
-        _orderByItems;
-
-    /// <summary>
-    /// Determines whether the <c>ORDER BY</c> clause is empty.
-    /// </summary>
-    public bool IsEmpty() =>
-        _orderByItems.IsNullOrEmpty();
-
-    /// <summary>
-    /// Creates a new <c>ORDER BY</c> clause with the specified <see cref="OrderByItemBase"/> appended.
-    /// This operation is immutable and does not modify the original instance.
-    /// </summary>
-    /// <param name="orderByItem">
-    /// The <see cref="OrderByItemBase"/> to append, representing a table, column, and sort direction.
-    /// </param>
-    /// <returns>
-    /// A new <c>ORDER BY</c> clause that includes the appended <see cref="OrderByItemBase"/>.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
-    /// </exception>
-    public OrderBy WithAppend(OrderByItemBase orderByItem)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
-
-        return new(_orderByItems.Append(orderByItem));
-    }
-
-    /// <summary>
-    /// Creates a new <c>ORDER BY</c> clause with the specified sequence of
-    /// <see cref="OrderByItemBase"/> objects concatenated.
-    /// This operation is immutable and does not modify the original instance.
-    /// </summary>
-    /// <param name="orderByItems">
-    /// The <see cref="OrderByItemBase"/> objects to append to the clause.
-    /// </param>
-    /// <returns>
-    /// A new <c>ORDER BY</c> clause that includes the concatenated items.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
-    /// </exception>
-    public OrderBy WithConcat(params IEnumerable<OrderByItemBase> orderByItems)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
-
-        return new(_orderByItems.Concat(orderByItems));
-    }
-
-    /// <summary>
-    /// Returns this instance cast to the concrete implementation, <see cref="OrderBy"/>.
-    /// </summary>
-    /// <returns>
-    /// This instance as an <see cref="OrderBy"/> object.
-    /// </returns>
-    public OrderBy AsOrderBy() => this;
-
-    public IEnumerable<OrderByItemBase> OrderByItemsAsEnumerable() =>
-        _orderByItems;
-
-    /// <summary>
-    /// Generates the SQL <c>ORDER BY</c> clause represented by this instance.
-    /// </summary>
-    /// <returns>
-    /// A SQL string for the <c>ORDER BY</c> clause, or <see cref="string.Empty"/>
-    /// if no ordering is defined.
-    /// </returns>
-    internal string ToSql(ISqlDialects dialect) =>
-        IsEmpty()
-            ? string.Empty
-            : $"ORDER BY {string.Join(", ", _orderByItems.Select(item => item.ToSql(dialect)))}";
+    public override int GetHashCode() =>
+        HashCode.Combine(TableTag, ColumnInfo);
 }

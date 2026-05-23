@@ -15,7 +15,7 @@ public class OrderByExamples
     [Fact]
     public void SelectWithWithOrderByItem()
     {
-        OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+        OrderBy<Customer> orderBy = new(nameof(Customer.Name));
         SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC", query.QueryText);
@@ -26,9 +26,9 @@ public class OrderByExamples
     [Fact]
     public void SelectWithWithTwoOrderByItems()
     {
-        OrderByItem<Customer> orderBy1 = new(nameof(Customer.Name));
-        OrderByItem<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
-        OrderBy orderBy = new(orderBy1, orderBy2);
+        OrderBy<Customer> orderBy1 = new(nameof(Customer.Name));
+        OrderBy<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
+        OrderBys orderBy = new(orderBy1, orderBy2);
         SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC", query.QueryText);

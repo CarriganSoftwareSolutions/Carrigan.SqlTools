@@ -55,7 +55,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ORDER BY [Customer].[Email] ASC
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectAll(OrderBy? orderBy = null) =>
+    public SqlQuery SelectAll(OrderBys? orderBy = null) =>
         base.BaseSelectAll(orderBy);
 
     /// <summary>
@@ -121,7 +121,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <para>Select with join and order by example:</para>
     /// <para>
     /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -145,7 +145,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <para>
     /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -182,7 +182,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBy? orderBy, PagingBase? paging) =>
+    public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging) =>
         base.BaseSelect(distinct, selects, joins, predicates, orderBy, paging);
 
     /// <summary>

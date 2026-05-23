@@ -28,7 +28,7 @@ public class OffsetNextExamples
     public void SelectWithDefinePageWithOrderBy()
     {
         DefinePage definePage = new(2, 25);
-        OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+        OrderBy<Customer> orderBy = new(nameof(Customer.Name));
         SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, definePage);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
@@ -51,7 +51,7 @@ public class OffsetNextExamples
     public void SelectWithOffsetNextPageWithOrderBy()
     {
         OffsetFetchNext offsetNext = new(50, 25);
-        OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+        OrderBy<Customer> orderBy = new(nameof(Customer.Name));
         SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, offsetNext);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);

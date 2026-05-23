@@ -385,7 +385,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
         Parameter ratingParameter = new("Rating", 4.5m);
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
-        OrderBy orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
+        OrderBys orderBy = new OrderBys(new OrderBy<BookStats>(nameof(BookStats.AverageReview)), new OrderBy<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
         SqlQuery query = BookSqlGenerator.Select(null, null, join, wherePredicate, orderBy, null);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
@@ -406,7 +406,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
         Parameter ratingParameter = new("Rating", 4.3m);
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
-        OrderBy orderBy = new OrderBy(new OrderByItem<BookStats>(nameof(BookStats.AverageReview)), new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
+        OrderBys orderBy = new OrderBys(new OrderBy<BookStats>(nameof(BookStats.AverageReview)), new OrderBy<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
         PagingBase paging = new DefinePage(2, 3);
         SqlQuery query = BookSqlGenerator.Select(null, null, join, wherePredicate, orderBy, paging);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
@@ -428,10 +428,10 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Parameter ratingParameter = new("Rating", 4.3m);
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
 
-        OrderBy orderBy = new OrderBy
+        OrderBys orderBy = new OrderBys
         (
-            new OrderByItem<BookStats>(nameof(BookStats.AverageReview)),
-            new OrderByItem<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending)
+            new OrderBy<BookStats>(nameof(BookStats.AverageReview)),
+            new OrderBy<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending)
         );
 
         PagingBase paging = new DefinePage(2, 3);

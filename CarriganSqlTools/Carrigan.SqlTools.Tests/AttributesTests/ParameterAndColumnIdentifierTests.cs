@@ -202,7 +202,7 @@ public class ParameterAndColumnIdentifierTests
     [Fact]
     public void OrderByTest()
     {
-        OrderByItem<ColumnIdentifiers> orderByItem = new(nameof(ColumnIdentifiers.ColumnName));
+        OrderBy<ColumnIdentifiers> orderByItem = new(nameof(ColumnIdentifiers.ColumnName));
         SqlQuery query = _generator.Select(null, null, null, null, orderByItem, null);
         string actual = query.QueryText;
         string expected = "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] ORDER BY [ColumnIdentifiers].[Column] ASC";

@@ -13,29 +13,29 @@ public class EmptyOrderByTests
     [Fact]
     public void EmptyOrderByTests_ToSql()
     {
-        OrderBy orderBy = OrderBy.Empty;
+        OrderBys orderBy = OrderBys.Empty;
 
         Assert.Equal(string.Empty, orderBy.ToSql(Dialect));
     }
     [Fact]
     public void EmptyOrderByTests_TableTags()
     {
-        OrderBy orderBy = OrderBy.Empty;
+        OrderBys orderBy = OrderBys.Empty;
 
         Assert.Empty(orderBy.TableTags);
     }
     [Fact]
     public void EmptyOrderByTests_OrderByItems()
     {
-        OrderBy orderBy = OrderBy.Empty;
+        OrderBys orderBy = OrderBys.Empty;
 
-        Assert.Empty(orderBy.OrderByItemsAsEnumerable());
+        Assert.Empty(orderBy.AsEnumerable());
     }
 
     [Fact]
     public void EmptyOrderByTests_IsEmpty()
     {
-        OrderBy orderBy = OrderBy.Empty;
+        OrderBys orderBy = OrderBys.Empty;
 
         Assert.True(orderBy.IsEmpty());
     }
@@ -43,7 +43,7 @@ public class EmptyOrderByTests
     [Fact]
     public void Equals_Object_DifferentType_ReturnsFalse()
     {
-        OrderByItemBase item = new OrderByItem<Address>("Street");
+        OrderByBase item = new OrderBy<Address>("Street");
 
         Assert.False(item.Equals((object)"Street"));
     }

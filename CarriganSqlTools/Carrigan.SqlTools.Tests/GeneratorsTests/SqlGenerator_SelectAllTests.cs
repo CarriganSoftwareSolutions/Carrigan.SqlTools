@@ -54,8 +54,8 @@ public class SqlGenerator_SelectAllTests
     [Fact]
     public void SqlSelect_HandlesSchemaInTableAttribute_WithOrderBy()
     {
-        OrderByItem<EntityWithSchema> orderByItems = new(nameof(EntityWithSchema.Id));
-        SqlQuery query = _sqlGeneratorForEntityWithSchema.SelectAll(new OrderBy(orderByItems));
+        OrderBy<EntityWithSchema> orderByItems = new(nameof(EntityWithSchema.Id));
+        SqlQuery query = _sqlGeneratorForEntityWithSchema.SelectAll(new OrderBys(orderByItems));
 
         string expectedSql = "SELECT [myschema].[EntityWithSchema].* FROM [myschema].[EntityWithSchema] ORDER BY [myschema].[EntityWithSchema].[Id] ASC";
         Assert.Equal(expectedSql, query.QueryText);

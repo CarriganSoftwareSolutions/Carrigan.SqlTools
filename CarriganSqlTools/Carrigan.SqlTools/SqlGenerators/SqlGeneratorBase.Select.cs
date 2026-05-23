@@ -54,7 +54,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// ORDER BY [Customer].[Email] ASC
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelectAll(OrderBy? orderBy = null) =>
+    protected virtual SqlQuery BaseSelectAll(OrderBys? orderBy = null) =>
         BaseSelect(null, null, null, null, orderBy, null);
 
     /// <summary>
@@ -120,7 +120,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <para>Select with join and order by example:</para>
     /// <para>
     /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -144,7 +144,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <para>
     /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="OrderByItem{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -181,7 +181,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelect(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBy? orderBy, Paging.PagingBase? paging)
+    protected virtual SqlQuery BaseSelect(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, Paging.PagingBase? paging)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
@@ -250,14 +250,14 @@ public abstract partial class SqlGeneratorBase<T>
         {
             // add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server
             // that has unexpected behavior if the order by values are not unique
-            orderBy ??= new OrderBy();
-            IEnumerable<OrderByItem<T>> orderByKeyItems =
+            orderBy ??= new OrderBys();
+            IEnumerable<OrderBy<T>> orderByKeyItems =
             [
                 .. KeyColumnInfo
-                    .Select(static key => new OrderByItem<T>(key.PropertyName, SortDirectionEnum.Ascending))
+                    .Select(static key => new OrderBy<T>(key.PropertyName, SortDirectionEnum.Ascending))
                     .Where(item => orderBy.Contains(item) == false)
             ];
-            orderBy = orderBy.WithConcat(orderByKeyItems);
+            orderBy = orderBy.Concat(orderByKeyItems);
         }
 
         return GetFragments().ToSqlQuery(Dialect);

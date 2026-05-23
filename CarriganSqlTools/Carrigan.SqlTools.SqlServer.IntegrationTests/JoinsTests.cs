@@ -307,7 +307,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Append(new Join<OrderedItem>(orderOrderedItemPredicate))
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = new(SelectTag.GetAll<Book>());
-        OrderByItem<Book> orderByItems = new (nameof(Book.Id));
+        OrderBy<Book> orderByItems = new (nameof(Book.Id));
         SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, joins, null, orderByItems, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
 
@@ -337,7 +337,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Append(new Join<OrderedItem>(orderOrderedItemPredicate))
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = new(SelectTag.GetAll<Book>());
-        OrderByItem<Book> orderByItems = new(nameof(Book.Id));
+        OrderBy<Book> orderByItems = new(nameof(Book.Id));
         SqlQuery query = CustomerSqlGenerator.Select(true, selectTags, joins, null, orderByItems, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
 

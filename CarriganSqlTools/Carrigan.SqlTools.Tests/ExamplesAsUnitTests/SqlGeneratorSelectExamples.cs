@@ -29,7 +29,7 @@ public class SqlGeneratorSelectExamples
     [Fact]
     public void SelectAllWithOrderBy()
     {
-        OrderByItem<Customer> orderByItem = new(nameof(Customer.Email));
+        OrderBy<Customer> orderByItem = new(nameof(Customer.Email));
         SqlQuery query = customerGenerator.SelectAll(orderByItem);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Email] ASC", query.QueryText);
@@ -59,7 +59,7 @@ public class SqlGeneratorSelectExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new(predicate);
 
-        OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+        OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
         SqlQuery query = customerGenerator.Select(null, null, join, null, orderByOrderDate, null);
 
@@ -81,7 +81,7 @@ public class SqlGeneratorSelectExamples
         Parameter minTotal = new("Total", 500m);
         GreaterThan greaterThan = new(totalCol, minTotal);
 
-        OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+        OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
         SqlQuery query = customerGenerator.Select(null, null, join, greaterThan, orderByOrderDate, null);
 

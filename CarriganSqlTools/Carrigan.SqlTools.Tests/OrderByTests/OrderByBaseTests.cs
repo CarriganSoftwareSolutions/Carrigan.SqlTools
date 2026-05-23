@@ -1,55 +1,43 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 public class OrderByBaseTests
 {
-    private readonly static ISqlDialects Dialect = new SqlServerDialect();
-    [Fact]
-    public void AsOrderBy_ReturnsSameInstanceForOrderBy()
-    {
-        OrderBy orderBy = OrderBy.Empty;
-
-        OrderBy actual = orderBy.AsOrderBy();
-
-        Assert.Same(orderBy, actual);
-    }
+    private static readonly ISqlDialects Dialect = new SqlServerDialect();
 
     [Fact]
-    public void WithAppend_DoesNotMutateOriginal()
+    public void ImplicitConversion_ReturnsOrderBysWithSingleItem()
     {
-        OrderBy orderBy = OrderBy.Empty;
-        OrderByItemBase item = new OrderByItem<TestEntity>("Name");
+        OrderByBase item = new OrderBy<Address>("City");
 
-        OrderBy appended = orderBy.WithAppend(item);
+        OrderBys orderBy = item;
 
-        Assert.True(orderBy.IsEmpty());
-        Assert.False(appended.IsEmpty());
+        OrderByBase actual = Assert.Single(orderBy.AsEnumerable());
+        Assert.Same(item, actual);
+        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
-    public void WithConcat_AppendsItemsInOrder()
+    public void Flatten_ReturnsCurrentItemOnly()
     {
-        OrderBy orderBy = OrderBy.Empty;
+        OrderByBase item = new OrderBy<Address>("Street");
 
-        OrderByItemBase[] items =
-        [
-            new OrderByItem<TestEntity>("Name"),
-            new OrderByItem<TestEntity>("Id")
-        ];
+        IEnumerable<ISqlFragment> fragments = item.Flatten();
 
-        OrderBy appended = orderBy.WithConcat(items);
-
-        string sql = appended.ToSql(Dialect);
-        Assert.Contains("[TestEntity].[Name]", sql);
-        Assert.Contains("[TestEntity].[Id]", sql);
+        ISqlFragment fragment = Assert.Single(fragments);
+        Assert.Same(item, fragment);
     }
 
-    private sealed class TestEntity
-    {
-        public string Name { get; } = string.Empty;
-        public int Id { get; }
-    }
+    [Fact]
+    public void GetSqlFragmentParameters_ReturnsEmptyCollection() =>
+        Assert.Empty(new OrderBy<Address>("Street").GetSqlFragmentParameters());
+
+    [Fact]
+    public void ToSql_UsesColumnTagAndSortDirection() =>
+        Assert.Equal("[Address].[City] DESC", new OrderBy<Address>("City", SortDirectionEnum.Descending).ToSql(Dialect));
 }

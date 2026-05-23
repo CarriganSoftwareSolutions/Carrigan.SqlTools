@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.OrderByItems;
 /// <summary>
 /// Represents a single-column specification within a SQL <c>ORDER BY</c> clause.
 /// </summary>
-public abstract class OrderByItemBase : ISqlFragment, IEquatable<OrderByItemBase>
+public abstract class OrderByBase : ISqlFragment, IEquatable<OrderByBase>
 {
     /// <summary>
     /// Gets the <see cref="ColumnInfo"/> associated with this item.
@@ -27,22 +27,22 @@ public abstract class OrderByItemBase : ISqlFragment, IEquatable<OrderByItemBase
     internal SortDirectionEnum SortDirection { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="OrderByItemBase"/> class with the specified sort direction.
+    /// Initializes a new instance of the <see cref="OrderByBase"/> class with the specified sort direction.
     /// </summary>
     /// <param name="sortDirection">The sort direction to apply (defaults to <see cref="SortDirectionEnum.Ascending"/>).</param>
-    protected OrderByItemBase(SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) =>
+    protected OrderByBase(SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) =>
         SortDirection = sortDirection;
 
     /// <summary>
-    /// Determines whether the current instance is equal to another <see cref="OrderByItemBase"/>.
+    /// Determines whether the current instance is equal to another <see cref="OrderByBase"/>.
     /// </summary>
     /// <remarks>
     /// Equality compares only the table and column (i.e., <see cref="TableTag"/> and <see cref="ColumnInfo"/>)
     /// and intentionally ignores <see cref="SortDirection"/>.
     /// </remarks>
-    /// <param name="other">The <see cref="OrderByItemBase"/> to compare with this instance.</param>
+    /// <param name="other">The <see cref="OrderByBase"/> to compare with this instance.</param>
     /// <returns><c>true</c> if both items refer to the same table and column; otherwise, <c>false</c>.</returns>
-    public bool Equals(OrderByItemBase? other)
+    public bool Equals(OrderByBase? other)
     {
         if (ReferenceEquals(this, other)) return true;
         if (other is null) return false;
@@ -55,7 +55,7 @@ public abstract class OrderByItemBase : ISqlFragment, IEquatable<OrderByItemBase
     /// Determines whether the specified object is equal to the current instance.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
-    /// <returns><c>true</c> if <paramref name="obj"/> is an equal <see cref="OrderByItemBase"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if <paramref name="obj"/> is an equal <see cref="OrderByBase"/>; otherwise, <c>false</c>.</returns>
     public abstract override bool Equals(object? obj);
 
     /// <summary>
@@ -64,13 +64,29 @@ public abstract class OrderByItemBase : ISqlFragment, IEquatable<OrderByItemBase
     /// <returns>An integer hash code for the current object.</returns>
     public abstract override int GetHashCode();
 
-    public static implicit operator OrderBy(OrderByItemBase orderByItemBase) =>
+    /// <summary>
+    /// Defines an implicit conversion from <see cref="OrderByBase"/> to <see cref="OrderBys"/>,
+    /// </summary>
+    /// <param name="orderByItemBase">
+    /// The <see cref="OrderByBase"/> instance to convert. The resulting <see cref="OrderBys"/> will contain this single item.
+    /// </param>
+    public static implicit operator OrderBys(OrderByBase orderByItemBase) =>
         new(orderByItemBase);
 
-
+    /// <summary>
+    /// Yields the instance as a single-item sequence of <see cref="ISqlFragment"/>.
+    /// </summary>
+    /// <returns>A sequence of <see cref="ISqlFragment"/> containing the instance.</returns>
     public IEnumerable<ISqlFragment> Flatten() =>
         [this];
 
+    /// <summary>
+    /// Gets the SQL fragment parameters referenced by the SQL fragment.
+    /// </summary>
+    /// <remarks>Enumeration is deferred; callers should materialize the sequence if it will be iterated
+    /// multiple times or accessed concurrently.</remarks>
+    /// <returns>An IEnumerable<SqlFragmentParameter> containing parameters referenced by the SQL fragment; empty if there are no
+    /// parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         [];
 

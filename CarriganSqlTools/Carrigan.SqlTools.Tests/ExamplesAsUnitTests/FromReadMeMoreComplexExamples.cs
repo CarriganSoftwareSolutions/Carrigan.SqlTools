@@ -26,7 +26,7 @@ public class FromReadMeMoreComplexExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new(predicate);
 
-        OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+        OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
         SqlQuery query = customerGenerator.Select(null, null, join, null, orderByOrderDate, null);
 
@@ -44,9 +44,9 @@ public class FromReadMeMoreComplexExamples
 
         InnerJoin<Order> join = new(predicate);
 
-        OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-        OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
-        OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
+        OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+        OrderBy<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
+        OrderBys orderBy = new(orderByCustomerId, orderByOrderDate);
 
         SqlQuery query = customerGenerator.Select(null, null, join, null, orderBy, null);
 

@@ -1,104 +1,126 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByItems;
-using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.OrderByTests;
 
 public class OrderByItemTests
 {
-    private readonly static ISqlDialects Dialect = new SqlServerDialect();
-    [Theory]
-    [InlineData("Street", SortDirectionEnum.Ascending, "Address.Street", "[Address].[Street]", "ASC", "[Address].[Street] ASC")]
-    [InlineData("City", SortDirectionEnum.Descending, "Address.City", "[Address].[City]", "DESC", "[Address].[City] DESC")]
-    public void OrderByItem_Constructor(string columnName, SortDirectionEnum direction, string columnString, string columnTag, string directionString, string sql)
-    {
-        OrderByItem<Address> orderByItem = new(columnName, direction);
+    private static readonly ISqlDialects Dialect = new SqlServerDialect();
 
-        Assert.Equal(columnString, orderByItem.ColumnInfo.ColumnTag);
-        Assert.Equal(columnTag, orderByItem.ColumnInfo.ColumnTag.ToSql(Dialect));
-        Assert.Equal(directionString, orderByItem.SortDirection.ToSql());
-        Assert.Equal(sql, orderByItem.ToSql(Dialect));
+    [Theory]
+    [InlineData("Street", SortDirectionEnum.Ascending, "[Address].[Street] ASC")]
+    [InlineData("City", SortDirectionEnum.Descending, "[Address].[City] DESC")]
+    public void Constructor_WithStringPropertyName_CreatesExpectedSql(string propertyName, SortDirectionEnum sortDirection, string expectedSql)
+    {
+        OrderBy<Address> orderByItem = new(propertyName, sortDirection);
+
+        Assert.Equal(expectedSql, orderByItem.ToSql(Dialect));
     }
 
     [Fact]
-    public void OrderByItem_Constructor_ArgumentException() => 
-        Assert.Throws<InvalidPropertyException<Address>>(() => new OrderByItem<Address>("LiveLongAndProsper", SortDirectionEnum.Descending));
+    public void Constructor_WithPropertyName_CreatesExpectedSql()
+    {
+        PropertyName propertyName = new("City");
 
+        OrderBy<Address> orderByItem = new(propertyName, SortDirectionEnum.Descending);
 
-    // IEquatable<IOrderByItem>.Equals against null
+        Assert.Equal("[Address].[City] DESC", orderByItem.ToSql(Dialect));
+    }
+
+    [Fact]
+    public void Constructor_WithDefaultSortDirection_UsesAscending() =>
+        Assert.Equal("[Address].[City] ASC", new OrderBy<Address>("City").ToSql(Dialect));
+
+    [Fact]
+    public void Constructor_WithInvalidPropertyName_ThrowsInvalidPropertyException() =>
+        Assert.Throws<InvalidPropertyException<Address>>(() => new OrderBy<Address>("LiveLongAndProsper"));
+
     [Fact]
     public void Equals_Null_ReturnsFalse()
     {
-        OrderByItemBase item = new OrderByItem<Address>("Street");
+        OrderByBase item = new OrderBy<Address>("Street");
+
         Assert.False(item.Equals(null));
     }
 
-    // Same TableTag + ColumnTag but different SortDirection → still equal
+    [Fact]
+    public void Equals_ObjectWithDifferentType_ReturnsFalse()
+    {
+        OrderByBase item = new OrderBy<Address>("Street");
+
+        Assert.False(item.Equals((object)"Street"));
+    }
+
+    [Fact]
+    public void Equals_SameReference_ReturnsTrue()
+    {
+        OrderByBase item = new OrderBy<Address>("Street");
+
+        Assert.True(item.Equals(item));
+    }
+
     [Fact]
     public void Equals_SameTableAndColumn_IgnoresSortDirection()
     {
-        OrderByItemBase ascending = new OrderByItem<Address>("City", SortDirectionEnum.Ascending);
-        OrderByItemBase descending = new OrderByItem<Address>("City", SortDirectionEnum.Descending);
+        OrderByBase ascending = new OrderBy<Address>("City", SortDirectionEnum.Ascending);
+        OrderByBase descending = new OrderBy<Address>("City", SortDirectionEnum.Descending);
 
         Assert.True(ascending.Equals(descending));
         Assert.True(descending.Equals(ascending));
-  
         Assert.True(ascending.Equals((object)descending));
+        Assert.Equal(ascending.GetHashCode(), descending.GetHashCode());
     }
 
-    //  Different ColumnName → not equal
     [Fact]
     public void Equals_DifferentColumn_ReturnsFalse()
     {
-        OrderByItemBase street = new OrderByItem<Address>("Street");
-        OrderByItemBase city = new OrderByItem<Address>("City");
+        OrderByBase street = new OrderBy<Address>("Street");
+        OrderByBase city = new OrderBy<Address>("City");
 
         Assert.False(street.Equals(city));
         Assert.False(city.Equals(street));
     }
 
-    // Different T (hence different TableTag) → not equal
     [Fact]
     public void Equals_DifferentEntityType_ReturnsFalse()
     {
-        OrderByItemBase addressItem = new OrderByItem<Address>("Street");
-
-        OrderByItem<Person> personItem = new("Name");
+        OrderByBase addressItem = new OrderBy<Address>("Street");
+        OrderByBase personItem = new OrderBy<Person>("Name");
 
         Assert.False(addressItem.Equals(personItem));
         Assert.False(personItem.Equals(addressItem));
     }
 
-    // List<T>.Contains uses IEquatable<IOrderByItem>
     [Fact]
     public void ListContains_FindsEquivalentItem()
     {
-        List<OrderByItemBase> list = 
-            [
-                new OrderByItem<Address>("Street"),
-                new OrderByItem<Address>("City")
-            ];
+        List<OrderByBase> orderByItems =
+        [
+            new OrderBy<Address>("Street"),
+            new OrderBy<Address>("City")
+        ];
 
-        OrderByItem<Address> candidate = new ("City");
-        Assert.Contains(candidate, list);
+        OrderBy<Address> candidate = new("City");
+        OrderBy<Address> missing = new("PostalCode");
 
-        OrderByItem<Address> missing = new ("PostalCode");
-        Assert.DoesNotContain(missing, list);
+        Assert.Contains(candidate, orderByItems);
+        Assert.DoesNotContain(missing, orderByItems);
     }
 
-    // Dictionary<IOrderByItem, …> uses Equals + GetHashCode
     [Fact]
     public void DictionaryKey_EquivalentItem_WorksAsKey()
     {
-        Dictionary<OrderByItemBase, string> dictionary = [];
-        OrderByItem<Address> key1 = new ("Street");
-        dictionary[key1] = "hello";
+        Dictionary<OrderByBase, string> dictionary = [];
+        OrderBy<Address> key = new("Street");
+        OrderBy<Address> equivalentKey = new("Street", SortDirectionEnum.Descending);
 
-        OrderByItem<Address> key2 = new ("Street");
-        Assert.True(dictionary.ContainsKey(key2));
-        Assert.Equal("hello", dictionary[key2]);
+        dictionary[key] = "hello";
+
+        Assert.True(dictionary.ContainsKey(equivalentKey));
+        Assert.Equal("hello", dictionary[equivalentKey]);
     }
 }
