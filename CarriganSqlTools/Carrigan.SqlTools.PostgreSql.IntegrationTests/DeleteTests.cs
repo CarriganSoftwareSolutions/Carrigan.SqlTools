@@ -8,6 +8,7 @@ using Npgsql;
 using Carrigan.SqlTools.Generators.PostgreSql;
 using System.Data.Common;
 using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
 
@@ -374,8 +375,9 @@ public class DeleteTests : IClassFixture<DeleteFixture>
             new Column<OrderedItem>(nameof(OrderedItem.Price)),
             new Parameter("Thirteen", 13m)
         );
-        Joins<OrderedItem> joins = new Joins<OrderedItem>(new Join<Order>(orderOrderedItemPredicate))
-            .Append(new Join<Customer>(customerOrderPredicate));
+        And and = new(greaterThan, orderOrderedItemPredicate);
+        Join<Customer> joinCustomer = new(customerOrderPredicate);
+        Joins<Order> joinsOnOrder = new(joinCustomer);
 
         SqlQuery selectAllQuery = OrderedItemSqlGenerator.SelectAll();
         await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
@@ -437,7 +439,8 @@ public class DeleteTests : IClassFixture<DeleteFixture>
         OrderedItemDataSet.ValidateById(orderedItems, 35, 6);
         OrderedItemDataSet.ValidateById(orderedItems, 36, 9);
 
-        SqlQuery deleteQuery = OrderedItemSqlGenerator.Delete(joins, greaterThan);
+        //SqlQuery deleteQuery = OrderedItemSqlGenerator.Delete(null, joinsOnOrder, and);
+        SqlQuery deleteQuery = OrderedItemSqlGenerator.Delete<Order>(null, joinCustomer, and);
         await CommandsAsync.ExecuteNonQueryAsync(deleteQuery, null, connection);
 
         orderedItems = await CommandsAsync.ExecuteReaderAsync<OrderedItem>(selectAllQuery, null, connection);

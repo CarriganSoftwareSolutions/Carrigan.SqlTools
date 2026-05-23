@@ -50,7 +50,7 @@ public abstract partial class SqlGeneratorBase<T>
         (
             KeyColumnInfo.Select(columnInfo => new ColumnValue<T>(columnInfo.PropertyName, columnInfo.PropertyInfo.GetValue(entity)))
         );
-        return BaseDelete(null, predicates);
+        return BaseDelete(null, null, predicates);
     }
 
     /// <summary>
@@ -120,19 +120,16 @@ public abstract partial class SqlGeneratorBase<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return BaseDelete(null, new Or(entities.Select(static entity => SqlGeneratorBase<T>.GetByKeyPredicates(entity))));
+            return BaseDelete(null, null, new Or(entities.Select(static entity => SqlGeneratorBase<T>.GetByKeyPredicates(entity))));
     }
 
     /// <summary>
     /// Generates a SQL <c>DELETE</c> statement for the table represented by
     /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
+    /// <param name="usings"></param>
     /// <param name="joins">
     /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
-    /// </param>
-    /// <param name="predicates">
-    /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
-    /// that determine which rows to delete.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
@@ -202,18 +199,33 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseDelete(Joins<T>? joins, Predicates? predicates)
+    /// <param name="predicates">
+    /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
+    /// that determine which rows to delete.
+    /// </param>
+    protected virtual SqlQuery BaseDelete(IEnumerable<TableTag>? usings, JoinsBase? joins, Predicates? predicates)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
             yield return new SqlFragmentText("DELETE");
             if (joins.IsNotNullOrEmpty())
             {
+                if (usings.IsNotNullOrEmpty())
+                    yield return new SqlFragmentText(" FROM ");
                 yield return ISqlFragment.Space;
                 yield return Table;
             }
-            yield return new SqlFragmentText(" FROM ");
-            yield return Table;
+            if(usings.IsNotNullOrEmpty())
+            {
+                yield return new SqlFragmentText(" USING ");
+                foreach (ISqlFragment fragment in usings.JoinFragments(", "))
+                    yield return fragment;
+            }
+            else
+            {
+                yield return new SqlFragmentText(" FROM ");
+                yield return Table;
+            }
 
             if (joins?.IsNotNullOrEmpty() ?? false)
                 foreach (ISqlFragment sqlFragment in joins.ToSqlFragments(Dialect))
@@ -232,7 +244,7 @@ public abstract partial class SqlGeneratorBase<T>
         }
         else
         {
-            IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+            IEnumerable<TableTag> selectTableTags = (usings ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
             IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
             if (invalidTags.Any())

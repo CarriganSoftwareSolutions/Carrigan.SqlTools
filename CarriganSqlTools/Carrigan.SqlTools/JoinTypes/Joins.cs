@@ -91,7 +91,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
-public class Joins<leftT>
+public class Joins<leftT> : JoinsBase
 {
     /// <summary>
     /// The collection of join operations represented by this instance.
@@ -196,7 +196,7 @@ public class Joins<leftT>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
-    internal IEnumerable<TableTag> TableTags =>
+    internal override IEnumerable<TableTag> TableTags =>
         ValidatedJoints.Select(static join => join.TableTag).Append(TableTag);
 
     /// <summary>
@@ -276,7 +276,6 @@ public class Joins<leftT>
     internal static TableTag TableTag =>
         SqlToolsReflectorCache<leftT>.Table;
 
-
     /// <summary>
     /// Generates the SQL fragments for all <c>JOIN</c> clauses
     /// represented by this <see cref="Joins"/> instance.
@@ -290,7 +289,7 @@ public class Joins<leftT>
     /// <remarks>
     /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
     /// </remarks>
-    internal IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (ValidatedJoints.Count() == 1)
             return ValidatedJoints.SelectMany(join => join.ToSqlFragments(dialect, "Join"));
@@ -307,7 +306,7 @@ public class Joins<leftT>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
-    internal bool IsEmpty() =>
+    internal override bool IsEmpty() =>
         ValidatedJoints.None();
 
     private IEnumerable<JoinBase> ValidatedJoints
@@ -323,6 +322,9 @@ public class Joins<leftT>
             return materialized;
         }
     }
+
+    internal override JoinBase First() => 
+        Joints.First();
 
     public static implicit operator Joins<leftT>(JoinBase joins) => new (joins);
 }

@@ -179,6 +179,13 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete(Joins<T>? joins, Predicates? predicates) =>
-        base.BaseDelete(joins, predicates);
+    public SqlQuery Delete<usingT>(IEnumerable<TableTag>? usings, Joins<usingT>? joins, Predicates? predicates)  where usingT : class
+    {
+        TableTag usingShouldContain = TableTag.Get<usingT>();
+        //if (joins.IsNotNullOrEmpty())
+        //    if(usings.DoesNotContain(usingShouldContain))
+        //        throw new InvalidTableException(usingShouldContain);
+
+        return base.BaseDelete(usings?? [usingShouldContain], joins, predicates);
+    }
 }

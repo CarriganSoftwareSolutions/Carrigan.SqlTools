@@ -87,6 +87,8 @@ namespace Carrigan.SqlTools.Tags;
 /// </example>
 public class TableTag : StringWrapper, ISqlFragment
 {
+    public static TableTag Get<T>() where T : class =>
+        SqlToolsReflectorCache<T>.Table;
     private readonly SchemaName? SchemaName;
     private readonly TableName TableName;
     /// <summary>

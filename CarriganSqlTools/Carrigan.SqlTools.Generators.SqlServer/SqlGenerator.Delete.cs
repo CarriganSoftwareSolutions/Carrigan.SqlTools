@@ -180,5 +180,5 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     public SqlQuery Delete(Joins<T>? joins, Predicates? predicates) =>
-        base.BaseDelete(joins, predicates);
+        base.BaseDelete(null, joins, predicates);
 }
