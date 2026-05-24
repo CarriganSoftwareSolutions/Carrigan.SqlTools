@@ -1,0 +1,23 @@
+using Carrigan.SqlTools.Dialects.PostgreSql;
+using Carrigan.SqlTools.Types;
+
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.PostgreSqlTests;
+
+public partial class PostgreSqlTypesProviderTests
+{
+    [Fact]
+    public void AsBytea_Default_ReturnsBytea()
+    {
+        FieldProperties actual = PostgreSqlTypesProvider.AsBytea();
+
+        AssertFieldProperties(actual, "BYTEA", isMax: true, isFixedLength: false);
+    }
+
+    [Fact]
+    public void AsBytea_NullableTrue_ReturnsNullableBytea()
+    {
+        FieldProperties actual = PostgreSqlTypesProvider.AsBytea(true);
+
+        AssertFieldProperties(actual, "BYTEA", isMax: true, isFixedLength: false, isNullable: true);
+    }
+}

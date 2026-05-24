@@ -1,0 +1,290 @@
+﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
+
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
+public class SelectTagsTests
+{
+    private static readonly SqlServerDialect Dialect = new();
+
+    //IGNORE SPELLING: dbo
+    private static SelectTag New(string? schemaName, string tableName, string columnName, string? aliasName) =>
+        New(SchemaName.New(schemaName), new TableName(tableName), new ColumnName(columnName), AliasName.New(aliasName));
+    private static SelectTag New(SchemaName? schemaName, TableName tableName, ColumnName columnName, AliasName? aliasName) =>
+        new (new ColumnTag(new TableTag(schemaName, tableName), columnName), AliasTag.New(aliasName));
+
+    private static readonly SelectTag a = New(null, "SomeTable", "SomeColumn", null);
+    private static readonly SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);
+    private static readonly SelectTag c = New(null, "SomeTable", "SomeColumn", "SomeAlias");
+    private static readonly SelectTag d = New("dbo", "SomeTable", "SomeColumn", "SomeAlias");
+
+    private static readonly string aExpectedString = "[SomeTable].[SomeColumn]";
+    private static readonly string bExpectedString = "[dbo].[SomeTable].[SomeColumn]";
+    private static readonly string cExpectedString = "[SomeTable].[SomeColumn] AS [SomeAlias]";
+    private static readonly string dExpectedString = "[dbo].[SomeTable].[SomeColumn] AS [SomeAlias]";
+
+    [Fact]
+    public void ResultColumnNames() 
+    {
+        ResultColumnName aName = a.ResultColumnName;
+        ResultColumnName bName = b.ResultColumnName;
+        ResultColumnName cName = c.ResultColumnName;
+        ResultColumnName dName = d.ResultColumnName;
+
+
+        string aExpectedName = "SomeColumn";
+        string bExpectedName = "SomeColumn";
+        string cExpectedName = "SomeAlias";
+        string dExpectedName = "SomeAlias";
+
+        Assert.Equal(aExpectedName, aName);
+        Assert.Equal(bExpectedName, bName);
+        Assert.Equal(cExpectedName, cName);
+        Assert.Equal(dExpectedName, dName);
+    }
+
+    [Fact]
+    public void Empty()
+    {
+        SelectTags selectTags = new ();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+    }
+
+    [Fact]
+    public void NotEmptyNew()
+    {
+        SelectTags selectTags = new(d);
+        Assert.False(selectTags.Empty());
+        Assert.True(selectTags.Any());
+        Assert.Single(selectTags.All());
+
+        Assert.Equal(dExpectedString, selectTags.ToSql(Dialect));
+
+        Assert.Equal("[dbo].[SomeTable]", selectTags.GetTableTags().Single().ToSql(Dialect));
+    }
+
+    [Fact]
+    public void NotEmptyAppendProperty()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Append<Order>("Id", "Override");
+
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsAlpha.Empty());
+        Assert.True(selectTagsAlpha.Any());
+
+        Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(Dialect));
+
+        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
+    }
+
+    [Fact]
+    public void NotEmptyAppendPropertyName()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Append<Order>(new("Id"), new("Override"));
+
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsAlpha.Empty());
+        Assert.True(selectTagsAlpha.Any());
+
+        Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(Dialect));
+
+        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
+    }
+
+    [Fact]
+    public void NotEmptyAppend()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Append(a);
+
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsAlpha.Empty());
+        Assert.True(selectTagsAlpha.Any());
+
+        Assert.Equal(aExpectedString, selectTagsAlpha.ToSql(Dialect));
+
+        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));;
+    }
+
+    [Fact]
+    public void NotEmptyConcat()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
+
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsAlpha.Empty());
+        Assert.True(selectTagsAlpha.Any());
+        Assert.Equal(4, selectTagsAlpha.All().Count());
+
+        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.ToSql(Dialect));
+
+        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(0).ToSql(Dialect));
+        Assert.Equal("[dbo].[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(1).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void NotEmptyConcatSelects()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
+        SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
+
+        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsBeta.Empty());
+        Assert.True(selectTagsBeta.Any());
+
+        Assert.Equal(4, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
+
+        Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.ToSql(Dialect));
+
+        Assert.Equal("[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(0).ToSql(Dialect));
+        Assert.Equal("[dbo].[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(1).ToSql(Dialect));
+    }
+
+    [Fact]
+    public void NotEmptyConcatPropertyString()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Concat<Order>("Id", "CustomerId", "PaymentMethodId", "OrderDate", "Total");
+        SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
+
+        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsBeta.Empty());
+        Assert.True(selectTagsBeta.Any());
+
+        Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
+
+        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
+
+        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
+    }
+
+    [Fact]
+    public void NotEmptyConcatPropertiesFromGets()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Concat
+        (
+            SelectTags.Get<Order>("Id", "Override"),
+            SelectTags.Get<Order>("CustomerId", "Override2"),
+            SelectTags.Get<Order>("PaymentMethodId"),
+            SelectTags.Get<Order>("OrderDate"),
+            SelectTags.Get<Order>("Total")
+        );
+        SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
+
+        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsBeta.Empty());
+        Assert.True(selectTagsBeta.Any());
+
+        Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
+
+        Assert.Equal($"[Order].[Id] AS [Override], [Order].[CustomerId] AS [Override2], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
+
+        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
+    }
+
+    [Fact]
+    public void NotEmptyConcatPropertiesFromGetMany()
+    {
+        SelectTags selectTags = new();
+        Assert.True(selectTags.Empty());
+        Assert.False(selectTags.Any());
+        SelectTags selectTagsAlpha = selectTags.Concat
+        (
+            SelectTags.GetMany<Order>("Id", "CustomerId", "PaymentMethodId", "OrderDate", "Total")
+        );
+        SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
+
+        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.False(selectTags.Any());
+
+        Assert.False(selectTagsBeta.Empty());
+        Assert.True(selectTagsBeta.Any());
+
+        Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
+
+        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
+
+        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
+    }
+
+    [Fact]
+    public void AppendInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>("InvalidColumn")));
+    [Fact]
+    public void AppendInvalidAliasStringException() =>
+        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>("Id", "123Invalid")));
+
+    [Fact]
+    public void AppendInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>(new("InvalidColumn"))));
+    [Fact]
+    public void AppendInvalidAliasNameException() =>
+        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>(new("Id"), new("123Invalid"))));
+
+
+    [Fact]
+    public void ConcatInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Concat<Order>("InvalidColumn")));
+    [Fact]
+    public void ConcatInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Concat<Order>(new PropertyName("InvalidColumn"))));
+
+
+    [Fact]
+    public void GetInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.Get<Order>("InvalidColumn"));
+    [Fact]
+    public void GetInvalidAliasStringException() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTags.Get<Order>("Id", "123Invalid"));
+    [Fact]
+    public void GetInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.Get<Order>(new ("InvalidColumn")));
+
+    [Fact]
+    public void GetInvalidAliasNameException() =>
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTags.Get<Order>(new("Id"), new("123Invalid")));
+
+    [Fact]
+    public void GetManyInvalidPropertyStringException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.GetMany<Order>("InvalidColumn"));
+    [Fact]
+    public void GetManyInvalidPropertyNameException() =>
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.GetMany<Order>(new PropertyName("InvalidColumn")));
+}
