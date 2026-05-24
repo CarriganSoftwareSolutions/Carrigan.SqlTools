@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -44,8 +44,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// </example>
     /// <example>
     /// <code language="csharp"><![CDATA[
-    /// OrderByItem<Customer> orderByItem = new(nameof(Customer.Email));
-    /// SqlQuery query = customerGenerator.SelectAll(orderByItem);
+    /// OrderBy<Customer> orderBy = new(nameof(Customer.Email));
+    /// SqlQuery query = customerGenerator.SelectAll(orderBy);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -126,7 +126,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
     /// 
-    /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+    /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
     /// SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
     /// ]]></code>
@@ -154,7 +154,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Parameter minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
     /// 
-    /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+    /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
     /// SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
     /// ]]></code>

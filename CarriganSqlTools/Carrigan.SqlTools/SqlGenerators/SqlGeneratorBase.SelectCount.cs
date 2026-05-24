@@ -2,7 +2,6 @@
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OrderByItems;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;

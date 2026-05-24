@@ -2,11 +2,11 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.SqlTypes;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.SqlTypes;
 using Carrigan.SqlTools.Types;
 using System.Data;
 using System.Reflection;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.ExceptionTests;
 

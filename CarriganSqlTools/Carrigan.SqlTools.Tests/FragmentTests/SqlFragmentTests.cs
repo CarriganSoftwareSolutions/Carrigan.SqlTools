@@ -2,7 +2,7 @@
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.FragmentTests;
 

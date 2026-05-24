@@ -1,0 +1,11 @@
+﻿using Carrigan.SqlTools.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+[Identifier("IdentifierNameOverrideSchemaTable", "Identifier")]
+[Table("WtfMate")]
+public class IdentifierNameOverrideSchema
+{
+    public Guid Id { get; set; }
+    public string? Text { get; set; }
+}

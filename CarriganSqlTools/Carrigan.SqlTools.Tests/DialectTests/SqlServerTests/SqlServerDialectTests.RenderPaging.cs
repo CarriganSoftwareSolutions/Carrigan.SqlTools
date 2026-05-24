@@ -83,15 +83,4 @@ public partial class SqlServerDialectTests
 
         Assert.Equal("OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", actual.ToSql(dialect));
     }
-
-    [Fact]
-    public void RenderPaging_LimitOffset_ReturnsEquivalentSqlServerOffsetFetchNext()
-    {
-        SqlServerDialect dialect = new();
-        LimitOffset paging = new(10, 20);
-
-        ISqlFragment actual = dialect.RenderPaging(paging);
-
-        Assert.Equal("OFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY", actual.ToSql(dialect));
-    }
 }

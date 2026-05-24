@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Generators.PostgreSql.Tests;
+﻿namespace Carrigan.SqlTools.PostgreSql.Tests;
 
 public class UnitTest1
 {

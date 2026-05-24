@@ -1,9 +1,8 @@
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
-using Carrigan.SqlTools.Tests.Helpers;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.SqlServer;
 
 
 //IGNORE SPELLING: dbo

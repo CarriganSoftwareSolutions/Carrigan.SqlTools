@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <RootNamespace>Carrigan.SqlTools</RootNamespace>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -48,6 +49,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Carrigan.SqlTools.Generators.PostgreSql\Carrigan.SqlTools.Generators.PostgreSql.csproj" />
   </ItemGroup>
 
   

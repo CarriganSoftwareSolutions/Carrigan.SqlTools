@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.PredicatesLogicTests;
 

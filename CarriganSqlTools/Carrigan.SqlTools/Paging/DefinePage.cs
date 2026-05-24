@@ -25,7 +25,7 @@
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
-/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+/// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
 /// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, definePage);
 /// ]]></code>
 /// <para>Resulting SQL:</para>

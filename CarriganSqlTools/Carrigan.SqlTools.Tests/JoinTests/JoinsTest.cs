@@ -5,8 +5,8 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Tests.TestEntities;
-using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Tests.JoinTests;
 public class JoinsTest

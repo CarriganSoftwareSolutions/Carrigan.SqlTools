@@ -2,7 +2,7 @@
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
-using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.SetsTests;
 

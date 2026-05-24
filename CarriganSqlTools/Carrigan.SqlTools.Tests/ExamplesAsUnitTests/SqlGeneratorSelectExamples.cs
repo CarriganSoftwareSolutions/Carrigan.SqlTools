@@ -1,13 +1,13 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
-using Carrigan.SqlTools.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Paging;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.SqlServer;
 
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
@@ -29,8 +29,8 @@ public class SqlGeneratorSelectExamples
     [Fact]
     public void SelectAllWithOrderBy()
     {
-        OrderBy<Customer> orderByItem = new(nameof(Customer.Email));
-        SqlQuery query = customerGenerator.SelectAll(orderByItem);
+        OrderBy<Customer> orderBy = new(nameof(Customer.Email));
+        SqlQuery query = customerGenerator.SelectAll(orderBy);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Email] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -73,7 +73,7 @@ public class SqlGeneratorSelectExamples
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: Columns<Order> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: OrderBy<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new(predicate);
 

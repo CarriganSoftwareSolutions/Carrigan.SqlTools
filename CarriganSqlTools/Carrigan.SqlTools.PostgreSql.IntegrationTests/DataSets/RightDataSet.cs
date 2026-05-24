@@ -1,5 +1,5 @@
 ﻿using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Generators.PostgreSql;
+using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;

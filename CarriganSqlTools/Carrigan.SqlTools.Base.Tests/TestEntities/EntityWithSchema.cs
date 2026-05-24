@@ -1,0 +1,22 @@
+﻿using Carrigan.SqlTools.Attributes;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Carrigan.SqlTools.Base.Tests.TestEntities;
+
+//ignore spelling: myschema
+
+//Note: Identifier "EntityWithSchema" should override the Table's name attribute of "EntityWithSchemaTable"
+//Note: Identifier Schema "myschema" should override the Table's name attribute of "EntityWithSchema"
+
+[Table("EntityWithSchemaTable", Schema = "myCustomSchema")]
+[Identifier("EntityWithSchema", Schema: "myschema")]
+public class EntityWithSchema
+{
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public EntityWithSchema() { }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    [Key]
+    public int Id { get; set; }
+    public string Description { get; set; }
+}

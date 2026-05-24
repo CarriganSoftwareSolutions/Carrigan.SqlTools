@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;

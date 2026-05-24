@@ -3,17 +3,17 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Tests.TestEntities;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Aliases;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Ambiguous;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Columns;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Parameters;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.SqlTypes;
-using Carrigan.SqlTools.Tests.TestEntities.Exceptionals.Table;
-using Carrigan.SqlTools.Tests.TestEntities.NotExceptional;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Aliases;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Ambiguous;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Columns;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Parameters;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.SqlTypes;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Table;
+using Carrigan.SqlTools.Base.Tests.TestEntities.NotExceptional;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 public class SqlGenerator_ConstructorValidationTests

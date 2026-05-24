@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using System.Collections.Generic;
 
 namespace Carrigan.SqlTools.Tests.Tags;

@@ -1,13 +1,11 @@
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OrderByItems;
+using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
-using Carrigan.SqlTools.Tests.Helpers;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.SqlServer;
 
 //IGNORE SPELLING: dbo
 
@@ -22,7 +20,7 @@ public class FromReadMeMoreComplexExamples
     public void SelectWithJoinsAndOrderBy()
     {
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: OrderBy<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new(predicate);
 
@@ -39,16 +37,16 @@ public class FromReadMeMoreComplexExamples
     public void SelectWithTwoPartOrderBy()
     {
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: OrderByItem<Order> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: OrderBy<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
         InnerJoin<Order> join = new(predicate);
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
         OrderBy<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
-        OrderBys orderBy = new(orderByCustomerId, orderByOrderDate);
+        OrderBys orderBys = new(orderByCustomerId, orderByOrderDate);
 
-        SqlQuery query = customerGenerator.Select(null, null, join, null, orderBy, null);
+        SqlQuery query = customerGenerator.Select(null, null, join, null, orderBys, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

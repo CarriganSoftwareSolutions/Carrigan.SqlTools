@@ -1,0 +1,13 @@
+﻿using Carrigan.SqlTools.Attributes;
+
+namespace Carrigan.SqlTools.Base.Tests.TestEntities;
+
+[Identifier("Email", "schema")]
+internal class EmailModel
+{
+    [PrimaryKey]
+    public int Id { get; set; }
+    public int CustomerId { get; set; }
+    [Identifier("Email")]
+    public string? EmailAddress { get; set; }
+}

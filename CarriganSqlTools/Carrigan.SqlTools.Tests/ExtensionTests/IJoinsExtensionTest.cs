@@ -1,6 +1,6 @@
 ﻿using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.ExtensionTests;
 

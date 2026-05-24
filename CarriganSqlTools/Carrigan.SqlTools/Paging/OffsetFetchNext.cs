@@ -29,10 +29,11 @@
 /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
+/// 
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// OffsetNext offsetNext = new(50, 25);
-/// OrderByItem<Customer> orderBy = new(nameof(Customer.Name));
+/// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
 /// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, offsetNext);
 /// ]]></code>
 /// <para>Resulting SQL:</para>

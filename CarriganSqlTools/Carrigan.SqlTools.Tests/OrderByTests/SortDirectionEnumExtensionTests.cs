@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.OrderByItems;
+﻿using Carrigan.SqlTools.OrderByClause;
 
 namespace Carrigan.SqlTools.Tests.OrderByTests;
 

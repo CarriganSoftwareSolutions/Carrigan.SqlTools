@@ -1,8 +1,8 @@
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities;
-using Carrigan.SqlTools.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 

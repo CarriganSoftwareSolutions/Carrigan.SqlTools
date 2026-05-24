@@ -1,5 +1,5 @@
 ﻿using Carrigan.SqlTools.Invocation;
-using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 
 namespace Carrigan.SqlTools.Tests.InvocationTests;
 

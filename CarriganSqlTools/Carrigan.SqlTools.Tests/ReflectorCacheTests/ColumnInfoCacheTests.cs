@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tests.ReflectorCacheTests;

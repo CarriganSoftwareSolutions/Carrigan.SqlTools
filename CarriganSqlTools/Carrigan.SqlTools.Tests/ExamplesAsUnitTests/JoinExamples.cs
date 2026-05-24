@@ -4,9 +4,9 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Tests.TestEntities; //this is where Customer and Order are defined.
-using Carrigan.SqlTools.Tests.Helpers;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.ExamplesAsUnitTests;
 public class JoinExamples

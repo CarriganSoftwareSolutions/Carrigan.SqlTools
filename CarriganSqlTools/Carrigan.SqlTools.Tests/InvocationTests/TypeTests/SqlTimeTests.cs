@@ -1,5 +1,5 @@
 using Carrigan.SqlTools.Invocation;
-using Carrigan.SqlTools.Tests.TestEntities.NarrowTypes;
+using Carrigan.SqlTools.Base.Tests.TestEntities.NarrowTypes;
 using System;
 
 namespace Carrigan.SqlTools.Tests.InvocationTests.TypeTests;

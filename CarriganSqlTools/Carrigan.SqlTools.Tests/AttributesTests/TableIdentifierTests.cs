@@ -1,8 +1,8 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.TestEntities.Attributes;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.AttributesTests;
 

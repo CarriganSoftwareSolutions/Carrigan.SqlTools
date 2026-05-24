@@ -5,7 +5,7 @@ using Carrigan.SqlTools.SqlServer.IntegrationTests.DataSets;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 using Microsoft.Data.SqlClient;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests;
 

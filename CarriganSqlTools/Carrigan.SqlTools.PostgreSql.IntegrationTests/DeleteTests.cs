@@ -5,7 +5,7 @@ using Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 using Npgsql;
-using Carrigan.SqlTools.Generators.PostgreSql;
+using Carrigan.SqlTools.PostgreSql;
 using System.Data.Common;
 using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Tags;

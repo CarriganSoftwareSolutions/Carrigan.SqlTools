@@ -106,9 +106,17 @@ All examples use the following `using` statements to keep code clean in the exam
 
 ```csharp
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OrderByClause;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
-using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlGenerator;
+using Carrigan.SqlTools.SqlGenerators.SqlServer;
+using Carrigan.SqlTools.Tests.Helpers;
 using Carrigan.SqlTools.Tests.TestEntities;
+using System.Text;
+
+//Note for PostgreSQL: using Carrigan.SqlTools.Tests.TestEntities
 
 // Example data models
 public class Customer
@@ -299,12 +307,12 @@ public SqlGenerator<Customer> customerGenerator = new();
 ### Select with Joins and Order By
 `ColumnEqualsColumn<LeftT, RightT>`, Order validates the names of the properties, and throws an error if the property isn't valid
 
-`OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
+`OrderBy<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 InnerJoin<Order> join = new(predicate);
 
-OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
 SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
 
@@ -321,17 +329,17 @@ SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, nu
 ### Select with Two Part Order By
 `ColumnEqualsColumn<LeftT, RightT>`, Order validates the names of the properties, and throws an error if the property isn't valid
 
-`OrderByItem<Order>` validates the names of the properties, and throws an error if the property isn't valid
+`OrderBy<Order>` validates the names of the properties, and throws an error if the property isn't valid
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
 InnerJoin<Order> join = new(predicate);
 
-OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-OrderByItem<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
-OrderBy orderBy = new(orderByCustomerId, orderByOrderDate);
+OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+OrderBy<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
+OrderBys orderBys = new(orderByCustomerId, orderByOrderDate);
 
-SqlQuery query = customerGenerator.Select(null, join, null, orderBy, null);
+SqlQuery query = customerGenerator.Select(null, join, null, orderBys, null);
 
 // SELECT [Customer].* 
 // FROM [Customer]

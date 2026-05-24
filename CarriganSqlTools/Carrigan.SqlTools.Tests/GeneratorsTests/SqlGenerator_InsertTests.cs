@@ -3,10 +3,10 @@ using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tests.Helpers;
-using Carrigan.SqlTools.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using System.Text;
-using Carrigan.SqlTools.Generators.SqlServer;
+using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Tests.GeneratorsTests;
 
