@@ -49,10 +49,11 @@
   
   <ItemGroup>
     <InternalsVisibleTo Include="Carrigan.SqlTools.Base.Tests" />
-    <InternalsVisibleTo Include="Carrigan.SqlTools.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.SqlServer.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql.Tests" />
   </ItemGroup>
 
   <ItemGroup>

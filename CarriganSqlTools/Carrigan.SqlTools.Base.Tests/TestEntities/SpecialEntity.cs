@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools.Tests.InvocationTests;
-
-namespace Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿namespace Carrigan.SqlTools.Base.Tests.TestEntities;
 
 //IGNORE SPELLING: Enums
 
