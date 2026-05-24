@@ -2,7 +2,10 @@
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+
+//IGNORE SPELLING: subquery, subqueries, intellisense
 
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -30,19 +33,31 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class Join<rightT> : JoinBase
+public class Join<rightT> : JoinBase where rightT : class
 {
+    /// <summary>
+    /// Optional readonly subquery for the right-hand side.
+    /// </summary>
+    /// <remarks>Null when no subquery is provided. Assigned at construction and immutable
+    /// thereafter.</remarks>
+    private readonly SubQuery<rightT>? SubQuery;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
     /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public Join(Predicates predicates) : base(predicates)
-    { }
+    public Join(Predicates predicates, SubQuery<rightT>? subQuery = null) : base(predicates) => 
+        SubQuery = subQuery;
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -54,14 +69,19 @@ public class Join<rightT> : JoinBase
     /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="Join{rightT}"/> instance.
     /// </returns>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public static Joins<leftT> Joins<leftT>(Predicates predicates) =>
-        new(new Join<rightT>(predicates));
+    public static Joins<leftT> Joins<leftT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where leftT : class =>
+        new(new Join<rightT>(predicates, subQuery));
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -73,7 +93,7 @@ public class Join<rightT> : JoinBase
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing the current <see cref="Join{rightT}"/> instance.
     /// </returns>
-    public Joins<leftT> AsJoins<leftT>() =>
+    public Joins<leftT> AsJoins<leftT>() where leftT : class =>
         new(this);
 
     /// <summary>
@@ -102,11 +122,17 @@ public class Join<rightT> : JoinBase
     /// The branch prefix used to distinguish parameters in the join predicates from the main where clause.
     /// </param>
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
-    {
+    {   
+        //TODO: can we remove branchPrefix now?
         if (_predicates == null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("JOIN requires at least one predicate for the ON clause.");
 
         yield return new SqlFragmentText(" JOIN ");
+        if(SubQuery is not null)
+        {
+            yield return SubQuery;
+            yield return new SqlFragmentText(" AS ");
+        }
         yield return TableTag;
         yield return new SqlFragmentText(" ON ");
         foreach (ISqlFragment fragment in _predicates.ToSqlFragments(dialect))

@@ -4,7 +4,10 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+
+//IGNORE SPELLING: subquery, subqueries, intellisense
 
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -91,7 +94,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
-public class Joins<leftT> : JoinsBase
+public class Joins<leftT> : JoinsBase where leftT : class
 {
     /// <summary>
     /// The collection of join operations represented by this instance.
@@ -169,17 +172,17 @@ public class Joins<leftT> : JoinsBase
     /// </summary>
     /// <param name="newJoins">The additional join operations to include.</param>
     /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional joins.</returns>
-    public Joins<leftT> Concat(IEnumerable<JoinBase> newJoins) =>
+    public Joins<leftT> Concat(IEnumerable<JoinBase> newJoins) => 
         new(Joints.Concat(newJoins));
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
     /// plus the additional joins provided.
     /// </summary>
-    /// <typeparam name="rightTs"></typeparam>
+    /// <typeparam name="rightT"></typeparam>
     /// <param name="newJoins">The additional join operations to include.</param>
     /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional joins.</returns>
-    public Joins<leftT> Concat<rightTs>(Joins<rightTs> newJoins) =>
+    public Joins<leftT> Concat<rightT>(Joins<rightT> newJoins) where rightT : class =>
         new(Joints.Concat(newJoins.Joints));
 
     /// <summary>
@@ -205,11 +208,16 @@ public class Joins<leftT> : JoinsBase
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.</param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="LeftJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> LeftJoin<rightT>(Predicates predicates) =>
-        JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates);
+    public static Joins<leftT> LeftJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+        JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
@@ -217,11 +225,16 @@ public class Joins<leftT> : JoinsBase
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.</param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="RightJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> RightJoin<rightT>(Predicates predicates) =>
-        JoinTypes.RightJoin<rightT>.Joins<leftT>(predicates);
+    public static Joins<leftT> RightJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+        JoinTypes.RightJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
@@ -229,11 +242,16 @@ public class Joins<leftT> : JoinsBase
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.</param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="Join{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> Join<rightT>(Predicates predicates) =>
-        JoinTypes.Join<rightT>.Joins<leftT>(predicates);
+    public static Joins<leftT> Join<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+        JoinTypes.Join<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
@@ -241,11 +259,16 @@ public class Joins<leftT> : JoinsBase
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.</param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="InnerJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> InnerJoin<rightT>(Predicates predicates) =>
-        JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates);
+    public static Joins<leftT> InnerJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+        JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
@@ -253,22 +276,32 @@ public class Joins<leftT> : JoinsBase
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.</param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> FullJoin<rightT>(Predicates predicates) =>
-        JoinTypes.FullJoin<rightT>.Joins<leftT>(predicates);
+    public static Joins<leftT> FullJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+        JoinTypes.FullJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created <see cref="CrossJoin{rightT}"/> operation.
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="CrossJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> CrossJoin<rightT>() =>
-        JoinTypes.CrossJoin<rightT>.Joins<leftT>();
+    public static Joins<leftT> CrossJoin<rightT>(SubQuery<rightT>? subQuery = null) where rightT : class =>
+        JoinTypes.CrossJoin<rightT>.Joins<leftT>(subQuery);
 
     /// <summary>
     /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.

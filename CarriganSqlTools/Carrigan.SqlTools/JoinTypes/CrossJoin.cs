@@ -2,7 +2,10 @@
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+
+//IGNORE SPELLING: subquery, subqueries, intellisense
 
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -24,26 +27,43 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// CROSS JOIN [Order]
 /// ]]></code>
 /// </example>
-public class CrossJoin<rightT> : JoinBase
+public class CrossJoin<rightT> : JoinBase where rightT : class
 {
+    /// <summary>
+    /// Optional readonly subquery for the right-hand side.
+    /// </summary>
+    /// <remarks>Null when no subquery is provided. Assigned at construction and immutable
+    /// thereafter.</remarks>
+    private readonly SubQuery<rightT>? SubQuery;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="CrossJoin{rightT}"/> class.
     /// </summary>
-    public CrossJoin() : base(new EmptyPredicate())
-    { }
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
+    public CrossJoin(SubQuery<rightT>? subQuery = null) : base(new EmptyPredicate()) =>
+        SubQuery = subQuery;
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
     /// a newly created <see cref="CrossJoin{rightT}"/> operation.
     /// </summary>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <typeparam name="leftT">
     /// The data model representing the left (base) table being joined onto.
     /// </typeparam>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="CrossJoin{rightT}"/> instance.
     /// </returns>
-    public static Joins<leftT> Joins<leftT>() =>
-        new(new CrossJoin<rightT>());
+    public static Joins<leftT> Joins<leftT>(SubQuery<rightT>? subQuery = null) where leftT : class =>
+        new(new CrossJoin<rightT>(subQuery));
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -55,7 +75,7 @@ public class CrossJoin<rightT> : JoinBase
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing the current <see cref="CrossJoin{rightT}"/> instance.
     /// </returns>
-    public Joins<leftT> AsJoins<leftT>() =>
+    public Joins<leftT> AsJoins<leftT>() where leftT : class =>
         new(this);
 
     /// <summary>
@@ -86,6 +106,11 @@ public class CrossJoin<rightT> : JoinBase
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
     {
         yield return new SqlFragmentText(" CROSS JOIN ");
+        if (SubQuery is not null)
+        {
+            yield return SubQuery;
+            yield return new SqlFragmentText(" AS ");
+        }
         yield return TableTag;
     }
 }

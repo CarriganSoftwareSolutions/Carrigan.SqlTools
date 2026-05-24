@@ -65,7 +65,7 @@ public class PredicateExamples
     {
         //Note: ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        LeftJoin<Order> join = new (columnValue);
+        LeftJoin<Order> join = new(columnValue);
         SqlQuery query = customerGenerator.Select(null, null, join, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] LEFT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
@@ -101,6 +101,26 @@ public class PredicateExamples
         SqlQueryTestHelper.AssertParameterCount(query, 1);
 
         SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "@example.");
+    }
+
+
+    [Fact]
+    public void PredicateExists()
+    {
+        Predicates orderTotalGreaterThan = new GreaterThan
+        (
+            new Column<Order>(nameof(Order.Total)),
+            new Parameter("Total", 100.00m)
+        );
+        SubQuery<Order> subQuery = orderGenerator.SubQuery(null, null, null, orderTotalGreaterThan, null, null);
+        Exists exists = new(subQuery);
+
+        SqlQuery query = customerGenerator.Select(null, null, null, exists, null, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 100.00m);
     }
 
     [Fact]
@@ -235,6 +255,25 @@ public class PredicateExamples
     }
 
     [Fact]
+    public void PredicateNotExists()
+    {
+        Predicates orderTotalGreaterThan = new GreaterThan
+        (
+            new Column<Order>(nameof(Order.Total)),
+            new Parameter("Total", 100.00m)
+        );
+        SubQuery<Order> subQuery = orderGenerator.SubQuery(null, null, null, orderTotalGreaterThan, null, null);
+        NotExists notExists = new(subQuery);
+
+        SqlQuery query = customerGenerator.Select(null, null, null, notExists, null, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (NOT EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 100.00m);
+    }
+
+    [Fact]
     public void PredicateNotEqual()
     {
         Parameter parameterName = new("Name", "Hank");
@@ -264,7 +303,7 @@ public class PredicateExamples
         SqlQueryTestHelper.AssertParameterCount(query, 3);
 
         SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
-        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Hank@example.com");;
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Hank@example.com");
         SqlQueryTestHelper.AssertParameterValue(query, "@Phone_3", "+1(555)555-5555");
     }
 
@@ -299,5 +338,4 @@ public class PredicateExamples
 
         SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
-
 }

@@ -24,7 +24,7 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// ORDER BY [Customer].[Name] ASC
 /// ]]></code>
 /// </example>
-public class OrderBy<T> : OrderByBase
+public class OrderBy<T> : OrderByBase where T : class
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,

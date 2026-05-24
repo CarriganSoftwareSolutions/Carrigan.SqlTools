@@ -2,7 +2,10 @@
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+
+//IGNORE SPELLING: subquery, subqueries, intellisense
 
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -30,19 +33,31 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class LeftJoin<rightT> : JoinBase
+public class LeftJoin<rightT> : JoinBase where rightT : class
 {
+    /// <summary>
+    /// Optional readonly subquery for the right-hand side.
+    /// </summary>
+    /// <remarks>Null when no subquery is provided. Assigned at construction and immutable
+    /// thereafter.</remarks>
+    private readonly SubQuery<rightT>? SubQuery;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="LeftJoin{rightT}"/> class.
     /// </summary>
     /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
     /// </param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public LeftJoin(Predicates predicates) : base(predicates)
-    { }
+    public LeftJoin(Predicates predicates, SubQuery<rightT>? subQuery = null) : base(predicates) =>
+        SubQuery = subQuery;
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -54,14 +69,19 @@ public class LeftJoin<rightT> : JoinBase
     /// <param name="predicate">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
     /// </param>
+    /// <param name="subQuery">
+    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="LeftJoin{rightT}"/> instance.
     /// </returns>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicate"/> is <c>null</c>.
     /// </exception>
-    public static Joins<leftT> Joins<leftT>(Predicates predicate) =>
-        new(new LeftJoin<rightT>(predicate));
+    public static Joins<leftT> Joins<leftT>(Predicates predicate, SubQuery<rightT>? subQuery = null) where leftT : class =>
+        new(new LeftJoin<rightT>(predicate, subQuery));
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -73,7 +93,7 @@ public class LeftJoin<rightT> : JoinBase
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing the current <see cref="LeftJoin{rightT}"/> instance.
     /// </returns>
-    public Joins<leftT> AsJoins<leftT>() =>
+    public Joins<leftT> AsJoins<leftT>() where leftT : class =>
         new(this);
 
     /// <summary>
@@ -107,6 +127,11 @@ public class LeftJoin<rightT> : JoinBase
             throw new InvalidOperationException("LEFT JOIN requires at least one predicate for the ON clause.");
 
         yield return new SqlFragmentText(" LEFT JOIN ");
+        if (SubQuery is not null)
+        {
+            yield return SubQuery;
+            yield return new SqlFragmentText(" AS ");
+        }
         yield return TableTag;
         yield return new SqlFragmentText(" ON ");
         foreach (ISqlFragment fragment in _predicates.ToSqlFragments(dialect))

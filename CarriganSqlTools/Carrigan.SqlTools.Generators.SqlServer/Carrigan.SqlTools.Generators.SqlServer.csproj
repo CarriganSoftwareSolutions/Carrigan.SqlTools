@@ -49,7 +49,6 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    <ProjectReference Include="..\Carrigan.SqlTools.Generators.PostgreSql\Carrigan.SqlTools.Generators.PostgreSql.csproj" />
   </ItemGroup>
 
   

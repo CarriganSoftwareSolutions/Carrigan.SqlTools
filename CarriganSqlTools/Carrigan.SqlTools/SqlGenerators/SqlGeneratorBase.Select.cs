@@ -181,11 +181,14 @@ public abstract partial class SqlGeneratorBase<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelect(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, Paging.PagingBase? paging)
+    protected virtual SqlQuery BaseSelect(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging) =>
+        BaseSelectFragments(distinct, selects, joins, predicates, orderBy, paging).ToSqlQuery(Dialect);
+
+    private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
-            if(distinct ?? false)
+            if (distinct ?? false)
                 yield return new SqlFragmentText($"SELECT DISTINCT ");
             else
                 yield return new SqlFragmentText($"SELECT ");
@@ -217,7 +220,7 @@ public abstract partial class SqlGeneratorBase<T>
             }
 
             if (orderBy.IsNotNullOrEmpty())
-                    yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql(Dialect)}");
+                yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql(Dialect)}");
 
 
             if (paging is not null)
@@ -260,7 +263,7 @@ public abstract partial class SqlGeneratorBase<T>
             orderBy = orderBy.Concat(orderByKeyItems);
         }
 
-        return GetFragments().ToSqlQuery(Dialect);
+        return GetFragments();
     }
 
     /// <summary>
