@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// <summary>
 /// Represents a base class for subqueries, encapsulating common logic for rendering and parameter management.
 /// </summary>
-public class SubQueryBase : ISqlFragment
+public class SubqueryBase : ISqlFragment
 {
     /// <summary>
     /// The SQL dialect to use for rendering the fragments of this subquery. 
@@ -24,7 +24,7 @@ public class SubQueryBase : ISqlFragment
     private readonly IEnumerable<ISqlFragment> SqlFragments;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubQueryBase"/> class with the specified SQL fragments and dialect.
+    /// Initializes a new instance of the <see cref="SubqueryBase"/> class with the specified SQL fragments and dialect.
     /// </summary>
     /// <param name="sqlFragments">
     /// The sequence of SQL fragments that make up the subquery. These fragments will be rendered 
@@ -35,7 +35,7 @@ public class SubQueryBase : ISqlFragment
     /// The SQL dialect to use for rendering the fragments of this subquery. 
     /// This ensures that the generated SQL is compatible with the target database system.
     /// </param>
-    public SubQueryBase(IEnumerable<ISqlFragment> sqlFragments, ISqlDialects dialect)
+    public SubqueryBase(IEnumerable<ISqlFragment> sqlFragments, ISqlDialects dialect)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {

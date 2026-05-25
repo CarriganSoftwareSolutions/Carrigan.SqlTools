@@ -8,8 +8,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <summary>
 /// Represents a SQL NOT EXISTS predicate that evaluates a subquery and is true when the subquery returns no rows.
 /// </summary>
-/// <remarks>Constructed with a SubQueryBase that supplies the subquery. Produces the SQL fragment NOT EXISTS
-/// (<subquery>) and relies on SubQueryPredicateBase for rendering and parameterization.</remarks>
+/// <remarks>Constructed with a SubqueryBase that supplies the subquery. Produces the SQL fragment NOT EXISTS
+/// (<subquery>) and relies on SubqueryPredicateBase for rendering and parameterization.</remarks>
 /// 
 /// <example>
 /// <code language="csharp"><![CDATA[
@@ -18,10 +18,10 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 ///     new Column<Order>(nameof(Order.Total)),
 ///     new Parameter("Total", 100.00m)
 /// );
-/// SubQuery<Order> subQuery = orderGenerator.SubQuery(null, null, null, orderTotalGreaterThan, null, null);
+/// Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
 /// NotExists notExists = new(subQuery);
 /// 
-/// SqlQuery query = customerGenerator.Select(null, null, null, notExists, null, null);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, notExists, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
@@ -30,14 +30,14 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// WHERE (NOT EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))
 /// ]]></code>
 /// </example>
-public class NotExists : SubQueryPredicateBase
+public class NotExists : SubqueryPredicateBase
 {
     /// <summary>
     /// Initializes a new NotExists instance representing a SQL NOT EXISTS expression for the specified subquery.
     /// </summary>
     /// <remarks>Passes the subquery and the NOT EXISTS operator to the base class.</remarks>
     /// <param name="subQuery">Subquery to evaluate with the NOT EXISTS operator.</param>
-    public NotExists(SubQueryBase subQuery) : base(subQuery, "NOT EXISTS")
+    public NotExists(SubqueryBase subQuery) : base(subQuery, "NOT EXISTS")
     { 
     }
 }

@@ -42,7 +42,7 @@ public class ColumnEqualsColumnTests
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
         Assert.Throws<InvalidTableException>(() =>
         {
-            SqlQuery query = leftGenerator.Select(null, null, null, columnEqualsColumn, null, null);
+            SqlQuery query = leftGenerator.Select(null, null, null, null, columnEqualsColumn, null, null);
         });
     }
 
@@ -50,8 +50,8 @@ public class ColumnEqualsColumnTests
     public void LeftRightSql()
     {
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
-        Joins<JoinLeftTable> relations = new  (new Join<JoinRightTable>(columnEqualsColumn));
-        SqlQuery query = leftGenerator.Select(null, null, relations, null, null, null);
+        Joins<JoinLeftTable> relations = new (new Join<JoinRightTable>(columnEqualsColumn));
+        SqlQuery query = leftGenerator.Select(null, null, null, relations, null, null, null);
 
         Assert.Equal("SELECT [Left].* FROM [Left] JOIN [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
@@ -62,7 +62,7 @@ public class ColumnEqualsColumnTests
     {
         ColumnEqualsColumn<JoinRightTable, JoinLastTable> columnEqualsColumn = new(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
         Joins<JoinRightTable> relations = new (new Join<JoinLastTable>(columnEqualsColumn));
-        SqlQuery query = rightGenerator.Select(null, null, relations, null, null, null);
+        SqlQuery query = rightGenerator.Select(null, null, null, relations, null, null, null);
 
         Assert.Equal("SELECT [Right].* FROM [Right] JOIN [Last] ON ([Right].[LastId] = [Last].[Id])", query.QueryText);
         SqlQueryTestHelper.AssertParameterCount(query, 0);

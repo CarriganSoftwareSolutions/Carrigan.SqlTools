@@ -12,7 +12,7 @@
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, definePage);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, definePage);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
@@ -26,7 +26,7 @@
 /// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
 /// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, definePage);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, definePage);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.PostgreSql;
 
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
-    public SubQuery<T> SubQuery
+    public Subquery<T> Subquery
     (
         bool? distinct,
         SelectTags? selects,
@@ -18,5 +18,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         OrderBys? orderBy,
         PagingBase? paging
     ) =>
-        BaseSubQuery(distinct, selects, joins, predicates, orderBy, paging);
+        BaseSubquery(distinct, selects, joins, predicates, orderBy, paging);
+
+
+    public Subquery<T> Subquery(SubqueryBuilder<T> subqueryBuilder) =>
+        Subquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
 }

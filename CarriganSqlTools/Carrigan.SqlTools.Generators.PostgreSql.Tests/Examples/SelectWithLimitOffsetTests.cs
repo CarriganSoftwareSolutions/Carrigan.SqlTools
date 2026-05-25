@@ -15,7 +15,7 @@ public class SelectLimitOffsetTests
     public void SelectWithLimitOffset()
     {
         LimitOffset limitOffset = new(25, 50);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, limitOffset);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Id\" ASC LIMIT 25 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -27,7 +27,7 @@ public class SelectLimitOffsetTests
     {
         LimitOffset limitOffset = new(25, 50);
         OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-        SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, limitOffset);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, limitOffset);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Name\" ASC, \"Customer\".\"Id\" ASC LIMIT 25 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -39,7 +39,7 @@ public class SelectLimitOffsetTests
     {
         LimitOffset limitOffset = new(25, 50);
         OrderBy<Customer> orderBy = new(nameof(Customer.Name), SortDirectionEnum.Descending);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, limitOffset);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, limitOffset);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Name\" DESC, \"Customer\".\"Id\" ASC LIMIT 25 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -50,7 +50,7 @@ public class SelectLimitOffsetTests
     public void SelectWithLimitOffsetWithFirstPage()
     {
         LimitOffset limitOffset = new(25, 0);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, limitOffset);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Id\" ASC LIMIT 25", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -61,7 +61,7 @@ public class SelectLimitOffsetTests
     public void SelectWithLimitOffsetWithSingleRowLimit()
     {
         LimitOffset limitOffset = new(1, 50);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, limitOffset);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Id\" ASC LIMIT 1 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

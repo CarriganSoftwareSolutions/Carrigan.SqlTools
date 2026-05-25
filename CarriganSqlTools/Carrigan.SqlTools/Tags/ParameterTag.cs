@@ -1,14 +1,7 @@
 ﻿using Carrigan.Core.DataTypes;
-using Carrigan.Core.Extensions;
-using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
-using Carrigan.SqlTools.Types;
-using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Tags;
 /// <summary>

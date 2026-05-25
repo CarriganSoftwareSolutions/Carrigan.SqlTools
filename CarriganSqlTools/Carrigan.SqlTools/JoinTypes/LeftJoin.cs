@@ -40,7 +40,7 @@ public class LeftJoin<rightT> : JoinBase where rightT : class
     /// </summary>
     /// <remarks>Null when no subquery is provided. Assigned at construction and immutable
     /// thereafter.</remarks>
-    private readonly SubQuery<rightT>? SubQuery;
+    private readonly Subquery<rightT>? Subquery;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LeftJoin{rightT}"/> class.
@@ -49,15 +49,15 @@ public class LeftJoin<rightT> : JoinBase where rightT : class
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public LeftJoin(Predicates predicates, SubQuery<rightT>? subQuery = null) : base(predicates) =>
-        SubQuery = subQuery;
+    public LeftJoin(Predicates predicates, Subquery<rightT>? subQuery = null) : base(predicates) =>
+        Subquery = subQuery;
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
@@ -70,7 +70,7 @@ public class LeftJoin<rightT> : JoinBase where rightT : class
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -80,7 +80,7 @@ public class LeftJoin<rightT> : JoinBase where rightT : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicate"/> is <c>null</c>.
     /// </exception>
-    public static Joins<leftT> Joins<leftT>(Predicates predicate, SubQuery<rightT>? subQuery = null) where leftT : class =>
+    public static Joins<leftT> Joins<leftT>(Predicates predicate, Subquery<rightT>? subQuery = null) where leftT : class =>
         new(new LeftJoin<rightT>(predicate, subQuery));
 
     /// <summary>
@@ -127,9 +127,9 @@ public class LeftJoin<rightT> : JoinBase where rightT : class
             throw new InvalidOperationException("LEFT JOIN requires at least one predicate for the ON clause.");
 
         yield return new SqlFragmentText(" LEFT JOIN ");
-        if (SubQuery is not null)
+        if (Subquery is not null)
         {
-            yield return SubQuery;
+            yield return Subquery;
             yield return new SqlFragmentText(" AS ");
         }
         yield return TableTag;

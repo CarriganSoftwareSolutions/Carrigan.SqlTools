@@ -1,19 +1,11 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Invocation;
-using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.RegularExpressions;
-using Carrigan.SqlTools.Sets;
+﻿using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using System.Net;
-using System.Text;
 //IGNORE SPELLING: newid, unindexed
 
 namespace Carrigan.SqlTools.PostgreSql;
 
-public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
+public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities,
@@ -220,4 +212,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </example>
     public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, ColumnCollection<T>? returnColumns, params IEnumerable<T> entities) =>
         base.BaseInsert(insertColumnCollection, returnColumns, entities);
+
+    public SqlQuery Insert(InsertBuilder<T> insertQuery) =>
+        Insert(insertQuery.InsertColumns, insertQuery.ReturnColumns, insertQuery.Records);
 }

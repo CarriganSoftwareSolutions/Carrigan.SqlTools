@@ -84,7 +84,12 @@ public class SqlFragmentParameter : ISqlFragment
     /// Any exception thrown by <see cref="Parameter.ParameterTag"/> will be propagated to the caller.
     /// </remarks>
     public string ToSql(ISqlDialects dialect) =>
+        //Note: ToString will not render the final parameter text by itself.
+        //When unit testing, you need to convert to final SqlQuery, then get the command text.
+        //The command text should then have @'s added if needed, and index numbers added on. 
+        //Before that, it will just be the parameter name.
         ParameterTag;
+
 
     /// <summary>
     /// Retrieves the parameters contained within this fragment for later materialization.

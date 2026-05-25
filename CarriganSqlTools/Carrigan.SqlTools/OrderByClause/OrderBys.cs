@@ -17,7 +17,7 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// OrderBy<Customer> orderBy1 = new(nameof(Customer.Name));
 /// OrderBy<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
 /// OrderBys orderBys = new(orderBy1, orderBy2);
-/// SqlQuery query = customerGenerator.Select(null, null, null, orderBys, null);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBys, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

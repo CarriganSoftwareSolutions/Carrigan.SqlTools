@@ -48,6 +48,10 @@
   </ItemGroup>
   
   <ItemGroup>
+    <None Remove="QueryBuilders\InsertQueryBase.cs~RF3d0fff71.TMP" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <InternalsVisibleTo Include="Carrigan.SqlTools.Base.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.SqlServer.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer" />

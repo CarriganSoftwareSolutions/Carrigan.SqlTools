@@ -16,17 +16,17 @@ public class ExistsTests
     private readonly SqlGenerator<Order> orderGenerator = new();
 
     [Fact]
-    public void Select_WithExistsPredicate_RendersExistsSubQuery()
+    public void Select_WithExistsPredicate_RendersExistsSubquery()
     {
         Predicates subQueryPredicate = new GreaterThan
         (
             new Column<Order>(nameof(Order.Total)),
             new Parameter("Total", 100.00m)
         );
-        SubQuery<Order> subQuery = orderGenerator.SubQuery(null, null, null, subQueryPredicate, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null);
         Exists exists = new(subQuery);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, exists, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, exists, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -42,7 +42,7 @@ public class ExistsTests
             new Column<Order>(nameof(Order.CustomerId)),
             new Parameter("CustomerId", 42)
         );
-        SubQuery<Order> subQuery = orderGenerator.SubQuery(null, null, null, subQueryPredicate, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null);
         Exists exists = new(subQuery);
         Predicates outerPredicate = new Equal
         (
@@ -51,7 +51,7 @@ public class ExistsTests
         );
         And and = new(exists, outerPredicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, and, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, and, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ((EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[CustomerId] = @CustomerId_1))) AND ([Customer].[Name] = @Name_2))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

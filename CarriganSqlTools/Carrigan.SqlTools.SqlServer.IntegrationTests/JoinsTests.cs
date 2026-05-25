@@ -29,7 +29,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new Join<Order>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, join, null, null, null);
+        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -78,7 +78,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new InnerJoin<Order>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, join, null, null, null);
+        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -127,7 +127,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new LeftJoin<Order>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, join, null, null, null);
+        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -182,7 +182,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new RightJoin<Customer>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
-        SqlQuery query = OrderSqlGenerator.Select(null, selectTags, join, null, null, null);
+        SqlQuery query = OrderSqlGenerator.Select(null, null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -237,7 +237,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Left, Right> joinPredicate = new(nameof(Left.Id), nameof(Right.Id));
         JoinBase join = new FullJoin<Right>(joinPredicate);
         SelectTags selectTags = new(SelectTag.GetAll<LeftRight>());
-        SqlQuery query = LeftSqlGenerator.Select(null, selectTags, join, null, null, null);
+        SqlQuery query = LeftSqlGenerator.Select(null, null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
 
@@ -258,7 +258,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     {
         JoinBase join = new CrossJoin<Right>();
         SelectTags selectTags = new(SelectTag.GetAll<LeftRight>());
-        SqlQuery query = LeftSqlGenerator.Select(null, selectTags, join, null, null, null);
+        SqlQuery query = LeftSqlGenerator.Select(null, null, selectTags, join, null, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
 
@@ -307,7 +307,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = new(SelectTag.GetAll<Book>());
         OrderBy<Book> orderByItems = new (nameof(Book.Id));
-        SqlQuery query = CustomerSqlGenerator.Select(null, selectTags, joins, null, orderByItems, null);
+        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, joins, null, orderByItems, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
 
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
@@ -337,7 +337,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = new(SelectTag.GetAll<Book>());
         OrderBy<Book> orderByItems = new(nameof(Book.Id));
-        SqlQuery query = CustomerSqlGenerator.Select(true, selectTags, joins, null, orderByItems, null);
+        SqlQuery query = CustomerSqlGenerator.Select(true, null,selectTags, joins, null, orderByItems, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
 
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);

@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public abstract partial class SqlGeneratorBase<T>
 {
-    protected virtual SubQuery<T> BaseSubQuery
+    protected virtual Subquery<T> BaseSubquery
     (
         bool? distinct,
         SelectTags? selects,
@@ -17,6 +17,6 @@ public abstract partial class SqlGeneratorBase<T>
         OrderBys? orderBy,
         PagingBase? paging
     ) =>
-        new(BaseSelectFragments(distinct, selects, joins, predicates, orderBy, paging), Dialect);
+        new(BaseSelectFragments(distinct, null, selects, joins, predicates, orderBy, paging), Dialect);
 
 }

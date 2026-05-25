@@ -19,7 +19,7 @@
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// OffsetNext offsetNext = new(50, 25);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, offsetNext);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, offsetNext);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
@@ -34,7 +34,7 @@
 /// <code language="csharp"><![CDATA[
 /// OffsetNext offsetNext = new(50, 25);
 /// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, offsetNext);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, offsetNext);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

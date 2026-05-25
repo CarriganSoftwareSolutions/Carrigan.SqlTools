@@ -73,7 +73,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
     /// </param>
-    /// <param name="orderBy">
+    /// <param name="orderBys">
     /// Optional ordering to compose the <c>ORDER BY</c> clause.
     /// When <paramref name="offsetNext"/> is provided, key columns are appended to
     /// the ordering (if not already present) to ensure stable paging semantics.
@@ -97,7 +97,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </exception>
     /// <exception cref="InvalidTableException">
     /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
-    /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
+    /// <paramref name="orderBys"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     /// <example>
     /// <para>Select with join example:</para>
@@ -172,7 +172,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// OffsetNext offsetNext = new(50, 25);
-    /// SqlQuery query = customerGenerator.Select(null, null, null, null, offsetNext);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, null, null, offsetNext);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -182,8 +182,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging) =>
-        base.BaseSelect(distinct, selects, joins, predicates, orderBy, paging);
+    public SqlQuery Select(bool? distinct, Subquery<T>? subQuery, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBys, PagingBase? paging) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, orderBys, paging);
+
+    public SqlQuery Select(SelectBuilder<T> selectQuery) =>
+        Select(selectQuery.Distinct, selectQuery.Subquery, selectQuery.Selects, selectQuery.Joins, selectQuery.Where, selectQuery.OrderBys, selectQuery.Paging);
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key

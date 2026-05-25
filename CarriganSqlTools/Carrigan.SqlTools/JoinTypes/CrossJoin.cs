@@ -34,25 +34,25 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     /// </summary>
     /// <remarks>Null when no subquery is provided. Assigned at construction and immutable
     /// thereafter.</remarks>
-    private readonly SubQuery<rightT>? SubQuery;
+    private readonly Subquery<rightT>? Subquery;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CrossJoin{rightT}"/> class.
     /// </summary>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
-    public CrossJoin(SubQuery<rightT>? subQuery = null) : base(new EmptyPredicate()) =>
-        SubQuery = subQuery;
+    public CrossJoin(Subquery<rightT>? subQuery = null) : base(new EmptyPredicate()) =>
+        Subquery = subQuery;
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
     /// a newly created <see cref="CrossJoin{rightT}"/> operation.
     /// </summary>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -62,7 +62,7 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="CrossJoin{rightT}"/> instance.
     /// </returns>
-    public static Joins<leftT> Joins<leftT>(SubQuery<rightT>? subQuery = null) where leftT : class =>
+    public static Joins<leftT> Joins<leftT>(Subquery<rightT>? subQuery = null) where leftT : class =>
         new(new CrossJoin<rightT>(subQuery));
 
     /// <summary>
@@ -106,9 +106,9 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
     {
         yield return new SqlFragmentText(" CROSS JOIN ");
-        if (SubQuery is not null)
+        if (Subquery is not null)
         {
-            yield return SubQuery;
+            yield return Subquery;
             yield return new SqlFragmentText(" AS ");
         }
         yield return TableTag;

@@ -55,7 +55,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// ]]></code>
     /// </example>
     protected virtual SqlQuery BaseSelectAll(OrderBys? orderBy = null) =>
-        BaseSelect(null, null, null, null, orderBy, null);
+        BaseSelect(null, null, null, null, null, orderBy, null);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
@@ -171,7 +171,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// OffsetNext offsetNext = new(50, 25);
-    /// SqlQuery query = customerGenerator.Select(null, null, null, null, offsetNext);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, null, null, offsetNext);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -181,10 +181,10 @@ public abstract partial class SqlGeneratorBase<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelect(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging) =>
-        new(Dialect, CommandType.Text, BaseSelectFragments(distinct, selects, joins, predicates, orderBy, paging));
+    protected virtual SqlQuery BaseSelect(bool? distinct, Subquery<T>? subQuery, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging) =>
+        new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, predicates, orderBy, paging));
 
-    private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging)
+    private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, Subquery<T>? subQuery, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
@@ -203,6 +203,12 @@ public abstract partial class SqlGeneratorBase<T>
                 yield return new SqlFragmentText(".*");
             }
             yield return new SqlFragmentText(" FROM ");
+            if (subQuery is not null)
+            {
+                yield return subQuery;
+                yield return new SqlFragmentText(" AS ");
+            }
+
             yield return Table;
 
             if (joins?.IsNotNullOrEmpty() ?? false)
@@ -311,6 +317,6 @@ public abstract partial class SqlGeneratorBase<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return BaseSelect(null, null, null, new Or(entities.Select(entity => new And(SqlGeneratorBase<T>.GetByKeyPredicates(entity)))), null, null);
+            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(SqlGeneratorBase<T>.GetByKeyPredicates(entity)))), null, null);
     }
 }

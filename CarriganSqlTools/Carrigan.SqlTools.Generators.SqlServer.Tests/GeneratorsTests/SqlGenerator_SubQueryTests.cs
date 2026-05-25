@@ -12,24 +12,24 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 
-public class SqlGenerator_SubQueryTests
+public class SqlGenerator_SubqueryTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
     private readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
-    public void SubQuery_SelectAll_WrapsSelectAndUsesModelMetadataAsAlias()
+    public void Subquery_SelectAll_WrapsSelectAndUsesModelMetadataAsAlias()
     {
         SqlGenerator<EntityWithTableAttribute> generator = new();
 
-        SubQuery<EntityWithTableAttribute> subQuery = generator.SubQuery(null, null, null, null, null, null);
+        Subquery<EntityWithTableAttribute> subQuery = generator.Subquery(null, null, null, null, null, null);
 
         Assert.Equal("(SELECT [Test].* FROM [Test])", subQuery.ToSql(Dialect));
     }
 
     [Fact]
-    public void SubQuery_WithDistinctSelectsOrderByAndPaging_RendersExpectedSql()
+    public void Subquery_WithDistinctSelectsOrderByAndPaging_RendersExpectedSql()
     {
         SelectTags selects = SelectTags.GetMany<Customer>
         (
@@ -40,7 +40,7 @@ public class SqlGenerator_SubQueryTests
         OrderBy<Customer> orderBy = new(nameof(Customer.Name));
         DefinePage paging = new(2, 25);
 
-        SubQuery<Customer> subQuery = customerGenerator.SubQuery(true, selects, null, null, orderBy, paging);
+        Subquery<Customer> subQuery = customerGenerator.Subquery(true, selects, null, null, orderBy, paging);
 
         Assert.Equal(
             "(SELECT DISTINCT [Customer].[Id], [Customer].[Name] FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY)",
@@ -48,7 +48,7 @@ public class SqlGenerator_SubQueryTests
     }
 
     [Fact]
-    public void SubQuery_WithPredicate_ReturnsFinalizedParameters()
+    public void Subquery_WithPredicate_ReturnsFinalizedParameters()
     {
         Predicates predicate = new Equal
         (
@@ -56,7 +56,7 @@ public class SqlGenerator_SubQueryTests
             new Parameter("CustomerId", 42)
         );
 
-        SubQuery<Customer> subQuery = customerGenerator.SubQuery(null, null, null, predicate, null, null);
+        Subquery<Customer> subQuery = customerGenerator.Subquery(null, null, null, predicate, null, null);
 
         IEnumerable<SqlFragmentParameter> parameters = [.. subQuery.GetSqlFragmentParameters()];
 
@@ -65,7 +65,7 @@ public class SqlGenerator_SubQueryTests
     }
 
     [Fact]
-    public void SubQuery_WhenRenderedInsideOuterFragmentSequence_FinalizesInnerAndOuterParametersTogether()
+    public void Subquery_WhenRenderedInsideOuterFragmentSequence_FinalizesInnerAndOuterParametersTogether()
     {
         Predicates predicate = new Equal
         (
@@ -73,7 +73,7 @@ public class SqlGenerator_SubQueryTests
             new Parameter("CustomerId", 42)
         );
 
-        SubQuery<Customer> subQuery = customerGenerator.SubQuery(null, null, null, predicate, null, null);
+        Subquery<Customer> subQuery = customerGenerator.Subquery(null, null, null, predicate, null, null);
 
         IEnumerable<ISqlFragment> fragments =
         [
@@ -96,11 +96,11 @@ public class SqlGenerator_SubQueryTests
     }
 
     [Fact]
-    public void SubQuery_WithSelectFromUnjoinedTable_ThrowsInvalidTableException()
+    public void Subquery_WithSelectFromUnjoinedTable_ThrowsInvalidTableException()
     {
         SelectTags selects = SelectTags.Get<Order>(nameof(Order.Id));
 
         Assert.Throws<InvalidTableException>(() =>
-            customerGenerator.SubQuery(null, selects, null, null, null, null));
+            customerGenerator.Subquery(null, selects, null, null, null, null));
     }
 }

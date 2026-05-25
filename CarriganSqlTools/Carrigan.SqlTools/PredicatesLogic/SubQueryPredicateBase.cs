@@ -7,7 +7,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <summary>
 /// Base class for predicates that involve subqueries, such as EXISTS, IN, and comparison predicates with subqueries.
 /// </summary>
-public class SubQueryPredicateBase : Predicates
+public class SubqueryPredicateBase : Predicates
 {
     /// <summary>
     /// The collection of SQL fragments that make up the subquery predicate. 
@@ -17,13 +17,13 @@ public class SubQueryPredicateBase : Predicates
     protected readonly IEnumerable<ISqlFragment> Fragments;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SubQueryPredicateBase"/> class with the specified subquery 
+    /// Initializes a new instance of the <see cref="SubqueryPredicateBase"/> class with the specified subquery 
     /// and command (e.g., "EXISTS", "IN", or a comparison operator). The constructor constructs the appropriate 
     /// SQL fragments
     /// </summary>
     /// <param name="subQueryBase">The subquery to include in the predicate.</param>
     /// <param name="command">The SQL command (e.g., "EXISTS", "IN") to use.</param>
-    protected SubQueryPredicateBase(SubQueryBase subQueryBase, string command) : base([]) => 
+    protected SubqueryPredicateBase(SubqueryBase subQueryBase, string command) : base([]) => 
         Fragments = [new SqlFragmentText($"({command} "), subQueryBase, new SqlFragmentText(")")];
 
     /// <summary>

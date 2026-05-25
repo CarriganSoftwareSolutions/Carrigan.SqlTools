@@ -209,14 +209,14 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="LeftJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> LeftJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+    public static Joins<leftT> LeftJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
         JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
@@ -226,14 +226,14 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="RightJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> RightJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+    public static Joins<leftT> RightJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
         JoinTypes.RightJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
@@ -243,14 +243,14 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="Join{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> Join<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+    public static Joins<leftT> Join<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
         JoinTypes.Join<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
@@ -260,14 +260,14 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="InnerJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> InnerJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+    public static Joins<leftT> InnerJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
         JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
@@ -277,14 +277,14 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> FullJoin<rightT>(Predicates predicates, SubQuery<rightT>? subQuery = null) where rightT : class =>
+    public static Joins<leftT> FullJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
         JoinTypes.FullJoin<rightT>.Joins<leftT>(predicates, subQuery);
 
     /// <summary>
@@ -293,14 +293,14 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="subQuery">
-    /// An optional <see cref="SubQuery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <returns>
     /// A new <see cref="Joins{leftT}"/> containing a single <see cref="CrossJoin{rightT}"/>.
     /// </returns>
-    public static Joins<leftT> CrossJoin<rightT>(SubQuery<rightT>? subQuery = null) where rightT : class =>
+    public static Joins<leftT> CrossJoin<rightT>(Subquery<rightT>? subQuery = null) where rightT : class =>
         JoinTypes.CrossJoin<rightT>.Joins<leftT>(subQuery);
 
     /// <summary>

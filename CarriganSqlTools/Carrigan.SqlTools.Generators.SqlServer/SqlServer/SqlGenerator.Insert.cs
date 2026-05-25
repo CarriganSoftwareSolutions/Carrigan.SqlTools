@@ -212,4 +212,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </example>
     public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, ColumnCollection<T>? returnColumns, params IEnumerable<T> entities) =>
         base.BaseInsert(insertColumnCollection, returnColumns, entities);
+
+    public SqlQuery Insert(InsertBuilder<T> insertQuery) =>
+        Insert(insertQuery.InsertColumns, insertQuery.ReturnColumns, insertQuery.Records);
 }

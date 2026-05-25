@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.Paging;
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(25, 50);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, limitOffset);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
@@ -29,7 +29,7 @@ namespace Carrigan.SqlTools.Paging;
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(25, 50);
 /// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, limitOffset);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, limitOffset);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
@@ -46,7 +46,7 @@ namespace Carrigan.SqlTools.Paging;
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(25, 50);
 /// OrderBy<Customer> orderBy = new(nameof(Customer.Name), SortDirectionEnum.Descending);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, orderBy, limitOffset);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, limitOffset);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
@@ -62,7 +62,7 @@ namespace Carrigan.SqlTools.Paging;
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(25, 0);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, limitOffset); 
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset); 
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
@@ -76,7 +76,7 @@ namespace Carrigan.SqlTools.Paging;
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(1, 50);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, limitOffset);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

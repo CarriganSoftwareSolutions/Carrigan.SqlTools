@@ -62,7 +62,7 @@ public class AliasAttributeTests
         SqlGenerator<AliasEntity> generator = new();
 
         string expected = "SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias] FROM [AliasEntity]";
-        SqlQuery query = generator.Select(null, tags, null, null, null, null);
+        SqlQuery query = generator.Select(null, null, tags, null, null, null, null);
 
         Assert.Equal(expected, query.QueryText);
     }

@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, null, orderBy, null);
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
