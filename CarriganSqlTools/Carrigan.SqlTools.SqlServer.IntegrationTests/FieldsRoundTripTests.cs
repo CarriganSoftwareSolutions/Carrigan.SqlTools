@@ -1,8 +1,8 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer, DateOnly, TimeOnly, XDocument, XmlDocument, lorem ipsum
 
+using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 using Microsoft.Data.SqlClient;
 using System.Xml.Linq;
 

@@ -1,24 +1,24 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
 using Carrigan.SqlTools.IntegrationTests.Models;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.Inserts;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Inserts;
 
-namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 
-public sealed class JoinsFixture : SqlFixtureBase
+public sealed class SubqueryFixture : PostgreSqlFixtureBase
 {
-    public JoinsFixture()
+    public SubqueryFixture()
         : base
         (
             [
-                Address.CreateTableSqlServer,
-                Book.CreateTableSqlServer,
-                Customer.CreateTableSqlServer,
-                BookStats.CreateTableSqlServer,
-                Order.CreateTableSqlServer,
-                OrderedItem.CreateTableSqlServer,
-                Left.CreateTableSqlServer,
-                Right.CreateTableSqlServer
+                Address.CreateTablePostgreSql,
+                Book.CreateTablePostgreSql,
+                Customer.CreateTablePostgreSql,
+                BookStats.CreateTablePostgreSql,
+                Order.CreateTablePostgreSql,
+                OrderedItem.CreateTablePostgreSql,
+                Left.CreateTablePostgreSql,
+                Right.CreateTablePostgreSql
             ],
 
             Insert.AddressInsertStatement

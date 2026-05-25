@@ -4,12 +4,12 @@ using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.CompositeModels;
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
 using Carrigan.SqlTools.Tags;
 using Npgsql;
+using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.IntegrationTests.CompositeModels;
+using Carrigan.SqlTools.IntegrationTests.DataSets;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
 

@@ -1,8 +1,7 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.DataSets;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
+using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.Inserts;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 
@@ -12,24 +11,24 @@ public sealed class DeleteFixture : SqlFixtureBase
         : base
         (
             [
-                Address.CreateTableSql,
-                Book.CreateTableSql,
-                Customer.CreateTableSql,
-                BookStats.CreateTableSql,
-                Order.CreateTableSql,
-                OrderedItem.CreateTableSql,
-                Left.CreateTableSql,
-                Right.CreateTableSql
+                Address.CreateTableSqlServer,
+                Book.CreateTableSqlServer,
+                Customer.CreateTableSqlServer,
+                BookStats.CreateTableSqlServer,
+                Order.CreateTableSqlServer,
+                OrderedItem.CreateTableSqlServer,
+                Left.CreateTableSqlServer,
+                Right.CreateTableSqlServer
             ],
 
-            AddressDataSet.InsertStatement
-                .Concat(BookDataSet.InsertStatement)
-                .Concat(CustomerDataSet.InsertStatement)
-                .Concat(BookStatsDataSet.InsertStatement)
-                .Concat(OrderDataSet.InsertStatement)
-                .Concat(OrderedItemDataSet.InsertStatement)
-                .Concat(LeftDataSet.InsertStatement)
-                .Concat(RightDataSet.InsertStatement)
+            Insert.AddressInsertStatement
+                .Concat(Insert.BookInsertStatement)
+                .Concat(Insert.CustomerInsertStatement)
+                .Concat(Insert.BookStatsInsertStatement)
+                .Concat(Insert.OrderInsertStatement)
+                .Concat(Insert.OrderedItemInsertStatement)
+                .Concat(Insert.LeftInsertStatement)
+                .Concat(Insert.RightInsertStatement)
         )
     {
     }

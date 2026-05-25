@@ -5,9 +5,9 @@ using Carrigan.SqlTools.SqlServer.IntegrationTests.Inserts;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 
-public sealed class JoinsFixture : SqlFixtureBase
+public sealed class SubqueryFixture : SqlFixtureBase
 {
-    public JoinsFixture()
+    public SubqueryFixture()
         : base
         (
             [

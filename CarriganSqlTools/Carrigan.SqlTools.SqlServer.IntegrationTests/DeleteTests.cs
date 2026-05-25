@@ -1,9 +1,9 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.SqlTools.IntegrationTests.DataSets;
+using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.DataSets;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.Models;
 using Microsoft.Data.SqlClient;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests;

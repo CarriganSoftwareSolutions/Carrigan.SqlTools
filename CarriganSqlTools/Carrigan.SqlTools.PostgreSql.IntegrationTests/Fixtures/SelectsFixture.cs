@@ -1,8 +1,7 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.DataSets;
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.Models;
-using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Inserts;
 using Respawn;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
@@ -13,12 +12,12 @@ public sealed class SelectsFixture : PostgreSqlFixtureBase
         : base
         (
             [
-                Book.CreateTableSql,
-                BookStats.CreateTableSql
+                Book.CreateTablePostgreSql,
+                BookStats.CreateTablePostgreSql
             ],
 
-            BookDataSet.InsertStatement
-                .Concat(BookStatsDataSet.InsertStatement)
+            Insert.BookInsertStatement
+                .Concat(Insert.BookStatsInsertStatement)
         )
     {
     }
