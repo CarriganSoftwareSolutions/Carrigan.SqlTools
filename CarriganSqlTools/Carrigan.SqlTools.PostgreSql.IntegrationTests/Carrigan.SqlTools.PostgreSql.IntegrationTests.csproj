@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Carrigan.Core" Version="0.1.0-alpha.202605201251" />
     <PackageReference Include="coverlet.collector" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
@@ -32,10 +38,6 @@
     <ProjectReference Include="..\Carrigan.SqlTools.Generators.PostgreSql\Carrigan.SqlTools.Generators.PostgreSql.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools.IntegrationTests\Carrigan.SqlTools.IntegrationTests.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

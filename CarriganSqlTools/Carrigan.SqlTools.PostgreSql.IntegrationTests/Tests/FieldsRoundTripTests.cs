@@ -2,13 +2,12 @@
 //IGNORE SPELLING: datetimes, lorem ipsum, datetime, TimeOnly, XDocument, XmlDocument
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Clients.PostgreSql;
 using System.Xml.Linq;
 using Npgsql;
 using Carrigan.SqlTools.IntegrationTests.Models;
 
-namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 //TODO: We still have some edge case around datetimes with/without timezones to address with a more detailed datetime test class.
 public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
 {

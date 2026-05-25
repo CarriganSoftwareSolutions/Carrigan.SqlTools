@@ -7,7 +7,7 @@ using Npgsql;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 
-namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 
 public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 {

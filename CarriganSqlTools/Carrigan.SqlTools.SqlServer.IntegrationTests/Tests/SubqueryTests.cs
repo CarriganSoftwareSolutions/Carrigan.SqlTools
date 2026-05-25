@@ -1,17 +1,16 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
-using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.Tags;
-using Npgsql;
+using Microsoft.Data.SqlClient;
 
-namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 
 public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
 {
@@ -35,7 +34,7 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
 
         SqlQuery query = CustomerSqlGenerator.Select(select);
 
-        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<Customer> customers = await CommandsAsync.ExecuteReaderAsync<Customer>(query, null, unitTestConnection);
 
         Assert.Equal(25, customers.Count());
@@ -52,7 +51,7 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
         JoinBase join = new Join<Order>(joinPredicate, subquery);
         SelectTags selectTags = new(SelectTag.GetAll<CustomerOrder>());
         SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null);
-        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
         Assert.Equal(36, customerOrders.Count());

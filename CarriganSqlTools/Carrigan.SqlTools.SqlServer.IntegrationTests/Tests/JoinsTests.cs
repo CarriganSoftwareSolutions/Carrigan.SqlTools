@@ -9,7 +9,7 @@ using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.Tags;
 using Microsoft.Data.SqlClient;
 
-namespace Carrigan.SqlTools.SqlServer.IntegrationTests;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 
 public sealed class JoinsTests : IClassFixture<JoinsFixture>
 {

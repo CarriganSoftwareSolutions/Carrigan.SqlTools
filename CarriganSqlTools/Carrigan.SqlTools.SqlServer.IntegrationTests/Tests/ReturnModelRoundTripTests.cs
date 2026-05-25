@@ -6,7 +6,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Microsoft.Data.SqlClient;
 
-namespace Carrigan.SqlTools.SqlServer.IntegrationTests;
+namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 
 public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 {

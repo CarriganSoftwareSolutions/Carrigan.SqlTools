@@ -2,7 +2,6 @@
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.Tags;
@@ -11,7 +10,7 @@ using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 
-namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 
 public sealed class JoinsTests : IClassFixture<JoinsFixture>
 {

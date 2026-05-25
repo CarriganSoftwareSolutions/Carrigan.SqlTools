@@ -7,7 +7,7 @@ using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 
-namespace Carrigan.SqlTools.PostgreSql.IntegrationTests;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 
 public class DeleteTests : IClassFixture<DeleteFixture>
 {
