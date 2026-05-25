@@ -120,7 +120,7 @@ public abstract partial class SqlGeneratorBase<T>
             yield return ISqlFragment.Semicolon;
         }
 
-        return GetFragments().ToSqlQuery(Dialect);
+        return new SqlQuery(Dialect, CommandType.Text, GetFragments());
     }
 
 
@@ -338,7 +338,7 @@ public abstract partial class SqlGeneratorBase<T>
             }
         }
 
-        return GetFragments().ToSqlQuery(Dialect);
+        return new SqlQuery(Dialect, CommandType.Text, GetFragments());
     }
 
 

@@ -13,23 +13,12 @@ public sealed class SqlQueryTests
     private static readonly SqlServerDialect Dialect = new();
 
     [Fact]
-    public void InternalConstructor()
-    {
-        SqlQuery query = new(Dialect, []);
-
-        Assert.Equal(string.Empty, query.QueryText);
-        Assert.NotNull(query.Parameters);
-        SqlQueryTestHelper.AssertParameterCount(query, 0);
-        Assert.Equal(CommandType.Text, query.CommandType);
-    }
-
-    [Fact]
     public void Constructor_NullDialect_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new SqlQuery(null!, []));
+        Assert.Throws<ArgumentNullException>(() => new SqlQuery(null!, CommandType.Text, []));
 
     [Fact]
     public void Constructor_NullFragments_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new SqlQuery(Dialect, null!));
+        Assert.Throws<ArgumentNullException>(() => new SqlQuery(Dialect, CommandType.Text, null!));
 
     [Fact]
     public void GetParameterCount()
@@ -42,7 +31,7 @@ public sealed class SqlQueryTests
             new SqlFragmentParameter(new ParameterTag("@p1"), 1)
         ];
 
-        SqlQuery query = new(Dialect, sql);
+        SqlQuery query = new(Dialect, CommandType.Text, sql);
 
         Assert.Equal(2, query.GetParameterCount());
     }
@@ -58,7 +47,7 @@ public sealed class SqlQueryTests
             new SqlFragmentParameter(new ParameterTag("@p2"), 2)
         ];
 
-        SqlQuery query = new(Dialect, sql);
+        SqlQuery query = new(Dialect, CommandType.Text, sql);
 
         Assert.Equal(2, query.GetParameterCount());
 
@@ -76,7 +65,7 @@ public sealed class SqlQueryTests
             new SqlFragmentText(" "),
             new SqlFragmentParameter(new ParameterTag("@p2"), 2)
         ];
-        SqlQuery query = new(Dialect, sql);
+        SqlQuery query = new(Dialect, CommandType.Text, sql);
 
         Assert.Throws<KeyNotFoundException>(() => (int?)query.GetParameterValue("@missing"));
     }

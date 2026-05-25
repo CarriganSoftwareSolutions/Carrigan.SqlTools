@@ -216,6 +216,6 @@ public class SqlQueryExtensionsTests
         SqlFragmentParameter sqlFragmentParameter = new(new ParameterTag(parameterName), fieldProperties, value);
         SqlServerDialect dialect = new();
 
-        return (SqlQuery)dialect.RenderSqlQuery([sqlFragmentParameter]);
+        return new (dialect, CommandType.Text, [sqlFragmentParameter]);
     }
 }

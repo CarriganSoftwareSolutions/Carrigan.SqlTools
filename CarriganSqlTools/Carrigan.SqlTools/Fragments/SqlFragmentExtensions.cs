@@ -112,19 +112,6 @@ internal static class SqlFragmentExtensions
         separator.IsNotNullOrEmpty()
             ? fragments.JoinFragments()
             : fragments.JoinFragments(new SqlFragmentText(separator));
-
-
-    /// <summary>
-    /// Converts a sequence of SQL fragments into a complete <see cref="SqlQuery"/> object, including the concatenated SQL text and the collected parameters.
-    /// </summary>
-    /// <param name="fragments">The sequence of fragments to convert.</param>
-    /// <param name="dialect">The SQL dialect to use for rendering the fragments.</param>
-    /// <returns>A <see cref="SqlQuery"/> object containing the concatenated SQL text and the collected parameters.</returns>
-    internal static SqlQuery ToSqlQuery(this IEnumerable<ISqlFragment> fragments, ISqlDialects dialect) =>
-        dialect.RenderSqlQuery(fragments);
-
-    internal static SqlQuery ToStoredProcedureQuery(this IEnumerable<SqlFragmentParameter> fragments, ISqlDialects dialect, ProcedureTag procedureTag) =>
-        dialect.RenderStoredProcedureQuery(fragments, procedureTag);
             
     /// <summary>
     /// Flattens a sequence of SQL fragments by recursively expanding any nested sequences of fragments into a single, flat sequence.

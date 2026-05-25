@@ -54,8 +54,8 @@ namespace Carrigan.SqlTools.Tags;
 /// </example>
 public class ProcedureTag : StringWrapper, ISqlFragment
 {
-    private readonly SchemaName? SchemaName;
-    private readonly ProcedureName ProcedureName;
+    internal readonly SchemaName? SchemaName;
+    internal readonly ProcedureName ProcedureName;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProcedureTag"/> class.
@@ -125,5 +125,5 @@ public class ProcedureTag : StringWrapper, ISqlFragment
         [];
 
     public string ToSql(ISqlDialects dialect) =>
-        dialect.RenderProcedureTag(SchemaName, ProcedureName);
+        dialect.RenderProcedureTag(this);
 }

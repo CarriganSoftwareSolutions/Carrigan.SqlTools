@@ -6,6 +6,7 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
+using System.Data;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
@@ -36,16 +37,16 @@ public class SqlServerDialect : ISqlDialects
     /// <exception cref="NotImplementedException">Thrown in all cases as this method is not yet implemented.</exception>
     public string QuoteIdentifier(string identifier) =>
         $"[{identifier}]";
+
     /// <summary>
     /// Generates a string representation of the specified database procedure, optionally within a given schema.
     /// </summary>
-    /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
-    /// <param name="procedureName">The name of the procedure tag to render. Cannot be null or empty.</param>
+    /// <param name="procedure">The procedure tag to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified procedure.</returns>
-    public string RenderProcedureTag(SchemaName? schemaName, ProcedureName procedureName) =>
-        schemaName.IsNotNullOrEmpty()
-            ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(procedureName)}"
-            : QuoteIdentifier(procedureName);
+    public string RenderProcedureTag(ProcedureTag procedure) =>
+        procedure.SchemaName.IsNotNullOrEmpty()
+            ? $"{QuoteIdentifier(procedure.SchemaName)}.{QuoteIdentifier(procedure.ProcedureName)}"
+            : QuoteIdentifier(procedure.ProcedureName);
 
     /// <summary>
     /// Generates a string representation of the specified database table, optionally qualified by schema.
@@ -185,7 +186,7 @@ public class SqlServerDialect : ISqlDialects
     {
         if (baseParameterName[0] == '@')
         {
-            return $"@{baseParameterName[1..]}_{parameterIndex}";
+            return $"{baseParameterName}_{parameterIndex}";
         }
         else
         {
@@ -213,7 +214,6 @@ public class SqlServerDialect : ISqlDialects
     /// </summary>
     /// <param name="fieldProperties">The field properties for which to generate the SQL declaration.</param>
     /// <returns>A string representing the SQL declaration for the specified field properties.</returns>
-    /// 
     public string RenderFieldProperties(FieldProperties fieldProperties)
     {
         if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
@@ -256,12 +256,6 @@ public class SqlServerDialect : ISqlDialects
             return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
         }
     }
-
-    public SqlQuery RenderSqlQuery(IEnumerable<ISqlFragment> sqlFragments) =>
-        new(this, sqlFragments);
-
-    public SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag) =>
-        new(this, sqlFragments, procedureTag);
 
     /// <summary>
     /// Performs the necessary conversions for a parameter value

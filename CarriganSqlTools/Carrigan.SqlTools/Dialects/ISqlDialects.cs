@@ -27,10 +27,9 @@ public interface ISqlDialects
     /// <summary>
     /// Generates a string representation of the specified database procedure, optionally within a given schema.
     /// </summary>
-    /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
-    /// <param name="procedureName">The name of the procedure tag to render. Cannot be null or empty.</param>
+    /// <param name="procedure">The procedure tag to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified procedure.</returns>
-    string RenderProcedureTag(SchemaName? schemaName, ProcedureName procedureName);
+    string RenderProcedureTag(ProcedureTag procedure);
 
     /// Generates a string representation of the specified database table, optionally within a given schema.
     /// </summary>
@@ -70,6 +69,7 @@ public interface ISqlDialects
     /// <param name="parameterIndex">The index to append to the base parameter name. Must be zero or greater.</param>
     /// <returns>A string representing the final parameter name, formed by combining the base name and the index.</returns>
     string RenderFinalParameterName(string baseParameterName, int parameterIndex);
+
     /// <summary>
     /// Generates a paging clause for a SQL query based on the specified offset and fetch next values aka limit offset.
     /// </summary>
@@ -95,11 +95,6 @@ public interface ISqlDialects
     /// </returns>
     /// 
     string RenderFieldProperties(FieldProperties fieldProperties);
-
-    SqlQuery RenderSqlQuery(IEnumerable<ISqlFragment> sqlFragments);
-
-    SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag);
-
 
     /// <summary>
     /// Performs the necessary conversions for a parameter value

@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -12,67 +14,63 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// </summary>
 public class SqlQuery
 {
+    public IEnumerable<ISqlFragment> SqlFragments { get; set; }
     protected readonly ISqlDialects Dialect;
     /// <summary>
     /// Gets or sets the SQL command text.
     /// </summary>
-    public string QueryText { get; protected set; } = string.Empty;
+    public string QueryText => 
+        Validate() 
+            ? CommandType == CommandType.StoredProcedure
+                ? SqlFragments.Where(fragment => fragment is not SqlFragmentParameter).ToSql(Dialect)
+                : SqlFragments.ToSql(Dialect)            
+            : throw new ArgumentException(null, nameof(SqlFragments));
 
     /// <summary>
     /// Gets or sets the parameter values for this command,
     /// keyed by <see cref="ParameterTag"/>.
     /// </summary>
-    public Dictionary<ParameterTag, object?> ParametersAsDictionary { get; protected set; } = [];
+    /// <remarks>
+    /// This is now reserved for internal testing methods.
+    /// </remarks>
+    [ExternalOnly]
+    internal Dictionary<ParameterTag, object?> ParametersAsDictionary => new
+    (
+        Parameters
+            .Select(parameter => new KeyValuePair<ParameterTag, object?>(parameter.ParameterTag, parameter.Value))
+    );
 
-    public IEnumerable<SqlFragmentParameter> Parameters { get; protected set; } = [];
+
+    public IEnumerable<SqlFragmentParameter> Parameters => 
+        SqlFragments.GetSqlFragmentParameters(Dialect);
 
     /// <summary>
     /// Gets or sets the command type for this SQL query.
     /// </summary>
     public CommandType CommandType { get; protected init; }
 
+    public bool Validate()
+    {
+        ArgumentNullException.ThrowIfNull(SqlFragments);
+        if (SqlFragments.IsNullOrEmpty())
+            throw new ArgumentException(null, nameof(SqlFragments));
+        return true;
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SqlQuery"/> class with the specified
     /// </summary>
     /// <param name="dialect">The SQL dialect to use for rendering the fragments.</param>
+    /// <param name="commandType"></param>
     /// <param name="fragments">The sequence of SQL fragments to render.</param>
-    internal SqlQuery(ISqlDialects dialect, IEnumerable<ISqlFragment> fragments)
+    internal SqlQuery(ISqlDialects dialect, CommandType commandType, IEnumerable<ISqlFragment> fragments)
     {
         ArgumentNullException.ThrowIfNull(fragments);
         ArgumentNullException.ThrowIfNull(dialect);
+        SqlFragments = fragments;
         Dialect = dialect;
-        QueryText = fragments.ToSql(dialect);
-        Parameters = fragments.GetSqlFragmentParameters(dialect);
-        CommandType = CommandType.Text;
-        ParametersAsDictionary = new
-        (
-            Parameters
-                .Select(parameter => new KeyValuePair<ParameterTag, object?>(parameter.ParameterTag, parameter.Value))
-        );
+        CommandType = commandType;
     }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SqlQuery"/> class for a stored procedure with the specified
-    /// </summary>
-    /// <param name="dialect">The SQL dialect to use for rendering the fragments.</param>
-    /// <param name="fragments">The sequence of SQL fragments representing the parameters.</param>
-    /// <param name="procedure">The stored procedure to execute.</param>
-    internal SqlQuery(ISqlDialects dialect, IEnumerable<SqlFragmentParameter> fragments, ProcedureTag procedure)
-    {
-        ArgumentNullException.ThrowIfNull(procedure);
-        ArgumentNullException.ThrowIfNull(dialect);
-        ArgumentNullException.ThrowIfNull(fragments);
-        Dialect = dialect;
-        QueryText = procedure.ToSql(dialect);
-        Parameters = fragments.GetSqlFragmentParameters(dialect);
-        ParametersAsDictionary = new
-        (
-            Parameters
-                .Select(parameter => new KeyValuePair<ParameterTag, object?>(parameter.ParameterTag, parameter.Value))
-        );
-        CommandType = CommandType.StoredProcedure;
-    }
-
 
     /// <summary>
     /// Retrieves the value of a parameter by its name (for unit testing).
@@ -96,7 +94,6 @@ public class SqlQuery
     {
         ArgumentNullException.ThrowIfNull(parameterTestName);
         ParameterTag tag = new (parameterTestName);
-
 
         if (ParametersAsDictionary.ContainsKey(new ParameterTag(tag)))
             return ParametersAsDictionary[tag];

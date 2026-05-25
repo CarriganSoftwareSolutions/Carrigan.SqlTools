@@ -170,6 +170,6 @@ public abstract partial class SqlGeneratorBase<T>
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);
 
-        return GetFragments().ToSqlQuery(Dialect);
+        return new SqlQuery(Dialect, CommandType.Text, GetFragments());
     }
 }

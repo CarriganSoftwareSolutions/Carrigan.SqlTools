@@ -32,13 +32,12 @@ public class PostgreSqlDialect : ISqlDialects
     /// <summary>
     /// Generates a string representation of the specified database procedure, optionally within a given schema.
     /// </summary>
-    /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
-    /// <param name="procedureName">The name of the procedure tag to render. Cannot be null or empty.</param>
+    /// <param name="procedure">The procedure tag to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified procedure.</returns>
-    public string RenderProcedureTag(SchemaName? schemaName, ProcedureName procedureName) =>
-        schemaName.IsNotNullOrEmpty()
-            ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(procedureName)}"
-            : QuoteIdentifier(procedureName);
+    public string RenderProcedureTag(ProcedureTag procedure) =>
+        procedure.SchemaName.IsNotNullOrEmpty()
+            ? $"{QuoteIdentifier(procedure.SchemaName)}.{QuoteIdentifier(procedure.ProcedureName)}"
+            : QuoteIdentifier(procedure.ProcedureName);
 
     /// <summary>
     /// Generates a string representation of the specified PostgreSQL table,
@@ -168,6 +167,15 @@ public class PostgreSqlDialect : ISqlDialects
         return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
     }
 
+    /// <summary>
+    /// Determines whether the specified PostgreSQL provider type name requires a length declaration when rendering field properties.
+    /// </summary>
+    /// <param name="providerTypeName">
+    /// The PostgreSQL provider type name to evaluate, e.g., "VARCHAR", "CHAR", "BIT", etc.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the provider type name requires a length declaration; otherwise, <c>false</c>.
+    /// </returns>
     private static bool RequiresLengthDeclaration(string providerTypeName) =>
         providerTypeName is
             "CHAR" or
@@ -178,6 +186,18 @@ public class PostgreSqlDialect : ISqlDialects
             "BIT VARYING" or
             "VARBIT";
 
+    /// <summary>
+    /// Renders the PostgreSQL declaration for a temporal field (TIME or TIMESTAMP) with the specified fractional seconds precision.
+    /// </summary>
+    /// <param name="declaration">
+    /// The base declaration for the temporal type, e.g., "TIME WITH TIME ZONE", "TIMESTAMP WITHOUT TIME ZONE", etc.
+    /// </param>
+    /// <param name="fractionalSecondsPrecision">
+    /// The fractional seconds precision for the temporal type.
+    /// </param>
+    /// <returns>
+    /// The rendered declaration for the temporal type with the specified fractional seconds precision.
+    /// </returns>
     private static string RenderTemporalPrecision(string declaration, byte fractionalSecondsPrecision) =>
         declaration switch
         {
@@ -187,12 +207,6 @@ public class PostgreSqlDialect : ISqlDialects
             "TIMESTAMP WITHOUT TIME ZONE" => $"TIMESTAMP({fractionalSecondsPrecision}) WITHOUT TIME ZONE",
             _ => $"{declaration}({fractionalSecondsPrecision})"
         };
-
-    public SqlQuery RenderSqlQuery(IEnumerable<ISqlFragment> sqlFragments) =>
-        new(this, sqlFragments);
-
-    public SqlQuery RenderStoredProcedureQuery(IEnumerable<SqlFragmentParameter> sqlFragments, ProcedureTag procedureTag) =>
-        new(this, sqlFragments, procedureTag);
 
     /// <summary>
     /// Performs PostgreSQL parameter value conversions.
@@ -217,9 +231,24 @@ public class PostgreSqlDialect : ISqlDialects
         }
     }
 
+    /// <summary>
+    /// Returns the PostgreSQL-specific symbol used to represent the logical XOR operator in SQL expressions.
+    /// </summary>
+    /// <returns>
+    /// A string containing the PostgreSQL symbol for the logical XOR operator, which is "#".
+    /// </returns>
     public ISqlFragment GetXOrSymbol() =>
         new SqlFragmentText("#");
 
+    /// <summary>
+    /// Returns the appropriate SQL fragment for a LIKE operator based on the specified case sensitivity preference for PostgreSQL.
+    /// </summary>
+    /// <param name="isCaseSensitive">
+    /// A value indicating whether the LIKE operator should be case-sensitive.
+    /// </param>
+    /// <returns>
+    /// An SQL fragment representing the appropriate LIKE operator for PostgreSQL.
+    /// </returns>
     public ISqlFragment GetDialectLike(bool? isCaseSensitive = null)
     {
         if (isCaseSensitive is null || isCaseSensitive.Value)

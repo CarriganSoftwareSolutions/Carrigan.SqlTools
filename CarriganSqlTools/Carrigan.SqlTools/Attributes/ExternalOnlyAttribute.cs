@@ -47,5 +47,5 @@
 /// }
 /// ]]></code>
 /// </example>
-[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false)]
 public sealed class ExternalOnlyAttribute : Attribute { }

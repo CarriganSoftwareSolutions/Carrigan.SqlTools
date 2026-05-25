@@ -182,7 +182,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// ]]></code>
     /// </example>
     protected virtual SqlQuery BaseSelect(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging) =>
-        BaseSelectFragments(distinct, selects, joins, predicates, orderBy, paging).ToSqlQuery(Dialect);
+        new(Dialect, CommandType.Text, BaseSelectFragments(distinct, selects, joins, predicates, orderBy, paging));
 
     private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging)
     {

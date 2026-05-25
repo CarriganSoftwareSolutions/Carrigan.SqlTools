@@ -6,6 +6,7 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
+using System.Data;
 using System.Net;
 using System.Text;
 //IGNORE SPELLING: newid, unindexed
@@ -332,6 +333,6 @@ public abstract partial class SqlGeneratorBase<T>
             }
         }
 
-        return GetFinalFragments().ToSqlQuery(Dialect);
+        return new SqlQuery(Dialect, CommandType.Text, GetFinalFragments());
     }
 }

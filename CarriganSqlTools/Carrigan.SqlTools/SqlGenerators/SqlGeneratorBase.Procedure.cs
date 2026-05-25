@@ -58,7 +58,8 @@ public abstract partial class SqlGeneratorBase<T>
     {
         ArgumentNullException.ThrowIfNull(entity);
         IEnumerable<SqlFragmentParameter> parameters = ColumnInfo.Select(column => GetSqlParameter(column, entity));
+        ISqlFragment fragment = new SqlFragmentText(Dialect.RenderProcedureTag(ProcedureTag));
 
-        return parameters.ToStoredProcedureQuery(Dialect, ProcedureTag);
+        return new(Dialect, CommandType.StoredProcedure, parameters.Prepend(fragment));
     }
 }

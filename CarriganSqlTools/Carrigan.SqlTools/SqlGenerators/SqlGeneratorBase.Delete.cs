@@ -80,8 +80,7 @@ public abstract partial class SqlGeneratorBase<T>
             yield return Table;
             yield return ISqlFragment.Semicolon;
         }
-        return GetFragments()
-            .ToSqlQuery(Dialect);
+        return new SqlQuery(Dialect, CommandType.Text, GetFragments());
     }
 
     /// <summary>
@@ -250,7 +249,7 @@ public abstract partial class SqlGeneratorBase<T>
             if (invalidTags.Any())
                 throw new InvalidTableException(invalidTags);
             
-            return GetFragments().ToSqlQuery(Dialect);
+            return new SqlQuery(Dialect, CommandType.Text, GetFragments());
         }
     }
 }
