@@ -21,16 +21,16 @@ internal static class SqlFragmentExtensions
     private static IEnumerable<ISqlFragment> RenderFinalFragmentEnumeration(this IEnumerable<ISqlFragment> sqlFragments, ISqlDialects dialect)
     {
         List<ISqlFragment> sqlFragmentsFinalForm = [];
-        IEnumerable<ISqlFragment> flatenedSqlFragments = sqlFragments.Flaten();
+        IEnumerable<ISqlFragment> flattenedSqlFragments = sqlFragments.Flatten();
         int j = 1; //start at 1 because PostgreSQL and SQL Lite use 1-based parameter indexing.
-        for (int i = 0; i < flatenedSqlFragments.Count(); i++)
+        for (int i = 0; i < flattenedSqlFragments.Count(); i++)
         {
-            if (flatenedSqlFragments.ElementAt(i) is SqlFragmentParameter parameterFragment)
+            if (flattenedSqlFragments.ElementAt(i) is SqlFragmentParameter parameterFragment)
             {
                 sqlFragmentsFinalForm.Add(RenderFinalParameter(dialect, parameterFragment, j++));
             }
             else
-                sqlFragmentsFinalForm.Add(flatenedSqlFragments.ElementAt(i));
+                sqlFragmentsFinalForm.Add(flattenedSqlFragments.ElementAt(i));
         }
         return sqlFragmentsFinalForm.AsEnumerable<ISqlFragment>();
     }
@@ -118,7 +118,7 @@ internal static class SqlFragmentExtensions
     /// </summary>
     /// <param name="fragments">The sequence of fragments to flatten.</param>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects representing the flattened structure of the input sequence.</returns>
-    internal static IEnumerable<ISqlFragment> Flaten(this IEnumerable<ISqlFragment> fragments) =>
+    internal static IEnumerable<ISqlFragment> Flatten(this IEnumerable<ISqlFragment> fragments) =>
         fragments.SelectMany(element => element.Flatten());
 
 

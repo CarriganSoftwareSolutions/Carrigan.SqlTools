@@ -25,8 +25,6 @@ public partial class PostgreSqlTypesProviderTests
     [Theory]
     [InlineData((byte)0)]
     [InlineData((byte)54)]
-    public void AsFloat_InvalidPrecision_Exception(byte precision)
-    {
+    public void AsFloat_InvalidPrecision_Exception(byte precision) => 
         Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsFloat(precision));
-    }
 }

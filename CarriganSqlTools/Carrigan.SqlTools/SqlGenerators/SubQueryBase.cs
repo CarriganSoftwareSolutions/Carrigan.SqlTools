@@ -55,7 +55,7 @@ public class SubqueryBase : ISqlFragment
     /// </summary>
     /// <returns></returns>
     public IEnumerable<ISqlFragment> Flatten() =>
-        SqlFragments.Flaten();
+        SqlFragments.Flatten();
 
     /// <summary>
     /// Extracts the parameters from the SQL fragments of this subquery. This method traverses the fragments
@@ -85,7 +85,7 @@ public class SubqueryBase : ISqlFragment
     public string ToSql(ISqlDialects dialect)
     {
         StringBuilder stringBuilder = new();
-        foreach (ISqlFragment fragment in SqlFragments.Flaten())
+        foreach (ISqlFragment fragment in SqlFragments.Flatten())
         {
             stringBuilder.Append(fragment.ToSql(dialect));
         }

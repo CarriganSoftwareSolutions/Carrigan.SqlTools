@@ -48,7 +48,7 @@ public class OrderByExtensionsTests
     [Fact]
     public void OrderByExtension_IsNullOrEmpty_False()
     {
-        OrderBys order = new OrderBys(new OrderBy<ColumnTable>(nameof(ColumnTable.D000destruct0)));
+        OrderBys order = new(new OrderBy<ColumnTable>(nameof(ColumnTable.D000destruct0)));
 
         Assert.False(order.IsNullOrEmpty());
     }

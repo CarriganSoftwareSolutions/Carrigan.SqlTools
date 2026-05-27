@@ -2,6 +2,8 @@ using Carrigan.SqlTools.Attributes;
 
 namespace Carrigan.SqlTools.IntegrationTests.Models;
 
+//IGNORE SPELLING: Postgre
+
 public sealed class OrderedItem
 {
     [PrimaryKey]

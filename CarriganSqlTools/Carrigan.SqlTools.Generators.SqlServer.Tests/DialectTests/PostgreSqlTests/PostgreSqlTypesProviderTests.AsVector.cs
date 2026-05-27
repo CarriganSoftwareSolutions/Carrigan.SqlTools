@@ -25,8 +25,6 @@ public partial class PostgreSqlTypesProviderTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void AsVector_InvalidDimensions_Exception(int dimensions)
-    {
+    public void AsVector_InvalidDimensions_Exception(int dimensions) =>
         Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVector(dimensions));
-    }
 }

@@ -32,7 +32,7 @@ public class LogicalOperatorTests
             new TestLogicalOperator("AND", []));
 
     [Fact]
-    public void LogicalOperator_SinglePredicate_ToSql_DoesNotAddParensOrOperator()
+    public void LogicalOperator_SinglePredicate_ToSql_DoesNotAddParenthesisOrOperator()
     {
         TestLogicalOperator op = new("AND",
         [
@@ -46,7 +46,7 @@ public class LogicalOperatorTests
     }
 
     [Fact]
-    public void LogicalOperator_MultiplePredicates_ToSql_AddsParensAndOperator()
+    public void LogicalOperator_MultiplePredicates_ToSql_AddsParenthesisAndOperator()
     {
         TestLogicalOperator op = new("AND",
         [

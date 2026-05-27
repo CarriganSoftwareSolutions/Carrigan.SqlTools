@@ -166,7 +166,7 @@ public class SqlGenerator_ConstructorValidationTests
 
     [Fact]
     public void EntityWithEncryptionNull() =>
-        Assert.Throws<ArgumentNullException>(() => _ = new SqlGenerator<EntityWithEncryption>((IEncryption)null!));
+        Assert.Throws<EncrypterNotProvidedException<EntityWithEncryption>>(() => _ = new SqlGenerator<EntityWithEncryption>((IEncryption)null!));
 
     [Fact]
     public void EncryptionProvided() =>

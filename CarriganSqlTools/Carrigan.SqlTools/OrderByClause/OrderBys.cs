@@ -6,6 +6,8 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Tags;
 
+//IGNORE SPELLING: Bys
+
 namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>

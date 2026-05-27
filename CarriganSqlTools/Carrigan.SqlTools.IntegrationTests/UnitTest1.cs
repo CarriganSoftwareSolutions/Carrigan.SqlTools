@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.IntegrationsTests;
+﻿namespace Carrigan.SqlTools.IntegrationTests;
 
 public class UnitTest1
 {

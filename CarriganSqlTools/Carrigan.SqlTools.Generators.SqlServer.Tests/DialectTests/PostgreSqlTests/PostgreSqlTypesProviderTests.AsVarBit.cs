@@ -25,8 +25,6 @@ public partial class PostgreSqlTypesProviderTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void AsVarBit_InvalidLength_Exception(int length)
-    {
+    public void AsVarBit_InvalidLength_Exception(int length) =>
         Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVarBit(length));
-    }
 }

@@ -96,7 +96,11 @@ internal static class CommandSharedMethods
                 if (dataReader.IsDBNull(i))
                     rowData.Add(currentColumnName, DBNull.Value);
                 else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
-                    rowData.Add(currentColumnName, new SqlXml(XmlReader.Create(new StringReader(dataReader.GetString(i)))));
+                {
+                    using StringReader stringReader = new(dataReader.GetString(i));
+                    using XmlReader xmlReader = XmlReader.Create(stringReader);
+                    rowData.Add(currentColumnName, new SqlXml(xmlReader));
+                }
                 else
                     rowData.Add(currentColumnName, dataReader.GetValue(i));
             }

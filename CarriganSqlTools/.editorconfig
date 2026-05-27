@@ -2,6 +2,11 @@
 root = true
 dotnet_diagnostic.CARRIGAN0001.severity = error
 
+[*]
+# VSSPELL: Repository-level ignored words
+vsspell_section_id = 9f07c577adcd4fd7a93a42a503828225
+vsspell_ignored_words_9f07c577adcd4fd7a93a42a503828225 = File:.vsspell/IgnoredWords.dic
+
 # C# files
 [*.cs]
 

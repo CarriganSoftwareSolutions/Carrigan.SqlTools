@@ -73,7 +73,7 @@ public partial class SqlServerTypesProviderTests
     [Fact]
     public void FromNullableClrType_ReturnsNullable()
     {
-        FieldProperties actual = SqlServerTypesProvider.FromNullableClrType(typeof(string));
+        FieldProperties actual = SqlServerTypesProvider.FromNullableClrType<string>();
 
         Assert.Equal("NVARCHAR", actual.ProviderTypeName);
         Assert.True(actual.IsNullable);
@@ -91,7 +91,7 @@ public partial class SqlServerTypesProviderTests
     [Fact]
     public void FromClrType_ReturnsSqlVariant_WhenClrTypeIsNotMapped()
     {
-        FieldProperties actual = SqlServerTypesProvider.FromClrType(typeof(Uri));
+        FieldProperties actual = SqlServerTypesProvider.FromClrType<Uri>();
 
         Assert.Equal("SQL_VARIANT", actual.ProviderTypeName);
         Assert.False(actual.IsNullable);
@@ -100,7 +100,7 @@ public partial class SqlServerTypesProviderTests
     [Fact]
     public void FromClrType_MapsUnsignedLongToDecimal20Scale0()
     {
-        FieldProperties actual = SqlServerTypesProvider.FromClrType(typeof(ulong));
+        FieldProperties actual = SqlServerTypesProvider.FromClrType<ulong>();
 
         Assert.Equal("DECIMAL", actual.ProviderTypeName);
         Assert.Equal((byte)20, actual.Precision);

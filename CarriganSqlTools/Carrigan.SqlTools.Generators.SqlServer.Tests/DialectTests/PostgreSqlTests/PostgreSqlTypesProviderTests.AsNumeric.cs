@@ -55,14 +55,10 @@ public partial class PostgreSqlTypesProviderTests
     }
 
     [Fact]
-    public void AsNumeric_ZeroPrecision_Exception()
-    {
+    public void AsNumeric_ZeroPrecision_Exception() => 
         Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsNumeric(0));
-    }
 
     [Fact]
-    public void AsNumeric_ScaleGreaterThanPrecision_Exception()
-    {
+    public void AsNumeric_ScaleGreaterThanPrecision_Exception() =>
         Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsNumeric(2, 3));
-    }
 }

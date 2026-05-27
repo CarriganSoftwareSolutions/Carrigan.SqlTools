@@ -1,6 +1,6 @@
 ﻿using Carrigan.SqlTools.Paging;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.OffsetNextTests;
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PagingTests;
 
 public class DefinePageTests
 {

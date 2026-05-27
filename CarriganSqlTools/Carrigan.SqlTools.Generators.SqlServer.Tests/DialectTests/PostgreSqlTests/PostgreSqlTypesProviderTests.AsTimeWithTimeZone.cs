@@ -39,8 +39,6 @@ public partial class PostgreSqlTypesProviderTests
     }
 
     [Fact]
-    public void AsTimeWithTimeZone_InvalidFractionalSecondsPrecision_Exception()
-    {
+    public void AsTimeWithTimeZone_InvalidFractionalSecondsPrecision_Exception() => 
         Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsTimeWithTimeZone(7));
-    }
 }

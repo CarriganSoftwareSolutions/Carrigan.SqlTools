@@ -21,7 +21,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         _fixture = fixture;
 
     #region get no tests
-    private async Task<IEnumerable<Customer>> GetAllCustomersNotest()
+    private async Task<IEnumerable<Customer>> GetAllCustomersNoTest()
     {
         await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
         //Validate DB initial state
@@ -66,7 +66,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
     #region get pretest
     private async Task<IEnumerable<Customer>> GetAllCustomersPretest()
     {
-        IEnumerable<Customer> allCustomers = await GetAllCustomersNotest();
+        IEnumerable<Customer> allCustomers = await GetAllCustomersNoTest();
         Assert.Equal(25, allCustomers.Count());
         for (int i = 0; i < 25;)
             CustomerDataSet.ValidateById(allCustomers, ++i);
@@ -97,7 +97,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
     #endregion
 
     #region get post tests
-    private async Task<IEnumerable<Customer>> GetAllFemaleCustomersPosttest()
+    private async Task<IEnumerable<Customer>> GetAllFemaleCustomersPostTest()
     {
         IEnumerable<Customer> femaleCustomers = await GetAllFemaleCustomersNoTest();
 
@@ -112,7 +112,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         return femaleCustomers;
     }
 
-    private async Task<IEnumerable<Customer>> GetAllMaleCustomersPosttest()
+    private async Task<IEnumerable<Customer>> GetAllMaleCustomersPostTest()
     {
         IEnumerable<Customer> customers = await GetAllMaleCustomersNoTest();
 
@@ -124,7 +124,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         return customers;
     }
 
-    private async Task<Customer> GetCustomerByIdPosttest(int id)
+    private async Task<Customer> GetCustomerByIdPostTest(int id)
     {
         Customer customer = (await GetCustomerByIdNoTest(id)).Single();
         ValidateRename(customer, customer.Id);
@@ -146,7 +146,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
     #endregion
 
     [Fact]
-    public async Task UpdateSinglei()
+    public async Task UpdateSingle()
     {
         //reset
         await _fixture.ResetAsync();
@@ -163,7 +163,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         Assert.Equal(1, count);
 
         //post update unit tests
-        _ = await GetCustomerByIdPosttest(2);
+        _ = await GetCustomerByIdPostTest(2);
         _ = await GetCustomerByNotIdPostTest(2);
     }
     [Fact]
@@ -180,8 +180,8 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         int count  = await CommandsAsync.ExecuteNonQueryAsync(updateQuery, null, connection);
         Assert.Equal(12, count);
 
-        _ = GetAllMaleCustomersPosttest();
-        _ = GetAllFemaleCustomersPosttest();
+        _ = GetAllMaleCustomersPostTest();
+        _ = GetAllFemaleCustomersPostTest();
     }
 
     [Fact]
@@ -201,8 +201,8 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         int count = await CommandsAsync.ExecuteNonQueryAsync(updateBuilder, null, connection);
         Assert.Equal(12, count);
 
-        _ = GetAllMaleCustomersPosttest();
-        _ = GetAllFemaleCustomersPosttest();
+        _ = GetAllMaleCustomersPostTest();
+        _ = GetAllFemaleCustomersPostTest();
     }
 
     [Fact]
@@ -213,10 +213,10 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         _ = await GetAllCustomersPretest();        
         
         using SqlConnection connection = new(_fixture.UnitTestConnectionString);
-        ColumnEqualsColumn<Customer, Order> cec = new (nameof(Customer.Id), nameof(Order.CustomerId));
+        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new (nameof(Customer.Id), nameof(Order.CustomerId));
         ColumnValue<Customer> customerThe = new (nameof(Customer.Id), 3);
 
-        Join<Order> joinOrderOn = new(cec);
+        Join<Order> joinOrderOn = new(columnEqualsColumn);
         SelectBuilder<Customer> selectBuilder = new()
         {
             Joins = joinOrderOn,
@@ -240,7 +240,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         Assert.Equal(1, count);
 
         //post update unit tests
-        _ = await GetCustomerByIdPosttest(3);
+        _ = await GetCustomerByIdPostTest(3);
         _ = await GetCustomerByNotIdPostTest(3);
 
     }
