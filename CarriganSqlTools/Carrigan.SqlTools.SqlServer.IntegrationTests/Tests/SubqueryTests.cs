@@ -19,8 +19,6 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
     private readonly SqlGenerator<Customer> CustomerSqlGenerator = new();
     private readonly SqlGenerator<Order> OrderSqlGenerator = new();
 
-    private readonly SqlGenerator<Book> BookSqlGenerator = new();
-
     public SubqueryTests(SubqueryFixture fixture) =>
         _fixture = fixture;
 

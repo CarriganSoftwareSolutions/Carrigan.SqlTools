@@ -1,4 +1,7 @@
 ﻿
+using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.SqlGenerators;
+
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
@@ -7,6 +10,11 @@ namespace Carrigan.SqlTools.SqlServer;
 /// <typeparam name="T">
 /// The entity/model type that defines the table into which data will be inserted. 
 /// </typeparam>
-public sealed record InsertBuilder<T> : QueryBuilders.InsertBuilderBase<T> where T : class
+public sealed record InsertBuilder<T> : QueryBuilders.InsertBuilderBase<T>, IQueryBuilder where T : class
 {
+    private readonly SqlGenerator<T> SqlGenerator = new();
+    public InsertBuilder(IEncryption? encryption = null) =>
+        SqlGenerator = new(encryption);
+    public SqlQuery AsSqlQuery() =>
+        SqlGenerator.Insert(this);
 }

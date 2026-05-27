@@ -33,7 +33,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ]]></code>
 /// </example>
 public class Parameter : Predicates
-{
+{ //TOdo: implement typed parameter, even more generic where the name is just a default, one that gets info from class property.
     /// <summary>
     /// The value to bind to the parameter.
     /// </summary>

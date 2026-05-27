@@ -12,11 +12,7 @@ public class DeleteTests : IClassFixture<DeleteFixture>
 {
     private readonly DeleteFixture _fixture;
 
-    private readonly SqlGenerator<Book> BookSqlGenerator = new();
-    private readonly SqlGenerator<Customer> CustomerSqlGenerator = new();
-    private readonly SqlGenerator<Order> OrderSqlGenerator = new();
     private readonly SqlGenerator<OrderedItem> OrderedItemSqlGenerator = new();
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
 
     public DeleteTests(DeleteFixture fixture) =>
         _fixture = fixture;

@@ -25,7 +25,7 @@ public class DeleteBuilderTests
             Where = predicateId
         };
 
-        SqlQuery query = generator.Delete<JoinRightTable>(deleteBuilder);
+        SqlQuery query = generator.Delete(deleteBuilder);
 
         Assert.Equal("DELETE [Left] FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);

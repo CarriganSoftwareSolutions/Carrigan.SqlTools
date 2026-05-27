@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Carrigan.SqlTools.SqlServer</PackageId>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools.Clients.Core\Carrigan.SqlTools.Clients.Core.csproj" />
+    <ProjectReference Include="..\Carrigan.SqlTools.Generators.SqlServer\Carrigan.SqlTools.Generators.SqlServer.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
   </ItemGroup>
 

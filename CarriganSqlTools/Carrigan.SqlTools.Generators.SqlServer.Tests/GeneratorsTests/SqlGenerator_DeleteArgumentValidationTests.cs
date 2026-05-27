@@ -10,7 +10,7 @@ public sealed class SqlGenerator_DeleteArgumentValidationTests
     public void Delete_NullEntity_Exception()
     {
         SqlGenerator<EntityWithTableAttribute> generator = new();
-        Assert.Throws<ArgumentNullException>(() => generator.Delete(null!));
+        Assert.Throws<ArgumentNullException>(() => generator.Delete((EntityWithTableAttribute)null!));
     }
 
     [Fact]

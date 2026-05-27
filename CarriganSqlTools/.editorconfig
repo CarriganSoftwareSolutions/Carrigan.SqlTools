@@ -5,6 +5,9 @@ dotnet_diagnostic.CARRIGAN0001.severity = error
 # C# files
 [*.cs]
 
+#IDisposable
+dotnet_diagnostic.CA2000.severity = warning
+
 #### Core EditorConfig Options ####
 
 # Indentation and spacing

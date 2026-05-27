@@ -12,11 +12,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     protected override ISqlDialects Dialect { get; init; } = new SqlServerDialect();
 
-    public SqlGenerator()
+    public SqlGenerator() : base()
     {
     }
 
-    public SqlGenerator(IEncryption encryption) : base(encryption)
+    public SqlGenerator(IEncryption? encryption) : base(encryption)
     {
     }
 }

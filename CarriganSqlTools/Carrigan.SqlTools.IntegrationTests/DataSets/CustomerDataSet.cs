@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.IntegrationTests.DataSets;
 
 public static class CustomerDataSet
 {
-    public static void ValidateById(IEnumerable<Customer> actualCustomers, int expectedId)
+    public static void ValidateById(IEnumerable<Customer> actualCustomers, int? expectedId)
     {
         Customer actual = actualCustomers.Where(customer => customer.Id == expectedId).Single();
         Validate(actual, expectedId);

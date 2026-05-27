@@ -1,9 +1,11 @@
+using Carrigan.SqlTools.Attributes;
 using System;
 
 namespace Carrigan.SqlTools.IntegrationTests.Models;
 
 public sealed class Customer
 {
+    [PrimaryKey]
     public int? Id { get; set; }
     public string? FirstName { get; set; } = string.Empty;
     public string? LastName { get; set; } = string.Empty;

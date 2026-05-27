@@ -56,9 +56,4 @@
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
   </ItemGroup>
 
-  
-  <ItemGroup>
-    <Folder Include="SqlBuilders\" />
-  </ItemGroup>
-
 </Project>

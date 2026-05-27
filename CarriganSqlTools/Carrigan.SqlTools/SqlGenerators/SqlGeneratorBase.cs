@@ -55,6 +55,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// </exception>
     private void ValidationChecks()
     {
+        //TODO: can some of these be move to static to ensure it only runs once.
         List<Exception> exceptions = [];
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
         IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
@@ -180,9 +181,9 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// The <see cref="IEncryption"/> implementation used to encrypt and decrypt values.
     /// Must not be <c>null</c>.
     /// </param>
-    public SqlGeneratorBase(IEncryption encryption)
+    public SqlGeneratorBase(IEncryption? encryption)
     {
-        _Encryption = encryption ?? throw new ArgumentNullException(nameof(encryption));
+        _Encryption = encryption;
 
         ValidationChecks();
     }

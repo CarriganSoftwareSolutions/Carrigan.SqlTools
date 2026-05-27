@@ -178,6 +178,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     public SqlQuery Delete(Joins<T>? joins, Predicates? predicates) =>
         base.BaseDelete(null, joins, predicates);
 
-    public SqlQuery Delete<usingT>(DeleteBuilder<T> deleteQuery) where usingT : class =>
+    public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         Delete(deleteQuery.Joins, deleteQuery.Where);
 }
