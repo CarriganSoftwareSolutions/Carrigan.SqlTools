@@ -14,22 +14,42 @@ public class DeleteBuilderTests
     private readonly SqlGenerator<JoinLeftTable> generator = new();
 
     [Fact]
-    public void DeleteBuilder_WithUsingsJoinsAndWhere_RendersExpectedSql()
+    public void DeleteBuilder_WithUsingsAndWhere_RendersExpectedSql()
     {
-        Predicates joinId = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter("Id", 3));
-        Joins<JoinLeftTable> joins = new(new InnerJoin<JoinRightTable>(joinId));
+        Predicates where = new ColumnValue<JoinRightTable>(nameof(JoinRightTable.Id), 3);
 
         DeleteBuilder<JoinLeftTable> deleteBuilder = new()
         {
             Usings = [TableTag.Get<JoinRightTable>()],
-            Joins = joins,
-            Where = predicateId
+            Where = where
         };
 
-        SqlQuery query = generator.Delete<JoinRightTable>(deleteBuilder);
+        SqlQuery query = generator.Delete(deleteBuilder);
 
-        Assert.Equal("DELETE FROM  \"Left\" USING \"Right\" INNER JOIN \"Right\" ON (\"Left\".\"RightId\" = \"Right\".\"Id\") WHERE (\"Right\".\"Id\" = $1)", query.QueryText);
+        Assert.Equal("DELETE USING \"Right\" WHERE (\"Right\".\"Id\" = $1)", query.QueryText);
+        Assert.Equal(CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 3);
+    }
+
+    [Fact]
+    public void DeleteBuilder_WithUsingsJoinsAndWhere_RendersExpectedSql()
+    {
+        Predicates where = new ColumnValue<JoinRightTable>(nameof(JoinRightTable.Id), 3);
+
+        Predicates joinOn = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
+        Joins<JoinRightTable> joins = new InnerJoin<JoinLastTable>(joinOn);
+
+        DeleteBuilder<JoinLeftTable, JoinRightTable> deleteBuilder = new()
+        {
+            Usings = [TableTag.Get<JoinRightTable>()],
+            Joins = joins,
+            Where = where
+        };
+
+        SqlQuery query = generator.Delete(deleteBuilder);
+
+        Assert.Equal("DELETE FROM  \"Left\" USING \"Right\" INNER JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\") WHERE (\"Right\".\"Id\" = $1)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", 3);

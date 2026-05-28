@@ -206,7 +206,7 @@ public abstract partial class SqlGeneratorBase<T>
                     ))
             );
 
-            return BaseUpdate(valuesEntity, columns, null, or);
+            return BaseUpdate(valuesEntity, columns, null, null, or);
         }
     }
 
@@ -221,12 +221,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// Optional column selection. When provided, only these columns are updated; when
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
+    /// <param name="from"></param>
     /// <param name="joins">
     /// Optional <see cref="Joins"/> describing tables to join for the update.
-    /// </param>
-    /// <param name="predicates">
-    /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
-    /// determines which rows to update.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
@@ -300,16 +297,21 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollection<T>? columns, Joins<T>? joins, Predicates? predicates)
+    /// <param name="predicates">
+    /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
+    /// determines which rows to update.
+    /// </param>
+    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollection<T>? columns, IEnumerable<TableTag>? from, JoinsBase? joins, Predicates? predicates)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
         IEnumerable<ColumnInfo> updateTheseColumns =
             [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys)];
 
-        IEnumerable<TableTag> selectTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+        IEnumerable<TableTag> selectTableTags = (from ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
+        bool useFullyQualifiedSets = Dialect.DoesUpdateSupportsFullyQualifiedSets() && joins.IsNotNullOrEmpty();
 
         if (invalidTags.Any())
         {
@@ -321,15 +323,27 @@ public abstract partial class SqlGeneratorBase<T>
             yield return new SqlFragmentText("UPDATE ");
             yield return Table;
             yield return new SqlFragmentText(" SET ");
-            foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, joins.IsNotNullOrEmpty()))
+            foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, useFullyQualifiedSets))
                 yield return fragment;
-            if(joins.IsNotNullOrEmpty())
+
+            if (from.IsNotNullOrEmpty())
+            {
+                yield return new SqlFragmentText(" FROM ");
+                foreach (ISqlFragment fragment in from.JoinFragments(", "))
+                    yield return fragment;
+            }
+            else if (joins.IsNotNullOrEmpty())
             {
                 yield return new SqlFragmentText(" FROM ");
                 yield return Table;
+            }
+
+            if (joins.IsNotNullOrEmpty())
+            {
                 foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
                     yield return fragment;
             }
+
             if(predicates is not null)
             {
                 yield return new SqlFragmentText($" WHERE ");

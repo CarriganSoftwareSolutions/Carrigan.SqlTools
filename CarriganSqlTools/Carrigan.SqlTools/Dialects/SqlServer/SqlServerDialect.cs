@@ -290,4 +290,13 @@ public class SqlServerDialect : ISqlDialects
         else
             return new SqlFragmentText("COLLATE SQL_Latin1_General_CP1_CI_AS LIKE");
     }
+
+    /// <summary>
+    /// Indicates whether the SQL Server dialect supports fully qualified set operations in UPDATE statements.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> since SQL Server supports fully qualified set operations in UPDATE statements./>.
+    /// </returns>
+    public bool DoesUpdateSupportsFullyQualifiedSets() =>
+        true;
 }

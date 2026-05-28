@@ -256,4 +256,13 @@ public class PostgreSqlDialect : ISqlDialects
         else
             return new SqlFragmentText("ILIKE");
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>
+    /// <c>false</c>, as PostgreSQL does not support fully qualified sets in UPDATE statements.
+    /// </returns>
+    public bool DoesUpdateSupportsFullyQualifiedSets() =>
+        false;
 }

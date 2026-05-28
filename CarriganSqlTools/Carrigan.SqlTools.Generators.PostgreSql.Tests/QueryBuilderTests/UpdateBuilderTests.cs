@@ -30,12 +30,12 @@ public class UpdateBuilderTests
             Values = values,
             UpdateColumns = new ColumnCollection<JoinLeftTable>(nameof(JoinLeftTable.Col1), nameof(JoinLeftTable.Col2)),
             Joins = joins,
-            Predicates = predicateId
+            Where = predicateId
         };
 
         SqlQuery query = generator.Update(updateBuilder);
 
-        Assert.Equal("UPDATE \"Left\" SET \"Left\".\"Col1\" = $1, \"Left\".\"Col2\" = $2 FROM \"Left\" INNER JOIN \"Right\" ON (\"Left\".\"RightId\" = \"Right\".\"Id\") WHERE (\"Right\".\"Id\" = $3)", query.QueryText);
+        Assert.Equal("UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Left\" INNER JOIN \"Right\" ON (\"Left\".\"RightId\" = \"Right\".\"Id\") WHERE (\"Right\".\"Id\" = $3)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 3);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hello");

@@ -30,7 +30,7 @@ public class UpdateBuilderTests
             Values = values,
             UpdateColumns = new ColumnCollection<JoinLeftTable>(nameof(JoinLeftTable.Col1), nameof(JoinLeftTable.Col2)),
             Joins = joins,
-            Predicates = predicateId
+            Where = predicateId
         };
 
         SqlQuery query = generator.Update(updateBuilder);

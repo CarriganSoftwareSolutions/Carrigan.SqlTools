@@ -239,8 +239,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     public SqlQuery Update(T entity, ColumnCollection<T>? columns, Joins<T>? joins, Predicates? predicates) =>
-        base.BaseUpdate(entity, columns, joins, predicates);
+        base.BaseUpdate(entity, columns, null, joins, predicates);
 
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>
-        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.Joins, updateQuery.Predicates);
+        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.Joins, updateQuery.Where);
 }

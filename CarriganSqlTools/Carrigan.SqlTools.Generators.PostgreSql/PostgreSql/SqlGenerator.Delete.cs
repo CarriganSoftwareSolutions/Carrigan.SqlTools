@@ -179,16 +179,21 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete<usingT>(IEnumerable<TableTag>? usings, Joins<usingT>? joins, Predicates? predicates)  where usingT : class
+    public SqlQuery Delete<usingsT>(IEnumerable<TableTag>? usings, Joins<usingsT>? joins, Predicates? predicates) where usingsT : class
     {
-        TableTag usingShouldContain = TableTag.Get<usingT>();
-        //if (joins.IsNotNullOrEmpty())
-        //    if(usings.DoesNotContain(usingShouldContain))
-        //        throw new InvalidTableException(usingShouldContain);
-
-        return base.BaseDelete(usings?? [usingShouldContain], joins, predicates);
+        if (joins.IsNotNullOrEmpty())
+        {
+            TableTag usingShouldContain = joins.TableTags.First();
+            usings ??= [usingShouldContain];
+            if (usings.DoesNotContain(usingShouldContain))
+                throw new InvalidTableException(usingShouldContain);
+        }
+        return base.BaseDelete(usings, joins, predicates);
     }
 
-    public SqlQuery Delete<usingT>(DeleteBuilder<T> deleteQuery) where usingT : class =>
+    public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery)  where usingsT : class =>
+        Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
+
+    public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
 }

@@ -1,5 +1,11 @@
-﻿namespace Carrigan.SqlTools.PostgreSql;
+﻿using Carrigan.SqlTools.SqlGenerators;
 
-public sealed record SelectBuilder<T> : QueryBuilders.SelectBuilderBase<T> where T : class
+namespace Carrigan.SqlTools.PostgreSql;
+
+public sealed record SelectBuilder<T> : QueryBuilders.SelectBuilderBase<T>, IQueryBuilder where T : class
 {
+    private readonly SqlGenerator<T> SqlGenerator = new();
+
+    public SqlQuery AsSqlQuery() =>
+        SqlGenerator.Select(this);
 }

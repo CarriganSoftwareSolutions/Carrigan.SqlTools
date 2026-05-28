@@ -1,14 +1,16 @@
-﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
+﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, , SqlServer
 
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
-using Microsoft.Data.SqlClient;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
+using Npgsql;
+using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 
 public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 {
@@ -22,7 +24,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
     #region get no tests
     private async Task<IEnumerable<Customer>> GetAllCustomersNoTest()
     {
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         //Validate DB initial state
         SelectBuilder<Customer> selectAllBuilder = new() { };
         return await CommandsAsync.ExecuteReaderAsync<Customer>(selectAllBuilder, null, connection);
@@ -30,14 +32,14 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
     private async Task<IEnumerable<Customer>> GetCustomerByIdNoTest(int id)
     {
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         SqlQuery sqlQuery = CustomerSqlGenerator.SelectById(new Customer() { Id = id });
         return await CommandsAsync.ExecuteReaderAsync<Customer>(sqlQuery, null, connection);
     }
 
     private async Task<IEnumerable<Customer>> GetCustomerByNotIdNoTest(int id)
     {
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         Predicates where = new NotEqual(new Column<Customer>(nameof(Customer.Id)), new Parameter("Id", id));
         SqlQuery sqlQuery = CustomerSqlGenerator.Select(new SelectBuilder<Customer>() { Where = where });
         return await CommandsAsync.ExecuteReaderAsync<Customer>(sqlQuery, null, connection);
@@ -45,7 +47,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
     private async Task<IEnumerable<Customer>> GetAllFemaleCustomersNoTest()
     {
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         Predicates where = new ColumnValue<Customer>(nameof(Customer.Gender), 'F');
         //Validate DB initial state
         SelectBuilder<Customer> selectAllBuilder = new() { Where = where };
@@ -54,7 +56,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
     private async Task<IEnumerable<Customer>> GetAllMaleCustomersNoTest()
     {
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         Predicates where = new ColumnValue<Customer>(nameof(Customer.Gender), 'M');
         //Validate DB initial state
         SelectBuilder<Customer> selectAllBuilder = new() { Where = where };
@@ -156,7 +158,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
         //update targets
         customer.FirstName = "Jane";
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         SqlQuery updateQuery = CustomerSqlGenerator.UpdateById(customer);
         int count = await CommandsAsync.ExecuteNonQueryAsync(updateQuery, null, connection);
         Assert.Equal(1, count);
@@ -174,7 +176,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         IEnumerable<Customer> femaleCustomers = await GetAllFemaleCustomersPretest();
 
         Customer values = new() { FirstName = "Jane", LastName = "Doe" };
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         SqlQuery updateQuery = CustomerSqlGenerator.UpdateByIds(values, new(nameof(Customer.FirstName)), femaleCustomers);
         int count  = await CommandsAsync.ExecuteNonQueryAsync(updateQuery, null, connection);
         Assert.Equal(12, count);
@@ -189,7 +191,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         await _fixture.ResetAsync();
         _ = GetAllCustomersPretest();
 
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         Customer values = new() { FirstName = "Jane" };
         UpdateBuilder<Customer> updateBuilder = new()
         {
@@ -205,13 +207,13 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
     }
 
     [Fact]
-    public async Task JoinOnSubquery()
+    public async Task UpdateFrom()
     {
         await _fixture.ResetAsync();
 
         _ = await GetAllCustomersPretest();        
         
-        using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new (nameof(Customer.Id), nameof(Order.CustomerId));
         ColumnValue<Customer> customerThe = new (nameof(Customer.Id), 3);
 
@@ -229,13 +231,16 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         UpdateBuilder<Customer> updateBuilder = new()
         {
             Values = values,
+            From = [TableTag.Get<Order>()],
             UpdateColumns = new(nameof(Customer.FirstName)),
-            Where = new ColumnValue<Order>(nameof(Order.CustomerId), 3),
-            Joins = joinOrderOn
+            Where = new And
+            (
+                columnEqualsColumn,
+                new ColumnValue<Order>(nameof(Order.CustomerId), 3)
+            )
         };
 
         int count = await CommandsAsync.ExecuteNonQueryAsync(updateBuilder, null, connection);
-        //int count = (int)(await CommandsAsync.ExecuteScalarAsync(updateQuery, null, connection) ?? throw new NullReferenceException());
         Assert.Equal(1, count);
 
         //post update unit tests
@@ -243,6 +248,53 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         _ = await GetCustomerByNotIdPostTest(3);
 
     }
+
+    [Fact]
+    public async Task UpdateFromJoin()
+    {
+        await _fixture.ResetAsync();
+
+        _ = await GetAllCustomersPretest();
+
+        using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
+        ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
+        ColumnValue<Customer> customerThe = new(nameof(Customer.Id), 3);
+
+        Join<Order> joinOrderOn = new(columnEqualsColumn);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = joinOrderOn,
+            Where = customerThe
+        };
+        IEnumerable<Customer> targetRecords = await CommandsAsync.ExecuteReaderAsync<Customer>(selectBuilder, null, connection);
+        Assert.Equal(3, targetRecords.Count());
+        CustomerDataSet.ValidateByIndexRange(targetRecords, 0, 2, 3);
+
+        ColumnEqualsColumn<Order, Address> orderAddressPredicate = new(nameof(Order.AddressId), nameof(Address.Id));
+        Join<Address> joinAddress = new(orderAddressPredicate);
+        ColumnValue<Address> addressId = new("Id", 6);
+        Customer values = new() { FirstName = "Jane" };
+        UpdateBuilder<Customer, Order> updateBuilder = new()
+        {
+            Values = values,
+            From = [TableTag.Get<Order>()],
+            UpdateColumns = new(nameof(Customer.FirstName)),
+            Where = new And (columnEqualsColumn, addressId),
+            Joins = joinAddress
+        };
+
+        SqlQuery sqlQuery = CustomerSqlGenerator.Update(updateBuilder);
+
+        int count = await CommandsAsync.ExecuteNonQueryAsync(updateBuilder, null, connection);
+        Assert.Equal(1, count);
+
+        //post update unit tests
+        _ = await GetCustomerByIdPostTest(3);
+        _ = await GetCustomerByNotIdPostTest(3);
+
+    }
+
+
     static void ValidateRename(Customer actual, int? expectedId)
     {
         //obligatory null handling

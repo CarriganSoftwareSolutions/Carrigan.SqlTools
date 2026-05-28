@@ -166,12 +166,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional column selection. When provided, only these columns are updated; when
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
+    /// <param name="from"></param>
     /// <param name="joins">
     /// Optional <see cref="Joins"/> describing tables to join for the update.
-    /// </param>
-    /// <param name="predicates">
-    /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
-    /// determines which rows to update.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
@@ -245,9 +242,25 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, ColumnCollection<T>? columns, Joins<T>? joins, Predicates? predicates) =>
-        base.BaseUpdate(entity, columns, joins, predicates);
+    /// <param name="predicates">
+    /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
+    /// determines which rows to update.
+    /// </param>
+    public SqlQuery Update<joinsT>(T entity, ColumnCollection<T>? columns, IEnumerable<TableTag>? from, Joins<joinsT>? joins, Predicates? predicates) where joinsT : class
+    {
+        if (joins.IsNotNullOrEmpty())
+        {
+            TableTag fromShouldContain = joins.TableTags.First();
+            from ??= [fromShouldContain];
+            if (from.DoesNotContain(fromShouldContain))
+                throw new InvalidTableException(fromShouldContain);
+        }
+        return base.BaseUpdate(entity, columns, from, joins, predicates);
+    }
+
+    public SqlQuery Update<joinsT>(UpdateBuilder<T, joinsT> updateQuery) where joinsT : class =>
+        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
 
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>
-        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.Joins, updateQuery.Predicates);
+        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
 }

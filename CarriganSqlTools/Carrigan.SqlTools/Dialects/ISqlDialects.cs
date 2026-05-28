@@ -124,4 +124,12 @@ public interface ISqlDialects
     /// </param>
     /// <returns>A <see cref="ISqlFragment"/> representing the LIKE operation in the SQL dialect.</returns>
     ISqlFragment GetDialectLike(bool? isCaseSensitive = null);
+
+    /// <summary>
+    /// Indicates whether the SQL dialect supports fully qualified sets in UPDATE statements.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the SQL dialect supports fully qualified sets in UPDATE statements; otherwise, <see langword="false"/>.
+    /// </returns>
+    public bool DoesUpdateSupportsFullyQualifiedSets();
 }

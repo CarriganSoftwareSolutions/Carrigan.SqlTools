@@ -200,7 +200,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
     internal override IEnumerable<TableTag> TableTags =>
-        ValidatedJoints.Select(static join => join.TableTag).Append(TableTag);
+        ValidatedJoints.Select(static join => join.TableTag).Prepend(TableTag);
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
