@@ -9,10 +9,9 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderColumn_WithTable_ReturnsTableQualifiedColumnName()
     {
-        SqlServerDialect dialect = new();
         TableTag tableTag = new("dbo", "Customer");
 
-        string actual = dialect.RenderColumn(tableTag, new ColumnName("Name"));
+        string actual = Dialect.RenderColumn(tableTag, new ColumnName("Name"));
 
         Assert.Equal("[dbo].[Customer].[Name]", actual);
     }
@@ -20,10 +19,9 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderColumn_WithoutTable_ReturnsColumnNameOnly()
     {
-        SqlServerDialect dialect = new();
         TableTag tableTag = new("dbo", "Customer");
 
-        string actual = dialect.RenderColumn(tableTag, new ColumnName("Name"), false);
+        string actual = Dialect.RenderColumn(tableTag, new ColumnName("Name"), false);
 
         Assert.Equal("[Name]", actual);
     }

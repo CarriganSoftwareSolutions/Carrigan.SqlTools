@@ -10,9 +10,7 @@ public partial class SqlServerDialectTests
     [InlineData("Customer Name", "[Customer Name]")]
     public void QuoteIdentifier_ReturnsBracketedIdentifier(string identifier, string expected)
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.QuoteIdentifier(identifier);
+        string actual = Dialect.QuoteIdentifier(identifier);
 
         Assert.Equal(expected, actual);
     }

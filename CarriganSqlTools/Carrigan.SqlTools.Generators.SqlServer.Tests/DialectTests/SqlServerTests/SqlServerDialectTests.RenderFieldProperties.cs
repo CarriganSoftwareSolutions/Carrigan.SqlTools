@@ -8,9 +8,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsEmptyString_WhenProviderTypeNameIsNull()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties());
+        string actual = Dialect.RenderFieldProperties(new FieldProperties());
 
         Assert.Equal(string.Empty, actual);
     }
@@ -18,9 +16,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsEmptyString_WhenProviderTypeNameIsWhitespace()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties { ProviderTypeName = "   " });
+        string actual = Dialect.RenderFieldProperties(new FieldProperties { ProviderTypeName = "   " });
 
         Assert.Equal(string.Empty, actual);
     }
@@ -31,9 +27,7 @@ public partial class SqlServerDialectTests
     [InlineData("bigint", false, "BIGINT NOT NULL")]
     public void RenderFieldProperties_ReturnsExpectedNullabilityDeclaration(string providerTypeName, bool isNullable, string expected)
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = providerTypeName,
             IsNullable = isNullable
@@ -51,9 +45,7 @@ public partial class SqlServerDialectTests
     [InlineData("VARBINARY", 256, "VARBINARY(256) NOT NULL")]
     public void RenderFieldProperties_ReturnsLengthDeclaration_ForLengthBasedTypes(string providerTypeName, int length, string expected)
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = providerTypeName,
             Length = length
@@ -65,9 +57,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsMaxDeclaration_WhenIsMaxIsTrue()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = "NVARCHAR",
             IsMax = true
@@ -79,9 +69,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsPrecisionAndScaleDeclaration_WhenBothAreSpecified()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = "DECIMAL",
             Precision = 18,
@@ -94,9 +82,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsPrecisionDeclaration_WhenOnlyPrecisionIsSpecified()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = "FLOAT",
             Precision = 24
@@ -108,9 +94,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsFractionalSecondsPrecisionDeclaration()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = "DATETIME2",
             FractionalSecondsPrecision = 7
@@ -122,9 +106,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsVectorLengthDeclaration_WhenBaseTypeIsMissing()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = "VECTOR",
             Length = 3
@@ -136,9 +118,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderFieldProperties_ReturnsVectorLengthAndBaseTypeDeclaration_WhenBaseTypeIsSpecified()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderFieldProperties(new FieldProperties
+        string actual = Dialect.RenderFieldProperties(new FieldProperties
         {
             ProviderTypeName = "VECTOR",
             Length = 3,

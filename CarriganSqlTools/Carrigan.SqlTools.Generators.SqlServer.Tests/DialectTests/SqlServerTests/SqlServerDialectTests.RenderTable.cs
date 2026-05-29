@@ -8,9 +8,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderTable_WithSchema_ReturnsSchemaQualifiedTableName()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderTable(new SchemaName("dbo"), new TableName("Customer"));
+        string actual = Dialect.RenderTable(new SchemaName("dbo"), new TableName("Customer"));
 
         Assert.Equal("[dbo].[Customer]", actual);
     }
@@ -18,9 +16,7 @@ public partial class SqlServerDialectTests
     [Fact]
     public void RenderTable_WithoutSchema_ReturnsTableNameOnly()
     {
-        SqlServerDialect dialect = new();
-
-        string actual = dialect.RenderTable(null, new TableName("Customer"));
+        string actual = Dialect.RenderTable(null, new TableName("Customer"));
 
         Assert.Equal("[Customer]", actual);
     }
