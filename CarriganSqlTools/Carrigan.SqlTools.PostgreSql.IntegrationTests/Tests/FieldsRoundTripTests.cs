@@ -8,7 +8,6 @@ using Npgsql;
 using Carrigan.SqlTools.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
-//TODO: We still have some edge case around datetimes with/without timezones to address with a more detailed datetime test class.
 public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
 {
     private readonly FieldsFixture _fixture;
