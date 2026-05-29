@@ -123,10 +123,10 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                     DateOnlyNullableValue = null,
                     TimeOnlyValue = new TimeOnly(13, 14, 15, 123),
                     TimeOnlyNullableValue = null,
-                    DateTimeValue = new DateTime(2025, 01, 02, 03, 04, 05, 0, DateTimeKind.Unspecified), //Note: not testing milliseconds because of precision errors
+                    DateTimeValue = new DateTime(2025, 01, 02, 03, 04, 05, 0, DateTimeKind.Utc), //Note: not testing milliseconds because of precision errors
                     DateTimeNullableValue = null,
 
-                    DateTimeOffsetValue = new DateTimeOffset(1969, 7, 20, 20, 17, 0, TimeSpan.Zero),
+                    DateTimeOffsetValue = new DateTimeOffset(1969, 7, 20, 16, 17, 0, new TimeSpan(-4, 0, 0)),
                     DateTimeOffsetNullableValue = null,
 
                     BytesValue = [ 0x01, 0x02, 0x03 ],

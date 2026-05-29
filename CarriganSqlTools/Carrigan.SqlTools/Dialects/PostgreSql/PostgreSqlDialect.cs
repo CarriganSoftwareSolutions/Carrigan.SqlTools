@@ -265,4 +265,42 @@ public class PostgreSqlDialect : ISqlDialects
     /// </returns>
     public bool DoesUpdateSupportsFullyQualifiedSets() =>
         false;
+
+    /// <summary>
+    /// Normalizes a <see cref="DateTimeOffset"/> value to UTC by converting it to Universal Time.
+    /// </summary>
+    /// <param name="dateTimeOffset">
+    /// The <see cref="DateTimeOffset"/> value to normalize. If null, the method returns null.
+    /// </param>
+    /// <returns>
+    /// A normalized <see cref="DateTimeOffset"/> value in UTC, or null if the input was null.
+    /// </returns>
+    public DateTimeOffset? NormalizeTimeZone(DateTimeOffset? dateTimeOffset) =>
+        dateTimeOffset?.ToUniversalTime();
+
+    /// <summary>
+    /// Normalizes a <see cref="DateTime"/> value by converting it to UTC if its Kind is Local or Utc, and then removing
+    /// the Kind information to set it to Unspecified.
+    /// Local       -> converts to UTC time, then removes Kind
+    /// Utc         -> keeps the same clock value, then removes Kind
+    /// Unspecified -> leaves the clock value alone
+    /// </summary>
+    /// <param name="dateTime">
+    /// The <see cref="DateTime"/> value to normalize. If null, the method returns null.
+    /// </param>
+    /// <returns>
+    /// A normalized <see cref="DateTime"/> value with Kind set to Unspecified, or null if the input was null.
+    /// The clock value is adjusted based on the original Kind as follows
+    /// Local       -> converts to UTC time, then removes Kind
+    /// Utc         -> keeps the same clock value, then removes Kind
+    /// Unspecified -> leaves the clock value alone
+    /// </returns>
+    public DateTime? NormalizeTimeZone(DateTime? dateTime) =>
+        dateTime is null
+            ? null
+            : DateTime.SpecifyKind(
+                dateTime.Value.Kind == DateTimeKind.Unspecified
+                    ? dateTime.Value
+                    : dateTime.Value.ToUniversalTime(),
+                DateTimeKind.Unspecified);
 }

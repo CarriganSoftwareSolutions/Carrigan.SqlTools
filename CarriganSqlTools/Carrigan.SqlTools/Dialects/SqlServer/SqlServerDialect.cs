@@ -299,4 +299,32 @@ public class SqlServerDialect : ISqlDialects
     /// </returns>
     public bool DoesUpdateSupportsFullyQualifiedSets() =>
         true;
+
+    /// <summary>
+    /// Normalizes a <see cref="DateTimeOffset"/> value. For use with SQL Server this doesn't do anything. 
+    /// </summary>
+    /// <param name="dateTimeOffset">
+    /// The <see cref="DateTimeOffset"/> value to normalize.
+    /// This method is provided to allow for any necessary adjustments to the value before it is used in SQL Server operations, 
+    /// such as ensuring it is in a specific time zone or format. For SQL Server, no adjustments are necessary, 
+    /// so the original value is returned unchanged.
+    /// </param>
+    /// <returns>
+    /// The original <see cref="DateTimeOffset"/> value passed as an argument, without any modifications or adjustments.
+    /// </returns>
+    public DateTimeOffset? NormalizeTimeZone(DateTimeOffset? dateTimeOffset) =>
+        dateTimeOffset;
+
+    /// <summary>
+    /// Normalizes a <see cref="DateTime"/> value. For use with SQL Server this doesn't do anything.
+    /// </summary>
+    /// <param name="dateTime">
+    /// The <see cref="DateTime"/> value to normalize. This method is provided to allow for any necessary adjustments to the value
+    /// before it is used in SQL Server operations, such as ensuring it is in a specific time zone or format. 
+    /// For SQL Server, no adjustments are necessary.
+    /// </param>
+    /// <returns></returns>
+
+    public DateTime? NormalizeTimeZone(DateTime? dateTime) =>
+        dateTime;
 }

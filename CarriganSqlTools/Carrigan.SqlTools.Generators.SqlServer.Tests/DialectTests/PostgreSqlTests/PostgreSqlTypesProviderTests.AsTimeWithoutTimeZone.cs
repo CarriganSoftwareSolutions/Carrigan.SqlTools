@@ -2,6 +2,7 @@ using Carrigan.SqlTools.Dialects.PostgreSql;
 using Carrigan.SqlTools.Types;
 using System;
 
+//TODO: Move postge tests to the new postgre unit tests project.
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.PostgreSqlTests;
 
 public partial class PostgreSqlTypesProviderTests

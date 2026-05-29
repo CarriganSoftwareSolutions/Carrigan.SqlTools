@@ -2,7 +2,6 @@
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 
@@ -132,4 +131,29 @@ public interface ISqlDialects
     /// <see langword="true"/> if the SQL dialect supports fully qualified sets in UPDATE statements; otherwise, <see langword="false"/>.
     /// </returns>
     public bool DoesUpdateSupportsFullyQualifiedSets();
+
+    /// <summary>
+    /// Normalizes a <see cref="DateTimeOffset"/> value to the appropriate time zone for the SQL dialect, if necessary.
+    /// </summary>
+    /// <param name="dateTimeOffset">
+    /// The <see cref="DateTimeOffset"/> value to normalize. This may involve converting the value to a specific time zone or adjusting it 
+    /// according to the rules of the SQL dialect. If the dialect does not require normalization, the original value is returned unchanged.
+    /// </param>
+    /// <returns></returns>
+    public DateTimeOffset? NormalizeTimeZone(DateTimeOffset? dateTimeOffset);
+
+    /// <summary>
+    /// Normalizes a <see cref="DateTime"/> value to the appropriate time zone for the SQL dialect, if necessary. This may involve converting 
+    /// the value to a specific time zone or adjusting it according to the rules of the SQL dialect. If the dialect does not require normalization, 
+    /// the original value is returned unchanged.
+    /// </summary>
+    /// <param name="dateTime">
+    /// The <see cref="DateTime"/> value to normalize. This may involve converting the value to a specific time zone or adjusting it according to
+    /// the rules of the SQL dialect.
+    /// </param>
+    /// <returns>
+    /// The normalized <see cref="DateTime"/> value suitable for database operations according to the SQL dialect's time zone handling rules. 
+    /// If the dialect does not require normalization, the original value is returned unchanged.
+    /// </returns>
+    public DateTime? NormalizeTimeZone(DateTime? dateTime);
 }
