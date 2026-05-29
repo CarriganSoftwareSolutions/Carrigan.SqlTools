@@ -84,7 +84,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectEqual()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
-        Parameter value = new("YearPublished", 1865);
+        Parameter value = new(1865, "YearPublished");
         Predicates predicates = new Equal(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -99,7 +99,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectGreaterThan()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
-        Parameter value = new("YearPublished", 1865);
+        Parameter value = new(1865, "YearPublished");
         Predicates predicates = new GreaterThan(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -119,7 +119,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectGreaterThanEqual()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
-        Parameter value = new("YearPublished", 1865);
+        Parameter value = new(1865, "YearPublished");
         Predicates predicates = new GreaterThanEqual(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -173,7 +173,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectLessThan()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
-        Parameter value = new("YearPublished", 1851);
+        Parameter value = new(1851, "YearPublished");
         Predicates predicates = new LessThan(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -190,7 +190,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectLessThanEqual()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
-        Parameter value = new("YearPublished", 1851);
+        Parameter value = new(1851, "YearPublished");
         Predicates predicates = new LessThanEqual(year, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -208,7 +208,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectLike()
     {
         Column<Book> title = new(nameof(Book.Title));
-        Parameter value = new("Title", "%oF%");
+        Parameter value = new("%oF%", "Title");
         Predicates predicates = new Like(title, value);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -226,7 +226,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectLikeCaseSensitive_Match()
     {
         Column<Book> title = new(nameof(Book.Title));
-        Parameter value = new("Title", "%of%");
+        Parameter value = new("%of%", "Title");
         Predicates predicates = new Like(title, value, true);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -244,7 +244,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectLikeCaseInsensitive_Match()
     {
         Column<Book> title = new(nameof(Book.Title));
-        Parameter value = new("Title", "%oF%");
+        Parameter value = new("%oF%", "Title");
         Predicates predicates = new Like(title, value, false);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -262,7 +262,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectLikeCaseSensitive_Miss()
     {
         Column<Book> title = new(nameof(Book.Title));
-        Parameter value = new("Title", "%oF%");
+        Parameter value = new("%oF%", "Title");
         Predicates predicates = new Like(title, value, true);
 
         SqlQuery query = BookSqlGenerator.Select(null, null, null, null, predicates, null, null);
@@ -276,7 +276,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectNotLessThan()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
-        Parameter value = new("YearPublished", 1897);
+        Parameter value = new(1897, "YearPublished");
         Predicates predicates = new Not(new LessThan(year, value));
 
 
@@ -293,7 +293,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectNotEqual()
     {
         Column<Book> year = new(nameof(Book.YearPublished));
-        Parameter value = new("YearPublished", 1897);
+        Parameter value = new(1897, "YearPublished");
         Predicates predicates = new NotEqual(year, value);
 
 
@@ -338,8 +338,8 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectXOr()
     {
         Column<Book> id = new(nameof(Book.Id));
-        Parameter value1 = new("valueOne", 5);
-        Parameter value2 = new("valueTwo", 3);
+        Parameter value1 = new(5, "valueOne");
+        Parameter value2 = new(3, "valueTwo");
         Xor xor = new(value1, value2);
         Equal equal = new(id, xor);
 
@@ -357,7 +357,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
         JoinBase join = new Join<BookStats>(joinPredicate);
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
-        Parameter ratingParameter = new("Rating", 4.6m);
+        Parameter ratingParameter = new(4.6m, "Rating");
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
         SqlQuery query = BookSqlGenerator.Select(null, null, null, join, wherePredicate, null, null);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
@@ -375,7 +375,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
         JoinBase join = new Join<BookStats>(joinPredicate);
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
-        Parameter ratingParameter = new("Rating", 4.5m);
+        Parameter ratingParameter = new(4.5m, "Rating");
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
         OrderBys orderBy = new (new OrderBy<BookStats>(nameof(BookStats.AverageReview)), new OrderBy<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
         SqlQuery query = BookSqlGenerator.Select(null, null, null, join, wherePredicate, orderBy, null);
@@ -396,7 +396,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
         JoinBase join = new Join<BookStats>(joinPredicate);
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
-        Parameter ratingParameter = new("Rating", 4.3m);
+        Parameter ratingParameter = new(4.3m, "Rating");
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
         OrderBys orderBy = new (new OrderBy<BookStats>(nameof(BookStats.AverageReview)), new OrderBy<Book>(nameof(Book.YearPublished), SortDirectionEnum.Descending));
         PagingBase paging = new DefinePage(2, 3);
@@ -417,7 +417,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         JoinBase join = new Join<BookStats>(joinPredicate);
 
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
-        Parameter ratingParameter = new("Rating", 4.3m);
+        Parameter ratingParameter = new(4.3m, "Rating");
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
 
         OrderBys orderBy = new

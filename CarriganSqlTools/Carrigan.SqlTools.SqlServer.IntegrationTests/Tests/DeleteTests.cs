@@ -365,7 +365,7 @@ public class DeleteTests : IClassFixture<DeleteFixture>
         GreaterThan greaterThan = new
         (
             new Column<OrderedItem>(nameof(OrderedItem.Price)),
-            new Parameter("Thirteen", 13m)
+            new Parameter(13m, "Thirteen")
         );
         Joins<OrderedItem> joins = new Joins<OrderedItem>(new Join<Order>(orderOrderedItemPredicate))
             .Append(new Join<Customer>(customerOrderPredicate));

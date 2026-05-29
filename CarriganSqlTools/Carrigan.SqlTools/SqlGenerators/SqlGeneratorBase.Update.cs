@@ -201,7 +201,7 @@ public abstract partial class SqlGeneratorBase<T>
                         KeyColumnInfo.Select(column => new Equal
                             (
                                 new Column<T>(column.PropertyName),
-                                new Parameter(column.ParameterTag, column.PropertyInfo.GetValue(entity)))
+                                new Parameter(column.PropertyInfo.GetValue(entity), column.ParameterTag))
                             )
                     ))
             );

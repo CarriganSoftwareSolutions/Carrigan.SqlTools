@@ -77,15 +77,6 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
         if (invalidColumns.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
 
-        ColumnInfo
-            .Select(static column => new Tuple<PropertyInfo, SqlTypeAttribute?>(column.PropertyInfo, SqlTypeAttribute.GetSqlTypeAttribute(column.PropertyInfo)))
-            .Select(static tuple => SqlTypeMismatchException.Validate(tuple.Item1, tuple.Item2))
-            .ForEach(sqlTypeMismatchException =>
-            {
-                if (sqlTypeMismatchException is not null)
-                    exceptions.Add(sqlTypeMismatchException);
-            });
-
        invalidAliases =
             ColumnInfo
                 .Where(static column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName))
@@ -199,7 +190,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// Useful for selecting a record by primary key.
     /// </returns>
     private static And GetByKeyPredicates(T entity) =>
-        new(KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.ParameterTag, key.PropertyInfo.GetValue(entity)))));
+        new(KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.PropertyInfo.GetValue(entity), key.ParameterTag))));
 
     /// <summary>
     /// Creates a <see cref="Parameter"/> object for the specified column and entity instance. 
@@ -242,7 +233,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             throw new NullReferenceException();
 
         if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
-            return new (column.ParameterTag, _Encryption.Version);
+            return new (column, _Encryption.Version);
         else if (_Encryption is not null && IsEncrypted(column))
             return SqlFragmentParameter.GetEncryptedParameter(_Encryption, column, entity);
         else

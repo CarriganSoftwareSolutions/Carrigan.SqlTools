@@ -1,6 +1,4 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Types;
+﻿using Carrigan.SqlTools.Attributes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 
@@ -11,16 +9,11 @@ public sealed class SqlVarBinaryMaxAttributeTests
     {
         SqlVarBinaryMaxAttribute sqlVarBinaryMaxAttribute = new();
 
-        Assert.NotNull(sqlVarBinaryMaxAttribute);
-        Assert.NotNull(sqlVarBinaryMaxAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlVarBinaryMaxAttribute.SqlTypeDefinition;
-
-        Assert.Equal(SqlDbType.VarBinary, sqlTypeDefinition.Type);
-        Assert.Null(sqlTypeDefinition.Size);
-        Assert.True(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal("VARBINARY(MAX)", sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(
+            sqlVarBinaryMaxAttribute,
+            "VARBINARY",
+            "VARBINARY(MAX)",
+            expectedIsMax: true,
+            expectedIsFixedLength: false);
     }
 }

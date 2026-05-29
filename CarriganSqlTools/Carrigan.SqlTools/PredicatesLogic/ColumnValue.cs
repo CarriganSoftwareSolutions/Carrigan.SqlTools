@@ -81,7 +81,7 @@ public class ColumnValue<T> : Predicates
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
         Column<T> left = new(propertyName);
-        Parameter right = new(left.ColumnInfo.ParameterTag, parameterValue);
+        Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
 
         return new Equal(left, right);
     }

@@ -30,7 +30,7 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
         };
 
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter(3, "Id"));
         InnerJoin<JoinRightTable> join = new(joinId);
         Joins<JoinLeftTable> joins = new(join);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelColumnCollection, joins, predicateId);
@@ -55,7 +55,7 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
 
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter(3, "Id"));
         InnerJoin<JoinRightTable> join1 = new(joinId1);
         LeftJoin<JoinLastTable> join2 = new(joinId2);
         Joins<JoinLeftTable> joins = new(join1, join2);
@@ -83,7 +83,7 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
 
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<Customer>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<Customer>("Id"), new Parameter(3, "Id"));
 
         InnerJoin<JoinRightTable> join1 = new(joinId1);
         LeftJoin<JoinLastTable> join2 = new(joinId2);
@@ -99,7 +99,7 @@ public class SqlGenerator_UpdateJoinsAndPredicatesTests
             Col2 = "World"
         };
 
-        Predicates predicateId = new Equal(new Column<Customer>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<Customer>("Id"), new Parameter(3, "Id"));
 
         Assert.Throws<InvalidTableException>(() => _ = _sqlGeneratorForJoinLeftTable.Update(entity, _leftLabelColumnCollection, null, predicateId));
     }

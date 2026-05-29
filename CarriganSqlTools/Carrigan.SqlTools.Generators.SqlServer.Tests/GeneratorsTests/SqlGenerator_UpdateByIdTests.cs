@@ -364,7 +364,7 @@ public class SqlGenerator_UpdateByIdTests
             NotKey2 = 8
         };
 
-        Predicates predicateId = new Equal(new Column<JoinLeftTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinLeftTable>("Id"), new Parameter(3, "Id"));
         SqlQuery query = _sqlGeneratorCompositeKeyTable.UpdateByIds(entity3, _leftCompositeKeyTable, entity1, entity2);
 
         string expectedSql = "UPDATE [Ck] SET [NotKey1] = @NotKey1_1, [NotKey2] = @NotKey2_2 WHERE " +

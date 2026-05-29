@@ -8,10 +8,10 @@ public partial class SqlServerTypesProviderTests
 {
     [Fact]
     public void AsText_ReturnsText() => 
-        AssertCharacter(SqlServerTypesProvider.AsText(), "TEXT", null, true, false, false);
+        AssertCharacter(SqlServerTypesProvider.AsText(), "TEXT", null, false, false, false);
 
     [Fact]
     public void AsText_ReturnsNullable_WhenNullableTrue() =>
-        AssertCharacter(SqlServerTypesProvider.AsText(true), "TEXT", null, true, false, false, true);
+        AssertCharacter(SqlServerTypesProvider.AsText(true), "TEXT", null, false, false, false, true);
 }
 #pragma warning restore CS0618

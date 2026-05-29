@@ -1,10 +1,9 @@
 ﻿//IGNORE SPELLING: bigint, char, datetime, datetime2, datetimeoffset, hierarchyid, int, json, nchar, ntext, nvarchar, rowversion,
 //IGNORE SPELLING: smalldatetime,smallint, smallmoney, sql_variant, tinyint, uniqueidentifier, varbinary, varchar, xml, nullability
 
-using System;
+using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;
-using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Dialects.SqlServer;
 
@@ -394,7 +393,7 @@ public static class SqlServerTypesProvider
     public static FieldProperties AsText(bool? nullable = null) =>
         Create(
             providerTypeName: "TEXT",
-            isMax: true,
+            isMax: false,
             isUnicode: false,
             isFixedLength: false,
             nullable: nullable);
@@ -406,7 +405,7 @@ public static class SqlServerTypesProvider
     public static FieldProperties AsNText(bool? nullable = null) =>
         Create(
             providerTypeName: "NTEXT",
-            isMax: true,
+            isMax: false,
             isUnicode: true,
             isFixedLength: false,
             nullable: nullable);
@@ -462,7 +461,7 @@ public static class SqlServerTypesProvider
     public static FieldProperties AsImage(bool? nullable = null) =>
         Create(
             providerTypeName: "IMAGE",
-            isMax: true,
+            isMax: false,
             isFixedLength: false,
             nullable: nullable);
 

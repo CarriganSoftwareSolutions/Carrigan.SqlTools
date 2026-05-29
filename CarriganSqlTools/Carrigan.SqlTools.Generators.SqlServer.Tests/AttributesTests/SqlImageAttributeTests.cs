@@ -1,6 +1,4 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Types;
+﻿using Carrigan.SqlTools.Attributes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 
@@ -11,16 +9,11 @@ public sealed class SqlImageAttributeTests
     {
         SqlImageAttribute sqlImageAttribute = new();
 
-        Assert.NotNull(sqlImageAttribute);
-        Assert.NotNull(sqlImageAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlImageAttribute.SqlTypeDefinition;
-
-        Assert.Equal(SqlDbType.Image, sqlTypeDefinition.Type);
-        Assert.Null(sqlTypeDefinition.Size);
-        Assert.False(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal("IMAGE", sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(
+            sqlImageAttribute,
+            "IMAGE",
+            "IMAGE",
+            expectedIsMax: false,
+            expectedIsFixedLength: false);
     }
 }

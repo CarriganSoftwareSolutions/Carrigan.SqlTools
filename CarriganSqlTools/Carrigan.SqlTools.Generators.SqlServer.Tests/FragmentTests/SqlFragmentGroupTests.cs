@@ -31,8 +31,8 @@ public class SqlFragmentGroupTests
     [Fact]
     public void SqlFragmentGroup_GetParameters_ReturnsParametersFromNestedGroups()
     {
-        Parameter parameter1 = new("Name", "Jonathan");
-        Parameter parameter2 = new("Status", "Active");
+        Parameter parameter1 = new("Jonathan", "Name");
+        Parameter parameter2 = new("Active", "Status");
 
         SqlFragmentGroup innerGroup = new(
         [

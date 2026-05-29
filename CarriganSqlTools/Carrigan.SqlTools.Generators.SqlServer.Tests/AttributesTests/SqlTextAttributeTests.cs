@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
@@ -7,23 +6,19 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 public sealed class SqlTextAttributeTests
 {
     [Theory]
-    [InlineData(EncodingEnum.Ascii, SqlDbType.Text, "TEXT")]
-    [InlineData(EncodingEnum.Unicode, SqlDbType.NText, "NTEXT")]
-    public void Constructor_EncodingEnum(EncodingEnum encoding,SqlDbType expectedSqlDbType, string expectedTypeDeclaration)
+    [InlineData(EncodingEnum.Ascii, "TEXT", "TEXT", false)]
+    [InlineData(EncodingEnum.Unicode, "NTEXT", "NTEXT", true)]
+    public void Constructor_EncodingEnum(EncodingEnum encoding, string expectedProviderTypeName, string expectedTypeDeclaration, bool expectedIsUnicode)
     {
         SqlTextAttribute sqlTextAttribute = new(encoding);
 
-        Assert.NotNull(sqlTextAttribute);
-        Assert.NotNull(sqlTextAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlTextAttribute.SqlTypeDefinition;
-
-        Assert.Equal(expectedSqlDbType, sqlTypeDefinition.Type);
-        Assert.Null(sqlTypeDefinition.Size);
-        Assert.False(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal(expectedTypeDeclaration, sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(
+            sqlTextAttribute,
+            expectedProviderTypeName,
+            expectedTypeDeclaration,
+            expectedIsMax: false,
+            expectedIsUnicode: expectedIsUnicode,
+            expectedIsFixedLength: false);
     }
 
     [Fact]

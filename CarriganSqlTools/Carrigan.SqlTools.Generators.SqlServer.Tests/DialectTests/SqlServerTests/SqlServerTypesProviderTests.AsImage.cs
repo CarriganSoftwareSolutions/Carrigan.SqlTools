@@ -8,10 +8,10 @@ public partial class SqlServerTypesProviderTests
 {
     [Fact]
     public void AsImage_ReturnsImage() =>
-        AssertBinary(SqlServerTypesProvider.AsImage(), "IMAGE", null, true, false);
+        AssertBinary(SqlServerTypesProvider.AsImage(), "IMAGE", null, false, false);
 
     [Fact]
     public void AsImage_ReturnsNullable_WhenNullableTrue() => 
-        AssertBinary(SqlServerTypesProvider.AsImage(true), "IMAGE", null, true, false, true);
+        AssertBinary(SqlServerTypesProvider.AsImage(true), "IMAGE", null, false, false, true);
 }
 #pragma warning restore CS0618

@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
@@ -7,26 +6,19 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 public sealed class SqlVarCharMaxAttributeTests
 {
     [Theory]
-    [InlineData(EncodingEnum.Ascii, SqlDbType.VarChar, "VARCHAR(MAX)")]
-    [InlineData(EncodingEnum.Unicode, SqlDbType.NVarChar, "NVARCHAR(MAX)")]
-    public void Constructor_EncodingEnum(
-        EncodingEnum encoding,
-        SqlDbType expectedSqlDbType,
-        string expectedTypeDeclaration)
+    [InlineData(EncodingEnum.Ascii, "VARCHAR", "VARCHAR(MAX)", false)]
+    [InlineData(EncodingEnum.Unicode, "NVARCHAR", "NVARCHAR(MAX)", true)]
+    public void Constructor_EncodingEnum(EncodingEnum encoding, string expectedProviderTypeName, string expectedTypeDeclaration, bool expectedIsUnicode)
     {
         SqlVarCharMaxAttribute sqlVarCharMaxAttribute = new(encoding);
 
-        Assert.NotNull(sqlVarCharMaxAttribute);
-        Assert.NotNull(sqlVarCharMaxAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlVarCharMaxAttribute.SqlTypeDefinition;
-
-        Assert.Equal(expectedSqlDbType, sqlTypeDefinition.Type);
-        Assert.Null(sqlTypeDefinition.Size);
-        Assert.True(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal(expectedTypeDeclaration, sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(
+            sqlVarCharMaxAttribute,
+            expectedProviderTypeName,
+            expectedTypeDeclaration,
+            expectedIsMax: true,
+            expectedIsUnicode: expectedIsUnicode,
+            expectedIsFixedLength: false);
     }
 
     [Fact]

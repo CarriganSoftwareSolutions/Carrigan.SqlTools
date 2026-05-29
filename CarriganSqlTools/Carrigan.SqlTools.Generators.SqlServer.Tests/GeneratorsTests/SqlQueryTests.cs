@@ -26,9 +26,9 @@ public sealed class SqlQueryTests
         List<ISqlFragment> sql =
         [
             new SqlFragmentText("SELECT "),
-            new SqlFragmentParameter(new ParameterTag("@p1"), 1),
+            new SqlFragmentParameter(new ParameterTag("@p1"), null, 1),
             new SqlFragmentText(" "),
-            new SqlFragmentParameter(new ParameterTag("@p1"), 1)
+            new SqlFragmentParameter(new ParameterTag("@p1"), null, 1)
         ];
 
         SqlQuery query = new(Dialect, CommandType.Text, sql);
@@ -42,9 +42,9 @@ public sealed class SqlQueryTests
         List<ISqlFragment> sql =
         [
             new SqlFragmentText("SELECT "),
-            new SqlFragmentParameter(new ParameterTag("@p1"), 1),
+            new SqlFragmentParameter(new ParameterTag("@p1"), null, 1),
             new SqlFragmentText(" "),
-            new SqlFragmentParameter(new ParameterTag("@p2"), 2)
+            new SqlFragmentParameter(new ParameterTag("@p2"), null, 2)
         ];
 
         SqlQuery query = new(Dialect, CommandType.Text, sql);
@@ -61,9 +61,9 @@ public sealed class SqlQueryTests
         List<ISqlFragment> sql =
         [
             new SqlFragmentText("SELECT "),
-            new SqlFragmentParameter(new ParameterTag("@p1"), 1),
+            new SqlFragmentParameter(new ParameterTag("@p1"), null, 1),
             new SqlFragmentText(" "),
-            new SqlFragmentParameter(new ParameterTag("@p2"), 2)
+            new SqlFragmentParameter(new ParameterTag("@p2"), null, 2)
         ];
         SqlQuery query = new(Dialect, CommandType.Text, sql);
 

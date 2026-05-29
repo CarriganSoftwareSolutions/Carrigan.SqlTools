@@ -53,7 +53,7 @@ public class SqlGenerator_SubqueryTests
         Predicates predicate = new Equal
         (
             new Column<Customer>(nameof(Customer.Id)),
-            new Parameter("CustomerId", 42)
+            new Parameter(42, "CustomerId")
         );
 
         Subquery<Customer> subQuery = customerGenerator.Subquery(null, null, null, predicate, null, null);
@@ -70,7 +70,7 @@ public class SqlGenerator_SubqueryTests
         Predicates predicate = new Equal
         (
             new Column<Customer>(nameof(Customer.Id)),
-            new Parameter("CustomerId", 42)
+            new Parameter(42, "CustomerId")
         );
 
         Subquery<Customer> subQuery = customerGenerator.Subquery(null, null, null, predicate, null, null);
@@ -80,7 +80,7 @@ public class SqlGenerator_SubqueryTests
             new SqlFragmentText("SELECT * FROM "),
             subQuery,
             new SqlFragmentText(" AS [Customer] WHERE [Customer].[Name] = "),
-            new SqlFragmentParameter(new Parameter("Name", "Jonathan"))
+            new SqlFragmentParameter(new Parameter("Jonathan", "Name"))
         ];
 
         string sql = fragments.ToSql(Dialect);

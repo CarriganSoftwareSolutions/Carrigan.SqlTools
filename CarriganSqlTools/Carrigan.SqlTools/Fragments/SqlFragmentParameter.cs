@@ -16,32 +16,90 @@ namespace Carrigan.SqlTools.Fragments;
 /// </remarks>
 public class SqlFragmentParameter : ISqlFragment
 {
+    /// <summary>
+    /// Gets the <see cref="ParameterTag"/> associated with this parameter fragment, which serves as a unique identifier for the parameter during SQL 
+    /// generation and materialization.
+    /// </summary>
     public readonly ParameterTag ParameterTag;
+    /// <summary>
+    /// Gets the <see cref="FieldProperties"/> associated with this parameter fragment, which can be used to validate the parameter value before SQL generation
+    /// </summary>
     public readonly FieldProperties? FieldProperties;
+    /// <summary>
+    /// Gets the runtime value associated with this parameter fragment, which will be materialized as a SQL parameter value during query execution. 
+    /// </summary>
     public readonly object? Value;
 
+    /// <summary>
+    /// Creates a new <see cref="SqlFragmentParameter"/> for the specified column and entity, applying encryption if an <see cref="IEncryption"/> instance is provided.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of the entity from which the parameter value will be extracted. This type is used to access the property value via reflection based on the provided <see cref="ColumnInfo"/>.
+    /// </typeparam>
+    /// <param name="encryption">
+    /// An optional <see cref="IEncryption"/> instance used to encrypt the parameter value if encryption is required. If this parameter is <c>null</c>, the value will be used as-is without encryption.
+    /// </param>
+    /// <param name="column">
+    /// The <see cref="ColumnInfo"/> object that contains metadata about the column for which the parameter is being created, including the property information needed to extract the value from the entity and any encryption requirements.
+    /// </param>
+    /// <param name="entity">
+    /// The entity from which to extract the parameter value.
+    /// </param>
+    /// <returns>
+    /// A new <see cref="SqlFragmentParameter"/> instance representing the encrypted parameter.
+    /// </returns>
     internal static SqlFragmentParameter GetEncryptedParameter<T>(IEncryption? encryption, ColumnInfo column, T entity) =>
-        new(column.ParameterTag, encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
+        new(column, encryption?.Encrypt(column.PropertyInfo.GetValue(entity)?.ToString()));
 
+    /// <summary>
+    /// Creates a new <see cref="SqlFragmentParameter"/> for the specified column and entity, extracting the parameter value directly without encryption.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="column">
+    /// The <see cref="ColumnInfo"/> object that contains metadata about the column for which the parameter is being created.
+    /// </param>
+    /// <param name="fieldProperties">
+    /// The <see cref="FieldProperties"/> associated with the parameter, used for validation.
+    /// </param>
+    /// <param name="entity">
+    /// The entity from which to extract the parameter value.
+    /// </param>
+    /// <returns>
+    /// A new <see cref="SqlFragmentParameter"/> instance representing the parameter.
+    /// </returns>
     internal static SqlFragmentParameter GetParameter<T>(ColumnInfo column, FieldProperties fieldProperties, T entity) =>
         new(column, fieldProperties, column.PropertyInfo.GetValue(entity));
 
-    internal SqlFragmentParameter(ParameterTag parameterTag, FieldProperties fieldProperties, object? value)
+    /// <summary>
+    /// Initializes a new instance of <see cref="SqlFragmentParameter"/> using the provided <see cref="ColumnInfo"/> to determine the parameter tag and field properties, and the provided value as the parameter value.
+    /// </summary>
+    /// <param name="columnInfo">The <see cref="ColumnInfo"/> object that contains metadata about the column for which the parameter is being created.</param>
+    /// <param name="value">The value for the parameter.</param>
+    internal SqlFragmentParameter(ColumnInfo columnInfo, object? value)  
+        : this (columnInfo, columnInfo.FieldProperties, value)
     {
-        ParameterTag = parameterTag;
-        FieldProperties = fieldProperties;
-        Value = value;
-    }
-    internal SqlFragmentParameter(ParameterTag parameterTag, object? value)
-    {
-        ParameterTag = parameterTag;
-        FieldProperties = null;
-        Value = value;
     }
 
-    internal SqlFragmentParameter(ColumnInfo columnInfo, FieldProperties fieldProperties, object? value)
+    /// <summary>
+    /// Initializes a new instance of <see cref="SqlFragmentParameter"/> using the provided <see cref="ColumnInfo"/> to determine the parameter tag, the provided <see cref="FieldProperties"/> for validation, and the provided value as the parameter value.
+    /// </summary>
+    /// <param name="columnInfo">The <see cref="ColumnInfo"/> object that contains metadata about the column for which the parameter is being created.</param>
+    /// <param name="fieldProperties">The <see cref="FieldProperties"/> associated with the parameter, used for validation.</param>
+    /// <param name="value">The value for the parameter.</param>
+    internal SqlFragmentParameter(ColumnInfo columnInfo, FieldProperties? fieldProperties, object? value)
+        : this(columnInfo.ParameterTag, columnInfo.FieldProperties ?? fieldProperties, value)
     {
-        ParameterTag = columnInfo.ParameterTag;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="SqlFragmentParameter"/> with the provided parameter tag, field properties, and value.
+    /// </summary>
+    /// <param name="parameterTag">The tag for the parameter.</param>
+    /// <param name="fieldProperties">The field properties for the parameter.</param>
+    /// <param name="value">The value for the parameter.</param>
+    internal SqlFragmentParameter(ParameterTag parameterTag, FieldProperties? fieldProperties, object? value)
+    {
+        ParameterTag = parameterTag;
         FieldProperties = fieldProperties;
         Value = value;
     }
@@ -53,14 +111,14 @@ public class SqlFragmentParameter : ISqlFragment
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="parameter"/> is <c>null</c>.
     /// </exception>
-    internal SqlFragmentParameter(Parameter parameter)
-    {
-        ArgumentNullException.ThrowIfNull(parameter);
-        ParameterTag = parameter.Name;
-        FieldProperties = null;
-        Value = parameter.Value;
-    }
+    internal SqlFragmentParameter(Parameter parameter) : this(parameter.Name, parameter.FieldProperties, parameter.Value)
+    { }
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="SqlFragmentParameter"/> by copying the properties of an existing instance and applying a new parameter tag.
+    /// </summary>
+    /// <param name="sqlFragmentParameter">The existing parameter instance to copy.</param>
+    /// <param name="newTag">The new tag for the parameter.</param>
     internal SqlFragmentParameter(SqlFragmentParameter sqlFragmentParameter, ParameterTag newTag)
     {
         ParameterTag = newTag;
@@ -68,6 +126,11 @@ public class SqlFragmentParameter : ISqlFragment
         Value = sqlFragmentParameter.Value;
     }
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="SqlFragmentParameter"/> by copying the properties of an existing instance and applying a new value.
+    /// </summary>
+    /// <param name="sqlFragmentParameter">The existing parameter instance to copy.</param>
+    /// <param name="recastValue">The new value for the parameter.</param>
     internal SqlFragmentParameter(SqlFragmentParameter sqlFragmentParameter, object? recastValue)
     {
         ParameterTag = sqlFragmentParameter.ParameterTag;

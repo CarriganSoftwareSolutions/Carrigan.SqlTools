@@ -22,7 +22,7 @@ public class UpdateBuilderTests
             Col2 = "World"
         };
         Predicates joinId = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter(3, "Id"));
         Joins<JoinLeftTable> joins = new(new InnerJoin<JoinRightTable>(joinId));
 
         UpdateBuilder<JoinLeftTable> updateBuilder = new()

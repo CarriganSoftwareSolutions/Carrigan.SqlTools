@@ -19,13 +19,13 @@ public class XorThanTests
     private static readonly PredicatesLogic.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private static readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private static readonly PredicatesLogic.Predicates ParameterPi = new Parameter("Pi", 3.14f);
+    private static readonly PredicatesLogic.Predicates ParameterPi = new Parameter(3.14f, "Pi");
     private static readonly string ParameterPiSql = "@Pi_1";
 
-    private static readonly PredicatesLogic.Predicates ParameterElite = new Parameter("Elite", 1337);
+    private static readonly PredicatesLogic.Predicates ParameterElite = new Parameter(1337, "Elite");
     private static readonly string ParameterEliteSql = "@Elite_1";
 
-    private static readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
+    private static readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
     private static readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 

@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
@@ -7,26 +6,13 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 public sealed class SqlMoneyAttributeTests
 {
     [Theory]
-    [InlineData(SizeableEnum.Regular, SqlDbType.Money, "MONEY")]
-    [InlineData(SizeableEnum.Smaller, SqlDbType.SmallMoney, "SMALLMONEY")]
-    public void Constructor_SizeableEnum(
-        SizeableEnum moneySize,
-        SqlDbType expectedSqlDbType,
-        string expectedTypeDeclaration)
+    [InlineData(SizeableEnum.Regular, "MONEY", "MONEY")]
+    [InlineData(SizeableEnum.Smaller, "SMALLMONEY", "SMALLMONEY")]
+    public void Constructor_SizeableEnum(SizeableEnum moneySize, string expectedProviderTypeName, string expectedTypeDeclaration)
     {
         SqlMoneyAttribute sqlMoneyAttribute = new(moneySize);
 
-        Assert.NotNull(sqlMoneyAttribute);
-        Assert.NotNull(sqlMoneyAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlMoneyAttribute.SqlTypeDefinition;
-
-        Assert.Equal(expectedSqlDbType, sqlTypeDefinition.Type);
-        Assert.Null(sqlTypeDefinition.Size);
-        Assert.False(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal(expectedTypeDeclaration, sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(sqlMoneyAttribute, expectedProviderTypeName, expectedTypeDeclaration);
     }
 
     [Fact]

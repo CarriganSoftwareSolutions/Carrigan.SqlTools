@@ -1,52 +1,42 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Types;
-using System.Data;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 
 public sealed class SqlBinaryAttributeTests
 {
     [Theory]
-    [InlineData(StorageTypeEnum.Fixed, SqlDbType.Binary, "BINARY(8000)")]
-    [InlineData(StorageTypeEnum.Var, SqlDbType.VarBinary, "VARBINARY(MAX)")]
-    public void Constructor_StorageType(StorageTypeEnum storageTypeEnum, SqlDbType expectedSqlDbType, string expectedTypeDeclaration)
+    [InlineData(StorageTypeEnum.Fixed, "BINARY", "BINARY(8000)", 8000, false, true)]
+    [InlineData(StorageTypeEnum.Var, "VARBINARY", "VARBINARY(MAX)", null, true, false)]
+    public void Constructor_StorageType(StorageTypeEnum storageTypeEnum, string expectedProviderTypeName, string expectedTypeDeclaration, int? expectedLength, bool? expectedIsMax, bool? expectedIsFixedLength)
     {
         SqlBinaryAttribute sqlBinaryAttribute = new(storageTypeEnum);
 
-        Assert.NotNull(sqlBinaryAttribute);
-        Assert.NotNull(sqlBinaryAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlBinaryAttribute.SqlTypeDefinition;
-
-        Assert.Equal(expectedSqlDbType, sqlTypeDefinition.Type);
-        Assert.Null(sqlTypeDefinition.Size);
-        Assert.False(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal(expectedTypeDeclaration, sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(
+            sqlBinaryAttribute,
+            expectedProviderTypeName,
+            expectedTypeDeclaration,
+            expectedLength: expectedLength,
+            expectedIsMax: expectedIsMax,
+            expectedIsFixedLength: expectedIsFixedLength);
     }
 
     [Theory]
-    [InlineData(StorageTypeEnum.Fixed, 1, SqlDbType.Binary, "BINARY(1)")]
-    [InlineData(StorageTypeEnum.Fixed, 8000, SqlDbType.Binary, "BINARY(8000)")]
-    [InlineData(StorageTypeEnum.Var, 1, SqlDbType.VarBinary, "VARBINARY(1)")]
-    [InlineData(StorageTypeEnum.Var, 8000, SqlDbType.VarBinary, "VARBINARY(8000)")]
-    public void Constructor_WithSize(StorageTypeEnum storageTypeEnum, int size, SqlDbType expectedSqlDbType, string expectedTypeDeclaration)
+    [InlineData(StorageTypeEnum.Fixed, 1, "BINARY", "BINARY(1)", true)]
+    [InlineData(StorageTypeEnum.Fixed, 8000, "BINARY", "BINARY(8000)", true)]
+    [InlineData(StorageTypeEnum.Var, 1, "VARBINARY", "VARBINARY(1)", false)]
+    [InlineData(StorageTypeEnum.Var, 8000, "VARBINARY", "VARBINARY(8000)", false)]
+    public void Constructor_WithSize(StorageTypeEnum storageTypeEnum, int size, string expectedProviderTypeName, string expectedTypeDeclaration, bool expectedIsFixedLength)
     {
         SqlBinaryAttribute sqlBinaryAttribute = new(storageTypeEnum, size);
 
-        Assert.NotNull(sqlBinaryAttribute);
-        Assert.NotNull(sqlBinaryAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlBinaryAttribute.SqlTypeDefinition;
-
-        Assert.Equal(expectedSqlDbType, sqlTypeDefinition.Type);
-        Assert.Equal(size, sqlTypeDefinition.Size);
-        Assert.False(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal(expectedTypeDeclaration, sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(
+            sqlBinaryAttribute,
+            expectedProviderTypeName,
+            expectedTypeDeclaration,
+            expectedLength: size,
+            expectedIsMax: false,
+            expectedIsFixedLength: expectedIsFixedLength);
     }
 
     [Fact]
@@ -58,12 +48,10 @@ public sealed class SqlBinaryAttributeTests
     }
 
     [Theory]
-    // BINARY: valid range 1–8000
     [InlineData(StorageTypeEnum.Fixed, 0)]
     [InlineData(StorageTypeEnum.Fixed, 8001)]
-    // VARBINARY: valid range 1–8000
     [InlineData(StorageTypeEnum.Var, 0)]
     [InlineData(StorageTypeEnum.Var, 8001)]
     public void Constructor_WithSize_OutOfRange_Exception(StorageTypeEnum storageTypeEnum, int size) =>
-        Assert.Throws<SqlTypeArgumentOutOfRangeException>(() => new SqlBinaryAttribute(storageTypeEnum, size));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new SqlBinaryAttribute(storageTypeEnum, size));
 }

@@ -1,7 +1,6 @@
 ﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
@@ -41,19 +40,14 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     internal readonly ColumnName ColumnName;
 
     /// <summary>
-    /// Represents the <see cref="SqlTypeDefinition"/> associated with this property.
+    /// Represents the legacy <see cref="SqlTypeDefinition"/> associated with this property.
     /// </summary>
-    /// <remarks>
-    /// If the property is decorated with an attribute that derives from
-    /// <see cref="SqlTypeAttribute"/>, the explicitly specified SQL type is used.
-    /// Otherwise, a default <see cref="SqlTypeDefinition"/> is generated based on
-    /// the underlying CLR property type.
-    ///
-    /// This value is used when generating SQL parameters and when constructing
-    /// result sets when returning table values from
-    /// <see cref="SqlGenerators.SqlGeneratorBase{T}.InsertAutoId(T)"/>.
-    /// </remarks>
     internal readonly SqlTypeDefinition SqlType;
+
+    /// <summary>
+    /// Represents an explicit SQL field-mapping override supplied by a <see cref="SqlTypeAttribute"/>, if any.
+    /// </summary>
+    internal readonly FieldProperties? FieldProperties;
 
     internal Type Type => 
         PropertyInfo.PropertyType;
@@ -150,7 +144,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);
 
-        SqlType = sqlTypeAttribute?.SqlTypeDefinition ?? new(propertyInfo.PropertyType);
+        SqlType = new(propertyInfo.PropertyType);
+        FieldProperties = sqlTypeAttribute?.FieldProperties;
 
         ParameterTag = new(parameterName);
         AliasName = aliasName;

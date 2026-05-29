@@ -77,7 +77,7 @@ public class FromReadMeMoreComplexExamples
     {
         //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
         Column<Order> totalCol = new(nameof(Order.Total));
-        Parameter minTotal = new("Total", 500m);
+        Parameter minTotal = new(500m, "Total");
         GreaterThan greaterThan = new(totalCol, minTotal);
 
         SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);

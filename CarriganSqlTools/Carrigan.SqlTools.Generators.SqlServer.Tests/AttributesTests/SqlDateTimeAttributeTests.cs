@@ -1,33 +1,18 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 
-
 public sealed class SqlDateTimeAttributeTests
 {
     [Theory]
-    [InlineData(SizeableEnum.Regular, SqlDbType.DateTime, "DATETIME")]
-    [InlineData(SizeableEnum.Smaller, SqlDbType.SmallDateTime, "SMALLDATETIME")]
-    public void Constructor_SizeableEnum(
-        SizeableEnum dateTimeSize,
-        SqlDbType expectedSqlDbType,
-        string expectedTypeDeclaration)
+    [InlineData(SizeableEnum.Regular, "DATETIME", "DATETIME")]
+    [InlineData(SizeableEnum.Smaller, "SMALLDATETIME", "SMALLDATETIME")]
+    public void Constructor_SizeableEnum(SizeableEnum sizeableEnum, string expectedProviderTypeName, string expectedTypeDeclaration)
     {
-        SqlDateTimeAttribute sqlDateTimeAttribute = new(dateTimeSize);
+        SqlDateTimeAttribute sqlDateTimeAttribute = new(sizeableEnum);
 
-        Assert.NotNull(sqlDateTimeAttribute);
-        Assert.NotNull(sqlDateTimeAttribute.SqlTypeDefinition);
-
-        SqlTypeDefinition sqlTypeDefinition = sqlDateTimeAttribute.SqlTypeDefinition;
-
-        Assert.Equal(expectedSqlDbType, sqlTypeDefinition.Type);
-        Assert.Null(sqlTypeDefinition.Size);
-        Assert.False(sqlTypeDefinition.UseMax);
-        Assert.Null(sqlTypeDefinition.Precision);
-        Assert.Null(sqlTypeDefinition.Scale);
-        Assert.Equal(expectedTypeDeclaration, sqlTypeDefinition.TypeDeclaration);
+        SqlTypeAttributeTestHelpers.AssertFieldProperties(sqlDateTimeAttribute, expectedProviderTypeName, expectedTypeDeclaration);
     }
 
     [Fact]

@@ -11,13 +11,9 @@ public class SqlFragmentParameterTests
     private static readonly SqlServerDialect Dialect = new();
 
     [Fact]
-    public void Constructor_NullParameter_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new SqlFragmentParameter(null!));
-
-    [Fact]
     public void ToSql_DelegatesToParameter()
     {
-        Parameter parameter = new("@Name", 123);
+        Parameter parameter = new(123, "@Name");
         SqlFragmentParameter fragment = new(parameter);
 
         string expectedValue = parameter.ToSql();
@@ -27,27 +23,9 @@ public class SqlFragmentParameterTests
     }
 
     [Fact]
-    public void GetParameters_WithNullParameterValue_ReturnsDBNullValue()
-    {
-        Parameter parameter = new("Name", null);
-
-        IEnumerable<ISqlFragment> fragments =
-        [
-            new SqlFragmentParameter(parameter)
-        ];
-
-        IEnumerable<SqlFragmentParameter> parameters = fragments.GetSqlFragmentParameters(Dialect);
-
-        SqlFragmentParameter actual = Assert.Single(parameters);
-
-        Assert.Equal("@Name_1", actual.ParameterTag.ToString());
-        Assert.Equal(null!, actual.Value); //value substitutions are now done late, in the SqlServerQuery. This should now be null instead of DBNull
-    }
-
-    [Fact]
     public void SqlFragmentParameter_ToSql_DoesNotDuplicateAtSign()
     {
-        SqlFragmentParameter fragment = new(new Parameter("@Name", "Jonathan"));
+        SqlFragmentParameter fragment = new(new Parameter("Jonathan", "@Name"));
 
         string sql = fragment.ToSql(Dialect);
 

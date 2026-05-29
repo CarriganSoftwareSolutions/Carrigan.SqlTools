@@ -60,7 +60,7 @@ public class SqlGenerator_SelectCountTests
     [Fact]
     public void SqlSelect_NoJoins_WithPredicates_WithTableAttribute()
     {
-        PredicatesLogic.Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter("Col1", 3));
+        PredicatesLogic.Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter(3, "Col1"));
         SqlQuery query = _sqlGeneratorForColumnTable.SelectCount(null, null, null, id);
 
         string expectedSql = "SELECT COUNT([ColumnTable].[Col1]) FROM [ColumnTable] WHERE ([ColumnTable].[Col1] = @Col1_1)";
@@ -74,7 +74,7 @@ public class SqlGenerator_SelectCountTests
     public void SqlSelectCount_WithInnerJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter(3, "Id"));
         Joins<JoinLeftTable> join = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.SelectCount(null, null, join, predicateId);
 
@@ -89,7 +89,7 @@ public class SqlGenerator_SelectCountTests
     public void SqlSelectCount_WithLeftJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter(3, "Id"));
         Joins<JoinLeftTable> join = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(joinId);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.SelectCount(null, null, join, predicateId);
 
@@ -105,7 +105,7 @@ public class SqlGenerator_SelectCountTests
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates joinId2 = new Equal(new Column<JoinRightTable>("LastId"), new Column<JoinLastTable>("Id"));
-        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinLastTable>("Id"), new Parameter(3, "Id"));
         InnerJoin<JoinRightTable> join1 = new(joinId1);
         LeftJoin<JoinLastTable> join2 = new(joinId2);
         SqlQuery query = _sqlGeneratorForJoinLeftTable.SelectCount(null, null, new Joins<JoinLeftTable>(join1, join2), predicateId);

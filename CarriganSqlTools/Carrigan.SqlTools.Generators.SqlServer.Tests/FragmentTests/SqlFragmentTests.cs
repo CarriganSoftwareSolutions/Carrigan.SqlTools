@@ -39,8 +39,8 @@ public class SqlFragmentTests
     [Fact]
     public void GetParameters_WithMixedFragments_ReturnsOnlyParameters()
     {
-        Parameter parameter1 = new("Name", "Jonathan");
-        Parameter parameter2 = new("Age", 42);
+        Parameter parameter1 = new("Jonathan", "Name");
+        Parameter parameter2 = new(42, "Age");
 
         IEnumerable<ISqlFragment> fragments =
         [

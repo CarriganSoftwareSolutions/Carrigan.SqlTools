@@ -19,12 +19,12 @@ public class LogicalOperatorTests
     [Fact]
     public void LogicalOperator_OperatorNull_ThrowsArgumentNullException() =>
         _ = Assert.Throws<ArgumentNullException>(() =>
-            new TestLogicalOperator(null!, [new Parameter("P1", 1)]));
+            new TestLogicalOperator(null!, [new Parameter(1, "P1")]));
 
     [Fact]
     public void LogicalOperator_OperatorWhitespace_ThrowsArgumentException() =>
         _ = Assert.Throws<ArgumentException>(() =>
-            new TestLogicalOperator(" ", [new Parameter("P1", 1)]));
+            new TestLogicalOperator(" ", [new Parameter(1, "P1")]));
 
     [Fact]
     public void LogicalOperator_EmptyPredicates_ThrowsArgumentNullException() =>
@@ -36,7 +36,7 @@ public class LogicalOperatorTests
     {
         TestLogicalOperator op = new("AND",
         [
-            new Parameter("P1", 1),
+            new Parameter(1, "P1"),
         ]);
 
         string expected = "@P1_1";
@@ -50,8 +50,8 @@ public class LogicalOperatorTests
     {
         TestLogicalOperator op = new("AND",
         [
-            new Parameter("P1", 1),
-            new Parameter("P2", 2),
+            new Parameter(1, "P1"),
+            new Parameter(2, "P2"),
         ]);
 
         string expected = "(@P1_1 AND @P2_2)";

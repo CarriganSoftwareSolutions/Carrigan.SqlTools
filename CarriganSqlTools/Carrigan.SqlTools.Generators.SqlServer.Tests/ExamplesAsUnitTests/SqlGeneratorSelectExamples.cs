@@ -78,7 +78,7 @@ public class SqlGeneratorSelectExamples
         InnerJoin<Order> join = new(predicate);
 
         Column<Order> totalCol = new(nameof(Order.Total));
-        Parameter minTotal = new("Total", 500m);
+        Parameter minTotal = new(500m, "Total");
         GreaterThan greaterThan = new(totalCol, minTotal);
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));

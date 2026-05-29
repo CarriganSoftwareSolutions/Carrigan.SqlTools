@@ -16,7 +16,7 @@ public class DeleteBuilderTests
     public void DeleteBuilder_WithJoinsAndWhere_RendersExpectedSql()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter("Id", 3));
+        Predicates predicateId = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter(3, "Id"));
         Joins<JoinLeftTable> joins = new(new InnerJoin<JoinRightTable>(joinId));
 
         DeleteBuilder<JoinLeftTable> deleteBuilder = new()

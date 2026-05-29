@@ -40,7 +40,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
     private async Task<IEnumerable<Customer>> GetCustomerByNotIdNoTest(int id)
     {
         await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
-        Predicates where = new NotEqual(new Column<Customer>(nameof(Customer.Id)), new Parameter("Id", id));
+        Predicates where = new NotEqual(new Column<Customer>(nameof(Customer.Id)), new Parameter(id, "Id"));
         SqlQuery sqlQuery = CustomerSqlGenerator.Select(new SelectBuilder<Customer>() { Where = where });
         return await CommandsAsync.ExecuteReaderAsync<Customer>(sqlQuery, null, connection);
     }

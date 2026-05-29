@@ -164,6 +164,16 @@ public class SqlToolsReflectorCache<T>
         else
             return _ColumnInfoCache.GetMany(keys);
     }
+    internal static ColumnInfo GetColumnsFromProperty(PropertyName propertyNames)
+    {
+        ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
+
+        InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(propertyNames);
+        if (invalidPropertyException is not null)
+            throw invalidPropertyException;
+        else
+            return _ColumnInfoCache.Get(propertyNames);
+    }
 
     /// <summary>
     /// A collection of <see cref="ReflectorCache.ColumnInfo"/> objects representing

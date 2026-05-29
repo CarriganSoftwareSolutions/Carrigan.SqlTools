@@ -76,7 +76,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateColumn()
     {
-        Parameter parameterName = new("Name", "Hank");
+        Parameter parameterName = new("Hank", "Name");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equalName = new(columnName, parameterName);
         SqlQuery query = customerGenerator.Select(null, null, null, null, equalName, null, null);
@@ -91,7 +91,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateContains()
     {
-        Parameter parameterEmail = new("Email", "@example.");
+        Parameter parameterEmail = new("@example.", "Email");
         Column<Customer> columnEmail = new(nameof(Customer.Email));
         Contains<Customer> predicate = new(columnEmail, parameterEmail);
         SqlQuery query = customerGenerator.Select(null, null, null, null, predicate, null, null);
@@ -110,7 +110,7 @@ public class PredicateExamples
         Predicates orderTotalGreaterThan = new GreaterThan
         (
             new Column<Order>(nameof(Order.Total)),
-            new Parameter("Total", 100.00m)
+            new Parameter(100.00m, "Total")
         );
         Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
         Exists exists = new(subQuery);
@@ -126,7 +126,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateEqual()
     {
-        Parameter parameterName = new("Name", "Hank");
+        Parameter parameterName = new("Hank", "Name");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equalName = new(columnName, parameterName);
         SqlQuery query = customerGenerator.Select(null, null, null, null, equalName, null, null);
@@ -141,7 +141,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateGreaterThan()
     {
-        Parameter parameterTotal = new("Total", 1776.00m);
+        Parameter parameterTotal = new(1776.00m, "Total");
         Column<Order> columnTotal = new(nameof(Order.Total));
         GreaterThan predicate = new(columnTotal, parameterTotal);
         SqlQuery query = orderGenerator.Select(null, null, null, null, predicate, null, null);
@@ -156,7 +156,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateGreaterThanEquals()
     {
-        Parameter parameterTotal = new("Total", 1776.00m);
+        Parameter parameterTotal = new(1776.00m, "Total");
         Column<Order> columnTotal = new(nameof(Order.Total));
         GreaterThanEqual predicate = new(columnTotal, parameterTotal);
         SqlQuery query = orderGenerator.Select(null, null, null, null, predicate, null, null);
@@ -196,7 +196,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateLessThan()
     {
-        Parameter parameterTotal = new("Total", 1776.00m);
+        Parameter parameterTotal = new(1776.00m, "Total");
         Column<Order> columnTotal = new(nameof(Order.Total));
         LessThan predicate = new(columnTotal, parameterTotal);
         SqlQuery query = orderGenerator.Select(null, null, null, null, predicate, null, null);
@@ -211,7 +211,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateLessThanEquals()
     {
-        Parameter parameterTotal = new("Total", 1776.00m);
+        Parameter parameterTotal = new(1776.00m, "Total");
         Column<Order> columnTotal = new(nameof(Order.Total));
         LessThanEqual predicate = new(columnTotal, parameterTotal);
         SqlQuery query = orderGenerator.Select(null, null, null, null, predicate, null, null);
@@ -226,7 +226,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateLike()
     {
-        Parameter parameterEmail = new("Email", "%@example.com");
+        Parameter parameterEmail = new("%@example.com", "Email");
         Column<Customer> columnEmail = new(nameof(Customer.Email));
         Like predicate = new(columnEmail, parameterEmail);
         SqlQuery query = customerGenerator.Select(null, null, null, null, predicate, null, null);
@@ -241,7 +241,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateNot()
     {
-        Parameter parameterName = new("Name", "Hank");
+        Parameter parameterName = new("Hank", "Name");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equal = new(columnName, parameterName);
         Not not = new(equal);
@@ -260,7 +260,7 @@ public class PredicateExamples
         Predicates orderTotalGreaterThan = new GreaterThan
         (
             new Column<Order>(nameof(Order.Total)),
-            new Parameter("Total", 100.00m)
+            new Parameter(100.00m, "Total")
         );
         Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
         NotExists notExists = new(subQuery);
@@ -276,7 +276,7 @@ public class PredicateExamples
     [Fact]
     public void PredicateNotEqual()
     {
-        Parameter parameterName = new("Name", "Hank");
+        Parameter parameterName = new("Hank", "Name");
         Column<Customer> columnName = new(nameof(Customer.Name));
         NotEqual predicate = new(columnName, parameterName);
         SqlQuery query = customerGenerator.Select(null, null, null, null, predicate, null, null);
@@ -327,7 +327,22 @@ public class PredicateExamples
     [Fact]
     public void PredicateParameter()
     {
-        Parameter parameterName = new("Name", "Hank");
+        Parameter parameterName = new("Hank", "Name");
+        Column<Customer> columnName = new(nameof(Customer.Name));
+        Equal equalName = new(columnName, parameterName);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, equalName, null, null);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
+    }
+
+    [Fact]
+    public void PredicateParameterGeneric()
+    {
+        Parameter<Customer> parameterName = new(nameof(Customer.Name), "Hank");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equalName = new(columnName, parameterName);
         SqlQuery query = customerGenerator.Select(null, null, null, null, equalName, null, null);

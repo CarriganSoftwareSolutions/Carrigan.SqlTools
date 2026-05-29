@@ -48,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Carrigan.SqlTools.SqlServer.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.SqlServer.Tests" />
   </ItemGroup>
 
   <ItemGroup>

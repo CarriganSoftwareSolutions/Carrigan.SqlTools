@@ -21,7 +21,7 @@ public class ExistsTests
         Predicates subQueryPredicate = new GreaterThan
         (
             new Column<Order>(nameof(Order.Total)),
-            new Parameter("Total", 100.00m)
+            new Parameter(100.00m, "Total")
         );
         Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null);
         Exists exists = new(subQuery);
@@ -40,14 +40,14 @@ public class ExistsTests
         Predicates subQueryPredicate = new Equal
         (
             new Column<Order>(nameof(Order.CustomerId)),
-            new Parameter("CustomerId", 42)
+            new Parameter(42, "CustomerId")
         );
         Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null);
         Exists exists = new(subQuery);
         Predicates outerPredicate = new Equal
         (
             new Column<Customer>(nameof(Customer.Name)),
-            new Parameter("Name", "Jonathan")
+            new Parameter("Jonathan", "Name")
         );
         And and = new(exists, outerPredicate);
 

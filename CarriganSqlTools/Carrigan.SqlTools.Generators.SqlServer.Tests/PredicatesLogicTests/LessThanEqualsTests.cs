@@ -20,13 +20,13 @@ public class LessThanEqualsTests
     private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly Predicates ParameterPi = new Parameter("Pi", 3.14f);
+    private readonly Predicates ParameterPi = new Parameter(3.14f, "Pi");
     private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly Predicates ParameterElite = new Parameter("Elite", 1337);
+    private readonly Predicates ParameterElite = new Parameter(1337, "Elite");
     private readonly string ParameterEliteSql = "@Elite_1";
 
-    private readonly Predicates ParameterHelloWorld = new Parameter("HelloWorld", "Hello World!");
+    private readonly Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
     private readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 
@@ -306,10 +306,10 @@ public class LessThanEqualsTests
 
     [Fact]
     public void LessThanEqual_LeftNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new LessThanEqual(null!, new Parameter("P1", 1)));
+        Assert.Throws<NullReferenceException>(() => new LessThanEqual(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void LessThanEqual_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new LessThanEqual(new Parameter("P1", 1), null!));
+        Assert.Throws<NullReferenceException>(() => new LessThanEqual(new Parameter(1, "P1"), null!));
 
 }

@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
@@ -9,7 +10,7 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Carrigan.SqlTools.SqlServer.Tests;
+namespace Carrigan.SqlTools.Clients.SqlServer.Tests;
 
 public class SqlQueryExtensionsTests
 {
@@ -212,7 +213,7 @@ public class SqlQueryExtensionsTests
 
     private static SqlQuery GetQuery(string parameterName, object? value, FieldProperties fieldProperties)
     {
-        Parameter parameter = new(parameterName, value);
+        Parameter parameter = new(value, parameterName);
         SqlFragmentParameter sqlFragmentParameter = new(new ParameterTag(parameterName), fieldProperties, value);
         SqlServerDialect dialect = new();
 

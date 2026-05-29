@@ -242,8 +242,8 @@ public class JoinSubqueryTests
     [Fact]
     public void Select_WithSubqueryJoin_CombinesSubqueryAndOuterPredicateParameters()
     {
-        Predicates subQueryPredicate = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Col1)), new Parameter("RightCol1", "Open"));
-        Predicates outerPredicate = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Col2)), new Parameter("RightCol2", "Closed"));
+        Predicates subQueryPredicate = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Col1)), new Parameter("Open", "RightCol1"));
+        Predicates outerPredicate = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Col2)), new Parameter("Closed", "RightCol2"));
         Joins<JoinLeftTable> joins = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate(), RightSubquery(subQueryPredicate));
 
         SqlQuery query = LeftGenerator.Select(null, null, null, joins, outerPredicate, null, null);

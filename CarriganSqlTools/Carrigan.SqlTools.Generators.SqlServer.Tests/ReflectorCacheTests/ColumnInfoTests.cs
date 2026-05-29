@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Types;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using System.Data;
@@ -306,33 +307,35 @@ public class ColumnInfoTests
 
     [Theory]
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "NChar", new string[] { },
-    SqlDbType.NChar, "NCHAR(4000)", 4000, null, null, false)]
+        "NCHAR", "NCHAR(4000)", 4000, false, true, true, null, null, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "Text", new string[] { },
-    SqlDbType.Text, "TEXT", null, null, null, false)]
+        "TEXT", "TEXT", null, false, false, false, null, null, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "VarChar", new string[] { },
-    SqlDbType.VarChar, "VARCHAR(8000)", 8000, null, null, false)]
+        "VARCHAR", "VARCHAR(8000)", 8000, false, false, false, null, null, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "NVarChar", new string[] { },
-    SqlDbType.NVarChar, "NVARCHAR(4000)", 4000, null, null, false)]
+        "NVARCHAR", "NVARCHAR(4000)", 4000, false, true, false, null, null, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "Binary", new string[] { },
-    SqlDbType.Binary, "BINARY(4000)", 4000, null, null, false)]
+        "BINARY", "BINARY(4000)", 4000, false, null, true, null, null, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "VarBinary", new string[] { },
-    SqlDbType.VarBinary, "VARBINARY(4000)", 4000, null, null, false)]
+        "VARBINARY", "VARBINARY(4000)", 4000, false, null, false, null, null, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "VarBinaryMax", new string[] { },
-    SqlDbType.VarBinary, "VARBINARY(MAX)", null, null, null, true)]
+        "VARBINARY", "VARBINARY(MAX)", null, true, null, false, null, null, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "Decimal", new string[] { },
-    SqlDbType.Decimal, "DECIMAL(18, 4)", null, (byte)18, (byte)4, false)]
+        "DECIMAL", "DECIMAL(18, 4)", null, null, null, null, (byte)18, (byte)4, null)]
 
     [InlineData("dbo", "SqlTypeOverRiderEntity", typeof(SqlTypeOverRiderEntity), "DateTime2", new string[] { },
-    SqlDbType.DateTime2, "DATETIME2(7)", null, null, (byte)7, false)]
-    public void SqlDbType_WithOverrides(string? schemaName, string tableName, Type type, string propertyName, string[] keyProperties,
-            SqlDbType expectedSqlType, string expectedSqlDeclarationType, int? expectedSize, byte? expectedPrecision, byte? expectedScale, bool expectedUseMax)
+        "DATETIME2", "DATETIME2(7)", null, null, null, null, null, null, (byte)7)]
+    public void FieldProperties_WithOverrides(string? schemaName, string tableName, Type type, string propertyName, string[] keyProperties,
+        string expectedProviderTypeName, string expectedDeclarationType, int? expectedLength, bool? expectedIsMax,
+        bool? expectedIsUnicode, bool? expectedIsFixedLength, byte? expectedPrecision, byte? expectedScale,
+        byte? expectedFractionalSecondsPrecision)
     {
         IEnumerable<PropertyInfo> keys =
             keyProperties
@@ -346,13 +349,21 @@ public class ColumnInfoTests
 
         ColumnInfo columnInfo = new(schema, table, property, keys);
 
-        Assert.Equal(expectedSqlType, columnInfo.SqlType.Type);
-        Assert.Equal(expectedSqlDeclarationType, columnInfo.SqlType.TypeDeclaration);
-        Assert.Equal(expectedSize, columnInfo.SqlType.Size);
-        Assert.Equal(expectedPrecision, columnInfo.SqlType.Precision);
-        Assert.Equal(expectedScale, columnInfo.SqlType.Scale);
-        Assert.Equal(expectedUseMax, columnInfo.SqlType.UseMax);
+        Assert.NotNull(columnInfo.FieldProperties);
+        FieldProperties fieldProperties = columnInfo.FieldProperties!;
+
+        Assert.Equal(expectedProviderTypeName, fieldProperties.ProviderTypeName);
+        Assert.Equal(expectedLength, fieldProperties.Length);
+        Assert.Equal(expectedIsMax, fieldProperties.IsMax);
+        Assert.Equal(expectedIsUnicode, fieldProperties.IsUnicode);
+        Assert.Equal(expectedIsFixedLength, fieldProperties.IsFixedLength);
+        Assert.Equal(expectedPrecision, fieldProperties.Precision);
+        Assert.Equal(expectedScale, fieldProperties.Scale);
+        Assert.Equal(expectedFractionalSecondsPrecision, fieldProperties.FractionalSecondsPrecision);
+        Assert.False(fieldProperties.IsNullable);
+        Assert.Equal($"{expectedDeclarationType} NOT NULL", Dialect.RenderFieldProperties(fieldProperties));
     }
+
     [Fact]
     public void New_TableNameNull_Exception()
     {
