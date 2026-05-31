@@ -7,7 +7,7 @@ public sealed record SelectBuilder<T> : QueryBuilders.SelectBuilderBase<T>, IQue
 {
     private readonly SqlGenerator<T> SqlGenerator = new();
 
-    public DeleteBuilder(IEncryption? encryption = null) =>
+    public SelectBuilder(IEncryption? encryption = null) =>
         SqlGenerator = new(encryption);
 
     public SqlQuery AsSqlQuery() =>
