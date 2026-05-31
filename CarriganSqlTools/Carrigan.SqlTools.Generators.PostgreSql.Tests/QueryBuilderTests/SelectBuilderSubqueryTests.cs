@@ -20,7 +20,7 @@ public class SelectBuilderSubqueryTests
     {
         Predicates subqueryPredicate = new Equal(new Column<Customer>(nameof(Customer.Name)), new Parameter("Hank", "Name"));
         Subquery<Customer> subquery = customerGenerator.Subquery(null, null, null, subqueryPredicate, null, null);
-        SelectTags selects = SelectTags.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email));
+        SelectTags selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email));
         Predicates outerPredicate = new Equal(new Column<Customer>(nameof(Customer.Email)), new Parameter("hank@example.com", "Email"));
 
         SqlQuery query = customerGenerator.Select(null, subquery, selects, null, outerPredicate, null, null);
@@ -42,7 +42,7 @@ public class SelectBuilderSubqueryTests
         SelectBuilder<Customer> selectBuilder = new()
         {
             Subquery = subquery,
-            Selects = SelectTags.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email)),
+            Selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email)),
             Where = outerPredicate
         };
 
@@ -61,10 +61,10 @@ public class SelectBuilderSubqueryTests
         Subquery<Customer> subquery = customerGenerator.Subquery
         (
             true,
-            SelectTags.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
+            SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
             null,
             null,
-            new OrderBy<Customer>(nameof(Customer.Name)),
+            new OrderBys(new OrderBy<Customer>(nameof(Customer.Name))),
             new LimitOffset(25, 50)
         );
 
@@ -72,8 +72,8 @@ public class SelectBuilderSubqueryTests
         {
             Distinct = true,
             Subquery = subquery,
-            Selects = SelectTags.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
-            OrderBys = new OrderBy<Customer>(nameof(Customer.Name)),
+            Selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
+            OrderBys = new OrderBys(new OrderBy<Customer>(nameof(Customer.Name))),
             Paging = new LimitOffset(10, 0)
         };
 
@@ -91,7 +91,7 @@ public class SelectBuilderSubqueryTests
         Subquery<Customer> subquery = customerGenerator.Subquery(null, null, null, subqueryPredicate, null, null);
         ColumnEqualsColumn<Customer, Order> customerIdEqualsOrderCustomerId = new(nameof(Customer.Id), nameof(Order.CustomerId));
         Joins<Customer> joins = new(new InnerJoin<Order>(customerIdEqualsOrderCustomerId));
-        SelectTags selects = SelectTags.Get<Customer>(nameof(Customer.Id), "CustomerId").Append<Order>(nameof(Order.Total));
+        SelectTags selects = new SelectTags(SelectTagGenerator.Get<Customer>(nameof(Customer.Id), "CustomerId")).Append<Order>(nameof(Order.Total));
         Predicates where = new GreaterThan(new Column<Order>(nameof(Order.Total)), new Parameter(500m, "Total"));
 
         SelectBuilder<Customer> selectBuilder = new()

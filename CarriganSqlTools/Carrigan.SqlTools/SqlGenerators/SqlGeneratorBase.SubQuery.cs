@@ -11,10 +11,10 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual Subquery<T> BaseSubquery
     (
         bool? distinct,
-        SelectTags? selects,
+        SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        OrderBys? orderBy,
+        OrderBysBase? orderBy,
         PagingBase? paging
     ) =>
         new(BaseSelectFragments(distinct, null, selects, joins, predicates, orderBy, paging), Dialect);

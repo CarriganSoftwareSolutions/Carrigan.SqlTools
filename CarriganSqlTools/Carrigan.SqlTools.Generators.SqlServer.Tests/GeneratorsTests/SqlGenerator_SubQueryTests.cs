@@ -31,7 +31,7 @@ public class SqlGenerator_SubqueryTests
     [Fact]
     public void Subquery_WithDistinctSelectsOrderByAndPaging_RendersExpectedSql()
     {
-        SelectTags selects = SelectTags.GetMany<Customer>
+        SelectTags selects = SelectTagGenerator.GetMany<Customer>
         (
             nameof(Customer.Id),
             nameof(Customer.Name)
@@ -98,7 +98,7 @@ public class SqlGenerator_SubqueryTests
     [Fact]
     public void Subquery_WithSelectFromUnjoinedTable_ThrowsInvalidTableException()
     {
-        SelectTags selects = SelectTags.Get<Order>(nameof(Order.Id));
+        SelectTags selects = new SelectTags(SelectTagGenerator.Get<Order>(nameof(Order.Id)));
 
         Assert.Throws<InvalidTableException>(() =>
             customerGenerator.Subquery(null, selects, null, null, null, null));

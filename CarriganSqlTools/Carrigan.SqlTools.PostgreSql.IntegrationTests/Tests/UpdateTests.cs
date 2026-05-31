@@ -9,6 +9,7 @@ using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Npgsql;
 using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Sets;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 
@@ -177,7 +178,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
         Customer values = new() { FirstName = "Jane", LastName = "Doe" };
         await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
-        SqlQuery updateQuery = CustomerSqlGenerator.UpdateByIds(values, new(nameof(Customer.FirstName)), femaleCustomers);
+        SqlQuery updateQuery = CustomerSqlGenerator.UpdateByIds(values, new ColumnCollection<Customer>(nameof(Customer.FirstName)), femaleCustomers);
         int count  = await CommandsAsync.ExecuteNonQueryAsync(updateQuery, null, connection);
         Assert.Equal(12, count);
 
@@ -196,7 +197,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         UpdateBuilder<Customer> updateBuilder = new()
         {
             Values = values,
-            UpdateColumns = new(nameof(Customer.FirstName)),
+            UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.FirstName)),
             Where = new ColumnValue<Customer>(nameof(Customer.Gender), "F")
         };
         int count = await CommandsAsync.ExecuteNonQueryAsync(updateBuilder, null, connection);
@@ -232,7 +233,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         {
             Values = values,
             From = [TableTag.Get<Order>()],
-            UpdateColumns = new(nameof(Customer.FirstName)),
+            UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.FirstName)),
             Where = new And
             (
                 columnEqualsColumn,
@@ -278,7 +279,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         {
             Values = values,
             From = [TableTag.Get<Order>()],
-            UpdateColumns = new(nameof(Customer.FirstName)),
+            UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.FirstName)),
             Where = new And (columnEqualsColumn, addressId),
             Joins = joinAddress
         };

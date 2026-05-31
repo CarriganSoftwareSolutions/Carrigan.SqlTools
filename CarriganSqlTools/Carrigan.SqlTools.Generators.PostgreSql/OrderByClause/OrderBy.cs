@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
@@ -7,7 +8,7 @@ namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>
 /// Represents a single-column specification within a SQL <c>ORDER BY</c> clause.
-/// Also implements <see cref="OrderBys"/> to make single-column order-by usage convenient.
+/// Also implements <see cref="OrderBysBase"/> to make single-column order-by usage convenient.
 /// </summary>
 /// <typeparam name="T">
 /// The entity/model type that defines the table containing the column to order by.
@@ -41,7 +42,7 @@ public class OrderBy<T> : OrderByBase where T : class
     /// </exception>
     public OrderBy(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
         : base(sortDirection) =>
-        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).Single();
+        ColumnInfo = SqlToolsReflectorCache<T>.GetColumnsFromProperties(DialectStatics.SupportedTypes, propertyName).Single();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
@@ -63,12 +64,34 @@ public class OrderBy<T> : OrderByBase where T : class
     }
 
     /// <summary>
+    /// Converts a single <see cref="OrderBy{T}"/> item into an <see cref="OrderBys"/> collection.
+    /// </summary>
+    /// <param name="orderByItem">The single order-by item to wrap.</param>
+    public static implicit operator OrderBys(OrderBy<T> orderByItem)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
+
+        return new OrderBys(orderByItem);
+    }
+
+    /// <summary>
+    /// Converts a single <see cref="OrderBy{T}"/> item into an <see cref="OrderBysBase"/> collection.
+    /// </summary>
+    /// <param name="orderByItem">The single order-by item to wrap.</param>
+    public static implicit operator OrderBysBase(OrderBy<T> orderByItem)
+    {
+        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
+
+        return new OrderBys(orderByItem);
+    }
+
+    /// <summary>
     /// The <see cref="Tags.ColumnInfo"/> that specifies the column being ordered.
     /// </summary>
     internal override ColumnInfo ColumnInfo { get; }
 
     /// <summary>
-    /// Part of the <see cref="OrderBys"/> implementation.
+    /// Part of the <see cref="OrderBysBase"/> implementation.
     /// Returns the single <see cref="TableTag"/> involved in this order-by item.
     /// </summary>
     internal IEnumerable<TableTag> TableTags =>
@@ -94,4 +117,5 @@ public class OrderBy<T> : OrderByBase where T : class
     /// </returns>
     public override int GetHashCode() =>
         HashCode.Combine(TableTag, ColumnInfo);
+
 }

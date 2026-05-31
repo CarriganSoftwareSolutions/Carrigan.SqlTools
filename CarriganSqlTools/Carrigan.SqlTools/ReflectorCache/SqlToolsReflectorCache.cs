@@ -2,7 +2,6 @@
 using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.RegularExpressions;
@@ -81,13 +80,21 @@ public class SqlToolsReflectorCache<T>
     /// <summary>
     /// Gets all <see cref="ReflectorCache.ColumnInfo"/> instances defined for <typeparamref name="T"/>.
     /// </summary>
-    internal static IEnumerable<ColumnInfo> ColumnInfo { get; private set; }
+    /// <param name="supportedTypes">
+    /// A set of supported types to filter the columns by.
+    /// </param>
+    internal static IEnumerable<ColumnInfo> GetColumnInfo(HashSet<Type> supportedTypes) =>
+        _ColumnInfoCache.Values.Where(columnInfo => supportedTypes.Contains(columnInfo.Type));
 
     /// <summary>
     /// A collection of <see cref="ReflectorCache.ColumnInfo"/> instances that exclude
     /// key columns defined on <typeparamref name="T"/>.
     /// </summary>
-    internal static readonly IEnumerable<ColumnInfo> ColumnInfoLessKeys;
+    /// <param name="supportedTypes">
+    /// A set of supported types to filter the columns by.
+    /// </param>
+    internal static IEnumerable<ColumnInfo> GetGetColumnInfoLessKeys(HashSet<Type> supportedTypes) =>
+        _ColumnInfoCache.Values.Where(columnInfo => supportedTypes.Contains(columnInfo.Type) && KeyColumnInfo.DoesNotContain(columnInfo));
 
     /// <summary>
     /// The <see cref="ReflectorCache.ColumnInfo"/> representing the encryption key version column,
@@ -124,22 +131,34 @@ public class SqlToolsReflectorCache<T>
     /// <summary>
     /// Indicates whether <typeparamref name="T"/> defines one or more columns with an alias name.
     /// </summary>
-    internal static readonly bool HasAliasedColumns;
+    /// <param name="supportedTypes">
+    /// A set of supported types to filter the columns by.
+    /// </param>
+    internal static bool HasAliasedColumns(HashSet<Type> supportedTypes) =>
+        GetColumnInfo(supportedTypes)
+                .Any(column => column.AliasName is not null);
 
     /// <summary>
-    /// Gets a <see cref="Tags.SelectTags"/> collection representing the <see cref="SelectTag"/>
-    /// for each mapped column on <typeparamref name="T"/>.
+    /// Creates select tags for every supported mapped column on <typeparamref name="T"/>.
     /// </summary>
-    internal static SelectTags SelectTags =>
-        new(ColumnInfo.Select(column => column.SelectTag));
+    /// <typeparam name="selectTagT">The concrete select-tag type to create.</typeparam>
+    /// <param name="supportedTypes">A set of supported types to filter the columns by.</param>
+    /// <param name="selectTagFactory">The factory used to create the concrete select-tag type.</param>
+    /// <returns>All supported select tags for <typeparamref name="T"/>.</returns>
+    internal static IEnumerable<selectTagT> CreateAllSelectTags<selectTagT>
+    (
+        HashSet<Type> supportedTypes,
+        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory
+    )
+        where selectTagT : SelectTagBase =>
+            GetColumnInfo(supportedTypes)
+                .Select(column => CreateSelectTag(column, null, selectTagFactory));
 
     /// <summary>
     /// Resolves an enumeration of <see cref="ReflectorCache.ColumnInfo"/> instances that correspond
     /// to the provided <see cref="PropertyName"/>.
     /// </summary>
-    /// <param name="propertyNames">
-    /// One or more <see cref="PropertyName"/> defined on <typeparamref name="T"/>.
-    /// </param>
+    /// <param name="supportedTypes"></param>
     /// <returns>
     /// The matching <see cref="ReflectorCache.ColumnInfo"/> objects.
     /// </returns>
@@ -153,22 +172,39 @@ public class SqlToolsReflectorCache<T>
     /// Thrown when one or more <see cref="PropertyName"/> do not match valid
     /// column properties in <typeparamref name="T"/>.
     /// </exception>
-    internal static IEnumerable<ColumnInfo> GetColumnsFromProperties(params IEnumerable<PropertyName> propertyNames)
+    /// <param name="propertyNames">
+    /// One or more <see cref="PropertyName"/> defined on <typeparamref name="T"/>.
+    /// </param>
+    internal static IEnumerable<ColumnInfo> GetColumnsFromProperties(HashSet<Type> supportedTypes, params IEnumerable<PropertyName> propertyNames)
     {
         ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
         IEnumerable<PropertyName> keys = propertyNames.Materialize(NullOptionsEnum.Exception);
 
-        InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(keys);
+        InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(supportedTypes, keys);
         if (invalidPropertyException is not null)
             throw invalidPropertyException;
         else
             return _ColumnInfoCache.GetMany(keys);
     }
-    internal static ColumnInfo GetColumnsFromProperty(PropertyName propertyNames)
+
+    /// <summary>
+    /// Resolves the <see cref="ReflectorCache.ColumnInfo"/> instance that corresponds
+    /// to the provided <see cref="PropertyName"/>.
+    /// </summary>
+    /// <param name="supportedTypes">
+    /// A set of supported types to filter the columns by.
+    /// </param>
+    /// <param name="propertyNames">
+    /// The <see cref="PropertyName"/> for which to resolve column information.
+    /// </param>
+    /// <returns>
+    /// The matching <see cref="ReflectorCache.ColumnInfo"/> object.
+    /// </returns>
+    internal static ColumnInfo GetColumnsFromProperty(HashSet<Type> supportedTypes, PropertyName propertyNames)
     {
         ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
 
-        InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(propertyNames);
+        InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(supportedTypes, propertyNames);
         if (invalidPropertyException is not null)
             throw invalidPropertyException;
         else
@@ -191,7 +227,7 @@ public class SqlToolsReflectorCache<T>
     /// A cached lookup of <see cref="PropertyInfo"/> objects mapped to
     /// corresponding <see cref="ReflectorCache.ColumnInfo"/> metadata for <typeparamref name="T"/>.
     /// </summary>
-    private static readonly ColumnInfoCache<T, ColumnInfo> _ColumnInfoCache;
+    private static readonly ColumnInfoCache<T> _ColumnInfoCache;
 
     /// <summary>
     /// Static constructor that initializes the reflection-based metadata cache
@@ -225,8 +261,6 @@ public class SqlToolsReflectorCache<T>
                 ?? Type.Name
         );
 
-        HashSet<Type> supportedTypes = [.. SqlTypeCache.GetAllCSharpTypes()];
-
         IEnumerable<PropertyInfo> readableProperties =
             ReflectorCache<T>
                 .ReadablePublicInstanceProperties
@@ -236,8 +270,7 @@ public class SqlToolsReflectorCache<T>
             readableProperties
                 .Where(property =>
                     property.GetCustomAttribute<NotMappedAttribute>() is null
-                    && property.PropertyType != typeof(object) // filters out SqlDbType.Variant
-                    && supportedTypes.Contains(property.PropertyType))
+                    && property.PropertyType != typeof(object)) // filters out SqlDbType.Variant
                 .Materialize(NullOptionsEnum.Exception);
 
         IEnumerable<PropertyInfo> primaryKeys =
@@ -255,7 +288,7 @@ public class SqlToolsReflectorCache<T>
         else
             keys = primaryKeys;
 
-        _ColumnInfoCache = new ColumnInfoCache<T, ColumnInfo>
+        _ColumnInfoCache = new ColumnInfoCache<T>
         (
             properties.Select(property =>
                 new Tuple<PropertyInfo, ColumnInfo>
@@ -265,62 +298,116 @@ public class SqlToolsReflectorCache<T>
                 ))
         );
 
-        ColumnInfo =
+        //TODO: ensure each SqlGenerator validates the columns are supported.
+        KeyColumnInfo =
             _ColumnInfoCache
                 .Values
-                .Materialize(NullOptionsEnum.Exception);
-
-        KeyColumnInfo =
-            ColumnInfo
                 .Where(column => column.IsKeyPart)
-                .Materialize(NullOptionsEnum.Exception);
-
-        ColumnInfoLessKeys =
-            ColumnInfo
-                .Where(column => column.IsKeyPart is false)
                 .Materialize(NullOptionsEnum.Exception);
 
         HasKeyProperty = KeyColumnInfo.Any();
 
+        //TODO: ensure each SqlGenerator validates the columns are supported.
         KeyVersionColumnsInfo =
-            ColumnInfo
+            _ColumnInfoCache
+                .Values
                 .Where(column => column.IsKeyVersionProperty)
                 .Materialize(NullOptionsEnum.Exception);
 
         _EncryptedColumnInfoHashSet =
         [
-            .. ColumnInfo.Where(column => column.IsEncrypted),
+            .. _ColumnInfoCache
+                .Values
+                .Where(column => column.IsEncrypted),
         ];
-
-        HasAliasedColumns = ColumnInfo.Any(column => column.AliasName is not null);
     }
 
 
     /// <summary>
-    /// Creates a new <see cref="SelectTag"/> for the specified property on <typeparamref name="T"/>,
-    /// using the provided alias if supplied; otherwise defaults to the property's alias attribute (if any).
+    /// Creates a concrete select tag for the specified property on <typeparamref name="T"/>.
     /// </summary>
-    /// <typeparam name="T">The entity/model type containing the property.</typeparam>
+    /// <typeparam name="selectTagT">The concrete select-tag type to create.</typeparam>
     /// <param name="propertyName">The name of the property to project.</param>
-    /// <param name="aliasName">
-    /// An optional alias name override. If provided, it must be a valid SQL identifier.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="SelectTag"/> representing the requested property projection.
-    /// </returns>
-    /// <exception cref="InvalidPropertyException{T}">
-    /// Thrown when <paramref name="propertyName"/> is not a valid, mappable column property for <typeparamref name="T"/>.
-    /// </exception>
-    /// <exception cref="InvalidSqlIdentifierException">
-    /// Thrown when <paramref name="aliasName"/> is provided but fails SQL identifier validation.
-    /// </exception>
-    internal static SelectTag GetSelectTag(PropertyName propertyName, AliasName? aliasName = null)
+    /// <param name="supportedTypes">A set of supported types to filter the columns by.</param>
+    /// <param name="selectTagFactory">The factory used to create the concrete select-tag type.</param>
+    /// <param name="aliasName">An optional alias name override.</param>
+    /// <returns>A concrete select tag representing the requested property projection.</returns>
+    internal static selectTagT CreateSelectTag<selectTagT>
+    (
+        PropertyName propertyName,
+        HashSet<Type> supportedTypes,
+        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory,
+        AliasName? aliasName = null
+    )
+        where selectTagT : SelectTagBase
     {
+        ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
+        ArgumentNullException.ThrowIfNull(supportedTypes, nameof(supportedTypes));
+        ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));
+
+        ColumnInfo columnInfo = GetColumnsFromProperty(supportedTypes, propertyName);
+        return CreateSelectTag(columnInfo, aliasName, selectTagFactory);
+    }
+
+    /// <summary>
+    /// Creates concrete select tags for the specified properties on <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="selectTagT">The concrete select-tag type to create.</typeparam>
+    /// <param name="supportedTypes">A set of supported types to filter the columns by.</param>
+    /// <param name="selectTagFactory">The factory used to create the concrete select-tag type.</param>
+    /// <param name="propertyNames">The property names to project.</param>
+    /// <returns>The concrete select tags representing the requested property projections.</returns>
+    internal static IEnumerable<selectTagT> CreateSelectTags<selectTagT>
+    (
+        HashSet<Type> supportedTypes,
+        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory,
+        params IEnumerable<PropertyName> propertyNames
+    )
+        where selectTagT : SelectTagBase
+    {
+        ArgumentNullException.ThrowIfNull(supportedTypes, nameof(supportedTypes));
+        ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));
+        ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
+
+        return GetColumnsFromProperties(supportedTypes, propertyNames)
+            .Select(columnInfo => CreateSelectTag(columnInfo, null, selectTagFactory));
+    }
+
+    /// <summary>
+    /// Creates a neutral reflected select tag for the specified property without filtering by dialect support.
+    /// </summary>
+    /// <remarks>
+    /// This overload exists for attributes that are attached directly to a property and therefore need to
+    /// describe projection metadata before a dialect-specific generator is involved.
+    /// </remarks>
+    internal static SelectTagBase GetSelectTag(PropertyName propertyName, AliasName? aliasName = null)
+    {
+        ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
+
+        ColumnInfo columnInfo = _ColumnInfoCache.Get(propertyName);
+        return CreateSelectTag(columnInfo, aliasName, static (columnTag, aliasTag) => new ReflectedSelectTag(columnTag, aliasTag));
+    }
+
+    private static selectTagT CreateSelectTag<selectTagT>
+    (
+        ColumnInfo columnInfo,
+        AliasName? aliasName,
+        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory
+    )
+        where selectTagT : SelectTagBase
+    {
+        ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
+        ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));
+
         if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
             throw new InvalidSqlIdentifierException(aliasName);
-        ColumnInfo columnInfo =
-            GetColumnsFromProperties(propertyName)
-                .FirstOrDefault() ?? throw new InvalidPropertyException<T>(propertyName);
-        return new(columnInfo.ColumnTag, AliasTag.New(aliasName ?? columnInfo.AliasName));
+
+        ColumnTag columnTag = columnInfo.SelectTag.ColumnTag;
+        AliasTag? aliasTag = aliasName is null
+            ? columnInfo.SelectTag.AliasTag
+            : AliasTag.New(aliasName);
+
+        return selectTagFactory(columnTag, aliasTag);
     }
+
 }

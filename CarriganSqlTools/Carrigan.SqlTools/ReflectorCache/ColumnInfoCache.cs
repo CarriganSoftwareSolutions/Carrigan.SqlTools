@@ -22,19 +22,16 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <typeparam name="typeT">
 /// The model/entity type whose properties the cache is keyed on (the “lookup source” type).
 /// </typeparam>
-/// <typeparam name="valueT">
-/// The cached value type associated with each property (e.g., <c>ColumnInfo</c>).
-/// </typeparam>
-internal class ColumnInfoCache<typeT, valueT>
+internal class ColumnInfoCache<typeT>
 {
     /// <summary>
     /// The read-only dictionary that serves as the core cache.
     /// Keys are <see cref="PropertyName"/> values derived from <see cref="PropertyInfo.Name"/>.
     /// </summary>
-    private readonly IReadOnlyDictionary<PropertyName, valueT> _cache;
+    private readonly IReadOnlyDictionary<PropertyName, ColumnInfo> _cache;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ColumnInfoCache{typeT, valueT}"/> class.
+    /// Initializes a new instance of the <see cref="ColumnInfoCache{typeT}"/> class.
     /// </summary>
     /// <param name="data">
     /// An enumeration of tuples mapping a <see cref="PropertyInfo"/> to its cached value.
@@ -46,20 +43,20 @@ internal class ColumnInfoCache<typeT, valueT>
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="data"/> contains disallowed null tuple entries.
     /// </exception>
-    internal ColumnInfoCache(IEnumerable<Tuple<PropertyInfo, valueT>> data)
+    internal ColumnInfoCache(IEnumerable<Tuple<PropertyInfo, ColumnInfo>> data)
     {
         ArgumentNullException.ThrowIfNull(data);
 
-        IEnumerable<Tuple<PropertyInfo, valueT>> materialized = data.Materialize(NullOptionsEnum.Exception);
+        IEnumerable<Tuple<PropertyInfo, ColumnInfo>> materialized = data.Materialize(NullOptionsEnum.Exception);
 
-        Dictionary<PropertyName, valueT> cache = [];
-        foreach (Tuple<PropertyInfo, valueT> tuple in materialized)
+        Dictionary<PropertyName, ColumnInfo> cache = [];
+        foreach (Tuple<PropertyInfo, ColumnInfo> tuple in materialized)
         {
             ArgumentNullException.ThrowIfNull(tuple.Item1, nameof(data));
             cache.Add(new PropertyName(tuple.Item1.Name), tuple.Item2);
         }
 
-        _cache = new ReadOnlyDictionary<PropertyName, valueT>(cache);
+        _cache = new ReadOnlyDictionary<PropertyName, ColumnInfo>(cache);
     }
 
     /// <summary>
@@ -74,11 +71,11 @@ internal class ColumnInfoCache<typeT, valueT>
     /// <exception cref="InvalidPropertyException{typeT}">
     /// Thrown when <paramref name="propertyNameKey"/> does not exist in the cache.
     /// </exception>
-    internal valueT Get(PropertyName propertyNameKey)
+    internal ColumnInfo Get(PropertyName propertyNameKey)
     {
         ArgumentNullException.ThrowIfNull(propertyNameKey, nameof(propertyNameKey));
 
-        if (_cache.TryGetValue(propertyNameKey, out valueT? value))
+        if (_cache.TryGetValue(propertyNameKey, out ColumnInfo? value))
             return value;
         else
             throw new InvalidPropertyException<typeT>(propertyNameKey);
@@ -100,7 +97,7 @@ internal class ColumnInfoCache<typeT, valueT>
     /// <exception cref="InvalidPropertyException{typeT}">
     /// Thrown when one or more property names are not present in the cache.
     /// </exception>
-    internal IEnumerable<valueT> GetMany(params IEnumerable<PropertyName> propertyNameKeys)
+    internal IEnumerable<ColumnInfo> GetMany(params IEnumerable<PropertyName> propertyNameKeys)
     {
         ArgumentNullException.ThrowIfNull(propertyNameKeys, nameof(propertyNameKeys));
 
@@ -116,14 +113,14 @@ internal class ColumnInfoCache<typeT, valueT>
     /// <summary>
     /// Gets all cached values.
     /// </summary>
-    internal IEnumerable<valueT> Values =>
+    internal IEnumerable<ColumnInfo> Values =>
         _cache.Values;
 
     /// <summary>
     /// Creates an <see cref="InvalidPropertyException{typeT}"/> that includes any invalid
     /// property names—if any are found—or returns <c>null</c> when all are valid.
     /// </summary>
-    /// <param name="propertyNames">The property names to validate.</param>
+    /// <param name="supportedType"></param>
     /// <returns>
     /// An <see cref="InvalidPropertyException{typeT}"/> if any names are invalid; otherwise, <c>null</c>.
     /// </returns>
@@ -133,12 +130,19 @@ internal class ColumnInfoCache<typeT, valueT>
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="propertyNames"/> contains disallowed null values.
     /// </exception>
-    internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<PropertyName> propertyNames)
+    /// <param name="propertyNames">The property names to validate.</param>
+    internal InvalidPropertyException<typeT>? GetExceptionForInvalidProperties(HashSet<Type> supportedTypes, params IEnumerable<PropertyName> propertyNames)
     {
         ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
 
         IEnumerable<PropertyName> keys = propertyNames.Materialize(NullOptionsEnum.Exception);
-        IEnumerable<PropertyName> invalidPropertyNames = keys.Where(propertyName => _cache.ContainsKey(propertyName) is false);
+        IEnumerable<PropertyName> invalidPropertyNames =
+            keys.Where
+            (
+                propertyName =>
+                    _cache.TryGetValue(propertyName, out ColumnInfo? columnInfo) is false
+                        || supportedTypes.DoesNotContain(columnInfo.Type)
+                );
 
         if (invalidPropertyNames.Any())
             return new(invalidPropertyNames);

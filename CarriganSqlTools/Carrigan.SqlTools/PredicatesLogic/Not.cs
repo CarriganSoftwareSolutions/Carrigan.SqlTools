@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 /// <example>
 /// <para>
-/// <see cref="Column{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
+/// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterName = new("Name", "Hank");

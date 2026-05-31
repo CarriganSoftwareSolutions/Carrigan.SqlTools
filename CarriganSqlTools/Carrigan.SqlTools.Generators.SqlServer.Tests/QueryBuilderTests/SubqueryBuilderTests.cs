@@ -22,9 +22,9 @@ public class SubqueryBuilderTests
         SubqueryBuilder<Customer> subqueryBuilder = new()
         {
             Distinct = true,
-            Selects = SelectTags.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
+            Selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
             Where = new Equal(new Column<Customer>(nameof(Customer.Name)), new Parameter("Hank", "Name")),
-            OrderBys = new OrderBy<Customer>(nameof(Customer.Name)),
+            OrderBys = new OrderBys(new OrderBy<Customer>(nameof(Customer.Name))),
             Paging = new DefinePage(2, 25)
         };
 

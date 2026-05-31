@@ -12,10 +12,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     public Subquery<T> Subquery
     (
         bool? distinct,
-        SelectTags? selects,
+        SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        OrderBys? orderBy,
+        OrderBysBase? orderBy,
         PagingBase? paging
     ) =>
         BaseSubquery(distinct, selects, joins, predicates, orderBy, paging);

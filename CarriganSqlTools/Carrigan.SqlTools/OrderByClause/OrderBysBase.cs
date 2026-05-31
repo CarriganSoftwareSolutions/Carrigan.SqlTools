@@ -11,7 +11,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>
-/// Concrete implementation of <see cref="OrderBys"/> for an <c>ORDER BY</c>
+/// Concrete implementation of <see cref="OrderBysBase"/> for an <c>ORDER BY</c>
 /// clause that supports multiple columns.
 /// </summary>
 /// <example>
@@ -30,22 +30,17 @@ namespace Carrigan.SqlTools.OrderByClause;
 ///     [Customer].[Id] DESC
 /// ]]></code>
 /// </example>
-public class OrderBys
+public abstract class OrderBysBase
 {
-    /// <summary>
-    /// Gets an empty <c>ORDER BY</c> clause.
-    /// </summary>
-    public static OrderBys Empty =>
-        new();
 
     /// <summary>
     /// Holds all parts of the <c>ORDER BY</c> clause, with one <see cref="OrderByBase"/>
     /// for each individual column.
     /// </summary>
-    private readonly IEnumerable<OrderByBase> _orderByItems;
+    protected readonly IEnumerable<OrderByBase> _orderByItems;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="OrderBys"/> class,
+    /// Initializes a new instance of the <see cref="OrderBysBase"/> class,
     /// representing an <c>ORDER BY</c> clause.
     /// </summary>
     /// <param name="orderByItems">
@@ -58,53 +53,12 @@ public class OrderBys
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="orderByItems"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public OrderBys(params IEnumerable<OrderByBase> orderByItems)
+    public OrderBysBase(params IEnumerable<OrderByBase> orderByItems)
     {
         ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
 
         _orderByItems = orderByItems.Materialize(NullOptionsEnum.Exception);
     }
-
-        /// <summary>
-    /// Creates a new <c>ORDER BY</c> clause containing a single item for the specified
-    /// property on <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The entity/model type that defines the table containing the property to order by.
-    /// </typeparam>
-    /// <param name="propertyName">The property representing the column to order by.</param>
-    /// <param name="sortDirection">The sort direction to apply.</param>
-    /// <returns>
-    /// A new <see cref="OrderBys"/> instance containing one <see cref="OrderBy{T}"/> item.
-    /// </returns>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
-    /// </exception>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the resolved column metadata does not contain exactly one match.
-    public static OrderBys New<T>(PropertyName propertyName, SortDirectionEnum sortDirection) where T : class => 
-        new(new OrderBy<T>(propertyName, sortDirection));
-
-    /// <summary>
-    /// Creates a new <c>ORDER BY</c> clause containing a single item for the specified
-    /// property on <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The entity/model type that defines the table containing the property to order by.
-    /// </typeparam>
-    /// <param name="propertyName">The name of the property representing the column to order by.</param>
-    /// <param name="sortDirection">The sort direction to apply.</param>
-    /// <returns>
-    /// A new <see cref="OrderBys"/> instance containing one <see cref="OrderBy{T}"/> item.
-    /// </returns>
-    /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
-    /// </exception>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the resolved column metadata does not contain exactly one match.
-    /// </exception>
-    public static OrderBys New<T>(string propertyName, SortDirectionEnum sortDirection) where T : class =>
-        OrderBys.New<T>(new PropertyName(propertyName), sortDirection);
 
     /// <summary>
     /// Determines whether the specified <paramref name="orderByItem"/> is present
@@ -133,7 +87,7 @@ public class OrderBys
     /// <summary>
     /// Determines whether the <c>ORDER BY</c> clause is empty.
     /// </summary>
-    public bool IsEmpty() =>
+    public bool IsEmpty() => 
         _orderByItems.IsNullOrEmpty();
 
     /// <summary>
@@ -149,12 +103,7 @@ public class OrderBys
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
     /// </exception>
-    public OrderBys Append(OrderByBase orderByItem)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
-
-        return new(_orderByItems.Append(orderByItem));
-    }
+    public abstract OrderBysBase Append(OrderByBase orderByItem);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
@@ -171,8 +120,7 @@ public class OrderBys
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
     /// </exception>
-    public OrderBys Append<T>(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) where T : class =>
-        new(_orderByItems.Append(new OrderBy<T>(propertyName, sortDirection)));
+    public abstract OrderBysBase Append<T>(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) where T : class;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
@@ -190,16 +138,8 @@ public class OrderBys
     /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
     /// </exception>
     [ExternalOnly]
-    public OrderBys Append<T>(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) where T : class =>
+    public virtual OrderBysBase Append<T>(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) where T : class =>
         Append<T>(new PropertyName(propertyName), sortDirection);
-
-    [Obsolete("WithAppend has been deprecated. Please use just Append from now on.")]
-    public OrderBys WithAppend(OrderByBase orderByItem)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
-
-        return new(_orderByItems.Append(orderByItem));
-    }
 
     /// <summary>
     /// Creates a new <c>ORDER BY</c> clause with the specified sequence of
@@ -215,28 +155,15 @@ public class OrderBys
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="orderByItems"/> is <c>null</c>.
     /// </exception>
-    public OrderBys Concat(params IEnumerable<OrderByBase> orderByItems)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
-
-        return new(_orderByItems.Concat(orderByItems));
-    }
-
-    [Obsolete("WithConcat has been deprecate. Please use just Concat from now on.")]
-    public OrderBys WithConcat(params IEnumerable<OrderByBase> orderByItems)
-    {
-        ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
-
-        return new(_orderByItems.Concat(orderByItems));
-    }
+    public abstract OrderBysBase Concat(params IEnumerable<OrderByBase> orderByItems);
 
     /// <summary>
-    /// Returns this instance cast to the concrete implementation, <see cref="OrderBys"/>.
+    /// Returns this instance cast to the concrete implementation, <see cref="OrderBysBase"/>.
     /// </summary>
     /// <returns>
-    /// This instance as an <see cref="OrderBys"/> object.
+    /// This instance as an <see cref="OrderBysBase"/> object.
     /// </returns>
-    public OrderBys AsOrderBy() => this;
+    public virtual OrderBysBase AsOrderBy() => this;
 
     /// <summary>
     /// Returns all contained <see cref="OrderByBase"/> objects.

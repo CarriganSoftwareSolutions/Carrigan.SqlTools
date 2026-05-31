@@ -12,6 +12,7 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ReflectorCacheTests;
 public class SqlToolsReflectorCacheTests
 {
     private static readonly SqlServerDialect Dialect = new();
+    private static readonly HashSet<Type> SupportedTypes = Dialect.SupportedTypes();
 
     #region test models
 
@@ -105,7 +106,7 @@ public class SqlToolsReflectorCacheTests
     {   //Using the expected property names to compare results from GetColumnsFromProperties to the actual values of KeyColumnInfo
         //The comparer will ensure each critical part is equal.
         IEnumerable<ColumnInfo> GetExpected<T>(params IEnumerable<string> expectedPropertyNames) =>
-            SqlToolsReflectorCache<T>.GetColumnsFromProperties(expectedPropertyNames.Select(name => new PropertyName(name)));
+            SqlToolsReflectorCache<T>.GetColumnsFromProperties(SupportedTypes, expectedPropertyNames.Select(name => new PropertyName(name)));
 
         IEnumerable<ColumnInfo> GetActual<T>() =>
             SqlToolsReflectorCache<T>.KeyColumnInfo;
@@ -147,7 +148,7 @@ public class SqlToolsReflectorCacheTests
             expectedNames.Select(name => new ColumnName(name));
 
         IEnumerable<ColumnName> GetActual<T>() =>
-            SqlToolsReflectorCache<T>.ColumnInfo.Select(item => item.ColumnName);
+            SqlToolsReflectorCache<T>.GetColumnInfo(SupportedTypes).Select(item => item.ColumnName);
 
         Assert.Equal(GetExpected("Id", "Property", "Column", "Identifier", "IdentifierOverride"), GetActual<ColumnIdentifiers>());
     }
@@ -156,10 +157,10 @@ public class SqlToolsReflectorCacheTests
     public void ColumnInfoCompare()
     {   //Using the expected property names to compare results from GetColumnsFromProperties to the actual  column info
         IEnumerable<ColumnInfo> GetExpected<T>(params IEnumerable<string> expectedPropertyNames) =>
-            SqlToolsReflectorCache<T>.GetColumnsFromProperties(expectedPropertyNames.Select(name => new PropertyName(name)));
+            SqlToolsReflectorCache<T>.GetColumnsFromProperties(SupportedTypes, expectedPropertyNames.Select(name => new PropertyName(name)));
 
         IEnumerable<ColumnInfo> GetActual<T>() =>
-            SqlToolsReflectorCache<T>.ColumnInfo;
+            SqlToolsReflectorCache<T>.GetColumnInfo(SupportedTypes);
 
         Assert.Equal(GetExpected<ColumnIdentifiers>("Id", "Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"), GetActual<ColumnIdentifiers>(), ColumnInfoAllPropertiesComparer.Instance);
     }
@@ -171,7 +172,7 @@ public class SqlToolsReflectorCacheTests
             expectedNames.Select(name => new ColumnName(name));
 
         IEnumerable<ColumnName> GetActual<T>() =>
-            SqlToolsReflectorCache<T>.ColumnInfoLessKeys.Select(item => item.ColumnName);
+            SqlToolsReflectorCache<T>.GetGetColumnInfoLessKeys(SupportedTypes).Select(item => item.ColumnName);
 
         Assert.Equal(GetExpected("Property", "Column", "Identifier", "IdentifierOverride"), GetActual<ColumnIdentifiers>());
     }
@@ -180,10 +181,10 @@ public class SqlToolsReflectorCacheTests
     public void ColumnInfoLessKeysCompare()
     {   //Using the expected property names to compare results from GetColumnsFromProperties to the actual  column info
         IEnumerable<ColumnInfo> GetExpected<T>(params IEnumerable<string> expectedPropertyNames) =>
-            SqlToolsReflectorCache<T>.GetColumnsFromProperties(expectedPropertyNames.Select(name => new PropertyName(name)));
+            SqlToolsReflectorCache<T>.GetColumnsFromProperties(SupportedTypes, expectedPropertyNames.Select(name => new PropertyName(name)));
 
         IEnumerable<ColumnInfo> GetActual<T>() =>
-            SqlToolsReflectorCache<T>.ColumnInfoLessKeys;
+            SqlToolsReflectorCache<T>.GetGetColumnInfoLessKeys(SupportedTypes);
 
         Assert.Equal(GetExpected<ColumnIdentifiers>("Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"), GetActual<ColumnIdentifiers>(), ColumnInfoAllPropertiesComparer.Instance);
     }
@@ -212,7 +213,7 @@ public class SqlToolsReflectorCacheTests
     [Fact]
     public void KeyVersion()
     {
-        ColumnInfo expected = SqlToolsReflectorCache<EntityWithEncryption>.GetColumnsFromProperties(new PropertyName("KeyVersion")).Single();
+        ColumnInfo expected = SqlToolsReflectorCache<EntityWithEncryption>.GetColumnsFromProperties(SupportedTypes, new PropertyName("KeyVersion")).Single();
         ColumnInfo? actual = SqlToolsReflectorCache<EntityWithEncryption>.KeyVersionColumnInfo;
         Assert.NotNull(actual);
         Assert.Equal(expected, actual, ColumnInfoAllPropertiesComparer.Instance);
@@ -229,7 +230,7 @@ public class SqlToolsReflectorCacheTests
     [Fact] 
     public void IsEncrypted_True()
     {
-        ColumnInfo encrypted = SqlToolsReflectorCache<EntityWithEncryption>.GetColumnsFromProperties(new PropertyName("SensitiveData")).Single();
+        ColumnInfo encrypted = SqlToolsReflectorCache<EntityWithEncryption>.GetColumnsFromProperties(SupportedTypes, new PropertyName("SensitiveData")).Single();
         Assert.True(SqlToolsReflectorCache<EntityWithEncryption> .IsEncrypted(encrypted));
         Assert.True(encrypted.IsEncrypted);
     }
@@ -237,7 +238,7 @@ public class SqlToolsReflectorCacheTests
     [Fact]
     public void IsEncrypted_False()
     {
-        ColumnInfo encrypted = SqlToolsReflectorCache<EntityWithEncryption>.GetColumnsFromProperties(new PropertyName("NotSensitiveData")).Single();
+        ColumnInfo encrypted = SqlToolsReflectorCache<EntityWithEncryption>.GetColumnsFromProperties(SupportedTypes, new PropertyName("NotSensitiveData")).Single();
         Assert.False(SqlToolsReflectorCache<EntityWithEncryption>.IsEncrypted(encrypted));
         Assert.False(encrypted.IsEncrypted);
     }
@@ -265,21 +266,21 @@ public class SqlToolsReflectorCacheTests
     [Fact]
     public void HasAliasedColumns_False()
     {
-        bool value = SqlToolsReflectorCache<NoAliasModel>.HasAliasedColumns;
+        bool value = SqlToolsReflectorCache<NoAliasModel>.HasAliasedColumns(SupportedTypes);
         Assert.False(value);
     }
 
     [Fact]
     public void HasAliasedColumns_True()
     {
-        bool value = SqlToolsReflectorCache<AliasedModel>.HasAliasedColumns;
+        bool value = SqlToolsReflectorCache<AliasedModel>.HasAliasedColumns(SupportedTypes);
         Assert.True(value);
     }
 
     [Fact]
     public void SelectTags_AliasModel()
     {
-        SelectTags selectTags = SqlToolsReflectorCache<AliasedModel>.SelectTags;
+        SelectTags selectTags = SelectTagGenerator.GetAll<AliasedModel>();
 
         Assert.Equal(2, selectTags.All().Count());
         Assert.Equal("[AliasedModel].[Id], [AliasedModel].[Name] AS [FullName]", selectTags.ToSql(Dialect));
@@ -288,7 +289,7 @@ public class SqlToolsReflectorCacheTests
     [Fact]
     public void SelectTags_NoAliasModel()
     {
-        SelectTags selectTags = SqlToolsReflectorCache<NoAliasModel>.SelectTags;
+        SelectTags selectTags = SelectTagGenerator.GetAll<NoAliasModel>();
 
         Assert.Equal(2, selectTags.All().Count());
         Assert.Equal("[NoAliasModel].[Id], [NoAliasModel].[Name]", selectTags.ToSql(Dialect));

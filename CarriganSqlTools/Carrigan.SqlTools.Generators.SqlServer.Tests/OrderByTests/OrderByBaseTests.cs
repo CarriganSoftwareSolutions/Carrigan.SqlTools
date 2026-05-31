@@ -13,7 +13,7 @@ public class OrderByBaseTests
     [Fact]
     public void ImplicitConversion_ReturnsOrderBysWithSingleItem()
     {
-        OrderByBase item = new OrderBy<Address>("City");
+        OrderBy<Address> item = new("City");
 
         OrderBys orderBy = item;
 
@@ -25,7 +25,7 @@ public class OrderByBaseTests
     [Fact]
     public void Flatten_ReturnsCurrentItemOnly()
     {
-        OrderByBase item = new OrderBy<Address>("Street");
+        OrderBy<Address> item = new("Street");
 
         IEnumerable<ISqlFragment> fragments = item.Flatten();
 

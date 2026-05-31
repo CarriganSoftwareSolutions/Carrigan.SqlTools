@@ -43,7 +43,7 @@ public class EmptyOrderByTests
     [Fact]
     public void Equals_Object_DifferentType_ReturnsFalse()
     {
-        OrderByBase item = new OrderBy<Address>("Street");
+        OrderBy<Address> item = new("Street");
 
         Assert.False(item.Equals((object)"Street"));
     }

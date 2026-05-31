@@ -6,9 +6,11 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.RegularExpressions;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Reflection;
@@ -33,6 +35,8 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// The SQL dialect configuration used for generating database queries.
     /// </summary>
     protected abstract ISqlDialects Dialect { get; init; }
+
+    protected abstract HashSet<Type> SupportedTypes { get; }
 
     /// <summary>
     /// Stores the encryption service used for SQL generation,
@@ -61,6 +65,10 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
         IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
         IEnumerable<Tuple<PropertyInfo, ParameterTag>> invalidParameters = [];
 
+        if (KeyColumnInfo.Where(key => SupportedTypes.DoesNotContain(key.Type)).Any())
+            //TODO: new type for these types of exceptions.
+            exceptions.Add(new Exception("Key Contains Unsupported Column CLR Type"));
+
         if (SqlIdentifierPattern.Fails(TableName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, TableName));
         if (SchemaName is not null && SqlIdentifierPattern.Fails(SchemaName))
@@ -69,7 +77,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             exceptions.Add(new InvalidSqlIdentifierException(Type, ProcedureName));
 
         invalidColumns =
-            ColumnInfo
+            GetColumnInfo(SupportedTypes)
                 .Where(static column => SqlIdentifierPattern.Fails(column.ColumnName))
                 .Select(static column => new Tuple<PropertyInfo, ColumnName>(column.PropertyInfo, column.ColumnName))
                 .Materialize(NullOptionsEnum.Exception);
@@ -78,7 +86,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
 
        invalidAliases =
-            ColumnInfo
+            GetColumnInfo(SupportedTypes)
                 .Where(static column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName))
                 .Select(static column =>
                     column.AliasName is not null
@@ -91,7 +99,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             exceptions.Add(new InvalidSqlIdentifierException(invalidAliases));
 
         invalidParameters =
-            ColumnInfo
+            GetColumnInfo(SupportedTypes)
                 .Where(static column => SqlIdentifierPattern.Fails(column.ParameterTag))
                 .Select(static column => new Tuple<PropertyInfo, ParameterTag>(column.PropertyInfo, column.ParameterTag))
                 .Materialize(NullOptionsEnum.Exception);
@@ -115,34 +123,6 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             throw exceptions.First();
         else if (exceptions.Count > 1)
             throw new AggregateException(exceptions);
-    }
-
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SqlGeneratorBase{T}"/> class without an encrypter.
-    /// </summary>
-    /// <exception cref="AggregateException">
-    /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
-    /// </exception>
-    /// <exception cref="InvalidSqlIdentifierException">
-    /// for invalid table, schema, procedure, column, alias, or parameter identifiers.
-    /// </exception>
-    /// <exception cref="EncrypterNotProvidedException{T}">
-    /// if encrypted columns exist but no encrypter was supplied
-    /// </exception>
-    /// <exception cref="NoKeyVersionException{T}">
-    /// if encrypted columns exist but no key-version property was designated.
-    /// </exception>
-    /// <exception cref="InvalidKeyVersionPropertyTypeException{T}">
-    /// if the key-version property is not an <see cref="int"/> (nullable allowed).
-    /// </exception>
-    /// <exception cref="MultipleKeyVersionsException{T}">
-    /// if more than one key-version property is present.
-    /// </exception>
-    public SqlGeneratorBase()
-    {
-        _Encryption = null;
-        ValidationChecks();
     }
 
     /// <summary>
@@ -172,7 +152,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// The <see cref="IEncryption"/> implementation used to encrypt and decrypt values.
     /// Must not be <c>null</c>.
     /// </param>
-    public SqlGeneratorBase(IEncryption? encryption)
+    public SqlGeneratorBase(IEncryption? encryption = null)
     {
         _Encryption = encryption;
 
@@ -189,8 +169,8 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// An <see cref="And"/> predicate that matches the entity’s key column values.  
     /// Useful for selecting a record by primary key.
     /// </returns>
-    private static And GetByKeyPredicates(T entity) =>
-        new(KeyColumnInfo.Select(key => new Equal(new Column<T>(key.PropertyName), new Parameter(key.PropertyInfo.GetValue(entity), key.ParameterTag))));
+    private And GetByKeyPredicates(T entity) =>
+        new(KeyColumnInfo.Select(key => new Equal(GetColumn(key.PropertyName), new Parameter(key.PropertyInfo.GetValue(entity), key.ParameterTag))));
 
     /// <summary>
     /// Creates a <see cref="Parameter"/> object for the specified column and entity instance. 
@@ -239,4 +219,19 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
         else
             return SqlFragmentParameter.GetParameter(column, Dialect.GetDefaultFieldPropertiesByClrType(column.Type), entity);
     }
+
+    protected abstract ColumnBase<T> GetColumn(PropertyName propertyName);
+    protected abstract ColumnValueBase<T> GetColumnValue(ColumnInfo columnInfo, T entity);
+
+    protected abstract ColumnCollectionBase<T> GetColumnCollection(params IEnumerable<PropertyName> propertyNames);
+
+    protected abstract OrderBysBase NewOrderBys();
+
+    protected abstract OrderByBase NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection);
+
+    /// <summary>
+    /// Creates the dialect-specific select-tag collection for all supported mapped columns.
+    /// </summary>
+    protected abstract SelectTagsBase GetAllSelectTags();
+
 }

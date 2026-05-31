@@ -54,7 +54,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// ORDER BY [Customer].[Email] ASC
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelectAll(OrderBys? orderBy = null) =>
+    protected virtual SqlQuery BaseSelectAll(OrderBysBase? orderBy = null) =>
         BaseSelect(null, null, null, null, null, orderBy, null);
 
     /// <summary>
@@ -101,7 +101,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <example>
     /// <para>Select with join example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -119,7 +119,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <example>
     /// <para>Select with join and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
@@ -142,8 +142,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// <example>
     /// <para>Select with join, where, and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
@@ -181,10 +181,10 @@ public abstract partial class SqlGeneratorBase<T>
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseSelect(bool? distinct, Subquery<T>? subQuery, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging) =>
+    protected virtual SqlQuery BaseSelect(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBy, PagingBase? paging) =>
         new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, predicates, orderBy, paging));
 
-    private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, Subquery<T>? subQuery, SelectTags? selects, Joins<T>? joins, Predicates? predicates, OrderBys? orderBy, PagingBase? paging)
+    private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBy, PagingBase? paging)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
@@ -195,8 +195,8 @@ public abstract partial class SqlGeneratorBase<T>
 
             if (selects is not null && selects.Any())
                 yield return selects;
-            else if (HasAliasedColumns)
-                yield return SelectTags;
+            else if (HasAliasedColumns(SupportedTypes))
+                yield return GetAllSelectTags();
             else
             {
                 yield return Table;
@@ -259,11 +259,11 @@ public abstract partial class SqlGeneratorBase<T>
         {
             // add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server
             // that has unexpected behavior if the order by values are not unique
-            orderBy ??= new OrderBys();
-            IEnumerable<OrderBy<T>> orderByKeyItems =
+            orderBy ??= NewOrderBys();
+            IEnumerable<OrderByBase> orderByKeyItems =
             [
                 .. KeyColumnInfo
-                    .Select(static key => new OrderBy<T>(key.PropertyName, SortDirectionEnum.Ascending))
+                    .Select(key => NewOrderByKey(key.PropertyName, SortDirectionEnum.Ascending))
                     .Where(item => orderBy.Contains(item) == false)
             ];
             orderBy = orderBy.Concat(orderByKeyItems);
@@ -317,6 +317,6 @@ public abstract partial class SqlGeneratorBase<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(SqlGeneratorBase<T>.GetByKeyPredicates(entity)))), null, null);
+            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(GetByKeyPredicates(entity)))), null, null);
     }
 }

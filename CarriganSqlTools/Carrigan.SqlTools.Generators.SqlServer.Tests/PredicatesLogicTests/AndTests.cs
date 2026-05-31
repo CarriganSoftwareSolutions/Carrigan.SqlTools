@@ -44,7 +44,7 @@ public class AndTests
             new Column<ColumnTable>("Col2"),
             new Or (
             [
-                new Column < ColumnTable >("ColA"),
+                new Column<ColumnTable>("ColA"),
                 new Column<ColumnTable>("ColB"),
                 new Parameter(2, "PA")
             ])
@@ -64,12 +64,12 @@ public class AndTests
         [
             new Parameter(1, "P1"),
             new Parameter(2, "P2"),
-            new Column < ColumnTable >("Col1"),
-            new Column < ColumnTable >("Col2"),
+            new Column<ColumnTable>("Col1"),
+            new Column<ColumnTable>("Col2"),
             new Or (
             [
-                new Column < ColumnTable >("ColA"),
-                new Column <ColumnTable>("ColB"),
+                new Column<ColumnTable>("ColA"),
+                new Column<ColumnTable>("ColB"),
                 new Parameter(2, "PA")
             ])
         ]);

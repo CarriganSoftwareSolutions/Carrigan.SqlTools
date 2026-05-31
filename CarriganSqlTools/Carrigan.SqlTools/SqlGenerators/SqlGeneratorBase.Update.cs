@@ -65,7 +65,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
@@ -84,7 +84,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE [Id] = @Id;
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseUpdateById(T entity, ColumnCollection<T>? columns = null)
+    protected virtual SqlQuery BaseUpdateById(T entity, ColumnCollectionBase<T>? columns = null)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
@@ -92,7 +92,7 @@ public abstract partial class SqlGeneratorBase<T>
             throw new NoPrimaryKeyPropertyException<T>();
 
         IEnumerable<ColumnInfo> updateTheseColumns =
-            (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys;
+            (columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : GetGetColumnInfoLessKeys(SupportedTypes);
 
         IEnumerable<ISqlFragment>GetWhereFragments() =>
             KeyColumnInfo
@@ -160,7 +160,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// </exception>
     /// <example>
     /// <para>
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Customer updateValues = new()
@@ -187,7 +187,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseUpdateByIds(T valuesEntity, ColumnCollection<T>? columns, params IEnumerable<T> idEntities)
+    protected virtual SqlQuery BaseUpdateByIds(T valuesEntity, ColumnCollectionBase<T>? columns, params IEnumerable<T> idEntities)
     {
         ArgumentNullException.ThrowIfNull(valuesEntity);
 
@@ -200,7 +200,7 @@ public abstract partial class SqlGeneratorBase<T>
                     (
                         KeyColumnInfo.Select(column => new Equal
                             (
-                                new Column<T>(column.PropertyName),
+                                GetColumn(column.PropertyName),
                                 new Parameter(column.PropertyInfo.GetValue(entity), column.ParameterTag))
                             )
                     ))
@@ -243,9 +243,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// <example>
     /// <para>
     /// Create Update SQL query with a Where clause.
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnValueBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Order entity = new()
@@ -277,8 +277,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// <example>
     /// <para>
     /// Create Update SQL query with Joins and a Where clause.
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnValueBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new()
@@ -301,12 +301,12 @@ public abstract partial class SqlGeneratorBase<T>
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
     /// </param>
-    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollection<T>? columns, IEnumerable<TableTag>? from, JoinsBase? joins, Predicates? predicates)
+    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, JoinsBase? joins, Predicates? predicates)
     {
         ArgumentNullException.ThrowIfNull(entity);
 
         IEnumerable<ColumnInfo> updateTheseColumns =
-            [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : ColumnInfoLessKeys)];
+            [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : GetGetColumnInfoLessKeys(SupportedTypes))];
 
         IEnumerable<TableTag> selectTableTags = (from ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(col => col.TableTag)?.Distinct() ?? []];

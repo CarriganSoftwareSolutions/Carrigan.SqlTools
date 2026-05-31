@@ -27,7 +27,7 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
             && EqualityComparer<PropertyInfo>.Default.Equals(left.PropertyInfo, right.PropertyInfo)
             && EqualityComparer<PropertyName>.Default.Equals(left.PropertyName, right.PropertyName)
             && EqualityComparer<ParameterTag>.Default.Equals(left.ParameterTag, right.ParameterTag)
-            && EqualityComparer<SelectTag>.Default.Equals(left.SelectTag, right.SelectTag)
+            && EqualityComparer<SelectTagBase>.Default.Equals(left.SelectTag, right.SelectTag)
             && EqualityComparer<AliasName>.Default.Equals(left.AliasName, right.AliasName)
             && left.IsKeyPart == right.IsKeyPart
             && left.IsEncrypted == right.IsEncrypted
@@ -47,7 +47,7 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
         hashCode.Add(obj.PropertyInfo, EqualityComparer<PropertyInfo>.Default);
         hashCode.Add(obj.PropertyName, EqualityComparer<PropertyName>.Default);
         hashCode.Add(obj.ParameterTag, EqualityComparer<ParameterTag>.Default);
-        hashCode.Add(obj.SelectTag, EqualityComparer<SelectTag>.Default);
+        hashCode.Add(obj.SelectTag, EqualityComparer<SelectTagBase>.Default);
         hashCode.Add(obj.IsKeyPart);
         hashCode.Add(obj.IsEncrypted);
         hashCode.Add(obj.IsKeyVersionProperty);

@@ -36,7 +36,7 @@ public class Parameter<T> : Parameter where T : class
     /// </summary>
     /// <param name="propertyName">PropertyName that identifies the property from which columns are resolved.</param>
     /// <param name="value">Value to assign to the parameter; may be null.</param>
-    public Parameter(PropertyName propertyName, object? value) : base(value, SqlToolsReflectorCache<T>.GetColumnsFromProperty(propertyName))
+    public Parameter(PropertyName propertyName, object? value) : base(value, SqlToolsReflectorCache<T>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName))
     {
     }
     /// <summary>

@@ -140,7 +140,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     /// <example>
-    /// <para>Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Customer> join = new(predicate);

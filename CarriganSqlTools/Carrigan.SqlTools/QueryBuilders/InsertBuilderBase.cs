@@ -18,12 +18,12 @@ public abstract record InsertBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the columns to include in the INSERT statement.
     /// </summary>
-    public ColumnCollection<T>? InsertColumns { get; set; }
+    public ColumnCollectionBase<T>? InsertColumns { get; set; }
 
     /// <summary>
     /// Gets or sets the columns to return from the INSERT statement.
     /// </summary>
-    public ColumnCollection<T>? ReturnColumns { get; set; }
+    public ColumnCollectionBase<T>? ReturnColumns { get; set; }
 
     /// <summary>
     /// Gets or sets the records to insert.
@@ -35,7 +35,7 @@ public abstract record InsertBuilderBase<T> where T : class
     /// </summary>
     /// <param name="insertColumns">The columns to include in the INSERT statement.</param>
     /// <returns>A new query instance with the specified insert columns.</returns>
-    public InsertBuilderBase<T> WithInsertColumns(ColumnCollection<T>? insertColumns) =>
+    public InsertBuilderBase<T> WithInsertColumns(ColumnCollectionBase<T>? insertColumns) =>
         this with { InsertColumns = insertColumns };
 
     /// <summary>
@@ -43,7 +43,7 @@ public abstract record InsertBuilderBase<T> where T : class
     /// </summary>
     /// <param name="returnColumns">The columns to return from the INSERT statement.</param>
     /// <returns>A new query instance with the specified return columns.</returns>
-    public InsertBuilderBase<T> WithReturnColumns(ColumnCollection<T>? returnColumns) =>
+    public InsertBuilderBase<T> WithReturnColumns(ColumnCollectionBase<T>? returnColumns) =>
         this with { ReturnColumns = returnColumns };
 
     /// <summary>

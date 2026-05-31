@@ -59,7 +59,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
@@ -78,7 +78,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE [Id] = @Id;
     /// ]]></code>
     /// </example>
-    public SqlQuery UpdateById(T entity, ColumnCollection<T>? columns = null) =>
+    public SqlQuery UpdateById(T entity, ColumnCollectionBase<T>? columns = null) =>
         base.BaseUpdateById(entity, columns);
 
 
@@ -118,7 +118,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </exception>
     /// <example>
     /// <para>
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Customer updateValues = new()
@@ -145,7 +145,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
     /// ]]></code>
     /// </example>
-    public SqlQuery UpdateByIds(T valuesEntity, ColumnCollection<T>? columns, params IEnumerable<T> idEntities) =>
+    public SqlQuery UpdateByIds(T valuesEntity, ColumnCollectionBase<T>? columns, params IEnumerable<T> idEntities) =>
         base.BaseUpdateByIds(valuesEntity, columns, idEntities);
 
     /// <summary>
@@ -184,9 +184,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>
     /// Create Update SQL query with a Where clause.
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnValueBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Order entity = new()
@@ -218,8 +218,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>
     /// Create Update SQL query with Joins and a Where clause.
-    /// <see cref="ColumnCollection{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnValueBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Customer entity = new()
@@ -238,7 +238,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, ColumnCollection<T>? columns, Joins<T>? joins, Predicates? predicates) =>
+    public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, Joins<T>? joins, Predicates? predicates) =>
         base.BaseUpdate(entity, columns, null, joins, predicates);
 
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>

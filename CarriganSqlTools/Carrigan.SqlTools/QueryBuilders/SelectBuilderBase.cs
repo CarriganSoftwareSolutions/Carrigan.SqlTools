@@ -24,7 +24,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the selected columns or expressions for the query.
     /// </summary>
-    public SelectTags? Selects { get; set; }
+    public SelectTagsBase? Selects { get; set; }
 
     /// <summary>
     /// Gets or sets the subquery to use as the query source instead of the default table.
@@ -44,7 +44,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the ORDER BY clause for the query.
     /// </summary>
-    public OrderBys? OrderBys { get; set; }
+    public OrderBysBase? OrderBys { get; set; }
 
     /// <summary>
     /// Gets or sets the paging options for the query.
@@ -78,7 +78,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="selectTags">The select tags to include in the query.</param>
     /// <returns>A new query instance with the specified select tags.</returns>
-    public SelectBuilderBase<T> WithSelectTags(SelectTags? selectTags) =>
+    public SelectBuilderBase<T> WithSelectTags(SelectTagsBase? selectTags) =>
         this with { Selects = selectTags };
 
     /// <summary>
@@ -110,7 +110,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="orderBy">The ORDER BY clause to apply to the query.</param>
     /// <returns>A new query instance with the specified ORDER BY clause.</returns>
-    public SelectBuilderBase<T> WithOrderBy(OrderBys? orderBy) =>
+    public SelectBuilderBase<T> WithOrderBy(OrderBysBase? orderBy) =>
         this with { OrderBys = orderBy };
 
     /// <summary>

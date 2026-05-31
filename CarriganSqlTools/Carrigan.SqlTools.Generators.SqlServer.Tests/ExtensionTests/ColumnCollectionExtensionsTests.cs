@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExtensionTests;
 
@@ -22,7 +23,7 @@ public class ColumnCollectionExtensionsTests
     public void IsNullOrEmpty_EmptyColumnNames_ReturnsTrue()
     {
         // Arrange: pass an empty IEnumerable<string>.
-        ColumnCollection<ColumnTable> columnCollection = new(Enumerable.Empty<string>());
+        ColumnCollection<ColumnTable> columnCollection = new(Enumerable.Empty<PropertyName>());
 
         // Act
         bool result = columnCollection.IsNullOrEmpty();
@@ -39,7 +40,7 @@ public class ColumnCollectionExtensionsTests
         [
             "Col1", "Col2", "ColA", "ColB", "Pizza", "D000destruct0", "Express"
         ];
-        ColumnCollection<ColumnTable> columnCollection = new(propertyNames);
+        ColumnCollection<ColumnTable> columnCollection = new(propertyNames.Select(name => new PropertyName(name)));
 
         // Act
         bool result = columnCollection.IsNullOrEmpty();
@@ -65,7 +66,7 @@ public class ColumnCollectionExtensionsTests
     public void IsNotNullOrEmpty_EmptyColumnNames_ReturnsFalse()
     {
         // Arrange: pass an empty IEnumerable<string>.
-        ColumnCollection<ColumnTable> columnCollection = new(Enumerable.Empty<string>());
+        ColumnCollection<ColumnTable> columnCollection = new(Enumerable.Empty<PropertyName>());
 
         // Act
         bool result = columnCollection.IsNotNullOrEmpty();
@@ -82,7 +83,7 @@ public class ColumnCollectionExtensionsTests
         [
             "Col1", "Col2", "ColA", "ColB", "Pizza", "D000destruct0", "Express"
         ];
-        ColumnCollection<ColumnTable> columnCollection = new(propertyNames);
+        ColumnCollection<ColumnTable> columnCollection = new(propertyNames.Select(propertyName => new PropertyName(propertyName)));
 
         // Act
         bool result = columnCollection.IsNotNullOrEmpty();
@@ -98,7 +99,7 @@ public class ColumnCollectionExtensionsTests
         IEnumerable<string> propertyNames = typeof(ColumnTable)
             .GetProperties()
             .Select(p => p.Name);
-        ColumnCollection<ColumnTable> columnCollection = new(propertyNames);
+        ColumnCollection<ColumnTable> columnCollection = new(propertyNames.Select(propertyName => new PropertyName(propertyName)));
 
         // Act
         bool result = columnCollection.IsNotNullOrEmpty();

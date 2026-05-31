@@ -77,10 +77,10 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     internal readonly AliasName? AliasName;
 
     /// <summary>
-    /// The <see cref="Tags.SelectTag"/> used to represent this column
+    /// The <see cref="Tags.SelectTagBase"/> used to represent this column
     /// in SELECT clauses, including alias handling.
     /// </summary>
-    internal readonly SelectTag SelectTag;
+    internal readonly SelectTagBase SelectTag;
 
     /// <summary>
     /// Indicates whether this property is part of the data model’s key definition.
@@ -152,7 +152,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         SelectTagAttribute? selectTagAttribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
-        SelectTag = selectTagAttribute?.SelectTag ?? new(ColumnTag, AliasTag.New(aliasName));
+        SelectTag = selectTagAttribute?.SelectTag ?? new ReflectedSelectTag(ColumnTag, AliasTag.New(aliasName));
 
         IsKeyPart = keys.Contains(propertyInfo);
         IsEncrypted = propertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;

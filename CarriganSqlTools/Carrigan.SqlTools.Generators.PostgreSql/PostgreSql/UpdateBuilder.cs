@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
@@ -18,6 +19,9 @@ public sealed record UpdateBuilder<T, joinsT> : QueryBuilders.UpdateBuilderBase<
 {
 
     private readonly SqlGenerator<T> SqlGenerator = new();
+
+    public UpdateBuilder(IEncryption? encryption = null) =>
+        SqlGenerator = new(encryption);
 
     /// <summary>
     /// Gets or sets the tables to include in the FROM clause.
@@ -46,6 +50,9 @@ public sealed record UpdateBuilder<T> : QueryBuilders.UpdateBuilderBase<T, T>, I
     "Use UpdateBuilder<T, joinsT> when a PostgreSQL UPDATE statement requires joins.";
 
     private readonly SqlGenerator<T> SqlGenerator = new();
+
+    public UpdateBuilder(IEncryption? encryption = null) =>
+        SqlGenerator = new(encryption);
 
     /// <summary>
     /// Gets or sets the tables to include in the FROM clause.

@@ -10,21 +10,18 @@ public class SelectTagsTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    //IGNORE SPELLING: dbo
-    private static SelectTag New(string? schemaName, string tableName, string columnName, string? aliasName) =>
-        New(SchemaName.New(schemaName), new TableName(tableName), new ColumnName(columnName), AliasName.New(aliasName));
-    private static SelectTag New(SchemaName? schemaName, TableName tableName, ColumnName columnName, AliasName? aliasName) =>
-        new (new ColumnTag(new TableTag(schemaName, tableName), columnName), AliasTag.New(aliasName));
+    private static SelectTagBase New(string columnName, string? aliasName) =>
+        new SelectTag(new PropertyName(columnName), AliasName.New(aliasName));
 
-    private static readonly SelectTag a = New(null, "SomeTable", "SomeColumn", null);
-    private static readonly SelectTag b = New("dbo", "SomeTable", "SomeColumn", null);
-    private static readonly SelectTag c = New(null, "SomeTable", "SomeColumn", "SomeAlias");
-    private static readonly SelectTag d = New("dbo", "SomeTable", "SomeColumn", "SomeAlias");
+    private static readonly SelectTagBase a = New("SomeColumn", null);
+    private static readonly SelectTagBase b = New("OtherColumn", null);
+    private static readonly SelectTagBase c = New("SomeColumn", "SomeAlias");
+    private static readonly SelectTagBase d = New("OtherColumn", "SomeAlias");
 
-    private static readonly string aExpectedString = "[SomeTable].[SomeColumn]";
-    private static readonly string bExpectedString = "[dbo].[SomeTable].[SomeColumn]";
-    private static readonly string cExpectedString = "[SomeTable].[SomeColumn] AS [SomeAlias]";
-    private static readonly string dExpectedString = "[dbo].[SomeTable].[SomeColumn] AS [SomeAlias]";
+    private static readonly string aExpectedString = "[SomeColumn]";
+    private static readonly string bExpectedString = "[OtherColumn]";
+    private static readonly string cExpectedString = "[SomeColumn] AS [SomeAlias]";
+    private static readonly string dExpectedString = "[OtherColumn] AS [SomeAlias]";
 
     [Fact]
     public void ResultColumnNames() 
@@ -36,7 +33,7 @@ public class SelectTagsTests
 
 
         string aExpectedName = "SomeColumn";
-        string bExpectedName = "SomeColumn";
+        string bExpectedName = "OtherColumn";
         string cExpectedName = "SomeAlias";
         string dExpectedName = "SomeAlias";
 
@@ -49,7 +46,7 @@ public class SelectTagsTests
     [Fact]
     public void Empty()
     {
-        SelectTags selectTags = new ();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
     }
@@ -57,20 +54,20 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyNew()
     {
-        SelectTags selectTags = new(d);
+        SelectTags selectTags = new SelectTags(d);
         Assert.False(selectTags.Empty());
         Assert.True(selectTags.Any());
         Assert.Single(selectTags.All());
 
         Assert.Equal(dExpectedString, selectTags.ToSql(Dialect));
 
-        Assert.Equal("[dbo].[SomeTable]", selectTags.GetTableTags().Single().ToSql(Dialect));
+        Assert.True(selectTags.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
     public void NotEmptyAppendProperty()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append<Order>("Id", "Override");
@@ -89,7 +86,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyAppendPropertyName()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append<Order>(new("Id"), new("Override"));
@@ -108,7 +105,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyAppend()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append(a);
@@ -121,13 +118,13 @@ public class SelectTagsTests
 
         Assert.Equal(aExpectedString, selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));;
+        Assert.True(selectTagsAlpha.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
     public void NotEmptyConcat()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
@@ -141,14 +138,13 @@ public class SelectTagsTests
 
         Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(0).ToSql(Dialect));
-        Assert.Equal("[dbo].[SomeTable]", selectTagsAlpha.GetTableTags().ElementAt(1).ToSql(Dialect));
+        Assert.True(selectTagsAlpha.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
     public void NotEmptyConcatSelects()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
@@ -164,14 +160,13 @@ public class SelectTagsTests
 
         Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(0).ToSql(Dialect));
-        Assert.Equal("[dbo].[SomeTable]", selectTagsBeta.GetTableTags().ElementAt(1).ToSql(Dialect));
+        Assert.True(selectTagsBeta.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
     public void NotEmptyConcatPropertyString()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat<Order>("Id", "CustomerId", "PaymentMethodId", "OrderDate", "Total");
@@ -193,16 +188,16 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyConcatPropertiesFromGets()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat
         (
-            SelectTags.Get<Order>("Id", "Override"),
-            SelectTags.Get<Order>("CustomerId", "Override2"),
-            SelectTags.Get<Order>("PaymentMethodId"),
-            SelectTags.Get<Order>("OrderDate"),
-            SelectTags.Get<Order>("Total")
+            SelectTagGenerator.Get<Order>("Id", "Override"),
+            SelectTagGenerator.Get<Order>("CustomerId", "Override2"),
+            SelectTagGenerator.Get<Order>("PaymentMethodId"),
+            SelectTagGenerator.Get<Order>("OrderDate"),
+            SelectTagGenerator.Get<Order>("Total")
         );
         SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
 
@@ -222,12 +217,12 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyConcatPropertiesFromGetMany()
     {
-        SelectTags selectTags = new();
+        SelectTags selectTags = new SelectTags();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat
         (
-            SelectTags.GetMany<Order>("Id", "CustomerId", "PaymentMethodId", "OrderDate", "Total")
+            SelectTagGenerator.GetMany<Order>("Id", "CustomerId", "PaymentMethodId", "OrderDate", "Total")
         );
         SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
 
@@ -269,22 +264,22 @@ public class SelectTagsTests
 
     [Fact]
     public void GetInvalidPropertyStringException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.Get<Order>("InvalidColumn"));
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTagGenerator.Get<Order>("InvalidColumn"));
     [Fact]
     public void GetInvalidAliasStringException() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTags.Get<Order>("Id", "123Invalid"));
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTagGenerator.Get<Order>("Id", "123Invalid"));
     [Fact]
     public void GetInvalidPropertyNameException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.Get<Order>(new ("InvalidColumn")));
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTagGenerator.Get<Order>(new ("InvalidColumn")));
 
     [Fact]
     public void GetInvalidAliasNameException() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTags.Get<Order>(new("Id"), new("123Invalid")));
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTagGenerator.Get<Order>(new("Id"), new("123Invalid")));
 
     [Fact]
     public void GetManyInvalidPropertyStringException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.GetMany<Order>("InvalidColumn"));
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTagGenerator.GetMany<Order>("InvalidColumn"));
     [Fact]
     public void GetManyInvalidPropertyNameException() =>
-        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTags.GetMany<Order>(new PropertyName("InvalidColumn")));
+        Assert.Throws<InvalidPropertyException<Order>>(() => SelectTagGenerator.GetMany<Order>(new PropertyName("InvalidColumn")));
 }

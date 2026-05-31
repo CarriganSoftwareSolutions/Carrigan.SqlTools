@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 /// <example>
 /// <para>
-/// <see cref="Column{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
+/// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterEmail = new("Email", "%@example.com");
@@ -35,7 +35,7 @@ public class Like : DialectOperator
     /// <c>LIKE</c> operator.
     /// </summary>
     /// <param name="left">
-    /// The left-hand operand of the comparison, typically a <see cref="Column{T}"/> instance.
+    /// The left-hand operand of the comparison, typically a <see cref="ColumnBase{T}"/> instance.
     /// </param>
     /// <param name="right">
     /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.

@@ -115,6 +115,17 @@ internal class ColumnTag : StringWrapper, ISqlFragment
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnTag"/> class for an unqualified column name.
+    /// </summary>
+    /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
+    internal ColumnTag(ColumnName columnName)
+        : base(columnName, StringComparison.OrdinalIgnoreCase)
+    {
+        ColumnName = columnName;
+        TableTag = new(SchemaName.New(null), new TableName(null));
+    }
+
+    /// <summary>
     /// Determines whether this <see cref="ColumnTag"/> represents an empty or whitespace column name.
     /// </summary>
     /// <returns>

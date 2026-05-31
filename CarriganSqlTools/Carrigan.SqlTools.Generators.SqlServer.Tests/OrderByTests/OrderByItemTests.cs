@@ -42,7 +42,7 @@ public class OrderByItemTests
     [Fact]
     public void Equals_Null_ReturnsFalse()
     {
-        OrderByBase item = new OrderBy<Address>("Street");
+        OrderBy<Address> item = new("Street");
 
         Assert.False(item.Equals(null));
     }
@@ -50,7 +50,7 @@ public class OrderByItemTests
     [Fact]
     public void Equals_ObjectWithDifferentType_ReturnsFalse()
     {
-        OrderByBase item = new OrderBy<Address>("Street");
+        OrderBy<Address> item = new("Street");
 
         Assert.False(item.Equals((object)"Street"));
     }
@@ -58,7 +58,7 @@ public class OrderByItemTests
     [Fact]
     public void Equals_SameReference_ReturnsTrue()
     {
-        OrderByBase item = new OrderBy<Address>("Street");
+        OrderBy<Address> item = new("Street");
 
         Assert.True(item.Equals(item));
     }
@@ -66,8 +66,8 @@ public class OrderByItemTests
     [Fact]
     public void Equals_SameTableAndColumn_IgnoresSortDirection()
     {
-        OrderByBase ascending = new OrderBy<Address>("City", SortDirectionEnum.Ascending);
-        OrderByBase descending = new OrderBy<Address>("City", SortDirectionEnum.Descending);
+        OrderBy<Address> ascending = new("City", SortDirectionEnum.Ascending);
+        OrderBy<Address> descending = new("City", SortDirectionEnum.Descending);
 
         Assert.True(ascending.Equals(descending));
         Assert.True(descending.Equals(ascending));
@@ -78,8 +78,8 @@ public class OrderByItemTests
     [Fact]
     public void Equals_DifferentColumn_ReturnsFalse()
     {
-        OrderByBase street = new OrderBy<Address>("Street");
-        OrderByBase city = new OrderBy<Address>("City");
+        OrderBy<Address> street = new("Street");
+        OrderBy<Address> city = new("City");
 
         Assert.False(street.Equals(city));
         Assert.False(city.Equals(street));
@@ -88,8 +88,8 @@ public class OrderByItemTests
     [Fact]
     public void Equals_DifferentEntityType_ReturnsFalse()
     {
-        OrderByBase addressItem = new OrderBy<Address>("Street");
-        OrderByBase personItem = new OrderBy<Person>("Name");
+        OrderBy<Address> addressItem = new("Street");
+        OrderBy<Person> personItem = new("Name");
 
         Assert.False(addressItem.Equals(personItem));
         Assert.False(personItem.Equals(addressItem));

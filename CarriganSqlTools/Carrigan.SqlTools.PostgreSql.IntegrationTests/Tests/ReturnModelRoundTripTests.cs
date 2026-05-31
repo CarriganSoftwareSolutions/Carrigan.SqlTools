@@ -39,7 +39,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 
         // These columns are returned via OUTPUT
         ColumnCollection<ReturnModel> returnColumns =
-            new("Id1", "Id2", "DateTime", "Status", "DeletedFlag");
+            new ("Id1", "Id2", "DateTime", "Status", "DeletedFlag");
 
         SqlQuery insertQuery = _generator.Insert(insertColumns, returnColumns, toInsert);
 

@@ -1,0 +1,102 @@
+﻿
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
+
+namespace Carrigan.SqlTools.PredicatesLogic;
+
+/// <summary>
+/// Represents the predicate <c>Column = Value</c> for use in SQL <c>WHERE</c> or <c>JOIN</c> conditions.
+/// This class is a convenience wrapper that reduces the boilerplate required to compare a column
+/// against a constant value using the SQL equality operator (<c>=</c>).
+/// </summary>
+/// <remarks>
+/// Property name validation is performed during construction. If the provided property name does not
+/// map to a valid, eligible property on <typeparamref name="T"/>, an exception will be thrown.
+/// </remarks>
+/// <example>
+/// <para>
+/// <see cref="ColumnValueBase{T}"/> validates property names and throws an exception if a property name is invalid.
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
+/// SqlQuery query = customerGenerator.Select(null, null, columnValue, null, null);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// WHERE ([Customer].[Name] = @Parameter_Name)
+/// ]]></code>
+/// </example>
+public abstract class ColumnValueBase<T> : Predicates where T : class
+{
+    /// <summary>
+    /// The composed predicate (e.g., <c>[T].[Column] = @Parameter_Column</c>) that this class builds.
+    /// </summary>
+    protected readonly Predicates value;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnValueBase{T}"/> class,
+    /// representing a predicate that compares a column to a constant value using
+    /// the SQL equality operator (<c>=</c>).
+    /// </summary>
+    /// <param name="left">
+    /// The left-hand side of the predicate, representing the column to compare. This is used to construct
+    /// </param>
+    /// <param name="parameterValue">
+    /// The constant value to compare against the column in the generated SQL.
+    /// </param>
+
+    public ColumnValueBase(ColumnBase<T> left, object? parameterValue) : this(CreateValue(left, parameterValue))
+    {
+    }
+
+    /// <summary>
+    /// Private constructor used to ensure the base <see cref="Predicates"/> type is constructed
+    /// with the composed predicate as a child node.
+    /// </summary>
+    /// <param name="equal">The composed <see cref="Equal"/> predicate.</param>
+    private ColumnValueBase(Equal equal) : base([equal]) =>
+        value = equal;
+
+    /// <summary>
+    /// Factory method that creates the <see cref="Equal"/> predicate comparing the column to the parameter value.
+    /// </summary>
+    /// <param name="left">
+    /// The left-hand side of the predicate, representing the column to compare. This is used to construct
+    /// </param>
+    /// <param name="parameterValue">
+    /// The constant value to compare against the column in the generated SQL. This is used to construct
+    /// </param>
+    /// <returns></returns>
+    protected static Equal CreateValue(ColumnBase<T> left, object? parameterValue)
+    {
+        Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
+
+        return new Equal(left, right);
+    }
+
+    /// <summary>
+    /// Produces the SQL fragment represented by this predicate.
+    /// </summary>
+    /// <param name="prefix">
+    /// A prefix accumulated while traversing the predicate tree; used to disambiguate
+    /// duplicate parameter names when necessary.
+    /// </param>
+    /// <param name="branchName">
+    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
+    /// </param>
+    /// <param name="duplicates">
+    /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
+    /// to decide when to apply the <paramref name="prefix"/>.
+    /// </param>
+    /// <returns>
+    /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
+    /// </returns>
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    {
+        foreach (ISqlFragment fragment in value.ToSqlFragments(dialect))
+            yield return fragment;
+    }
+}

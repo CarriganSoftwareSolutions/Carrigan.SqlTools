@@ -435,7 +435,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
 
         PagingBase paging = new DefinePage(2, 3);
 
-        SelectTags selectTags = SelectTags.GetMany<Book>
+        SelectTags selectTags = SelectTagGenerator.GetMany<Book>
         (
             nameof(Book.Title),
             nameof(Book.Author)

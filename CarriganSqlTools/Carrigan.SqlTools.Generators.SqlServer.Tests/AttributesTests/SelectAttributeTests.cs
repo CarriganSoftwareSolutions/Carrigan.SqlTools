@@ -86,7 +86,7 @@ public sealed class SelectTagAttributeTests
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
-        SelectTag? selectTag = attribute?.SelectTag;
+        SelectTagBase? selectTag = attribute?.SelectTag;
 
         Assert.NotNull(selectTag);
 
@@ -106,7 +106,7 @@ public sealed class SelectTagAttributeTests
 
         SelectTagAttribute? attribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
-        SelectTag? selectTag = attribute?.SelectTag;
+        SelectTagBase? selectTag = attribute?.SelectTag;
 
         Assert.NotNull(selectTag);
 

@@ -226,9 +226,10 @@ public class JoinSubqueryTests
     [Fact]
     public void Select_WithSubqueryJoin_AllowsSelectingFromJoinedSubqueryAlias()
     {
-        SelectTags selectTags = SelectTags
-            .Get<JoinLeftTable>(nameof(JoinLeftTable.Id))
-            .Append<JoinRightTable>(nameof(JoinRightTable.Col1), "RightCol1");
+        SelectTags selectTags =
+            SelectTagGenerator
+                .Get<JoinLeftTable>(nameof(JoinLeftTable.Id))
+                .Append<JoinRightTable>(nameof(JoinRightTable.Col1), "RightCol1");
 
         Joins<JoinLeftTable> joins = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate(), RightSubquery());
 

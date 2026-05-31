@@ -48,10 +48,10 @@ public class AmbiguousResultColumnException : Exception
     }
 
     /// <summary>
-    /// Checks a given <see cref="SelectTags"/> instance for duplicate
+    /// Checks a given <see cref="SelectTagsBase"/> instance for duplicate
     /// <see cref="ResultColumnName"/> values and returns an exception if any are found.
     /// </summary>
-    /// <param name="selects">The <see cref="SelectTags"/> instance to analyze for ambiguous result columns.</param>
+    /// <param name="selects">The <see cref="SelectTagsBase"/> instance to analyze for ambiguous result columns.</param>
     /// <returns>
     /// A new <see cref="AmbiguousResultColumnException"/> if duplicate column names are detected;
     /// otherwise, <c>null</c>.
@@ -60,7 +60,7 @@ public class AmbiguousResultColumnException : Exception
     /// This method is typically invoked by SQL generator validation routines to ensure that
     /// no two columns in a result set produce the same output name, whether by alias or by column name.
     /// </remarks>
-    internal static AmbiguousResultColumnException? CheckNames(SelectTags? selects)
+    internal static AmbiguousResultColumnException? CheckNames(SelectTagsBase? selects)
     {
         if (selects is null || selects.Empty())
             return null;

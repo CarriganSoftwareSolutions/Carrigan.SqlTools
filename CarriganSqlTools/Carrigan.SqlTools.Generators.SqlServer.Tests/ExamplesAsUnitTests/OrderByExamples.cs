@@ -28,7 +28,7 @@ public class OrderByExamples
     {
         OrderBy<Customer> orderBy1 = new(nameof(Customer.Name));
         OrderBy<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
-        OrderBys orderBys = new(orderBy1, orderBy2);
+        OrderBys orderBys = new OrderBys(orderBy1, orderBy2);
         SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBys, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] DESC", query.QueryText);

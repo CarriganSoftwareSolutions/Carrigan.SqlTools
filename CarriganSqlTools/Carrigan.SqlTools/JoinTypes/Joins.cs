@@ -28,7 +28,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </remarks>
 /// <example>
 /// <para>
-/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates property names and throws an exception
+/// Note: <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates property names and throws an exception
 /// if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
@@ -53,7 +53,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </example>
 /// <example>
 /// <para>
-/// Note: <see cref="ColumnEqualsColumn{Customer, Order}"/> validates property names and throws an exception
+/// Note: <see cref="ColumnEqualsColumnBase{Customer, Order}"/> validates property names and throws an exception
 /// if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[

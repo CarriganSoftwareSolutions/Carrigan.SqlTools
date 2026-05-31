@@ -65,15 +65,6 @@ public abstract class OrderByBase : ISqlFragment, IEquatable<OrderByBase>
     public abstract override int GetHashCode();
 
     /// <summary>
-    /// Defines an implicit conversion from <see cref="OrderByBase"/> to <see cref="OrderBys"/>,
-    /// </summary>
-    /// <param name="orderByItemBase">
-    /// The <see cref="OrderByBase"/> instance to convert. The resulting <see cref="OrderBys"/> will contain this single item.
-    /// </param>
-    public static implicit operator OrderBys(OrderByBase orderByItemBase) =>
-        new(orderByItemBase);
-
-    /// <summary>
     /// Yields the instance as a single-item sequence of <see cref="ISqlFragment"/>.
     /// </summary>
     /// <returns>A sequence of <see cref="ISqlFragment"/> containing the instance.</returns>

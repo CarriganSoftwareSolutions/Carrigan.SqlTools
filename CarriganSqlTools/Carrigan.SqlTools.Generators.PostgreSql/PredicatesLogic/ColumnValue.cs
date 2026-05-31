@@ -3,8 +3,6 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -32,13 +30,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
-public class ColumnValue<T> : Predicates
+public class ColumnValue<T> : ColumnValueBase<T> where T : class
 {
-    /// <summary>
-    /// The composed predicate (e.g., <c>[T].[Column] = @Parameter_Column</c>) that this class builds.
-    /// </summary>
-    protected readonly Predicates value;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnValue{T}"/> class,
     /// representing a predicate that compares a column to a constant value using
@@ -64,27 +57,24 @@ public class ColumnValue<T> : Predicates
     /// Thrown only if a property passes validation but no matching column metadata is returned.
     /// This is not expected under normal conditions.
     /// </exception>
-    public ColumnValue(PropertyName propertyName, object? parameterValue) : this(CreateValue(propertyName, parameterValue))
+    public ColumnValue(PropertyName propertyName, object? parameterValue) : base(CreateValue(propertyName), parameterValue)
     {
     }
 
     /// <summary>
-    /// Private constructor used to ensure the base <see cref="Predicates"/> type is constructed
-    /// with the composed predicate as a child node.
+    /// Creates a <see cref="ColumnBase{T}"/> instance for the given <paramref name="propertyName"/>.
     /// </summary>
-    /// <param name="equal">The composed <see cref="Equal"/> predicate.</param>
-    private ColumnValue(Equal equal) : base([equal]) =>
-        value = equal;
-
-    private static Equal CreateValue(PropertyName propertyName, object? parameterValue)
+    /// <param name="propertyName">
+    /// The property name that identifies the column on the entity type <typeparamref name="T"/>.
+    /// </param>
+    /// <returns></returns>
+    private static ColumnBase<T> CreateValue(PropertyName propertyName)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
-        Column<T> left = new(propertyName);
-        Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
-
-        return new Equal(left, right);
+        return new Column<T>(propertyName);
     }
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnValue{T}"/> class,
@@ -112,28 +102,5 @@ public class ColumnValue<T> : Predicates
     [ExternalOnly]
     public ColumnValue(string propertyName, object parameterValue) : this(new PropertyName(propertyName), parameterValue)
     {
-    }
-
-    /// <summary>
-    /// Produces the SQL fragment represented by this predicate.
-    /// </summary>
-    /// <param name="prefix">
-    /// A prefix accumulated while traversing the predicate tree; used to disambiguate
-    /// duplicate parameter names when necessary.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
-    /// to decide when to apply the <paramref name="prefix"/>.
-    /// </param>
-    /// <returns>
-    /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
-    /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
-    {
-        foreach (ISqlFragment fragment in value.ToSqlFragments(dialect))
-            yield return fragment;
     }
 }

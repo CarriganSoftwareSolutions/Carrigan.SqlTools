@@ -1,9 +1,10 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+﻿using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.QueryBuilders;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Reflection.Emit;
-
+//TODO: QUery Builder classes need to be reevaluated IEncryption support.
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
@@ -19,6 +20,9 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
     where joinsT : class
 {
     private readonly SqlGenerator<T> SqlGenerator = new();
+
+    public DeleteBuilder(IEncryption? encryption = null) =>
+        SqlGenerator = new (encryption);
 
     /// <summary>
     /// Gets or sets the tables to include in the USING clause.
@@ -58,6 +62,9 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     "Use DeleteBuilder<T, joinsT> when a PostgreSQL DELETE statement requires joins.";
 
     private readonly SqlGenerator<T> SqlGenerator = new();
+
+    public DeleteBuilder(IEncryption? encryption = null) =>
+        SqlGenerator = new(encryption);
 
     /// <summary>
     /// Gets or sets the tables to include in the USING clause.

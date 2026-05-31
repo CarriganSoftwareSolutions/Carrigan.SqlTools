@@ -42,14 +42,14 @@ public abstract partial class SqlGeneratorBase<T>
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = orderGenerator.SelectCount(null, null, null, null);
     /// ]]></code>
-    /// <para><see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para><see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code><![CDATA[
     /// SELECT COUNT([Order].[Id]) FROM [Order]
     /// ]]></code>
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Column<Order> totalCol = new(nameof(Order.Total));
@@ -67,8 +67,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if a property isn't valid
-    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if a property isn't valid
+    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Column<Order> totalCol = new(nameof(Order.Total));
@@ -91,7 +91,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if a property isn't valid
+    /// <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if a property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// SelectTag selectTag = SelectTag.Get<Customer>("Id", "CustomerId");
@@ -119,7 +119,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
     /// </param>
-    protected virtual SqlQuery BaseSelectCount(bool? distinct, SelectTag? select, Joins<T>? joins, Predicates? predicates)
+    protected virtual SqlQuery BaseSelectCount(bool? distinct, SelectTagBase? select, Joins<T>? joins, Predicates? predicates)
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
@@ -131,7 +131,7 @@ public abstract partial class SqlGeneratorBase<T>
             if (select is not null)
                 yield return select.WithNoAlias();
             else
-                yield return ColumnInfo.First().ColumnTag;
+                yield return GetColumnInfo(SupportedTypes).First().ColumnTag;
 
             yield return new SqlFragmentText(") FROM ");
             yield return Table;
@@ -159,13 +159,6 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
-
-        if (select is not null)
-        {
-            AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(select);
-            if (ambiguousResultColumns is not null)
-                throw ambiguousResultColumns;
-        }
 
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);

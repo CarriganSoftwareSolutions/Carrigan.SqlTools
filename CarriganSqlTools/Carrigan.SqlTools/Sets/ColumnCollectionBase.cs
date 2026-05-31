@@ -24,7 +24,7 @@ namespace Carrigan.SqlTools.Sets;
 /// <example>
 /// <para>
 /// Update example using ColumnCollection
-/// Note: <see cref="ColumnCollection{T}"/> validates the names of the properties, and throws an error if the property isn't valid
+/// Note: <see cref="ColumnCollectionBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
@@ -43,8 +43,11 @@ namespace Carrigan.SqlTools.Sets;
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
-public class ColumnCollection<T>
+public abstract class ColumnCollectionBase<T>
 {
+    protected abstract HashSet<Type> SupportedTypes { get; }
+    protected abstract ColumnCollectionBase<T> FromPropertyName(IEnumerable<PropertyName> propertyNames);
+
     /// <summary>
     /// Gets the resolved <see cref="ColumnInfo"/> metadata for this collection.
     /// </summary>
@@ -54,8 +57,9 @@ public class ColumnCollection<T>
     /// </remarks>
     internal IEnumerable<ColumnInfo> ColumnInfo { get; private set; } = [];
 
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="ColumnCollection{T}"/> class.
+    /// Initializes a new instance of the <see cref="ColumnCollectionBase{T}"/> class.
     /// </summary>
     /// <param name="propertyNames">The property names to include in the collection.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyNames"/> is <c>null</c>.</exception>
@@ -65,15 +69,15 @@ public class ColumnCollection<T>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when one or more property names do not exist on <typeparamref name="T"/>.
     /// </exception>
-    public ColumnCollection(params IEnumerable<PropertyName> propertyNames) => 
+    public ColumnCollectionBase(params IEnumerable<PropertyName> propertyNames) => 
         ColumnInfo =
             SqlToolsReflectorCache<T>
-                .GetColumnsFromProperties(propertyNames)
+                .GetColumnsFromProperties(SupportedTypes, propertyNames)
                 .DistinctBy(static columnInfo => columnInfo.PropertyName)
                 .Materialize(NullOptionsEnum.Exception);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ColumnCollection{T}"/> class.
+    /// Initializes a new instance of the <see cref="ColumnCollectionBase{T}"/> class.
     /// </summary>
     /// <param name="propertyNames">The CLR property name strings to include in the collection.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyNames"/> is <c>null</c>.</exception>
@@ -81,7 +85,7 @@ public class ColumnCollection<T>
     /// Thrown when one or more property names do not exist on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
-    public ColumnCollection(params IEnumerable<string> propertyNames) :
+    public ColumnCollectionBase(params IEnumerable<string> propertyNames) :
         this(propertyNames.Select(name => new PropertyName(name)))
     { }
 
@@ -110,7 +114,7 @@ public class ColumnCollection<T>
 
         ColumnInfo resolvedColumnInfo =
             SqlToolsReflectorCache<T>
-                .GetColumnsFromProperties(propertyName)
+                .GetColumnsFromProperties(SupportedTypes, propertyName)
                 .Single();
 
         ColumnInfo =
@@ -131,7 +135,7 @@ public class ColumnCollection<T>
         AddColumn(new PropertyName(propertyName));
 
     /// <summary>
-    /// Returns a new <see cref="ColumnCollection{T}"/> with an additional column.
+    /// Returns a new <see cref="ColumnCollectionBase{T}"/> with an additional column.
     /// </summary>
     /// <param name="propertyName">The property name to append.</param>
     /// <returns>A new collection that includes the appended column.</returns>
@@ -142,10 +146,10 @@ public class ColumnCollection<T>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when <paramref name="propertyName"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
-    public ColumnCollection<T> AppendColumn(PropertyName propertyName)
+    public virtual ColumnCollectionBase<T> AppendColumn(PropertyName propertyName)
     {
-        ColumnCollection<T> returnValue =
-            new(ColumnInfo.Select(static columnInfo => columnInfo.PropertyName));
+        ColumnCollectionBase<T> returnValue =
+            FromPropertyName(ColumnInfo.Select(static columnInfo => columnInfo.PropertyName));
 
         bool alreadyIncluded =
             returnValue
@@ -160,7 +164,7 @@ public class ColumnCollection<T>
 
         ColumnInfo resolvedColumnInfo =
             SqlToolsReflectorCache<T>
-                .GetColumnsFromProperties(propertyName)
+                .GetColumnsFromProperties(SupportedTypes, propertyName)
                 .Single();
 
         returnValue.ColumnInfo =
@@ -173,7 +177,7 @@ public class ColumnCollection<T>
     }
 
     /// <summary>
-    /// Returns a new <see cref="ColumnCollection{T}"/> with an additional column.
+    /// Returns a new <see cref="ColumnCollectionBase{T}"/> with an additional column.
     /// </summary>
     /// <param name="propertyName">The property name to append.</param>
     /// <returns>A new collection that includes the appended column.</returns>
@@ -181,11 +185,11 @@ public class ColumnCollection<T>
     /// Thrown when <paramref name="propertyName"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
-    public ColumnCollection<T> AppendColumn(string propertyName) =>
+    public virtual ColumnCollectionBase<T> AppendColumn(string propertyName) =>
         AppendColumn(new PropertyName(propertyName));
 
     /// <summary>
-    /// Returns a new <see cref="ColumnCollection{T}"/> with additional columns appended.
+    /// Returns a new <see cref="ColumnCollectionBase{T}"/> with additional columns appended.
     /// </summary>
     /// <param name="propertyNames">The property names to append.</param>
     /// <returns>A new collection that includes the appended columns.</returns>
@@ -196,14 +200,14 @@ public class ColumnCollection<T>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
-    public ColumnCollection<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames)
+    public virtual ColumnCollectionBase<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames)
     {
-        ColumnCollection<T> returnValue =
-            new(ColumnInfo.Select(static columnInfo => columnInfo.PropertyName));
+        ColumnCollectionBase<T> returnValue =
+            FromPropertyName(ColumnInfo.Select(static columnInfo => columnInfo.PropertyName));
 
         IEnumerable<ColumnInfo> additionalColumnInfo =
             SqlToolsReflectorCache<T>
-                .GetColumnsFromProperties(propertyNames);
+                .GetColumnsFromProperties(SupportedTypes, propertyNames);
 
         returnValue.ColumnInfo =
             returnValue
@@ -216,7 +220,7 @@ public class ColumnCollection<T>
     }
 
     /// <summary>
-    /// Returns a new <see cref="ColumnCollection{T}"/> with additional columns appended.
+    /// Returns a new <see cref="ColumnCollectionBase{T}"/> with additional columns appended.
     /// </summary>
     /// <param name="propertyNames">The property names to append.</param>
     /// <returns>A new collection that includes the appended columns.</returns>
@@ -224,6 +228,6 @@ public class ColumnCollection<T>
     /// Thrown when any name in <paramref name="propertyNames"/> does not exist on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
-    public ColumnCollection<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
+    public virtual ColumnCollectionBase<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
         ConcatColumn(propertyNames.Select(static propertyName => new PropertyName(propertyName)));
 }

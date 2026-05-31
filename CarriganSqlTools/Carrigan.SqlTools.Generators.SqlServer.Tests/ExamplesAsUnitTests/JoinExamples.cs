@@ -121,7 +121,7 @@ public class JoinExamples
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         SelectTags selectTags =
-            SelectTags.Get<Customer>("Id", "CustomerId")
+            SelectTagGenerator.Get<Customer>("Id", "CustomerId")
                 .Concat<Customer>(["Name", "Email", "Phone"])
                 .Append<Order>("Id", "OrderId")
                 .Concat<Order>(["OrderDate", "Total"])

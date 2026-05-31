@@ -6,14 +6,14 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// Represents a simple predicate in which a column is compared to a specific value (i.e., <c>Column = Value</c>).
 /// </summary>
 /// <remarks>
-/// This class functions as a shorthand or alias for <see cref="ColumnValue{T}"/>, designed to reduce the amount of code
+/// This class functions as a shorthand or alias for <see cref="ColumnValueBase{T}"/>, designed to reduce the amount of code
 /// needed for common equality comparisons in SQL <c>WHERE</c> or <c>JOIN</c> clauses.
 /// </remarks>
 /// <typeparam name="T">
 /// The entity or data model type that defines the table containing the column to compare.
 /// </typeparam>
 [Obsolete("Use ColumnValues<T> instead.")]
-public class ByColumnValues<T> : ColumnValue<T>
+public class ByColumnValues<T> : ColumnValue<T> where T : class
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ByColumnValues{T}"/> class,

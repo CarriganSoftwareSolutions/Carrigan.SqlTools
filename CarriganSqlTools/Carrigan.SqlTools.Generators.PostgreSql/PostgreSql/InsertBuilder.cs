@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PostgreSql;
 
@@ -11,6 +12,9 @@ namespace Carrigan.SqlTools.PostgreSql;
 public sealed record InsertBuilder<T> : QueryBuilders.InsertBuilderBase<T>, IQueryBuilder where T : class
 {
     private readonly SqlGenerator<T> SqlGenerator = new();
+
+    public InsertBuilder(IEncryption? encryption = null) =>
+        SqlGenerator = new(encryption);
 
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Insert(this);

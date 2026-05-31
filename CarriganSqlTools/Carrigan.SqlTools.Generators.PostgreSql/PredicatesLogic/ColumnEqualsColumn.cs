@@ -34,7 +34,9 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 ///   ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator
+public class ColumnEqualsColumn<leftT, rightT> : ColumnEqualsColumnBase<leftT, rightT> 
+    where leftT : class
+    where rightT: class
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnEqualsColumn{leftT, rightT}"/> class,
@@ -56,7 +58,7 @@ public class ColumnEqualsColumn<leftT, rightT> : ComparisonOperator
     /// This is not expected under normal conditions.
     /// </exception>
     public ColumnEqualsColumn(PropertyName leftPropertyName, PropertyName rightPropertyName)
-        : base(new Column<leftT>(leftPropertyName), new Column<rightT>(rightPropertyName), "=")
+        : base(new Column<leftT>(leftPropertyName), new Column<rightT>(rightPropertyName))
     {
     }
 

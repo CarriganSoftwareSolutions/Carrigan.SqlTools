@@ -38,7 +38,7 @@ public class AliasAttributeTests
     [Fact]
     public void SelectTag()
     {
-        SelectTags tags = SelectTags.GetMany<AliasEntity>
+        SelectTags tags = SelectTagGenerator.GetMany<AliasEntity>
         (
             nameof(AliasEntity.Id),
             nameof(AliasEntity.TestColumn),
@@ -52,7 +52,7 @@ public class AliasAttributeTests
     [Fact]
     public void SqlExample()
     {
-        SelectTags tags = SelectTags.GetMany<AliasEntity>
+        SelectTags tags = SelectTagGenerator.GetMany<AliasEntity>
         (
             nameof(AliasEntity.Id),
             nameof(AliasEntity.TestColumn),

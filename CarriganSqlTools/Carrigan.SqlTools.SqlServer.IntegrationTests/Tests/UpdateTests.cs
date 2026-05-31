@@ -4,6 +4,7 @@ using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Microsoft.Data.SqlClient;
@@ -175,7 +176,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
         Customer values = new() { FirstName = "Jane", LastName = "Doe" };
         await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
-        SqlQuery updateQuery = CustomerSqlGenerator.UpdateByIds(values, new(nameof(Customer.FirstName)), femaleCustomers);
+        SqlQuery updateQuery = CustomerSqlGenerator.UpdateByIds(values, new ColumnCollection<Customer>(nameof(Customer.FirstName)), femaleCustomers);
         int count  = await CommandsAsync.ExecuteNonQueryAsync(updateQuery, null, connection);
         Assert.Equal(12, count);
 
@@ -194,7 +195,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         UpdateBuilder<Customer> updateBuilder = new()
         {
             Values = values,
-            UpdateColumns = new(nameof(Customer.FirstName)),
+            UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.FirstName)),
             Where = new ColumnValue<Customer>(nameof(Customer.Gender), "F")
         };
         int count = await CommandsAsync.ExecuteNonQueryAsync(updateBuilder, null, connection);
@@ -213,7 +214,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         
         using SqlConnection connection = new(_fixture.UnitTestConnectionString);
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new (nameof(Customer.Id), nameof(Order.CustomerId));
-        ColumnValue<Customer> customerThe = new (nameof(Customer.Id), 3);
+        ColumnValueBase<Customer> customerThe = new ColumnValue<Customer>(nameof(Customer.Id), 3);
 
         Join<Order> joinOrderOn = new(columnEqualsColumn);
         SelectBuilder<Customer> selectBuilder = new()
@@ -229,7 +230,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         UpdateBuilder<Customer> updateBuilder = new()
         {
             Values = values,
-            UpdateColumns = new(nameof(Customer.FirstName)),
+            UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.FirstName)),
             Where = new ColumnValue<Order>(nameof(Order.CustomerId), 3),
             Joins = joinOrderOn
         };

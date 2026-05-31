@@ -26,7 +26,7 @@ public abstract record UpdateBuilderBase<T, joinsT>
     /// <summary>
     /// Gets or sets the columns to update.
     /// </summary>
-    public ColumnCollection<T>? UpdateColumns { get; set; }
+    public ColumnCollectionBase<T>? UpdateColumns { get; set; }
 
     /// <summary>
     /// Gets or sets the joins to include in the UPDATE statement.
@@ -51,7 +51,7 @@ public abstract record UpdateBuilderBase<T, joinsT>
     /// </summary>
     /// <param name="updateColumns">The columns to update.</param>
     /// <returns>A new query instance with the specified update columns.</returns>
-    public UpdateBuilderBase<T, joinsT> WithUpdateColumns(ColumnCollection<T>? updateColumns) =>
+    public UpdateBuilderBase<T, joinsT> WithUpdateColumns(ColumnCollectionBase<T>? updateColumns) =>
         this with { UpdateColumns = updateColumns };
 
     /// <summary>

@@ -4,7 +4,6 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -17,22 +16,10 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </typeparam>
 /// <example>
 /// <para>
-/// <see cref="Column{T}"/> validates property names and throws an exception if a property name is invalid.
+/// <see cref="ColumnBase{T}"/> validates property names and throws an exception if a property name is invalid.
 /// </para>
-/// <code language="csharp"><![CDATA[
-/// Parameter parameterName = new("Name", "Hank");
-/// Column<Customer> columnName = new(nameof(Customer.Name));
-/// Equal equalName = new(columnName, parameterName);
-/// SqlQuery query = customerGenerator.Select(null, null, equalName, null, null);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// WHERE ([Customer].[Name] = @Parameter_Name)
-/// ]]></code>
-/// </example>
-public class Column<T> : ColumnBase
+
+public class ColumnBase<T> : ColumnBase where T: class
 {
     /// <summary>
     /// The name of the property representing the column.
@@ -50,7 +37,7 @@ public class Column<T> : ColumnBase
         new($"{propertyName} is not a valid property name on {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(propertyName));
 
     /// <summary>
-    /// Initializes a new <see cref="Column{T}"/> using a property name.
+    /// Initializes a new <see cref="ColumnBase{T}"/> using a property name.
     /// </summary>
     /// <param name="propertyName">The property name that identifies the column.</param>
     /// <exception cref="ArgumentNullException">
@@ -60,11 +47,11 @@ public class Column<T> : ColumnBase
     /// Thrown when <paramref name="propertyName"/> does not map to a valid, eligible property on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
-    public Column(string propertyName) : this(new PropertyName(propertyName))
+    internal ColumnBase(HashSet<Type> supportedTypes, string propertyName) : this(supportedTypes, new PropertyName(propertyName))
     { }
 
     /// <summary>
-    /// Initializes a new <see cref="Column{T}"/> using a <see cref="PropertyName"/> wrapper.
+    /// Initializes a new <see cref="ColumnBase{T}"/> using a <see cref="PropertyName"/> wrapper.
     /// </summary>
     /// <param name="propertyName">The property name wrapper that identifies the column.</param>
     /// <exception cref="ArgumentNullException">
@@ -77,14 +64,14 @@ public class Column<T> : ColumnBase
     /// Thrown only if the property passes validation but no matching column metadata is returned.
     /// This is not expected under normal conditions.
     /// </exception>
-    public Column(PropertyName propertyName) : base(GetColumnInfo(propertyName)) =>
+    internal ColumnBase(HashSet<Type> supportedTypes, PropertyName propertyName) : base(GetColumnInfo(supportedTypes, propertyName)) => 
         PropertyName = propertyName;
 
-    private static ColumnInfo GetColumnInfo(PropertyName propertyName)
+    private static ColumnInfo GetColumnInfo(HashSet<Type> supportedTypes, PropertyName propertyName)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
-        return SqlToolsReflectorCache<T>.GetColumnsFromProperties(propertyName).SingleOrDefault()
+        return SqlToolsReflectorCache<T>.GetColumnsFromProperties(supportedTypes, propertyName).SingleOrDefault()
             ?? throw NoSuchProperty(propertyName);
     }
 

@@ -12,7 +12,7 @@ public class AttributeExamples
     [Fact]
     public void AliasAttributeExample()
     {
-        SelectTags tags = SelectTags.GetMany<AliasEntity>
+        SelectTags tags = SelectTagGenerator.GetMany<AliasEntity>
         (
             nameof(AliasEntity.Id),
             nameof(AliasEntity.TestColumn),

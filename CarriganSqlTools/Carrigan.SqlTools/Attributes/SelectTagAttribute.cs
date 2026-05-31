@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.Attributes;
 
 public abstract class SelectTagAttribute : Attribute
 {
-    internal SelectTag? SelectTag { get; init; }
+    internal SelectTagBase? SelectTag { get; init; }
 
     internal static SelectTagAttribute? GetAttribute(PropertyInfo propertyInfo) =>
         propertyInfo

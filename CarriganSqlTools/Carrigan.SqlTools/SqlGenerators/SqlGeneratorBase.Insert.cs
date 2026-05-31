@@ -140,8 +140,8 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual SqlQuery BaseInsertAutoId(params IEnumerable<T> entities) =>
         BaseInsert
         (
-            new ColumnCollection<T>(ColumnInfoLessKeys.Select(column => column.PropertyName)),
-            new ColumnCollection<T>(KeyColumnInfo.Select(column => column.PropertyName)),
+            GetColumnCollection(GetGetColumnInfoLessKeys(SupportedTypes).Select(column => column.PropertyName)),
+            GetColumnCollection(KeyColumnInfo.Select(column => column.PropertyName)),
             entities
         );
 
@@ -282,11 +282,11 @@ public abstract partial class SqlGeneratorBase<T>
     /// SELECT Id, DateOf FROM @OutputTable;
     /// ]]></code>
     /// </example>
-    protected virtual SqlQuery BaseInsert(ColumnCollection<T>? insertColumnCollection, ColumnCollection<T>? returnColumns, params IEnumerable<T> entities)
+    protected virtual SqlQuery BaseInsert(ColumnCollectionBase<T>? insertColumnCollection, ColumnCollectionBase<T>? returnColumns, params IEnumerable<T> entities)
     {
         if (entities.IsNullOrEmpty())
             throw new ArgumentException("No records provided.", nameof(entities));
-        IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? ColumnInfo;
+        IEnumerable<ColumnInfo> insertTheseColumns = insertColumnCollection?.ColumnInfo ?? GetColumnInfo(SupportedTypes);
 
         IEnumerable<ISqlFragment> GetInsertIntoFragments()
         {

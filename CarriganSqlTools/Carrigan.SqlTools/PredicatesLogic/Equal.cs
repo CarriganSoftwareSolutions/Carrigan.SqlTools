@@ -5,7 +5,7 @@
 /// </summary>
 /// <example>
 /// <para>
-/// <see cref="Column{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
+/// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterName = new("Name", "Hank");
@@ -28,7 +28,7 @@ public class Equal : ComparisonOperator
     /// </summary>
     /// <param name="left">
     /// The left-hand operand of the comparison.
-    /// Typically a <see cref="Column{T}"/> instance.
+    /// Typically a <see cref="ColumnBase{T}"/> instance.
     /// </param>
     /// <param name="right">
     /// The right-hand operand of the comparison.

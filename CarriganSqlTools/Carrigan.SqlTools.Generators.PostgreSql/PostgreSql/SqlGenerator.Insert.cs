@@ -210,7 +210,7 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     /// SELECT Id, DateOf FROM @OutputTable;
     /// ]]></code>
     /// </example>
-    public SqlQuery Insert(ColumnCollection<T>? insertColumnCollection, ColumnCollection<T>? returnColumns, params IEnumerable<T> entities) =>
+    public SqlQuery Insert(ColumnCollectionBase<T>? insertColumnCollection, ColumnCollectionBase<T>? returnColumns, params IEnumerable<T> entities) =>
         base.BaseInsert(insertColumnCollection, returnColumns, entities);
 
     public SqlQuery Insert(InsertBuilder<T> insertQuery) =>

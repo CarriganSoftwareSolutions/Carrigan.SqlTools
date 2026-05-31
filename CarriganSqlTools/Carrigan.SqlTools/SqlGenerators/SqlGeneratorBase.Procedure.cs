@@ -57,7 +57,7 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual SqlQuery BaseProcedure(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
-        IEnumerable<SqlFragmentParameter> parameters = ColumnInfo.Select(column => GetSqlParameter(column, entity));
+        IEnumerable<SqlFragmentParameter> parameters = GetColumnInfo(SupportedTypes).Select(column => GetSqlParameter(column, entity));
         ISqlFragment fragment = new SqlFragmentText(Dialect.RenderProcedureTag(ProcedureTag));
 
         return new(Dialect, CommandType.StoredProcedure, parameters.Prepend(fragment));

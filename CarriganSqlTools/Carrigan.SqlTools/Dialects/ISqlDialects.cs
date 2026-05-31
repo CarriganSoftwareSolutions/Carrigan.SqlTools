@@ -156,4 +156,14 @@ public interface ISqlDialects
     /// If the dialect does not require normalization, the original value is returned unchanged.
     /// </returns>
     public DateTime? NormalizeTimeZone(DateTime? dateTime);
+
+    /// <summary>
+    /// Returns a set of CLR types that are supported by the SQL dialect for parameterization and field mapping. This set may include common types such as
+    /// <see cref="int"/>, <see cref="string"/>, <see cref="DateTime"/>, <see cref="DateTimeOffset"/>, and others, depending on the capabilities of the SQL dialect.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="HashSet{Type}"/> containing the CLR types that are supported by the SQL dialect for parameterization and field mapping. This set is used to 
+    /// determine which types can be directly mapped to SQL types and may influence how parameters are rendered and how field properties are determined for those types.
+    /// </returns>
+    public HashSet<Type> SupportedTypes();
 }

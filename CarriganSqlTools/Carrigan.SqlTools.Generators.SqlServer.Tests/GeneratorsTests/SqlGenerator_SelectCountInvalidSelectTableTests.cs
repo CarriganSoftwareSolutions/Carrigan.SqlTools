@@ -14,7 +14,7 @@ public sealed class SqlGenerator_SelectCountInvalidSelectTableTests
         MockEncryption mockEncrypter = new("+Encrypted+");
         SqlGenerator<Customer> customerGenerator = new(mockEncrypter);
 
-        SelectTag selectTag = SelectTag.Get<Order>("Id");
+        SelectTagBase selectTag = SelectTagGenerator.Get<Order>("Id");
 
         Assert.Throws<InvalidTableException>(() => customerGenerator.SelectCount(null, selectTag, null, null));
     }

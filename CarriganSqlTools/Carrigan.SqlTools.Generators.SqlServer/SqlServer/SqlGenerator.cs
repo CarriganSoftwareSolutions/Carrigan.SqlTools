@@ -4,6 +4,12 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.OrderByClause;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.SqlGenerators;
 using System.Reflection;
 
@@ -15,12 +21,25 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// The SQL dialect configuration used for generating database queries.
     /// </summary>
     protected override ISqlDialects Dialect { get; init; } = new SqlServerDialect();
+    protected override HashSet<Type> SupportedTypes => DialectStatics.SupportedTypes;
+    protected override SelectTagsBase GetAllSelectTags() =>
+        SelectTagGenerator.GetAll<T>();
+    protected override ColumnBase<T> GetColumn(PropertyName propertyName) =>
+        new Column<T>(propertyName);
+    protected override ColumnValueBase<T> GetColumnValue(ColumnInfo columnInfo, T entity) =>
+        new ColumnValue<T>(columnInfo.PropertyName, columnInfo.PropertyInfo.GetValue(entity));
+    protected override ColumnCollectionBase<T> GetColumnCollection(params IEnumerable<PropertyName> propertyNames) =>
+        new ColumnCollection<T>(propertyNames);
+    protected override OrderBysBase NewOrderBys() =>
+        new OrderBys();
+    protected override OrderByBase NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection) =>
+        new OrderBy<T>(propertyName, sortDirection);
 
     public SqlGenerator() : base()
     {
         List<Exception> exceptions = [];
 
-        ColumnInfo
+        GetColumnInfo(SupportedTypes)
             .Select(static column => new Tuple<PropertyInfo, SqlTypeAttribute?>(column.PropertyInfo, SqlTypeAttribute.GetSqlTypeAttribute(column.PropertyInfo)))
             .Select(static tuple => SqlTypeMismatchException.Validate(tuple.Item1, tuple.Item2))
             .ForEach(sqlTypeMismatchException =>
