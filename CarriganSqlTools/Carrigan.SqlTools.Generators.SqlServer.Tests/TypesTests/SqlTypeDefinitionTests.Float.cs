@@ -1,6 +1,6 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Types;
+using System.Data;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TypesTests;
 

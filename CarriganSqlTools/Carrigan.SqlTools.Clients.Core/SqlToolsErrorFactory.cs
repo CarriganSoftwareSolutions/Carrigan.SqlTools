@@ -1,7 +1,5 @@
 ﻿using Carrigan.SqlTools.Clients.Core.Exceptions;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
-using System.Data.Common;
 
 namespace Carrigan.SqlTools.Clients.Core;
 

@@ -4,7 +4,7 @@ using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Carrigan.SqlTools.Dialects.PostgreSql;
+namespace Carrigan.SqlTools.Dialects;
 
 /// <summary>
 /// Provides predefined <see cref="FieldProperties"/> values for PostgreSQL data types.

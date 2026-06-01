@@ -1,6 +1,5 @@
-﻿using System.Reflection;
-using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Types;
+﻿using Carrigan.SqlTools.Attributes;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;
 

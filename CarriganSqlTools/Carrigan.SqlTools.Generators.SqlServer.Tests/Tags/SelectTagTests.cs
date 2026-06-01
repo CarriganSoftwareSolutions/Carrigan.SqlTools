@@ -1,10 +1,8 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
-using System.Collections.Generic;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
 public class SelectTagTests

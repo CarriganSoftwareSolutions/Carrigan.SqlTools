@@ -1,6 +1,5 @@
 ﻿
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.PredicatesLogic;

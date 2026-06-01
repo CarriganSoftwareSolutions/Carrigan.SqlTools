@@ -1,7 +1,6 @@
 ﻿//IGNORE SPELLING: equal
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

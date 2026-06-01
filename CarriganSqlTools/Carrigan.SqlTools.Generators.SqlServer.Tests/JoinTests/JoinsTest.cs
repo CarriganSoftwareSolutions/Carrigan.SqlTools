@@ -1,12 +1,11 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.JoinTests;
 public class JoinsTest

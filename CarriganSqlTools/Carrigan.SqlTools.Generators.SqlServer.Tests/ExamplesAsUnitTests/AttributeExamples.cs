@@ -1,9 +1,9 @@
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
-using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;
 

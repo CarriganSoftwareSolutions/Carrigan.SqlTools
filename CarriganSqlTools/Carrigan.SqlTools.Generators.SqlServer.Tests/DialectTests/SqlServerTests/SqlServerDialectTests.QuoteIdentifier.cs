@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
-
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
+﻿namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
 
 public partial class SqlServerDialectTests
 {

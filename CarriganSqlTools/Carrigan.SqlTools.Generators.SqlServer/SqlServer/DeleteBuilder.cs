@@ -1,7 +1,5 @@
 ﻿
 using Carrigan.Core.Interfaces;
-using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.QueryBuilders;
 using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.SqlServer;

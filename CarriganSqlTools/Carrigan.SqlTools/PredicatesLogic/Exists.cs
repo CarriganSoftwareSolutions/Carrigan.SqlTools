@@ -1,5 +1,4 @@
-﻿using Carrigan.Core.Interfaces.IModels;
-using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.SqlGenerators;
 
 //IGNORE SPELLING: subquery, subqueries, intellisense, exists
 

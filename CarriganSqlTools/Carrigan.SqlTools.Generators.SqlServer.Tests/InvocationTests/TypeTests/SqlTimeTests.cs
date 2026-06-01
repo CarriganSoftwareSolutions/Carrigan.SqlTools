@@ -1,6 +1,5 @@
-using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.Base.Tests.TestEntities.NarrowTypes;
-using System;
+using Carrigan.SqlTools.Invocation;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.InvocationTests.TypeTests;
 

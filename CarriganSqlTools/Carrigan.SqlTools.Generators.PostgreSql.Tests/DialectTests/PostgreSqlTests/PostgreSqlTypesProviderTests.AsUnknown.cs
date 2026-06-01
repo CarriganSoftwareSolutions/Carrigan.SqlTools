@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.PostgreSql;
+﻿using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlTests;
 

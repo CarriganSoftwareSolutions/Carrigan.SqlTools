@@ -4,7 +4,6 @@ using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
 using System.Data;
-using System.Data.Common;
 
 namespace Carrigan.SqlTools.Clients.PostgreSql;
 

@@ -1,10 +1,5 @@
 ﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Types;
-using System.Data;
-using System.Reflection;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
 

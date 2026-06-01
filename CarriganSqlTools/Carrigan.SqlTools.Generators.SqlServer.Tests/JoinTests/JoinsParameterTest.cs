@@ -1,10 +1,8 @@
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.JoinTests;

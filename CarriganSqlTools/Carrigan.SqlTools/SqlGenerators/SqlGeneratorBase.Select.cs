@@ -1,5 +1,4 @@
 ﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -8,7 +7,6 @@ using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 

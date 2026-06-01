@@ -1,13 +1,12 @@
 ﻿using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.PostgreSql;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
-using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PostgreSql;
 

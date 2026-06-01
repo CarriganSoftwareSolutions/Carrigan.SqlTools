@@ -1,11 +1,11 @@
 ﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Dialects.PostgreSql;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
+using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 

@@ -1,14 +1,9 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Invocation;
-using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-using System.Net;
-using System.Text;
 //IGNORE SPELLING: newid, unindexed
 
 namespace Carrigan.SqlTools.SqlGenerators;

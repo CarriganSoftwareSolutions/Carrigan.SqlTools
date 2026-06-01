@@ -1,4 +1,3 @@
-using Carrigan.SqlTools.Dialects.PostgreSql;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;

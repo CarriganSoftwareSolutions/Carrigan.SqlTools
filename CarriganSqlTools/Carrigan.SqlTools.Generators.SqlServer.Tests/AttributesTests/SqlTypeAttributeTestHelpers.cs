@@ -1,5 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;

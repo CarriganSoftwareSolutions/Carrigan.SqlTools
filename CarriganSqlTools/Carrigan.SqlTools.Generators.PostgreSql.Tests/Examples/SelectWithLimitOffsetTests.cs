@@ -1,9 +1,9 @@
-﻿using Carrigan.SqlTools.OrderByClause;
+﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Base.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
 

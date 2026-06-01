@@ -1,7 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Fragments;
-
-namespace Carrigan.SqlTools.OrderByClause;
+﻿namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>
 /// Provides extension methods for converting <see cref="SortDirectionEnum"/> values

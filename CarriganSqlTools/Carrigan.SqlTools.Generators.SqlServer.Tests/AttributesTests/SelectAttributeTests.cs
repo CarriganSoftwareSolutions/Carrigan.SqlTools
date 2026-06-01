@@ -1,6 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Tags;
 using System.Reflection;
 

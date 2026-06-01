@@ -1,6 +1,4 @@
-using System;
 using Carrigan.SqlTools.Types;
-using Xunit;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
 

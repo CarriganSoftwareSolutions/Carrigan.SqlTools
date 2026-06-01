@@ -3,15 +3,13 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using System.Data;
-using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace Carrigan.SqlTools.Dialects.SqlServer;
+namespace Carrigan.SqlTools.Dialects;
 
 /// <summary>
 /// Provides SQL dialect-specific formatting and rendering logic for Microsoft SQL Server.

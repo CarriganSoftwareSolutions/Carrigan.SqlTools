@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.IdentifierTypes;
+﻿using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
 

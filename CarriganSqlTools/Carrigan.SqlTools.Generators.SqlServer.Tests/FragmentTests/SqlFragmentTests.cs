@@ -1,8 +1,7 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.Base.Tests.Helpers;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.FragmentTests;
 

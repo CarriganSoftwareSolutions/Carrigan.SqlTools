@@ -1,12 +1,11 @@
 ﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Generators.SqlServer.Tests.TestComparers;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Generators.SqlServer.Tests.TestComparers;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ReflectorCacheTests;
 public class SqlToolsReflectorCacheTests

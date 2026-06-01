@@ -1,6 +1,5 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
-using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Inserts;
 

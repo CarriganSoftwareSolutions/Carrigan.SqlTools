@@ -1,9 +1,9 @@
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
-using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;

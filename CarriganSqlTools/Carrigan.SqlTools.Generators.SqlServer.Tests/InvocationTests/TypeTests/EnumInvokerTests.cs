@@ -1,6 +1,6 @@
+using Carrigan.SqlTools.Base.Tests.TestEntities.NarrowTypes;
 using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.OrderByClause;
-using Carrigan.SqlTools.Base.Tests.TestEntities.NarrowTypes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.InvocationTests.TypeTests;
 

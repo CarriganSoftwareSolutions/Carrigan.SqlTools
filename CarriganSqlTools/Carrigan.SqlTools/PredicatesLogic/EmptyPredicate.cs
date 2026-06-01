@@ -1,7 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Tags;
-using System.Collections.Generic;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

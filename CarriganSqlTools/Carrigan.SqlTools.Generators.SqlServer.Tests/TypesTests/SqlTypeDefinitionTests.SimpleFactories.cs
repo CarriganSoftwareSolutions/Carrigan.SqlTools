@@ -1,7 +1,6 @@
 ﻿// File: SqlTypeDefinitionTests.SimpleFactories.cs
-using System.Data;
 using Carrigan.SqlTools.Types;
-using Xunit;
+using System.Data;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TypesTests;
 

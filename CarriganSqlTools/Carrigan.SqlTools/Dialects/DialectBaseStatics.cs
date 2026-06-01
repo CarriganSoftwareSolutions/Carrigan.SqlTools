@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Carrigan.SqlTools.Dialects;
+﻿namespace Carrigan.SqlTools.Dialects;
 
 internal static class DialectBaseStatics
 {

@@ -1,12 +1,10 @@
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Base.Tests.Helpers;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
-using System.Text;
 using Carrigan.SqlTools.SqlServer;
+using System.Text;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 

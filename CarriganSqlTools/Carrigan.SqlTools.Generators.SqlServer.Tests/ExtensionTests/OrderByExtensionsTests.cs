@@ -1,5 +1,5 @@
-﻿using Carrigan.SqlTools.OrderByClause;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.OrderByClause;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExtensionTests;
 

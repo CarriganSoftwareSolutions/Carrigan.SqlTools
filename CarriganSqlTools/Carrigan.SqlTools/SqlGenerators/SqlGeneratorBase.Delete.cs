@@ -5,7 +5,6 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-using System.Text;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 

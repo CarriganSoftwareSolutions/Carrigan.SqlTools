@@ -1,7 +1,6 @@
-using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.Base.Tests.TestEntities.NarrowTypes;
+using Carrigan.SqlTools.Invocation;
 using System.Data.SqlTypes;
-using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 

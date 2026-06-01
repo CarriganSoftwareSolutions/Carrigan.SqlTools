@@ -1,12 +1,8 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using System.Data;
 
 namespace Carrigan.SqlTools.    PostgreSql;
 

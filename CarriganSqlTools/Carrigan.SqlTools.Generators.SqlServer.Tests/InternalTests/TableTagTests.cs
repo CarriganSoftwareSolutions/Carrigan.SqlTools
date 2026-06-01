@@ -1,7 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.InternalTests;

@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;

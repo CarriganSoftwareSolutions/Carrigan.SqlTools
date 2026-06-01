@@ -1,5 +1,5 @@
 ﻿using Carrigan.SqlTools.Clients.PostgreSql;
-using Carrigan.SqlTools.Dialects.PostgreSql;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
 using Respawn;

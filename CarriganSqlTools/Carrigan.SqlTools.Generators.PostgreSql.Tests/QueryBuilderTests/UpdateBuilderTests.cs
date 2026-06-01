@@ -1,10 +1,10 @@
 ﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.PostgreSql;
 using System.Data;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.QueryBuilderTests;

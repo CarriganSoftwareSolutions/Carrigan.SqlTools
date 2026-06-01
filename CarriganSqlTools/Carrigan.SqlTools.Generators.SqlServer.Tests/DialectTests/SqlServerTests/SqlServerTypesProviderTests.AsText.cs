@@ -1,6 +1,5 @@
 #pragma warning disable CS0618
-using Carrigan.SqlTools.Dialects.SqlServer;
-using Xunit;
+using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
 

@@ -1,5 +1,4 @@
 using Carrigan.SqlTools.IntegrationTests.Models;
-using Carrigan.SqlTools.SqlGenerators;
 
 //IGNORE SPELLING: Lakeview Hillcrest
 

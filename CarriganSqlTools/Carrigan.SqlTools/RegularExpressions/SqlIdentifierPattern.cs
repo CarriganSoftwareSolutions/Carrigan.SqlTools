@@ -1,5 +1,4 @@
-﻿using Carrigan.Core.Extensions;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Carrigan.SqlTools.RegularExpressions;
 

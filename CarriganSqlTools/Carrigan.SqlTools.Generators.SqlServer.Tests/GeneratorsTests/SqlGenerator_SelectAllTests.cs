@@ -1,8 +1,6 @@
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;

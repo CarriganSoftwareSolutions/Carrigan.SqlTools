@@ -1,5 +1,4 @@
 ﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Paging;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PagingTests;

@@ -1,6 +1,6 @@
-﻿using Carrigan.SqlTools.Invocation;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Invocation;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.InvocationTests;
 

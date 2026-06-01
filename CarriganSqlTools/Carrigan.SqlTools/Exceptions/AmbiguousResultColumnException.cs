@@ -1,7 +1,6 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
-using System.Diagnostics.Metrics;
 
 namespace Carrigan.SqlTools.Exceptions;
 

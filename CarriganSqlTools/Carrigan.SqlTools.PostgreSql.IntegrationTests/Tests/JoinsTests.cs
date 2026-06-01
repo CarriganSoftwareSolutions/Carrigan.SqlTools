@@ -1,14 +1,14 @@
 ﻿using Carrigan.SqlTools.Clients.PostgreSql;
-using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.OrderByClause;
-using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
-using Carrigan.SqlTools.Tags;
-using Npgsql;
-using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
+using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.OrderByClause;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
+using Npgsql;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 

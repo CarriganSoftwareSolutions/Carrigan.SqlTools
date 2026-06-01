@@ -1,6 +1,5 @@
-using Carrigan.SqlTools.Dialects.PostgreSql;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
-using System;
 using System.Xml;
 using System.Xml.Linq;
 

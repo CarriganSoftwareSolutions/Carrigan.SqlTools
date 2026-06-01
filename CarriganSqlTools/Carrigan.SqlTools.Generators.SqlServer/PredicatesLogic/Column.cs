@@ -1,9 +1,6 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

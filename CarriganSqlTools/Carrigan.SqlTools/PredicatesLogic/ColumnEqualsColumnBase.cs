@@ -1,11 +1,4 @@
-﻿using Carrigan.Core.Interfaces.IModels;
-using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.JoinTypes;
-using Carrigan.SqlTools.SqlGenerators;
-
-namespace Carrigan.SqlTools.PredicatesLogic;
+﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Represents a predicate that compares two columns for equality (i.e., <c>Column1 = Column2</c>).

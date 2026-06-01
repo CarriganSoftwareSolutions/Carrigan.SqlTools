@@ -1,5 +1,4 @@
 using Carrigan.SqlTools.IntegrationTests.Models;
-using Carrigan.SqlTools.SqlGenerators;
 
 //IGNORE SPELLING: Moby Bram Cristo Alexandre Orczy
 

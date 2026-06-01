@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Ambiguous;
+﻿namespace Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Ambiguous;
 internal class AmbiguousRight
 {
     public int Id { get; set; }

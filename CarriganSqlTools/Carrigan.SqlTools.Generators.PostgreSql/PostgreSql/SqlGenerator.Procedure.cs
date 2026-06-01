@@ -1,5 +1,4 @@
-﻿using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.SqlGenerators;
+﻿using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 

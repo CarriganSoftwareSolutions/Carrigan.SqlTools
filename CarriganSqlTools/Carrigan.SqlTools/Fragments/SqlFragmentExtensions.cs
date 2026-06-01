@@ -1,9 +1,6 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.PredicatesLogic;
-using System.Collections;
-using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Fragments;
 

@@ -1,6 +1,4 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
-
-namespace Carrigan.SqlTools.Tags;
+﻿namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
 /// Internal neutral select tag used by reflection metadata and attributes when no dialect-specific

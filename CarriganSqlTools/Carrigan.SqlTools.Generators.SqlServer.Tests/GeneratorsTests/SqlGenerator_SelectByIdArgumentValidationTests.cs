@@ -1,5 +1,5 @@
-﻿using Carrigan.SqlTools.SqlServer;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 

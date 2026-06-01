@@ -1,7 +1,6 @@
 ﻿using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
-using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
@@ -51,7 +50,6 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// <exception cref="AggregateException">
     /// Thrown when multiple validation errors are detected. Possible inner exceptions include:
     /// <see cref="InvalidSqlIdentifierException"/>,
-    /// <see cref="SqlTypeMismatchException"/>,
     /// <see cref="EncrypterNotProvidedException{T}"/>,
     /// <see cref="NoKeyVersionException{T}"/>,
     /// <see cref="InvalidKeyVersionPropertyTypeException{T}"/>, and

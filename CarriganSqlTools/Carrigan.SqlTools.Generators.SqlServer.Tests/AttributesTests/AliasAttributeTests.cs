@@ -1,11 +1,9 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.SqlServer;
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Tags;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;

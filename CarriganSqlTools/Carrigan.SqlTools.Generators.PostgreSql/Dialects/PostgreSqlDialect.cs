@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 //IGNORE SPELLING: Npgsql
 
-namespace Carrigan.SqlTools.Dialects.PostgreSql;
+namespace Carrigan.SqlTools.Dialects;
 
 /// <summary>
 /// Provides SQL dialect-specific formatting and rendering logic for PostgreSQL.

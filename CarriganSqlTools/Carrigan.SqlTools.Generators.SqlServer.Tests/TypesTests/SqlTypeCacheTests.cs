@@ -1,5 +1,5 @@
-﻿using System.Data;
-using Carrigan.SqlTools.Types;
+﻿using Carrigan.SqlTools.Types;
+using System.Data;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TypesTests;
 

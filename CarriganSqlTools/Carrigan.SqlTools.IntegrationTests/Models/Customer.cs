@@ -1,5 +1,4 @@
 using Carrigan.SqlTools.Attributes;
-using System;
 
 namespace Carrigan.SqlTools.IntegrationTests.Models;
 

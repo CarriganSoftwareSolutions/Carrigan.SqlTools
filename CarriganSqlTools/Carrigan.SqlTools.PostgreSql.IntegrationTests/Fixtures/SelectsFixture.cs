@@ -2,7 +2,6 @@
 
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Inserts;
-using Respawn;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 

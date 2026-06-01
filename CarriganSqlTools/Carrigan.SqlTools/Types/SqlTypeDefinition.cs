@@ -1,6 +1,6 @@
-﻿using Carrigan.SqlTools.Exceptions;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Exceptions;
 using System.Data;
-using Carrigan.Core.Extensions;
 
 //IGNORE SPELLING: xml, unicode
 namespace Carrigan.SqlTools.Types;

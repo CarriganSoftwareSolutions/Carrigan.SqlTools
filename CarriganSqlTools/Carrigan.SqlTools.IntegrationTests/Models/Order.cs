@@ -1,5 +1,3 @@
-using System;
-
 namespace Carrigan.SqlTools.IntegrationTests.Models;
 
 public sealed class Order

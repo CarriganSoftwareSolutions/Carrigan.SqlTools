@@ -1,8 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Tags;
-
-namespace Carrigan.SqlTools.PredicatesLogic;
+﻿namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Base class for SQL Dialect predicates (e.g., <c>=</c>, <c>&lt;&gt;</c>, <c>&gt;</c>, <c>&lt;</c>, etc.).

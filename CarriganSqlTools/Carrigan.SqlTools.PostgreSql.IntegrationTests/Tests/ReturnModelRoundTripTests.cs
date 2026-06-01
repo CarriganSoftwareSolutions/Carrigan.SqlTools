@@ -1,11 +1,11 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
 
-using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Clients.PostgreSql;
-using Npgsql;
-using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
+using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.SqlGenerators;
+using Npgsql;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 

@@ -1,6 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;

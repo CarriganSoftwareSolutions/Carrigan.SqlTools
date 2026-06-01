@@ -1,7 +1,5 @@
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
 using Carrigan.SqlTools.Types;
-using Xunit;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TypesTests;
 //IGNORE SPELLING: bigint

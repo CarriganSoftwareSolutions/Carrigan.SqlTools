@@ -7,7 +7,6 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Types;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
@@ -244,8 +243,6 @@ public class SqlToolsReflectorCache<T>
         string? schemaName =
             identifierAttribute?.Schema?.ToString().GetValueOrNull()
                 ?? tableAttribute?.Schema?.GetValueOrNull();
-
-        DialectAttribute? dialectAttribute = Type.GetCustomAttribute<DialectAttribute>();
 
         SchemaName = SchemaName.New(schemaName);
 

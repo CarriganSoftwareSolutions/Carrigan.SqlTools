@@ -1,7 +1,5 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExceptionTests;

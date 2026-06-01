@@ -1,12 +1,4 @@
-﻿using Carrigan.SqlTools.OrderByClause;
-using Carrigan.SqlTools.SqlGenerators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Carrigan.SqlTools.Paging;
+﻿namespace Carrigan.SqlTools.Paging;
 
 /// <summary>
 /// Represents a paging strategy that uses the LIMIT and OFFSET clauses, commonly supported by databases like PostgreSQL and MySQL.

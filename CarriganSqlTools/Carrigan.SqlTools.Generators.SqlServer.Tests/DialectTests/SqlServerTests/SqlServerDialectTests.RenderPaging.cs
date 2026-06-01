@@ -1,7 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.Fragments;
+﻿using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Paging;
-using Xunit;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
 

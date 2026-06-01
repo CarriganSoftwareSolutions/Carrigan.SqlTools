@@ -1,14 +1,11 @@
-﻿using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Dialects.SqlServer;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
-using Carrigan.SqlTools.Types;
 using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Tags;
 using System.Text;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.AttributesTests;

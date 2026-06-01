@@ -1,7 +1,5 @@
 ﻿// IGNORE SPELLING: bigint, binary, bit, char, cursor, date, datetime, datetime2, datetimeoffset, decimal, float, geography, geometry, hierarchyid, image, int, json, money, nchar, ntext, numeric, nvarchar, real, rowversion, smalldatetime, smallint, smallmoney, sql_variant, table, text, time, timestamp, tinyint, uniqueidentifier, varbinary, varchar, vector, xml
 
-using System;
-
 namespace Carrigan.SqlTools.Types;
 
 /// <summary>

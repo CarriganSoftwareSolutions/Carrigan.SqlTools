@@ -1,9 +1,7 @@
-using System;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;
-using Carrigan.SqlTools.Dialects.SqlServer;
-using Carrigan.SqlTools.Types;
-using Xunit;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
 

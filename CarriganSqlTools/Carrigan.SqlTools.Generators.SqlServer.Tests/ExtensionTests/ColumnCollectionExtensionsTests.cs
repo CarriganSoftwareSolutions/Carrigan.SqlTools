@@ -1,6 +1,6 @@
-﻿using Carrigan.SqlTools.Sets;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Sets;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExtensionTests;
 

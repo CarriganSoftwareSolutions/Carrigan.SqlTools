@@ -1,11 +1,11 @@
 ﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer, DateOnly
 //IGNORE SPELLING: datetimes, lorem ipsum, datetime, TimeOnly, XDocument, XmlDocument
+using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Clients.PostgreSql;
-using System.Xml.Linq;
 using Npgsql;
-using Carrigan.SqlTools.IntegrationTests.Models;
+using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
