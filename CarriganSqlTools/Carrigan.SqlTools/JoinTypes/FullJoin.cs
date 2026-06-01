@@ -119,10 +119,8 @@ public class FullJoin<rightT> : JoinBase where rightT : class
     /// <remarks>
     /// Any exception thrown while rendering the predicate tree will be propagated to the caller.
     /// </remarks>
-    /// <param name="branchPrefix">
-    /// The branch prefix used to distinguish parameters in join predicates from the main where clause.
-    /// </param>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
+    /// 
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("FULL JOIN requires at least one predicate for the ON clause.");

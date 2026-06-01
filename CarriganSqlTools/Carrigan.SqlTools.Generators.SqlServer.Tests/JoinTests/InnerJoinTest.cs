@@ -82,6 +82,6 @@ public class InnerJoinTest
         Predicates id = new EmptyPredicate();
         InnerJoin<JoinRightTable> join = new(id);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect, "Join").ToSql(Dialect));
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect).ToSql(Dialect));
     }
 }

@@ -58,9 +58,6 @@ public abstract class JoinBase
     /// <param name="dialect"></param>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
-    /// <param name="branchPrefix"> 
-    /// The branch name used when generating predicate SQL and parameter tags via
-    /// <see cref="Predicates.ToSqlFragments()"/>.
-    /// </param>
-    internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix);
+    /// 
+    internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 }

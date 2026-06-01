@@ -69,9 +69,6 @@ public class Like : DialectOperator
     /// A SQL fragment in the form <c>(&lt;left-sql&gt; OP &lt;right-sql&gt;)</c>, e.g.,
     /// <c>([T].[Col] = @Parameter_Col)</c>.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
-    /// </exception>
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("(");

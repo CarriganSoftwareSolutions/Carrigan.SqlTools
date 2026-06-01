@@ -325,9 +325,9 @@ public class Joins<leftT> : JoinsBase where leftT : class
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (ValidatedJoints.Count() == 1)
-            return ValidatedJoints.SelectMany(join => join.ToSqlFragments(dialect, "Join"));
+            return ValidatedJoints.SelectMany(join => join.ToSqlFragments(dialect));
         else
-            return ValidatedJoints.SelectMany((join, i) => join.ToSqlFragments(dialect, $"Joins{i}"));
+            return ValidatedJoints.SelectMany((join, i) => join.ToSqlFragments(dialect));
     }
 
     /// <summary>

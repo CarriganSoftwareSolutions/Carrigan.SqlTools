@@ -65,25 +65,11 @@ public abstract class LogicalOperator : Predicates
     /// <summary>
     /// Generates the SQL fragment represented by this logical operator.
     /// </summary>
-    /// <param name="prefix">
-    /// A prefix accumulated while traversing the predicate tree. This is appended to parameter
-    /// names to keep them unique when duplicates occur.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-specified parameter tags that are duplicates, used to decide when a prefix
-    /// must be applied.
-    /// </param>
     /// <returns>
     /// A SQL string for the combined predicates. If a single predicate was provided, returns that
     /// predicate’s SQL without adding the operator; otherwise returns the predicates joined by the
     /// operator and wrapped in parentheses.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
-    /// </exception>
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         int index = 0;

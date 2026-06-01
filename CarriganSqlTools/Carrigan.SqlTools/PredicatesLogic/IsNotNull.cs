@@ -52,23 +52,9 @@ public class IsNotNull : Predicates
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
     /// </summary>
-    /// <param name="prefix">
-    /// A prefix added to parameter names during recursive traversal of the logic tree,
-    /// ensuring that each parameter name remains unique.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// Tracks user-supplied parameter names that are duplicates, allowing this method
-    /// to determine when prefixes should be applied.
-    /// </param>
     /// <returns>
     /// A SQL string representing the <c>IS NOT NULL</c> condition.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
-    /// </exception>
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("(");

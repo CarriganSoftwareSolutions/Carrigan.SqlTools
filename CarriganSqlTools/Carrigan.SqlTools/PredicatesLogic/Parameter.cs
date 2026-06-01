@@ -155,21 +155,9 @@ public class Parameter : Predicates
     /// <summary>
     /// Produces the SQL fragment for this parameter (its final, possibly prefixed name).
     /// </summary>
-    /// <param name="prefix">
-    /// The recursion-built prefix used to disambiguate duplicate user-supplied parameter names.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all of the parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied parameter tags identified as duplicates within the predicate tree.
-    /// </param>
     /// <returns>
     /// The SQL parameter name (e.g., <c>@Parameter_Name</c> or a prefixed variant).
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
-    /// </exception>
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentParameter(this);

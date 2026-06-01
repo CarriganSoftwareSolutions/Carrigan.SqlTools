@@ -71,6 +71,6 @@ public class FullJoinTest
         Predicates predicate = new EmptyPredicate();
         FullJoin<JoinRightTable> join = new(predicate);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect, "Joins").ToSql(Dialect));
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect).ToSql(Dialect));
     }
 }

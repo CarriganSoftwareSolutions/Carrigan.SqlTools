@@ -82,6 +82,6 @@ public class JoinTests
         Predicates id = new EmptyPredicate();
         Join<JoinRightTable> join = new(id);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect, "Join").ToSql(Dialect));
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect).ToSql(Dialect));
     }
 }

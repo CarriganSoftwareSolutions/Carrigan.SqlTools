@@ -82,6 +82,6 @@ public class LeftJoinTest
         Predicates id = new EmptyPredicate();
         LeftJoin<JoinRightTable> join = new(id);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect, "Join").ToSql(Dialect));
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect).ToSql(Dialect));
     }
 }

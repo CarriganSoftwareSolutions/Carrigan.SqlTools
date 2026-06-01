@@ -78,17 +78,6 @@ public class ColumnBase<T> : ColumnBase where T: class
     /// <summary>
     /// Produces the SQL fragment represented by this column.
     /// </summary>
-    /// <param name="prefix">
-    /// A prefix accumulated through the predicate tree to disambiguate duplicate parameter names.
-    /// Not used by columns.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied parameter names that are duplicated and may require a prefix.
-    /// Not used by columns.
-    /// </param>
     /// <returns>
     /// The SQL-escaped column identifier (e.g., <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>).
     /// </returns>

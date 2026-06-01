@@ -58,23 +58,9 @@ public class Contains<T> : Predicates where T : class
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
     /// </summary>
-    /// <param name="prefix">
-    /// A disambiguation prefix accumulated during predicate-tree traversal.
-    /// Used to ensure parameter names are unique when duplicates exist.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
-    /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
-    /// </param>
     /// <returns>
     /// A SQL fragment of the form <c>CONTAINS(&lt;column&gt;, &lt;parameter&gt;)</c>.
     /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="prefix"/> or <paramref name="branchName"/> or <paramref name="duplicates"/> is <c>null</c>.
-    /// </exception>
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("CONTAINS(");

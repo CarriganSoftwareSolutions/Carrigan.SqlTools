@@ -79,17 +79,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
     /// </summary>
-    /// <param name="prefix">
-    /// A prefix accumulated while traversing the predicate tree; used to disambiguate
-    /// duplicate parameter names when necessary.
-    /// </param>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied parameter tags detected as duplicates. Used by leaf nodes
-    /// to decide when to apply the <paramref name="prefix"/>.
-    /// </param>
+
     /// <returns>
     /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
     /// </returns>

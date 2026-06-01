@@ -93,14 +93,8 @@ public abstract class Predicates
     /// passes that set to the recursive <see cref="ToSqlFragments()"/> overload,
     /// which may add disambiguating prefixes to produce unique parameter names.
     /// </remarks>
-    /// <param name="branchName">
-    /// The branch prefix that is prepended to the beginning of all parameter names in this predicate tree.
-    /// The leading <c>@</c> is optional and will be ignored.
-    /// </param>
     /// <returns>The SQL fragments represented by this predicate tree.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="branchName"/> is <c>null</c>.
-    /// </exception>
+
     internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 
     private static IEnumerable<Predicates> GetAllDescendantPredicates(IEnumerable<Predicates> predicates)

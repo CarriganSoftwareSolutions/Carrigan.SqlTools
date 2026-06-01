@@ -74,7 +74,7 @@ public class RightJoinTests
         Predicates id = new EmptyPredicate();
         RightJoin<JoinRightTable> join = new(id);
 
-        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect, "Join").ToSql(Dialect));
+        Assert.Throws<InvalidOperationException>(() => join.ToSqlFragments(Dialect).ToSql(Dialect));
     }
 
 }

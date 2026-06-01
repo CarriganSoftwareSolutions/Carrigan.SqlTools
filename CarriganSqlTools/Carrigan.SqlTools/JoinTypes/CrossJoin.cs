@@ -99,11 +99,8 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     /// </summary>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
-    /// <param name="branchPrefix">
-    /// The branch prefix used to distinguish parameters in join predicates from the main where clause.
-    /// This value is ignored for <c>CROSS JOIN</c> because no <c>ON</c> clause is emitted.
-    /// </param>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect, string branchPrefix)
+    /// 
+    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText(" CROSS JOIN ");
         if (Subquery is not null)
