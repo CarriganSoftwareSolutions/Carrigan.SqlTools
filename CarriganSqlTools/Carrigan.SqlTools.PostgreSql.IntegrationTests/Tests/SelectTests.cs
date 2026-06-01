@@ -78,9 +78,6 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         BookDataSet.ValidateById(books, 4);
     }
 
-    //TODO: we need a integration unit test for contains, but are being limited by our current local db server instance.
-
-
     [Fact]
     public async Task SelectEqual()
     {
@@ -342,7 +339,6 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     [Fact]
     public async Task SelectXOr()
     {
-        //TODO: Postgre uses # instead of ^ for xor. ^ is exponentiation. This is unit test is failing because of that difference.
         // WE need to address the underlying difference in the project.
         Column<Book> id = new(nameof(Book.Id));
         Parameter value1 = new(5, "valueOne");

@@ -2,7 +2,6 @@
 
 internal static class DialectStatics
 {
-    //TODO: move dialect provider to this project, have it use this static
     /// <summary>
     /// Returns a set of CLR types that are supported by the PostgreSQL dialect for SQL parameter mapping and type inference.
     /// </summary>

@@ -57,7 +57,6 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// </exception>
     private void ValidationChecks()
     {
-        //TODO: can some of these be move to static to ensure it only runs once.
         List<Exception> exceptions = [];
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
         IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
