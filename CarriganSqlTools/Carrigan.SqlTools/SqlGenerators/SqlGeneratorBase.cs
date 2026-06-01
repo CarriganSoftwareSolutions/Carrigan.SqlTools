@@ -62,10 +62,14 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
         IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
         IEnumerable<Tuple<PropertyInfo, ParameterTag>> invalidParameters = [];
+        IEnumerable<Type> unsupportedKeyTypes =
+            KeyColumnInfo
+                .Where(key => SupportedTypes.DoesNotContain(key.Type))
+                .Select(key => key.Type)
+                .Distinct();
 
-        if (KeyColumnInfo.Where(key => SupportedTypes.DoesNotContain(key.Type)).Any())
-            //TODO: new type for these types of exceptions.
-            exceptions.Add(new Exception("Key Contains Unsupported Column CLR Type"));
+        if (unsupportedKeyTypes.Any())
+            exceptions.Add(new UnsupportedKeyColumnClrTypeException(unsupportedKeyTypes));
 
         if (SqlIdentifierPattern.Fails(TableName))
             exceptions.Add(new InvalidSqlIdentifierException(Type, TableName));

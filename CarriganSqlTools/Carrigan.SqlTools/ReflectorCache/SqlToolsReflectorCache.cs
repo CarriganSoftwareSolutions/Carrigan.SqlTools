@@ -297,7 +297,6 @@ public class SqlToolsReflectorCache<T>
                 ))
         );
 
-        //TODO: ensure each SqlGenerator validates the columns are supported.
         KeyColumnInfo =
             _ColumnInfoCache
                 .Values
@@ -306,7 +305,6 @@ public class SqlToolsReflectorCache<T>
 
         HasKeyProperty = KeyColumnInfo.Any();
 
-        //TODO: ensure each SqlGenerator validates the columns are supported.
         KeyVersionColumnsInfo =
             _ColumnInfoCache
                 .Values
