@@ -2,6 +2,7 @@
 using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.RegularExpressions;
@@ -264,7 +265,8 @@ public class SqlToolsReflectorCache<T>
         IEnumerable<PropertyInfo> readableProperties =
             ReflectorCache<T>
                 .ReadablePublicInstanceProperties
-                .Materialize(NullOptionsEnum.Exception);
+                .Materialize(NullOptionsEnum.Exception)
+                .Where(propertyInfo => DialectBaseStatics.SupportedTypes.Contains(propertyInfo.PropertyType));
 
         IEnumerable<PropertyInfo> properties =
             readableProperties
