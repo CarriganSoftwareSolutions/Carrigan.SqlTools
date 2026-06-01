@@ -39,10 +39,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly ColumnName ColumnName;
 
-    /// <summary>
-    /// Represents the legacy <see cref="SqlTypeDefinition"/> associated with this property.
-    /// </summary>
-    internal readonly SqlTypeDefinition SqlType;
 
     /// <summary>
     /// Represents an explicit SQL field-mapping override supplied by a <see cref="SqlTypeAttribute"/>, if any.
@@ -144,7 +140,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);
 
-        SqlType = new(propertyInfo.PropertyType);
         FieldProperties = sqlTypeAttribute?.FieldProperties;
 
         ParameterTag = new(parameterName);

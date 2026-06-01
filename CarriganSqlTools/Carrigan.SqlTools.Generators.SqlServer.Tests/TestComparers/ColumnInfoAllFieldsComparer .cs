@@ -32,8 +32,7 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
             && left.IsKeyPart == right.IsKeyPart
             && left.IsEncrypted == right.IsEncrypted
             && left.IsKeyVersionProperty == right.IsKeyVersionProperty
-            && left.SqlType.Type == right.SqlType.Type
-            && left.SqlType.TypeDeclaration == right.SqlType.TypeDeclaration;
+            && left.IsKeyVersionProperty == right.IsKeyVersionProperty;
     }
 
     public int GetHashCode(ColumnInfo obj)
@@ -51,8 +50,6 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
         hashCode.Add(obj.IsKeyPart);
         hashCode.Add(obj.IsEncrypted);
         hashCode.Add(obj.IsKeyVersionProperty);
-        hashCode.Add(obj.SqlType.Type.ToString());
-        hashCode.Add(obj.SqlType.TypeDeclaration);
         return hashCode.ToHashCode();
     }
 }

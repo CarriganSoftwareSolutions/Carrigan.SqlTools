@@ -16,75 +16,75 @@ public class ColumnInfoTests
     [InlineData(null, "ColumnIdentifiersTable", typeof(ColumnIdentifiers), "Id", new[] { "Id" },
         "[ColumnIdentifiersTable].[Id]", "Id", "Id", 
         "IdParameter",  null, "[ColumnIdentifiersTable].[Id]",
-        true, false, false,  "[ColumnIdentifiersTable]", SqlDbType.Int, "INT")]
+        true, false, false,  "[ColumnIdentifiersTable]")]
 
     [InlineData("dbo", "ColumnIdentifiersTable", typeof(ColumnIdentifiers), "Id", new[] { "Id" },
         "[dbo].[ColumnIdentifiersTable].[Id]", "Id", "Id",
         "IdParameter", null, "[dbo].[ColumnIdentifiersTable].[Id]",
-        true, false, false, "[dbo].[ColumnIdentifiersTable]", SqlDbType.Int, "INT")]
+        true, false, false, "[dbo].[ColumnIdentifiersTable]")]
 
     [InlineData("dbo", "ColumnIdentifiersTable", typeof(ColumnIdentifiers), "Property", new[] { "Id" },
         "[dbo].[ColumnIdentifiersTable].[Property]", "Property", "Property",
         "PropertyParameter", null, "[dbo].[ColumnIdentifiersTable].[Property]",
-        false, false, false, "[dbo].[ColumnIdentifiersTable]", SqlDbType.Int, "INT")]
+        false, false, false, "[dbo].[ColumnIdentifiersTable]")]
 
     [InlineData("dbo", "ColumnIdentifiersTable", typeof(ColumnIdentifiers), "ColumnName", new[] { "Id" },
         "[dbo].[ColumnIdentifiersTable].[Column]", "Column", "ColumnName",
         "ColumnParameter", null, "[dbo].[ColumnIdentifiersTable].[Column]",
-        false, false, false, "[dbo].[ColumnIdentifiersTable]", SqlDbType.Int, "INT")]
+        false, false, false, "[dbo].[ColumnIdentifiersTable]")]
 
     [InlineData("dbo", "ColumnIdentifiersTable", typeof(ColumnIdentifiers), "IdentifierName", new[] { "Id" },
         "[dbo].[ColumnIdentifiersTable].[Identifier]", "Identifier", "IdentifierName",
         "IdentifierParameter", null, "[dbo].[ColumnIdentifiersTable].[Identifier]",
-        false, false, false, "[dbo].[ColumnIdentifiersTable]", SqlDbType.Int, "INT")]
+        false, false, false, "[dbo].[ColumnIdentifiersTable]")]
 
     [InlineData("dbo", "ColumnIdentifiersTable", typeof(ColumnIdentifiers), "IdentifierOverrideName", new[] { "Id" },
         "[dbo].[ColumnIdentifiersTable].[IdentifierOverride]", "IdentifierOverride", "IdentifierOverrideName",
         "IdentifierOverrideParameter", null, "[dbo].[ColumnIdentifiersTable].[IdentifierOverride]",
-        false, false, false, "[dbo].[ColumnIdentifiersTable]", SqlDbType.Int, "INT")]
+        false, false, false, "[dbo].[ColumnIdentifiersTable]")]
 
     [InlineData("dbo", "Test", typeof(EntityWithEncryption), "Id", new[] { "Id" },
         "[dbo].[Test].[Id]", "Id", "Id",
         "Id", null, "[dbo].[Test].[Id]",
-        true, false, false, "[dbo].[Test]", SqlDbType.Int, "INT")]
+        true, false, false, "[dbo].[Test]")]
 
     [InlineData("dbo", "Test", typeof(EntityWithEncryption), "NotSensitiveData", new[] { "Id" },
         "[dbo].[Test].[NotSensitiveData]", "NotSensitiveData", "NotSensitiveData",
         "NotSensitiveData", null, "[dbo].[Test].[NotSensitiveData]",
-        false, false, false, "[dbo].[Test]", SqlDbType.NVarChar, "NVARCHAR(MAX)")]
+        false, false, false, "[dbo].[Test]")]
 
     [InlineData("dbo", "Test", typeof(EntityWithEncryption), "SensitiveData", new[] { "Id" },
         "[dbo].[Test].[SensitiveData]", "SensitiveData", "SensitiveData",
         "SensitiveData", null, "[dbo].[Test].[SensitiveData]",
-        false, true, false, "[dbo].[Test]", SqlDbType.NVarChar, "NVARCHAR(MAX)")]
+        false, true, false, "[dbo].[Test]")]
 
     [InlineData("dbo", "Test", typeof(EntityWithEncryption), "KeyVersion", new[] { "Id" },
         "[dbo].[Test].[KeyVersion]", "KeyVersion", "KeyVersion",
         "KeyVersion", null, "[dbo].[Test].[KeyVersion]",
-        false, false, true, "[dbo].[Test]", SqlDbType.Int, "INT")]
+        false, false, true, "[dbo].[Test]")]
 
     [InlineData("dbo", "TableWithAliases", typeof(TableWithAliases), "Id", new[] { "Id" },
         "[dbo].[TableWithAliases].[Id]", "Id", "Id",
         "Id", "TableId", "[dbo].[TableWithAliases].[Id] AS [TableId]",
-        true, false, false, "[dbo].[TableWithAliases]", SqlDbType.Int, "INT")]
+        true, false, false, "[dbo].[TableWithAliases]")]
 
 
     [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "Key", new[] { "Key" },
         "[dbo].[NullableTestEntity].[Key]", "Key", "Key",
         "Key", null, "[dbo].[NullableTestEntity].[Key]",
         true, false, false, 
-        "[dbo].[NullableTestEntity]", SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
+        "[dbo].[NullableTestEntity]")]
 
     [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "IntValue", new[] { "Key" },
         "[dbo].[NullableTestEntity].[IntValue]", "IntValue", "IntValue",
         "IntValue", null, "[dbo].[NullableTestEntity].[IntValue]",
         false, false, false,
-        "[dbo].[NullableTestEntity]", SqlDbType.Int, "INT")]
+        "[dbo].[NullableTestEntity]")]
     public void New(string? schemaName, string tableName, Type type, string propertyName, string[] keyProperties,
-        string expectedColumnTag, string  expectedColumnName, string expectedPropertyName, 
+        string expectedColumnTag, string expectedColumnName, string expectedPropertyName,
         string parameterTag, string? expectedAliasName, string expectedSelectTag,
         bool expectedIsKeyPart, bool expectedIsEncrypted, bool expectedIsKeyVersionProperty,
-        string expectedTableTag, SqlDbType expectedSqlType, string expectedSqlDeclarationType)
+        string expectedTableTag)
     {
         IEnumerable<PropertyInfo> keys = keyProperties.Select(property => type.GetProperty(property)).OfType<PropertyInfo>();
 
@@ -121,8 +121,6 @@ public class ColumnInfoTests
 
         Assert.False(columnInfo.IsEmpty());
 
-        Assert.Equal(expectedSqlType, columnInfo.SqlType.Type);
-        Assert.Equal(expectedSqlDeclarationType, columnInfo.SqlType.TypeDeclaration);
     }
 
     [Fact]
@@ -193,104 +191,71 @@ public class ColumnInfoTests
 
 
     [Theory]
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "LongValue", new[] { "Key" },
-        SqlDbType.BigInt, "BIGINT")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "LongValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "ShortValue", new[] { "Key" },
-        SqlDbType.SmallInt, "SMALLINT")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "ShortValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "ByteValue", new[] { "Key" },
-        SqlDbType.TinyInt, "TINYINT")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "ByteValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "BoolValue", new[] { "Key" },
-        SqlDbType.Bit, "BIT")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "BoolValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DecimalValue", new[] { "Key" },
-        SqlDbType.Decimal, "DECIMAL")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DecimalValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "FloatValue", new[] { "Key" },
-        SqlDbType.Real, "REAL")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "FloatValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DoubleValue", new[] { "Key" },
-        SqlDbType.Float, "FLOAT")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DoubleValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DateTimeValue", new[] { "Key" },
-        SqlDbType.DateTime2, "DATETIME2")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DateTimeValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "GuidValue", new[] { "Key" },
-        SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "GuidValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "CharValue", new[] { "Key" },
-        SqlDbType.NChar, "NCHAR(1)")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "CharValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "TimeOnlyValue", new[] { "Key" },
-        SqlDbType.Time, "TIME")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "TimeOnlyValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DateOnlyValue", new[] { "Key" },
-        SqlDbType.Date, "DATE")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DateOnlyValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "ByteArrayValue", new[] { "Key" },
-        SqlDbType.VarBinary, "VARBINARY(MAX)")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "ByteArrayValue", new[] { "Key" })]
 
-    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DateTimeOffsetValue", new[] { "Key" },
-        SqlDbType.DateTimeOffset, "DATETIMEOFFSET")]
+    [InlineData("dbo", "NullableTestEntity", typeof(NullableTestEntity), "DateTimeOffsetValue", new[] { "Key" })]
 
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "IntValue", new[] { "Key" },
-        SqlDbType.Int, "INT")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "IntValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "LongValue", new[] { "Key" },
-        SqlDbType.BigInt, "BIGINT")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "LongValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "ShortValue", new[] { "Key" },
-        SqlDbType.SmallInt, "SMALLINT")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "ShortValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "ByteValue", new[] { "Key" },
-        SqlDbType.TinyInt, "TINYINT")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "ByteValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "BoolValue", new[] { "Key" },
-        SqlDbType.Bit, "BIT")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "BoolValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DecimalValue", new[] { "Key" },
-        SqlDbType.Decimal, "DECIMAL")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DecimalValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "FloatValue", new[] { "Key" },
-        SqlDbType.Real, "REAL")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "FloatValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DoubleValue", new[] { "Key" },
-        SqlDbType.Float, "FLOAT")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DoubleValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "StringValue", new[] { "Key" },
-        SqlDbType.NVarChar, "NVARCHAR(MAX)")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "StringValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DateTimeValue", new[] { "Key" },
-        SqlDbType.DateTime2, "DATETIME2")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DateTimeValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "GuidValue", new[] { "Key" },
-        SqlDbType.UniqueIdentifier, "UNIQUEIDENTIFIER")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "GuidValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "CharValue", new[] { "Key" },
-        SqlDbType.NChar, "NCHAR(1)")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "CharValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "ByteArrayValue", new[] { "Key" },
-        SqlDbType.VarBinary, "VARBINARY(MAX)")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "ByteArrayValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "TimeOnlyValue", new[] { "Key" },
-        SqlDbType.Time, "TIME")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "TimeOnlyValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DateOnlyValue", new[] { "Key" },
-        SqlDbType.Date, "DATE")]
+    [InlineData("dbo", "StandardEntity", typeof(StandardEntity), "DateOnlyValue", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(SpecialEntity), "EnumValueString", new[] { "Key" },
-        SqlDbType.Int, "INT")]
+    [InlineData("dbo", "StandardEntity", typeof(SpecialEntity), "EnumValueString", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(SpecialEntity), "EnumValueInt", new[] { "Key" },
-        SqlDbType.Int, "INT")]
+    [InlineData("dbo", "StandardEntity", typeof(SpecialEntity), "EnumValueInt", new[] { "Key" })]
 
-    [InlineData("dbo", "StandardEntity", typeof(SpecialEntity), "NullableEnumValue", new[] { "Key" },
-        SqlDbType.Int, "INT")]
-    public void SqlDbTyp(string? schemaName, string tableName, Type type, string propertyName, string[] keyProperties,
-        SqlDbType expectedSqlType, string expectedSqlDeclarationType)
+    [InlineData("dbo", "StandardEntity", typeof(SpecialEntity), "NullableEnumValue", new[] { "Key" })]
+    public void SqlDbTyp(string? schemaName, string tableName, Type type, string propertyName, string[] keyProperties)
     {
         IEnumerable<PropertyInfo> keys = keyProperties.Select(property => type.GetProperty(property)).OfType<PropertyInfo>();
 
@@ -300,8 +265,6 @@ public class ColumnInfoTests
         Assert.NotNull(property);
         ColumnInfo columnInfo = new(schema, table, property, keys);
 
-        Assert.Equal(expectedSqlType, columnInfo.SqlType.Type);
-        Assert.Equal(expectedSqlDeclarationType, columnInfo.SqlType.TypeDeclaration);
     }
 
     [Theory]
