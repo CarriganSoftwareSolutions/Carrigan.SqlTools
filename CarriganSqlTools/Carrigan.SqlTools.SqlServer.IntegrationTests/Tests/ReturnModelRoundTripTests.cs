@@ -97,7 +97,5 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
             // DateTime: ensure the value from INSERT matches what is actually in the DB
             Assert.Equal(fromInsert.DateTime, fromDb.DateTime);
         }
-
-        connection.Dispose();
     }
 }

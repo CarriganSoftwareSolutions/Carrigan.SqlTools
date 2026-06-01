@@ -43,7 +43,7 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
 
         SqlQuery insertQuery = _generator.Insert(insertColumns, returnColumns, toInsert);
 
-        NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
 
         // Act 1: execute INSERT and capture returned values
         List<ReturnModel> returnedRows =
@@ -98,7 +98,5 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
             // DateTime: ensure the value from INSERT matches what is actually in the DB
             Assert.Equal(fromInsert.DateTime, fromDb.DateTime);
         }
-
-        connection.Dispose();
     }
 }

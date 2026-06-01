@@ -182,15 +182,15 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         int count  = await CommandsAsync.ExecuteNonQueryAsync(updateQuery, null, connection);
         Assert.Equal(12, count);
 
-        _ = GetAllMaleCustomersPostTest();
-        _ = GetAllFemaleCustomersPostTest();
+        _ = await GetAllMaleCustomersPostTest();
+        _ = await GetAllFemaleCustomersPostTest();
     }
 
     [Fact]
     public async Task UpdateWhere()
     {
         await _fixture.ResetAsync();
-        _ = GetAllCustomersPretest();
+        _ = await GetAllCustomersPretest();
 
         await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         Customer values = new() { FirstName = "Jane" };
@@ -214,7 +214,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
         _ = await GetAllCustomersPretest();        
         
-        using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new (nameof(Customer.Id), nameof(Order.CustomerId));
         ColumnValue<Customer> customerThe = new (nameof(Customer.Id), 3);
 
@@ -257,7 +257,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
 
         _ = await GetAllCustomersPretest();
 
-        using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new(nameof(Customer.Id), nameof(Order.CustomerId));
         ColumnValue<Customer> customerThe = new(nameof(Customer.Id), 3);
 

@@ -1,65 +1,123 @@
 ﻿using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Dialects.PostgreSql;
-using Carrigan.SqlTools.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
 using Respawn;
 
-// Ignore Spelling: PostgreSql, Respawn, Respawner, Reseed, Carrigan, SqlTools, pgcrypto
+//IGNORE SPELLING: respawner
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 
-public abstract class PostgreSqlFixtureBase : DbFixtureBase<NpgsqlConnection>
+public abstract class PostgreSqlFixtureBase : IAsyncLifetime
 {
-    private const string DefaultSchemaName = "public";
+    private const string SchemaName = "public";
 
     private static readonly PostgreSqlDialect Dialect = new();
 
-    protected PostgreSqlFixtureBase(IEnumerable<string> tableDefinitions) :
-        base(Configurations.MaintenanceDbConnectionString, tableDefinitions)
+    private readonly string MaintenanceConnectionString;
+    private readonly string DatabaseName = "CarriganSqlToolsTestDb_" + Guid.CreateVersion7().ToString("N");
+    private readonly IEnumerable<string> TableDefinitions;
+    private readonly IEnumerable<SqlQuery> DatabaseSetups;
+
+    private Respawner? _respawner;
+
+    internal string UnitTestConnectionString
     {
-    }
-
-    protected PostgreSqlFixtureBase(IEnumerable<string> tableDefinitions, IEnumerable<SqlQuery> databaseSetups) :
-        base(Configurations.MaintenanceDbConnectionString, tableDefinitions, databaseSetups)
-    {
-    }
-
-    protected override IDbAdapter DbAdapter => Respawn.DbAdapter.Postgres;
-
-    protected override string SchemaName => DefaultSchemaName;
-
-    protected override NpgsqlConnection CreateConnection(string connectionString) => new(connectionString);
-
-    protected override string BuildUnitTestConnectionString(string maintenanceConnectionString, string databaseName)
-    {
-        NpgsqlConnectionStringBuilder builder = new(maintenanceConnectionString)
+        get
         {
-            Database = databaseName
-        };
+            NpgsqlConnectionStringBuilder builder = new(MaintenanceConnectionString)
+            {
+                Database = DatabaseName
+            };
 
-        return builder.ConnectionString;
+            return builder.ConnectionString;
+        }
+    }
+    private void ExecuteDatabaseSetups(NpgsqlConnection connection)
+    {
+        foreach (SqlQuery query in DatabaseSetups)
+        {
+            Commands.ExecuteNonQuery(query, null, connection);
+        }
     }
 
-    protected override string CreateDatabaseCommandText(string databaseName)
+    protected PostgreSqlFixtureBase(IEnumerable<string> tableDefinition)
     {
-        string dbIdentifier = Dialect.QuoteIdentifier(databaseName);
-
-        return $"CREATE DATABASE {dbIdentifier};";
+        MaintenanceConnectionString = Configurations.MaintenanceDbConnectionString;
+        TableDefinitions = tableDefinition;
+        DatabaseSetups = [];
     }
 
-    protected override string DropDatabaseCommandText(string databaseName)
+    protected PostgreSqlFixtureBase(IEnumerable<string> tableDefinition, IEnumerable<SqlQuery> databaseSetups)
     {
-        string dbIdentifier = Dialect.QuoteIdentifier(databaseName);
+        MaintenanceConnectionString = Configurations.MaintenanceDbConnectionString;
+        TableDefinitions = tableDefinition;
+        DatabaseSetups = databaseSetups;
+    }
 
-        return $"""
+    public async ValueTask InitializeAsync()
+    {
+        await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
+        await maintenanceConnection.OpenAsync();
+
+        string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
+
+        await using NpgsqlCommand createDb = maintenanceConnection.CreateCommand();
+        createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
+        await createDb.ExecuteNonQueryAsync();
+
+        await using NpgsqlConnection unitTestConnection = new(UnitTestConnectionString);
+        await unitTestConnection.OpenAsync();
+
+        await using NpgsqlCommand createExtension = unitTestConnection.CreateCommand();
+        createExtension.CommandText = "CREATE EXTENSION IF NOT EXISTS pgcrypto;";
+        await createExtension.ExecuteNonQueryAsync();
+
+        foreach (string tableDefinition in TableDefinitions)
+        {
+            await using NpgsqlCommand createTable = unitTestConnection.CreateCommand();
+            createTable.CommandText = tableDefinition;
+            await createTable.ExecuteNonQueryAsync();
+        }
+
+        _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.Postgres,
+            SchemasToInclude = [SchemaName],
+            WithReseed = true
+        });
+
+        ExecuteDatabaseSetups(unitTestConnection);
+    }
+
+    public async Task ResetAsync()
+    {
+        if (_respawner == null)
+            throw new InvalidOperationException($"{DatabaseName} Respawner has not been initialized.");
+
+        await using NpgsqlConnection unitTestConnection = new(UnitTestConnectionString);
+        await unitTestConnection.OpenAsync();
+
+        await _respawner.ResetAsync(unitTestConnection);
+
+        ExecuteDatabaseSetups(unitTestConnection);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
+        await maintenanceConnection.OpenAsync();
+
+        string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
+
+        await using NpgsqlCommand dropDb = maintenanceConnection.CreateCommand();
+        dropDb.CommandText =
+            $"""
             DROP DATABASE IF EXISTS {dbIdentifier} WITH (FORCE);
             """;
+
+        await dropDb.ExecuteNonQueryAsync();
+
+        GC.SuppressFinalize(this);
     }
-
-    protected override async Task BeforeCreateTablesAsync(NpgsqlConnection connection) => 
-        await ExecuteCommandAsync(connection, "CREATE EXTENSION IF NOT EXISTS pgcrypto;");
-
-    protected override void ExecuteDatabaseSetup(SqlQuery query, NpgsqlConnection connection) => 
-        Commands.ExecuteNonQuery(query, null, connection);
 }
