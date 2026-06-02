@@ -1,10 +1,14 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Invocation;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Reflection;
@@ -95,6 +99,8 @@ internal static class CommandSharedMethods
 
                 if (dataReader.IsDBNull(i))
                     rowData.Add(currentColumnName, DBNull.Value);
+                else if (TryReadNullableArrayValue<T>(dataReader, i, new (currentColumnName), dataTypeName, out object? arrayValue))
+                    rowData.Add(currentColumnName, arrayValue);
                 else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
                 {
                     using StringReader stringReader = new(dataReader.GetString(i));
@@ -119,6 +125,111 @@ internal static class CommandSharedMethods
             throw SqlToolsErrorFactory.MaterializationFailed(typeof(T), rowData.Keys, exception);
         }
     }
+
+    private static bool TryReadNullableArrayValue<T>(DbDataReader dataReader, int ordinal, ResultColumnName columnName, string dataTypeName, out object? value) where T : class, new()
+    {
+        value = null;
+
+        if (InvocationReflectorCache<T>.Exists(columnName) is false || InvocationReflectorCache<T>.IsArray(columnName) is false)
+            return false;
+        else
+        {
+            Type type = InvocationReflectorCache<T>.GetType(columnName);
+            Type? elementType = type.GetElementType();
+            if (type == typeof(byte[]) || elementType is null || IsNullableValueType(elementType) is false)
+                return false;
+            else
+            {
+                foreach (Type readType in GetNullableArrayReadTypes(type, dataTypeName))
+                {
+                    try
+                    {
+                        value = GetFieldValue(dataReader, ordinal, readType);
+                        return true;
+                    }
+                    catch (InvalidCastException)
+                    {
+                    }
+                    catch (NotSupportedException)
+                    {
+                    }
+                    catch (TargetInvocationException exception) when (exception.InnerException is InvalidCastException or NotSupportedException)
+                    {
+                    }
+                }
+                return false;
+            }
+        }
+    }
+
+    private static IEnumerable<Type> GetNullableArrayReadTypes(Type targetArrayType, string dataTypeName)
+    {
+        Type? providerArrayType = GetProviderNullableArrayReadType(dataTypeName);
+
+        if (providerArrayType is not null)
+            yield return providerArrayType;
+
+        if (providerArrayType != targetArrayType)
+            yield return targetArrayType;
+    }
+
+    private static Type? GetProviderNullableArrayReadType(string dataTypeName)
+    {
+        string normalized = NormalizePostgreSqlArrayTypeName(dataTypeName);
+
+        return normalized switch
+        {
+            "uuid" or "_uuid" => typeof(Guid?[]),
+            "boolean" or "bool" or "_bool" => typeof(bool?[]),
+            "smallint" or "int2" or "_int2" => typeof(short?[]),
+            "integer" or "int" or "int4" or "_int4" => typeof(int?[]),
+            "bigint" or "int8" or "_int8" => typeof(long?[]),
+            "real" or "float4" or "_float4" => typeof(float?[]),
+            "double precision" or "float8" or "_float8" => typeof(double?[]),
+            "numeric" or "decimal" or "money" or "_numeric" or "_money" => typeof(decimal?[]),
+            "date" or "_date" => typeof(DateOnly?[]),
+            "time without time zone" or "time" or "_time" => typeof(TimeOnly?[]),
+            "interval" or "_interval" => typeof(TimeSpan?[]),
+            "timestamp without time zone" or "timestamp" or "_timestamp" => typeof(DateTime?[]),
+            "timestamp with time zone" or "timestampz" or "timestamptz" or "_timestamptz" => typeof(DateTime?[]),
+            "character" or "char" or "bpchar" or "character varying" or "varchar" or "text" or "xml" or "_bpchar" or "_varchar" or "_text" or "_xml" => typeof(string[]),
+            "bytea" or "_bytea" => typeof(byte[][]),
+            _ => null
+        };
+    }
+
+    private static string NormalizePostgreSqlArrayTypeName(string dataTypeName)
+    {
+        string normalized = dataTypeName.Trim().ToLowerInvariant();
+
+        if (normalized.EndsWith("[]", StringComparison.Ordinal))
+            normalized = normalized[..^2].Trim();
+
+        if (normalized.Length > 0 && normalized[0] == '_')
+            return normalized;
+
+        int openParenthesisIndex = normalized.IndexOf('(', StringComparison.Ordinal);
+        if (openParenthesisIndex >= 0)
+        {
+            int closeParenthesisIndex = normalized.IndexOf(')', openParenthesisIndex + 1);
+            if (closeParenthesisIndex > openParenthesisIndex)
+                normalized = string.Concat(normalized.AsSpan(0, openParenthesisIndex), normalized.AsSpan(closeParenthesisIndex + 1)).Trim();
+        }
+
+        return normalized;
+    }
+
+    private static object? GetFieldValue(DbDataReader dataReader, int ordinal, Type fieldType)
+    {
+        MethodInfo method = typeof(DbDataReader)
+            .GetMethod(nameof(DbDataReader.GetFieldValue), [typeof(int)])
+            ?? throw new MissingMethodException(typeof(DbDataReader).FullName, nameof(DbDataReader.GetFieldValue));
+
+        return method.MakeGenericMethod(fieldType).Invoke(dataReader, [ordinal]);
+    }
+
+    private static bool IsNullableValueType(Type type) =>
+        type.IsValueType && Nullable.GetUnderlyingType(type) is not null;
 
     /// <summary>
     /// Decrypts encrypted properties on the provided records in-place.

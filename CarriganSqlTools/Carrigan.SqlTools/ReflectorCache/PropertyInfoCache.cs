@@ -154,4 +154,16 @@ internal class PropertyInfoCache<typeT>
         else
             return null;
     }
+
+    /// <summary>
+    /// Determines whether the cache contains a mapping for the specified <see cref="ResultColumnName"/>.
+    /// </summary>
+    /// <param name="key">
+    /// The <see cref="ResultColumnName"/> to check for presence in the cache.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the cache contains a mapping for <paramref name="key"/>; otherwise, <see langword="false"/>.
+    /// </returns>
+    internal bool HasKey(ResultColumnName key) =>
+        _cache.ContainsKey(key);
 }

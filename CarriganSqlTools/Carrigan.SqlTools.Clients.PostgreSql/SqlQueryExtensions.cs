@@ -146,6 +146,8 @@ internal static class SqlQueryExtensions
             "TIME WITHOUT TIME ZONE" => NpgsqlDbType.Time,
             "TIME WITH TIME ZONE" => NpgsqlDbType.TimeTz,
 
+            "INTERVAL" => NpgsqlDbType.Interval,
+
             "TIMESTAMP" => NpgsqlDbType.Timestamp,
             "TIMESTAMP WITHOUT TIME ZONE" => NpgsqlDbType.Timestamp,
             "TIMESTAMP WITH TIME ZONE" => NpgsqlDbType.TimestampTz,

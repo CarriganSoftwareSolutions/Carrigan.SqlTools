@@ -178,7 +178,7 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
                     DateTimeValue = DateTime.MinValue,
                     DateTimeNullableValue = null,
 
-                    DateTimeOffsetValue = new DateTimeOffset(0001, 01, 02, 00, 00, 00, TimeSpan.Zero),
+                    DateTimeOffsetValue = new (0001, 01, 02, 00, 00, 00, TimeSpan.Zero),
                     DateTimeOffsetNullableValue = null,
 
                     BytesValue = [],
@@ -231,12 +231,12 @@ public sealed class FieldsRoundTripTests : IClassFixture<FieldsFixture>
 
                 DateOnlyValue = DateOnly.MaxValue,
                 DateOnlyNullableValue = null,
-                TimeOnlyValue = new TimeOnly(23, 59, 59, 999, 999), // not using TimeOnly.MaxValue, do to precision differences
+                TimeOnlyValue = new (23, 59, 59, 999, 999), // not using TimeOnly.MaxValue, do to precision differences
                 TimeOnlyNullableValue = null,
                 DateTimeValue = DateTime.MaxValue,
                 DateTimeNullableValue = null,
 
-                DateTimeOffsetValue = new DateTimeOffset(9999, 12, 30, 00, 00, 00, TimeSpan.Zero),
+                DateTimeOffsetValue = new (9999, 12, 30, 00, 00, 00, TimeSpan.Zero),
                 DateTimeOffsetNullableValue = null,
 
                 BytesValue = [],

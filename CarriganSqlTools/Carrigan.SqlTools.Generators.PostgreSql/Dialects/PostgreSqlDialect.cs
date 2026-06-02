@@ -227,10 +227,60 @@ public class PostgreSqlDialect : ISqlDialects
         {
             return ((object?)xmlDocument.OuterXml) ?? DBNull.Value;
         }
+        else if (value is Array array && value is not byte[])
+        {
+            return ArrayValueConversion(array);
+        }
         else
         {
             return value;
         }
+    }
+
+    private object ArrayValueConversion(Array array)
+    {
+        Type elementType = array.GetType().GetElementType()
+            ?? throw new ArgumentException("Array values must have an element type.", nameof(array));
+
+        if (elementType == typeof(XDocument))
+            return ((XDocument?[])array).Select(value => value?.ToString()).ToArray();
+        if (elementType == typeof(XmlDocument))
+            return ((XmlDocument?[])array).Select(value => value?.OuterXml).ToArray();
+
+        if (elementType == typeof(char))
+            return ((char[])array).Select(value => value.ToString()).ToArray();
+        if (elementType == typeof(char?))
+            return ((char?[])array).Select(value => value?.ToString()).ToArray();
+
+        if (elementType == typeof(byte?))
+            return ((byte?[])array).Select(value => value is null ? null : (short?)value.Value).ToArray();
+        if (elementType == typeof(sbyte))
+            return ((sbyte[])array).Select(value => (short)value).ToArray();
+        if (elementType == typeof(sbyte?))
+            return ((sbyte?[])array).Select(value => value is null ? null : (short?)value.Value).ToArray();
+        if (elementType == typeof(ushort))
+            return ((ushort[])array).Select(value => (int)value).ToArray();
+        if (elementType == typeof(ushort?))
+            return ((ushort?[])array).Select(value => value is null ? null : (int?)value.Value).ToArray();
+        if (elementType == typeof(uint))
+            return ((uint[])array).Select(value => (long)value).ToArray();
+        if (elementType == typeof(uint?))
+            return ((uint?[])array).Select(value => value is null ? null : (long?)value.Value).ToArray();
+        if (elementType == typeof(ulong))
+            return ((ulong[])array).Select(value => (decimal)value).ToArray();
+        if (elementType == typeof(ulong?))
+            return ((ulong?[])array).Select(value => value is null ? null : (decimal?)value.Value).ToArray();
+
+        if (elementType == typeof(DateTime))
+            return ((DateTime[])array).Select(value => NormalizeTimeZone(value)!.Value).ToArray();
+        if (elementType == typeof(DateTime?))
+            return ((DateTime?[])array).Select(NormalizeTimeZone).ToArray();
+        if (elementType == typeof(DateTimeOffset))
+            return ((DateTimeOffset[])array).Select(value => NormalizeTimeZone(value)!.Value).ToArray();
+        if (elementType == typeof(DateTimeOffset?))
+            return ((DateTimeOffset?[])array).Select(NormalizeTimeZone).ToArray();
+
+        return array;
     }
 
     /// <summary>

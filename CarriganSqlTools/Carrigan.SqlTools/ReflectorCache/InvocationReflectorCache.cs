@@ -116,4 +116,40 @@ internal static class InvocationReflectorCache<T>
                 ?? propertyInfo.Name
         );
     }
+
+    /// <summary>
+    /// Checks if a given <see cref="ResultColumnName"/> exists in the cache, indicating that
+    /// </summary>
+    /// <param name="resultsColumnName">
+    /// The <see cref="ResultColumnName"/> to check for existence in the cache.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the <see cref="ResultColumnName"/> exists in the cache; otherwise, <c>false</c>.
+    /// </returns>
+    internal static bool Exists(ResultColumnName resultsColumnName) =>
+        PropertyInfoCache.HasKey(resultsColumnName);
+
+    /// <summary>
+    /// Checks if the property mapped to a given <see cref="ResultColumnName"/> is an array type.
+    /// </summary>
+    /// <param name="resultsColumnName">
+    /// The <see cref="ResultColumnName"/> whose mapped property's type is being checked.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the mapped property's type is an array; otherwise, <c>false</c>.
+    /// </returns>
+    internal static bool IsArray(ResultColumnName resultsColumnName) =>
+        PropertyInfoCache.Get(resultsColumnName).PropertyType.IsArray;
+
+    /// <summary>
+    /// Gets the CLR <see cref="System.Type"/> of the property mapped to a given <see cref="ResultColumnName"/>.
+    /// </summary>
+    /// <param name="resultsColumnName">
+    /// The <see cref="ResultColumnName"/> whose mapped property's type is being retrieved.
+    /// </param>
+    /// <returns>
+    /// The CLR <see cref="System.Type"/> of the property mapped to the specified <see cref="ResultColumnName"/>.
+    /// </returns>
+    internal static Type GetType(ResultColumnName resultsColumnName) =>
+        PropertyInfoCache.Get(resultsColumnName).PropertyType;
 }

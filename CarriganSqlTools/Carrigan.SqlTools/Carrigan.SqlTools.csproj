@@ -53,6 +53,7 @@
   
   <ItemGroup>
     <InternalsVisibleTo Include="Carrigan.SqlTools.Base.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.PostgreSql" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.SqlServer.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql" />

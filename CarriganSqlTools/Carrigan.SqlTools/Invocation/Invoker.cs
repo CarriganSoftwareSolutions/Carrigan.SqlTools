@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
@@ -98,21 +99,51 @@ public static class Invoker<T> where T : class, new()
         ArgumentNullException.ThrowIfNull(propertyInfo);
 
         Type targetType = propertyInfo.PropertyType;
+
+        if (targetType.IsArray && targetType != typeof(byte[]) && databaseValue is Array databaseArray)
+            return ConvertArrayValue(databaseArray, targetType);
+
+        return ConvertScalarValue(databaseValue, targetType, IsNullable(propertyInfo));
+    }
+
+    private static Array ConvertArrayValue(Array databaseArray, Type targetArrayType)
+    {
+        Type targetElementType = targetArrayType.GetElementType()
+            ?? throw new ArgumentException("Array target types must have an element type.", nameof(targetArrayType));
+
+        Array convertedArray = Array.CreateInstance(targetElementType, databaseArray.Length);
+
+        for (int index = 0; index < databaseArray.Length; index++)
+        {
+            object? databaseValue = databaseArray.GetValue(index);
+            object? convertedValue = ConvertScalarValue(databaseValue, targetElementType, targetIsNullable: true);
+            convertedArray.SetValue(convertedValue, index);
+        }
+
+        return convertedArray;
+    }
+
+    private static object? ConvertScalarValue(object? databaseValue, Type targetType, bool targetIsNullable)
+    {
         Type underlyingTargetType = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
         if (databaseValue is null || databaseValue == DBNull.Value)
         {
             if (underlyingTargetType == typeof(string))
-                return IsNullable(propertyInfo) ? null : string.Empty;
+                return targetIsNullable ? null : string.Empty;
             else if (underlyingTargetType == typeof(byte[]))
-                return IsNullable(propertyInfo) ? null : Array.Empty<byte>();
+                return targetIsNullable ? null : Array.Empty<byte>();
             else
                 return null;
         }
-        else if (databaseValue is SqlXml sqlXmlValue)
+
+        if (underlyingTargetType.IsInstanceOfType(databaseValue))
+            return databaseValue;
+
+        if (databaseValue is SqlXml sqlXmlValue)
         {
             if (sqlXmlValue.IsNull)
-                    return null;
+                return null;
             else if (underlyingTargetType == typeof(XDocument))
                 return XDocument.Parse(sqlXmlValue.Value);
             else if (underlyingTargetType == typeof(XmlDocument))
@@ -124,15 +155,21 @@ public static class Invoker<T> where T : class, new()
 
             return sqlXmlValue;
         }
+        else if (underlyingTargetType == typeof(XDocument) && databaseValue is string xDocumentXml)
+            return XDocument.Parse(xDocumentXml);
+        else if (underlyingTargetType == typeof(XmlDocument) && databaseValue is string xmlDocumentXml)
+        {
+            XmlDocument xmlDocument = new();
+            xmlDocument.LoadXml(xmlDocumentXml);
+            return xmlDocument;
+        }
         // Special case: SQL date (returned as DateTime) to DateOnly conversion.
         else if (databaseValue is DateTime dateTime)
         {
             if (underlyingTargetType == typeof(DateOnly))
                 return DateOnly.FromDateTime(dateTime);
-
             else if (underlyingTargetType == typeof(TimeOnly))
                 return TimeOnly.FromDateTime(dateTime);
-
             else if (underlyingTargetType == typeof(DateTimeOffset))
                 return new DateTimeOffset(dateTime);
             else
@@ -142,12 +179,7 @@ public static class Invoker<T> where T : class, new()
         else if (underlyingTargetType == typeof(TimeOnly) && databaseValue is TimeSpan timeSpan)
             return TimeOnly.FromTimeSpan(timeSpan);
         else if (underlyingTargetType == typeof(char) && databaseValue is string charAsString)
-        {
-            if (charAsString.Length == 0)
-                return null;
-            else
-                return charAsString[0];
-        }
+            return charAsString.Length == 0 ? null : charAsString[0];
         else if (underlyingTargetType.IsEnum)
         {
             if (databaseValue is string s)
@@ -155,14 +187,24 @@ public static class Invoker<T> where T : class, new()
             else
                 return Enum.ToObject(underlyingTargetType, databaseValue);
         }
-        else if(databaseValue is short shortValue && underlyingTargetType == typeof(byte))
-        {
-            return (byte)shortValue;
-        }
-
+        else if (databaseValue is IConvertible && IsConvertibleNumericTarget(underlyingTargetType))
+            return Convert.ChangeType(databaseValue, underlyingTargetType, CultureInfo.InvariantCulture);
 
         return databaseValue;
     }
+
+    private static bool IsConvertibleNumericTarget(Type targetType) =>
+        targetType == typeof(byte)
+        || targetType == typeof(sbyte)
+        || targetType == typeof(short)
+        || targetType == typeof(ushort)
+        || targetType == typeof(int)
+        || targetType == typeof(uint)
+        || targetType == typeof(long)
+        || targetType == typeof(ulong)
+        || targetType == typeof(float)
+        || targetType == typeof(double)
+        || targetType == typeof(decimal);
 
     private static bool IsNullable(PropertyInfo propertyInfo)
     {
