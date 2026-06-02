@@ -14,6 +14,14 @@ public partial class PostgreSqlTypesProviderTests
     }
 
     [Fact]
+    public void AsVarChar_NullLength_ReturnsVarChar()
+    {
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(null);
+
+        AssertFieldProperties(actual, "VARCHAR", length: null, isUnicode: true, isFixedLength: false);
+    }
+
+    [Fact]
     public void AsVarChar_NullableTrue_ReturnsNullableVarChar()
     {
         FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(50, true);
@@ -21,9 +29,18 @@ public partial class PostgreSqlTypesProviderTests
         AssertFieldProperties(actual, "VARCHAR", length: 50, isUnicode: true, isFixedLength: false, isNullable: true);
     }
 
+    [Fact]
+    public void AsVarChar_NullLength_NullableTrue_ReturnsNullableVarChar()
+    {
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(null, true);
+
+        AssertFieldProperties(actual, "VARCHAR", length: null, isUnicode: true, isFixedLength: false, isNullable: true);
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
+    [InlineData(10_485_761)]
     public void AsVarChar_InvalidLength_Exception(int length) => 
         Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVarChar(length));
 }

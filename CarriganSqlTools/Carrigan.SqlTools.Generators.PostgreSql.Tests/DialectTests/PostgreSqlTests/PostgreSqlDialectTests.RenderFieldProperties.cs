@@ -35,6 +35,27 @@ public partial class PostgreSqlDialectTests
     }
 
     [Fact]
+    public void RenderFieldProperties_CharWithoutLength_ReturnsCharNotNull()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsChar(null));
+        Assert.Equal("CHAR NOT NULL", actual);
+    }
+
+    [Fact]
+    public void RenderFieldProperties_VarCharWithoutLength_ReturnsVarCharNotNull()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsVarChar(null));
+        Assert.Equal("VARCHAR NOT NULL", actual);
+    }
+
+    [Fact]
+    public void RenderFieldProperties_FloatWithoutPrecision_ReturnsFloatNotNull()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsFloat(null));
+        Assert.Equal("FLOAT NOT NULL", actual);
+    }
+
+    [Fact]
     public void RenderFieldProperties_TextMax_DoesNotRenderMaxLength()
     {
         string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsText());

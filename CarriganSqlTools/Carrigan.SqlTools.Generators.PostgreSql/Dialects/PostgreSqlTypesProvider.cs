@@ -95,6 +95,7 @@ public static class PostgreSqlTypesProvider
         if (type == typeof(DateTime)) return AsTimestampWithoutTimeZone(effectiveNullable);
         if (type == typeof(DateOnly)) return AsDate(effectiveNullable);
         if (type == typeof(TimeOnly)) return AsTimeWithoutTimeZone(effectiveNullable);
+        if (type == typeof(TimeSpan)) return AsInterval(effectiveNullable);
         if (type == typeof(DateTimeOffset)) return AsTimestampWithTimeZone(effectiveNullable);
 
         if (type == typeof(XmlDocument)) return AsXml(effectiveNullable);
@@ -103,22 +104,27 @@ public static class PostgreSqlTypesProvider
         return AsText(effectiveNullable);
     }
 
-    private static void ValidateRange(int value, int minValue, int maxValue, string parameterName)
+    private static void ValidateRange(int? value, bool allowNullValue, int minValue, int maxValue, string parameterName)
     {
-        if (value < minValue || value > maxValue)
+        if (value is null)
+        {
+            if (allowNullValue is false)
+                throw new ArgumentOutOfRangeException(parameterName, value, $"Value must be between {minValue} and {maxValue}.");
+        }
+        else if (value < minValue || value > maxValue)
         {
             throw new ArgumentOutOfRangeException(parameterName, value, $"Value must be between {minValue} and {maxValue}.");
         }
     }
 
-    private static void ValidateCharacterLength(int length) =>
-        ValidateRange(length, 1, LIMIT_FOR_CHARACTER_LENGTH, nameof(length));
+    private static void ValidateCharacterLength(int? length) =>
+        ValidateRange(length, true, 1, LIMIT_FOR_CHARACTER_LENGTH, nameof(length));
 
     private static void ValidateBitLength(int length) =>
-        ValidateRange(length, 1, LIMIT_FOR_BIT_LENGTH, nameof(length));
+        ValidateRange(length, false, 1, LIMIT_FOR_BIT_LENGTH, nameof(length));
 
     private static void ValidatePrecision(byte precision) =>
-        ValidateRange(precision, 1, LIMIT_FOR_NUMERIC_PRECISION, nameof(precision));
+        ValidateRange(precision, false, 1, LIMIT_FOR_NUMERIC_PRECISION, nameof(precision));
 
     private static void ValidatePrecisionAndScale(byte precision, byte scale)
     {
@@ -129,10 +135,10 @@ public static class PostgreSqlTypesProvider
     }
 
     private static void ValidateFractionalSecondsPrecision(byte fractionalSecondsPrecision) =>
-        ValidateRange(fractionalSecondsPrecision, 0, LIMIT_FOR_FRACTIONAL_SECONDS_PRECISION, nameof(fractionalSecondsPrecision));
+        ValidateRange(fractionalSecondsPrecision, false, 0, LIMIT_FOR_FRACTIONAL_SECONDS_PRECISION, nameof(fractionalSecondsPrecision));
 
-    private static void ValidateFloatPrecision(byte precision) =>
-        ValidateRange(precision, LIMIT_FOR_FLOAT_MIN_PRECISION, LIMIT_FOR_FLOAT_MAX_PRECISION, nameof(precision));
+    private static void ValidateFloatPrecision(byte? precision) =>
+        ValidateRange(precision, true, LIMIT_FOR_FLOAT_MIN_PRECISION, LIMIT_FOR_FLOAT_MAX_PRECISION, nameof(precision));
 
     private static void ValidateVectorDimensions(int dimensions)
     {
@@ -209,7 +215,7 @@ public static class PostgreSqlTypesProvider
 
     #region Character Types
 
-    public static FieldProperties AsChar(int length, bool? nullable = null)
+    public static FieldProperties AsChar(int? length, bool? nullable = null)
     {
         ValidateCharacterLength(length);
 
@@ -221,7 +227,7 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
-    public static FieldProperties AsVarChar(int length, bool? nullable = null)
+    public static FieldProperties AsVarChar(int? length, bool? nullable = null)
     {
         ValidateCharacterLength(length);
 
@@ -282,7 +288,7 @@ public static class PostgreSqlTypesProvider
     public static FieldProperties AsDoublePrecision(bool? nullable = null) => 
         Create("DOUBLE PRECISION", nullable: nullable);
 
-    public static FieldProperties AsFloat(byte precision, bool? nullable = null)
+    public static FieldProperties AsFloat(byte? precision, bool? nullable = null)
     {
         ValidateFloatPrecision(precision);
 
@@ -392,6 +398,9 @@ public static class PostgreSqlTypesProvider
             fractionalSecondsPrecision: fractionalSecondsPrecision,
             nullable: nullable);
     }
+
+    public static FieldProperties AsInterval(bool? nullable = null) =>
+        Create("INTERVAL", nullable: nullable);
 
     #endregion
 

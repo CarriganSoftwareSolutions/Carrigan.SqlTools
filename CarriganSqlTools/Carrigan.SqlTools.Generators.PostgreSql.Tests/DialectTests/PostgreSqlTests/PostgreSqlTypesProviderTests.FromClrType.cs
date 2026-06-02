@@ -44,6 +44,8 @@ public partial class PostgreSqlTypesProviderTests
     [InlineData(typeof(DateOnly?), "DATE", true)]
     [InlineData(typeof(TimeOnly), "TIME WITHOUT TIME ZONE", false)]
     [InlineData(typeof(TimeOnly?), "TIME WITHOUT TIME ZONE", true)]
+    [InlineData(typeof(TimeSpan), "INTERVAL", false)]
+    [InlineData(typeof(TimeSpan?), "INTERVAL", true)]
     [InlineData(typeof(DateTimeOffset), "TIMESTAMP WITH TIME ZONE", false)]
     [InlineData(typeof(DateTimeOffset?), "TIMESTAMP WITH TIME ZONE", true)]
     [InlineData(typeof(XmlDocument), "XML", false)]
