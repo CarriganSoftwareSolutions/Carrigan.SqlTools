@@ -18,7 +18,8 @@ internal static class PostgreSqlTypeAttributeTestHelpers
         bool? expectedIsFixedLength = null,
         byte? expectedPrecision = null,
         byte? expectedScale = null,
-        byte? expectedFractionalSecondsPrecision = null)
+        byte? expectedFractionalSecondsPrecision = null,
+        bool? expectedIsArray = false)
     {
         Assert.NotNull(attribute);
         Assert.NotNull(attribute.FieldProperties);
@@ -34,6 +35,7 @@ internal static class PostgreSqlTypeAttributeTestHelpers
         Assert.Equal(expectedScale, fieldProperties.Scale);
         Assert.Equal(expectedFractionalSecondsPrecision, fieldProperties.FractionalSecondsPrecision);
         Assert.False(fieldProperties.IsNullable);
+        Assert.Equal(expectedIsArray, fieldProperties.IsArray);
         Assert.Equal($"{expectedTypeDeclaration} NOT NULL", Dialect.RenderFieldProperties(fieldProperties));
     }
 }

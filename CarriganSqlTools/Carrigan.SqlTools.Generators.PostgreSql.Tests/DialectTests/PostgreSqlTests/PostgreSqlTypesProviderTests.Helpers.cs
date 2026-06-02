@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Types;
+﻿using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlTests;
 
@@ -15,7 +15,8 @@ public partial class PostgreSqlTypesProviderTests
         byte? scale = null,
         byte? fractionalSecondsPrecision = null,
         string? baseType = null,
-        bool isNullable = false)
+        bool isNullable = false,
+        bool? isArray = false)
     {
         Assert.Equal(providerTypeName, actual.ProviderTypeName);
         Assert.Equal(length, actual.Length);
@@ -27,5 +28,6 @@ public partial class PostgreSqlTypesProviderTests
         Assert.Equal(fractionalSecondsPrecision, actual.FractionalSecondsPrecision);
         Assert.Equal(baseType, actual.BaseType);
         Assert.Equal(isNullable, actual.IsNullable);
+        Assert.Equal(isArray, actual.IsArray);
     }
 }

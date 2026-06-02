@@ -7,9 +7,6 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="DialectTests\PostgreSqlTests\PostgreSqlTypesProviderTests.AsUnknown.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="10.0.1">
@@ -26,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools.Base.Tests\Carrigan.SqlTools.Base.Tests.csproj" />
+    <ProjectReference Include="..\Carrigan.SqlTools.Clients.PostgreSql\Carrigan.SqlTools.Clients.PostgreSql.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools.Generators.PostgreSql\Carrigan.SqlTools.Generators.PostgreSql.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
   </ItemGroup>
@@ -34,8 +32,5 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="DialectTests\PostgreSqlTests\PostgreSqlTypesProviderTests.AsUnknown.cs" />
-  </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlTests;
@@ -10,7 +10,7 @@ public partial class PostgreSqlTypesProviderTests
     {
         FieldProperties actual = PostgreSqlTypesProvider.AsProviderSpecific("citext");
 
-        AssertFieldProperties(actual, "CITEXT");
+        AssertFieldProperties(actual, "CITEXT", isArray: null);
     }
 
     [Fact]
@@ -18,7 +18,7 @@ public partial class PostgreSqlTypesProviderTests
     {
         FieldProperties actual = PostgreSqlTypesProvider.AsProviderSpecific("inet", true);
 
-        AssertFieldProperties(actual, "INET", isNullable: true);
+        AssertFieldProperties(actual, "INET", isNullable: true, isArray: null);
     }
 
     [Theory]
@@ -30,6 +30,6 @@ public partial class PostgreSqlTypesProviderTests
     }
 
     [Fact]
-    public void AsProviderSpecific_InvalidProviderTypeName_NullException() => 
+    public void AsProviderSpecific_InvalidProviderTypeName_NullException() =>
         Assert.Throws<ArgumentNullException>(() => PostgreSqlTypesProvider.AsProviderSpecific(null!));
 }

@@ -29,9 +29,10 @@ internal static class DialectStatics
 
         // Text
         typeof(string),
+        typeof(string[]),
         typeof(char),
         typeof(char?),
-        typeof(string[]),
+        typeof(char[]),
         typeof(char?[]),
 
         // Binary
@@ -52,20 +53,32 @@ internal static class DialectStatics
         typeof(sbyte?),
         typeof(short),
         typeof(short?),
+        typeof(ushort),
+        typeof(ushort?),
         typeof(int),
         typeof(int?),
+        typeof(uint),
+        typeof(uint?),
         typeof(long),
         typeof(long?),
+        typeof(ulong),
+        typeof(ulong?),
 
         typeof(byte?[]),
         typeof(sbyte[]),
         typeof(sbyte?[]),
         typeof(short[]),
         typeof(short?[]),
+        typeof(ushort[]),
+        typeof(ushort?[]),
         typeof(int[]),
         typeof(int?[]),
+        typeof(uint[]),
+        typeof(uint?[]),
         typeof(long[]),
         typeof(long?[]),
+        typeof(ulong[]),
+        typeof(ulong?[]),
 
         // Decimal and floating-point
         typeof(float),
@@ -113,7 +126,8 @@ internal static class DialectStatics
         typeof(System.Xml.XmlDocument[]),
 
         // Fallback
-        typeof(object)
+        typeof(object),
+        typeof(object[])
     ];
 
 }

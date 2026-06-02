@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlTests;
@@ -95,6 +95,42 @@ public partial class PostgreSqlDialectTests
     {
         string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsVector(1536, false));
         Assert.Equal("VECTOR(1536) NOT NULL", actual);
+    }
+
+
+    [Fact]
+    public void RenderFieldProperties_IntegerArrayNotNullable_ReturnsIntegerArrayNotNull()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsInteger(true));
+        Assert.Equal("INTEGER[] NOT NULL", actual);
+    }
+
+    [Fact]
+    public void RenderFieldProperties_IntegerArrayNullable_ReturnsIntegerArrayNull()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsInteger(true, true));
+        Assert.Equal("INTEGER[] NULL", actual);
+    }
+
+    [Fact]
+    public void RenderFieldProperties_VarCharArrayWithLength_ReturnsVarCharArrayLengthNotNull()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsVarChar(50, true));
+        Assert.Equal("VARCHAR(50)[] NOT NULL", actual);
+    }
+
+    [Fact]
+    public void RenderFieldProperties_NumericArrayWithPrecisionAndScale_ReturnsNumericArrayPrecisionScaleNotNull()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsNumeric(18, 2, true));
+        Assert.Equal("NUMERIC(18, 2)[] NOT NULL", actual);
+    }
+
+    [Fact]
+    public void RenderFieldProperties_TimestampArrayWithPrecision_ReturnsPostgreSqlTemporalPrecisionArrayFormat()
+    {
+        string actual = Dialect.RenderFieldProperties(PostgreSqlTypesProvider.AsTimestampWithTimeZone(6, true));
+        Assert.Equal("TIMESTAMP(6) WITH TIME ZONE[] NOT NULL", actual);
     }
 
     [Fact]

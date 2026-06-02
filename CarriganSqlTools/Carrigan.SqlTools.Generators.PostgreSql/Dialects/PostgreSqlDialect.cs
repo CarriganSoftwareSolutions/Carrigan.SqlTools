@@ -163,7 +163,7 @@ public class PostgreSqlDialect : ISqlDialects
             declaration += $"({fieldProperties.Length})";
         }
 
-        if(fieldProperties.IsArray is not null && fieldProperties.IsArray.Value)
+        if (fieldProperties.IsArray is not null && fieldProperties.IsArray.Value)
             declaration += "[]";
 
         return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
@@ -260,7 +260,7 @@ public class PostgreSqlDialect : ISqlDialects
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns>
     /// <c>false</c>, as PostgreSQL does not support fully qualified sets in UPDATE statements.
@@ -320,9 +320,10 @@ public class PostgreSqlDialect : ISqlDialects
 
         // Text
         typeof(string),
+        typeof(string[]),
         typeof(char),
         typeof(char?),
-        typeof(string[]),
+        typeof(char[]),
         typeof(char?[]),
 
         // Binary
@@ -343,20 +344,32 @@ public class PostgreSqlDialect : ISqlDialects
         typeof(sbyte?),
         typeof(short),
         typeof(short?),
+        typeof(ushort),
+        typeof(ushort?),
         typeof(int),
         typeof(int?),
+        typeof(uint),
+        typeof(uint?),
         typeof(long),
         typeof(long?),
+        typeof(ulong),
+        typeof(ulong?),
 
         typeof(byte?[]),
         typeof(sbyte[]),
         typeof(sbyte?[]),
         typeof(short[]),
         typeof(short?[]),
+        typeof(ushort[]),
+        typeof(ushort?[]),
         typeof(int[]),
         typeof(int?[]),
+        typeof(uint[]),
+        typeof(uint?[]),
         typeof(long[]),
         typeof(long?[]),
+        typeof(ulong[]),
+        typeof(ulong?[]),
 
         // Decimal and floating-point
         typeof(float),
@@ -404,6 +417,7 @@ public class PostgreSqlDialect : ISqlDialects
         typeof(System.Xml.XmlDocument[]),
 
         // Fallback
-        typeof(object)
+        typeof(object),
+        typeof(object[])
     ];
 }

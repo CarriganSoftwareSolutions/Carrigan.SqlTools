@@ -5,6 +5,9 @@ namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlT
 
 public partial class PostgreSqlTypesProviderTests
 {
+    private static readonly string[] firstSecondName = ["first", "second"];
+    private static readonly int[] oneTwoThree = [1, 2, 3];
+
     [Fact]
     public void FromClrValue_WithNull_ReturnsNullableUnknownFieldProperties()
     {
@@ -20,6 +23,7 @@ public partial class PostgreSqlTypesProviderTests
         Assert.Null(fieldProperties.Scale);
         Assert.Null(fieldProperties.FractionalSecondsPrecision);
         Assert.Null(fieldProperties.BaseType);
+        Assert.Null(fieldProperties.IsArray);
     }
 
     [Fact]
@@ -37,6 +41,7 @@ public partial class PostgreSqlTypesProviderTests
         Assert.Null(fieldProperties.Scale);
         Assert.Null(fieldProperties.FractionalSecondsPrecision);
         Assert.Null(fieldProperties.BaseType);
+        Assert.Null(fieldProperties.IsArray);
     }
 
     [Fact]
@@ -46,6 +51,7 @@ public partial class PostgreSqlTypesProviderTests
 
         Assert.Equal("INTEGER", fieldProperties.ProviderTypeName);
         Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)false, fieldProperties.IsArray);
     }
 
     [Fact]
@@ -58,6 +64,7 @@ public partial class PostgreSqlTypesProviderTests
         Assert.True(fieldProperties.IsUnicode);
         Assert.False(fieldProperties.IsFixedLength);
         Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)false, fieldProperties.IsArray);
     }
 
     [Fact]
@@ -67,5 +74,60 @@ public partial class PostgreSqlTypesProviderTests
 
         Assert.Equal("UUID", fieldProperties.ProviderTypeName);
         Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)false, fieldProperties.IsArray);
     }
+
+    [Fact]
+    public void FromClrValue_WithByteArrayValue_ReturnsByteaScalarFieldProperties()
+    {
+        FieldProperties fieldProperties = PostgreSqlTypesProvider.FromClrValue(new byte[] { 1, 2, 3 });
+
+        Assert.Equal("BYTEA", fieldProperties.ProviderTypeName);
+        Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)false, fieldProperties.IsArray);
+    }
+
+    [Fact]
+    public void FromClrValue_WithByteArrayArrayValue_ReturnsByteaArrayFieldProperties()
+    {
+        FieldProperties fieldProperties = PostgreSqlTypesProvider.FromClrValue(new byte[][] { [1, 2], [3, 4] });
+
+        Assert.Equal("BYTEA", fieldProperties.ProviderTypeName);
+        Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)true, fieldProperties.IsArray);
+    }
+
+    [Fact]
+    public void FromClrValue_WithIntegerArrayValue_ReturnsIntegerArrayFieldProperties()
+    {
+        FieldProperties fieldProperties = PostgreSqlTypesProvider.FromClrValue(oneTwoThree);
+
+        Assert.Equal("INTEGER", fieldProperties.ProviderTypeName);
+        Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)true, fieldProperties.IsArray);
+    }
+
+    [Fact]
+    public void FromClrValue_WithStringArrayValue_ReturnsTextArrayFieldProperties()
+    {
+        FieldProperties fieldProperties = PostgreSqlTypesProvider.FromClrValue(firstSecondName);
+
+        Assert.Equal("TEXT", fieldProperties.ProviderTypeName);
+        Assert.True(fieldProperties.IsMax);
+        Assert.True(fieldProperties.IsUnicode);
+        Assert.False(fieldProperties.IsFixedLength);
+        Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)true, fieldProperties.IsArray);
+    }
+
+    [Fact]
+    public void FromClrValue_WithGuidArrayValue_ReturnsUuidArrayFieldProperties()
+    {
+        FieldProperties fieldProperties = PostgreSqlTypesProvider.FromClrValue(new[] { Guid.NewGuid(), Guid.NewGuid() });
+
+        Assert.Equal("UUID", fieldProperties.ProviderTypeName);
+        Assert.False(fieldProperties.IsNullable);
+        Assert.Equal((bool?)true, fieldProperties.IsArray);
+    }
+
 }

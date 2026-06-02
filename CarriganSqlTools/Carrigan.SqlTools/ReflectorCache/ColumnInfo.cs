@@ -45,7 +45,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly FieldProperties? FieldProperties;
 
-    internal Type Type => 
+    internal Type Type =>
         PropertyInfo.PropertyType;
 
     /// <summary>
@@ -115,7 +115,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="tableName"/>, <paramref name="propertyInfo"/>, or <paramref name="keys"/> is <c>null</c>.
     /// </exception>
-    /// 
+    ///
     internal ColumnInfo(SchemaName? schemaName, TableName tableName, PropertyInfo propertyInfo, IEnumerable<PropertyInfo> keys)
     {
         ArgumentNullException.ThrowIfNull(tableName, nameof(tableName));
@@ -143,7 +143,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         if (sqlTypeAttribute is not null)
         {
             FieldProperties = sqlTypeAttribute.FieldProperties;
-            FieldProperties.IsArray = propertyInfo.PropertyType.IsArray;
+            FieldProperties.IsArray = IsSqlArray(propertyInfo.PropertyType);
         }
 
         ParameterTag = new(parameterName);
@@ -157,6 +157,18 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         IsEncrypted = propertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;
         IsKeyVersionProperty = propertyInfo.GetCustomAttribute<KeyVersionAttribute>() != null;
     }
+
+    /// <summary>
+    /// Determines whether the specified property type should be treated as an array type in SQL,
+    /// </summary>
+    /// <param name="propertyType">
+    /// The <see cref="Type"/> of the property to evaluate for SQL array semantics.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the property type is an array (excluding <see cref="byte[]"/>); otherwise, <c>false</c>.
+    /// </returns>
+    private static bool IsSqlArray(Type propertyType) =>
+        propertyType.IsArray && propertyType != typeof(byte[]);
 
     /// <summary>
     /// Implicitly converts a <see cref="ColumnInfo"/> to its fully qualified SQL

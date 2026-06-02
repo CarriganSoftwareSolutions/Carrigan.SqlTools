@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlTests;
 
@@ -19,6 +20,7 @@ public partial class PostgreSqlTypesProviderTests
         Assert.Null(fieldProperties.Scale);
         Assert.Null(fieldProperties.FractionalSecondsPrecision);
         Assert.Null(fieldProperties.BaseType);
+        Assert.Null(fieldProperties.IsArray);
     }
 
     [Fact]
@@ -36,6 +38,7 @@ public partial class PostgreSqlTypesProviderTests
         Assert.Null(fieldProperties.Scale);
         Assert.Null(fieldProperties.FractionalSecondsPrecision);
         Assert.Null(fieldProperties.BaseType);
+        Assert.Null(fieldProperties.IsArray);
     }
 
     [Fact]
@@ -45,5 +48,6 @@ public partial class PostgreSqlTypesProviderTests
 
         Assert.Equal("UNKNOWN", fieldProperties.ProviderTypeName);
         Assert.False(fieldProperties.IsNullable);
+        Assert.Null(fieldProperties.IsArray);
     }
 }

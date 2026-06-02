@@ -101,7 +101,7 @@ internal static class SqlQueryExtensions
         string providerTypeName = fieldProperties.ProviderTypeName?.Trim().ToUpperInvariant()
             ?? throw new ArgumentOutOfRangeException(nameof(fieldProperties), fieldProperties.ProviderTypeName, "PostgreSQL provider type name cannot be null.");
 
-        return providerTypeName switch
+        NpgsqlDbType npgsqlDbType = providerTypeName switch
         {
             "UUID" => NpgsqlDbType.Uuid,
 
@@ -162,5 +162,9 @@ internal static class SqlQueryExtensions
 
             _ => throw new ArgumentOutOfRangeException(nameof(fieldProperties), fieldProperties.ProviderTypeName, "Unsupported PostgreSQL provider type name.")
         };
+
+        return fieldProperties.IsArray is true
+            ? NpgsqlDbType.Array | npgsqlDbType
+            : npgsqlDbType;
     }
 }

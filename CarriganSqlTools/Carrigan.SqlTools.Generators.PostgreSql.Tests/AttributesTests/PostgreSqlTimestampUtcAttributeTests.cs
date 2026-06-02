@@ -7,9 +7,9 @@ public sealed class PostgreSqlTimestampUtcAttributeTests
     [Fact]
     public void Constructor()
     {
-        PostgreSqlTimestampUtcAttribute postgreSqlTimestampTzAttribute = new();
+        PostgreSqlTimestampUtcAttribute postgreSqlTimestampUtcAttribute = new();
 
-        PostgreSqlTypeAttributeTestHelpers.AssertFieldProperties(postgreSqlTimestampTzAttribute, "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITH TIME ZONE");
+        PostgreSqlTypeAttributeTestHelpers.AssertFieldProperties(postgreSqlTimestampUtcAttribute, "TIMESTAMP WITH TIME ZONE", "TIMESTAMP WITH TIME ZONE");
     }
 
     [Theory]
@@ -17,10 +17,10 @@ public sealed class PostgreSqlTimestampUtcAttributeTests
     [InlineData((byte)6, "TIMESTAMP(6) WITH TIME ZONE")]
     public void Constructor_WithFractionalSecondPrecision(byte fractionalSecondPrecision, string expectedTypeDeclaration)
     {
-        PostgreSqlTimestampUtcAttribute postgreSqlTimestampTzAttribute = new(fractionalSecondPrecision);
+        PostgreSqlTimestampUtcAttribute postgreSqlTimestampUtcAttribute = new(fractionalSecondPrecision);
 
         PostgreSqlTypeAttributeTestHelpers.AssertFieldProperties(
-            postgreSqlTimestampTzAttribute,
+            postgreSqlTimestampUtcAttribute,
             "TIMESTAMP WITH TIME ZONE",
             expectedTypeDeclaration,
             expectedFractionalSecondsPrecision: fractionalSecondPrecision);
