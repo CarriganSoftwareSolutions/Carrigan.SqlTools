@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsDate_Default_ReturnsDate()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsDate();
+        FieldProperties actual = PostgreSqlTypesProvider.AsDate(false);
 
         AssertFieldProperties(actual, "DATE");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsDate_NullableTrue_ReturnsNullableDate()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsDate(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsDate(false, true);
 
         AssertFieldProperties(actual, "DATE", isNullable: true);
     }

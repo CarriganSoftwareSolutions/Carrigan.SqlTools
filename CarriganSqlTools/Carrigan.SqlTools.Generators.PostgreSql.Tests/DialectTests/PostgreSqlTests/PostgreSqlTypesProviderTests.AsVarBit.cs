@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVarBit_ValidLength_ReturnsVarBit()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVarBit(8);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarBit(8, false);
 
         AssertFieldProperties(actual, "VARBIT", length: 8, isFixedLength: false);
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVarBit_NullableTrue_ReturnsNullableVarBit()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVarBit(8, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarBit(8, false, true);
 
         AssertFieldProperties(actual, "VARBIT", length: 8, isFixedLength: false, isNullable: true);
     }
@@ -25,5 +25,5 @@ public partial class PostgreSqlTypesProviderTests
     [InlineData(0)]
     [InlineData(-1)]
     public void AsVarBit_InvalidLength_Exception(int length) =>
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVarBit(length));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVarBit(length, false));
 }

@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsDoublePrecision_Default_ReturnsDoublePrecision()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsDoublePrecision();
+        FieldProperties actual = PostgreSqlTypesProvider.AsDoublePrecision(false);
 
         AssertFieldProperties(actual, "DOUBLE PRECISION");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsDoublePrecision_NullableTrue_ReturnsNullableDoublePrecision()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsDoublePrecision(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsDoublePrecision(false, true);
 
         AssertFieldProperties(actual, "DOUBLE PRECISION", isNullable: true);
     }

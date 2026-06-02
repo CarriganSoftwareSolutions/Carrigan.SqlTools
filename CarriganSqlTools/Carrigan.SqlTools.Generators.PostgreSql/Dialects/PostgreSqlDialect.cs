@@ -163,6 +163,9 @@ public class PostgreSqlDialect : ISqlDialects
             declaration += $"({fieldProperties.Length})";
         }
 
+        if(fieldProperties.IsArray is not null && fieldProperties.IsArray.Value)
+            declaration += "[]";
+
         return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
     }
 

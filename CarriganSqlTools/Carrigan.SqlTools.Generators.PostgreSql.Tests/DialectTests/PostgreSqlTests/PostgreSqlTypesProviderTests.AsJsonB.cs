@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsJsonB_Default_ReturnsJsonB()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsJsonB();
+        FieldProperties actual = PostgreSqlTypesProvider.AsJsonB(false);
 
         AssertFieldProperties(actual, "JSONB");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsJsonB_NullableTrue_ReturnsNullableJsonB()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsJsonB(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsJsonB(false, true);
 
         AssertFieldProperties(actual, "JSONB", isNullable: true);
     }

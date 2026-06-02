@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVarChar_ValidLength_ReturnsVarChar()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(50);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(50, false);
 
         AssertFieldProperties(actual, "VARCHAR", length: 50, isUnicode: true, isFixedLength: false);
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVarChar_NullLength_ReturnsVarChar()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(null);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(null, false);
 
         AssertFieldProperties(actual, "VARCHAR", length: null, isUnicode: true, isFixedLength: false);
     }
@@ -24,7 +24,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVarChar_NullableTrue_ReturnsNullableVarChar()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(50, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(50, false, true);
 
         AssertFieldProperties(actual, "VARCHAR", length: 50, isUnicode: true, isFixedLength: false, isNullable: true);
     }
@@ -32,7 +32,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVarChar_NullLength_NullableTrue_ReturnsNullableVarChar()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(null, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVarChar(null, false, true);
 
         AssertFieldProperties(actual, "VARCHAR", length: null, isUnicode: true, isFixedLength: false, isNullable: true);
     }
@@ -42,5 +42,5 @@ public partial class PostgreSqlTypesProviderTests
     [InlineData(-1)]
     [InlineData(10_485_761)]
     public void AsVarChar_InvalidLength_Exception(int length) => 
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVarChar(length));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVarChar(length, false));
 }

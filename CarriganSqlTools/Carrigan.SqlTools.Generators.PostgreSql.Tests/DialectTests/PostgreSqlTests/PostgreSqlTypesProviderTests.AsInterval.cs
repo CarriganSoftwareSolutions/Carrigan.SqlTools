@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsInterval_ReturnsInterval()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsInterval();
+        FieldProperties actual = PostgreSqlTypesProvider.AsInterval(false);
 
         AssertFieldProperties(actual, "INTERVAL");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsInterval_NullableTrue_ReturnsNullableInterval()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsInterval(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsInterval(false, true);
 
         AssertFieldProperties(actual, "INTERVAL", isNullable: true);
     }

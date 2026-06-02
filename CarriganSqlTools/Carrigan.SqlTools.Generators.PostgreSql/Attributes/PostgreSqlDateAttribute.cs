@@ -8,6 +8,6 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class PostgreSqlDateAttribute : SqlTypeAttribute
 {
-    public PostgreSqlDateAttribute() : base(PostgreSqlTypesProvider.AsDate())
+    public PostgreSqlDateAttribute() : base(PostgreSqlTypesProvider.AsDate(false))
     { }
 }

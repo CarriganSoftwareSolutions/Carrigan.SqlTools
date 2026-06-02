@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsJson_Default_ReturnsJson()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsJson();
+        FieldProperties actual = PostgreSqlTypesProvider.AsJson(false);
 
         AssertFieldProperties(actual, "JSON");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsJson_NullableTrue_ReturnsNullableJson()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsJson(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsJson(false, true);
 
         AssertFieldProperties(actual, "JSON", isNullable: true);
     }

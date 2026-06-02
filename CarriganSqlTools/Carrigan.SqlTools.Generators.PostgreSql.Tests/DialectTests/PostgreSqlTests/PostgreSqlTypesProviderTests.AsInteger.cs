@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsInteger_Default_ReturnsInteger()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsInteger();
+        FieldProperties actual = PostgreSqlTypesProvider.AsInteger(false);
 
         AssertFieldProperties(actual, "INTEGER");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsInteger_NullableTrue_ReturnsNullableInteger()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsInteger(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsInteger(false, true);
 
         AssertFieldProperties(actual, "INTEGER", isNullable: true);
     }

@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVector_ValidDimensions_ReturnsVector()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVector(1536);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVector(1536, false);
 
         AssertFieldProperties(actual, "VECTOR", length: 1536);
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsVector_NullableTrue_ReturnsNullableVector()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsVector(1536, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsVector(1536, false, true);
 
         AssertFieldProperties(actual, "VECTOR", length: 1536, isNullable: true);
     }
@@ -25,5 +25,5 @@ public partial class PostgreSqlTypesProviderTests
     [InlineData(0)]
     [InlineData(-1)]
     public void AsVector_InvalidDimensions_Exception(int dimensions) =>
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVector(dimensions));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsVector(dimensions, false));
 }

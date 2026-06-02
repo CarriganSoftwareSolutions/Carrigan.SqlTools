@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestamp_Default_ReturnsExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp();
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp(false);
 
         AssertFieldProperties(actual, "TIMESTAMP");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestamp_NullableTrue_ReturnsNullableExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp(false, true);
 
         AssertFieldProperties(actual, "TIMESTAMP", isNullable: true);
     }
@@ -24,7 +24,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestamp_WithFractionalSecondsPrecision_ReturnsExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp(6);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp(6, false);
 
         AssertFieldProperties(actual, "TIMESTAMP", fractionalSecondsPrecision: 6);
     }
@@ -32,12 +32,12 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestamp_WithFractionalSecondsPrecisionNullableTrue_ReturnsNullableExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp(6, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestamp(6, false, true);
 
         AssertFieldProperties(actual, "TIMESTAMP", fractionalSecondsPrecision: 6, isNullable: true);
     }
 
     [Fact]
     public void AsTimestamp_InvalidFractionalSecondsPrecision_Exception() => 
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsTimestamp(7));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsTimestamp(7, false));
 }

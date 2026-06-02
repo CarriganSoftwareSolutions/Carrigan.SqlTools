@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsNumeric_Default_ReturnsNumeric()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric();
+        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(false);
 
         AssertFieldProperties(actual, "NUMERIC");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsNumeric_NullableTrue_ReturnsNullableNumeric()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(false, true);
 
         AssertFieldProperties(actual, "NUMERIC", isNullable: true);
     }
@@ -24,7 +24,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsNumeric_WithPrecision_ReturnsNumeric()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18);
+        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18, false);
 
         AssertFieldProperties(actual, "NUMERIC", precision: 18);
     }
@@ -32,7 +32,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsNumeric_WithPrecisionNullableTrue_ReturnsNullableNumeric()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18, false, true);
 
         AssertFieldProperties(actual, "NUMERIC", precision: 18, isNullable: true);
     }
@@ -40,7 +40,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsNumeric_WithPrecisionAndScale_ReturnsNumeric()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18, 2);
+        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18, 2, false);
 
         AssertFieldProperties(actual, "NUMERIC", precision: 18, scale: 2);
     }
@@ -48,16 +48,16 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsNumeric_WithPrecisionAndScaleNullableTrue_ReturnsNullableNumeric()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18, 2, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsNumeric(18, 2, false, true);
 
         AssertFieldProperties(actual, "NUMERIC", precision: 18, scale: 2, isNullable: true);
     }
 
     [Fact]
     public void AsNumeric_ZeroPrecision_Exception() => 
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsNumeric(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsNumeric(0, false));
 
     [Fact]
     public void AsNumeric_ScaleGreaterThanPrecision_Exception() =>
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsNumeric(2, 3));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsNumeric(2, 3, false));
 }

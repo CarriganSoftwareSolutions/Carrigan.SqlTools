@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsXml_Default_ReturnsXml()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsXml();
+        FieldProperties actual = PostgreSqlTypesProvider.AsXml(false);
 
         AssertFieldProperties(actual, "XML");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsXml_NullableTrue_ReturnsNullableXml()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsXml(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsXml(false, true);
 
         AssertFieldProperties(actual, "XML", isNullable: true);
     }

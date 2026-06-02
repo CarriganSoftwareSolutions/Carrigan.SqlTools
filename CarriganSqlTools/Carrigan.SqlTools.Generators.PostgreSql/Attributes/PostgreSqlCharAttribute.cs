@@ -17,8 +17,8 @@ public sealed class PostgreSqlCharAttribute : SqlTypeAttribute
     private static FieldProperties GetFieldProperties(StorageTypeEnum storageTypeEnum, int? length) =>
         storageTypeEnum switch
         {
-            StorageTypeEnum.Fixed => PostgreSqlTypesProvider.AsChar(length),
-            StorageTypeEnum.Var => PostgreSqlTypesProvider.AsVarChar(length),
+            StorageTypeEnum.Fixed => PostgreSqlTypesProvider.AsChar(length, false),
+            StorageTypeEnum.Var => PostgreSqlTypesProvider.AsVarChar(length, false),
             _ => throw new NotSupportedException($"Unsupported storage type '{storageTypeEnum}'.")
         };
 }

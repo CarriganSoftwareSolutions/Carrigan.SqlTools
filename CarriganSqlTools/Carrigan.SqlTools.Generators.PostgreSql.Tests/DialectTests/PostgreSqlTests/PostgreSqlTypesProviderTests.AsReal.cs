@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsReal_Default_ReturnsReal()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsReal();
+        FieldProperties actual = PostgreSqlTypesProvider.AsReal(false);
 
         AssertFieldProperties(actual, "REAL");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsReal_NullableTrue_ReturnsNullableReal()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsReal(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsReal(false, true);
 
         AssertFieldProperties(actual, "REAL", isNullable: true);
     }

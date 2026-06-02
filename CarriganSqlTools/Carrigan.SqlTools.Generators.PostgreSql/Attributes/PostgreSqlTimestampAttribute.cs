@@ -8,9 +8,9 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class PostgreSqlTimestampAttribute : SqlTypeAttribute
 {
-    public PostgreSqlTimestampAttribute() : base(PostgreSqlTypesProvider.AsTimestampWithoutTimeZone())
+    public PostgreSqlTimestampAttribute() : base(PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(false))
     { }
 
-    public PostgreSqlTimestampAttribute(byte fractionalSecondsPrecision) : base(PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(fractionalSecondsPrecision))
+    public PostgreSqlTimestampAttribute(byte fractionalSecondsPrecision) : base(PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(fractionalSecondsPrecision, false))
     { }
 }

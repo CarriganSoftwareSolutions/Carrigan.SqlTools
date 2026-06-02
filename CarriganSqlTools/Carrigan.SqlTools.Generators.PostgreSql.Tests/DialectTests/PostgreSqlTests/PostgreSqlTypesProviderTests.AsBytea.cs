@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsBytea_Default_ReturnsBytea()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsBytea();
+        FieldProperties actual = PostgreSqlTypesProvider.AsBytea(false);
 
         AssertFieldProperties(actual, "BYTEA", isMax: true, isFixedLength: false);
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsBytea_NullableTrue_ReturnsNullableBytea()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsBytea(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsBytea(false, true);
 
         AssertFieldProperties(actual, "BYTEA", isMax: true, isFixedLength: false, isNullable: true);
     }

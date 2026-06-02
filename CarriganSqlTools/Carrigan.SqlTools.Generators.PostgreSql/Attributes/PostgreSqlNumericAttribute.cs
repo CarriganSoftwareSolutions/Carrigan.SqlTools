@@ -8,12 +8,12 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class PostgreSqlNumericAttribute : SqlTypeAttribute
 {
-    public PostgreSqlNumericAttribute() : base(PostgreSqlTypesProvider.AsNumeric())
+    public PostgreSqlNumericAttribute() : base(PostgreSqlTypesProvider.AsNumeric(false))
     { }
 
-    public PostgreSqlNumericAttribute(byte precision) : base(PostgreSqlTypesProvider.AsNumeric(precision))
+    public PostgreSqlNumericAttribute(byte precision) : base(PostgreSqlTypesProvider.AsNumeric(precision, false))
     { }
 
-    public PostgreSqlNumericAttribute(byte precision, byte scale) : base(PostgreSqlTypesProvider.AsNumeric(precision, scale))
+    public PostgreSqlNumericAttribute(byte precision, byte scale) : base(PostgreSqlTypesProvider.AsNumeric(precision, scale, false))
     { }
 }

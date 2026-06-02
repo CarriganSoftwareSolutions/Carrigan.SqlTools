@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsBigInt_Default_ReturnsBigInt()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsBigInt();
+        FieldProperties actual = PostgreSqlTypesProvider.AsBigInt(false);
 
         AssertFieldProperties(actual, "BIGINT");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsBigInt_NullableTrue_ReturnsNullableBigInt()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsBigInt(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsBigInt(false, true);
 
         AssertFieldProperties(actual, "BIGINT", isNullable: true);
     }

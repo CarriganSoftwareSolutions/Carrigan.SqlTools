@@ -140,7 +140,11 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);
 
-        FieldProperties = sqlTypeAttribute?.FieldProperties;
+        if (sqlTypeAttribute is not null)
+        {
+            FieldProperties = sqlTypeAttribute.FieldProperties;
+            FieldProperties.IsArray = propertyInfo.PropertyType.IsArray;
+        }
 
         ParameterTag = new(parameterName);
         AliasName = aliasName;

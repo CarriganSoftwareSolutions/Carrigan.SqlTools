@@ -8,8 +8,8 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class PostgreSqlFloatAttribute : SqlTypeAttribute
 {
-    public PostgreSqlFloatAttribute() : base(PostgreSqlTypesProvider.AsFloat(null))
+    public PostgreSqlFloatAttribute() : base(PostgreSqlTypesProvider.AsFloat(null, false))
     { }
-    public PostgreSqlFloatAttribute(byte precision) : base(PostgreSqlTypesProvider.AsFloat(precision))
+    public PostgreSqlFloatAttribute(byte precision) : base(PostgreSqlTypesProvider.AsFloat(precision, false))
     { }
 }

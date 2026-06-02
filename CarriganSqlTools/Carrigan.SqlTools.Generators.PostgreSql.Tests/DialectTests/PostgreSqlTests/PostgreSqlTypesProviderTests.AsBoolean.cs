@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsBoolean_Default_ReturnsBoolean()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsBoolean();
+        FieldProperties actual = PostgreSqlTypesProvider.AsBoolean(false);
 
         AssertFieldProperties(actual, "BOOLEAN");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsBoolean_NullableTrue_ReturnsNullableBoolean()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsBoolean(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsBoolean(false, true);
 
         AssertFieldProperties(actual, "BOOLEAN", isNullable: true);
     }

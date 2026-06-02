@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestampWithoutTimeZone_Default_ReturnsExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone();
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(false);
 
         AssertFieldProperties(actual, "TIMESTAMP WITHOUT TIME ZONE");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestampWithoutTimeZone_NullableTrue_ReturnsNullableExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(false, true);
 
         AssertFieldProperties(actual, "TIMESTAMP WITHOUT TIME ZONE", isNullable: true);
     }
@@ -24,7 +24,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestampWithoutTimeZone_WithFractionalSecondsPrecision_ReturnsExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(6);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(6, false);
 
         AssertFieldProperties(actual, "TIMESTAMP WITHOUT TIME ZONE", fractionalSecondsPrecision: 6);
     }
@@ -32,12 +32,12 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimestampWithoutTimeZone_WithFractionalSecondsPrecisionNullableTrue_ReturnsNullableExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(6, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(6, false, true);
 
         AssertFieldProperties(actual, "TIMESTAMP WITHOUT TIME ZONE", fractionalSecondsPrecision: 6, isNullable: true);
     }
 
     [Fact]
     public void AsTimestampWithoutTimeZone_InvalidFractionalSecondsPrecision_Exception() => 
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(7));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsTimestampWithoutTimeZone(7, false));
 }

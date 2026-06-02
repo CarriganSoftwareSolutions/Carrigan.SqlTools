@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsFloat_ValidPrecision_ReturnsFloat()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(24);
+        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(24, false);
 
         AssertFieldProperties(actual, "FLOAT", precision: 24);
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsFloat_NullPrecision_ReturnsFloat()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(null);
+        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(null, false);
 
         AssertFieldProperties(actual, "FLOAT", precision: null);
     }
@@ -24,7 +24,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsFloat_NullableTrue_ReturnsNullableFloat()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(53, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(53, false, true);
 
         AssertFieldProperties(actual, "FLOAT", precision: 53, isNullable: true);
     }
@@ -32,7 +32,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsFloat_NullPrecision_NullableTrue_ReturnsNullableFloat()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(null, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsFloat(null, false, true);
 
         AssertFieldProperties(actual, "FLOAT", precision: null, isNullable: true);
     }
@@ -41,5 +41,5 @@ public partial class PostgreSqlTypesProviderTests
     [InlineData((byte)0)]
     [InlineData((byte)54)]
     public void AsFloat_InvalidPrecision_Exception(byte precision) => 
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsFloat(precision));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsFloat(precision, false));
 }

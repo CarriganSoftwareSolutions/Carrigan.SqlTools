@@ -68,4 +68,9 @@ public sealed class FieldProperties
     /// </example>
     public string? BaseType { get; init; }
 
+    /// <summary>
+    /// Gets a value indicating whether the field is an array type.
+    /// </summary>
+    public bool? IsArray { get; set; }
+
 }

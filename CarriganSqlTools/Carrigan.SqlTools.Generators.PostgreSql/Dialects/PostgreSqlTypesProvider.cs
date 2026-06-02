@@ -1,6 +1,7 @@
 ﻿// IGNORE SPELLING: bigint, bool, bytea, char, jsonb, numeric, timestamptz, uuid, varchar, varbit, xml, nullability
 
 using Carrigan.SqlTools.Types;
+using System.Reflection.Metadata;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -32,9 +33,10 @@ public static class PostgreSqlTypesProvider
         byte? precision = null,
         byte? scale = null,
         byte? fractionalSecondsPrecision = null,
+        bool? isArray = null
+,
         string? baseType = null,
-        bool? nullable = null
-    )
+        bool? nullable = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(providerTypeName);
 
@@ -61,7 +63,8 @@ public static class PostgreSqlTypesProvider
             FractionalSecondsPrecision = fractionalSecondsPrecision,
             IsNullable = nullable ?? DEFAULT_IS_NULLABLE,
             ProviderTypeName = providerTypeName.ToUpperInvariant(),
-            BaseType = baseType?.ToUpperInvariant()
+            BaseType = baseType?.ToUpperInvariant(),
+            IsArray = isArray
         };
     }
 
@@ -72,36 +75,66 @@ public static class PostgreSqlTypesProvider
         Type type = Nullable.GetUnderlyingType(clrType) ?? clrType;
         bool? effectiveNullable = nullable ?? (Nullable.GetUnderlyingType(clrType) is not null ? true : null);
 
-        if (type == typeof(Guid)) return AsUuid(effectiveNullable);
-        if (type == typeof(string)) return AsText(effectiveNullable);
-        if (type == typeof(char)) return AsChar(1, effectiveNullable);
-        if (type == typeof(byte[])) return AsBytea(effectiveNullable);
+        if (type == typeof(Guid)) return AsUuid(false, effectiveNullable);
+        if (type == typeof(Guid[])) return AsUuid(true, effectiveNullable);
 
-        if (type == typeof(bool)) return AsBoolean(effectiveNullable);
+        if (type == typeof(string)) return AsText(false, effectiveNullable);
+        if (type == typeof(string[])) return AsText(true, effectiveNullable);
 
-        if (type == typeof(byte)) return AsSmallInt(effectiveNullable);
-        if (type == typeof(sbyte)) return AsSmallInt(effectiveNullable);
-        if (type == typeof(short)) return AsSmallInt(effectiveNullable);
-        if (type == typeof(ushort)) return AsInteger(effectiveNullable);
-        if (type == typeof(int)) return AsInteger(effectiveNullable);
-        if (type == typeof(uint)) return AsBigInt(effectiveNullable);
-        if (type == typeof(long)) return AsBigInt(effectiveNullable);
-        if (type == typeof(ulong)) return AsNumeric(20, 0, effectiveNullable);
+        if (type == typeof(char)) return AsChar(1, false, effectiveNullable);
+        if (type == typeof(char[])) return AsChar(1, true, effectiveNullable);
 
-        if (type == typeof(float)) return AsReal(effectiveNullable);
-        if (type == typeof(double)) return AsDoublePrecision(effectiveNullable);
-        if (type == typeof(decimal)) return AsNumeric(effectiveNullable);
+        if (type == typeof(byte[])) return AsBytea(false, effectiveNullable);
+        if (type == typeof(byte[][])) return AsBytea(true, effectiveNullable);
 
-        if (type == typeof(DateTime)) return AsTimestampWithoutTimeZone(effectiveNullable);
-        if (type == typeof(DateOnly)) return AsDate(effectiveNullable);
-        if (type == typeof(TimeOnly)) return AsTimeWithoutTimeZone(effectiveNullable);
-        if (type == typeof(TimeSpan)) return AsInterval(effectiveNullable);
-        if (type == typeof(DateTimeOffset)) return AsTimestampWithTimeZone(effectiveNullable);
+        if (type == typeof(bool)) return AsBoolean(false, effectiveNullable);
+        if (type == typeof(bool[])) return AsBoolean(true, effectiveNullable);
 
-        if (type == typeof(XmlDocument)) return AsXml(effectiveNullable);
-        if (type == typeof(XDocument)) return AsXml(effectiveNullable);
+        if (type == typeof(byte)) return AsSmallInt(false, effectiveNullable);
+        if (type == typeof(sbyte)) return AsSmallInt(false, effectiveNullable);
+        if (type == typeof(short)) return AsSmallInt(false, effectiveNullable);
+        if (type == typeof(ushort)) return AsInteger(false, effectiveNullable);
+        if (type == typeof(int)) return AsInteger(false, effectiveNullable);
+        if (type == typeof(uint)) return AsBigInt(false, effectiveNullable);
+        if (type == typeof(long)) return AsBigInt(false, effectiveNullable);
+        if (type == typeof(ulong)) return AsNumeric(20, 0, false, effectiveNullable);
 
-        return AsText(effectiveNullable);
+        if (type == typeof(byte[])) return AsSmallInt(true, effectiveNullable);
+        if (type == typeof(sbyte[])) return AsSmallInt(true, effectiveNullable);
+        if (type == typeof(short[])) return AsSmallInt(true, effectiveNullable);
+        if (type == typeof(ushort[])) return AsInteger(true, effectiveNullable);
+        if (type == typeof(int[])) return AsInteger(true, effectiveNullable);
+        if (type == typeof(uint[])) return AsBigInt(true, effectiveNullable);
+        if (type == typeof(long[])) return AsBigInt(true, effectiveNullable);
+        if (type == typeof(ulong[])) return AsNumeric(20, 0, true, effectiveNullable);
+
+        if (type == typeof(float)) return AsReal(false, effectiveNullable);
+        if (type == typeof(double)) return AsDoublePrecision(false, effectiveNullable);
+        if (type == typeof(decimal)) return AsNumeric(false, effectiveNullable);
+
+        if (type == typeof(float[])) return AsReal(true, effectiveNullable);
+        if (type == typeof(double[])) return AsDoublePrecision(false, effectiveNullable);
+        if (type == typeof(decimal[])) return AsNumeric(false, effectiveNullable);
+
+        if (type == typeof(DateTime)) return AsTimestampWithoutTimeZone(false, effectiveNullable);
+        if (type == typeof(DateOnly)) return AsDate(false, effectiveNullable);
+        if (type == typeof(TimeOnly)) return AsTimeWithoutTimeZone(false, effectiveNullable);
+        if (type == typeof(TimeSpan)) return AsInterval(false, effectiveNullable);
+        if (type == typeof(DateTimeOffset)) return AsTimestampWithTimeZone(false, effectiveNullable);
+
+        if (type == typeof(DateTime[])) return AsTimestampWithoutTimeZone(true, effectiveNullable);
+        if (type == typeof(DateOnly[])) return AsDate(true, effectiveNullable);
+        if (type == typeof(TimeOnly[])) return AsTimeWithoutTimeZone(true, effectiveNullable);
+        if (type == typeof(TimeSpan[])) return AsInterval(true, effectiveNullable);
+        if (type == typeof(DateTimeOffset[])) return AsTimestampWithTimeZone(true, effectiveNullable);
+
+        if (type == typeof(XmlDocument)) return AsXml(false, effectiveNullable);
+        if (type == typeof(XDocument)) return AsXml(false, effectiveNullable);
+
+        if (type == typeof(XmlDocument[])) return AsXml(true, effectiveNullable);
+        if (type == typeof(XDocument[])) return AsXml(true, effectiveNullable);
+
+        return AsText(false, effectiveNullable);
     }
 
     private static void ValidateRange(int? value, bool allowNullValue, int minValue, int maxValue, string parameterName)
@@ -148,20 +181,21 @@ public static class PostgreSqlTypesProvider
         }
     }
 
-    private static FieldProperties CreateNumericType(bool? nullable) =>
-        Create("NUMERIC", nullable: nullable);
+    private static FieldProperties CreateNumericType(bool isArray, bool? nullable) =>
+        Create("NUMERIC", isArray: isArray, nullable: nullable);
 
-    private static FieldProperties CreateNumericType(byte precision, bool? nullable)
+    private static FieldProperties CreateNumericType(byte precision, bool isArray, bool? nullable)
     {
         ValidatePrecision(precision);
 
         return Create(
             providerTypeName: "NUMERIC",
             precision: precision,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    private static FieldProperties CreateNumericType(byte precision, byte scale, bool? nullable)
+    private static FieldProperties CreateNumericType(byte precision, byte scale, bool isArray, bool? nullable)
     {
         ValidatePrecisionAndScale(precision, scale);
 
@@ -169,6 +203,7 @@ public static class PostgreSqlTypesProvider
             providerTypeName: "NUMERIC",
             precision: precision,
             scale: scale,
+            isArray: isArray,
             nullable: nullable);
     }
 
@@ -208,14 +243,14 @@ public static class PostgreSqlTypesProvider
 
     #region UUID
 
-    public static FieldProperties AsUuid(bool? nullable = null) => 
-        Create("UUID", nullable: nullable);
+    public static FieldProperties AsUuid(bool isArray, bool? nullable = null) => 
+        Create("UUID", isArray: isArray, nullable: nullable);
 
     #endregion
 
     #region Character Types
 
-    public static FieldProperties AsChar(int? length, bool? nullable = null)
+    public static FieldProperties AsChar(int? length, bool isArray, bool? nullable = null)
     {
         ValidateCharacterLength(length);
 
@@ -224,10 +259,11 @@ public static class PostgreSqlTypesProvider
             length: length,
             isUnicode: true,
             isFixedLength: true,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsVarChar(int? length, bool? nullable = null)
+    public static FieldProperties AsVarChar(int? length, bool isArray, bool? nullable = null)
     {
         ValidateCharacterLength(length);
 
@@ -236,65 +272,69 @@ public static class PostgreSqlTypesProvider
             length: length,
             isUnicode: true,
             isFixedLength: false,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsText(bool? nullable = null) =>
+    public static FieldProperties AsText(bool isArray, bool? nullable = null) =>
         Create(
             providerTypeName: "TEXT",
             isMax: true,
             isUnicode: true,
             isFixedLength: false,
+            isArray: isArray,
             nullable: nullable);
 
     #endregion
 
     #region Binary
 
-    public static FieldProperties AsBytea(bool? nullable = null) =>
+    public static FieldProperties AsBytea(bool isArray, bool? nullable = null) =>
         Create(
             providerTypeName: "BYTEA",
             isMax: true,
             isFixedLength: false,
+            isArray: isArray,
             nullable: nullable);
 
     #endregion
 
     #region Boolean
 
-    public static FieldProperties AsBoolean(bool? nullable = null) => 
-        Create("BOOLEAN", nullable: nullable);
+    public static FieldProperties AsBoolean(bool isArray, bool? nullable = null) => 
+        Create("BOOLEAN", isArray: isArray, nullable: nullable);
 
     #endregion
 
     #region Integers
 
-    public static FieldProperties AsSmallInt(bool? nullable = null) => 
-        Create("SMALLINT", nullable: nullable);
+    public static FieldProperties AsSmallInt(bool isArray, bool? nullable = null) => 
+        Create("SMALLINT", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsInteger(bool? nullable = null) => 
-        Create("INTEGER", nullable: nullable);
+    public static FieldProperties AsInteger(bool isArray, bool? nullable = null) => 
+        Create("INTEGER", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsBigInt(bool? nullable = null) => 
-        Create("BIGINT", nullable: nullable);
+    public static FieldProperties AsBigInt(bool isArray, bool? nullable = null) => 
+        Create("BIGINT", isArray: isArray, nullable: nullable);
 
     #endregion
 
     #region Floating Points
 
-    public static FieldProperties AsReal(bool? nullable = null) => 
-        Create("REAL", nullable: nullable);
+    public static FieldProperties AsReal(bool isArray, bool? nullable = null) => 
+        Create("REAL", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsDoublePrecision(bool? nullable = null) => 
-        Create("DOUBLE PRECISION", nullable: nullable);
+    public static FieldProperties AsDoublePrecision(bool isArray, bool? nullable = null) => 
+        Create("DOUBLE PRECISION", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsFloat(byte? precision, bool? nullable = null)
+    public static FieldProperties AsFloat(byte? precision, bool isArray, bool? nullable = null)
     {
         ValidateFloatPrecision(precision);
 
         return Create(
             providerTypeName: "FLOAT",
             precision: precision,
+            isArray: isArray,
             nullable: nullable);
     }
 
@@ -302,124 +342,130 @@ public static class PostgreSqlTypesProvider
 
     #region Numeric
 
-    public static FieldProperties AsNumeric(bool? nullable = null) =>
-        CreateNumericType(nullable);
+    public static FieldProperties AsNumeric(bool isArray, bool? nullable = null) =>
+        CreateNumericType(isArray, nullable);
 
-    public static FieldProperties AsNumeric(byte precision, bool? nullable = null) =>
-        CreateNumericType(precision, nullable);
+    public static FieldProperties AsNumeric(byte precision, bool isArray, bool? nullable = null) =>
+        CreateNumericType(precision, isArray, nullable);
 
-    public static FieldProperties AsNumeric(byte precision, byte scale, bool? nullable = null) => 
-        CreateNumericType(precision, scale, nullable);
+    public static FieldProperties AsNumeric(byte precision, byte scale, bool isArray, bool? nullable = null) => 
+        CreateNumericType(precision, scale, isArray, nullable);
 
-    public static FieldProperties AsMoney(bool? nullable = null) => 
-        Create("MONEY", nullable: nullable);
+    public static FieldProperties AsMoney(bool isArray, bool? nullable = null) => 
+        Create("MONEY", isArray: isArray, nullable: nullable);
 
     #endregion
 
     #region Date/Time
 
-    public static FieldProperties AsDate(bool? nullable = null) =>
-        Create("DATE", nullable: nullable);
+    public static FieldProperties AsDate(bool isArray, bool? nullable = null) =>
+        Create("DATE", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsTime(bool? nullable = null) => 
-        Create("TIME", nullable: nullable);
+    public static FieldProperties AsTime(bool isArray, bool? nullable = null) => 
+        Create("TIME", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsTime(byte fractionalSecondsPrecision, bool? nullable = null)
+    public static FieldProperties AsTime(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
 
         return Create(
             providerTypeName: "TIME",
             fractionalSecondsPrecision: fractionalSecondsPrecision,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsTimeWithoutTimeZone(bool? nullable = null) =>
-        Create("TIME WITHOUT TIME ZONE", nullable: nullable);
+    public static FieldProperties AsTimeWithoutTimeZone(bool isArray, bool? nullable = null) =>
+        Create("TIME WITHOUT TIME ZONE", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsTimeWithoutTimeZone(byte fractionalSecondsPrecision, bool? nullable = null)
+    public static FieldProperties AsTimeWithoutTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
 
         return Create(
             providerTypeName: "TIME WITHOUT TIME ZONE",
             fractionalSecondsPrecision: fractionalSecondsPrecision,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsTimeWithTimeZone(bool? nullable = null) =>
-        Create("TIME WITH TIME ZONE", nullable: nullable);
+    public static FieldProperties AsTimeWithTimeZone(bool isArray, bool? nullable = null) =>
+        Create("TIME WITH TIME ZONE", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsTimeWithTimeZone(byte fractionalSecondsPrecision, bool? nullable = null)
+    public static FieldProperties AsTimeWithTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
 
         return Create(
             providerTypeName: "TIME WITH TIME ZONE",
             fractionalSecondsPrecision: fractionalSecondsPrecision,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsTimestamp(bool? nullable = null) =>
-        Create("TIMESTAMP", nullable: nullable);
+    public static FieldProperties AsTimestamp(bool isArray, bool? nullable = null) =>
+        Create("TIMESTAMP", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsTimestamp(byte fractionalSecondsPrecision, bool? nullable = null)
+    public static FieldProperties AsTimestamp(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
 
         return Create(
             providerTypeName: "TIMESTAMP",
             fractionalSecondsPrecision: fractionalSecondsPrecision,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsTimestampWithoutTimeZone(bool? nullable = null) =>
-        Create("TIMESTAMP WITHOUT TIME ZONE", nullable: nullable);
+    public static FieldProperties AsTimestampWithoutTimeZone(bool isArray, bool? nullable = null) =>
+        Create("TIMESTAMP WITHOUT TIME ZONE", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsTimestampWithoutTimeZone(byte fractionalSecondsPrecision, bool? nullable = null)
+    public static FieldProperties AsTimestampWithoutTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
 
         return Create(
             providerTypeName: "TIMESTAMP WITHOUT TIME ZONE",
             fractionalSecondsPrecision: fractionalSecondsPrecision,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsTimestampWithTimeZone(bool? nullable = null) =>
-        Create("TIMESTAMP WITH TIME ZONE", nullable: nullable);
+    public static FieldProperties AsTimestampWithTimeZone(bool isArray, bool? nullable = null) =>
+        Create("TIMESTAMP WITH TIME ZONE", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsTimestampWithTimeZone(byte fractionalSecondsPrecision, bool? nullable = null)
+    public static FieldProperties AsTimestampWithTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
 
         return Create(
             providerTypeName: "TIMESTAMP WITH TIME ZONE",
             fractionalSecondsPrecision: fractionalSecondsPrecision,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsInterval(bool? nullable = null) =>
-        Create("INTERVAL", nullable: nullable);
+    public static FieldProperties AsInterval(bool isArray, bool? nullable = null) =>
+        Create("INTERVAL", isArray: isArray, nullable: nullable);
 
     #endregion
 
     #region XML/JSON
 
-    public static FieldProperties AsXml(bool? nullable = null) => 
-        Create("XML", nullable: nullable);
+    public static FieldProperties AsXml(bool isArray, bool? nullable = null) => 
+        Create("XML", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsJson(bool? nullable = null) =>
-        Create("JSON", nullable: nullable);
+    public static FieldProperties AsJson(bool isArray, bool? nullable = null) =>
+        Create("JSON", isArray: isArray, nullable: nullable);
 
-    public static FieldProperties AsJsonB(bool? nullable = null) =>
-        Create("JSONB", nullable: nullable);
+    public static FieldProperties AsJsonB(bool isArray, bool? nullable = null) =>
+        Create("JSONB", isArray: isArray, nullable: nullable);
 
     #endregion
 
     #region Bit Strings
 
-    public static FieldProperties AsBit(int length, bool? nullable = null)
+    public static FieldProperties AsBit(int length, bool isArray, bool? nullable = null)
     {
         ValidateBitLength(length);
 
@@ -427,10 +473,11 @@ public static class PostgreSqlTypesProvider
             providerTypeName: "BIT",
             length: length,
             isFixedLength: true,
+            isArray: isArray,
             nullable: nullable);
     }
 
-    public static FieldProperties AsVarBit(int length, bool? nullable = null)
+    public static FieldProperties AsVarBit(int length, bool isArray, bool? nullable = null)
     {
         ValidateBitLength(length);
 
@@ -438,6 +485,7 @@ public static class PostgreSqlTypesProvider
             providerTypeName: "VARBIT",
             length: length,
             isFixedLength: false,
+            isArray: isArray,
             nullable: nullable);
     }
 
@@ -445,13 +493,14 @@ public static class PostgreSqlTypesProvider
 
     #region Vector
 
-    public static FieldProperties AsVector(int dimensions, bool? nullable = null)
+    public static FieldProperties AsVector(int dimensions, bool isArray, bool? nullable = null)
     {
         ValidateVectorDimensions(dimensions);
 
         return Create(
             providerTypeName: "VECTOR",
             length: dimensions,
+            isArray: isArray,
             nullable: nullable);
     }
 

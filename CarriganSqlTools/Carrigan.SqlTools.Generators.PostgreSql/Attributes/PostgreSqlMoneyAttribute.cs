@@ -8,6 +8,6 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class PostgreSqlMoneyAttribute : SqlTypeAttribute
 {
-    public PostgreSqlMoneyAttribute() : base(PostgreSqlTypesProvider.AsMoney())
+    public PostgreSqlMoneyAttribute() : base(PostgreSqlTypesProvider.AsMoney(false))
     { }
 }

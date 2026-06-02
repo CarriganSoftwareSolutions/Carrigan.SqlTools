@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsText_Default_ReturnsText()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsText();
+        FieldProperties actual = PostgreSqlTypesProvider.AsText(false);
 
         AssertFieldProperties(actual, "TEXT", isMax: true, isUnicode: true, isFixedLength: false);
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsText_NullableTrue_ReturnsNullableText()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsText(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsText(false, true);
 
         AssertFieldProperties(actual, "TEXT", isMax: true, isUnicode: true, isFixedLength: false, isNullable: true);
     }

@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimeWithTimeZone_Default_ReturnsExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone();
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone(false);
 
         AssertFieldProperties(actual, "TIME WITH TIME ZONE");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimeWithTimeZone_NullableTrue_ReturnsNullableExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone(false, true);
 
         AssertFieldProperties(actual, "TIME WITH TIME ZONE", isNullable: true);
     }
@@ -24,7 +24,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimeWithTimeZone_WithFractionalSecondsPrecision_ReturnsExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone(6);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone(6, false);
 
         AssertFieldProperties(actual, "TIME WITH TIME ZONE", fractionalSecondsPrecision: 6);
     }
@@ -32,12 +32,12 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsTimeWithTimeZone_WithFractionalSecondsPrecisionNullableTrue_ReturnsNullableExpectedType()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone(6, true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsTimeWithTimeZone(6, false, true);
 
         AssertFieldProperties(actual, "TIME WITH TIME ZONE", fractionalSecondsPrecision: 6, isNullable: true);
     }
 
     [Fact]
     public void AsTimeWithTimeZone_InvalidFractionalSecondsPrecision_Exception() => 
-        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsTimeWithTimeZone(7));
+        Assert.Throws<ArgumentOutOfRangeException>(() => PostgreSqlTypesProvider.AsTimeWithTimeZone(7, false));
 }

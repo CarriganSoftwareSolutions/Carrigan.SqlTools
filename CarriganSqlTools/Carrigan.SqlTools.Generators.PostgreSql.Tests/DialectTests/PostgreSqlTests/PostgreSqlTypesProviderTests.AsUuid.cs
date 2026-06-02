@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsUuid_Default_ReturnsUuid()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsUuid();
+        FieldProperties actual = PostgreSqlTypesProvider.AsUuid(false);
 
         AssertFieldProperties(actual, "UUID");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsUuid_NullableTrue_ReturnsNullableUuid()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsUuid(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsUuid(false, true);
 
         AssertFieldProperties(actual, "UUID", isNullable: true);
     }

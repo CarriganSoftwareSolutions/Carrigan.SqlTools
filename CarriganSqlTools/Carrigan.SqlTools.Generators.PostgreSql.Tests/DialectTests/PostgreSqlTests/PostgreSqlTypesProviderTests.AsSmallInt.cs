@@ -8,7 +8,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsSmallInt_Default_ReturnsSmallInt()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsSmallInt();
+        FieldProperties actual = PostgreSqlTypesProvider.AsSmallInt(false);
 
         AssertFieldProperties(actual, "SMALLINT");
     }
@@ -16,7 +16,7 @@ public partial class PostgreSqlTypesProviderTests
     [Fact]
     public void AsSmallInt_NullableTrue_ReturnsNullableSmallInt()
     {
-        FieldProperties actual = PostgreSqlTypesProvider.AsSmallInt(true);
+        FieldProperties actual = PostgreSqlTypesProvider.AsSmallInt(false, true);
 
         AssertFieldProperties(actual, "SMALLINT", isNullable: true);
     }
