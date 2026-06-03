@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Xml;
 //IGNORE SPELLING: xml
 
-namespace Carrigan.SqlTools.SqlServer;
+namespace Carrigan.SqlTools.Clients.SqlServer;
 
 /// <summary>
 /// Provides shared command functionality used by synchronous and asynchronous command executors, 

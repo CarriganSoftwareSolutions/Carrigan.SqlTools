@@ -2,7 +2,6 @@
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;

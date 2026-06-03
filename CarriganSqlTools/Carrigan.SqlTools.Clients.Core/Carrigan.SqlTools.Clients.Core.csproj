@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Carrigan.SqlTools.Clients.Core</PackageId>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -20,8 +21,10 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
 
     <Description>
+      Shared core client infrastructure for Carrigan.SqlTools database dialect packages. Intended primarily as a transitive dependency for dialect-specific client implementations.
     </Description>
     <PackageTags>
+      sql;database;data-access;ado-net;sql-tools;database-client;transitive-package;sqlserver;postgresql
     </PackageTags>
   </PropertyGroup>
 
@@ -39,7 +42,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Carrigan.SqlTools.SqlServer" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.SqlServer" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.PostgreSql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+    <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

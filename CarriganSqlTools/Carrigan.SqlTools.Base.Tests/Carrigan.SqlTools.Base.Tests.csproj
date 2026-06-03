@@ -25,7 +25,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <InternalsVisibleTo Include="Carrigan.SqlTools.SqlServer.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.SqlServer.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer.Tests" />
   </ItemGroup>

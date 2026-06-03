@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Clients.SqlServer;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlGenerators;
 using Microsoft.Data.SqlClient;
 using Respawn;

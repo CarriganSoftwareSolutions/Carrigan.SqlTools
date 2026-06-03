@@ -23,21 +23,51 @@
 
     <!-- PreRelease Status -->
     <PreReleaseLabel>alpha</PreReleaseLabel>
-
     <!--Base Version for other projects-->
     <BaseVersion>0.6.0</BaseVersion>
-    <!-- Base version: x.y.z For Carrigan.SqlTools -->
-    <SqlToolsVersionBase>0.6.0</SqlToolsVersionBase>
-    <!-- Base version: x.y.z For Carrigan.SqlTools.SqlServer -->
-    <SqlToolsSqlServerVersionBase>0.6.0</SqlToolsSqlServerVersionBase>
+
+    <!-- PreReleaseStatus / Base version: x.y.z For Base Projects -->
+    <SqlToolsBaseProjectsBaseVersion>0.6.0</SqlToolsBaseProjectsBaseVersion>
+    <SqlToolsBaseProjectsPreReleaseLabel>alpha</SqlToolsBaseProjectsPreReleaseLabel>
+    
+    <!-- PreReleaseStatus / Base version: x.y.z For SqlServer Dialect -->
+    <SqlToolsSqlServerBaseVersion>0.6.0</SqlToolsSqlServerBaseVersion>
+    <SqlToolsSqlServerPreReleaseLabel>alpha</SqlToolsSqlServerPreReleaseLabel>
+    
+    <!-- PreReleaseStatus / Base version: x.y.z For PostgreSql Dialect -->
+    <SqlToolsPostgreSqlBaseVersion>0.6.0</SqlToolsPostgreSqlBaseVersion>
+    <SqlToolsPostgreSqlPreReleaseLabel>alpha</SqlToolsPostgreSqlPreReleaseLabel>
     
     <!-- Time Stamp -->
     <BuildTimeStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmm'))</BuildTimeStamp>
 
     <!-- Pick base/label by package -->
-    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools'">$(SqlToolsVersionBase)</BaseVersion>
-    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.SqlServer'">$(SqlToolsSqlServerVersionBase)</BaseVersion>
 
+    <!--Base Projects Base Version-->
+    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools'">$(SqlToolsBaseProjectsBaseVersion)</BaseVersion>
+    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.Clients.Core'">$(SqlToolsBaseProjectsBaseVersion)</BaseVersion>
+
+    <!--Base Projects PreRelease Label-->
+    <PreReleaseLabel Condition="'$(PackageId)'=='Carrigan.SqlTools'">$(SqlToolsBaseProjectsPreReleaseLabel)</PreReleaseLabel>
+    <PreReleaseLabel Condition="'$(PackageId)'=='Carrigan.SqlTools.Clients.Core'">$(SqlToolsBaseProjectsPreReleaseLabel)</PreReleaseLabel>
+    
+    <!-- SqlServer Dialect Projects Base Version-->
+    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.Clients.SqlServer'">$(SqlToolsSqlServerBaseVersion)</BaseVersion>
+    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.Generators.SqlServer'">$(SqlToolsSqlServerBaseVersion)</BaseVersion>
+
+    <!-- SqlServer Dialect Projects PreRelease Label-->
+    <PreReleaseLabel Condition="'$(PackageId)'=='Carrigan.SqlTools.Clients.SqlServer'">$(SqlToolsSqlServerPreReleaseLabel)</PreReleaseLabel>
+    <PreReleaseLabel Condition="'$(PackageId)'=='Carrigan.SqlTools.Generators.SqlServer'">$(SqlToolsSqlServerPreReleaseLabel)</PreReleaseLabel>
+
+    <!-- PostgreSql Dialect Projects Base Version-->
+    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.Clients.PostgreSql'">$(SqlToolsPostgreSqlBaseVersion)</BaseVersion>
+    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.Generators.PostgreSql'">$(SqlToolsPostgreSqlBaseVersion)</BaseVersion>
+
+    <!-- PostgreSql Dialect Projects PreRelease Label-->
+    <PreReleaseLabel Condition="'$(PackageId)'=='Carrigan.SqlTools.Clients.PostgreSql'">$(SqlToolsPostgreSqlPreReleaseLabel)</PreReleaseLabel>
+    <PreReleaseLabel Condition="'$(PackageId)'=='Carrigan.SqlTools.Generators.PostgreSql'">$(SqlToolsPostgreSqlPreReleaseLabel)</PreReleaseLabel>
+
+    
     <PreReleasePart Condition="'$(PreReleaseLabel)' != ''">-$(PreReleaseLabel).$(BuildTimeStamp)</PreReleasePart>
 
     <!-- Final version -->

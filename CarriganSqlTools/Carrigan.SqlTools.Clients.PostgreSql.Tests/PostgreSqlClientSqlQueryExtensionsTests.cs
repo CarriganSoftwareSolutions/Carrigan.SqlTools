@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Types;
 using NpgsqlTypes;
 using System.Reflection;
 
-namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlTests;
+namespace Carrigan.SqlTools.Clients.PostgreSql.Tests;
 
 public sealed class PostgreSqlClientSqlQueryExtensionsTests
 {

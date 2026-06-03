@@ -21,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Carrigan.SqlTools.Clients.SqlServer\Carrigan.SqlTools.Clients.SqlServer.csproj" />
-    <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
+    <ProjectReference Include="..\Carrigan.SqlTools.Clients.PostgreSql\Carrigan.SqlTools.Clients.PostgreSql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

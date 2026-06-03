@@ -5,8 +5,6 @@ VisualStudioVersion = 18.2.11408.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools", "Carrigan.SqlTools\Carrigan.SqlTools.csproj", "{E631F123-8CB9-4782-9310-8D6663821DAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.SqlServer", "Carrigan.SqlTools.SqlServer\Carrigan.SqlTools.SqlServer.csproj", "{1410A1B9-3CB4-48D3-8D83-1A7F3532F27E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -23,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.github\workflows\pull-request-validation.yml = ..\.github\workflows\pull-request-validation.yml
 		..\readme.md = ..\readme.md
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Analyzers", "Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj", "{B89156B8-5789-4B08-B8C4-60A9EBBD430D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{4A91D235-418D-49AC-9E8F-71ED65D6C2FC}"
 EndProject
@@ -58,6 +54,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Generator
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Clients.SqlServer.Tests", "Carrigan.SqlTools.Clients.SqlServer.Tests\Carrigan.SqlTools.Clients.SqlServer.Tests.csproj", "{9DD62B5C-8ED6-4E80-AB6F-6EB77A715A5B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Analyzers", "Analyzers", "{461C9803-3F48-4F78-9198-F732CADB7CA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Analyzers.SqlServer", "Carrigan.SqlTools.Analyzers.SqlServer\Carrigan.SqlTools.Analyzers.SqlServer\Carrigan.SqlTools.Analyzers.SqlServer.csproj", "{DBB2ACD4-DE65-9650-8878-A5C8FBE07EBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Clients.SqlServer", "Carrigan.SqlTools.Clients.SqlServer\Carrigan.SqlTools.Clients.SqlServer.csproj", "{7C57D7E7-538B-BC3D-FFDE-34B8EFEDAECE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Clients.PostgreSql.Tests", "Carrigan.SqlTools.Clients.PostgreSql.Tests\Carrigan.SqlTools.Clients.PostgreSql.Tests.csproj", "{85EE6F25-DB9C-4ED3-8554-F18506DB0E2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Analyzers.PostgreSql", "Carrigan.SqlTools.Analyzers.PostgreSql\Carrigan.SqlTools.Analyzers.PostgreSql\Carrigan.SqlTools.Analyzers.PostgreSql.csproj", "{4A33EE82-F3FC-02D4-768E-684AB93C0633}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,14 +74,6 @@ Global
 		{E631F123-8CB9-4782-9310-8D6663821DAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E631F123-8CB9-4782-9310-8D6663821DAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E631F123-8CB9-4782-9310-8D6663821DAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1410A1B9-3CB4-48D3-8D83-1A7F3532F27E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1410A1B9-3CB4-48D3-8D83-1A7F3532F27E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1410A1B9-3CB4-48D3-8D83-1A7F3532F27E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1410A1B9-3CB4-48D3-8D83-1A7F3532F27E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B89156B8-5789-4B08-B8C4-60A9EBBD430D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B89156B8-5789-4B08-B8C4-60A9EBBD430D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B89156B8-5789-4B08-B8C4-60A9EBBD430D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B89156B8-5789-4B08-B8C4-60A9EBBD430D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB61EAF6-6393-4876-ADFA-93FCFA46C269}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB61EAF6-6393-4876-ADFA-93FCFA46C269}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB61EAF6-6393-4876-ADFA-93FCFA46C269}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -124,12 +122,27 @@ Global
 		{9DD62B5C-8ED6-4E80-AB6F-6EB77A715A5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DD62B5C-8ED6-4E80-AB6F-6EB77A715A5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DD62B5C-8ED6-4E80-AB6F-6EB77A715A5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBB2ACD4-DE65-9650-8878-A5C8FBE07EBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBB2ACD4-DE65-9650-8878-A5C8FBE07EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBB2ACD4-DE65-9650-8878-A5C8FBE07EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBB2ACD4-DE65-9650-8878-A5C8FBE07EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C57D7E7-538B-BC3D-FFDE-34B8EFEDAECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C57D7E7-538B-BC3D-FFDE-34B8EFEDAECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C57D7E7-538B-BC3D-FFDE-34B8EFEDAECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C57D7E7-538B-BC3D-FFDE-34B8EFEDAECE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85EE6F25-DB9C-4ED3-8554-F18506DB0E2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85EE6F25-DB9C-4ED3-8554-F18506DB0E2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85EE6F25-DB9C-4ED3-8554-F18506DB0E2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85EE6F25-DB9C-4ED3-8554-F18506DB0E2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A33EE82-F3FC-02D4-768E-684AB93C0633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A33EE82-F3FC-02D4-768E-684AB93C0633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A33EE82-F3FC-02D4-768E-684AB93C0633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A33EE82-F3FC-02D4-768E-684AB93C0633}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1410A1B9-3CB4-48D3-8D83-1A7F3532F27E} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
 		{DB61EAF6-6393-4876-ADFA-93FCFA46C269} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
 		{094ED0BE-833F-4B19-B159-D377EA46EF24} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
 		{9107AE53-C3E1-4739-8E47-CA56F22F6595} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
@@ -142,6 +155,10 @@ Global
 		{CDFFE5B5-3433-42CF-AB03-B2EB469BBB7C} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
 		{53A30849-296B-4FE9-AA7A-392746FED7EF} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
 		{9DD62B5C-8ED6-4E80-AB6F-6EB77A715A5B} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
+		{DBB2ACD4-DE65-9650-8878-A5C8FBE07EBC} = {461C9803-3F48-4F78-9198-F732CADB7CA6}
+		{7C57D7E7-538B-BC3D-FFDE-34B8EFEDAECE} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
+		{85EE6F25-DB9C-4ED3-8554-F18506DB0E2A} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
+		{4A33EE82-F3FC-02D4-768E-684AB93C0633} = {461C9803-3F48-4F78-9198-F732CADB7CA6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7E326BD-0E69-4927-9699-75A4A950E268}

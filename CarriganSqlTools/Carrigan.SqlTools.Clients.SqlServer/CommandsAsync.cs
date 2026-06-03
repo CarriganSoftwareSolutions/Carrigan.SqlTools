@@ -1,16 +1,17 @@
 ﻿using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
 
-namespace Carrigan.SqlTools.SqlServer;
+namespace Carrigan.SqlTools.Clients.SqlServer;
 
 /// <summary>
-/// Provides methods to execute various ADO.NET commands using <see cref="SqlQuery"/> synchronously.
+/// Provides methods to execute various ADO.NET commands using <see cref="SqlQuery"/> asynchronously.
 /// </summary>
-public static class Commands
+public static class CommandsAsync
 {
     /// <summary>
     /// Attempts to open and close a SQL connection to validate the provided connection string.
@@ -18,7 +19,7 @@ public static class Commands
     /// <param name="connectionString">The connection string.</param>
     /// <param name="friendlyName">A friendly name included in the exception message when a connection cannot be established.</param>
     /// <exception cref="ConnectionFailedException">Thrown if a connection cannot be established.</exception>
-    public static void TestConnectionString(string connectionString, string friendlyName)
+    public static async Task TestConnectionStringAsync(string connectionString, string friendlyName)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
         ArgumentNullException.ThrowIfNull(friendlyName);
@@ -26,8 +27,8 @@ public static class Commands
         try
         {
             using SqlConnection connection = new(connectionString);
-            connection.Open();
-            connection.Close();
+            await connection.OpenAsync().ConfigureAwait(false);
+            await connection.CloseAsync().ConfigureAwait(false);
         }
         catch (Exception exception)
         {
@@ -43,8 +44,8 @@ public static class Commands
     /// <param name="connection">The connection.</param>
     /// <returns>The number of rows affected.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static int ExecuteNonQuery(IQueryBuilder query, DbTransaction? transaction, DbConnection connection) =>
-        ExecuteNonQuery(query.AsSqlQuery(), transaction, connection);
+    public static async Task<int> ExecuteNonQueryAsync(IQueryBuilder query, DbTransaction? transaction, DbConnection connection) =>
+        await ExecuteNonQueryAsync(query.AsSqlQuery(), transaction, connection);
 
     /// <summary>
     /// Executes an ADO.NET non-query command (for example, INSERT/UPDATE/DELETE) using a <see cref="SqlQuery"/>.
@@ -54,7 +55,7 @@ public static class Commands
     /// <param name="connection">The connection.</param>
     /// <returns>The number of rows affected.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static int ExecuteNonQuery(SqlQuery query, DbTransaction? transaction, DbConnection connection)
+    public static async Task<int> ExecuteNonQueryAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -63,23 +64,23 @@ public static class Commands
         if (connection.State != ConnectionState.Open)
         {
             wasClosed = true;
-            connection.Open();
+            await connection.OpenAsync().ConfigureAwait(false);
         }
 
         try
         {
             using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
 
-            return command.ExecuteNonQuery();
+            return await command.ExecuteNonQueryAsync().ConfigureAwait(false);
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteNonQuery), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteNonQueryAsync), query, exception);
         }
         finally
         {
             if (wasClosed && connection.State == ConnectionState.Open)
-                connection.Close();
+                await connection.CloseAsync().ConfigureAwait(false);
         }
     }
 
@@ -91,8 +92,8 @@ public static class Commands
     /// <param name="connection">The connection.</param>
     /// <returns>The first column of the first row in the result set, or <see langword="null"/> if the result set is empty.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static object? ExecuteScalar(IQueryBuilder query, DbTransaction? transaction, DbConnection connection) =>
-        ExecuteScalar(query.AsSqlQuery(), transaction, connection);
+    public static async Task<object?> ExecuteScalarAsync(IQueryBuilder query, DbTransaction? transaction, DbConnection connection) =>
+        await ExecuteScalarAsync(query.AsSqlQuery(), transaction, connection);
 
     /// <summary>
     /// Executes an ADO.NET scalar command using a <see cref="SqlQuery"/>.
@@ -102,7 +103,7 @@ public static class Commands
     /// <param name="connection">The connection.</param>
     /// <returns>The first column of the first row in the result set, or <see langword="null"/> if the result set is empty.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
-    public static object? ExecuteScalar(SqlQuery query, DbTransaction? transaction, DbConnection connection)
+    public static async Task<object?> ExecuteScalarAsync(SqlQuery query, DbTransaction? transaction, DbConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -111,23 +112,23 @@ public static class Commands
         if (connection.State != ConnectionState.Open)
         {
             wasClosed = true;
-            connection.Open();
+            await connection.OpenAsync().ConfigureAwait(false);
         }
 
         try
         {
             using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
 
-            return command.ExecuteScalar();
+            return await command.ExecuteScalarAsync().ConfigureAwait(false);
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteScalar), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteScalarAsync), query, exception);
         }
         finally
         {
             if (wasClosed && connection.State == ConnectionState.Open)
-                connection.Close();
+                await connection.CloseAsync().ConfigureAwait(false);
         }
     }
 
@@ -140,14 +141,15 @@ public static class Commands
     /// <param name="decrypters">Optional decrypter provider used to decrypt properties marked as encrypted.</param>
     /// <returns>A sequence of records read from the database.</returns>
     /// <exception cref="DecrypterNotProvided{T}">Thrown when one or more encrypted properties exist, but no decrypter provider is supplied.</exception>
-    /// <exception cref="NoKeyVersionException{T}">Thrown when encrypted properties exist, but the type does not define a key-version property.</exception>
+    /// <exception cref="Exceptions.NoKeyVersionException{T}">Thrown when encrypted properties exist, but the type does not define a key-version property.</exception>
     /// <exception cref="MissingDecryptionKeyException{T}">Thrown when encrypted properties contain values, but no matching decryption key can be found.</exception>
     /// <exception cref="DecryptionFailedException{T}">Thrown when decryption fails for an encrypted property.</exception>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
     /// <exception cref="DataReaderFailedException">Thrown when reading the data reader fails.</exception>
     /// <exception cref="RecordMaterializationException">Thrown when materializing a record into <typeparamref name="T"/> fails.</exception>
-    public static IEnumerable<T> ExecuteReader<T>(IQueryBuilder query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new() =>
-        ExecuteReader<T>(query.AsSqlQuery(), transaction, connection, decrypters);
+    public static async Task<IEnumerable<T>> ExecuteReaderAsync<T>(IQueryBuilder query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new() =>
+        await ExecuteReaderAsync<T>(query.AsSqlQuery(), transaction, connection, decrypters);
+
 
     /// <summary>
     /// Executes an ADO.NET reader command using a <see cref="SqlQuery"/> and materializes all records.
@@ -158,13 +160,13 @@ public static class Commands
     /// <param name="decrypters">Optional decrypter provider used to decrypt properties marked as encrypted.</param>
     /// <returns>A sequence of records read from the database.</returns>
     /// <exception cref="DecrypterNotProvided{T}">Thrown when one or more encrypted properties exist, but no decrypter provider is supplied.</exception>
-    /// <exception cref="NoKeyVersionException{T}">Thrown when encrypted properties exist, but the type does not define a key-version property.</exception>
+    /// <exception cref="Exceptions.NoKeyVersionException{T}">Thrown when encrypted properties exist, but the type does not define a key-version property.</exception>
     /// <exception cref="MissingDecryptionKeyException{T}">Thrown when encrypted properties contain values, but no matching decryption key can be found.</exception>
     /// <exception cref="DecryptionFailedException{T}">Thrown when decryption fails for an encrypted property.</exception>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
     /// <exception cref="DataReaderFailedException">Thrown when reading the data reader fails.</exception>
     /// <exception cref="RecordMaterializationException">Thrown when materializing a record into <typeparamref name="T"/> fails.</exception>
-    public static IEnumerable<T> ExecuteReader<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
+    public static async Task<IEnumerable<T>> ExecuteReaderAsync<T>(SqlQuery query, DbTransaction? transaction, DbConnection connection, IDecrypters? decrypters = null) where T : class, new()
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(connection);
@@ -180,27 +182,27 @@ public static class Commands
         if (connection.State != ConnectionState.Open)
         {
             wasClosed = true;
-            connection.Open();
+            await connection.OpenAsync().ConfigureAwait(false);
         }
 
         try
         {
             using DbCommand command = CommandSharedMethods.CreateCommand(query, connection, transaction);
-            using DbDataReader dataReader = command.ExecuteReader();
+            using DbDataReader dataReader = await command.ExecuteReaderAsync().ConfigureAwait(false);
 
-            while (dataReader.Read())
+            while (await dataReader.ReadAsync().ConfigureAwait(false))
             {
                 results.Add(CommandSharedMethods.ReadRecord<T>(dataReader));
             }
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteReader), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteReaderAsync), query, exception);
         }
         finally
         {
             if (wasClosed && connection.State == ConnectionState.Open)
-                connection.Close();
+                await connection.CloseAsync().ConfigureAwait(false);
         }
 
         CommandSharedMethods.DecryptFields(results, decrypters);

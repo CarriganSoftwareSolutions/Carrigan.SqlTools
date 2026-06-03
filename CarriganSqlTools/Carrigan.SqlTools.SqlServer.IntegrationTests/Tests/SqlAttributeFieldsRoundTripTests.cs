@@ -1,7 +1,7 @@
 ﻿//Ignore Spelling: SqlServer, varchar, varbinary, datetime, ntext
 
+using Carrigan.SqlTools.Clients.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.SqlServerModels;
 using Microsoft.Data.SqlClient;

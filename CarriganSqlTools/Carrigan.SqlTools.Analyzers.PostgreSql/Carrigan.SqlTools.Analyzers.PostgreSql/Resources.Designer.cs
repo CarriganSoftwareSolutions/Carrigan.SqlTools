@@ -11,7 +11,7 @@
 using System;
 using System.Reflection;
 
-namespace Carrigan.SqlTools.Analyzers
+namespace Carrigan.SqlTools.Analyzers.PostgreSql
 {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.

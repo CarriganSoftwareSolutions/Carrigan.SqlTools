@@ -22,10 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Carrigan.SqlTools.Base.Tests\Carrigan.SqlTools.Base.Tests.csproj" />
-    <ProjectReference Include="..\Carrigan.SqlTools.Clients.PostgreSql\Carrigan.SqlTools.Clients.PostgreSql.csproj" />
-    <ProjectReference Include="..\Carrigan.SqlTools.Generators.PostgreSql\Carrigan.SqlTools.Generators.PostgreSql.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
+    <ProjectReference Include="..\Carrigan.SqlTools.Base.Tests\Carrigan.SqlTools.Base.Tests.csproj" />
+    <ProjectReference Include="..\Carrigan.SqlTools.Generators.PostgreSql\Carrigan.SqlTools.Generators.PostgreSql.csproj" />
   </ItemGroup>
 
   <ItemGroup>

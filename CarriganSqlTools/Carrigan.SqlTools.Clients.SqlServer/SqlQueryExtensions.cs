@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace Carrigan.SqlTools.SqlServer;
+namespace Carrigan.SqlTools.Clients.SqlServer;
 
 internal static class SqlQueryExtensions
 {

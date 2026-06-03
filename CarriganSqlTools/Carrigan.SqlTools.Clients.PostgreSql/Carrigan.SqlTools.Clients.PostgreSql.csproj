@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Carrigan.SqlTools.Clients.PostgreSql</PackageId>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -20,8 +21,10 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
 
     <Description>
+      PostgreSQL client support for Carrigan.SqlTools. This package provides PostgreSQL-specific client functionality for executing Carrigan.SqlTools-generated SQL against PostgreSQL databases, using the shared Carrigan.SqlTools client core infrastructure.
     </Description>
     <PackageTags>
+      sql;database;data-access;ado-net;postgresql;postgres;npgsql;sql-tools;database-client;query-execution
     </PackageTags>
   </PropertyGroup>
 
@@ -41,5 +44,10 @@
     <ProjectReference Include="..\Carrigan.SqlTools.Clients.Core\Carrigan.SqlTools.Clients.Core.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools.Generators.PostgreSql\Carrigan.SqlTools.Generators.PostgreSql.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+    <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

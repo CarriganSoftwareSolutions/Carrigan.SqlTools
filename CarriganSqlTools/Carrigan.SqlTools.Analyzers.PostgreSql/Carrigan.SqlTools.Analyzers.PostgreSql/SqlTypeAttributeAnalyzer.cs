@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace Carrigan.SqlTools.Analyzers;
+namespace Carrigan.SqlTools.Analyzers.SqlServer;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 

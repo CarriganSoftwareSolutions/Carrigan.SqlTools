@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Carrigan.SqlTools.Generators.SqlServer</PackageId>
     <RootNamespace>Carrigan.SqlTools</RootNamespace>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -45,15 +46,22 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
   </ItemGroup>
-  
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Carrigan.SqlTools.Analyzers.SqlServer\Carrigan.SqlTools.Analyzers.SqlServer\Carrigan.SqlTools.Analyzers.SqlServer.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
-  
+  <ItemGroup>
+    <None Include="..\Carrigan.SqlTools.Analyzers.SqlServer\Carrigan.SqlTools.Analyzers.SqlServer\bin\$(Configuration)\netstandard2.0\Carrigan.SqlTools.Analyzers.SqlServer.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="\" />
+    <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

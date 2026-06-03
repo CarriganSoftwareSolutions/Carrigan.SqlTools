@@ -54,6 +54,7 @@
   <ItemGroup>
     <InternalsVisibleTo Include="Carrigan.SqlTools.Base.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.PostgreSql" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.SqlServer" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Clients.SqlServer.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql" />
@@ -66,15 +67,6 @@
     <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.0-alpha.202605270557" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300" PrivateAssets="All" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="..\Carrigan.SqlTools.Analyzers\Carrigan.SqlTools.Analyzers\bin\$(Configuration)\netstandard2.0\Carrigan.SqlTools.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <None Include="readme.md" Pack="true" PackagePath="\" />
