@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace Carrigan.SqlTools.Analyzers.SqlServer;
+namespace Carrigan.SqlTools.Analyzers.PostgreSql;
 
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 
@@ -18,7 +18,7 @@ namespace Carrigan.SqlTools.Analyzers.SqlServer;
 ///     <description>
 ///     Hard errors <see cref="SqlTypeAttributeAnalyzer.TypeRule"/> are raised only when a SQL type attribute is
 ///     applied to a property type that is fundamentally incompatible with it. These rules
-///     mirror those enforced by <c>SqlTypeMismatchException</c>.
+///     mirror those enforced by the PostgreSQL SQL type attribute rules.
 ///     </description>
 ///   </item>
 ///   <item>
@@ -39,22 +39,22 @@ namespace Carrigan.SqlTools.Analyzers.SqlServer;
 ///     <description>
 ///     Legacy warnings <see cref="SqlTypeAttributeAnalyzer.LegacyRule"/> are emitted for SQL types that are
 ///     technically supported but discouraged due to limited precision or range.
-///     This includes <c>DATETIME</c> and <c>MONEY</c> where <c>DATETIME2</c> or <c>DECIMAL</c> are preferred.
+///     This includes <c>MONEY</c>, where <c>NUMERIC</c> is generally preferred for new schemas.
 ///     </description>
 ///   </item>
 ///   <item>
 ///     <description>
 ///     Obsolete warnings <see cref="SqlTypeAttributeAnalyzer.ObsoleteRule"/> are issued for SQL types that are
-///     obsolete and should no longer appear in modern databases, such as <c>TEXT</c> and <c>IMAGE</c>.
+///     obsolete and should no longer appear in modern databases.
 ///     </description>
 ///   </item>
 /// </list>
 /// </summary>
 /// <remarks>
 /// This analyzer ensures that SQL mappings remain correct, predictable, and aligned with
-/// best practices across both modern and legacy SQL Server data types.
+/// best practices across PostgreSQL data types.
 /// The rules enforced here intentionally mirror, and expand upon,
-/// <c>SqlTypeMismatchException</c> so that issues can be surfaced at compile time rather
+/// the PostgreSQL SQL type attribute rules so that issues can be surfaced at compile time rather
 /// than failing at runtime.
 /// </remarks>
 public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
@@ -67,7 +67,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     ///
     /// <para>
     /// Mappings in this table correspond directly to the logic in
-    /// <c>SqlTypeMismatchException.AllowedAttributes</c>. The analyzer uses metadata names
+    /// the PostgreSQL SQL type attribute rules. The analyzer uses metadata names
     /// instead of <see cref="Type"/> objects in order to support analysis of <c>DateOnly</c> and <c>TimeOnly</c>,
     /// even though analyzers doesn't support those types.
     /// </para>
@@ -76,38 +76,26 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     private static readonly IReadOnlyDictionary<string, string[]> AllowedTypeMetadata =
         new Dictionary<string, string[]>
         {
-            ["Carrigan.SqlTools.Attributes.SqlBinaryAttribute"] =
-                ["System.Byte[]"],
-            ["Carrigan.SqlTools.Attributes.SqlVarBinaryMaxAttribute"] =
-                ["System.Byte[]"],
-            ["Carrigan.SqlTools.Attributes.SqlImageAttribute"] =
-                ["System.Byte[]"],
-
-            ["Carrigan.SqlTools.Attributes.SqlCharAttribute"] =
-                ["System.Char", "System.String", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
-            ["Carrigan.SqlTools.Attributes.SqlVarCharMaxAttribute"] =
-                ["System.Char", "System.String", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
-            ["Carrigan.SqlTools.Attributes.SqlTextAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlCharAttribute"] =
                 ["System.Char", "System.String", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
 
-            ["Carrigan.SqlTools.Attributes.SqlDateTimeAttribute"] =
-                ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
-            ["Carrigan.SqlTools.Attributes.SqlDateTime2Attribute"] =
-                ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
-
-            ["Carrigan.SqlTools.Attributes.SqlDateAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlDateAttribute"] =
                 ["System.DateTime", "System.DateOnly"],
-            ["Carrigan.SqlTools.Attributes.SqlTimeAttribute"] =
+
+            ["Carrigan.SqlTools.Attributes.PostgreSqlTimeAttribute"] =
                 ["System.DateTime", "System.TimeOnly"],
 
-            ["Carrigan.SqlTools.Attributes.SqlDateTimeOffsetAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlTimestampAttribute"] =
+                ["System.DateTime", "System.DateOnly", "System.TimeOnly"],
+
+            ["Carrigan.SqlTools.Attributes.PostgreSqlTimestampUtcAttribute"] =
                 ["System.DateTimeOffset"],
 
-            ["Carrigan.SqlTools.Attributes.SqlFloatAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlFloatAttribute"] =
                 ["System.Single", "System.Double", "System.Decimal"],
-            ["Carrigan.SqlTools.Attributes.SqlMoneyAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlMoneyAttribute"] =
                 ["System.Single", "System.Double", "System.Decimal"],
-            ["Carrigan.SqlTools.Attributes.SqlDecimalAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlNumericAttribute"] =
                 ["System.Single", "System.Double", "System.Decimal"]
         };
 
@@ -123,9 +111,9 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     private static readonly IReadOnlyDictionary<string, string[]> PrecisionWarningTypeMetadata =
         new Dictionary<string, string[]>
         {
-            ["Carrigan.SqlTools.Attributes.SqlFloatAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlFloatAttribute"] =
                 ["System.Single", "System.Decimal"],
-            ["Carrigan.SqlTools.Attributes.SqlDecimalAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlNumericAttribute"] =
                 ["System.Single", "System.Double"]
         };
 
@@ -144,48 +132,37 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     private static readonly IReadOnlyDictionary<string, string[]> SemanticWarningTypeMetadata =
         new Dictionary<string, string[]>
         {
-            ["Carrigan.SqlTools.Attributes.SqlDateTimeAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlTimestampAttribute"] =
                 ["System.DateOnly", "System.TimeOnly"],
-            ["Carrigan.SqlTools.Attributes.SqlDateTime2Attribute"] =
-                ["System.DateOnly", "System.TimeOnly"],
-            ["Carrigan.SqlTools.Attributes.SqlDateAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlDateAttribute"] =
                 ["System.DateTime"],
-            ["Carrigan.SqlTools.Attributes.SqlTimeAttribute"] =
+            ["Carrigan.SqlTools.Attributes.PostgreSqlTimeAttribute"] =
                 ["System.DateTime"],
 
-            ["Carrigan.SqlTools.Attributes.SqlVarCharAttribute"] = ["System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
-            ["Carrigan.SqlTools.Attributes.SqlVarCharMaxAttribute"] = ["System.Char", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"],
-            ["Carrigan.SqlTools.Attributes.SqlTextAttribute"] = ["System.Char", "System.Xml.Linq.XDocument", "System.Xml.XmlDocument"]
+            ["Carrigan.SqlTools.Attributes.PostgreSqlCharAttribute"] =
+                ["System.Xml.Linq.XDocument", "System.Xml.XmlDocument"]
         };
 
     /// <summary>
-    /// Attributes associated with SQL types that are marked obsolete by Microsoft.
-    /// SQL Server no longer recommends using <c>TEXT</c> and <c>IMAGE</c>.
+    /// Attributes associated with PostgreSQL types that are considered obsolete.
+    /// No PostgreSQL-specific SQL type attributes are currently classified as obsolete.
     /// </summary>
-    private static readonly string[] ObsoleteAttributeMetadataNames =
-    [
-        "Carrigan.SqlTools.Attributes.SqlTextAttribute",
-        "Carrigan.SqlTools.Attributes.SqlImageAttribute"
-    ];
+    private static readonly string[] ObsoleteAttributeMetadataNames = [];
 
     /// <summary>
-    /// Attributes associated with legacy SQL types with known structural limitations.
+    /// Attributes associated with PostgreSQL SQL types with known structural limitations or discouraged usage patterns.
     /// <para>
-    /// These types are still supported by SQL Server but have:
+    /// These types are still supported by PostgreSQL but have:
     /// </para>
     /// <list type="bullet">
     ///   <item><description>
-    ///   <c>MONEY</c> — fixed and limited scale; may truncate when applied to <c>decimal</c>.
-    ///   </description></item>
-    ///   <item><description>
-    ///   <c>DATETIME</c> — limited range (1753–9999) and coarse resolution (3.33ms).
+    ///   <c>MONEY</c> — fixed scale and formatting behavior; <c>NUMERIC</c> is usually safer for new schemas.
     ///   </description></item>
     /// </list>
     /// </summary>
     private static readonly string[] LegacyAttributeMetadataNames =
     [
-        "Carrigan.SqlTools.Attributes.SqlMoneyAttribute",
-        "Carrigan.SqlTools.Attributes.SqlDateTimeAttribute"
+        "Carrigan.SqlTools.Attributes.PostgreSqlMoneyAttribute"
     ];
 
     #endregion
@@ -195,7 +172,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     /// Reports an error when a SQL type attribute is applied to a type that is not
     /// allowed by the Carrigan.SqlTools mapping rules.
     /// </summary>
-    public const string TypeDiagnosticId = "CARRIGANSQL0001";
+    public const string TypeDiagnosticId = "CARRIGANSQL0011";
     /// <summary>
     /// Reports an error when a SQL type attribute is applied to a type that is not
     /// allowed by the Carrigan.SqlTools mapping rules.
@@ -213,7 +190,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     /// Reports a warning when a SQL type attribute may cause precision or scale loss
     /// when applied to a numeric type.
     /// </summary>
-    public const string PrecisionDiagnosticId = "CARRIGANSQL0002";
+    public const string PrecisionDiagnosticId = "CARRIGANSQL0012";
     /// <summary>
     /// Reports a warning when a SQL type attribute may cause precision or scale loss
     /// when applied to a numeric type.
@@ -231,7 +208,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     /// Reports a warning when a SQL type attribute is applied to a type whose
     /// semantics (date-only, time-only, full date time) does not match the SQL type.
     /// </summary>
-    public const string SemanticDiagnosticId = "CARRIGANSQL0003";
+    public const string SemanticDiagnosticId = "CARRIGANSQL0013";
     /// <summary>
     /// Reports a warning when a SQL type attribute is applied to a type whose
     /// semantics (date-only, time-only, full date time) does not match the SQL type.
@@ -246,40 +223,40 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
         description: "Warns when a type combination may cause semantic mismatches between SQL and .NET representations.");
 
     /// <summary>
-    /// Reports a warning when an attribute corresponding to a legacy SQL type is used.
+    /// Reports a warning when an attribute corresponding to a discouraged PostgreSQL SQL type is used.
     /// These types are supported but discouraged for new development.
     /// </summary>
-    public const string LegacyDiagnosticId = "CARRIGANSQL0004";
+    public const string LegacyDiagnosticId = "CARRIGANSQL0014";
     /// <summary>
-    /// Reports a warning when an attribute corresponding to a legacy SQL type is used.
+    /// Reports a warning when an attribute corresponding to a discouraged PostgreSQL SQL type is used.
     /// These types are supported but discouraged for new development.
     /// </summary>
     private static readonly DiagnosticDescriptor LegacyRule = new(
         id: LegacyDiagnosticId,
-        title: "Use of Attribute Associated with Legacy SQL Types DateTime and Money",
-        messageFormat: "Member '{0}' is marked with '{1}', which is associated with a legacy SQL type",
+        title: "Use of Attribute Associated with Discouraged PostgreSQL Type Money",
+        messageFormat: "Member '{0}' is marked with '{1}', which is associated with a discouraged PostgreSQL SQL type",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Checks and warns when an attribute associated with legacy SQL types is used.");
+        description: "Checks and warns when an attribute associated with discouraged PostgreSQL SQL types is used.");
 
     /// <summary>
-    /// Reports a warning when an attribute corresponding to an obsolete SQL type is used.
+    /// Reports a warning when an attribute corresponding to an obsolete PostgreSQL SQL type is used.
     /// These types should not be used in modern database schemas.
     /// </summary>
-    public const string ObsoleteDiagnosticId = "CARRIGANSQL0005";
+    public const string ObsoleteDiagnosticId = "CARRIGANSQL0015";
     /// <summary>
-    /// Reports a warning when an attribute corresponding to an obsolete SQL type is used.
+    /// Reports a warning when an attribute corresponding to an obsolete PostgreSQL SQL type is used.
     /// These types should not be used in modern database schemas.
     /// </summary>
     private static readonly DiagnosticDescriptor ObsoleteRule = new(
         id: ObsoleteDiagnosticId,
-        title: "Use of Attribute Associated with Obsolete SQL Types",
-        messageFormat: "Member '{0}' is marked with '{1}', which is associated with an obsolete SQL type",
+        title: "Use of Attribute Associated with Obsolete PostgreSQL Types",
+        messageFormat: "Member '{0}' is marked with '{1}', which is associated with an obsolete PostgreSQL SQL type",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Checks and warns when an attribute associated with obsolete SQL types is used.");
+        description: "Checks and warns when an attribute associated with obsolete PostgreSQL SQL types is used.");
 
     #endregion
 
@@ -429,6 +406,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     {
         IPropertySymbol propertySymbol = (IPropertySymbol)context.Symbol;
         ITypeSymbol propertyType = GetUnderlyingPropertyType(propertySymbol.Type);
+        string propertyTypeDisplay = propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
         foreach (AttributeData attribute in propertySymbol.GetAttributes())
         {
@@ -452,7 +430,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
                                 attributeLocation,
                                 propertySymbol.Name,
                                 attributeClass.Name,
-                                propertyType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                                propertyTypeDisplay
                             )
                         );
                     }
@@ -472,7 +450,7 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
                                 attributeLocation,
                                 propertySymbol.Name,
                                 attributeClass.Name,
-                                propertyType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                                propertyTypeDisplay
                             )
                         );
                     }
@@ -492,13 +470,13 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
                                 attributeLocation,
                                 propertySymbol.Name,
                                 attributeClass.Name,
-                                propertyType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)
+                                propertyTypeDisplay
                             )
                         );
                     }
                 }
 
-                // Obsolete attribute usage
+                // Discouraged attribute usage
                 if (legacyAttributeMappings.Contains(attributeClass))
                 {
                     context.ReportDiagnostic
@@ -532,11 +510,16 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
     }
 
     /// <summary>
-    /// Extracts the underlying CLR type of <c>Nullable&lt;T&gt;</c> so comparisons use
-    /// the non-nullable T.
+    /// Extracts the underlying CLR type of PostgreSQL array element types and <c>Nullable&lt;T&gt;</c>
+    /// so comparisons use the scalar non-nullable T.
     /// </summary>
     private static ITypeSymbol GetUnderlyingPropertyType(ITypeSymbol typeSymbol)
     {
+        if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol && IsByteArray(arrayTypeSymbol) is false)
+        {
+            return GetUnderlyingPropertyType(arrayTypeSymbol.ElementType);
+        }
+
         if (typeSymbol is INamedTypeSymbol namedTypeSymbol &&
             namedTypeSymbol.IsGenericType &&
             namedTypeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
@@ -546,6 +529,13 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 
         return typeSymbol;
     }
+
+    /// <summary>
+    /// Determines whether an array symbol represents <see cref="byte"/>[], which is treated as a PostgreSQL <c>BYTEA</c>
+    /// value rather than a PostgreSQL array of scalar values.
+    /// </summary>
+    private static bool IsByteArray(IArrayTypeSymbol arrayTypeSymbol) =>
+        arrayTypeSymbol.Rank == 1 && arrayTypeSymbol.ElementType.SpecialType == SpecialType.System_Byte;
 
     /// <summary>
     /// Gets the appropriate <see cref="Location"/> for a diagnostic tied to an attribute.
