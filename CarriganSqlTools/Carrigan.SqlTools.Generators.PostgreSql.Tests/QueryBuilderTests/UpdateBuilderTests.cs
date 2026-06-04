@@ -15,7 +15,7 @@ public class UpdateBuilderTests
     private readonly SqlGenerator<JoinLeftTable> generator = new();
 
     [Fact]
-    public void UpdateBuilder_WithValuesUpdateColumnsFromAndPredicates_RendersExpectedSql()
+    public void UpdateBuilder_WithFromAndWhere()
     {
         JoinLeftTable values = new()
         {
@@ -34,16 +34,20 @@ public class UpdateBuilderTests
         };
 
         SqlQuery query = generator.Update(updateBuilder);
+        string expectedSql =
+            "UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Right\" "
+            + "WHERE ((\"Left\".\"RightId\" = \"Right\".\"Id\") AND (\"Right\".\"Id\" = $3))";
 
-        Assert.Equal("UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Right\" WHERE ((\"Left\".\"RightId\" = \"Right\".\"Id\") AND (\"Right\".\"Id\" = $3))", query.QueryText);
+        Assert.Equal(expectedSql, query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 3);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hello");
         SqlQueryTestHelper.AssertParameterValue(query, "$2", "World");
         SqlQueryTestHelper.AssertParameterValue(query, "$3", 3);
     }
+
     [Fact]
-    public void UpdateBuilder_WithValuesUpdateColumnsJoinsAndPredicates_RendersExpectedSql()
+    public void UpdateBuilder_WithFromJoinsAndWhere()
     {
         JoinLeftTable values = new()
         {
@@ -65,8 +69,12 @@ public class UpdateBuilderTests
         };
 
         SqlQuery query = generator.Update(updateBuilder);
+        string expectedSql =
+            "UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Right\" "
+            + "INNER JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\") "
+            + "WHERE ((\"Left\".\"RightId\" = \"Right\".\"Id\") AND (\"Right\".\"Id\" = $3))";
 
-        Assert.Equal("UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Right\" INNER JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\") WHERE ((\"Left\".\"RightId\" = \"Right\".\"Id\") AND (\"Right\".\"Id\" = $3))", query.QueryText);
+        Assert.Equal(expectedSql, query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 3);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hello");
