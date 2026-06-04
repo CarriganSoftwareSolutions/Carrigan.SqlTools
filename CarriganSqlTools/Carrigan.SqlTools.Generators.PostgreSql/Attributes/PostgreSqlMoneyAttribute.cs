@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Attributes;
 
@@ -8,6 +8,9 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class PostgreSqlMoneyAttribute : SqlTypeAttribute
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PostgreSqlMoneyAttribute"/> class.
+    /// </summary>
     public PostgreSqlMoneyAttribute() : base(PostgreSqlTypesProvider.AsMoney(false))
     { }
 }
