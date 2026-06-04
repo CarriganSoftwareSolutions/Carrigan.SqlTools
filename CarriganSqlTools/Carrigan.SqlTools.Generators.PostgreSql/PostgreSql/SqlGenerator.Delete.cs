@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
@@ -176,21 +177,41 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete<usingsT>(IEnumerable<TableTag>? usings, Joins<usingsT>? joins, Predicates? predicates) where usingsT : class
+    public SqlQuery Delete<joinsT>(IEnumerable<TableTag>? usings, Joins<joinsT> joins, Predicates? predicates) where joinsT : class
     {
-        if (joins.IsNotNullOrEmpty())
+        TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
+        if (usings.IsNotNullOrEmpty() && usings.Contains(Table))
         {
-            TableTag usingShouldContain = joins.TableTags.First();
-            usings ??= [usingShouldContain];
-            if (usings.DoesNotContain(usingShouldContain))
-                throw new InvalidTableException(usingShouldContain);
+            //TODO: we need a new exception type for this
+            throw new Exception($"Using should not contains the table type {Table} when deleting or updating {Table}.");
+        }
+        if(joins.IsNotNullOrEmpty() && (usings?.DoesNotContain(joinsOn) ?? true))
+        {
+            //TODO: we need a new exceptions type for this
+            throw new Exception($"{nameof(usings)} does not contain table ${joinsOn} needed by joins in parameter {nameof(joins)}.");
         }
         return base.BaseDelete(usings, joins, predicates);
     }
 
-    public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery)  where usingsT : class =>
-        Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
+    public SqlQuery Delete(IEnumerable<TableTag>? usings, Predicates? predicates) 
+    {
+        if (usings.IsNotNullOrEmpty() && usings.Contains(Table))
+        {
+            //TODO: we need a new exception type for this
+            throw new Exception($"Using should not contains the table type {Table} when deleting or updating {Table}.");
+        }
+
+        return base.BaseDelete(usings, null, predicates);
+    }
+
+
+    public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery) where usingsT : class =>
+        deleteQuery.Joins is null
+            ? Delete(deleteQuery.Usings,  deleteQuery.Where)
+            : Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
 
     public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
-        Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
+        deleteQuery.Joins is null
+            ? Delete(deleteQuery.Usings, deleteQuery.Where)
+            : Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
 }

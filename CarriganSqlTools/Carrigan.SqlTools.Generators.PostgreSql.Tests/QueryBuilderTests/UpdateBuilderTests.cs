@@ -5,6 +5,7 @@ using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 using System.Data;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.QueryBuilderTests;
@@ -14,6 +15,34 @@ public class UpdateBuilderTests
     private readonly SqlGenerator<JoinLeftTable> generator = new();
 
     [Fact]
+    public void UpdateBuilder_WithValuesUpdateColumnsFromAndPredicates_RendersExpectedSql()
+    {
+        JoinLeftTable values = new()
+        {
+            Col1 = "Hello",
+            Col2 = "World"
+        };
+        Predicates usingJoin = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
+        Predicates where = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter(3, "Id"));
+
+        UpdateBuilder<JoinLeftTable> updateBuilder = new()
+        {
+            Values = values,
+            UpdateColumns = new ColumnCollection<JoinLeftTable>(nameof(JoinLeftTable.Col1), nameof(JoinLeftTable.Col2)),
+            From = [TableTag.Get<JoinRightTable>()],
+            Where = new And(usingJoin, where)
+        };
+
+        SqlQuery query = generator.Update(updateBuilder);
+
+        Assert.Equal("UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Right\" WHERE ((\"Left\".\"RightId\" = \"Right\".\"Id\") AND (\"Right\".\"Id\" = $3))", query.QueryText);
+        Assert.Equal(CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hello");
+        SqlQueryTestHelper.AssertParameterValue(query, "$2", "World");
+        SqlQueryTestHelper.AssertParameterValue(query, "$3", 3);
+    }
+    [Fact]
     public void UpdateBuilder_WithValuesUpdateColumnsJoinsAndPredicates_RendersExpectedSql()
     {
         JoinLeftTable values = new()
@@ -21,21 +50,23 @@ public class UpdateBuilderTests
             Col1 = "Hello",
             Col2 = "World"
         };
-        Predicates joinId = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
-        Predicates predicateId = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter(3, "Id"));
-        Joins<JoinLeftTable> joins = new(new InnerJoin<JoinRightTable>(joinId));
+        Predicates usingJoin = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
+        Predicates where = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter(3, "Id"));
+        Predicates lastJoin = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
+        Joins<JoinRightTable> joins = new(new InnerJoin<JoinLastTable>(lastJoin));
 
-        UpdateBuilder<JoinLeftTable> updateBuilder = new()
+        UpdateBuilder<JoinLeftTable, JoinRightTable> updateBuilder = new()
         {
             Values = values,
             UpdateColumns = new ColumnCollection<JoinLeftTable>(nameof(JoinLeftTable.Col1), nameof(JoinLeftTable.Col2)),
+            From = [TableTag.Get<JoinRightTable>()],
             Joins = joins,
-            Where = predicateId
+            Where = new And(usingJoin, where)
         };
 
         SqlQuery query = generator.Update(updateBuilder);
 
-        Assert.Equal("UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Left\" INNER JOIN \"Right\" ON (\"Left\".\"RightId\" = \"Right\".\"Id\") WHERE (\"Right\".\"Id\" = $3)", query.QueryText);
+        Assert.Equal("UPDATE \"Left\" SET \"Col1\" = $1, \"Col2\" = $2 FROM \"Right\" INNER JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\") WHERE ((\"Left\".\"RightId\" = \"Right\".\"Id\") AND (\"Right\".\"Id\" = $3))", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 3);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hello");

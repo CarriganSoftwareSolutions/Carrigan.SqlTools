@@ -206,21 +206,25 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<ISqlFragment> GetFragments()
         {
             yield return new SqlFragmentText("DELETE");
-            if (joins.IsNotNullOrEmpty())
+            
+            if(usings.IsNullOrEmpty() && joins.IsNullOrEmpty())
             {
-                if (usings.IsNotNullOrEmpty())
-                    yield return new SqlFragmentText(" FROM ");
-                yield return ISqlFragment.Space;
+                yield return new SqlFragmentText(" FROM ");
                 yield return Table;
             }
-            if(usings.IsNotNullOrEmpty())
+            else if(usings.IsNotNullOrEmpty())
             {
+                yield return new SqlFragmentText(" FROM ");
+                yield return Table;
                 yield return new SqlFragmentText(" USING ");
                 foreach (ISqlFragment fragment in usings.JoinFragments(", "))
                     yield return fragment;
+
             }
             else
             {
+                yield return ISqlFragment.Space;
+                yield return Table;
                 yield return new SqlFragmentText(" FROM ");
                 yield return Table;
             }

@@ -26,7 +26,7 @@ public class DeleteBuilderTests
 
         SqlQuery query = generator.Delete(deleteBuilder);
 
-        Assert.Equal("DELETE USING \"Right\" WHERE (\"Right\".\"Id\" = $1)", query.QueryText);
+        Assert.Equal("DELETE FROM \"Left\" USING \"Right\" WHERE (\"Right\".\"Id\" = $1)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", 3);
@@ -49,7 +49,7 @@ public class DeleteBuilderTests
 
         SqlQuery query = generator.Delete(deleteBuilder);
 
-        Assert.Equal("DELETE FROM  \"Left\" USING \"Right\" INNER JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\") WHERE (\"Right\".\"Id\" = $1)", query.QueryText);
+        Assert.Equal("DELETE FROM \"Left\" USING \"Right\" INNER JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\") WHERE (\"Right\".\"Id\" = $1)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", 3);

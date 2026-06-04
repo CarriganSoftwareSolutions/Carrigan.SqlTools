@@ -320,9 +320,12 @@ public abstract partial class SqlGeneratorBase<T>
         {
             yield return new SqlFragmentText("UPDATE ");
             yield return Table;
+
             yield return new SqlFragmentText(" SET ");
+
             foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, useFullyQualifiedSets))
                 yield return fragment;
+
 
             if (from.IsNotNullOrEmpty())
             {

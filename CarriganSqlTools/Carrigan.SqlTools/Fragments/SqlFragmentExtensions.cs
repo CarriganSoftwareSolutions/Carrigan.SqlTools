@@ -106,7 +106,7 @@ internal static class SqlFragmentExtensions
     /// <param name="separator">The optional separator to insert between fragments.</param>
     /// <returns>An enumerable of <see cref="ISqlFragment"/> representing the joined fragments.</returns>
     internal static IEnumerable<ISqlFragment> JoinFragments(this IEnumerable<ISqlFragment> fragments, string separator) =>
-        separator.IsNotNullOrEmpty()
+        separator.IsNullOrEmpty()
             ? fragments.JoinFragments()
             : fragments.JoinFragments(new SqlFragmentText(separator));
             
