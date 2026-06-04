@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Interfaces;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -13,12 +13,16 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// <remarks>
 /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the DELETE USING clause.
 /// </remarks>
-public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<T, joinsT>, IQueryBuilder 
+public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<T, joinsT>, IQueryBuilder
     where T : class
     where joinsT : class
 {
     private readonly SqlGenerator<T> SqlGenerator = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DeleteBuilder"/> class.
+    /// </summary>
+    /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public DeleteBuilder(IEncryption? encryption = null) =>
         SqlGenerator = new (encryption);
 
@@ -32,14 +36,16 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
     /// </summary>
     /// <param name="usings">The tables to include in the USING clause.</param>
     /// <returns>A new query instance with the specified USING tables.</returns>
-    /// <typeparam name="T">The model type being updated.</typeparam>
-    /// <typeparam name="joinsT">The model type used as the starting point for the join collection. This type should represent one of the source tables in the USING clause.</typeparam>
     /// <remarks>
     /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the DELETE USING clause.
     /// </remarks>
     public DeleteBuilder<T, joinsT> WithUsings(IEnumerable<TableTag>? usings) =>
         this with { Usings = usings };
 
+    /// <summary>
+    /// Builds a SQL query from the current builder state.
+    /// </summary>
+    /// <returns>The result of the AsSqlQuery operation.</returns>
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Delete(this);
 }
@@ -61,6 +67,10 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
 
     private readonly SqlGenerator<T> SqlGenerator = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DeleteBuilder"/> class.
+    /// </summary>
+    /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public DeleteBuilder(IEncryption? encryption = null) =>
         SqlGenerator = new(encryption);
 
@@ -71,16 +81,28 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
 
     [Obsolete(JoinsNotSupportedMessage, true)]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
+    /// <summary>
+    /// Gets the Joins value.
+    /// </summary>
     public override Joins<T>? Joins { get; set; }
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
 
     [Obsolete(JoinsNotSupportedMessage, true)]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
+    /// <summary>
+    /// Executes the WithJoins operation.
+    /// </summary>
+    /// <param name="joins">The SQL joins used by the query.</param>
+    /// <returns>The result of the WithJoins operation.</returns>
     public override DeleteBuilder<T> WithJoins(Joins<T>? joins) =>
         this with { Joins = joins };
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
+    /// <summary>
+    /// Builds a SQL query from the current builder state.
+    /// </summary>
+    /// <returns>The result of the AsSqlQuery operation.</returns>
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Delete(this);
 }

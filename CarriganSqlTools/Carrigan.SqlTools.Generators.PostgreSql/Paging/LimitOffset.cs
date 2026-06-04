@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Paging;
+namespace Carrigan.SqlTools.Paging;
 
 /// <summary>
 /// Represents a paging strategy that uses the LIMIT and OFFSET clauses, commonly supported by databases like PostgreSQL and MySQL.
@@ -10,13 +10,13 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT "Customer".* 
-/// FROM "Customer" 
-/// ORDER BY "Customer"."Id" ASC 
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// ORDER BY "Customer"."Id" ASC
 /// LIMIT 25 OFFSET 50
 /// ]]></code>
 /// </example>
-/// 
+///
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(25, 50);
@@ -25,15 +25,15 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT "Customer".* 
-/// FROM "Customer" 
-/// ORDER BY 
-///     "Customer"."Name" ASC, 
-///     "Customer"."Id" ASC 
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// ORDER BY
+///     "Customer"."Name" ASC,
+///     "Customer"."Id" ASC
 /// LIMIT 25 OFFSET 50
 /// ]]></code>
 /// </example>
-/// 
+///
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(25, 50);
@@ -42,29 +42,29 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT "Customer".* 
-/// FROM "Customer" 
-/// ORDER BY 
-///     "Customer"."Name" DESC, 
-///     "Customer"."Id" ASC 
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// ORDER BY
+///     "Customer"."Name" DESC,
+///     "Customer"."Id" ASC
 /// LIMIT 25 OFFSET 50
 /// ]]></code>
 /// </example>
-/// 
+///
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(25, 0);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset); 
+/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, limitOffset);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT "Customer".* 
-/// FROM "Customer" 
-/// ORDER BY "Customer"."Id" ASC 
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// ORDER BY "Customer"."Id" ASC
 /// LIMIT 25
 /// ]]></code>
 /// </example>
-/// 
+///
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// LimitOffset limitOffset = new(1, 50);
@@ -72,9 +72,9 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT "Customer".* 
-/// FROM "Customer" 
-/// ORDER BY "Customer"."Id" 
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// ORDER BY "Customer"."Id"
 /// ASC LIMIT 1 OFFSET 50
 /// ]]></code>
 /// </example>

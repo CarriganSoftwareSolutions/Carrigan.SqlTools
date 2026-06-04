@@ -1,21 +1,35 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.OrderByClause;
 
+/// <summary>
+/// Represents the <see cref="OrderBys"/> component.
+/// </summary>
 public class OrderBys : OrderBysBase
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrderBys"/> class.
+    /// </summary>
     public OrderBys() : base()
     {
     }
 
-    //public OrderBys(OrderByBase orderByItemBase) : base (orderByItemBase)
-    //{
-    //}
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrderBys"/> class.
+    /// </summary>
+    /// <param name="_orderByItems">The _orderByItems value.</param>
     public OrderBys(params IEnumerable<OrderByBase> _orderByItems) : base(_orderByItems)
     {
     }
 
+    /// <summary>
+    /// Creates a new collection with the supplied item appended.
+    /// </summary>
+    /// <param name="orderByItem">The ORDER BY item to append.</param>
+    /// <returns>The result of the Append operation.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public override OrderBys Append(OrderByBase orderByItem)
     {
         ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
@@ -23,12 +37,34 @@ public class OrderBys : OrderBysBase
         return new OrderBys(_orderByItems.Append(orderByItem));
     }
 
+    /// <summary>
+    /// Executes the <c>Append&lt;T&gt;</c> operation.
+    /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
+    /// <param name="sortDirection">The SQL sort direction.</param>
+    /// <returns>The result of the <c>Append&lt;T&gt;</c> operation.</returns>
     public override OrderBys Append<T>(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) =>
         new(_orderByItems.Append(new OrderBy<T>(propertyName, sortDirection)));
 
+    /// <summary>
+    /// Executes the <c>Append&lt;T&gt;</c> operation.
+    /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
+    /// <param name="sortDirection">The SQL sort direction.</param>
+    /// <returns>The result of the <c>Append&lt;T&gt;</c> operation.</returns>
     public override OrderBys Append<T>(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) =>
         Append<T>(new PropertyName(propertyName), sortDirection);
 
+    /// <summary>
+    /// Creates a new collection with the supplied items appended.
+    /// </summary>
+    /// <param name="orderByItems">The ORDER BY items to append.</param>
+    /// <returns>The result of the Concat operation.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public override OrderBys Concat(params IEnumerable<OrderByBase> orderByItems)
     {
         ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
@@ -70,6 +106,7 @@ public class OrderBys : OrderBysBase
     /// </exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the resolved column metadata does not contain exactly one match.
+    /// </exception>
     public static OrderBys New<T>(PropertyName propertyName, SortDirectionEnum sortDirection) where T : class =>
         new (new OrderBy<T>(propertyName, sortDirection));
 

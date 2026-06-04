@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Dialects;
+namespace Carrigan.SqlTools.Dialects;
 
 internal static class DialectStatics
 {

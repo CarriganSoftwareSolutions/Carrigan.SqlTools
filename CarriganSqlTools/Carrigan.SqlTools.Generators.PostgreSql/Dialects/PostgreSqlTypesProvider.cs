@@ -1,4 +1,4 @@
-﻿// IGNORE SPELLING: bigint, bool, bytea, char, jsonb, numeric, timestamptz, uuid, varchar, varbit, xml, nullability
+// IGNORE SPELLING: bigint, bool, bytea, char, jsonb, numeric, timestamptz, uuid, varchar, varbit, xml, nullability
 
 using Carrigan.SqlTools.Types;
 using System.Reflection.Metadata;
@@ -12,17 +12,81 @@ namespace Carrigan.SqlTools.Dialects;
 /// </summary>
 public static class PostgreSqlTypesProvider
 {
+    /// <summary>
+    /// The maximum allowed length for character types (CHAR, VARCHAR, TEXT)
+    /// </summary>
     private const int LIMIT_FOR_CHARACTER_LENGTH = 10_485_760;
+    /// <summary>
+    /// The maximum allowed length for bit types (BIT, VARBIT)
+    /// </summary>
     private const int LIMIT_FOR_BIT_LENGTH = 10_485_760;
+    /// <summary>
+    /// The default nullability for PostgreSQL types when not explicitly specified.
+    /// </summary>
     private const bool DEFAULT_IS_NULLABLE = false;
+    /// <summary>
+    /// The maximum allowed precision for numeric types (NUMERIC, DECIMAL).
+    /// </summary>
     private const byte LIMIT_FOR_NUMERIC_PRECISION = 255;
+    /// <summary>
+    /// The maximum allowed precision for fractional seconds in time-related types (TIME, TIMESTAMP).
+    /// </summary>
     private const byte LIMIT_FOR_FRACTIONAL_SECONDS_PRECISION = 6;
+    /// <summary>
+    /// The minimum allowed precision for floating-point types (FLOAT). 
+    /// </summary>
     private const byte LIMIT_FOR_FLOAT_MIN_PRECISION = 1;
+    /// <summary>
+    /// The maximum allowed precision for floating-point types (FLOAT). 
+    /// </summary>
     private const byte LIMIT_FOR_FLOAT_MAX_PRECISION = 53;
+    /// <summary>
+    /// The minimum allowed number of dimensions for vector types (VECTOR).
+    /// </summary>
     private const int LIMIT_FOR_VECTOR_MIN_DIMENSIONS = 1;
 
     #region Helper Methods
 
+    /// <summary>
+    /// Centralized factory method for creating <see cref="FieldProperties"/> instances with validation.
+    /// </summary>
+    /// <param name="providerTypeName">
+    /// The PostgreSQL provider type name (e.g., "VARCHAR", "NUMERIC"). This is required and must not be null or whitespace.
+    /// </param>
+    /// <param name="length">
+    /// The length to apply for applicable types (e.g., character types). Must be greater than zero when specified, and is validated according to PostgreSQL limits.
+    /// </param>
+    /// <param name="isMax">
+    /// Indicates whether the type should use the maximum length allowed by PostgreSQL (e.g., TEXT, BYTEA). This is mutually exclusive with a specified length.
+    /// </param>
+    /// <param name="isUnicode">
+    /// Indicates whether the type should be treated as Unicode. This is typically true for character types and false for binary types, but can be specified explicitly.
+    /// </param>
+    /// <param name="isFixedLength">
+    /// Indicates whether the type should be treated as fixed-length (e.g., CHAR) or variable-length (e.g., VARCHAR). 
+    /// This is typically true for CHAR and false for VARCHAR and TEXT, but can be specified explicitly.
+    /// </param>
+    /// <param name="precision">
+    /// The precision to apply for applicable types (e.g., NUMERIC, FLOAT). Must be greater than zero when specified, and is validated according to PostgreSQL limits.
+    /// </param>
+    /// <param name="scale">
+    /// The scale to apply for applicable types (e.g., NUMERIC, DECIMAL). Must be greater than zero when specified, and is validated according to PostgreSQL limits.
+    /// </param>
+    /// <param name="fractionalSecondsPrecision">
+    /// The precision for fractional seconds in time-related types (TIME, TIMESTAMP). Must be greater than zero when specified, and is validated according to PostgreSQL limits.
+    /// </param>
+    /// <param name="isArray">
+    /// Indicates whether the type should be treated as an array.
+    /// </param>
+    /// <param name="baseType">
+    /// The base type for the field.
+    /// </param>
+    /// <param name="nullable">
+    /// Indicates whether the field is nullable.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     private static FieldProperties Create
     (
         string providerTypeName,
@@ -67,6 +131,13 @@ public static class PostgreSqlTypesProvider
         };
     }
 
+    /// <summary>
+    /// Creates a <see cref="FieldProperties"/> instance based on the provided CLR type, with optional explicit nullability override.
+    /// </summary>
+    /// <param name="clrType">The CLR type for which to create field properties.</param>
+    /// <param name="nullable">Indicates whether the field is nullable.</param>
+    /// <returns>The created <see cref="FieldProperties"/> instance.</returns>
+    /// <exception cref="ArgumentException">Thrown when the provided CLR type is not supported.</exception>
     private static FieldProperties Create(Type clrType, bool? nullable = null)
     {
         ArgumentNullException.ThrowIfNull(clrType);
@@ -88,6 +159,13 @@ public static class PostgreSqlTypesProvider
         return CreateFromClrType(type, false, effectiveNullable);
     }
 
+    /// <summary>
+    /// Helper method to create <see cref="FieldProperties"/> from a CLR type, with explicit array and nullability information.
+    /// </summary>
+    /// <param name="type">The CLR type for which to create field properties.</param>
+    /// <param name="isArray">Indicates whether the field is an array.</param>
+    /// <param name="nullable">Indicates whether the field is nullable.</param>
+    /// <returns>The created <see cref="FieldProperties"/> instance.</returns>
     private static FieldProperties CreateFromClrType(Type type, bool isArray, bool? nullable)
     {
         if (type == typeof(Guid)) return AsUuid(isArray, nullable);
@@ -124,6 +202,18 @@ public static class PostgreSqlTypesProvider
         return AsText(isArray, nullable);
     }
 
+    /// <summary>
+    /// Validates that a nullable integer value falls within a specified range, with an option to allow null values.
+    /// </summary>
+    /// <param name="value">
+    /// The nullable integer value to validate. If <paramref name="allowNullValue"/> is <see langword="true"/>, this can be <see langword="null"/>; otherwise,
+    /// it must have a value within the specified range.
+    /// </param>
+    /// <param name="allowNullValue">Indicates whether null values are allowed.</param>
+    /// <param name="minValue">The minimum allowed value.</param>
+    /// <param name="maxValue">The maximum allowed value.</param>
+    /// <param name="parameterName">The name of the parameter being validated.</param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     private static void ValidateRange(int? value, bool allowNullValue, int minValue, int maxValue, string parameterName)
     {
         if (value is null)
@@ -137,12 +227,33 @@ public static class PostgreSqlTypesProvider
         }
     }
 
+    /// <summary>
+    /// Validates that a nullable byte value falls within a specified range, with an option to allow null values.
+    /// </summary>
+    /// <param name="length">
+    /// The nullable byte value to validate. If <paramref name="allowNullValue"/> is <see langword="true"/>, this can be <see langword="null"/>; otherwise,
+    /// it must have a value within the specified range.
+    /// </param>
     private static void ValidateCharacterLength(int? length) =>
         ValidateRange(length, true, 1, LIMIT_FOR_CHARACTER_LENGTH, nameof(length));
 
+    /// <summary>
+    /// Validates that a nullable integer value for bit length falls within the allowed range for PostgreSQL bit types.
+    /// </summary>
+    /// <param name="length">
+    /// The nullable integer value representing the bit length to validate. If this value is specified (i.e., not null), it must be greater than zero and less
+    /// than or equal to the defined limit for bit length.
+    /// </param>
     private static void ValidateBitLength(int length) =>
         ValidateRange(length, false, 1, LIMIT_FOR_BIT_LENGTH, nameof(length));
 
+    /// <summary>
+    /// Validates that a nullable byte value for precision falls within the allowed range for PostgreSQL numeric types.
+    /// </summary>
+    /// <param name="precision">
+    /// The nullable byte value representing the precision to validate. If this value is specified (i.e., not null), it must be greater than zero and less
+    /// than or equal to the defined limit for numeric precision.
+    /// </param>
     private static void ValidatePrecision(byte precision) =>
         ValidateRange(precision, false, 1, LIMIT_FOR_NUMERIC_PRECISION, nameof(precision));
 
@@ -154,12 +265,35 @@ public static class PostgreSqlTypesProvider
             throw new ArgumentOutOfRangeException(nameof(scale), scale, "Scale cannot be greater than precision.");
     }
 
+    /// <summary>
+    /// Validates that a nullable byte value for fractional seconds precision falls within the allowed range for PostgreSQL time-related types.
+    /// </summary>
+    /// <param name="fractionalSecondsPrecision">
+    /// The nullable byte value representing the fractional seconds precision to validate. If this value is specified (i.e., not null), it must be greater than
+    /// or equal to zero and less than or equal to the defined limit for fractional seconds precision.
+    /// </param>
     private static void ValidateFractionalSecondsPrecision(byte fractionalSecondsPrecision) =>
         ValidateRange(fractionalSecondsPrecision, false, 0, LIMIT_FOR_FRACTIONAL_SECONDS_PRECISION, nameof(fractionalSecondsPrecision));
 
+    /// <summary>
+    /// Validates that a nullable byte value for floating-point precision falls within the allowed range for PostgreSQL floating-point types.
+    /// </summary>
+    /// <param name="precision">
+    /// The nullable byte value representing the floating-point precision to validate. If this value is specified (i.e., not null), it must be greater than or equal to
+    /// the defined minimum limit for float precision and less than or equal to the defined maximum limit for float precision.
+    /// </param>
     private static void ValidateFloatPrecision(byte? precision) =>
         ValidateRange(precision, true, LIMIT_FOR_FLOAT_MIN_PRECISION, LIMIT_FOR_FLOAT_MAX_PRECISION, nameof(precision));
 
+    /// <summary>
+    /// Validates that an integer value for vector dimensions is greater than or equal to the defined minimum limit for vector dimensions.
+    /// </summary>
+    /// <param name="dimensions">
+    /// The integer value representing the vector dimensions to validate. It must be greater than or equal to the defined minimum limit for vector dimensions.
+    /// </param>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the provided dimensions value is less than the defined minimum limit for vector dimensions.
+    /// </exception>
     private static void ValidateVectorDimensions(int dimensions)
     {
         if (dimensions < LIMIT_FOR_VECTOR_MIN_DIMENSIONS)
@@ -168,9 +302,41 @@ public static class PostgreSqlTypesProvider
         }
     }
 
+    /// <summary>
+    /// Creates a <see cref="FieldProperties"/> instance for a numeric type (NUMERIC) with optional array and nullability settings.
+    /// </summary>
+    /// <param name="isArray">
+    /// Indicates whether the type should be treated as an array. If <see langword="true"/>, the resulting <see cref="FieldProperties"/> will indicate that it 
+    /// represents an array of NUMERIC types; if <see langword="false"/>, it will represent a single NUMERIC type.
+    /// </param>
+    /// <param name="nullable">
+    /// The explicit SQL nullability override. If set to <see langword="true"/>, the resulting <see cref="FieldProperties"/> will indicate that the type is nullable;
+    /// if set to <see langword="false"/>, it will indicate that the type is not nullable; if set to <c>null</c>, the default nullability will be applied (which is 
+    /// defined as non-nullable in this provider).
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance representing the PostgreSQL NUMERIC type, configured according to the specified array and nullability settings.
+    /// </returns>
     private static FieldProperties CreateNumericType(bool isArray, bool? nullable) =>
         Create("NUMERIC", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Creates a <see cref="FieldProperties"/> instance for a numeric type (NUMERIC) with specified precision and optional array and nullability settings.
+    /// </summary>
+    /// <param name="precision">
+    /// The SQL precision to apply for the NUMERIC type. This value must be greater than zero and less than or equal to the defined limit for numeric precision.
+    /// </param>
+    /// <param name="isArray">
+    /// Indicates whether the type should be treated as an array. If <see langword="true"/>, the resulting <see cref="FieldProperties"/> will indicate that it 
+    /// represents an array of NUMERIC types; if <see langword="false"/>, it will represent a single NUMERIC type.
+    /// </param>
+    /// <param name="nullable">
+    /// The explicit SQL nullability override. If set to <see langword="true"/>, the resulting <see cref="FieldProperties"/> will indicate that the type is nullable;
+    /// if set to <see langword="false"/>, it will indicate that the type is not nullable; if set to <c>null</c>, the default nullability will be applied.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance representing the PostgreSQL NUMERIC type, configured according to the specified array and nullability settings.
+    /// </returns>
     private static FieldProperties CreateNumericType(byte precision, bool isArray, bool? nullable)
     {
         ValidatePrecision(precision);
@@ -182,6 +348,27 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+
+    /// <summary>
+    /// Creates a <see cref="FieldProperties"/> instance for a numeric type (NUMERIC) with specified precision and scale, along with optional array and nullability settings.
+    /// </summary>
+    /// <param name="precision">
+    /// The SQL precision to apply for the NUMERIC type. This value must be greater than zero and less than or equal to the defined limit for numeric precision.
+    /// </param>
+    /// <param name="scale">
+    /// The SQL scale to apply for the NUMERIC type. This value must be greater than or equal to zero and less than or equal to the specified precision.
+    /// </param>
+    /// <param name="isArray">
+    /// Indicates whether the type should be treated as an array. If <see langword="true"/>, the resulting <see cref="FieldProperties"/> will indicate that it 
+    /// represents an array of NUMERIC types; if <see langword="false"/>, it will represent a single NUMERIC type.
+    /// </param>
+    /// <param name="nullable">
+    /// The explicit SQL nullability override. If set to <see langword="true"/>, the resulting <see cref="FieldProperties"/> will indicate that the type is nullable;
+    /// if set to <see langword="false"/>, it will indicate that the type is not nullable; if set to <c>null</c>, the default nullability will be applied.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance representing the PostgreSQL NUMERIC type, configured according to the specified array and nullability settings.
+    /// </returns>
     private static FieldProperties CreateNumericType(byte precision, byte scale, bool isArray, bool? nullable)
     {
         ValidatePrecisionAndScale(precision, scale);
@@ -198,6 +385,11 @@ public static class PostgreSqlTypesProvider
 
     #region CLR Types
 
+    /// <summary>
+    /// Executes the FromClrType operation.
+    /// </summary>
+    /// <param name="clrType">The clrType value.</param>
+    /// <returns>The result of the FromClrType operation.</returns>
     public static FieldProperties FromClrType(Type clrType) =>
         Create(clrType);
 
@@ -230,6 +422,12 @@ public static class PostgreSqlTypesProvider
 
     #region UUID
 
+    /// <summary>
+    /// Executes the AsUuid operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsUuid operation.</returns>
     public static FieldProperties AsUuid(bool isArray, bool? nullable = null) =>
         Create("UUID", isArray: isArray, nullable: nullable);
 
@@ -237,6 +435,13 @@ public static class PostgreSqlTypesProvider
 
     #region Character Types
 
+    /// <summary>
+    /// Executes the AsChar operation.
+    /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsChar operation.</returns>
     public static FieldProperties AsChar(int? length, bool isArray, bool? nullable = null)
     {
         ValidateCharacterLength(length);
@@ -250,6 +455,13 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsVarChar operation.
+    /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsVarChar operation.</returns>
     public static FieldProperties AsVarChar(int? length, bool isArray, bool? nullable = null)
     {
         ValidateCharacterLength(length);
@@ -263,6 +475,12 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsText operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsText operation.</returns>
     public static FieldProperties AsText(bool isArray, bool? nullable = null) =>
         Create(
             providerTypeName: "TEXT",
@@ -276,6 +494,12 @@ public static class PostgreSqlTypesProvider
 
     #region Binary
 
+    /// <summary>
+    /// Executes the AsBytea operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsBytea operation.</returns>
     public static FieldProperties AsBytea(bool isArray, bool? nullable = null) =>
         Create(
             providerTypeName: "BYTEA",
@@ -288,6 +512,12 @@ public static class PostgreSqlTypesProvider
 
     #region Boolean
 
+    /// <summary>
+    /// Executes the AsBoolean operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsBoolean operation.</returns>
     public static FieldProperties AsBoolean(bool isArray, bool? nullable = null) =>
         Create("BOOLEAN", isArray: isArray, nullable: nullable);
 
@@ -295,12 +525,30 @@ public static class PostgreSqlTypesProvider
 
     #region Integers
 
+    /// <summary>
+    /// Executes the AsSmallInt operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsSmallInt operation.</returns>
     public static FieldProperties AsSmallInt(bool isArray, bool? nullable = null) =>
         Create("SMALLINT", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsInteger operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsInteger operation.</returns>
     public static FieldProperties AsInteger(bool isArray, bool? nullable = null) =>
         Create("INTEGER", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsBigInt operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsBigInt operation.</returns>
     public static FieldProperties AsBigInt(bool isArray, bool? nullable = null) =>
         Create("BIGINT", isArray: isArray, nullable: nullable);
 
@@ -308,12 +556,31 @@ public static class PostgreSqlTypesProvider
 
     #region Floating Points
 
+    /// <summary>
+    /// Executes the AsReal operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsReal operation.</returns>
     public static FieldProperties AsReal(bool isArray, bool? nullable = null) =>
         Create("REAL", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsDoublePrecision operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsDoublePrecision operation.</returns>
     public static FieldProperties AsDoublePrecision(bool isArray, bool? nullable = null) =>
         Create("DOUBLE PRECISION", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsFloat operation.
+    /// </summary>
+    /// <param name="precision">The SQL precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsFloat operation.</returns>
     public static FieldProperties AsFloat(byte? precision, bool isArray, bool? nullable = null)
     {
         ValidateFloatPrecision(precision);
@@ -329,15 +596,42 @@ public static class PostgreSqlTypesProvider
 
     #region Numeric
 
+    /// <summary>
+    /// Executes the AsNumeric operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsNumeric operation.</returns>
     public static FieldProperties AsNumeric(bool isArray, bool? nullable = null) =>
         CreateNumericType(isArray, nullable);
 
+    /// <summary>
+    /// Executes the AsNumeric operation.
+    /// </summary>
+    /// <param name="precision">The SQL precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsNumeric operation.</returns>
     public static FieldProperties AsNumeric(byte precision, bool isArray, bool? nullable = null) =>
         CreateNumericType(precision, isArray, nullable);
 
+    /// <summary>
+    /// Executes the AsNumeric operation.
+    /// </summary>
+    /// <param name="precision">The SQL precision to apply.</param>
+    /// <param name="scale">The SQL scale to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsNumeric operation.</returns>
     public static FieldProperties AsNumeric(byte precision, byte scale, bool isArray, bool? nullable = null) =>
         CreateNumericType(precision, scale, isArray, nullable);
 
+    /// <summary>
+    /// Executes the AsMoney operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsMoney operation.</returns>
     public static FieldProperties AsMoney(bool isArray, bool? nullable = null) =>
         Create("MONEY", isArray: isArray, nullable: nullable);
 
@@ -345,12 +639,31 @@ public static class PostgreSqlTypesProvider
 
     #region Date/Time
 
+    /// <summary>
+    /// Executes the AsDate operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsDate operation.</returns>
     public static FieldProperties AsDate(bool isArray, bool? nullable = null) =>
         Create("DATE", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsTime operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTime operation.</returns>
     public static FieldProperties AsTime(bool isArray, bool? nullable = null) =>
         Create("TIME", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsTime operation.
+    /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTime operation.</returns>
     public static FieldProperties AsTime(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -362,9 +675,22 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsTimeWithoutTimeZone operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimeWithoutTimeZone operation.</returns>
     public static FieldProperties AsTimeWithoutTimeZone(bool isArray, bool? nullable = null) =>
         Create("TIME WITHOUT TIME ZONE", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsTimeWithoutTimeZone operation.
+    /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimeWithoutTimeZone operation.</returns>
     public static FieldProperties AsTimeWithoutTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -376,9 +702,22 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsTimeWithTimeZone operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimeWithTimeZone operation.</returns>
     public static FieldProperties AsTimeWithTimeZone(bool isArray, bool? nullable = null) =>
         Create("TIME WITH TIME ZONE", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsTimeWithTimeZone operation.
+    /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimeWithTimeZone operation.</returns>
     public static FieldProperties AsTimeWithTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -390,9 +729,22 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsTimestamp operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimestamp operation.</returns>
     public static FieldProperties AsTimestamp(bool isArray, bool? nullable = null) =>
         Create("TIMESTAMP", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsTimestamp operation.
+    /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimestamp operation.</returns>
     public static FieldProperties AsTimestamp(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -404,9 +756,22 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsTimestampWithoutTimeZone operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimestampWithoutTimeZone operation.</returns>
     public static FieldProperties AsTimestampWithoutTimeZone(bool isArray, bool? nullable = null) =>
         Create("TIMESTAMP WITHOUT TIME ZONE", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsTimestampWithoutTimeZone operation.
+    /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimestampWithoutTimeZone operation.</returns>
     public static FieldProperties AsTimestampWithoutTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -418,9 +783,22 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsTimestampWithTimeZone operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimestampWithTimeZone operation.</returns>
     public static FieldProperties AsTimestampWithTimeZone(bool isArray, bool? nullable = null) =>
         Create("TIMESTAMP WITH TIME ZONE", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsTimestampWithTimeZone operation.
+    /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsTimestampWithTimeZone operation.</returns>
     public static FieldProperties AsTimestampWithTimeZone(byte fractionalSecondsPrecision, bool isArray, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -432,6 +810,12 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsInterval operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsInterval operation.</returns>
     public static FieldProperties AsInterval(bool isArray, bool? nullable = null) =>
         Create("INTERVAL", isArray: isArray, nullable: nullable);
 
@@ -439,12 +823,30 @@ public static class PostgreSqlTypesProvider
 
     #region XML/JSON
 
+    /// <summary>
+    /// Executes the AsXml operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsXml operation.</returns>
     public static FieldProperties AsXml(bool isArray, bool? nullable = null) =>
         Create("XML", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsJson operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsJson operation.</returns>
     public static FieldProperties AsJson(bool isArray, bool? nullable = null) =>
         Create("JSON", isArray: isArray, nullable: nullable);
 
+    /// <summary>
+    /// Executes the AsJsonB operation.
+    /// </summary>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsJsonB operation.</returns>
     public static FieldProperties AsJsonB(bool isArray, bool? nullable = null) =>
         Create("JSONB", isArray: isArray, nullable: nullable);
 
@@ -452,6 +854,13 @@ public static class PostgreSqlTypesProvider
 
     #region Bit Strings
 
+    /// <summary>
+    /// Executes the AsBit operation.
+    /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsBit operation.</returns>
     public static FieldProperties AsBit(int length, bool isArray, bool? nullable = null)
     {
         ValidateBitLength(length);
@@ -464,6 +873,13 @@ public static class PostgreSqlTypesProvider
             nullable: nullable);
     }
 
+    /// <summary>
+    /// Executes the AsVarBit operation.
+    /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsVarBit operation.</returns>
     public static FieldProperties AsVarBit(int length, bool isArray, bool? nullable = null)
     {
         ValidateBitLength(length);
@@ -480,6 +896,13 @@ public static class PostgreSqlTypesProvider
 
     #region Vector
 
+    /// <summary>
+    /// Executes the AsVector operation.
+    /// </summary>
+    /// <param name="dimensions">The vector dimension count.</param>
+    /// <param name="isArray">The isArray value.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsVector operation.</returns>
     public static FieldProperties AsVector(int dimensions, bool isArray, bool? nullable = null)
     {
         ValidateVectorDimensions(dimensions);
@@ -494,12 +917,23 @@ public static class PostgreSqlTypesProvider
     #endregion
 
     #region Unknown
+    /// <summary>
+    /// Executes the AsUnknown operation.
+    /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsUnknown operation.</returns>
     public static FieldProperties AsUnknown(bool? nullable) =>
         Create("UNKNOWN", nullable: nullable);
     #endregion
 
     #region Provider Specific
 
+    /// <summary>
+    /// Executes the AsProviderSpecific operation.
+    /// </summary>
+    /// <param name="providerTypeName">The provider-specific SQL type name.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
+    /// <returns>The result of the AsProviderSpecific operation.</returns>
     public static FieldProperties AsProviderSpecific(string providerTypeName, bool? nullable = null) =>
         Create(providerTypeName, nullable: nullable);
 

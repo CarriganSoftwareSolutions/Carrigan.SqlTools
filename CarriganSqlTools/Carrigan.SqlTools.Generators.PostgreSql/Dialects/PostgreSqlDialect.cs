@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Paging;
@@ -7,8 +7,6 @@ using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;
-
-//IGNORE SPELLING: Npgsql
 
 namespace Carrigan.SqlTools.Dialects;
 
@@ -21,6 +19,10 @@ public class PostgreSqlDialect : ISqlDialects
     /// Encloses the specified identifier in PostgreSQL double quotes.
     /// Embedded double quotes are escaped by doubling them.
     /// </summary>
+    /// <param name="identifier">The identifier value.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public string QuoteIdentifier(string identifier)
     {
         ArgumentNullException.ThrowIfNull(identifier);
@@ -42,6 +44,8 @@ public class PostgreSqlDialect : ISqlDialects
     /// Generates a string representation of the specified PostgreSQL table,
     /// optionally qualified by schema.
     /// </summary>
+    /// <param name="schemaName">The SQL schema name to apply.</param>
+    /// <param name="tableName">The SQL table name to apply.</param>
     public string RenderTable(SchemaName? schemaName, TableName tableName) =>
         schemaName.IsNotNullOrEmpty()
             ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(tableName)}"
@@ -50,6 +54,9 @@ public class PostgreSqlDialect : ISqlDialects
     /// <summary>
     /// Renders the fully qualified PostgreSQL column name.
     /// </summary>
+    /// <param name="tableTag">The tableTag value.</param>
+    /// <param name="columnName">The SQL column name to apply.</param>
+    /// <param name="includeTable">The includeTable value.</param>
     public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
             ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName)}"
@@ -59,6 +66,13 @@ public class PostgreSqlDialect : ISqlDialects
     /// Generates SQL fragments for an INSERT statement that returns inserted values
     /// by appending PostgreSQL's RETURNING clause.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="insertIntoFragments">The insertIntoFragments value.</param>
+    /// <param name="insertValuesFragments">The insertValuesFragments value.</param>
+    /// <param name="columnInfo">The reflected column metadata for the model property.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public IEnumerable<ISqlFragment> GetInsertReturningFragments<T>(IEnumerable<ISqlFragment> insertIntoFragments, IEnumerable<ISqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo)
     {
         ArgumentNullException.ThrowIfNull(insertIntoFragments);
@@ -103,6 +117,7 @@ public class PostgreSqlDialect : ISqlDialects
     /// <summary>
     /// Generates a PostgreSQL LIMIT/OFFSET paging clause.
     /// </summary>
+    /// <param name="paging">The paging fragment to include in the query.</param>
     public ISqlFragment RenderPaging(PagingBase paging) =>
         new SqlFragmentText
         (
@@ -119,18 +134,25 @@ public class PostgreSqlDialect : ISqlDialects
     /// Renders PostgreSQL's native positional parameter name.
     /// PostgreSQL/Npgsql positional parameters are 1-origin: $1, $2, $3, etc.
     /// </summary>
+    /// <param name="baseParameterName">The baseParameterName value.</param>
+    /// <param name="parameterIndex">The parameterIndex value.</param>
     public string RenderFinalParameterName(string baseParameterName, int parameterIndex) =>
         $"${parameterIndex}";
 
     /// <summary>
     /// Returns the default PostgreSQL field properties for a CLR type.
     /// </summary>
+    /// <param name="type">The type value.</param>
     public FieldProperties GetDefaultFieldPropertiesByClrType(Type type) =>
         PostgreSqlTypesProvider.FromClrType(type);
 
     /// <summary>
     /// Generates the PostgreSQL declaration for a field based on the provided field properties.
     /// </summary>
+    /// <param name="fieldProperties">The SQL field properties that describe the value type.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public string RenderFieldProperties(FieldProperties fieldProperties)
     {
         ArgumentNullException.ThrowIfNull(fieldProperties);
@@ -213,6 +235,10 @@ public class PostgreSqlDialect : ISqlDialects
     /// <summary>
     /// Performs PostgreSQL parameter value conversions.
     /// </summary>
+    /// <param name="value">The parameter value.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when an argument is invalid for the requested SQL operation.
+    /// </exception>
     public object ValueConversion(object? value)
     {
         if (value == null)
@@ -237,6 +263,18 @@ public class PostgreSqlDialect : ISqlDialects
         }
     }
 
+    /// <summary>
+    /// Performs value conversions for array types to ensure compatibility with PostgreSQL's handling of array parameters.
+    /// </summary>
+    /// <param name="array">
+    /// The array value to convert.
+    /// </param>
+    /// <returns>
+    /// A converted array object with element types transformed as necessary for PostgreSQL compatibility.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when the provided array does not have a valid element type for conversion.
+    /// </exception>
     private object ArrayValueConversion(Array array)
     {
         Type elementType = array.GetType().GetElementType()
