@@ -1,5 +1,7 @@
-﻿using Carrigan.Core.Interfaces;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Clients.Core;
+using Carrigan.SqlTools.Clients.Core.Exceptions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
@@ -18,6 +20,9 @@ public static class Commands
     /// <param name="connectionString">The connection string.</param>
     /// <param name="friendlyName">A friendly name included in the exception message when a connection cannot be established.</param>
     /// <exception cref="ConnectionFailedException">Thrown if a connection cannot be established.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public static void TestConnectionString(string connectionString, string friendlyName)
     {
         ArgumentNullException.ThrowIfNull(connectionString);
@@ -54,6 +59,9 @@ public static class Commands
     /// <param name="connection">The connection.</param>
     /// <returns>The number of rows affected.</returns>
     /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public static int ExecuteNonQuery(SqlQuery query, NpgsqlTransaction? transaction, NpgsqlConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
@@ -101,7 +109,12 @@ public static class Commands
     /// <param name="transaction">The transaction (optional).</param>
     /// <param name="connection">The connection.</param>
     /// <returns>The first column of the first row in the result set, or <see langword="null"/> if the result set is empty.</returns>
-    /// <exception cref="CommandExecutionFailedException">Thrown when command execution fails.</exception>
+    /// <exception cref="CommandExecutionFailedException">
+    /// Thrown when command execution fails.
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public static object? ExecuteScalar(SqlQuery query, NpgsqlTransaction? transaction, NpgsqlConnection connection)
     {
         ArgumentNullException.ThrowIfNull(query);
@@ -134,6 +147,7 @@ public static class Commands
     /// <summary>
     /// Executes an ADO.NET reader command using a <see cref="SqlQuery"/> and materializes all records.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="query">The query to execute.</param>
     /// <param name="transaction">The transaction (optional).</param>
     /// <param name="connection">The connection.</param>
@@ -152,6 +166,7 @@ public static class Commands
     /// <summary>
     /// Executes an ADO.NET reader command using a <see cref="SqlQuery"/> and materializes all records.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="query">The query to execute.</param>
     /// <param name="transaction">The transaction (optional).</param>
     /// <param name="connection">The connection.</param>

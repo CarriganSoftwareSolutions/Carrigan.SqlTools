@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -89,7 +89,16 @@ internal static class SqlQueryExtensions
                     .Select(static parameter => GetSqlParameter(parameter));
     }
 
-
+    /// <summary>
+    /// Maps a <see cref="FieldProperties"/> instance to the corresponding <see cref="SqlDbType"/>.
+    /// </summary>
+    /// <param name="fieldProperties">
+    /// The <see cref="FieldProperties"/> containing the provider type name to map to a <see cref="SqlDbType"/>.
+    /// </param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the <see cref="FieldProperties.ProviderTypeName"/> does not correspond to a supported SQL Server provider type name.
+    /// </exception>
     private static SqlDbType FieldPropertiesToSqlDbType(FieldProperties fieldProperties)
     {
         ArgumentNullException.ThrowIfNull(fieldProperties);

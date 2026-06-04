@@ -1,8 +1,9 @@
-﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
+namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when a decryption operation fails.
 /// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public sealed class DecryptionFailedException<T> : SqlToolsQueryException
 {
     /// <summary>
@@ -21,6 +22,9 @@ public sealed class DecryptionFailedException<T> : SqlToolsQueryException
     /// <param name="keyVersion">The key version used.</param>
     /// <param name="propertyName">The property name being decrypted.</param>
     /// <param name="innerException">The underlying exception.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
 
     public DecryptionFailedException(int keyVersion, string propertyName, Exception innerException)
         : base(BuildMessage(keyVersion, propertyName), innerException)

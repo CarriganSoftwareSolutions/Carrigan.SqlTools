@@ -10,3 +10,10 @@ Uuid
 Bytea
 Npgsql
 Unjoined
+xml
+timestampz
+varchar
+timestamptz
+bpchar
+smallint
+bigint

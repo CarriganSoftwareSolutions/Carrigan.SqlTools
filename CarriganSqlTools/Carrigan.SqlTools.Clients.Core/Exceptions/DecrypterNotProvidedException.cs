@@ -1,8 +1,9 @@
-﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
+namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when one or more encrypted properties exist on <typeparamref name="T"/>, but no decrypter provider is supplied.
 /// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 /// <remarks>
 /// This exception is typically raised when materializing query results into <typeparamref name="T"/>
 /// (for example, via <c>Commands.ExecuteReader&lt;T&gt;</c> or <c>CommandsAsync.ExecuteReaderAsync&lt;T&gt;</c>)
@@ -23,6 +24,12 @@ public class DecrypterNotProvided<T> : SqlToolsQueryException
     {
     }
 
+    /// <summary>
+    /// Builds the exception message indicating that no decrypter provider was supplied for the model type,
+    /// </summary>
+    /// <returns>
+    /// A string message indicating that no decrypter provider was supplied for the model type, and that the model contains encrypted properties.
+    /// </returns>
     private static string BuildMessage() =>
         $"No decrypter provider was supplied for '{typeof(T).Name}', but '{typeof(T).Name}' contains encrypted properties.";
 }

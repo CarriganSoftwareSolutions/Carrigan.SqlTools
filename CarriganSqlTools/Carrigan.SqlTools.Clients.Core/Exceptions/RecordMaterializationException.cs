@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.Clients.Core.Exceptions;
@@ -8,9 +8,24 @@ namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 /// </summary>
 public sealed class RecordMaterializationException : SqlToolsQueryException
 {
+    /// <summary>
+    /// Gets the ModelType value.
+    /// </summary>
     public Type ModelType { get; }
+    /// <summary>
+    /// Gets the ColumnNames value.
+    /// </summary>
     public IEnumerable<string> ColumnNames { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RecordMaterializationException"/> class.
+    /// </summary>
+    /// <param name="modelType">The model type being read or materialized.</param>
+    /// <param name="columnNames">The SQL column names involved in materialization.</param>
+    /// <param name="innerException">The exception that caused this exception.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public RecordMaterializationException(Type modelType, IEnumerable<string> columnNames, Exception innerException)
         : base(BuildMessage(modelType, columnNames), innerException)
     {
@@ -22,6 +37,12 @@ public sealed class RecordMaterializationException : SqlToolsQueryException
         ColumnNames = columnNames.Materialize(NullOptionsEnum.FilteredOut);
     }
 
+    /// <summary>
+    /// Builds the exception message based on the model type and column names.
+    /// </summary>
+    /// <param name="modelType">The model type being read or materialized.</param>
+    /// <param name="columnNames">The SQL column names involved in materialization.</param>
+    /// <returns>The constructed exception message.</returns>
     private static string BuildMessage(Type modelType, IEnumerable<string> columnNames)
     {
         List<string> names = [];

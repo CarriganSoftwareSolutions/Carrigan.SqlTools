@@ -1,7 +1,8 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Clients.Core;
+using Carrigan.SqlTools.Clients.Core.Exceptions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Invocation;
@@ -13,12 +14,11 @@ using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Reflection;
 using System.Xml;
-//IGNORE SPELLING: xml
 
 namespace Carrigan.SqlTools.Clients.PostgreSql;
 
 /// <summary>
-/// Provides shared command functionality used by synchronous and asynchronous command executors, 
+/// Provides shared command functionality used by synchronous and asynchronous command executors,
 /// <see cref="Commands"/> and <see cref="CommandsAsync"/>.
 /// </summary>
 /// <remarks>
@@ -126,6 +126,31 @@ internal static class CommandSharedMethods
         }
     }
 
+    /// <summary>
+    /// Attempts to read a value from the data reader as a nullable array of the appropriate type based on the target property type
+    /// and the data type name reported by the reader.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The model type being materialized, used to determine the target property type for the current column.
+    /// </typeparam>
+    /// <param name="dataReader">
+    /// The data reader to read the value from, positioned on the record containing the value to read.
+    /// </param>
+    /// <param name="ordinal">
+    /// The ordinal of the column to read, used for value retrieval from the reader.
+    /// </param>
+    /// <param name="columnName">
+    /// The name of the column to read.
+    /// </param>
+    /// <param name="dataTypeName">
+    /// The data type name reported by the reader.
+    /// </param>
+    /// <param name="value">
+    /// The value read from the data reader, if successful.
+    /// </param>
+    /// <returns>
+    /// True if the value was successfully read, false otherwise.
+    /// </returns>
     private static bool TryReadNullableArrayValue<T>(DbDataReader dataReader, int ordinal, ResultColumnName columnName, string dataTypeName, out object? value) where T : class, new()
     {
         value = null;
@@ -162,6 +187,18 @@ internal static class CommandSharedMethods
         }
     }
 
+    /// <summary>
+    /// Determines the appropriate nullable array types to attempt reading from the data reader based on the target array type and the data type name.
+    /// </summary>
+    /// <param name="targetArrayType">
+    /// The target array type for which to determine appropriate read types.
+    /// </param>
+    /// <param name="dataTypeName">
+    /// The data type name reported by the reader.
+    /// </param>
+    /// <returns>
+    /// An enumerable of types that can be used to read the nullable array value.
+    /// </returns>
     private static IEnumerable<Type> GetNullableArrayReadTypes(Type targetArrayType, string dataTypeName)
     {
         Type? providerArrayType = GetProviderNullableArrayReadType(dataTypeName);
@@ -173,6 +210,15 @@ internal static class CommandSharedMethods
             yield return targetArrayType;
     }
 
+    /// <summary>
+    /// Maps PostgreSQL array data type names to their corresponding nullable array CLR types for reading from the data reader.
+    /// </summary>
+    /// <param name="dataTypeName">
+    /// The data type name reported by the reader.
+    /// </param>
+    /// <returns>
+    /// The corresponding nullable array CLR type, or null if no match is found.
+    /// </returns>
     private static Type? GetProviderNullableArrayReadType(string dataTypeName)
     {
         string normalized = NormalizePostgreSqlArrayTypeName(dataTypeName);
@@ -198,6 +244,15 @@ internal static class CommandSharedMethods
         };
     }
 
+    /// <summary>
+    /// Normalizes PostgreSQL array data type names by removing array indicators, trimming whitespace, and converting to lowercase for consistent comparison.
+    /// </summary>
+    /// <param name="dataTypeName">
+    /// The data type name to normalize.
+    /// </param>
+    /// <returns>
+    /// The normalized data type name.
+    /// </returns>
     private static string NormalizePostgreSqlArrayTypeName(string dataTypeName)
     {
         string normalized = dataTypeName.Trim().ToLowerInvariant();
@@ -219,6 +274,22 @@ internal static class CommandSharedMethods
         return normalized;
     }
 
+    /// <summary>
+    /// Uses reflection to invoke the generic <see cref="DbDataReader.GetFieldValue{T}(int)"/> method for the specified field type. 
+    /// </summary>
+    /// <param name="dataReader">
+    /// The data reader to read the value from, positioned on the record containing the value to read.
+    /// </param>
+    /// <param name="ordinal">
+    /// The zero-based column ordinal.
+    /// </param>
+    /// <param name="fieldType">
+    /// The type of the field to read.
+    /// </param>
+    /// <returns>
+    /// The value of the specified field.
+    /// </returns>
+    /// <exception cref="MissingMethodException"></exception>
     private static object? GetFieldValue(DbDataReader dataReader, int ordinal, Type fieldType)
     {
         MethodInfo method = typeof(DbDataReader)
@@ -228,6 +299,13 @@ internal static class CommandSharedMethods
         return method.MakeGenericMethod(fieldType).Invoke(dataReader, [ordinal]);
     }
 
+    /// <summary>
+    /// Determines if the provided type is a nullable value type, i.e. a <see cref="Nullable{T}"/> where T is a struct.
+    /// </summary>
+    /// <param name="type">The type to check.</param>
+    /// <returns>
+    /// <see langword="true"/> if the type is a nullable value type; otherwise, <see langword="false"/>.
+    /// </returns>
     private static bool IsNullableValueType(Type type) =>
         type.IsValueType && Nullable.GetUnderlyingType(type) is not null;
 

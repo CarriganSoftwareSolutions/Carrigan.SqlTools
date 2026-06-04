@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.Exceptions;
@@ -8,12 +8,11 @@ using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Reflection;
 using System.Xml;
-//IGNORE SPELLING: xml
 
 namespace Carrigan.SqlTools.Clients.SqlServer;
 
 /// <summary>
-/// Provides shared command functionality used by synchronous and asynchronous command executors, 
+/// Provides shared command functionality used by synchronous and asynchronous command executors,
 /// <see cref="Commands"/> and <see cref="CommandsAsync"/>.
 /// </summary>
 /// <remarks>

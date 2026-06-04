@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -47,7 +47,6 @@ internal static class SqlQueryExtensions
     ///     </item>
     /// </list>
     /// </remarks>
-
     internal static IEnumerable<NpgsqlParameter> GetParameterCollection(this SqlQuery query)
     {
         static NpgsqlParameter GetSqlParameter(SqlFragmentParameter parameter)
@@ -93,7 +92,12 @@ internal static class SqlQueryExtensions
                     .Select(static parameter => GetSqlParameter(parameter));
     }
 
-
+    /// <summary>
+    /// Maps a <see cref="FieldProperties"/> instance to the appropriate <see cref="NpgsqlDbType"/>
+    /// </summary>
+    /// <param name="fieldProperties">The field properties to map.</param>
+    /// <returns>The corresponding <see cref="NpgsqlDbType"/>.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the provider type name is not supported.</exception>
     private static NpgsqlDbType FieldPropertiesToNpgsqlDbType(FieldProperties fieldProperties)
     {
         ArgumentNullException.ThrowIfNull(fieldProperties);

@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Attributes;
+using Carrigan.Core.Attributes;
 using Carrigan.Core.ReflectionCaching;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
@@ -29,8 +29,20 @@ internal static class ClientReflectorCache<T>
     /// </summary>
     internal static PropertyInfo? KeyVersionProperty => _LazyKeyVersionProperty.Value;
 
+    /// <summary>
+    /// Initializes the lazy properties for the class, including:
+    /// </summary>
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyEncryptedProperties;
+
+    /// <summary>
+    /// Initializes the lazy properties for the class, including:
+    /// </summary>
     private static readonly Lazy<IEnumerable<PropertyInfo>> _LazyProperties;
+
+    /// <summary>
+    /// Initializes the lazy property for the class, which retrieves the property marked with <see cref="KeyVersionAttribute"/> that stores the encryption 
+    /// key version used to decrypt and encrypt a record, or <see langword="null"/> when no such property is defined.
+    /// </summary>
     private static readonly Lazy<PropertyInfo?> _LazyKeyVersionProperty;
 
     /// <summary>

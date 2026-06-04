@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Clients.Core.Exceptions;
+namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
 /// Thrown when encrypted properties contain values but no matching decryption key can be found.
@@ -21,6 +21,9 @@ public sealed class MissingDecryptionKeyException<T> : SqlToolsQueryException
     /// </summary>
     /// <param name="keyVersion">The key version read from the record.</param>
     /// <param name="propertyName">The property name that required decryption.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public MissingDecryptionKeyException(int? keyVersion, string propertyName)
         : base(BuildMessage(keyVersion, propertyName), innerException: null)
     {
@@ -30,6 +33,18 @@ public sealed class MissingDecryptionKeyException<T> : SqlToolsQueryException
         PropertyName = propertyName;
     }
 
+    /// <summary>
+    /// Builds the exception message indicating that no decryption key was found for the specified property and key version.
+    /// </summary>
+    /// <param name="keyVersion">
+    /// The key version read from the record, which may be <c>null</c> if the key version was not specified.
+    /// </param>
+    /// <param name="propertyName">
+    /// The name of the property that required decryption, which is guaranteed to be non-<c>null</c>.
+    /// </param>
+    /// <returns>
+    /// A formatted message indicating the missing decryption key for the specified property and key version.
+    /// </returns>
     private static string BuildMessage(int? keyVersion, string propertyName)
     {
         string keyDisplay = keyVersion is null ? "<null>" : keyVersion.Value.ToString();
