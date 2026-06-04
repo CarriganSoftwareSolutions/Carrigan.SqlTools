@@ -112,7 +112,7 @@ public abstract partial class SqlGeneratorBase<T>
             yield return new SqlFragmentText(" SET ");
             foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, false))
                 yield return fragment;
-            yield return new SqlFragmentText($" WHERE ");
+            yield return new SqlFragmentText(" WHERE ");
             foreach (ISqlFragment fragment in GetWhereFragments())
                 yield return fragment;
             yield return ISqlFragment.Semicolon;
@@ -345,9 +345,9 @@ public abstract partial class SqlGeneratorBase<T>
                     yield return fragment;
             }
 
-            if(predicates is not null)
+            if (predicates is not null)
             {
-                yield return new SqlFragmentText($" WHERE ");
+                yield return new SqlFragmentText(" WHERE ");
                 foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
                     yield return fragment;
             }

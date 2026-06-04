@@ -202,9 +202,6 @@ public class Joins<leftT> : JoinsBase where leftT : class
     internal override IEnumerable<TableTag> TableTags =>
         ValidatedJoints.Select(static join => join.TableTag).Prepend(TableTag);
 
-    internal override IEnumerable<Predicates> Predicates =>
-        ValidatedJoints.Select(static join => join.Predicates);
-
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
     /// a newly created <see cref="LeftJoin{rightT}"/> operation.

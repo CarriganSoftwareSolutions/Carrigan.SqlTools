@@ -245,26 +245,26 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Joins<joinsT>? joins, Predicates? predicates) where joinsT : class
     {
         TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
+
         if (from.IsNotNullOrEmpty() && from.Contains(Table))
         {
-            //TODO: we need a new exception type for this
-            throw new Exception($"Using should not contains the table type {Table} when deleting or updating {Table}.");
+            throw new InvalidTableException(Table);
         }
+
         if (joins.IsNotNullOrEmpty() && (from?.DoesNotContain(joinsOn) ?? true))
         {
-            //TODO: we need a new exceptions type for this
-            throw new Exception($"{nameof(from)} does not contain table ${joinsOn} needed by joins in parameter {nameof(joins)}.");
+            throw new InvalidTableException(joinsOn);
         }
+
         return base.BaseUpdate(entity, columns, from, joins, predicates);
     }
     public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Predicates? predicates) where joinsT : class
     {
-        TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
         if (from.IsNotNullOrEmpty() && from.Contains(Table))
         {
-            //TODO: we need a new exception type for this
-            throw new Exception($"Using should not contains the table type {Table} when deleting or updating {Table}.");
+            throw new InvalidTableException(Table);
         }
+
         return base.BaseUpdate(entity, columns, from, null, predicates);
     }
 
@@ -272,5 +272,5 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
 
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>
-        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
+        Update<T>(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Where);
 }

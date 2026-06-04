@@ -177,41 +177,38 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete<joinsT>(IEnumerable<TableTag>? usings, Joins<joinsT> joins, Predicates? predicates) where joinsT : class
+    public SqlQuery Delete<joinsT>(IEnumerable<TableTag>? usings, Joins<joinsT>? joins, Predicates? predicates) where joinsT : class
     {
         TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
+
         if (usings.IsNotNullOrEmpty() && usings.Contains(Table))
         {
-            //TODO: we need a new exception type for this
-            throw new Exception($"Using should not contains the table type {Table} when deleting or updating {Table}.");
+            throw new InvalidTableException(Table);
         }
-        if(joins.IsNotNullOrEmpty() && (usings?.DoesNotContain(joinsOn) ?? true))
+
+        if (joins.IsNotNullOrEmpty() && (usings?.DoesNotContain(joinsOn) ?? true))
         {
-            //TODO: we need a new exceptions type for this
-            throw new Exception($"{nameof(usings)} does not contain table ${joinsOn} needed by joins in parameter {nameof(joins)}.");
+            throw new InvalidTableException(joinsOn);
         }
+
         return base.BaseDelete(usings, joins, predicates);
     }
 
-    public SqlQuery Delete(IEnumerable<TableTag>? usings, Predicates? predicates) 
+    public SqlQuery Delete(IEnumerable<TableTag>? usings, Predicates? predicates)
     {
         if (usings.IsNotNullOrEmpty() && usings.Contains(Table))
         {
-            //TODO: we need a new exception type for this
-            throw new Exception($"Using should not contains the table type {Table} when deleting or updating {Table}.");
+            throw new InvalidTableException(Table);
         }
 
         return base.BaseDelete(usings, null, predicates);
     }
 
-
     public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery) where usingsT : class =>
-        deleteQuery.Joins is null
-            ? Delete(deleteQuery.Usings,  deleteQuery.Where)
-            : Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
-
-    public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         deleteQuery.Joins is null
             ? Delete(deleteQuery.Usings, deleteQuery.Where)
             : Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
+
+    public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
+        Delete(deleteQuery.Usings, deleteQuery.Where);
 }

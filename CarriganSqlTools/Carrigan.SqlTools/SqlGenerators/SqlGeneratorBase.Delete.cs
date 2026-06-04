@@ -207,19 +207,18 @@ public abstract partial class SqlGeneratorBase<T>
         {
             yield return new SqlFragmentText("DELETE");
             
-            if(usings.IsNullOrEmpty() && joins.IsNullOrEmpty())
+            if (usings.IsNullOrEmpty() && joins.IsNullOrEmpty())
             {
                 yield return new SqlFragmentText(" FROM ");
                 yield return Table;
             }
-            else if(usings.IsNotNullOrEmpty())
+            else if (usings.IsNotNullOrEmpty())
             {
                 yield return new SqlFragmentText(" FROM ");
                 yield return Table;
                 yield return new SqlFragmentText(" USING ");
                 foreach (ISqlFragment fragment in usings.JoinFragments(", "))
                     yield return fragment;
-
             }
             else
             {
@@ -240,7 +239,7 @@ public abstract partial class SqlGeneratorBase<T>
                     yield return sqlFragment;
             }
         }
-        if (predicates is null && joins.IsNullOrEmpty())
+        if (predicates is null && joins.IsNullOrEmpty() && usings.IsNullOrEmpty())
         {
             return BaseDeleteAll();
         }

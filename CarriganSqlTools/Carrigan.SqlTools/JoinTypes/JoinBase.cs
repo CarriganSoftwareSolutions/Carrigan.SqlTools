@@ -47,9 +47,6 @@ public abstract class JoinBase
     /// Each <see cref="TableTag"/> represents a table referenced within the join's <c>ON</c> clause.
     /// When this join type does not use predicates, this returns an empty sequence.
     /// </remarks>
-    internal Predicates Predicates =>
-        _predicates;
-
     internal IEnumerable<TableTag> JoinsOn =>
         _predicates.DescendantColumns
             .Select(static column => column.ColumnInfo.ColumnTag.TableTag)
