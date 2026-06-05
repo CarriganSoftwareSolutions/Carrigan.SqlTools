@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -10,6 +10,10 @@ using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
+/// <summary>
+/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
 {
     /// <summary>
@@ -31,27 +35,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown if any table referenced by <paramref name="orderBy"/> does not participate
     /// in the query (i.e., is not the base table and not included by joins).
     /// </exception>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// SqlQuery query = customerGenerator.SelectAll();
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].* FROM [Customer]
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// OrderBy<Customer> orderBy = new(nameof(Customer.Email));
-    /// SqlQuery query = customerGenerator.SelectAll(orderBy);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// ORDER BY [Customer].[Email] ASC
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseSelectAll(OrderBysBase? orderBy = null) =>
         BaseSelect(null, null, null, null, null, orderBy, null);
 
@@ -72,12 +55,12 @@ public abstract partial class SqlGeneratorBase<T>
     /// </param>
     /// <param name="orderBy">
     /// Optional ordering to compose the <c>ORDER BY</c> clause.
-    /// When <paramref name="offsetNext"/> is provided, key columns are appended to
+    /// When <paramref name="paging"/> is provided, key columns are appended to
     /// the ordering (if not already present) to ensure stable paging semantics.
     /// </param>
-    /// <param name="offsetNext">
-    /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
-    /// </param>
+    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
+    /// <param name="subQuery">The subquery used as the query source.</param>
+    /// <param name="paging">The paging fragment to include in the query.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
     /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
@@ -96,89 +79,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
     /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
-    /// <example>
-    /// <para>Select with join example:</para>
-    /// <para>
-    /// Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Order> join = new (predicate);
-    /// 
-    /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <para>Select with join and order by example:</para>
-    /// <para>
-    /// Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Order> join = new(predicate);
-    /// 
-    /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-    /// 
-    /// SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// INNER JOIN [Order] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
-    /// ORDER BY [Order].[OrderDate] ASC
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <para>Select with join, where, and order by example:</para>
-    /// <para>
-    /// Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Order> join = new(predicate);
-    /// 
-    /// Column<Order> totalCol = new(nameof(Order.Total));
-    /// Parameter minTotal = new("Total", 500m);
-    /// GreaterThan greaterThan = new(totalCol, minTotal);
-    /// 
-    /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-    /// 
-    /// SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// INNER JOIN [Order] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
-    /// WHERE ([Order].[Total] > @Parameter_Total) 
-    /// ORDER BY [Order].[OrderDate] ASC
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// OffsetNext offsetNext = new(50, 25);
-    /// SqlQuery query = customerGenerator.Select(null, null, null, null, null, offsetNext);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// ORDER BY [Customer].[Id] ASC 
-    /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseSelect(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBy, PagingBase? paging) =>
         new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, predicates, orderBy, paging));
 
@@ -297,18 +197,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when <typeparamref name="T"/> has no key annotations (neither the SQL generator’s
     /// <c>PrimaryKey</c> nor <c>Key</c> attributes) and a “By Id” operation is invoked.
     /// </exception>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// Customer entity = new() { Id = 42 };
-    /// SqlQuery query = customerGenerator.SelectById(entity);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// WHERE ([Customer].[Id] = @Parameter_Id)
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseSelectById(params IEnumerable<T> entities)
     {
         ArgumentNullException.ThrowIfNull(entities);

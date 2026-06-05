@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
@@ -47,11 +47,24 @@ public class AliasTag : StringWrapper, ISqlFragment
             return null;
     }
 
+    /// <summary>
+    /// Flattens this fragment into the sequence of fragments used to render SQL text.
+    /// </summary>
+    /// <returns>The result of the Flatten operation.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
     }
+    /// <summary>
+    /// Gets the SQL parameters contained by this fragment.
+    /// </summary>
+    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    /// <summary>
+    /// Renders the SQL fragment using the supplied dialect.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
+    /// <returns>The result of the ToSql operation.</returns>
         [];
     public string ToSql(ISqlDialects dialect) =>
         dialect.QuoteIdentifier(this);

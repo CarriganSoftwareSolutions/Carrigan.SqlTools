@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
@@ -23,7 +23,7 @@ namespace Carrigan.SqlTools.Tags;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// using Carrigan.SqlTools.SqlGenerators;
-/// 
+///
 /// [Table("Phone", Schema = "schema")]
 /// public class PhoneModel
 /// {
@@ -33,9 +33,9 @@ namespace Carrigan.SqlTools.Tags;
 ///     [Column("Phone")]
 ///     public string? PhoneNumber { get; set; }
 /// }
-/// 
+///
 /// SqlGenerator<PhoneModel> phoneGenerator = new();
-/// 
+///
 /// PhoneModel phone = new()
 /// {
 ///     Id = 2718,
@@ -46,8 +46,8 @@ namespace Carrigan.SqlTools.Tags;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [schema].[Phone] 
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// UPDATE [schema].[Phone]
+/// SET [CustomerId] = @CustomerId, [Phone] = @Phone
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
@@ -57,7 +57,7 @@ namespace Carrigan.SqlTools.Tags;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// using Carrigan.SqlTools.SqlGenerators;
-/// 
+///
 /// [Identifier("Email", "schema")]
 /// public class EmailModel
 /// {
@@ -67,9 +67,9 @@ namespace Carrigan.SqlTools.Tags;
 ///     [Identifier("Email")]
 ///     public string? EmailAddress { get; set; }
 /// }
-/// 
+///
 /// SqlGenerator<EmailModel> emailGenerator = new();
-/// 
+///
 /// EmailModel email = new()
 /// {
 ///     Id = 10,
@@ -80,13 +80,18 @@ namespace Carrigan.SqlTools.Tags;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [schema].[Phone] 
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone 
+/// UPDATE [schema].[Phone]
+/// SET [CustomerId] = @CustomerId, [Phone] = @Phone
 /// WHERE [Id] = @Id;
 /// ]]></code>
 /// </example>
 public class TableTag : StringWrapper, ISqlFragment
 {
+    /// <summary>
+    /// Executes the <c>Get&lt;T&gt;</c> operation.
+    /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <returns>The result of the <c>Get&lt;T&gt;</c> operation.</returns>
     public static TableTag Get<T>() where T : class =>
         SqlToolsReflectorCache<T>.Table;
     private readonly SchemaName? SchemaName;
@@ -101,7 +106,7 @@ public class TableTag : StringWrapper, ISqlFragment
     /// <exception cref="Exceptions.InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
-    /// 
+    ///
     internal TableTag(SchemaName? schemaName, TableName tableName)
         : base(schemaName.IsNotNullOrEmpty() ? $"{ schemaName}.{tableName}" : tableName, StringComparison.Ordinal)
     {
@@ -122,7 +127,7 @@ public class TableTag : StringWrapper, ISqlFragment
     /// <exception cref="Exceptions.InvalidSqlIdentifierException">
     /// Thrown when <paramref name="tableName"/> or a non-empty <paramref name="schemaName"/> fails SQL identifier validation.
     /// </exception>
-    /// 
+    ///
     [ExternalOnly]//An external only marked as internal can still be used by the unit tests class.
     internal TableTag(string? schemaName, string tableName)
         : this(SchemaName.New(schemaName), new(tableName))
@@ -152,11 +157,24 @@ public class TableTag : StringWrapper, ISqlFragment
         return (TableTag?)tableTagProperty.GetValue(null)
             ?? throw new InvalidOperationException($"The property 'Table' on type '{cacheType.FullName}' returned null.");
     }
+    /// <summary>
+    /// Flattens this fragment into the sequence of fragments used to render SQL text.
+    /// </summary>
+    /// <returns>The result of the Flatten operation.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
     }
+    /// <summary>
+    /// Gets the SQL parameters contained by this fragment.
+    /// </summary>
+    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    /// <summary>
+    /// Renders the SQL fragment using the supplied dialect.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
+    /// <returns>The result of the ToSql operation.</returns>
         [];
     public string ToSql(ISqlDialects dialect) =>
         dialect.RenderTable(SchemaName, TableName);

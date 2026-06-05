@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
@@ -13,16 +13,25 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// </summary>
 public class SqlQuery
 {
+    /// <summary>
+    /// Gets the SqlFragments value.
+    /// </summary>
     public IEnumerable<ISqlFragment> SqlFragments { get; set; }
+    /// <summary>
+    /// Gets the Dialect; value.
+    /// </summary>
     protected readonly ISqlDialects Dialect;
     /// <summary>
     /// Gets or sets the SQL command text.
     /// </summary>
-    public string QueryText => 
-        Validate() 
+    /// <exception cref="ArgumentException">
+    /// Thrown when an argument is invalid for the requested SQL operation.
+    /// </exception>
+    public string QueryText =>
+        Validate()
             ? CommandType == CommandType.StoredProcedure
                 ? SqlFragments.Where(fragment => fragment is not SqlFragmentParameter).ToSql(Dialect)
-                : SqlFragments.ToSql(Dialect)            
+                : SqlFragments.ToSql(Dialect)
             : throw new ArgumentException(null, nameof(SqlFragments));
 
     /// <summary>
@@ -40,7 +49,10 @@ public class SqlQuery
     );
 
 
-    public IEnumerable<SqlFragmentParameter> Parameters => 
+    /// <summary>
+    /// Gets the Parameters value.
+    /// </summary>
+    public IEnumerable<SqlFragmentParameter> Parameters =>
         SqlFragments.GetSqlFragmentParameters(Dialect);
 
     /// <summary>
@@ -48,6 +60,16 @@ public class SqlQuery
     /// </summary>
     public CommandType CommandType { get; protected init; }
 
+    /// <summary>
+    /// Validates the SQL query structure.
+    /// </summary>
+    /// <returns>The result of the Validate operation.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when an argument is invalid for the requested SQL operation.
+    /// </exception>
     public bool Validate()
     {
         ArgumentNullException.ThrowIfNull(SqlFragments);

@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
@@ -21,31 +21,17 @@ namespace Carrigan.SqlTools.Sets;
 /// Duplicate property names are ignored, preserving the first occurrence.
 /// </para>
 /// </remarks>
-/// <example>
-/// <para>
-/// Update example using ColumnCollection
-/// Note: <see cref="ColumnCollectionBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid
-/// </para>
-/// <code language="csharp"><![CDATA[
-/// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
-/// Customer entity = new()
-/// {
-///     Id = 42,
-///     Name = "Hank",
-///     Email = "Hank@example.gov"
-/// };
-/// SqlQuery query = customerGenerator.UpdateById(entity, columns);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// UPDATE [Customer] 
-/// SET [Email] = @Email 
-/// WHERE [Id] = @Id;
-/// ]]></code>
-/// </example>
 public abstract class ColumnCollectionBase<T>
 {
+    /// <summary>
+    /// Gets the SupportedTypes value.
+    /// </summary>
     protected abstract HashSet<Type> SupportedTypes { get; }
+    /// <summary>
+    /// Executes the FromPropertyName operation.
+    /// </summary>
+    /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
+    /// <returns>The result of the FromPropertyName operation.</returns>
     protected abstract ColumnCollectionBase<T> FromPropertyName(IEnumerable<PropertyName> propertyNames);
 
     /// <summary>
@@ -69,7 +55,7 @@ public abstract class ColumnCollectionBase<T>
     /// <exception cref="InvalidPropertyException{T}">
     /// Thrown when one or more property names do not exist on <typeparamref name="T"/>.
     /// </exception>
-    public ColumnCollectionBase(params IEnumerable<PropertyName> propertyNames) => 
+    public ColumnCollectionBase(params IEnumerable<PropertyName> propertyNames) =>
         ColumnInfo =
             SqlToolsReflectorCache<T>
                 .GetColumnsFromProperties(SupportedTypes, propertyNames)

@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
@@ -135,6 +135,9 @@ internal class ColumnTag : StringWrapper, ISqlFragment
         ColumnName.IsNullOrWhiteSpace();
 
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Flatten"/> class.
+    /// </summary>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;

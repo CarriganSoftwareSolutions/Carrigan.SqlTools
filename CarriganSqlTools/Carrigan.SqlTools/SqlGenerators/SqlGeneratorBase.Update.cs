@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -10,6 +10,10 @@ using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
+/// <summary>
+/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
 {
     /// <summary>
@@ -43,45 +47,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when <paramref name="columns"/> selects one or more key properties, or when it selects
     /// no non-key columns.
     /// </exception>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// Customer entity = new()
-    /// {
-    ///     Id = 42,
-    ///     Name = "Hank",
-    ///     Email = "Hank@example.com",
-    ///     Phone = "+1(555)555-5555"
-    /// };
-    /// SqlQuery query = customerGenerator.UpdateById(entity);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// UPDATE [Customer] 
-    /// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone 
-    /// WHERE [Id] = @Id;
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <para>
-    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
-    /// Customer entity = new()
-    /// {
-    ///     Id = 42,
-    ///     Name = "Hank",
-    ///     Email = "Hank@example.gov"
-    /// };
-    /// SqlQuery query = customerGenerator.UpdateById(entity, columns);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// UPDATE [Customer] 
-    /// SET [Email] = @Email 
-    /// WHERE [Id] = @Id;
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseUpdateById(T entity, ColumnCollectionBase<T>? columns = null)
     {
         ArgumentNullException.ThrowIfNull(entity);
@@ -156,35 +121,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="idEntities"/> is <c>null</c>.
     /// </exception>
-    /// <example>
-    /// <para>
-    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// Customer updateValues = new()
-    /// {
-    ///     Name = "John Doe",
-    ///     Email = string.Empty
-    /// };
-    /// 
-    /// IEnumerable<Customer> customerIds =
-    ///     [
-    ///         new() { Id = 42 },
-    ///             new() { Id = 732 }
-    ///     ];
-    /// 
-    /// ColumnCollection<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
-    /// 
-    /// SqlQuery query = customerGenerator.UpdateByIds(updateValues, updateColumns, customerIds);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// UPDATE [Customer] 
-    /// SET [Customer].[Name] = @ParameterSet_Name, [Customer].[Email] = @ParameterSet_Email 
-    /// FROM [Customer] 
-    /// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseUpdateByIds(T valuesEntity, ColumnCollectionBase<T>? columns, params IEnumerable<T> idEntities)
     {
         ArgumentNullException.ThrowIfNull(valuesEntity);
@@ -238,63 +174,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="entity"/> is <c>null</c>.
     /// </exception>
-    /// <example>
-    /// <para>
-    /// Create Update SQL query with a Where clause.
-    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnValueBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// Order entity = new()
-    /// {
-    ///     Id = 10,
-    ///     Total = 123.45m
-    /// };
-    /// 
-    /// ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
-    /// 
-    /// Column<Customer> customerId = new(nameof(Customer.Id));
-    /// Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
-    /// Equal customerIdsEquals = new(orderCustomerId, customerId);
-    /// InnerJoin<Customer> joinOnCustomerId = new(customerIdsEquals);
-    /// 
-    /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
-    /// 
-    /// SqlQuery query = orderGenerator.Update(entity, columnCollection, joinOnCustomerId, customerEmailEquals);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// UPDATE [Order] 
-    /// SET [Order].[Total] = @ParameterSet_Total 
-    /// FROM [Order] 
-    /// INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) 
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <para>
-    /// Create Update SQL query with Joins and a Where clause.
-    /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnValueBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// Customer entity = new()
-    /// {
-    ///     Email = "spam@example.com"
-    /// };
-    /// ColumnCollection<Customer> columnCollection = new(nameof(Customer.Email));
-    /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
-    /// 
-    /// SqlQuery query = customerGenerator.Update(entity, columnCollection, null, customerEmailEquals);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// UPDATE [Customer] 
-    /// SET [Email] = @ParameterSet_Email
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
-    /// ]]></code>
-    /// </example>
     /// <param name="predicates">
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.

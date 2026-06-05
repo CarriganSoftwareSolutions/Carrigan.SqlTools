@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
@@ -27,6 +27,9 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// </summary>
     /// <param name="propertyName">The model property/column name to select.</param>
     /// <param name="aliasName">The optional alias to apply to the selected column.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     protected SelectTagBase(PropertyName propertyName, AliasName? aliasName = null)
         : this(CreateColumnTag(propertyName), AliasTag.New(aliasName))
     {
@@ -58,16 +61,33 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     internal ResultColumnName ResultColumnName =>
         new(AliasTag?.ToString() ?? ColumnTag.ColumnName);
 
+    /// <summary>
+    /// Flattens this fragment into the sequence of fragments used to render SQL text.
+    /// </summary>
+    /// <returns>The result of the Flatten operation.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
     }
 
+    /// <summary>
+    /// Gets the SQL parameters contained by this fragment.
+    /// </summary>
+    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    /// <summary>
+    /// Renders the SQL fragment using the supplied dialect.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
+    /// <returns>The result of the ToSql operation.</returns>
         [];
 
     public string ToSql(ISqlDialects dialect) =>
         AliasTag is null ? ColumnTag.ToSql(dialect) : $"{ColumnTag.ToSql(dialect)} AS {AliasTag.ToSql(dialect)}";
 
+    /// <summary>
+    /// Creates an equivalent select tag without an alias.
+    /// </summary>
+    /// <returns>The result of the WithNoAlias operation.</returns>
     public abstract SelectTagBase WithNoAlias();
 }

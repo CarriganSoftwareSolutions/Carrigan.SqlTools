@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
@@ -35,6 +35,12 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// </summary>
     protected abstract ISqlDialects Dialect { get; init; }
 
+    /// <summary>
+    /// Gets the SupportedTypes value.
+    /// </summary>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when a supplied or generated SQL identifier is invalid.
+    /// </exception>
     protected abstract HashSet<Type> SupportedTypes { get; }
 
     /// <summary>
@@ -130,7 +136,6 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// Initializes a new instance of the <see cref="SqlGeneratorBase{T}"/> class
     /// using the specified encryption service.
     /// </summary>
-    /// <param name="dialect"></param>
     /// <exception cref="AggregateException">
     /// containing multiple exceptions. Potential exceptions include the exceptions listed below.
     /// </exception>
@@ -153,6 +158,12 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// The <see cref="IEncryption"/> implementation used to encrypt and decrypt values.
     /// Must not be <c>null</c>.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
+    /// <exception cref="InvalidParameterIdentifierException">
+    /// Thrown when a supplied or generated SQL parameter identifier is invalid.
+    /// </exception>
     public SqlGeneratorBase(IEncryption? encryption = null)
     {
         _Encryption = encryption;
@@ -167,28 +178,28 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// The entity instance containing the key values used to construct the predicate.
     /// </param>
     /// <returns>
-    /// An <see cref="And"/> predicate that matches the entity’s key column values.  
+    /// An <see cref="And"/> predicate that matches the entity’s key column values.
     /// Useful for selecting a record by primary key.
     /// </returns>
     private And GetByKeyPredicates(T entity) =>
         new(KeyColumnInfo.Select(key => new Equal(GetColumn(key.PropertyName), new Parameter(key.PropertyInfo.GetValue(entity), key.ParameterTag))));
 
     /// <summary>
-    /// Creates a <see cref="Parameter"/> object for the specified column and entity instance. 
+    /// Creates a <see cref="Parameter"/> object for the specified column and entity instance.
     /// </summary>
     /// <param name="column">The <see cref="ColumnInfo"/> describing the target column. Must not be <c>null</c> and must expose a <see cref="ParameterTag"/>; otherwise a <see cref="NullReferenceException"/> is thrown.</param>
     /// <param name="entity">The entity instance that supplies the value for the column. Must not be <c>null</c>.</param>
-    /// 
-    /// 
+    ///
+    ///
     /// <returns>
-    /// A <see cref="Parameter"/> constructed for the specified column and entity.  
-    /// - If the column is the key-version column, the returned <see cref="Parameter"/> contains the encrypter's version.  
-    /// - If the column is encrypted, the returned <see cref="Parameter"/> contains the encrypted value.  
+    /// A <see cref="Parameter"/> constructed for the specified column and entity.
+    /// - If the column is the key-version column, the returned <see cref="Parameter"/> contains the encrypter's version.
+    /// - If the column is encrypted, the returned <see cref="Parameter"/> contains the encrypted value.
     /// - Otherwise, the returned <see cref="Parameter"/> contains the raw value or <see cref="DBNull.Value"/>.
     /// </returns>
     /// <remarks>
-    /// If the column is encrypted, the value is encrypted.  
-    /// If the column is the key-version column, the encrypter's version is used instead of the entity value.  
+    /// If the column is encrypted, the value is encrypted.
+    /// If the column is the key-version column, the encrypter's version is used instead of the entity value.
     /// </remarks>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="column"/> is <c>null</c>.
@@ -221,13 +232,39 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             return SqlFragmentParameter.GetParameter(column, Dialect.GetDefaultFieldPropertiesByClrType(column.Type), entity);
     }
 
+    /// <summary>
+    /// Executes the GetColumn operation.
+    /// </summary>
+    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
+    /// <returns>The result of the GetColumn operation.</returns>
     protected abstract ColumnBase<T> GetColumn(PropertyName propertyName);
+    /// <summary>
+    /// Executes the GetColumnValue operation.
+    /// </summary>
+    /// <param name="columnInfo">The reflected column metadata for the model property.</param>
+    /// <param name="entity">The model instance representing the SQL row or parameter set.</param>
+    /// <returns>The result of the GetColumnValue operation.</returns>
     protected abstract ColumnValueBase<T> GetColumnValue(ColumnInfo columnInfo, T entity);
 
+    /// <summary>
+    /// Executes the GetColumnCollection operation.
+    /// </summary>
+    /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
+    /// <returns>The result of the GetColumnCollection operation.</returns>
     protected abstract ColumnCollectionBase<T> GetColumnCollection(params IEnumerable<PropertyName> propertyNames);
 
+    /// <summary>
+    /// Executes the NewOrderBys operation.
+    /// </summary>
+    /// <returns>The result of the NewOrderBys operation.</returns>
     protected abstract OrderBysBase NewOrderBys();
 
+    /// <summary>
+    /// Executes the NewOrderByKey operation.
+    /// </summary>
+    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
+    /// <param name="sortDirection">The SQL sort direction.</param>
+    /// <returns>The result of the NewOrderByKey operation.</returns>
     protected abstract OrderByBase NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection);
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Types;
+namespace Carrigan.SqlTools.Types;
 
 /// <summary>
 /// Specifies the character encoding to use when mapping .NET members to SQL

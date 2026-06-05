@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace Carrigan.SqlTools.RegularExpressions;
 
@@ -44,9 +44,9 @@ public static partial class SqlParameterPattern
     /// input is checked for <c>null</c>, and the regex is compiled and safe for typical inputs.
     /// </remarks>
     public static bool Passes(string? identifier) =>
-         identifier is not null 
-            && identifier.TrimStart('@').Length >= 1 
-            && identifier.Length <= 128 
+         identifier is not null
+            && identifier.TrimStart('@').Length >= 1
+            && identifier.Length <= 128
             && _regexPattern.IsMatch(identifier.TrimStart('@'))
             && identifier.StartsWith("@@") is false; //Only reserved words start with @@
 

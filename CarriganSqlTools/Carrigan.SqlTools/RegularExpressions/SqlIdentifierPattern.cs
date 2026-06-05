@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace Carrigan.SqlTools.RegularExpressions;
 
@@ -11,9 +11,9 @@ namespace Carrigan.SqlTools.RegularExpressions;
 /// </summary>
 /// <remarks>
 /// Unicode support has been added using <c>\p{L}</c> and <c>\p{Nl}</c> categories
-/// to allow letters and letter numbers.  
+/// to allow letters and letter numbers.
 /// Decomposed Unicode sequences are intentionally disallowed to avoid
-/// unpredictable normalization behavior between database configurations.  
+/// unpredictable normalization behavior between database configurations.
 /// **Provide pre-normalized identifier names.**
 /// </remarks>
 public static partial class SqlIdentifierPattern
@@ -63,7 +63,7 @@ public static partial class SqlIdentifierPattern
     /// <code>
     /// ^(?:[_#]|\p{L}|\p{Nl})(?:[_@#$]|\p{L}|\p{Nl}|\p{Nd})*$
     /// </code>
-    /// - **Start Character:** underscore (<c>_</c>), hash (<c>#</c>), letter (<c>\p{L}</c>), or letter number (<c>\p{Nl}</c>)  
+    /// - **Start Character:** underscore (<c>_</c>), hash (<c>#</c>), letter (<c>\p{L}</c>), or letter number (<c>\p{Nl}</c>)
     /// - **Subsequent Characters:** underscore, at-sign (<c>@</c>), hash, dollar sign (<c>$</c>), letter, letter number, or decimal digit (<c>\p{Nd}</c>)
     /// </remarks>
     [GeneratedRegex(@"^(?:[_#]|\p{L}|\p{Nl})(?:[_@#$]|\p{L}|\p{Nl}|\p{Nd})*$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]

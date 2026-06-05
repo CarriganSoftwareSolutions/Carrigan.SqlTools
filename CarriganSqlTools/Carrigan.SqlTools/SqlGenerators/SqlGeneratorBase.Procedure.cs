@@ -1,9 +1,13 @@
-﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
+/// <summary>
+/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
 {
     /// <summary>
@@ -38,22 +42,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when one or more procedure parameters resolve to the same <see cref="ParameterTag"/>,
     /// causing a duplicate key during dictionary construction.
     /// </exception>
-    /// <example>
-    /// <para>
-    /// 
-    /// </para>
-    /// <code language="csharp"><![CDATA[
-    /// ProcedureExec procedureExec = new()
-    /// {
-    ///     ValueColumn = "DangIt"
-    /// };
-    /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// [schema].[UpdateThing]
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseProcedure(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);

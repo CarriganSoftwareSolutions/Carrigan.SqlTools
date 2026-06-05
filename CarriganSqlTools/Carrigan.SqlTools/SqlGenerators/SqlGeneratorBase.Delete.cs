@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -8,6 +8,10 @@ using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
+/// <summary>
+/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
 {
     /// <summary>
@@ -31,16 +35,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// <exception cref="NullReferenceException">
     /// Thrown if a key column lacks a <see cref="ParameterTag"/> during parameter generation.
     /// </exception>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// Customer entity = new() { Id = 42 };
-    /// SqlQuery query = customerGenerator.Delete(entity);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DELETE FROM [Customer] ([Customer].[Id] = @Id_1)
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseDelete(T entity)
     {
         ArgumentNullException.ThrowIfNull(entity);
@@ -62,15 +56,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// <remarks>
     /// When building the SQL, only public properties with a getter are considered.
     /// </remarks>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// SqlQuery query = customerGenerator.DeleteAll();
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DELETE FROM [Customer];
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseDeleteAll()
     {
         static IEnumerable<ISqlFragment> GetFragments()
@@ -101,16 +86,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// <exception cref="NoPrimaryKeyPropertyException{T}">
     /// Thrown when <typeparamref name="T"/> has no key property metadata but a key-based delete was requested.
     /// </exception>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// Customer entity = new() { Id = 42 };
-    /// SqlQuery query = customerGenerator.DeleteById(entity);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DELETE FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)
-    /// ]]></code>
-    /// </example>
     protected virtual SqlQuery BaseDeleteById(params IEnumerable<T> entities)
     {
         ArgumentNullException.ThrowIfNull(entities);
@@ -140,63 +115,6 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when a <see cref="TableTag"/> referenced by <paramref name="predicates"/> is not present
     /// in the <paramref name="joins"/> set nor equal to the primary table.
     /// </exception>
-    /// <example>
-    /// <para>Example with null Joins and null predicates</para>
-    /// <code language="csharp"><![CDATA[
-    /// SqlQuery query = customerGenerator.Delete(null, null);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DELETE FROM [Customer];
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
-    /// SqlQuery query = customerGenerator.Delete(null, columnValue);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DELETE FROM [Customer] 
-    /// WHERE ([Customer].[Name] = @Parameter_Name)
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <para>Note: <see cref="ColumnEqualsColumnBase{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
-    /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Customer> join = new(predicate);
-    /// 
-    /// SqlQuery query = orderGenerator.Delete(join, null);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DELETE [Order] 
-    /// FROM [Order] 
-    /// INNER JOIN [Customer] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId])
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
-    /// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
-    /// <code language="csharp"><![CDATA[
-    /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Customer> join = new(predicate);
-    /// 
-    /// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
-    /// 
-    /// SqlQuery query = orderGenerator.Delete(join, customerEmail);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DELETE [Order]
-    /// FROM [Order] 
-    /// INNER JOIN [Customer] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
-    /// ]]></code>
-    /// </example>
     /// <param name="predicates">
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
@@ -206,7 +124,7 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<ISqlFragment> GetFragments()
         {
             yield return new SqlFragmentText("DELETE");
-            
+
             if (usings.IsNullOrEmpty() && joins.IsNullOrEmpty())
             {
                 yield return new SqlFragmentText(" FROM ");
@@ -250,7 +168,7 @@ public abstract partial class SqlGeneratorBase<T>
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
             if (invalidTags.Any())
                 throw new InvalidTableException(invalidTags);
-            
+
             return new SqlQuery(Dialect, CommandType.Text, GetFragments());
         }
     }

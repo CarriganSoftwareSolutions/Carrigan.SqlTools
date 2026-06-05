@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Types;
+namespace Carrigan.SqlTools.Types;
 /// <summary>
 /// Specifies whether a SQL Server character or binary data type uses fixed-length
 /// or variable-length storage.

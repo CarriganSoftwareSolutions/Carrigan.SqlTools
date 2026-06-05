@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.DataTypes;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.RegularExpressions;
@@ -27,21 +27,21 @@ namespace Carrigan.SqlTools.Tags;
 /// <para>Example usage with a parameter attribute:</para>
 /// <code language="csharp"><![CDATA[
 /// using Carrigan.SqlTools.SqlGenerators;
-/// 
+///
 /// [Identifier("UpdateThing", "schema")]
 /// public class ProcedureExec
 /// {
 ///     [Parameter("SomeValue")]
 ///     public string? ValueColumn { get; set; }
 /// }
-/// 
+///
 /// SqlGenerator<ProcedureExec> procedureExecGenerator = new();
-/// 
+///
 /// ProcedureExec procedureExec = new()
 /// {
 ///     ValueColumn = "DangIt"
 /// };
-/// 
+///
 /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 /// ]]></code>
 /// </example>
