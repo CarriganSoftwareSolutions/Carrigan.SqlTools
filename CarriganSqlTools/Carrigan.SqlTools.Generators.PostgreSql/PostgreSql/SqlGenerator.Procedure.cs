@@ -59,5 +59,5 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     public SqlQuery Procedure(T entity) =>
-        Procedure(entity);
+        BaseProcedure(entity);
 }
