@@ -14,6 +14,9 @@ namespace Carrigan.SqlTools.Tags;
 /// </summary>
 public abstract class SelectTagsBase : ISqlFragment, IEnumerable<SelectTagBase>
 {
+    /// <summary>
+    /// The immutable-style backing sequence of SELECT projection tags represented by this collection.
+    /// </summary>
     private readonly IEnumerable<SelectTagBase> _selectTags;
 
     /// <summary>
@@ -129,9 +132,9 @@ public abstract class SelectTagsBase : ISqlFragment, IEnumerable<SelectTagBase>
         _selectTags;
 
     /// <summary>
-    /// Executes the GetEnumerator operation.
+    /// Returns an enumerator for the contained select tags.
     /// </summary>
-    /// <returns>The result of the GetEnumerator operation.</returns>
+    /// <returns>An enumerator for the contained select tags.</returns>
     public IEnumerator<SelectTagBase> GetEnumerator() =>
         _selectTags.GetEnumerator();
 
@@ -141,7 +144,7 @@ public abstract class SelectTagsBase : ISqlFragment, IEnumerable<SelectTagBase>
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
-    /// <returns>The result of the Flatten operation.</returns>
+    /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
@@ -150,7 +153,7 @@ public abstract class SelectTagsBase : ISqlFragment, IEnumerable<SelectTagBase>
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
-    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
+    /// <returns>The SQL fragment parameters required to render this tag.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         [];
 

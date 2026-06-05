@@ -8,11 +8,9 @@ using Carrigan.SqlTools.Types;
 namespace Carrigan.SqlTools.Dialects;
 
 /// <summary>
-/// This is the ISqlDialects interface, which defines the methods that a SQL dialect must implement.
-/// It includes methods for quoting identifiers, rendering table and column names, rendering parameters,
-/// rendering paging, and rendering insert statements with returning clauses. Each method takes the necessary.
-/// The current implementation of this interface is the SqlServerDialect class, which implements the methods for the SQL Server dialect.
-/// The current interface is just a best guess at the methods that will be needed, and may need to be updated as the library is developed further.
+/// Defines the rendering contract used by SQL generators to translate shared SQL fragments into a concrete database dialect.
+/// Implementations quote identifiers, render table and column references, assign parameter names, render paging clauses,
+/// normalize temporal values, and map CLR types to dialect-specific SQL type metadata.
 /// </summary>
 public interface ISqlDialects
 {

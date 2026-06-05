@@ -31,7 +31,14 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </example>
 public class Contains<T> : Predicates where T : class
 {
+    /// <summary>
+    /// The column expression searched by the full-text predicate.
+    /// </summary>
     private readonly ColumnBase<T> _column;
+
+    /// <summary>
+    /// The search-condition parameter rendered as the second argument to <c>CONTAINS</c>.
+    /// </summary>
     private readonly Parameter _parameter;
 
     /// <summary>

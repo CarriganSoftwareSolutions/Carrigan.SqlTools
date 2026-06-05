@@ -14,11 +14,11 @@ namespace Carrigan.SqlTools.SqlGenerators;
 public class SqlQuery
 {
     /// <summary>
-    /// Gets the SqlFragments value.
+    /// Gets the SQL fragments used to render the command text and collect parameters.
     /// </summary>
     public IEnumerable<ISqlFragment> SqlFragments { get; set; }
     /// <summary>
-    /// Gets the Dialect; value.
+    /// Gets the SQL dialect used to render fragments and parameter placeholders.
     /// </summary>
     protected readonly ISqlDialects Dialect;
     /// <summary>
@@ -50,7 +50,7 @@ public class SqlQuery
 
 
     /// <summary>
-    /// Gets the Parameters value.
+    /// Gets the rendered SQL parameters keyed by their final dialect-specific names.
     /// </summary>
     public IEnumerable<SqlFragmentParameter> Parameters =>
         SqlFragments.GetSqlFragmentParameters(Dialect);
@@ -63,7 +63,7 @@ public class SqlQuery
     /// <summary>
     /// Validates the SQL query structure.
     /// </summary>
-    /// <returns>The result of the Validate operation.</returns>
+    /// <returns>The current query after validation succeeds.</returns>
     /// <exception cref="ArgumentNullException">
     /// Thrown when a required argument is <c>null</c>.
     /// </exception>

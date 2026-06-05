@@ -88,13 +88,21 @@ namespace Carrigan.SqlTools.Tags;
 public class TableTag : StringWrapper, ISqlFragment
 {
     /// <summary>
-    /// Executes the <c>Get&lt;T&gt;</c> operation.
+    /// Gets the reflected table tag for the specified model type.
     /// </summary>
     /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
-    /// <returns>The result of the <c>Get&lt;T&gt;</c> operation.</returns>
+    /// <returns>The table tag resolved from the reflection cache for <typeparamref name="T"/>.</returns>
     public static TableTag Get<T>() where T : class =>
         SqlToolsReflectorCache<T>.Table;
+
+    /// <summary>
+    /// The optional schema that qualifies the table name.
+    /// </summary>
     private readonly SchemaName? SchemaName;
+
+    /// <summary>
+    /// The table identifier without the schema qualifier.
+    /// </summary>
     private readonly TableName TableName;
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
@@ -160,7 +168,7 @@ public class TableTag : StringWrapper, ISqlFragment
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
-    /// <returns>The result of the Flatten operation.</returns>
+    /// <returns>A single-item sequence containing this table tag.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
@@ -168,14 +176,15 @@ public class TableTag : StringWrapper, ISqlFragment
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
-    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
+    /// <returns>An empty sequence because table-name fragments do not contain SQL parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-    /// <summary>
-    /// Renders the SQL fragment using the supplied dialect.
-    /// </summary>
-    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
-    /// <returns>The result of the ToSql operation.</returns>
         [];
+
+    /// <summary>
+    /// Renders the schema-qualified table name using the supplied SQL dialect.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to quote and combine the schema and table identifiers.</param>
+    /// <returns>The rendered table identifier.</returns>
     public string ToSql(ISqlDialects dialect) =>
         dialect.RenderTable(SchemaName, TableName);
 }

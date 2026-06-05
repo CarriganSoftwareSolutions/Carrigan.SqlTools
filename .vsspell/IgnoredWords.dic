@@ -44,3 +44,6 @@ varchar
 xml
 nullability
 newid
+Enums
+parameterless
+intellisense

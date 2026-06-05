@@ -14,8 +14,17 @@ namespace Carrigan.SqlTools.Fragments;
 /// </remarks>
 public interface ISqlFragment
 {
+    /// <summary>
+    /// Represents a single SQL space character.
+    /// </summary>
     internal static readonly ISqlFragment Space = new SqlFragmentText(" ");
+    /// <summary>
+    /// Represents a SQL statement terminator.
+    /// </summary>
     internal static readonly ISqlFragment Semicolon = new SqlFragmentText(";");
+    /// <summary>
+    /// Represents the current platform newline sequence.
+    /// </summary>
     internal static readonly ISqlFragment NewLine = new SqlFragmentText(Environment.NewLine);
 
     /// <summary>

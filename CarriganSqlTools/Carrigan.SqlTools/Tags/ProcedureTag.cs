@@ -54,7 +54,14 @@ namespace Carrigan.SqlTools.Tags;
 /// </example>
 public class ProcedureTag : StringWrapper, ISqlFragment
 {
+    /// <summary>
+    /// The optional schema that qualifies the stored procedure name.
+    /// </summary>
     internal readonly SchemaName? SchemaName;
+
+    /// <summary>
+    /// The stored procedure identifier without the schema qualifier.
+    /// </summary>
     internal readonly ProcedureName ProcedureName;
 
     /// <summary>
@@ -120,7 +127,7 @@ public class ProcedureTag : StringWrapper, ISqlFragment
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
-    /// <returns>The result of the Flatten operation.</returns>
+    /// <returns>A single-item sequence containing this procedure tag.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
@@ -128,7 +135,7 @@ public class ProcedureTag : StringWrapper, ISqlFragment
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
-    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
+    /// <returns>An empty sequence because procedure-name fragments do not contain SQL parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         [];
 
@@ -136,7 +143,7 @@ public class ProcedureTag : StringWrapper, ISqlFragment
     /// Renders the SQL fragment using the supplied dialect.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render the fragment.</param>
-    /// <returns>The result of the ToSql operation.</returns>
+    /// <returns>The rendered procedure identifier.</returns>
     public string ToSql(ISqlDialects dialect) =>
         dialect.RenderProcedureTag(this);
 }

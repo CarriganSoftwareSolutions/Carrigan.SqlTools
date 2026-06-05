@@ -9,7 +9,7 @@ using System.Data;
 namespace Carrigan.SqlTools.SqlGenerators;
 
 /// <summary>
-/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// Contains shared SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
@@ -100,9 +100,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// Generates a SQL <c>DELETE</c> statement for the table represented by
     /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
-    /// <param name="usings"></param>
+    /// <param name="usings">Optional table sources to place in a PostgreSQL-style USING clause.</param>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="JoinsBase"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.

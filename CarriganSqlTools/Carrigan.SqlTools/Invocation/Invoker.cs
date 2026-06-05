@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
-//IGNORE SPELLING: datetime, Enums, parameterless, Nullability
 namespace Carrigan.SqlTools.Invocation;
 
 /// <summary>
@@ -20,6 +19,9 @@ namespace Carrigan.SqlTools.Invocation;
 /// </typeparam>
 public static class Invoker<T> where T : class, new()
 {
+    /// <summary>
+    /// Provides nullable reference type metadata for reflected members.
+    /// </summary>
     private static readonly NullabilityInfoContext NullabilityContext = new();
 
     /// <summary>
@@ -82,9 +84,6 @@ public static class Invoker<T> where T : class, new()
     /// <param name="databaseValue">
     /// The raw value to convert (may be <c>null</c> or <see cref="DBNull.Value"/>).
     /// </param>
-    /// <param name="columnName">
-    /// The originating result column name (used for exception messages).
-    /// </param>
     /// <param name="propertyInfo">
     /// The property receiving the converted value.
     /// </param>
@@ -106,6 +105,15 @@ public static class Invoker<T> where T : class, new()
         return ConvertScalarValue(databaseValue, targetType, IsNullable(propertyInfo));
     }
 
+    /// <summary>
+    /// Converts a database array into the CLR array type required by the destination model property.
+    /// </summary>
+    /// <param name="databaseArray">The array value returned by the database provider.</param>
+    /// <param name="targetArrayType">The CLR array type declared by the model property.</param>
+    /// <returns>An array with each element converted to the target element type.</returns>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="targetArrayType"/> is not an array type with an element type.
+    /// </exception>
     private static Array ConvertArrayValue(Array databaseArray, Type targetArrayType)
     {
         Type targetElementType = targetArrayType.GetElementType()
@@ -123,6 +131,22 @@ public static class Invoker<T> where T : class, new()
         return convertedArray;
     }
 
+    /// <summary>
+    /// Converts a single database value into the CLR type required by the destination model property or array element.
+    /// </summary>
+    /// <param name="databaseValue">The value returned by the database provider.</param>
+    /// <param name="targetType">The CLR type expected by the destination model member.</param>
+    /// <param name="targetIsNullable">Whether the destination member can accept <see langword="null"/>.</param>
+    /// <returns>The converted value, the original value when no conversion is needed, or <see langword="null"/> for database nulls.</returns>
+    /// <exception cref="XmlException">
+    /// Thrown when XML text cannot be parsed as <see cref="XDocument"/> or <see cref="XmlDocument"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when enum or numeric conversion fails for the destination type.
+    /// </exception>
+    /// <exception cref="InvalidCastException">
+    /// Thrown when <see cref="Convert.ChangeType(object, Type, IFormatProvider)"/> cannot convert the supplied value.
+    /// </exception>
     private static object? ConvertScalarValue(object? databaseValue, Type targetType, bool targetIsNullable)
     {
         Type underlyingTargetType = Nullable.GetUnderlyingType(targetType) ?? targetType;
@@ -193,6 +217,11 @@ public static class Invoker<T> where T : class, new()
         return databaseValue;
     }
 
+    /// <summary>
+    /// Determines whether a CLR type can be populated through invariant-culture numeric conversion.
+    /// </summary>
+    /// <param name="targetType">The non-nullable CLR type being assigned.</param>
+    /// <returns><see langword="true"/> when <paramref name="targetType"/> is a supported numeric CLR type; otherwise, <see langword="false"/>.</returns>
     private static bool IsConvertibleNumericTarget(Type targetType) =>
         targetType == typeof(byte)
         || targetType == typeof(sbyte)
@@ -206,6 +235,11 @@ public static class Invoker<T> where T : class, new()
         || targetType == typeof(double)
         || targetType == typeof(decimal);
 
+    /// <summary>
+    /// Determines whether the reflected property can accept <see langword="null"/> values.
+    /// </summary>
+    /// <param name="propertyInfo">The reflected model property being assigned.</param>
+    /// <returns><see langword="true"/> when the property is nullable; otherwise, <see langword="false"/>.</returns>
     private static bool IsNullable(PropertyInfo propertyInfo)
     {
         Type type = propertyInfo.PropertyType;

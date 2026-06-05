@@ -37,6 +37,7 @@ public class ColumnBase<T> : ColumnBase where T: class
     /// <summary>
     /// Initializes a new <see cref="ColumnBase{T}"/> using a property name.
     /// </summary>
+    /// <param name="supportedTypes">The CLR types supported by the current SQL dialect.</param>
     /// <param name="propertyName">The property name that identifies the column.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="propertyName"/> is <c>null</c>.
@@ -51,6 +52,7 @@ public class ColumnBase<T> : ColumnBase where T: class
     /// <summary>
     /// Initializes a new <see cref="ColumnBase{T}"/> using a <see cref="PropertyName"/> wrapper.
     /// </summary>
+    /// <param name="supportedTypes">The CLR types supported by the current SQL dialect.</param>
     /// <param name="propertyName">The property name wrapper that identifies the column.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="propertyName"/> is <c>null</c>.
@@ -65,6 +67,18 @@ public class ColumnBase<T> : ColumnBase where T: class
     internal ColumnBase(HashSet<Type> supportedTypes, PropertyName propertyName) : base(GetColumnInfo(supportedTypes, propertyName)) =>
         PropertyName = propertyName;
 
+    /// <summary>
+    /// Resolves reflected column metadata for a model property after applying dialect type filtering.
+    /// </summary>
+    /// <param name="supportedTypes">The CLR types supported by the current SQL dialect.</param>
+    /// <param name="propertyName">The C# property name that represents the SQL column.</param>
+    /// <returns>The reflected column metadata for <paramref name="propertyName"/>.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyName"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="propertyName"/> does not map to exactly one supported model property.
+    /// </exception>
     private static ColumnInfo GetColumnInfo(HashSet<Type> supportedTypes, PropertyName propertyName)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));

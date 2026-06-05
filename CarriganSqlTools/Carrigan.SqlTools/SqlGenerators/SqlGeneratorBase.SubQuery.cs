@@ -7,13 +7,13 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.SqlGenerators;
 
 /// <summary>
-/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// Contains shared SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
 {
     /// <summary>
-    /// Gets the BaseSubquery value.
+    /// Gets the SQL fragment used to begin a subquery expression in shared generation code.
     /// </summary>
     protected virtual Subquery<T> BaseSubquery
     (

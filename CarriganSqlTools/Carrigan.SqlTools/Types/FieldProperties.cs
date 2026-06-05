@@ -3,17 +3,17 @@
 namespace Carrigan.SqlTools.Types;
 
 /// <summary>
-/// Represents SQL Server field type properties used to generate a SQL declaration.
+/// Describes dialect-specific SQL type metadata used to generate a column or parameter declaration.
 /// </summary>
 /// <remarks>
-/// This class describes the SQL Server side of a mapped field, including the provider type name,
+/// This class describes the database side of a mapped field, including the provider type name,
 /// length, precision, scale, Unicode behavior, fixed-length behavior, fractional seconds precision,
 /// provider base type, and nullability.
 /// </remarks>
 public sealed class FieldProperties
 {
     /// <summary>
-    /// Gets the length used by SQL Server character, binary, and vector types.
+    /// Gets the length used by dialect types that accept a length argument, such as character, binary, bit-string, or vector types.
     /// </summary>
     public int? Length { get; init; }
 
@@ -33,17 +33,17 @@ public sealed class FieldProperties
     public bool? IsFixedLength { get; init; }
 
     /// <summary>
-    /// Gets the precision used by SQL Server decimal and floating-point types.
+    /// Gets the precision used by dialect types that support numeric precision.
     /// </summary>
     public byte? Precision { get; init; }
 
     /// <summary>
-    /// Gets the scale used by SQL Server decimal types.
+    /// Gets the scale used by dialect types that support numeric scale.
     /// </summary>
     public byte? Scale { get; init; }
 
     /// <summary>
-    /// Gets the fractional seconds precision used by SQL Server time-related types.
+    /// Gets the fractional seconds precision used by dialect time-related types.
     /// </summary>
     public byte? FractionalSecondsPrecision { get; init; }
 
@@ -53,7 +53,7 @@ public sealed class FieldProperties
     public bool IsNullable { get; init; }
 
     /// <summary>
-    /// Gets the SQL Server provider type name.
+    /// Gets the provider-specific SQL type name.
     /// </summary>
     /// <example>
     /// <c>NVARCHAR</c>, <c>DECIMAL</c>, <c>VARBINARY</c>, <c>UNIQUEIDENTIFIER</c>.
@@ -61,7 +61,7 @@ public sealed class FieldProperties
     public string? ProviderTypeName { get; init; }
 
     /// <summary>
-    /// Gets the provider base type for SQL Server types that support an additional base type argument.
+    /// Gets the provider base type for dialect types that support an additional base type argument.
     /// </summary>
     /// <example>
     /// <c>FLOAT32</c> or <c>FLOAT16</c> for <c>VECTOR</c>.

@@ -16,7 +16,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 public abstract class JoinBase
 {
     /// <summary>
-    /// Gets the _predicates; value.
+    /// Gets the predicate used to relate the joined table to the previous table source.
     /// </summary>
     protected readonly Predicates _predicates;
 

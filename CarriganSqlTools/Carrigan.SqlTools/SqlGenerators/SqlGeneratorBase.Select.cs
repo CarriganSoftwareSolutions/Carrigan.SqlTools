@@ -11,7 +11,7 @@ using System.Data;
 namespace Carrigan.SqlTools.SqlGenerators;
 
 /// <summary>
-/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// Contains shared SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
@@ -82,6 +82,17 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual SqlQuery BaseSelect(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBy, PagingBase? paging) =>
         new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, predicates, orderBy, paging));
 
+    /// <summary>
+    /// Builds the SQL fragments that make up a SELECT statement.
+    /// </summary>
+    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
+    /// <param name="subQuery">The optional subquery used as the FROM source.</param>
+    /// <param name="selects">The optional SELECT projection list.</param>
+    /// <param name="joins">The optional joins to append after the FROM source.</param>
+    /// <param name="predicates">The optional WHERE predicates.</param>
+    /// <param name="orderBy">The optional ORDER BY clause.</param>
+    /// <param name="paging">The optional paging clause.</param>
+    /// <returns>The SQL fragments that render the SELECT statement.</returns>
     private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBy, PagingBase? paging)
     {
         IEnumerable<ISqlFragment> GetFragments()

@@ -45,6 +45,9 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     internal readonly FieldProperties? FieldProperties;
 
+    /// <summary>
+    /// Gets the CLR type declared by the reflected model property.
+    /// </summary>
     internal Type Type =>
         PropertyInfo.PropertyType;
 

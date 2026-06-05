@@ -26,6 +26,10 @@ public class NoKeyVersionException<T> : Exception
     {
     }
 
+    /// <summary>
+    /// Builds the exception message used when encrypted model columns exist without a key-version property.
+    /// </summary>
+    /// <returns>The exception message.</returns>
     private static string CreateMessage() =>
         $"{typeof(T).Name} has encrypted properties but no key version property was found.";
 }

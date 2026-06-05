@@ -28,6 +28,9 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </example>
 public class Not : Predicates
 {
+    /// <summary>
+    /// The predicate expression wrapped by this Not predicate.
+    /// </summary>
     private readonly Predicates _someValue;
 
     /// <summary>
@@ -44,6 +47,14 @@ public class Not : Predicates
     public Not(Predicates someValue) : base([ValidateSomeValue(someValue)]) =>
         _someValue = someValue;
 
+    /// <summary>
+    /// Validates that the predicate being wrapped is present.
+    /// </summary>
+    /// <param name="someValue">The predicate expression to wrap.</param>
+    /// <returns><paramref name="someValue"/> after validation.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="someValue"/> is <see langword="null"/>.
+    /// </exception>
     private static Predicates ValidateSomeValue(Predicates someValue)
     {
         ArgumentNullException.ThrowIfNull(someValue, nameof(someValue));

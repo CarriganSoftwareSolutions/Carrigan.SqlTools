@@ -13,7 +13,7 @@ using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 using System.Reflection;
-//IGNORE SPELLING: parameterization
+
 namespace Carrigan.SqlTools.SqlGenerators;
 
 /// <summary>
@@ -36,7 +36,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     protected abstract ISqlDialects Dialect { get; init; }
 
     /// <summary>
-    /// Gets the SupportedTypes value.
+    /// Gets the CLR types that the concrete dialect can map during SQL generation.
     /// </summary>
     /// <exception cref="InvalidSqlIdentifierException">
     /// Thrown when a supplied or generated SQL identifier is invalid.
@@ -210,9 +210,6 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// <exception cref="NullReferenceException">
     /// Thrown if <paramref name="column"/> does not expose a <see cref="ParameterTag"/>.
     /// </exception>
-    /// <exception cref="InvalidParameterIdentifierException">
-    /// Thrown if <paramref name="parameterPrepend"/> produces an invalid parameter identifier.
-    /// </exception>
     /// <exception cref="ArgumentException">
     /// Thrown when an index is applied to a parameter that already has an index.
     /// </exception>
@@ -233,38 +230,38 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     }
 
     /// <summary>
-    /// Executes the GetColumn operation.
+    /// Creates a dialect-specific predicate column object for the supplied model property.
     /// </summary>
-    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
-    /// <returns>The result of the GetColumn operation.</returns>
+    /// <param name="propertyName">The C# property name representing the SQL column.</param>
+    /// <returns>A column predicate node bound to <paramref name="propertyName"/>.</returns>
     protected abstract ColumnBase<T> GetColumn(PropertyName propertyName);
     /// <summary>
-    /// Executes the GetColumnValue operation.
+    /// Creates a dialect-specific column-value predicate for a reflected column and model instance.
     /// </summary>
     /// <param name="columnInfo">The reflected column metadata for the model property.</param>
-    /// <param name="entity">The model instance representing the SQL row or parameter set.</param>
-    /// <returns>The result of the GetColumnValue operation.</returns>
+    /// <param name="entity">The model instance that supplies the value for the generated parameter.</param>
+    /// <returns>A predicate that compares the column to the value read from <paramref name="entity"/>.</returns>
     protected abstract ColumnValueBase<T> GetColumnValue(ColumnInfo columnInfo, T entity);
 
     /// <summary>
-    /// Executes the GetColumnCollection operation.
+    /// Creates a dialect-specific collection of model columns from property names.
     /// </summary>
-    /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
-    /// <returns>The result of the GetColumnCollection operation.</returns>
+    /// <param name="propertyNames">The C# property names representing SQL columns.</param>
+    /// <returns>A column collection containing the requested model properties.</returns>
     protected abstract ColumnCollectionBase<T> GetColumnCollection(params IEnumerable<PropertyName> propertyNames);
 
     /// <summary>
-    /// Executes the NewOrderBys operation.
+    /// Creates an empty dialect-specific <c>ORDER BY</c> collection.
     /// </summary>
-    /// <returns>The result of the NewOrderBys operation.</returns>
+    /// <returns>An empty order-by collection for the concrete dialect package.</returns>
     protected abstract OrderBysBase NewOrderBys();
 
     /// <summary>
-    /// Executes the NewOrderByKey operation.
+    /// Creates a dialect-specific <c>ORDER BY</c> item for a key property.
     /// </summary>
-    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
+    /// <param name="propertyName">The C# property name representing the key column.</param>
     /// <param name="sortDirection">The SQL sort direction.</param>
-    /// <returns>The result of the NewOrderByKey operation.</returns>
+    /// <returns>An order-by item for the requested key property.</returns>
     protected abstract OrderByBase NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection);
 
     /// <summary>

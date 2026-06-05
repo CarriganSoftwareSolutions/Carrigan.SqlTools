@@ -24,14 +24,14 @@ namespace Carrigan.SqlTools.Sets;
 public abstract class ColumnCollectionBase<T>
 {
     /// <summary>
-    /// Gets the SupportedTypes value.
+    /// Gets the CLR property types supported by this column collection.
     /// </summary>
     protected abstract HashSet<Type> SupportedTypes { get; }
     /// <summary>
-    /// Executes the FromPropertyName operation.
+    /// Creates a new column collection from the supplied property names.
     /// </summary>
     /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
-    /// <returns>The result of the FromPropertyName operation.</returns>
+    /// <returns>A new column collection containing the supplied property names.</returns>
     protected abstract ColumnCollectionBase<T> FromPropertyName(IEnumerable<PropertyName> propertyNames);
 
     /// <summary>

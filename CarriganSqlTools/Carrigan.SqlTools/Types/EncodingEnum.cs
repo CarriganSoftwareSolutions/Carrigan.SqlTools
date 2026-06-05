@@ -5,7 +5,7 @@ namespace Carrigan.SqlTools.Types;
 /// character-based data types.
 /// </summary>
 /// <remarks>
-/// This enumeration is intended to distinguish between SQL Server types that use
+/// This enumeration distinguishes between dialect string types that use
 /// single-byte ASCII character storage and those that use Unicode storage.
 /// <para>
 /// Typical mappings include:

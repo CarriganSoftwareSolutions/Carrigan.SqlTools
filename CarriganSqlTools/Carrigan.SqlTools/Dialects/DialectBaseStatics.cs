@@ -1,16 +1,19 @@
 namespace Carrigan.SqlTools.Dialects;
 
+/// <summary>
+/// Stores CLR type metadata shared by dialect implementations before dialect-specific type filtering is applied.
+/// </summary>
 internal static class DialectBaseStatics
 {
     /// <summary>
-    /// Returns a set of CLR types that are supported by the base SqlToolsReflectorCache for SQL parameter mapping and type inference.
+    /// Gets the CLR types that the shared reflection cache can inspect for SQL parameter mapping and type inference.
     /// </summary>
     /// <returns>
     /// A <see cref="HashSet{Type}"/> containing the CLR types supported by the base SqlToolsReflectorCache, including but not limited to:
     /// <list type="bullet">
     ///     <item><description><see cref="Guid"/> and nullable <see cref="Guid"/> values, including array variants.</description></item>
     ///     <item><description>Text values, including <see cref="string"/>, <see cref="char"/>, nullable <see cref="char"/>, and supported array variants.</description></item>
-    ///     <item><description>Binary values, including <see cref="byte"/> arrays mapped as PostgreSQL <c>bytea</c>.</description></item>
+    ///     <item><description>Binary values, including <see cref="byte"/> arrays and arrays of binary values.</description></item>
     ///     <item><description><see cref="bool"/> and nullable <see cref="bool"/> values, including array variants.</description></item>
     ///     <item><description>Integer values, including <see cref="byte"/>, <see cref="sbyte"/>, <see cref="short"/>, <see cref="int"/>, <see cref="long"/>, and their nullable and array variants.</description></item>
     ///     <item><description>Numeric values, including <see cref="float"/>, <see cref="double"/>, <see cref="decimal"/>, and their nullable and array variants.</description></item>
@@ -36,7 +39,7 @@ internal static class DialectBaseStatics
         typeof(char?[]),
 
         // Binary
-        // byte[] is bytea, not a PostgreSQL array type.
+        // byte[] represents a binary value. byte[][] represents an array of binary values.
         typeof(byte[]),
         typeof(byte[][]),
 
@@ -119,7 +122,7 @@ internal static class DialectBaseStatics
         typeof(DateTimeOffset?[]),
 
         // XML
-        // PostgreSQL/Npgsql treats XML as string-compatible.
+        // Dialects may render XML-capable CLR types differently.
         typeof(System.Xml.Linq.XDocument),
         typeof(System.Xml.XmlDocument),
         typeof(System.Xml.Linq.XDocument[]),

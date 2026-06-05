@@ -47,6 +47,14 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
         AliasTag = aliasTag;
     }
 
+    /// <summary>
+    /// Creates a column tag from a model property name when no reflected table context is available.
+    /// </summary>
+    /// <param name="propertyName">The model property name to use as the SQL column name.</param>
+    /// <returns>A column tag containing the column name derived from <paramref name="propertyName"/>.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyName"/> is <see langword="null"/>.
+    /// </exception>
     private static ColumnTag CreateColumnTag(PropertyName propertyName)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
@@ -64,7 +72,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
-    /// <returns>The result of the Flatten operation.</returns>
+    /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
@@ -73,21 +81,21 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
-    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
+    /// <returns>An empty sequence because SELECT projection fragments do not contain SQL parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-    /// <summary>
-    /// Renders the SQL fragment using the supplied dialect.
-    /// </summary>
-    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
-    /// <returns>The result of the ToSql operation.</returns>
         [];
 
+    /// <summary>
+    /// Renders the selected column and optional alias using the supplied SQL dialect.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to render identifiers.</param>
+    /// <returns>The rendered SELECT-list fragment.</returns>
     public string ToSql(ISqlDialects dialect) =>
         AliasTag is null ? ColumnTag.ToSql(dialect) : $"{ColumnTag.ToSql(dialect)} AS {AliasTag.ToSql(dialect)}";
 
     /// <summary>
     /// Creates an equivalent select tag without an alias.
     /// </summary>
-    /// <returns>The result of the WithNoAlias operation.</returns>
+    /// <returns>A copy of this tag without an alias.</returns>
     public abstract SelectTagBase WithNoAlias();
 }

@@ -158,9 +158,8 @@ public class Joins<leftT> : JoinsBase where leftT : class
 
     /// <summary>
     /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
-    /// plus the addition join provided.
+    /// plus the additional join provided.
     /// </summary>
-    /// <typeparam name="leftT">The data model representing the left-side table being joined.</typeparam>
     /// <param name="newJoin">The join operation to append.</param>
     /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional join.</returns>
     public Joins<leftT> Append(JoinBase newJoin) =>
@@ -191,7 +190,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// </summary>
     /// <remarks>
     /// This provides a quick way to determine whether a given table participates in
-    /// any join operation within this <see cref="Joins"/> instance.
+    /// any join operation within this <see cref="Joins{leftT}"/> instance.
     /// </remarks>
     /// <returns>
     /// An enumeration of all <see cref="TableTag"/> instances involved in the join sequence.
@@ -311,10 +310,10 @@ public class Joins<leftT> : JoinsBase where leftT : class
 
     /// <summary>
     /// Generates the SQL fragments for all <c>JOIN</c> clauses
-    /// represented by this <see cref="Joins"/> instance.
+    /// represented by this <see cref="Joins{leftT}"/> instance.
     /// </summary>
     /// <returns>
-    /// An <see cref="IEnumerable{SqlFragment}"/> representing the <c>JOIN</c> clauses in sequence.
+    /// The SQL fragments that render each <c>JOIN</c> clause in sequence.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
@@ -331,7 +330,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     }
 
     /// <summary>
-    /// Determines whether this <see cref="Joins"/> instance contains any join definitions.
+    /// Determines whether this <see cref="Joins{leftT}"/> instance contains any join definitions.
     /// </summary>
     /// <returns>
     /// <see langword="true"/> if no joins are defined; otherwise, <see langword="false"/>.
@@ -342,6 +341,12 @@ public class Joins<leftT> : JoinsBase where leftT : class
     internal override bool IsEmpty() =>
         ValidatedJoints.None();
 
+    /// <summary>
+    /// Gets the materialized join collection after verifying that it is not <see langword="null"/> and contains no <see langword="null"/> entries.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <see cref="Joints"/> is <see langword="null"/> or contains a <see langword="null"/> entry.
+    /// </exception>
     private IEnumerable<JoinBase> ValidatedJoints
     {
         get
@@ -356,14 +361,21 @@ public class Joins<leftT> : JoinsBase where leftT : class
         }
     }
 
+    /// <summary>
+    /// Gets the first join in the current join sequence.
+    /// </summary>
+    /// <returns>The first join in the sequence.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <see cref="Joints"/> is <see langword="null"/> or contains a <see langword="null"/> entry.
+    /// </exception>
     internal override JoinBase First() =>
-        Joints.First();
+        ValidatedJoints.First();
 
     /// <summary>
-    /// Executes the operator operation.
+    /// Creates a <see cref="Joins{leftT}"/> collection containing a single join.
     /// </summary>
-    /// <typeparam name="leftT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
-    /// <param name="joins">The SQL joins used by the query.</param>
-    /// <returns>The result of the operator operation.</returns>
+    /// <typeparam name="leftT">The model type used as the starting table for the join collection.</typeparam>
+    /// <param name="joins">The SQL join to place in the collection.</param>
+    /// <returns>A join collection containing <paramref name="joins"/>.</returns>
     public static implicit operator Joins<leftT>(JoinBase joins) => new (joins);
 }

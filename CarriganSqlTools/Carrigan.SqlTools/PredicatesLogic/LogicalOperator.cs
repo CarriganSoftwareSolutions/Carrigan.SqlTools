@@ -10,6 +10,9 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 public abstract class LogicalOperator : Predicates
 {
+    /// <summary>
+    /// The SQL logical operator text placed between rendered child predicates.
+    /// </summary>
     private readonly string _operator;
 
     /// <summary>

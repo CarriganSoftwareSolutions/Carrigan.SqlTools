@@ -60,6 +60,10 @@ public static partial class SqlParameterPattern
     public static bool Fails(string? identifier) =>
         Passes(identifier) is false;
 
+    /// <summary>
+    /// Creates the compiled regular expression used to validate parameter-name characters after leading <c>@</c> characters are trimmed.
+    /// </summary>
+    /// <returns>The compiled parameter-name regular expression.</returns>
     [GeneratedRegex(@"^(?:[_@#$]|\p{L}|\p{Nl}|\p{Nd})*$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex SqlParameterRegex();
 }

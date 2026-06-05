@@ -34,6 +34,9 @@ public abstract class Predicates
         ChildNodes = childPredicates.Materialize(NullOptionsEnum.Exception);
     }
 
+    /// <summary>
+    /// Gets all parameter predicates reachable below the current predicate node.
+    /// </summary>
     internal IEnumerable<Parameter> DescendantParameters =>
         DescendantNodes.OfType<Parameter>();
 
@@ -97,6 +100,11 @@ public abstract class Predicates
 
     internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 
+    /// <summary>
+    /// Recursively enumerates every child predicate below the supplied predicate collection.
+    /// </summary>
+    /// <param name="predicates">The predicate collection whose descendants should be enumerated.</param>
+    /// <returns>All descendant predicate nodes in depth-first order.</returns>
     private static IEnumerable<Predicates> GetAllDescendantPredicates(IEnumerable<Predicates> predicates)
     {
         foreach (Predicates predicate in predicates)

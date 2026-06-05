@@ -50,7 +50,7 @@ public class AliasTag : StringWrapper, ISqlFragment
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
-    /// <returns>The result of the Flatten operation.</returns>
+    /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>
     public IEnumerable<ISqlFragment> Flatten()
     {
         yield return this;
@@ -58,14 +58,15 @@ public class AliasTag : StringWrapper, ISqlFragment
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
-    /// <returns>The result of the GetSqlFragmentParameters operation.</returns>
+    /// <returns>An empty sequence because alias fragments do not contain SQL parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-    /// <summary>
-    /// Renders the SQL fragment using the supplied dialect.
-    /// </summary>
-    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
-    /// <returns>The result of the ToSql operation.</returns>
         [];
+
+    /// <summary>
+    /// Renders the alias as a dialect-quoted SQL identifier.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to quote the alias identifier.</param>
+    /// <returns>The quoted alias identifier.</returns>
     public string ToSql(ISqlDialects dialect) =>
         dialect.QuoteIdentifier(this);
 }

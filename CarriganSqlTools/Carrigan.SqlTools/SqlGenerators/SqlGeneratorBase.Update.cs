@@ -11,7 +11,7 @@ using System.Data;
 namespace Carrigan.SqlTools.SqlGenerators;
 
 /// <summary>
-/// Represents the <see cref="SqlGeneratorBase{T}"/> component.
+/// Contains shared SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
@@ -155,9 +155,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// Optional column selection. When provided, only these columns are updated; when
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
-    /// <param name="from"></param>
+    /// <param name="from">Optional table sources to place in the UPDATE FROM clause.</param>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> describing tables to join for the update.
+    /// Optional <see cref="JoinsBase"/> describing tables to join for the update.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,

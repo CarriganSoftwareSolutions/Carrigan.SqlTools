@@ -142,6 +142,11 @@ public class SqlTypeNotSupportedException : Exception
             throw new SqlTypeNotSupportedException(type);
     }
 
+    /// <summary>
+    /// Formats reflected property metadata for inclusion in an unsupported SQL type error message.
+    /// </summary>
+    /// <param name="propertyInfo">The reflected property whose CLR type could not be mapped, if available.</param>
+    /// <returns>A display string containing the declaring type and property name, or a placeholder when unavailable.</returns>
     private static string FormatProperty(PropertyInfo? propertyInfo)
     {
         if (propertyInfo is null)

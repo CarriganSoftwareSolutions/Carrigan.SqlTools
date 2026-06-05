@@ -1,5 +1,6 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -27,6 +28,9 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </example>
 public class Like : DialectOperator
 {
+    /// <summary>
+    /// Indicates whether the dialect should render a case-sensitive or case-insensitive LIKE comparison when it supports that distinction.
+    /// </summary>
     private readonly bool? IsCaseSensitive;
 
     /// <summary>

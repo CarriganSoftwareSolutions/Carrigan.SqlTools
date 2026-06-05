@@ -1,7 +1,6 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-
-//IGNORE SPELLING: subquery, subqueries, intellisense
+using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 

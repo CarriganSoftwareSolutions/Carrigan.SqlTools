@@ -280,6 +280,11 @@ public class InvalidSqlIdentifierException: Exception
     }
     #endregion
 
+    /// <summary>
+    /// Formats reflected property metadata for inclusion in an invalid SQL identifier error message.
+    /// </summary>
+    /// <param name="propertyInfo">The reflected property associated with the invalid SQL identifier, if available.</param>
+    /// <returns>A display string containing the declaring type and property name, or a placeholder when unavailable.</returns>
     private static string FormatPropertyInfo(PropertyInfo? propertyInfo)
     {
         if (propertyInfo is null)

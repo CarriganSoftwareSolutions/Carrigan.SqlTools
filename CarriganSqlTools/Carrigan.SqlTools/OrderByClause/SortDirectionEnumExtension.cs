@@ -27,6 +27,11 @@ internal static class SortDirectionEnumExtension
             _ => throw CreateInvalidValueException(value),
         };
 
+    /// <summary>
+    /// Creates the exception used when an undefined sort-direction enum value is rendered.
+    /// </summary>
+    /// <param name="value">The undefined enum value.</param>
+    /// <returns>The exception describing the unsupported sort-direction value.</returns>
     private static ArgumentOutOfRangeException CreateInvalidValueException(SortDirectionEnum value) =>
         new(nameof(value), value, $"Invalid {nameof(SortDirectionEnum)} value: {value}.");
 }

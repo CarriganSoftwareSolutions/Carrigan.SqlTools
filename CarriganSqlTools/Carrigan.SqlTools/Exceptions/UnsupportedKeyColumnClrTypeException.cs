@@ -40,10 +40,18 @@ public sealed class UnsupportedKeyColumnClrTypeException : Exception
         : base(BuildMessage(unsupportedTypes)) => UnsupportedTypes = [.. unsupportedTypes.Distinct()];
 
     /// <summary>
-    /// Gets the UnsupportedTypes value.
+    /// Gets the unsupported key column CLR types that were found.
     /// </summary>
     public IReadOnlyCollection<Type> UnsupportedTypes { get; } = [];
 
+    /// <summary>
+    /// Builds the exception message from the unsupported CLR types used by key columns.
+    /// </summary>
+    /// <param name="unsupportedTypes">The key-column CLR types that the dialect cannot map.</param>
+    /// <returns>A message that lists the unsupported key-column CLR types.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="unsupportedTypes"/> is <see langword="null"/>.
+    /// </exception>
     private static string BuildMessage(IEnumerable<Type> unsupportedTypes)
     {
         Type[] types = [.. unsupportedTypes.Distinct()];

@@ -47,6 +47,14 @@ public sealed class InvalidPropertyException<T> : Exception
     {
     }
 
+    /// <summary>
+    /// Builds the exception message from the invalid model property names supplied by the caller.
+    /// </summary>
+    /// <param name="propertyNames">The property names that do not map to eligible model columns.</param>
+    /// <returns>A message that lists each distinct invalid property name.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyNames"/> is <see langword="null"/>.
+    /// </exception>
     private static string CreateMessage(IEnumerable<PropertyName> propertyNames)
     {
         ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));

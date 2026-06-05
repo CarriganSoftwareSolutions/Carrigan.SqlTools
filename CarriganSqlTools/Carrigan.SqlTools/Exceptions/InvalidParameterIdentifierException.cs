@@ -30,6 +30,14 @@ public class InvalidParameterIdentifierException : Exception
     {
     }
 
+    /// <summary>
+    /// Builds the exception message from the invalid parameter names supplied by the caller.
+    /// </summary>
+    /// <param name="identifiers">The parameter names that failed validation.</param>
+    /// <returns>A message that lists each distinct invalid parameter name.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="identifiers"/> is <see langword="null"/>.
+    /// </exception>
     private static string CreateMessage(IEnumerable<string?> identifiers)
     {
         ArgumentNullException.ThrowIfNull(identifiers, nameof(identifiers));
