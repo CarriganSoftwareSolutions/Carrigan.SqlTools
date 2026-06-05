@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
@@ -76,14 +76,14 @@ public abstract class OrderByBase : ISqlFragment, IEquatable<OrderByBase>
     /// </summary>
     /// <remarks>Enumeration is deferred; callers should materialize the sequence if it will be iterated
     /// multiple times or accessed concurrently.</remarks>
-    /// <returns>An IEnumerable<SqlFragmentParameter> containing parameters referenced by the SQL fragment; empty if there are no
-    /// parameters.</returns>
+    /// <returns>A sequence of <see cref="SqlFragmentParameter"/> values referenced by the SQL fragment; empty if there are no parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         [];
 
     /// <summary>
     /// Generates the SQL fragment for this order-by item (without the <c>ORDER BY</c> keyword).
     /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
     /// <remarks>
     /// The containing <see cref="SqlGenerators.SqlGeneratorBase{T}"/> is responsible for emitting the
     /// <c>ORDER BY</c> keyword and for joining multiple items.

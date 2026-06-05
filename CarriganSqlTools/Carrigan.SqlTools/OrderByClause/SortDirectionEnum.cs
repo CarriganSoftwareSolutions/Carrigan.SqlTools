@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.OrderByClause;
+namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>
 /// Specifies the sort direction for an <c>ORDER BY</c> clause.

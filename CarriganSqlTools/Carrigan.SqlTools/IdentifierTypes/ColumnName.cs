@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.IdentifierTypes;

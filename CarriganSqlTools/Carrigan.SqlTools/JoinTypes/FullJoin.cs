@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -50,7 +50,7 @@ public class FullJoin<rightT> : JoinBase where rightT : class
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -71,7 +71,7 @@ public class FullJoin<rightT> : JoinBase where rightT : class
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -119,7 +119,7 @@ public class FullJoin<rightT> : JoinBase where rightT : class
     /// <remarks>
     /// Any exception thrown while rendering the predicate tree will be propagated to the caller.
     /// </remarks>
-    /// 
+    ///
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (_predicates is null || _predicates is EmptyPredicate)

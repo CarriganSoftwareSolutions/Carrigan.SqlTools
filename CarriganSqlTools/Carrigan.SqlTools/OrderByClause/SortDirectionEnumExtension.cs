@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.OrderByClause;
+namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>
 /// Provides extension methods for converting <see cref="SortDirectionEnum"/> values
@@ -18,7 +18,7 @@ internal static class SortDirectionEnumExtension
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when <paramref name="value"/> is not a valid <see cref="SortDirectionEnum"/> value.
     /// </exception>
-    /// 
+    ///
     internal static string ToSql(this SortDirectionEnum value) =>
         value switch
         {

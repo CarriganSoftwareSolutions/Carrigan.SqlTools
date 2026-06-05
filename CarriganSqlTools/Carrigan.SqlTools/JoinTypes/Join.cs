@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -49,14 +49,14 @@ public class Join<rightT> : JoinBase where rightT : class
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public Join(Predicates predicates, Subquery<rightT>? subQuery = null) : base(predicates) => 
+    public Join(Predicates predicates, Subquery<rightT>? subQuery = null) : base(predicates) =>
         Subquery = subQuery;
 
     /// <summary>
@@ -70,7 +70,7 @@ public class Join<rightT> : JoinBase where rightT : class
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -118,9 +118,9 @@ public class Join<rightT> : JoinBase where rightT : class
     /// <remarks>
     /// Any exception thrown while rendering the predicate tree or while resolving <see cref="TableTag"/> will be propagated to the caller.
     /// </remarks>
-    /// 
+    ///
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
-    {   
+    {
         if (_predicates == null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("JOIN requires at least one predicate for the ON clause.");
 

@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -40,7 +40,7 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     /// Initializes a new instance of the <see cref="CrossJoin{rightT}"/> class.
     /// </summary>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -52,7 +52,7 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     /// a newly created <see cref="CrossJoin{rightT}"/> operation.
     /// </summary>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -99,7 +99,7 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     /// </summary>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
-    /// 
+    ///
     internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText(" CROSS JOIN ");

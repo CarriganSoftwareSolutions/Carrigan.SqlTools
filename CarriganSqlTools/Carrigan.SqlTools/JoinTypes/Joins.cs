@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
@@ -172,7 +172,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// </summary>
     /// <param name="newJoins">The additional join operations to include.</param>
     /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional joins.</returns>
-    public Joins<leftT> Concat(IEnumerable<JoinBase> newJoins) => 
+    public Joins<leftT> Concat(IEnumerable<JoinBase> newJoins) =>
         new(Joints.Concat(newJoins));
 
     /// <summary>
@@ -209,7 +209,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -226,7 +226,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -243,7 +243,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -260,7 +260,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -277,7 +277,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.</param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -293,7 +293,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// </summary>
     /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a 
+    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
@@ -356,8 +356,14 @@ public class Joins<leftT> : JoinsBase where leftT : class
         }
     }
 
-    internal override JoinBase First() => 
+    internal override JoinBase First() =>
         Joints.First();
 
+    /// <summary>
+    /// Executes the operator operation.
+    /// </summary>
+    /// <typeparam name="leftT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="joins">The SQL joins used by the query.</param>
+    /// <returns>The result of the operator operation.</returns>
     public static implicit operator Joins<leftT>(JoinBase joins) => new (joins);
 }

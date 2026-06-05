@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -15,6 +15,9 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </remarks>
 public abstract class JoinBase
 {
+    /// <summary>
+    /// Gets the _predicates; value.
+    /// </summary>
     protected readonly Predicates _predicates;
 
     /// <summary>
@@ -58,6 +61,6 @@ public abstract class JoinBase
     /// <param name="dialect"></param>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
-    /// 
+    ///
     internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 }

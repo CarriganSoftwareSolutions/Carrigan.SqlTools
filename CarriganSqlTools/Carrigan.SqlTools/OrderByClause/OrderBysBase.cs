@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
@@ -14,22 +14,6 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// Concrete implementation of <see cref="OrderBysBase"/> for an <c>ORDER BY</c>
 /// clause that supports multiple columns.
 /// </summary>
-/// <example>
-/// <code language="csharp"><![CDATA[
-/// OrderBy<Customer> orderBy1 = new(nameof(Customer.Name));
-/// OrderBy<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
-/// OrderBys orderBys = new(orderBy1, orderBy2);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBys, null);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// ORDER BY 
-///     [Customer].[Name] ASC, 
-///     [Customer].[Id] DESC
-/// ]]></code>
-/// </example>
 public abstract class OrderBysBase
 {
 
@@ -87,7 +71,7 @@ public abstract class OrderBysBase
     /// <summary>
     /// Determines whether the <c>ORDER BY</c> clause is empty.
     /// </summary>
-    public bool IsEmpty() => 
+    public bool IsEmpty() =>
         _orderByItems.IsNullOrEmpty();
 
     /// <summary>
@@ -108,34 +92,48 @@ public abstract class OrderBysBase
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
     /// specifying the table type <typeparamref name="T"/>, the property name,
-    /// and the desired sort direction. Then creates a new <c>ORDER BY</c> clause with 
+    /// and the desired sort direction. Then creates a new <c>ORDER BY</c> clause with
     /// the specified <see cref="OrderByBase"/> appended.
     /// This operation is immutable and does not modify the original instance.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="propertyName">The property representing the column to order by.</param>
     /// <param name="sortDirection">The sort direction to apply.</param>
     /// <returns>
     /// A new <c>ORDER BY</c> clause that includes the appended <see cref="OrderByBase"/>.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// Thrown when <paramref name="propertyName"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the resolved column metadata does not contain exactly one match.
     /// </exception>
     public abstract OrderBysBase Append<T>(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) where T : class;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
     /// specifying the table type <typeparamref name="T"/>, the property name,
-    /// and the desired sort direction. Then creates a new <c>ORDER BY</c> clause with 
+    /// and the desired sort direction. Then creates a new <c>ORDER BY</c> clause with
     /// the specified <see cref="OrderByBase"/> appended.
     /// This operation is immutable and does not modify the original instance.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="propertyName">The property representing the column to order by.</param>
     /// <param name="sortDirection">The sort direction to apply.</param>
     /// <returns>
     /// A new <c>ORDER BY</c> clause that includes the appended <see cref="OrderByBase"/>.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="orderByItem"/> is <c>null</c>.
+    /// Thrown when <paramref name="propertyName"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the resolved column metadata does not contain exactly one match.
     /// </exception>
     [ExternalOnly]
     public virtual OrderBysBase Append<T>(string propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) where T : class =>
