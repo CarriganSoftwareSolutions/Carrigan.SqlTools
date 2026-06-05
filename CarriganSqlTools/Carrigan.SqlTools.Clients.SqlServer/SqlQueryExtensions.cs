@@ -8,6 +8,9 @@ using System.Data;
 
 namespace Carrigan.SqlTools.Clients.SqlServer;
 
+/// <summary>
+/// Provides internal helpers for binding rendered SQL query parameters to SQL Server commands.
+/// </summary>
 internal static class SqlQueryExtensions
 {
     /// <summary>

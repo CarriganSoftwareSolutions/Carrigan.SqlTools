@@ -9,6 +9,9 @@ using System.Data;
 
 namespace Carrigan.SqlTools.Clients.PostgreSql;
 
+/// <summary>
+/// Provides internal helpers for binding rendered SQL query parameters to PostgreSQL commands.
+/// </summary>
 internal static class SqlQueryExtensions
 {
     /// <summary>
