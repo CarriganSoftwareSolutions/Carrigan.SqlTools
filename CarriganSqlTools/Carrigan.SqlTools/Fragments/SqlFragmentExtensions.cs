@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Tags;
 
@@ -71,7 +71,7 @@ internal static class SqlFragmentExtensions
     internal static string ToSql(this IEnumerable<ISqlFragment> sqlFragments, ISqlDialects dialect)
     {
         ArgumentNullException.ThrowIfNull(sqlFragments);
-        ArgumentNullException.ThrowIfNull(dialect);     
+        ArgumentNullException.ThrowIfNull(dialect);
 
         return string.Concat(sqlFragments.RenderFinalFragmentEnumeration(dialect).Select(fragment => fragment.ToSql(dialect)));
     }
@@ -109,7 +109,7 @@ internal static class SqlFragmentExtensions
         separator.IsNullOrEmpty()
             ? fragments.JoinFragments()
             : fragments.JoinFragments(new SqlFragmentText(separator));
-            
+
     /// <summary>
     /// Flattens a sequence of SQL fragments by recursively expanding any nested sequences of fragments into a single, flat sequence.
     /// </summary>

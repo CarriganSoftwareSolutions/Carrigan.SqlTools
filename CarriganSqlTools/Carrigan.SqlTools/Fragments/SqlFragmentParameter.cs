@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Interfaces;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -17,7 +17,7 @@ namespace Carrigan.SqlTools.Fragments;
 public class SqlFragmentParameter : ISqlFragment
 {
     /// <summary>
-    /// Gets the <see cref="ParameterTag"/> associated with this parameter fragment, which serves as a unique identifier for the parameter during SQL 
+    /// Gets the <see cref="ParameterTag"/> associated with this parameter fragment, which serves as a unique identifier for the parameter during SQL
     /// generation and materialization.
     /// </summary>
     public readonly ParameterTag ParameterTag;
@@ -26,7 +26,7 @@ public class SqlFragmentParameter : ISqlFragment
     /// </summary>
     public readonly FieldProperties? FieldProperties;
     /// <summary>
-    /// Gets the runtime value associated with this parameter fragment, which will be materialized as a SQL parameter value during query execution. 
+    /// Gets the runtime value associated with this parameter fragment, which will be materialized as a SQL parameter value during query execution.
     /// </summary>
     public readonly object? Value;
 
@@ -75,7 +75,7 @@ public class SqlFragmentParameter : ISqlFragment
     /// </summary>
     /// <param name="columnInfo">The <see cref="ColumnInfo"/> object that contains metadata about the column for which the parameter is being created.</param>
     /// <param name="value">The value for the parameter.</param>
-    internal SqlFragmentParameter(ColumnInfo columnInfo, object? value)  
+    internal SqlFragmentParameter(ColumnInfo columnInfo, object? value)
         : this (columnInfo, columnInfo.FieldProperties, value)
     {
     }
@@ -149,7 +149,7 @@ public class SqlFragmentParameter : ISqlFragment
     public string ToSql(ISqlDialects dialect) =>
         //Note: ToString will not render the final parameter text by itself.
         //When unit testing, you need to convert to final SqlQuery, then get the command text.
-        //The command text should then have @'s added if needed, and index numbers added on. 
+        //The command text should then have @'s added if needed, and index numbers added on.
         //Before that, it will just be the parameter name.
         ParameterTag;
 

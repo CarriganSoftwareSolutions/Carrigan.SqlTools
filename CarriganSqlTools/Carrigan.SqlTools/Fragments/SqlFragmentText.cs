@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -28,6 +28,7 @@ public class SqlFragmentText : ISqlFragment
     /// <summary>
     /// Converts this fragment into its SQL representation.
     /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
     /// <returns>The literal SQL text for this fragment.</returns>
     public string ToSql(ISqlDialects dialect) =>
         SqlText;

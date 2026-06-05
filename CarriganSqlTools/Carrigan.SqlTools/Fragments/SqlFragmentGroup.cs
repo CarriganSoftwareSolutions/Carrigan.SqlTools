@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -24,6 +24,7 @@ public class SqlFragmentGroup : ISqlFragment
     /// <summary>
     /// Generates the SQL representation of the current object by concatenating the SQL fragments.
     /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the fragment.</param>
     /// <returns>A string containing the complete SQL statement formed by joining all SQL fragments. The string may be empty if
     /// there are no fragments.</returns>
     public string ToSql(ISqlDialects dialect) =>
@@ -43,6 +44,6 @@ public class SqlFragmentGroup : ISqlFragment
     /// which can simplify processing or analysis of complex fragment trees.</remarks>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects representing all nested fragments in a single,
     /// flat sequence.</returns>
-    public IEnumerable<ISqlFragment> Flatten() => 
+    public IEnumerable<ISqlFragment> Flatten() =>
         sqlFragments.SelectMany(element => element.Flatten());
 }

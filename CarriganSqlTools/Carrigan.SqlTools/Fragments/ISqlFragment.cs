@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Fragments;
 
@@ -11,7 +11,6 @@ namespace Carrigan.SqlTools.Fragments;
 /// <item><description><see cref="SqlFragmentText"/> for literal SQL text.</description></item>
 /// <item><description><see cref="SqlFragmentParameter"/> for parameter references.</description></item>
 /// </list>
-/// <para>
 /// </remarks>
 public interface ISqlFragment
 {
