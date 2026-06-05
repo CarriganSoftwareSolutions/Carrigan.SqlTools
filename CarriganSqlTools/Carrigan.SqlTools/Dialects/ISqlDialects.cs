@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.ReflectorCache;
@@ -8,8 +8,8 @@ using Carrigan.SqlTools.Types;
 namespace Carrigan.SqlTools.Dialects;
 
 /// <summary>
-/// This is the ISqlDialects interface, which defines the methods that a SQL dialect must implement. 
-/// It includes methods for quoting identifiers, rendering table and column names, rendering parameters, 
+/// This is the ISqlDialects interface, which defines the methods that a SQL dialect must implement.
+/// It includes methods for quoting identifiers, rendering table and column names, rendering parameters,
 /// rendering paging, and rendering insert statements with returning clauses. Each method takes the necessary.
 /// The current implementation of this interface is the SqlServerDialect class, which implements the methods for the SQL Server dialect.
 /// The current interface is just a best guess at the methods that will be needed, and may need to be updated as the library is developed further.
@@ -30,6 +30,7 @@ public interface ISqlDialects
     /// <returns>A string containing the rendered representation of the specified procedure.</returns>
     string RenderProcedureTag(ProcedureTag procedure);
 
+    /// <summary>
     /// Generates a string representation of the specified database table, optionally within a given schema.
     /// </summary>
     /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
@@ -92,7 +93,7 @@ public interface ISqlDialects
     /// <returns>
     /// A string representing the SQL declaration for the field, formatted according to the rules of the SQL dialect. This may include the provider type name,
     /// </returns>
-    /// 
+    ///
     string RenderFieldProperties(FieldProperties fieldProperties);
 
     /// <summary>
@@ -118,7 +119,7 @@ public interface ISqlDialects
     /// Generates the appropriate SQL fragment for a LIKE operator in the SQL dialect, optionally considering case sensitivity.
     /// </summary>
     /// <param name="isCaseSensitive">
-    /// Indicates whether the LIKE operation should be case-sensitive. 
+    /// Indicates whether the LIKE operation should be case-sensitive.
     /// If null, the default behavior of the dialect is used.
     /// </param>
     /// <returns>A <see cref="ISqlFragment"/> representing the LIKE operation in the SQL dialect.</returns>
@@ -136,15 +137,15 @@ public interface ISqlDialects
     /// Normalizes a <see cref="DateTimeOffset"/> value to the appropriate time zone for the SQL dialect, if necessary.
     /// </summary>
     /// <param name="dateTimeOffset">
-    /// The <see cref="DateTimeOffset"/> value to normalize. This may involve converting the value to a specific time zone or adjusting it 
+    /// The <see cref="DateTimeOffset"/> value to normalize. This may involve converting the value to a specific time zone or adjusting it
     /// according to the rules of the SQL dialect. If the dialect does not require normalization, the original value is returned unchanged.
     /// </param>
     /// <returns></returns>
     public DateTimeOffset? NormalizeTimeZone(DateTimeOffset? dateTimeOffset);
 
     /// <summary>
-    /// Normalizes a <see cref="DateTime"/> value to the appropriate time zone for the SQL dialect, if necessary. This may involve converting 
-    /// the value to a specific time zone or adjusting it according to the rules of the SQL dialect. If the dialect does not require normalization, 
+    /// Normalizes a <see cref="DateTime"/> value to the appropriate time zone for the SQL dialect, if necessary. This may involve converting
+    /// the value to a specific time zone or adjusting it according to the rules of the SQL dialect. If the dialect does not require normalization,
     /// the original value is returned unchanged.
     /// </summary>
     /// <param name="dateTime">
@@ -152,7 +153,7 @@ public interface ISqlDialects
     /// the rules of the SQL dialect.
     /// </param>
     /// <returns>
-    /// The normalized <see cref="DateTime"/> value suitable for database operations according to the SQL dialect's time zone handling rules. 
+    /// The normalized <see cref="DateTime"/> value suitable for database operations according to the SQL dialect's time zone handling rules.
     /// If the dialect does not require normalization, the original value is returned unchanged.
     /// </returns>
     public DateTime? NormalizeTimeZone(DateTime? dateTime);
@@ -162,7 +163,7 @@ public interface ISqlDialects
     /// <see cref="int"/>, <see cref="string"/>, <see cref="DateTime"/>, <see cref="DateTimeOffset"/>, and others, depending on the capabilities of the SQL dialect.
     /// </summary>
     /// <returns>
-    /// A <see cref="HashSet{Type}"/> containing the CLR types that are supported by the SQL dialect for parameterization and field mapping. This set is used to 
+    /// A <see cref="HashSet{Type}"/> containing the CLR types that are supported by the SQL dialect for parameterization and field mapping. This set is used to
     /// determine which types can be directly mapped to SQL types and may influence how parameters are rendered and how field properties are determined for those types.
     /// </returns>
     public HashSet<Type> SupportedTypes();
