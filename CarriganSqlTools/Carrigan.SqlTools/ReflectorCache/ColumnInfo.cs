@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Attributes;
+using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -257,6 +257,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <summary>
     /// Determines whether two <see cref="ColumnInfo"/> instances represent the same column.
     /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="y">The y value.</param>
     public bool Equals(ColumnInfo? x, ColumnInfo? y)
     {
         if (ReferenceEquals(x, y)) return true;
@@ -267,12 +269,15 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <summary>
     /// Returns a hash code for the specified <see cref="ColumnInfo"/> instance.
     /// </summary>
+    /// <param name="obj">The obj value.</param>
     public int GetHashCode(ColumnInfo obj) =>
         obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
 
     /// <summary>
     /// Determines whether two <see cref="ColumnInfo"/> instances represent the same column.
     /// </summary>
+    /// <param name="left">The left predicate or value.</param>
+    /// <param name="right">The right predicate or value.</param>
     public static bool operator ==(ColumnInfo? left, ColumnInfo? right)
     {
         if (ReferenceEquals(left, right)) return true;
@@ -283,6 +288,8 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <summary>
     /// Determines whether two <see cref="ColumnInfo"/> instances do not represent the same column.
     /// </summary>
+    /// <param name="left">The left predicate or value.</param>
+    /// <param name="right">The right predicate or value.</param>
     public static bool operator !=(ColumnInfo? left, ColumnInfo? right)
     {
         return !(left == right);

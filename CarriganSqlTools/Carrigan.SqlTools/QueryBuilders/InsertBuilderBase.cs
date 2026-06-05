@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.Sets;
 
 namespace Carrigan.SqlTools.QueryBuilders;
 

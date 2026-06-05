@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
@@ -215,6 +215,12 @@ public class SqlToolsReflectorCache<T>
     /// A collection of <see cref="ReflectorCache.ColumnInfo"/> objects representing
     /// encryption key version columns, if present on <typeparamref name="T"/>.
     /// </summary>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
+    /// <exception cref="InvalidSqlIdentifierException">
+    /// Thrown when a supplied or generated SQL identifier is invalid.
+    /// </exception>
     protected static readonly IEnumerable<ColumnInfo> KeyVersionColumnsInfo;
 
     /// <summary>

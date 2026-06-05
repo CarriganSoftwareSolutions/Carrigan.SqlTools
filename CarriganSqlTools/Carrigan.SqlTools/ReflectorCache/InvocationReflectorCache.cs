@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
@@ -41,8 +41,8 @@ internal static class InvocationReflectorCache<T>
     /// </summary>
     /// <remarks>
     /// <see cref="InvocationReflectorCache{T}"/> does not filter properties based on type,
-    /// unlike <see cref="SqlToolsReflectorCache{T}"/>.  
-    /// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.  
+    /// unlike <see cref="SqlToolsReflectorCache{T}"/>.
+    /// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.
     /// In contrast, <see cref="InvocationReflectorCache{T}"/> optimistically attempts to map any data returned.
     /// Since a query should never return unwanted or non-mappable data, this approach is safe.
     /// By comparison, C# classes often contain properties that cannot be mapped to SQL data.
@@ -59,8 +59,8 @@ internal static class InvocationReflectorCache<T>
     /// </summary>
     /// <remarks>
     /// <see cref="InvocationReflectorCache{T}"/> does not filter properties based on type,
-    /// unlike <see cref="SqlToolsReflectorCache{T}"/>.  
-    /// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.  
+    /// unlike <see cref="SqlToolsReflectorCache{T}"/>.
+    /// The <see cref="SqlToolsReflectorCache{T}"/> filters properties to prevent unhandled types from being used.
     /// In contrast, <see cref="InvocationReflectorCache{T}"/> optimistically attempts to map any data returned.
     /// Since a query should never return unwanted or non-mappable data, this approach is safe.
     /// By comparison, C# classes often contain properties that cannot be mapped to SQL data.
@@ -81,7 +81,7 @@ internal static class InvocationReflectorCache<T>
 
         if (duplicates.Any())
         {
-            string details = 
+            string details =
                 string.Join("; ", duplicates.Select(static grouping =>$"{grouping.Key}: {string.Join(", ", grouping.Select(static tuple => tuple.Item2.Name))}"));
 
             throw new ArgumentException(

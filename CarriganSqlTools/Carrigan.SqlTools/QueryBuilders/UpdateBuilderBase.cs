@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 
@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.QueryBuilders;
 /// For SQL Server, <typeparamref name="joinsT" /> is usually the same type as <typeparamref name="T" />.
 /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the UPDATE FROM clause.
 /// </remarks>
-public abstract record UpdateBuilderBase<T, joinsT> 
+public abstract record UpdateBuilderBase<T, joinsT>
     where T : class
     where joinsT : class
 {

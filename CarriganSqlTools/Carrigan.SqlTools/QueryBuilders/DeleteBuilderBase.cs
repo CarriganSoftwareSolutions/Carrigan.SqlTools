@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.QueryBuilders;
