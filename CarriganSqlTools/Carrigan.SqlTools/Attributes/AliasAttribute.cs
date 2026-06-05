@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Attributes;
 
@@ -44,17 +44,17 @@ namespace Carrigan.SqlTools.Attributes;
 ///     nameof(AliasEntity.TestColumn),
 ///     nameof(AliasEntity.NoAlias)
 /// );
-/// 
+///
 /// SqlGenerator<AliasEntity> generator = new();
 /// SqlQuery query = generator.Select(null, null, tags, null, null, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias] 
+/// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias]
 /// FROM [AliasEntity]
 /// ]]></code>
-/// </example>/// 
-/// 
+/// </example>///
+///
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// using Carrigan.SqlTools.Attributes;
@@ -80,11 +80,11 @@ namespace Carrigan.SqlTools.Attributes;
 ///     CustomerId = 313,
 ///     EmailAddress = "Exterminate@GenericTinCanLand.gov"
 /// };
-/// SqlQuery query = emailGenerator.UpdateById(email);         
+/// SqlQuery query = emailGenerator.UpdateById(email);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [schema].[Email] 
+/// UPDATE [schema].[Email]
 /// SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>

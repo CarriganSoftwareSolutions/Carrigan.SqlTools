@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Types;
+using Carrigan.SqlTools.Types;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Attributes;

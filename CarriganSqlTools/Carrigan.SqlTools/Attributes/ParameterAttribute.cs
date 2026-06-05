@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Attributes;
+namespace Carrigan.SqlTools.Attributes;
 
 /// <summary>
 /// Specifies the SQL parameter identifier used by this library’s SQL generators for a property.

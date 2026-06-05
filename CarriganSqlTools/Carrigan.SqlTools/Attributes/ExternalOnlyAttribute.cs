@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Attributes;
+namespace Carrigan.SqlTools.Attributes;
 
 /// <summary>
 /// Marks a method or constructor overload as intended for external consumers only.
@@ -48,4 +48,6 @@
 /// ]]></code>
 /// </example>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Constructor, AllowMultiple = false)]
-public sealed class ExternalOnlyAttribute : Attribute { }
+public sealed class ExternalOnlyAttribute : Attribute
+{
+}
