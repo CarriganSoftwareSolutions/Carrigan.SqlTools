@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using System.Reflection;
@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.Exceptions;
 /// This exception typically occurs during reflection or SQL generation when
 /// the system encounters an identifier that violates the internal SQL naming
 /// pattern (for example, starting with a digit or containing invalid symbols).
-/// 
+///
 /// <para><b>Note:</b></para>
 /// For parameter identifiers, omit the leading <c>@</c> symbol; the SQL generator
 /// automatically adds it during parameter construction.
@@ -150,7 +150,7 @@ public class InvalidSqlIdentifierException: Exception
 
         return "The following column name(s) do not follow the SQL naming convention: "
             + pairs.Select(pair => $"\"{pair.Item2}\"").JoinAnd()
-            + ". Columns are associated with the following propertie(s): "
+            + ". Columns are associated with the following properties: "
             + pairs.Select(pair => $"\"{FormatPropertyInfo(pair.Item1)}\"").JoinAnd()
             + ".";
     }
@@ -171,6 +171,7 @@ public class InvalidSqlIdentifierException: Exception
     {
     }
 
+    /// <summary>
     /// Builds an error message listing invalid alias names and the properties they are associated with.
     /// </summary>
     /// <param name="names">
@@ -187,7 +188,7 @@ public class InvalidSqlIdentifierException: Exception
 
         return "The following alias name(s) do not follow the SQL naming convention: "
             + pairs.Select(pair => $"\"{pair.Item2}\"").JoinAnd()
-            + ". Aliases are associated with the following propertie(s): "
+            + ". Aliases are associated with the following properties: "
             + pairs.Select(pair => $"\"{FormatPropertyInfo(pair.Item1)}\"").JoinAnd()
             + ".";
     }
@@ -214,7 +215,7 @@ public class InvalidSqlIdentifierException: Exception
                 .JoinAnd();
     #endregion
 
-    #region ParameterTag 
+    #region ParameterTag
     /// <summary>
     /// Initializes a new instance of the <see cref="InvalidSqlIdentifierException"/> class
     /// for one or more invalid parameter names and their associated properties.
@@ -244,7 +245,7 @@ public class InvalidSqlIdentifierException: Exception
 
         return "The following parameter name(s) do not follow the SQL naming convention: "
             + pairs.Select(pair => $"\"{pair.Item2}\"").JoinAnd()
-            + ". Parameters are associated with the following propertie(s): "
+            + ". Parameters are associated with the following properties: "
             + pairs.Select(pair => $"\"{FormatPropertyInfo(pair.Item1)}\"").JoinAnd()
             + ".";
     }

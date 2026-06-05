@@ -108,7 +108,7 @@ public class OrderBys : OrderBysBase
     /// Thrown when the resolved column metadata does not contain exactly one match.
     /// </exception>
     public static OrderBys New<T>(PropertyName propertyName, SortDirectionEnum sortDirection) where T : class =>
-        new OrderBys(new OrderBy<T>(propertyName, sortDirection));
+        new (new OrderBy<T>(propertyName, sortDirection));
 
     /// <summary>
     /// Creates a new <c>ORDER BY</c> clause containing a single item for the specified

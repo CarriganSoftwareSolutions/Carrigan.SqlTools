@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 
 namespace Carrigan.SqlTools.Exceptions;
 
@@ -23,5 +23,5 @@ public class SqlTypeArgumentOutOfRangeException : ArgumentOutOfRangeException
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="parameterName"/> is <c>null</c>.</exception>
     internal SqlTypeArgumentOutOfRangeException(SqlDbType sqlDbType, string parameterName, int value, int minValue, int maxValue) : base
         (parameterName, value, $"{parameterName} is out of range for SQL type {sqlDbType}. The expected range is [{minValue}, {maxValue}] inclusive.")
-    { } 
+    { }
 }

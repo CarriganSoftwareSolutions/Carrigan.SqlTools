@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Exceptions;
+namespace Carrigan.SqlTools.Exceptions;
 
 /// <summary>
 /// Thrown when an encrypter is required but no key version property

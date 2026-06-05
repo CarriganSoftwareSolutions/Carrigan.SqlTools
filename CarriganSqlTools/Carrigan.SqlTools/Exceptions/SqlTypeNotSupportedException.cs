@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using System.Data;
 using System.Reflection;
@@ -17,6 +17,12 @@ public class SqlTypeNotSupportedException : Exception
     /// <summary>
     /// SQL types that are not currently supported by the SQL generator.
     /// </summary>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
+    /// <exception cref="SqlTypeNotSupportedException">
+    /// Thrown when the requested SQL type is not supported by the SQL dialect.
+    /// </exception>
     public static readonly IEnumerable<SqlDbType> TypesNotSupported =
         [
             SqlDbType.Timestamp,

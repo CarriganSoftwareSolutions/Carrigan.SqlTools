@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 
 namespace Carrigan.SqlTools.Exceptions;
 
@@ -18,5 +18,5 @@ public class SqlTypeDoesNotSupportMaxSizeException : Exception
     /// <param name="sqlDbType">The SQL type that was incorrectly configured to use <c>MAX</c> sizing.</param>
     internal SqlTypeDoesNotSupportMaxSizeException(SqlDbType sqlDbType) : base
         ($"{sqlDbType} does not support the MAX size argument. MAX size is supported only by VarChar, NVarChar, and VarBinary.")
-    { } 
+    { }
 }

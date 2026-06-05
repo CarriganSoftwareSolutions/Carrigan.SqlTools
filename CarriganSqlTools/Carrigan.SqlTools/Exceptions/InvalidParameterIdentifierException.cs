@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 
 namespace Carrigan.SqlTools.Exceptions;
 

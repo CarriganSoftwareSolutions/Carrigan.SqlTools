@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Exceptions;
@@ -16,8 +16,12 @@ namespace Carrigan.SqlTools.Exceptions;
 /// this exception is thrown.
 /// </para>
 /// </remarks>
-//TODO: create an analyzer to enforce the int requirement
+/// <summary>
+/// Represents the <see cref="InvalidKeyVersionPropertyTypeException{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public sealed class InvalidKeyVersionPropertyTypeException<T> : Exception
+//TODO: create an analyzer to enforce the int requirement
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="InvalidKeyVersionPropertyTypeException{T}"/> class.

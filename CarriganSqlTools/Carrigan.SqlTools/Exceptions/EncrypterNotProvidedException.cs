@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Exceptions;
+namespace Carrigan.SqlTools.Exceptions;
 
 /// <summary>
 /// Thrown when a <c>SqlGenerator&lt;T&gt;</c> is constructed for a model type

@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Exceptions;
+namespace Carrigan.SqlTools.Exceptions;
 
 /// <summary>
 /// Thrown when a model type <typeparamref name="T"/> does not define a primary key property.
