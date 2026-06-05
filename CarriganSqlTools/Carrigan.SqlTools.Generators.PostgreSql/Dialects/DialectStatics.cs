@@ -1,5 +1,8 @@
 namespace Carrigan.SqlTools.Dialects;
 
+/// <summary>
+/// Stores shared PostgreSQL dialect metadata used by generators, type providers, and validation logic.
+/// </summary>
 internal static class DialectStatics
 {
     /// <summary>

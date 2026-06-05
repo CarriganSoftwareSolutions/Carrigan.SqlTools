@@ -9,7 +9,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
@@ -188,7 +188,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds a SELECT SQL query for the supplied model data.
     /// </summary>
     /// <param name="selectQuery">The select builder to materialize.</param>
-    /// <returns>The result of the Select operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the SELECT statement.</returns>
     public SqlQuery Select(SelectBuilder<T> selectQuery) =>
         Select(selectQuery.Distinct, selectQuery.Subquery, selectQuery.Selects, selectQuery.Joins, selectQuery.Where, selectQuery.OrderBys, selectQuery.Paging);
 

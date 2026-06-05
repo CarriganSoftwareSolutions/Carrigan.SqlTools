@@ -10,7 +10,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
@@ -169,7 +169,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </param>
     /// <param name="from"></param>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> describing tables to join for the update.
+    /// Optional <see cref="Joins{joinsT}"/> describing tables to join for the update.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
@@ -264,14 +264,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         return base.BaseUpdate(entity, columns, from, joins, predicates);
     }
     /// <summary>
-    /// Executes the <c>Update&lt;joinsT&gt;</c> operation.
+    /// Creates a PostgreSQL UPDATE statement that may include FROM sources and joins.
     /// </summary>
     /// <typeparam name="joinsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="entity">The model instance representing the SQL row or parameter set.</param>
     /// <param name="columns">The model properties representing the SQL columns to include.</param>
     /// <param name="from">The SQL tables or source expressions used by the FROM clause.</param>
     /// <param name="predicates">The predicates used to build the SQL WHERE or ON clause.</param>
-    /// <returns>The result of the <c>Update&lt;joinsT&gt;</c> operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the PostgreSQL UPDATE statement.</returns>
     public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Predicates? predicates) where joinsT : class
     {
         if (from.IsNotNullOrEmpty() && from.Contains(Table))
@@ -283,11 +283,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     }
 
     /// <summary>
-    /// Executes the <c>Update&lt;joinsT&gt;</c> operation.
+    /// Creates a PostgreSQL UPDATE statement that may include FROM sources and joins.
     /// </summary>
     /// <typeparam name="joinsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="updateQuery">The update builder to materialize.</param>
-    /// <returns>The result of the <c>Update&lt;joinsT&gt;</c> operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the PostgreSQL UPDATE statement.</returns>
     public SqlQuery Update<joinsT>(UpdateBuilder<T, joinsT> updateQuery) where joinsT : class =>
         Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
 
@@ -295,7 +295,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds an UPDATE SQL query for the supplied model data.
     /// </summary>
     /// <param name="updateQuery">The update builder to materialize.</param>
-    /// <returns>The result of the Update operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the UPDATE statement.</returns>
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>
         Update<T>(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Where);
 }

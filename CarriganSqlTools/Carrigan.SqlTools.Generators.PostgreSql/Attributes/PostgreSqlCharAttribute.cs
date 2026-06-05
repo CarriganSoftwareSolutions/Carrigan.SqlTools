@@ -26,6 +26,10 @@ public sealed class PostgreSqlCharAttribute : SqlTypeAttribute
     public PostgreSqlCharAttribute(StorageTypeEnum storageTypeEnum, int length) : base(GetFieldProperties(storageTypeEnum, length))
     { }
 
+    /// <summary>
+    /// Creates field-property metadata for PostgreSQL character type metadata.
+    /// </summary>
+    /// <returns>The field metadata consumed by SQL type rendering.</returns>
     private static FieldProperties GetFieldProperties(StorageTypeEnum storageTypeEnum, int? length) =>
         storageTypeEnum switch
         {

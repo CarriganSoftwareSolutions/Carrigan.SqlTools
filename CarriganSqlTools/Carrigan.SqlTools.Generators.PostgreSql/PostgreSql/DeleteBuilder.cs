@@ -6,9 +6,9 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
-/// Represents the options used to build a DELETE query for the specified model type.
+/// Builds DELETE query options for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type being updated.</typeparam>
+/// <typeparam name="T">The model type being deleted.</typeparam>
 /// <typeparam name="joinsT">The model type used as the starting point for the join collection. This type should represent one of the source tables in the USING clause.</typeparam>
 /// <remarks>
 /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the DELETE USING clause.
@@ -17,10 +17,13 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
     where T : class
     where joinsT : class
 {
+    /// <summary>
+    /// Generates SQL for the builder state.
+    /// </summary>
     private readonly SqlGenerator<T> SqlGenerator = new();
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DeleteBuilder"/> class.
+    /// Initializes a new instance of the <see cref="DeleteBuilder{T, joinsT}"/> class.
     /// </summary>
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public DeleteBuilder(IEncryption? encryption = null) =>
@@ -45,7 +48,7 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
     /// <summary>
     /// Builds a SQL query from the current builder state.
     /// </summary>
-    /// <returns>The result of the AsSqlQuery operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> generated from the current builder state.</returns>
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Delete(this);
 }
@@ -53,22 +56,28 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
 
 
 /// <summary>
-/// Represents the options used to build a DELETE query for the specified model type.
+/// Builds DELETE query options for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type being updated.</typeparam>
+/// <typeparam name="T">The model type being deleted.</typeparam>
 public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, IQueryBuilder
     where T : class
 {
+    /// <summary>
+    /// Explains why the one-type PostgreSQL builder cannot accept joins rooted from the target table.
+    /// </summary>
     private const string JoinsNotSupportedMessage =
     "PostgreSQL DELETE joins are rooted from a table in the USING clause, not from the table being deleted. " +
     "This one-type DeleteBuilder<T> exists only for PostgreSQL DELETE statements that do not use Joins. " +
     "The inherited Joins member must exist because DeleteBuilderBase<T, T> defines it, but using Joins<T> here would incorrectly require the join chain to start with the deleted type. " +
     "Use DeleteBuilder<T, joinsT> when a PostgreSQL DELETE statement requires joins.";
 
+    /// <summary>
+    /// Generates SQL for the builder state.
+    /// </summary>
     private readonly SqlGenerator<T> SqlGenerator = new();
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DeleteBuilder"/> class.
+    /// Initializes a new instance of the <see cref="DeleteBuilder{T}"/> class.
     /// </summary>
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public DeleteBuilder(IEncryption? encryption = null) =>
@@ -82,7 +91,7 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     [Obsolete(JoinsNotSupportedMessage, true)]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
     /// <summary>
-    /// Gets the Joins value.
+    /// Gets or sets the obsolete joins member that is intentionally unavailable for this PostgreSQL builder.
     /// </summary>
     public override Joins<T>? Joins { get; set; }
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
@@ -91,10 +100,10 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     [Obsolete(JoinsNotSupportedMessage, true)]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
     /// <summary>
-    /// Executes the WithJoins operation.
+    /// Throws at compile time when callers try to add target-rooted joins to this PostgreSQL builder.
     /// </summary>
     /// <param name="joins">The SQL joins used by the query.</param>
-    /// <returns>The result of the WithJoins operation.</returns>
+    /// <returns>This member is obsolete with <c>error: true</c> and should not be called.</returns>
     public override DeleteBuilder<T> WithJoins(Joins<T>? joins) =>
         this with { Joins = joins };
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
@@ -102,7 +111,7 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     /// <summary>
     /// Builds a SQL query from the current builder state.
     /// </summary>
-    /// <returns>The result of the AsSqlQuery operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> generated from the current builder state.</returns>
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Delete(this);
 }

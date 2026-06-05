@@ -5,7 +5,7 @@ using System.Data;
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class

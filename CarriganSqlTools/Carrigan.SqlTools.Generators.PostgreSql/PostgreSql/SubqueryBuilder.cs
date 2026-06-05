@@ -1,7 +1,7 @@
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
-/// Represents the <see cref="SubqueryBuilder"/> component.
+/// Builds subquery options for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public sealed record SubqueryBuilder<T> : QueryBuilders.SubqueryBuilderBase<T> where T : class

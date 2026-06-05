@@ -98,9 +98,21 @@ public class PostgreSqlDialect : ISqlDialects
         }
     }
 
+    /// <summary>
+    /// Builds the PostgreSQL RETURNING clause for inserted columns.
+    /// </summary>
+    /// <typeparam name="T">The model type used to resolve result column names.</typeparam>
+    /// <param name="columnInfo">The columns to include in the RETURNING clause.</param>
+    /// <returns>A RETURNING clause that projects the inserted columns.</returns>
     private string ReturningColumns<T>(IEnumerable<ColumnInfo> columnInfo) =>
         $"RETURNING {string.Join(", ", columnInfo.Select(ReturningColumn<T>))}";
 
+    /// <summary>
+    /// Builds a PostgreSQL RETURNING projection for a single inserted column.
+    /// </summary>
+    /// <typeparam name="T">The model type used to resolve result column names.</typeparam>
+    /// <param name="columnInfo">The inserted column to project.</param>
+    /// <returns>The quoted column name, including an alias when the result column name differs.</returns>
     private string ReturningColumn<T>(ColumnInfo columnInfo)
     {
         string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo);

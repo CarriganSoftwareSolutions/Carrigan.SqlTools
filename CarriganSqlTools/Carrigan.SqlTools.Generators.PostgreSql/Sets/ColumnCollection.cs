@@ -4,7 +4,7 @@ using Carrigan.SqlTools.IdentifierTypes;
 namespace Carrigan.SqlTools.Sets;
 
 /// <summary>
-/// Represents the <see cref="ColumnCollection{T}"/> component.
+/// Represents a dialect-specific collection of model properties used as SQL columns.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public class ColumnCollection<T> : ColumnCollectionBase<T> where T : class
@@ -26,16 +26,16 @@ public class ColumnCollection<T> : ColumnCollectionBase<T> where T : class
     }
 
     /// <summary>
-    /// Gets the SupportedTypes value.
+    /// Gets the CLR property types supported by this column collection.
     /// </summary>
     protected override HashSet<Type> SupportedTypes =>
         DialectStatics.SupportedTypes;
 
     /// <summary>
-    /// Executes the FromPropertyName operation.
+    /// Creates a new column collection from the supplied property names.
     /// </summary>
     /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
-    /// <returns>The result of the FromPropertyName operation.</returns>
+    /// <returns>A new column collection containing the supplied property names.</returns>
     protected override ColumnCollection<T> FromPropertyName(IEnumerable<PropertyName> propertyNames) =>
         new (propertyNames);
 
@@ -43,7 +43,7 @@ public class ColumnCollection<T> : ColumnCollectionBase<T> where T : class
     /// Creates a new column collection with the supplied property added.
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
-    /// <returns>The result of the AppendColumn operation.</returns>
+    /// <returns>A new column collection that includes the supplied property when it is not already present.</returns>
     public override ColumnCollection<T> AppendColumn(PropertyName propertyName) =>
         (ColumnCollection<T>)base.AppendColumn(propertyName);
 
@@ -51,7 +51,7 @@ public class ColumnCollection<T> : ColumnCollectionBase<T> where T : class
     /// Creates a new column collection with the supplied property added.
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
-    /// <returns>The result of the AppendColumn operation.</returns>
+    /// <returns>A new column collection that includes the supplied property when it is not already present.</returns>
     public override ColumnCollection<T> AppendColumn(string propertyName) =>
         AppendColumn(new PropertyName(propertyName));
 
@@ -59,7 +59,7 @@ public class ColumnCollection<T> : ColumnCollectionBase<T> where T : class
     /// Creates a new column collection with the supplied properties added.
     /// </summary>
     /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
-    /// <returns>The result of the ConcatColumn operation.</returns>
+    /// <returns>A new column collection containing the current properties and the supplied additional properties.</returns>
     public override ColumnCollection<T> ConcatColumn(params IEnumerable<PropertyName> propertyNames) =>
         (ColumnCollection<T>)base.ConcatColumn(propertyNames);
 
@@ -67,7 +67,7 @@ public class ColumnCollection<T> : ColumnCollectionBase<T> where T : class
     /// Creates a new column collection with the supplied properties added.
     /// </summary>
     /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
-    /// <returns>The result of the ConcatColumn operation.</returns>
+    /// <returns>A new column collection containing the current properties and the supplied additional properties.</returns>
     public override ColumnCollection<T> ConcatColumn(params IEnumerable<string> propertyNames) =>
         ConcatColumn(propertyNames.Select(static propertyName => new PropertyName(propertyName)));
 

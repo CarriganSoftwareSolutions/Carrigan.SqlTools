@@ -9,7 +9,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
@@ -108,7 +108,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     /// <typeparam name="joinsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="Joins{joinsT}"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
@@ -205,7 +205,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     /// <param name="usings">The PostgreSQL USING tables or source expressions used by the DELETE statement.</param>
     /// <param name="predicates">The predicates used to build the SQL WHERE or ON clause.</param>
-    /// <returns>The result of the Delete operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the DELETE statement.</returns>
     /// <exception cref="InvalidTableException">
     /// Thrown when a supplied table is not valid for the requested SQL operation.
     /// </exception>
@@ -220,11 +220,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     }
 
     /// <summary>
-    /// Executes the <c>Delete&lt;usingsT&gt;</c> operation.
+    /// Creates a PostgreSQL DELETE statement that includes a USING clause.
     /// </summary>
     /// <typeparam name="usingsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="deleteQuery">The delete builder to materialize.</param>
-    /// <returns>The result of the <c>Delete&lt;usingsT&gt;</c> operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the PostgreSQL DELETE statement.</returns>
     public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery) where usingsT : class =>
         deleteQuery.Joins is null
             ? Delete(deleteQuery.Usings, deleteQuery.Where)
@@ -234,7 +234,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds a DELETE SQL query for the supplied model data.
     /// </summary>
     /// <param name="deleteQuery">The delete builder to materialize.</param>
-    /// <returns>The result of the Delete operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the DELETE statement.</returns>
     public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         Delete(deleteQuery.Usings, deleteQuery.Where);
 }

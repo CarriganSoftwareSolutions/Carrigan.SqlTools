@@ -8,13 +8,13 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
-    /// Gets the Subquery value.
+    /// Gets the SQL fragment that starts a subquery expression.
     /// </summary>
     public Subquery<T> Subquery
     (
@@ -32,7 +32,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds a subquery from the supplied subquery builder.
     /// </summary>
     /// <param name="subqueryBuilder">The subquery builder to materialize.</param>
-    /// <returns>The result of the Subquery operation.</returns>
+    /// <returns>A subquery that can be used as a SQL fragment.</returns>
     public Subquery<T> Subquery(SubqueryBuilder<T> subqueryBuilder) =>
         Subquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
 }
