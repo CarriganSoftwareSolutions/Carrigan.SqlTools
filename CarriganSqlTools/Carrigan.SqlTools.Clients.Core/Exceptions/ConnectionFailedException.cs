@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 public sealed class ConnectionFailedException : SqlToolsQueryException
 {
     /// <summary>
-    /// Gets the FriendlyName value.
+    /// Gets the friendly name of the database connection that failed.
     /// </summary>
     public string FriendlyName { get; }
 

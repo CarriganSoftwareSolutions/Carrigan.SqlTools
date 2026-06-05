@@ -6,15 +6,15 @@ namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 public sealed class DataReaderFailedException : SqlToolsQueryException
 {
     /// <summary>
-    /// Gets the ModelType value.
+    /// Gets the model type being read from the data reader when the failure occurred.
     /// </summary>
     public Type ModelType { get; }
     /// <summary>
-    /// Gets the Ordinal value.
+    /// Gets the column ordinal being read, when the ordinal was known.
     /// </summary>
     public int? Ordinal { get; }
     /// <summary>
-    /// Gets the ColumnName value.
+    /// Gets the column name being read, when the column name was known.
     /// </summary>
     public string? ColumnName { get; }
 

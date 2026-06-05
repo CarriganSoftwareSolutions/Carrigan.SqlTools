@@ -36,6 +36,12 @@ public sealed class DecryptionFailedException<T> : SqlToolsQueryException
         PropertyName = propertyName;
     }
 
+    /// <summary>
+    /// Builds the exception message that identifies the failed decryption key version and model property.
+    /// </summary>
+    /// <param name="keyVersion">The key version used for the failed decryption attempt.</param>
+    /// <param name="propertyName">The model property whose database value could not be decrypted.</param>
+    /// <returns>The exception message.</returns>
     private static string BuildMessage(int keyVersion, string propertyName) =>
         $"Decryption failed for '{typeof(T).Name}.{propertyName}'. KeyVersion={keyVersion}.";
 }

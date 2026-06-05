@@ -9,11 +9,11 @@ namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 public sealed class RecordMaterializationException : SqlToolsQueryException
 {
     /// <summary>
-    /// Gets the ModelType value.
+    /// Gets the model type being materialized from a data-reader record.
     /// </summary>
     public Type ModelType { get; }
     /// <summary>
-    /// Gets the ColumnNames value.
+    /// Gets the result-column names available when materialization failed.
     /// </summary>
     public IEnumerable<string> ColumnNames { get; }
 

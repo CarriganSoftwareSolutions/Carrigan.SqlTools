@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 public sealed class CommandExecutionFailedException : SqlToolsQueryException
 {
     /// <summary>
-    /// Gets the Operation value.
+    /// Gets the command operation being attempted when execution failed.
     /// </summary>
     public string Operation { get; }
 
@@ -21,7 +21,7 @@ public sealed class CommandExecutionFailedException : SqlToolsQueryException
     public string QueryText { get; }
 
     /// <summary>
-    /// Gets the CommandType value.
+    /// Gets the ADO.NET command type used by the failed SQL query.
     /// </summary>
     public CommandType CommandType { get; }
 
@@ -31,7 +31,7 @@ public sealed class CommandExecutionFailedException : SqlToolsQueryException
     public IEnumerable<string> ParameterNames { get; }
 
     /// <summary>
-    /// Gets the HasTransaction value.
+    /// Gets whether the failed command was executed with an active transaction.
     /// </summary>
     public bool HasTransaction { get; }
 
