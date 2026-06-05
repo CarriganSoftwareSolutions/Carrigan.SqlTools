@@ -7,7 +7,7 @@ using Carrigan.SqlTools.SqlGenerators;
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
@@ -164,7 +164,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> describing tables to join for the update.
+    /// Optional <see cref="Joins{T}"/> describing tables to join for the update.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
@@ -249,7 +249,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds an UPDATE SQL query for the supplied model data.
     /// </summary>
     /// <param name="updateQuery">The update builder to materialize.</param>
-    /// <returns>The result of the Update operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the UPDATE statement.</returns>
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>
         Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.Joins, updateQuery.Where);
 }

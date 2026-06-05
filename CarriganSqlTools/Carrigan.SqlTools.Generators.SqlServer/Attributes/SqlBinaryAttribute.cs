@@ -9,6 +9,9 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class SqlBinaryAttribute : SqlTypeAttribute
 {
+    /// <summary>
+    /// The default SQL Server length used for fixed-length binary fields when no size is specified.
+    /// </summary>
     private const int DefaultBinaryLength = 8000;
 
     /// <summary>
@@ -30,6 +33,10 @@ public sealed class SqlBinaryAttribute : SqlTypeAttribute
     { }
 
 
+    /// <summary>
+    /// Creates field-property metadata for SQL Server binary type metadata.
+    /// </summary>
+    /// <returns>The field metadata consumed by SQL type rendering.</returns>
     private static FieldProperties GetFieldProperties(StorageTypeEnum storageTypeEnum, int? size = null) =>
         storageTypeEnum switch
         {

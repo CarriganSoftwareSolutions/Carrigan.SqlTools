@@ -20,7 +20,7 @@ public sealed class SqlDateTimeAttribute : SqlTypeAttribute
     { }
 
     /// <summary>
-    /// Gets the <see cref="FieldProperties"/> corresponding to the specified <see cref="SizeableEnum"/> value.
+    /// Creates the SQL Server date/time field definition represented by the specified <see cref="SizeableEnum"/> value.
     /// </summary>
     /// <param name="sizeableEnum">
     /// The <see cref="SizeableEnum"/> value indicating the desired SQL type size. Supported values are:

@@ -20,6 +20,10 @@ public sealed class SqlTextAttribute : SqlTypeAttribute
     { }
 
 #pragma warning disable CS0618 // TEXT and NTEXT are intentionally exposed for legacy database schemas.
+    /// <summary>
+    /// Creates field-property metadata for SQL Server text type metadata.
+    /// </summary>
+    /// <returns>The field metadata consumed by SQL type rendering.</returns>
     private static FieldProperties GetFieldProperties(EncodingEnum encodingEnum) =>
         encodingEnum switch
         {

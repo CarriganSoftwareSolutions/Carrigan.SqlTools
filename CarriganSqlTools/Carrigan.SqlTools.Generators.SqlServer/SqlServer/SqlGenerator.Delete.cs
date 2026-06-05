@@ -7,7 +7,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
@@ -105,7 +105,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
     /// <param name="joins">
-    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="Joins{T}"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
@@ -186,7 +186,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds a DELETE SQL query for the supplied model data.
     /// </summary>
     /// <param name="deleteQuery">The delete builder to materialize.</param>
-    /// <returns>The result of the Delete operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the DELETE statement.</returns>
     public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         Delete(deleteQuery.Joins, deleteQuery.Where);
 }

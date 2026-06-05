@@ -15,7 +15,7 @@ using System.Reflection;
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// Generates SQL queries for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
@@ -25,54 +25,54 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     protected override ISqlDialects Dialect { get; init; } = new SqlServerDialect();
     /// <summary>
-    /// Gets the SupportedTypes value.
+    /// Gets the CLR types supported by this SQL dialect.
     /// </summary>
     protected override HashSet<Type> SupportedTypes => DialectStatics.SupportedTypes;
     /// <summary>
-    /// Executes the GetAllSelectTags operation.
+    /// Gets all selectable tags for the model type.
     /// </summary>
-    /// <returns>The result of the GetAllSelectTags operation.</returns>
+    /// <returns>The selectable tags resolved from the model type.</returns>
     protected override SelectTagsBase GetAllSelectTags() =>
         SelectTagGenerator.GetAll<T>();
     /// <summary>
-    /// Executes the GetColumn operation.
+    /// Creates a dialect-specific column expression for a model property.
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
-    /// <returns>The result of the GetColumn operation.</returns>
+    /// <returns>A dialect-specific column expression for the requested property.</returns>
     protected override ColumnBase<T> GetColumn(PropertyName propertyName) =>
         new Column<T>(propertyName);
     /// <summary>
-    /// Executes the GetColumnValue operation.
+    /// Creates a dialect-specific column-value expression from reflected column metadata and an entity instance.
     /// </summary>
     /// <param name="columnInfo">The reflected column metadata for the model property.</param>
     /// <param name="entity">The model instance representing the SQL row or parameter set.</param>
-    /// <returns>The result of the GetColumnValue operation.</returns>
+    /// <returns>A dialect-specific column-value expression containing the property value from <paramref name="entity"/>.</returns>
     protected override ColumnValueBase<T> GetColumnValue(ColumnInfo columnInfo, T entity) =>
         new ColumnValue<T>(columnInfo.PropertyName, columnInfo.PropertyInfo.GetValue(entity));
     /// <summary>
-    /// Executes the GetColumnCollection operation.
+    /// Creates a dialect-specific collection of columns from property names.
     /// </summary>
     /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
-    /// <returns>The result of the GetColumnCollection operation.</returns>
+    /// <returns>A dialect-specific column collection containing the requested properties.</returns>
     protected override ColumnCollectionBase<T> GetColumnCollection(params IEnumerable<PropertyName> propertyNames) =>
         new ColumnCollection<T>(propertyNames);
     /// <summary>
-    /// Executes the NewOrderBys operation.
+    /// Creates an empty dialect-specific ORDER BY collection.
     /// </summary>
-    /// <returns>The result of the NewOrderBys operation.</returns>
+    /// <returns>An empty dialect-specific ORDER BY collection.</returns>
     protected override OrderBysBase NewOrderBys() =>
         new OrderBys();
     /// <summary>
-    /// Executes the NewOrderByKey operation.
+    /// Creates a dialect-specific ORDER BY item for a model property.
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
     /// <param name="sortDirection">The SQL sort direction.</param>
-    /// <returns>The result of the NewOrderByKey operation.</returns>
+    /// <returns>A dialect-specific ORDER BY item for the requested property and sort direction.</returns>
     protected override OrderByBase NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection) =>
         new OrderBy<T>(propertyName, sortDirection);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SqlGenerator"/> class.
+    /// Initializes a new instance of the <see cref="SqlGenerator{T}"/> class.
     /// </summary>
     public SqlGenerator() : base()
     {
@@ -98,7 +98,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SqlGenerator"/> class.
+    /// Initializes a new instance of the <see cref="SqlGenerator{T}"/> class.
     /// </summary>
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public SqlGenerator(IEncryption? encryption) : base(encryption)

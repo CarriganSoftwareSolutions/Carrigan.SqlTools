@@ -1,6 +1,3 @@
-//IGNORE SPELLING: bigint, char, datetime, datetime2, datetimeoffset, hierarchyid, int, json, nchar, ntext, nvarchar, rowversion,
-//IGNORE SPELLING: smalldatetime,smallint, smallmoney, sql_variant, tinyint, uniqueidentifier, varbinary, varchar, xml, nullability
-
 using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;

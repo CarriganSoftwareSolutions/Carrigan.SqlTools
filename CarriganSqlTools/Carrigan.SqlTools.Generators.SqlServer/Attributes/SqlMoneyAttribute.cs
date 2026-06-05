@@ -19,6 +19,10 @@ public sealed class SqlMoneyAttribute : SqlTypeAttribute
     public SqlMoneyAttribute(SizeableEnum moneySize) : base(GetFieldProperties(moneySize))
     { }
 
+    /// <summary>
+    /// Creates field-property metadata for SQL Server money type metadata.
+    /// </summary>
+    /// <returns>The field metadata consumed by SQL type rendering.</returns>
     private static FieldProperties GetFieldProperties(SizeableEnum moneySize) =>
         moneySize switch
         {

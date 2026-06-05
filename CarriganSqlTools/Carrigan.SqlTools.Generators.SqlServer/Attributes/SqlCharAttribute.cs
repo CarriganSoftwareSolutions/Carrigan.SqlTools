@@ -9,7 +9,14 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class SqlCharAttribute : SqlTypeAttribute
 {
+    /// <summary>
+    /// The default SQL Server length used for non-Unicode character fields when no size is specified.
+    /// </summary>
     private const int DefaultAsciiLength = 8000;
+
+    /// <summary>
+    /// The default SQL Server length used for Unicode character fields when no size is specified.
+    /// </summary>
     private const int DefaultUnicodeLength = 4000;
 
     /// <summary>
@@ -36,7 +43,7 @@ public sealed class SqlCharAttribute : SqlTypeAttribute
     /// Maps the provided encoding and storage type options (and optional size) to a corresponding <see cref="FieldProperties"/> instance.
     /// </summary>
     /// <param name="encodingEnum">
-    /// The SQL character encoding option. 
+    /// The SQL character encoding option.
     /// </param>
     /// <param name="storageTypeEnum">
     /// The SQL storage type option.

@@ -120,6 +120,7 @@ public class SqlServerDialect : ISqlDialects
     /// Gets the column expression to use when returning values inserted for the column
     /// described by <paramref name="columnInfo"/>.
     /// </summary>
+    /// <typeparam name="T">The model type used to resolve result column names.</typeparam>
     /// <remarks>
     /// Because the caller will expect column names as they would appear in a <c>SELECT</c>,
     /// this method ensures that the final projection from <c>@OutputTable</c> uses the
@@ -143,6 +144,7 @@ public class SqlServerDialect : ISqlDialects
     /// <summary>
     /// Generates a <c>SELECT</c> statement that reads the captured values from <c>@OutputTable</c>.
     /// </summary>
+    /// <typeparam name="T">The model type used to resolve result column names.</typeparam>
     /// <param name="columnInfo">
     /// Columns for which the inserted values were captured.
     /// </param>
@@ -278,16 +280,16 @@ public class SqlServerDialect : ISqlDialects
     }
 
     /// <summary>
-    /// Executes the GetXOrSymbol operation.
+    /// Gets the SQL Server operator used for bitwise exclusive OR expressions.
     /// </summary>
-    /// <returns>The result of the GetXOrSymbol operation.</returns>
+    /// <returns>The SQL Server bitwise exclusive OR operator.</returns>
     public ISqlFragment GetXOrSymbol() =>
         new SqlFragmentText("^");
     /// <summary>
-    /// Executes the GetDialectLike operation.
+    /// Creates the SQL Server LIKE predicate for the selected case-sensitivity option.
     /// </summary>
     /// <param name="isCaseSensitive">The isCaseSensitive value.</param>
-    /// <returns>The result of the GetDialectLike operation.</returns>
+    /// <returns>A SQL Server LIKE predicate using the supplied operands and collation behavior.</returns>
     public ISqlFragment GetDialectLike(bool? isCaseSensitive = null)
     {
         if (isCaseSensitive is null)

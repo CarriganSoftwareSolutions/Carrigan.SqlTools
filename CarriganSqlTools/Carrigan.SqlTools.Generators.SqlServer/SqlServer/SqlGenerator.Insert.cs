@@ -1,12 +1,12 @@
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-//IGNORE SPELLING: newid, unindexed
+//IGNORE SPELLING: unindexed
 
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
-/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// Contains SQL generation members for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
@@ -180,7 +180,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ///        (@Id_1, @Name_1, @When_1)
     /// ]]></code>
     /// </example>
-    /// 
+    ///
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// EntityWithTableAttribute testEntity = new()
@@ -221,7 +221,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds an INSERT SQL query for the supplied model data.
     /// </summary>
     /// <param name="insertQuery">The insert builder to materialize.</param>
-    /// <returns>The result of the Insert operation.</returns>
+    /// <returns>A <see cref="SqlQuery"/> representing the INSERT statement.</returns>
     public SqlQuery Insert(InsertBuilder<T> insertQuery) =>
         Insert(insertQuery.InsertColumns, insertQuery.ReturnColumns, insertQuery.Records);
 }

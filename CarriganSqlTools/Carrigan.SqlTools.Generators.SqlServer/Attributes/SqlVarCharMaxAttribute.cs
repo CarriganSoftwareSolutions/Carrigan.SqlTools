@@ -19,6 +19,10 @@ public sealed class SqlVarCharMaxAttribute : SqlTypeAttribute
     public SqlVarCharMaxAttribute(EncodingEnum encodingEnum) : base(GetFieldProperties(encodingEnum))
     { }
 
+    /// <summary>
+    /// Creates field-property metadata for SQL Server <c>VARCHAR(MAX)</c> or <c>NVARCHAR(MAX)</c> metadata.
+    /// </summary>
+    /// <returns>The field metadata consumed by SQL type rendering.</returns>
     private static FieldProperties GetFieldProperties(EncodingEnum encodingEnum) =>
         encodingEnum switch
         {
