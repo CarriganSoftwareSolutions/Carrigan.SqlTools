@@ -15,13 +15,18 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// Parameter<Customer> parameterName = new(nameof(Customer.Name), "Hank");
 /// Column<Customer> columnName = new(nameof(Customer.Name));
 /// Equal equalName = new(columnName, parameterName);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, equalName, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = equalName
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].*
-/// FROM [Customer]
-/// WHERE ([Customer].[Name] = @Parameter_Name)
+/// SELECT "Customer".* 
+/// FROM "Customer"
+/// WHERE ("Customer"."Name" = $1)
 /// ]]></code>
 /// </example>
 public class Parameter<T> : Parameter where T : class

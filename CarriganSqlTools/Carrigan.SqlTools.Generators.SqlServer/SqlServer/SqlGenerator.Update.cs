@@ -1,3 +1,4 @@
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -56,9 +57,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone
-    /// WHERE [Id] = @Id;
+    /// UPDATE [Customer] 
+    /// SET [Name] = @Name_1, [Email] = @Email_2, [Phone] = @Phone_3
+    /// WHERE [Id] = @Id_4;
     /// ]]></code>
     /// </example>
     /// <example>
@@ -77,9 +78,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Email] = @Email
-    /// WHERE [Id] = @Id;
+    /// UPDATE [Customer] 
+    /// SET [Email] = @Email_1 
+    /// WHERE [Id] = @Id_2;
     /// ]]></code>
     /// </example>
     public SqlQuery UpdateById(T entity, ColumnCollectionBase<T>? columns = null) =>
@@ -125,28 +126,28 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
-    /// Customer updateValues = new()
-    /// {
-    ///     Name = "John Doe",
-    ///     Email = string.Empty
-    /// };
-    ///
-    /// IEnumerable<Customer> customerIds =
-    ///     [
-    ///         new() { Id = 42 },
-    ///             new() { Id = 732 }
-    ///     ];
-    ///
-    /// ColumnCollection<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
-    ///
-    /// SqlQuery query = customerGenerator.UpdateByIds(updateValues, updateColumns, customerIds);
+    ///  Customer updateValues = new()
+    ///  {
+    ///      Name = "John Doe",
+    ///      Email = string.Empty
+    ///  };
+    /// 
+    ///  IEnumerable<Customer> customerIds =
+    ///      [
+    ///          new() { Id = 42 },
+    ///              new() { Id = 732 }
+    ///      ];
+    /// 
+    ///  ColumnCollection<Customer> updateColumns = new(nameof(Customer.Name), nameof(Customer.Email));
+    /// 
+    ///  SqlQuery query = customerGenerator.UpdateByIds(updateValues, updateColumns, customerIds);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Customer].[Name] = @ParameterSet_Name, [Customer].[Email] = @ParameterSet_Email
-    /// FROM [Customer]
-    /// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
+    /// UPDATE [Customer] 
+    /// SET [Name] = @Name_1, [Email] = @Email_2 
+    /// WHERE (([Customer].[Id] = @Id_3) 
+    ///    OR ([Customer].[Id] = @Id_4))
     /// ]]></code>
     /// </example>
     public SqlQuery UpdateByIds(T valuesEntity, ColumnCollectionBase<T>? columns, params IEnumerable<T> idEntities) =>
@@ -200,23 +201,24 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// };
     ///
     /// ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
-    ///
+    /// 
     /// Column<Customer> customerId = new(nameof(Customer.Id));
     /// Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
     /// Equal customerIdsEquals = new(orderCustomerId, customerId);
     /// InnerJoin<Customer> joinOnCustomerId = new(customerIdsEquals);
-    ///
+    /// 
     /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
-    ///
+    /// 
     /// SqlQuery query = orderGenerator.Update(entity, columnCollection, joinOnCustomerId, customerEmailEquals);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Order]
-    /// SET [Order].[Total] = @ParameterSet_Total
-    /// FROM [Order]
-    /// INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id])
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
+    /// UPDATE [Order] 
+    /// SET [Order].[Total] = @Total_1 
+    /// FROM [Order] 
+    /// INNER JOIN [Customer] 
+    /// ON ([Order].[CustomerId] = [Customer].[Id]) 
+    /// WHERE ([Customer].[Email] = @Email_2)
     /// ]]></code>
     /// </example>
     /// <example>
@@ -232,14 +234,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// };
     /// ColumnCollection<Customer> columnCollection = new(nameof(Customer.Email));
     /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
-    ///
+    /// 
     /// SqlQuery query = customerGenerator.Update(entity, columnCollection, null, customerEmailEquals);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Email] = @ParameterSet_Email
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
+    /// UPDATE [Customer] 
+    /// SET [Email] = @Email_1
+    /// WHERE ([Customer].[Email] = @Email_2
     /// ]]></code>
     /// </example>
     public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, Joins<T>? joins, Predicates? predicates) =>

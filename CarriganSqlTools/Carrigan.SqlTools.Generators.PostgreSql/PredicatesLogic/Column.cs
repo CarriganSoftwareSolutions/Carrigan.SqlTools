@@ -1,7 +1,9 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,6 +11,25 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// Represents a dialect-specific SQL column expression for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Parameter parameterName = new("Hank", "Name");
+/// Column<Customer> columnName = new(nameof(Customer.Name));
+/// Equal equalName = new(columnName, parameterName);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = equalName
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// WHERE ("Customer"."Name" = $1)
+/// ]]></code>
+/// </example>
 public class Column<T> : ColumnBase<T>  where T : class
 {
     /// <summary>

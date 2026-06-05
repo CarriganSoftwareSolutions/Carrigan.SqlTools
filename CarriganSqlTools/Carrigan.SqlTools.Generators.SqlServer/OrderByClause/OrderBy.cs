@@ -2,6 +2,8 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByClause;
@@ -16,7 +18,12 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     OrderBys = orderBy
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

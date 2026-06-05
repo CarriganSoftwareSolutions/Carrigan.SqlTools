@@ -55,7 +55,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// [schema].[UpdateThing]
+    /// "schema"."UpdateThing"
     /// ]]></code>
     /// </example>
     public SqlQuery Procedure(T entity) =>

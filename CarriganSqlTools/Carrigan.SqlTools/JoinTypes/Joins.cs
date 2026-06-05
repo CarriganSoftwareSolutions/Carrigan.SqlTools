@@ -1,4 +1,5 @@
 using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
@@ -34,15 +35,30 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin<Order> join1 = new(predicate);
-///
+/// 
 /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
 /// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
-///
+/// 
 /// Joins<Customer> joins = new(join1, join2);
-/// SqlQuery query = customerGenerator.Select(null, joins, null, null, null);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Joins = joins
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// INNER JOIN "Order" 
+/// ON ("Customer"."Id" = "Order"."CustomerId") 
+/// INNER JOIN "PaymentMethod"
+/// ON ("Order"."PaymentMethodId" = "PaymentMethod"."Id")
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// INNER JOIN [Order]
@@ -58,40 +74,64 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// SelectTags selectTags =
-///     SelectTags.Get<Customer>("Id", "CustomerId")
+///     SelectTagGenerator.Get<Customer>("Id", "CustomerId")
 ///         .Concat<Customer>(["Name", "Email", "Phone"])
 ///         .Append<Order>("Id", "OrderId")
 ///         .Concat<Order>(["OrderDate", "Total"])
 ///         .Append<PaymentMethod>("Id", "PaymentMethodId")
 ///         .Append<PaymentMethod>("ZipCode");
-///
+/// 
 /// ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin<Order> join1 = new(customerIdEquals);
-///
-/// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals =
-///     new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
+/// 
+/// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
 /// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
-///
+/// 
 /// Joins<Customer> joins = new(join1, join2);
-/// SqlQuery query = customerGenerator.Select(selectTags, joins, null, null, null);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = selectTags,
+///     Joins = joins
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT 
+///     "Customer"."Id" AS "CustomerId",
+///     "Customer"."Name", 
+///     "Customer"."Email",
+///     "Customer"."Phone",
+///     "Order"."Id" AS "OrderId", 
+///     "Order"."OrderDate",
+///     "Order"."Total", 
+///     "PaymentMethod"."Id" AS "PaymentMethodId",
+///     "PaymentMethod"."ZipCode" 
+/// FROM "Customer" 
+/// INNER JOIN "Order"
+///    ON ("Customer"."Id" = "Order"."CustomerId") 
+/// INNER JOIN "PaymentMethod" 
+///    ON ("Order"."PaymentMethodId" = "PaymentMethod"."Id")
+/// 
+/// --SqlServer
 /// SELECT
-///     [Customer].[Id] AS [CustomerId],
-///     [Customer].[Name],
-///     [Customer].[Email],
-///     [Customer].[Phone],
-///     [Order].[Id] AS [OrderId],
-///     [Order].[OrderDate],
-///     [Order].[Total],
-///     [PaymentMethod].[Id] AS [PaymentMethodId],
-///     [PaymentMethod].[ZipCode]
+///     [Customer].[Id] AS [CustomerId], 
+///     [Customer].[Name], 
+///     [Customer].[Email], 
+///     [Customer].[Phone], 
+///     [Order].[Id] AS [OrderId], 
+///     [Order].[OrderDate], 
+///     [Order].[Total], 
+///     [PaymentMethod].[Id] AS [PaymentMethodId], 
+///     [PaymentMethod].[ZipCode] 
 /// FROM [Customer]
 /// INNER JOIN [Order]
-/// ON ([Customer].[Id] = [Order].[CustomerId])
-/// INNER JOIN [PaymentMethod]
-/// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
+///    ON ([Customer].[Id] = [Order].[CustomerId]) 
+/// INNER JOIN [PaymentMethod] 
+///    ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
 public class Joins<leftT> : JoinsBase where leftT : class

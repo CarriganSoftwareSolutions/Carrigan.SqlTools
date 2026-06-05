@@ -1,3 +1,5 @@
+using Carrigan.SqlTools.SqlGenerators;
+
 namespace Carrigan.SqlTools.Paging;
 
 /// <summary>
@@ -12,28 +14,58 @@ namespace Carrigan.SqlTools.Paging;
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, definePage);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Paging = definePage
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// ORDER BY "Customer"."Id" ASC 
+/// LIMIT 25 
+/// OFFSET 25
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// ORDER BY [Customer].[Id] ASC
-/// OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY
+/// OFFSET 25 ROWS 
+/// FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// DefinePage definePage = new(2, 25);
 /// OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, definePage);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     OrderBys = orderBy,
+///     Paging = definePage
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// ORDER BY "Customer"."Name" ASC, 
+///          "Customer"."Id" ASC 
+/// LIMIT 25 
+/// OFFSET 25
+/// 
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC
-/// OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY
+/// ORDER BY [Customer].[Name] ASC, 
+///          [Customer].[Id] ASC
+/// OFFSET 25 ROWS 
+/// FETCH NEXT 25 ROWS ONLY
 /// ]]></code>
 /// </example>
 public class DefinePage : PagingBase

@@ -1,5 +1,8 @@
 using Carrigan.Core.Interfaces;
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
@@ -13,6 +16,77 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// <remarks>
 /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the UPDATE FROM clause.
 /// </remarks>
+/// <example>
+/// <para>
+/// Create Update SQL query with a Where clause.
+/// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// Order entity = new()
+/// {
+///     Id = 10,
+///     Total = 123.45m
+/// };
+/// 
+/// ColumnCollection<Order> columnCollection = new(nameof(Order.Total));
+/// 
+/// Column<Customer> customerId = new(nameof(Customer.Id));
+/// Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
+/// Equal customerIdsEquals = new(orderCustomerId, customerId);
+/// 
+/// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
+/// 
+/// UpdateBuilder<Order> updateBuilder = new()
+/// {
+///     Values = entity,
+///     UpdateColumns = columnCollection,
+///     From = [TableTag.Get<Customer>()],
+///     Where = new And(customerIdsEquals, customerEmailEquals)
+/// };
+/// 
+/// SqlQuery query = orderGenerator.Update(updateBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE "Order" 
+/// SET "Total" = $1 
+/// FROM "Customer" 
+/// WHERE (("Order"."CustomerId" = "Customer"."Id") 
+///   AND ("Customer"."Email" = $2))
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>
+/// Create Update SQL query with Joins and a Where clause.
+/// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// Customer entity = new()
+/// {
+///     Email = "spam@example.com"
+/// };
+/// ColumnCollection<Customer> columnCollection = new(nameof(Customer.Email));
+/// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
+/// 
+/// UpdateBuilder<Customer> updateBuilder = new()
+/// {
+///     Values = entity,
+///     UpdateColumns = columnCollection,
+///     Where = customerEmailEquals
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Update(updateBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// UPDATE "Customer" 
+/// SET "Email" = $1
+/// WHERE ("Customer"."Email" = $2)
+/// ]]></code>
+/// </example>
 public sealed record UpdateBuilder<T, joinsT> : QueryBuilders.UpdateBuilderBase<T, joinsT>, IQueryBuilder
     where T : class
     where joinsT : class

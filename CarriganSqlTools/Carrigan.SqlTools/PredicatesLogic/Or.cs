@@ -1,3 +1,5 @@
+using Carrigan.SqlTools.SqlGenerators;
+
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
@@ -21,18 +23,31 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
 /// ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
 /// Or or = new(equalName, equalEmail, equalPhone);
-///
-/// SqlQuery query = customerGenerator.Select(null, null, or, null, null);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = or
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 ///
 /// <para>Resulting SQL:</para>
 ///
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// WHERE (("Customer"."Name" = $1) 
+///    OR ("Customer"."Email" = $2) 
+///    OR ("Customer"."Phone" = $3))
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE (([Customer].[Name] = @Parameter_Name)
-///     OR ([Customer].[Email] = @Parameter_Email)
-///     OR ([Customer].[Phone] = @Parameter_Phone))
+/// WHERE (([Customer].[Name] = @Name_1)
+///     OR ([Customer].[Email] = @Email_2)
+///     OR ([Customer].[Phone] = @Phone_3))
 /// ]]></code>
 /// </example>
 ///
@@ -41,13 +56,24 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <code language="csharp"><![CDATA[
 /// ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
 /// Or or = new(equalName);
-/// SqlQuery query = customerGenerator.Select(null, null, or, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = or
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer"
+/// WHERE ("Customer"."Name" = $1)
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE ([Customer].[Name] = @Parameter_Name)
+/// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
 public class Or : LogicalOperator

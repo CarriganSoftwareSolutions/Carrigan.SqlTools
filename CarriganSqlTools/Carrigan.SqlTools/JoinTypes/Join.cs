@@ -1,11 +1,10 @@
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-
-//IGNORE SPELLING: subquery, subqueries, intellisense
 
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -22,11 +21,23 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// Join<Order> join = new(predicate);
-///
-/// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Joins = join
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSQL
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// JOIN "Order" 
+/// ON ("Customer"."Id" = "Order"."CustomerId")
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// JOIN [Order]

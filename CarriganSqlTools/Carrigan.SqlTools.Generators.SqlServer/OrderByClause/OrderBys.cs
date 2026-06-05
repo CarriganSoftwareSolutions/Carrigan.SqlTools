@@ -5,6 +5,26 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// <summary>
 /// Represents the concrete collection of <c>ORDER BY</c> items for the dialect package.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// OrderBy<Customer> orderBy1 = new(nameof(Customer.Name));
+/// OrderBy<Customer> orderBy2 = new(nameof(Customer.Id), SortDirectionEnum.Descending);
+/// OrderBys orderBys = new(orderBy1, orderBy2);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     OrderBys = orderBys
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT [Customer].* 
+/// FROM [Customer] 
+/// ORDER BY [Customer].[Name] ASC, 
+///          [Customer].[Id] DESC
+/// ]]></code>
+/// </example>
 public class OrderBys : OrderBysBase
 {
     /// <summary>

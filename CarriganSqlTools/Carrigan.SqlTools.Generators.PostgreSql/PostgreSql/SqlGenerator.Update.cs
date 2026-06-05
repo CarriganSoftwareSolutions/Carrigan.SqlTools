@@ -1,4 +1,5 @@
 using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -205,19 +206,16 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Column<Customer> customerId = new(nameof(Customer.Id));
     /// Column<Order> orderCustomerId = new(nameof(Order.CustomerId));
     /// Equal customerIdsEquals = new(orderCustomerId, customerId);
-    /// InnerJoin<Customer> joinOnCustomerId = new(customerIdsEquals);
     ///
     /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
-    ///
-    /// SqlQuery query = orderGenerator.Update(entity, columnCollection, joinOnCustomerId, customerEmailEquals);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Order]
-    /// SET [Order].[Total] = @ParameterSet_Total
-    /// FROM [Order]
-    /// INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id])
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
+    /// UPDATE "Order" 
+    /// SET "Total" = $1 
+    /// FROM "Customer"
+    /// WHERE (("Order"."CustomerId" = "Customer"."Id") 
+    ///   AND ("Customer"."Email" = $2))
     /// ]]></code>
     /// </example>
     /// <example>
@@ -231,16 +229,24 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// {
     ///     Email = "spam@example.com"
     /// };
+    /// 
     /// ColumnCollection<Customer> columnCollection = new(nameof(Customer.Email));
     /// ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "Hank@example.com");
-    ///
-    /// SqlQuery query = customerGenerator.Update(entity, columnCollection, null, customerEmailEquals);
+    /// 
+    /// SqlQuery query = customerGenerator.Update<Customer>
+    /// (
+    ///     entity,
+    ///     columnCollection,
+    ///     null,
+    ///     null,
+    ///     customerEmailEquals
+    /// );
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Email] = @ParameterSet_Email
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
+    /// UPDATE "Customer" 
+    /// SET "Email" = $1 
+    /// WHERE ("Customer"."Email" = $2)
     /// ]]></code>
     /// </example>
     /// <param name="predicates">

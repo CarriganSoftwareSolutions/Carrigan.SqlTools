@@ -15,7 +15,12 @@ public class PagingExamples
     public void SelectWithDefinePage()
     {
         DefinePage definePage = new(2, 25);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, definePage);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Paging = definePage
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -27,7 +32,13 @@ public class PagingExamples
     {
         DefinePage definePage = new(2, 25);
         OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, definePage);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            OrderBys = orderBy,
+            Paging = definePage
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -38,7 +49,12 @@ public class PagingExamples
     public void SelectWithOffsetNext()
     {
         OffsetFetchNext offsetNext = new(50, 25);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, offsetNext);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Paging = offsetNext
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -50,7 +66,13 @@ public class PagingExamples
     {
         OffsetFetchNext offsetNext = new(50, 25);
         OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, orderBy, offsetNext);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            OrderBys = orderBy,
+            Paging = offsetNext
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

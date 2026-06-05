@@ -46,9 +46,17 @@ namespace Carrigan.SqlTools.Tags;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [schema].[Phone]
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone
-/// WHERE [Id] = @Id;
+/// --PostgreSql
+/// UPDATE "schema"."Phone"
+/// SET "CustomerId" = $1, 
+///     "Phone" = $2 
+/// WHERE "Id" = $3;
+/// 
+/// --SqlServer
+/// "UPDATE [schema].[Phone] 
+/// SET [CustomerId] = @CustomerId_1, 
+///     [Phone] = @Phone_2
+/// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
 /// <example>
@@ -80,9 +88,17 @@ namespace Carrigan.SqlTools.Tags;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// UPDATE [schema].[Phone]
-/// SET [CustomerId] = @CustomerId, [Phone] = @Phone
-/// WHERE [Id] = @Id;
+/// --PostgreSql
+/// UPDATE "schema"."Email" 
+/// SET "CustomerId" = $1, 
+///     "Email" = $2 
+/// WHERE "Id" = $3;
+/// 
+/// --SqlServer
+/// UPDATE [schema].[Email] 
+/// SET [CustomerId] = @CustomerId_1, 
+///     [Email] = @Email_2 
+/// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
 public class TableTag : StringWrapper, ISqlFragment

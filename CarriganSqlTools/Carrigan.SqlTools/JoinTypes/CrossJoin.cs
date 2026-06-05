@@ -1,11 +1,10 @@
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-
-//IGNORE SPELLING: subquery, subqueries, intellisense
 
 namespace Carrigan.SqlTools.JoinTypes;
 
@@ -18,10 +17,20 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// CrossJoin<Order> join = new();
-/// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Joins = join
+/// };
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// CROSS JOIN "Order"
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// CROSS JOIN [Order]

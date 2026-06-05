@@ -46,13 +46,9 @@ public class TagExamples
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         SqlQueryTestHelper.AssertParameterCount(query, 3);
-        //Assert.Equal(3, query.GetParameterCount());
         SqlQueryTestHelper.AssertParameterValue(query, "@Id_3", 10);
-        //Assert.Equal(10, (int?)query.GetParameterValue("@Id_3"));
         SqlQueryTestHelper.AssertParameterValue(query, "@CustomerId_1", 313);
-        //Assert.Equal(313, (int?)query.GetParameterValue("@CustomerId_1"));
         SqlQueryTestHelper.AssertParameterValue(query, "@Email_2", "Exterminate@GenericTinCanLand.gov");
-        //Assert.Equal("Exterminate@GenericTinCanLand.gov", (string?)query.GetParameterValue("@Email_2"));
     }
 
     [Fact]
@@ -68,8 +64,6 @@ public class TagExamples
         string actualSql = query.QueryText;
         Assert.Equal(expectedSql, actualSql);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
-        //Assert.Equal(1, query.GetParameterCount());
         SqlQueryTestHelper.AssertParameterValue(query, "@SomeValue_1", "DangIt");
-        //Assert.Equal("DangIt", (string?)query.GetParameterValue("@SomeValue_1"));
     }
 }

@@ -1,6 +1,8 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -20,13 +22,18 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
-/// SqlQuery query = customerGenerator.Select(null, null, columnValue, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = columnValue
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].*
-/// FROM [Customer]
-/// WHERE ([Customer].[Name] = @Parameter_Name)
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// WHERE ("Customer"."Name" = $1)
 /// ]]></code>
 /// </example>
 public class ColumnValue<T> : ColumnValueBase<T> where T : class

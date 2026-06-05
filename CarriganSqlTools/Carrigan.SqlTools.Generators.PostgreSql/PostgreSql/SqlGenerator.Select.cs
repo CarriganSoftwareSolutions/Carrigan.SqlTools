@@ -1,3 +1,4 @@
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
@@ -105,15 +106,17 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Order> join = new (predicate);
-    ///
-    /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
+    /// InnerJoin<Order> join = new(predicate);
+    /// Joins<Customer> joins = new(join);
+    /// 
+    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].*
-    /// FROM [Customer]
-    /// INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])
+    /// SELECT "Customer".* 
+    /// FROM "Customer"
+    /// INNER JOIN "Order"
+    ///   ON ("Customer"."Id" = "Order"."CustomerId")
     /// ]]></code>
     /// </example>
     /// <example>
@@ -125,18 +128,19 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
-    ///
-    /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-    ///
-    /// SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
+    /// Joins<Customer> joins = new(join);
+    /// 
+    /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+    /// 
+    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].*
-    /// FROM [Customer]
-    /// INNER JOIN [Order]
-    /// ON ([Customer].[Id] = [Order].[CustomerId])
-    /// ORDER BY [Order].[OrderDate] ASC
+    /// SELECT "Customer".* 
+    /// FROM "Customer" 
+    /// INNER JOIN "Order" 
+    ///    ON ("Customer"."Id" = "Order"."CustomerId") 
+    /// ORDER BY "Order"."OrderDate" ASC
     /// ]]></code>
     /// </example>
     /// <example>
@@ -149,36 +153,24 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
-    ///
+    /// Joins<Customer> joins = new(join);
+    /// 
     /// Column<Order> totalCol = new(nameof(Order.Total));
-    /// Parameter minTotal = new("Total", 500m);
+    /// Parameter minTotal = new(500m, "Total");
     /// GreaterThan greaterThan = new(totalCol, minTotal);
-    ///
-    /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-    ///
-    /// SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
+    /// 
+    /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
+    /// 
+    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, greaterThan, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].*
-    /// FROM [Customer]
-    /// INNER JOIN [Order]
-    /// ON ([Customer].[Id] = [Order].[CustomerId])
-    /// WHERE ([Order].[Total] > @Parameter_Total)
-    /// ORDER BY [Order].[OrderDate] ASC
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// OffsetNext offsetNext = new(50, 25);
-    /// SqlQuery query = customerGenerator.Select(null, null, null, null, null, offsetNext);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// SELECT [Customer].*
-    /// FROM [Customer]
-    /// ORDER BY [Customer].[Id] ASC
-    /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
+    /// SELECT "Customer".* 
+    /// FROM "Customer" 
+    /// INNER JOIN "Order" 
+    ///    ON ("Customer"."Id" = "Order"."CustomerId")
+    /// WHERE ("Order"."Total" > $1) 
+    /// ORDER BY "Order"."OrderDate" ASC
     /// ]]></code>
     /// </example>
     public SqlQuery Select(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBys, PagingBase? paging) =>
@@ -226,9 +218,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].*
-    /// FROM [Customer]
-    /// WHERE ([Customer].[Id] = @Parameter_Id)
+    /// SELECT "Customer".*
+    /// FROM "Customer" 
+    /// WHERE ("Customer"."Id" = $1)
     /// ]]></code>
     /// </example>
     public SqlQuery SelectById(params IEnumerable<T> entities) =>

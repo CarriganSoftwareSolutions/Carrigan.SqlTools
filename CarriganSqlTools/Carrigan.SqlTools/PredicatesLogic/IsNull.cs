@@ -1,5 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -15,10 +17,21 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <code language="csharp"><![CDATA[
 /// Column<Customer> columnName = new(nameof(Customer.Name));
 /// IsNull isNull = new(columnName);
-/// SqlQuery query = customerGenerator.Select(null, null, isNull, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = isNull
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// WHERE ("Customer"."Name" IS NULL)
+/// 
+/// --SqlServer
 /// SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] IS NULL)
 /// ]]></code>
 /// </example>

@@ -7,8 +7,6 @@ using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 
-//IGNORE SPELLING: dbo
-
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;
 
 public class FromReadMeMoreComplexExamples
@@ -26,7 +24,13 @@ public class FromReadMeMoreComplexExamples
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, orderByOrderDate, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join,
+            OrderBys = orderByOrderDate
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -46,7 +50,13 @@ public class FromReadMeMoreComplexExamples
         OrderBy<Customer> orderByCustomerId = new(nameof(Customer.Id), SortDirectionEnum.Descending);
         OrderBys orderBys = new(orderByCustomerId, orderByOrderDate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, orderBys, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join,
+            OrderBys = orderBys
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Customer].[Id] DESC, [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -64,7 +74,13 @@ public class FromReadMeMoreComplexExamples
 
         ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
-        SqlQuery query = orderGenerator.Delete(join, customerEmail);
+        DeleteBuilder<Order> deleteBuilder = new()
+        {
+            Joins = join,
+            Where = customerEmail
+        };
+
+        SqlQuery query = orderGenerator.Delete(deleteBuilder);
 
         Assert.Equal("DELETE [Order] FROM [Order] INNER JOIN [Customer] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Customer].[Email] = @Email_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -105,7 +121,15 @@ public class FromReadMeMoreComplexExamples
 
         ColumnValue<Customer> customerEmailEquals = new(nameof(Customer.Email), "spam@example.com");
 
-        SqlQuery query = orderGenerator.Update(entity, columnCollection, join, customerEmailEquals);
+        UpdateBuilder<Order> updateBuilder = new()
+        {
+            Values = entity,
+            UpdateColumns = columnCollection,
+            Joins = join,
+            Where = customerEmailEquals
+        };
+
+        SqlQuery query = orderGenerator.Update(updateBuilder);
 
 
         Assert.Equal("UPDATE [Order] SET [Order].[Total] = @Total_1 FROM [Order] INNER JOIN [Customer] ON ([Order].[CustomerId] = [Customer].[Id]) WHERE ([Customer].[Email] = @Email_2)", query.QueryText);

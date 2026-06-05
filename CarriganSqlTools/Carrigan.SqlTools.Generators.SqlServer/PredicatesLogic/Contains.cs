@@ -1,5 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -17,16 +19,21 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <see cref="ColumnBase{T}"/> validates property names and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameter parameterEmail = new("Email", "@example.");
+/// Parameter parameterEmail = new("@example.", "Email");
 /// Column<Customer> columnEmail = new(nameof(Customer.Email));
 /// Contains<Customer> predicate = new(columnEmail, parameterEmail);
-/// SqlQuery query = customerGenerator.Select(null, null, predicate, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = predicate
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE CONTAINS([Customer].[Email], @Parameter_Email)
+/// WHERE CONTAINS([Customer].[Email], @Email_1)
 /// ]]></code>
 /// </example>
 public class Contains<T> : Predicates where T : class

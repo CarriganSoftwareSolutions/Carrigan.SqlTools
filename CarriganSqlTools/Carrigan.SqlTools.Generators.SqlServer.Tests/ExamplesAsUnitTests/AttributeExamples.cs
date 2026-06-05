@@ -20,7 +20,12 @@ public class AttributeExamples
         );
 
         SqlGenerator<AliasEntity> generator = new();
-        SqlQuery query = generator.Select(null, null, tags, null, null, null, null);
+        SelectBuilder<AliasEntity> selectBuilder = new()
+        {
+            Selects = tags
+        };
+
+        SqlQuery query = generator.Select(selectBuilder);
 
         string expected = "SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias] FROM [AliasEntity]";
 

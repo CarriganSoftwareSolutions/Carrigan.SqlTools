@@ -1,3 +1,4 @@
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.SqlGenerators;
 
 //IGNORE SPELLING: subquery, subqueries, intellisense, exists, parameterization
@@ -14,15 +15,21 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// Predicates orderTotalGreaterThan = new GreaterThan
 /// (
 ///     new Column<Order>(nameof(Order.Total)),
-///     new Parameter("Total", 100.00m)
+///     new Parameter(100.00m, "Total")
 /// );
 /// Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
 /// NotExists notExists = new(subQuery);
-///
-/// SqlQuery query = customerGenerator.Select(null, null, null, null, notExists, null, null);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer"
+/// WHERE (NOT EXISTS (SELECT "Order".* FROM "Order" WHERE ("Order"."Total" > $1)))
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// WHERE (NOT EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))

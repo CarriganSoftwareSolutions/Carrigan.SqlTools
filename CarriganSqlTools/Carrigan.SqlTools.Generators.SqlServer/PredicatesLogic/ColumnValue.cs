@@ -20,13 +20,18 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
-/// SqlQuery query = customerGenerator.Select(null, null, columnValue, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = columnValue
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE ([Customer].[Name] = @Parameter_Name)
+/// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
 public class ColumnValue<T> : ColumnValueBase<T> where T : class

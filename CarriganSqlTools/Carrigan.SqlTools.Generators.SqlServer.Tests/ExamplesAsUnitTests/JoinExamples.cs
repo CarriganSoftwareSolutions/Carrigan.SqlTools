@@ -18,7 +18,12 @@ public class JoinExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         CrossJoin<Order> join = new();
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] CROSS JOIN [Order]", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -32,7 +37,12 @@ public class JoinExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         FullJoin<Order> join = new(predicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] FULL JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -46,7 +56,12 @@ public class JoinExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new (predicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -60,7 +75,12 @@ public class JoinExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         Join<Order> join = new(predicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -74,7 +94,12 @@ public class JoinExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         LeftJoin<Order> join = new(predicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] LEFT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -88,7 +113,12 @@ public class JoinExamples
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         RightJoin<Order> join = new(predicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] RIGHT JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -101,15 +131,24 @@ public class JoinExamples
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join1 = new(predicate);
-       
+
         ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
         InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
-       
+
         Joins<Customer> joins = new(join1, join2);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = joins
+        };
 
-        Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expectedQueryText = "SELECT [Customer].* FROM [Customer] " +
+            "INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) " +
+            "INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])";
+
+        Assert.Equal(expectedQueryText, query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
@@ -125,7 +164,7 @@ public class JoinExamples
                 .Concat<Order>(["OrderDate", "Total"])
                 .Append<PaymentMethod>("Id", "PaymentMethodId")
                 .Append<PaymentMethod>("ZipCode");
-        
+
         ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join1 = new(customerIdEquals);
 
@@ -134,9 +173,21 @@ public class JoinExamples
 
         Joins<Customer> joins = new(join1, join2);
 
-        SqlQuery query = customerGenerator.Select(null, null, selectTags, joins, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = joins
+        };
 
-        Assert.Equal("SELECT [Customer].[Id] AS [CustomerId], [Customer].[Name], [Customer].[Email], [Customer].[Phone], [Order].[Id] AS [OrderId], [Order].[OrderDate], [Order].[Total], [PaymentMethod].[Id] AS [PaymentMethodId], [PaymentMethod].[ZipCode] FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])", query.QueryText);
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expectedQueryText = "SELECT [Customer].[Id] AS [CustomerId], [Customer].[Name], [Customer].[Email], [Customer].[Phone], " +
+            "[Order].[Id] AS [OrderId], [Order].[OrderDate], [Order].[Total], " +
+            "[PaymentMethod].[Id] AS [PaymentMethodId], [PaymentMethod].[ZipCode] FROM [Customer] " +
+            "INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) " +
+            "INNER JOIN [PaymentMethod] ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])";
+
+        Assert.Equal(expectedQueryText, query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
     }

@@ -1,6 +1,8 @@
 //IGNORE SPELLING: equal
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -13,14 +15,25 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameter parameterName = new("Name", "Hank");
+/// Parameter parameterName = new("Hank", "Name");
 /// Column<Customer> columnName = new(nameof(Customer.Name));
 /// Equal equal = new(columnName, parameterName);
 /// Not not = new(equal);
-/// SqlQuery query = customerGenerator.Select(null, null, not, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = not
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer"
+/// WHERE (NOT ("Customer"."Name" = $1))
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// WHERE (NOT ([Customer].[Name] = @Parameter_Name))

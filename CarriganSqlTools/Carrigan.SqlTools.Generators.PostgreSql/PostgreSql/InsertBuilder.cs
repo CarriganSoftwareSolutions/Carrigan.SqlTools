@@ -9,6 +9,40 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// <typeparam name="T">
 /// The entity/model type that defines the table into which data will be inserted.
 /// </typeparam>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// IEnumerable<Customer> customers =
+///     [
+///         new()
+///                 {
+///                     Id = 42,
+///                     Name = "Hank",
+///                     Email = "Hank@example.com",
+///                     Phone = "+1(555)555-5555"
+///                 },
+///                 new()
+///                 {
+///                     Id = 732,
+///                     Name = "Homer",
+///                     Email = "Homer@example.com",
+///                     Phone = "+1(555)555-1234"
+///                 },
+///             ];
+/// InsertBuilder<Customer> insertBuilder = new()
+/// {
+///     Records = customers
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Insert(insertBuilder);
+/// ]]></code>
+///
+/// <para>Resulting SQL:</para>
+///
+/// <code><![CDATA[
+/// INSERT INTO "Customer" ("Id", "Name", "Email", "Phone")
+/// VALUES ($1, $2, $3, $4), ($5, $6, $7, $8);
+/// ]]></code>
+/// </example>
 public sealed record InsertBuilder<T> : QueryBuilders.InsertBuilderBase<T>, IQueryBuilder where T : class
 {
     /// <summary>

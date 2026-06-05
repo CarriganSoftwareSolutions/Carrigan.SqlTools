@@ -1,3 +1,6 @@
+using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
+
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
@@ -8,16 +11,27 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameter parameterName = new("Name", "Hank");
+/// Parameter parameterName = new("Hank", "Name");
 /// Column<Customer> columnName = new(nameof(Customer.Name));
 /// Equal equalName = new(columnName, parameterName);
-/// SqlQuery query = customerGenerator.Select(null, null, equalName, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = equalName
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// WHERE ("Customer"."Name" = $1)
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE ([Customer].[Name] = @Parameter_Name)
+/// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
 public class Equal : ComparisonOperator

@@ -1,0 +1,76 @@
+
+using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.PostgreSql;
+
+
+//IGNORE SPELLING: dbo
+
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
+
+public class FromReadMeAttributeExamples
+{
+    private static readonly SqlGenerator<PhoneModel> phoneGenerator = new();
+    private static readonly SqlGenerator<EmailModel> emailGenerator = new();
+    private static readonly SqlGenerator<ProcedureExec> procedureExecGenerator = new();
+
+    [Fact]
+    public void TableColumnKey()
+    {
+        PhoneModel phone = new()
+        {
+            Id = 2718,
+            CustomerId = 3141,
+            PhoneNumber = "07700 900461"
+        };
+        SqlQuery query = phoneGenerator.UpdateById(phone);
+
+        string expectedSql = """UPDATE "schema"."Phone" SET "CustomerId" = $1, "Phone" = $2 WHERE "Id" = $3;""";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "$3", 2718);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 3141);
+        SqlQueryTestHelper.AssertParameterValue(query, "$2", "07700 900461");
+    }
+
+    [Fact]
+    public void IdentifierPrimaryKey()
+    {
+        EmailModel email = new()
+        {
+            Id = 10,
+            CustomerId = 313,
+            EmailAddress = "Exterminate@GenericTinCanLand.gov"
+        };
+        SqlQuery query = emailGenerator.UpdateById(email);
+
+        string expectedSql = """UPDATE "schema"."Email" SET "CustomerId" = $1, "Email" = $2 WHERE "Id" = $3;""";
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+        SqlQueryTestHelper.AssertParameterCount(query, 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 313);
+        SqlQueryTestHelper.AssertParameterValue(query, "$2", "Exterminate@GenericTinCanLand.gov");
+        SqlQueryTestHelper.AssertParameterValue(query, "$3", 10);
+    }
+
+    [Fact]
+    public void Procedure()
+    {
+        ProcedureExec procedureExec = new()
+        {
+            ValueColumn = "DangIt"
+        };
+        SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
+
+        string expectedSql =
+            """
+            "schema"."UpdateThing"
+            """;
+        string actualSql = query.QueryText;
+        Assert.Equal(expectedSql, actualSql);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", "DangIt");
+    }
+}

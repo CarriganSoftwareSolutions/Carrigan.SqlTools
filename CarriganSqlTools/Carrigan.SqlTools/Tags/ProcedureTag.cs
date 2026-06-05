@@ -49,6 +49,10 @@ namespace Carrigan.SqlTools.Tags;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// "schema"."UpdateThing"
+/// 
+/// --SqlServer
 /// [schema].[UpdateThing]
 /// ]]></code>
 /// </example>

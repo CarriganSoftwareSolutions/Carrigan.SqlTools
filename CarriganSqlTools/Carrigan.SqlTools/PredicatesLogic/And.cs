@@ -1,3 +1,5 @@
+using Carrigan.SqlTools.SqlGenerators;
+
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
@@ -22,17 +24,30 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
 /// And and = new(equalName, equalEmail, equalPhone);
 ///
-/// SqlQuery query = customerGenerator.Select(null, null, and, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = and
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 ///
 /// <para>Resulting SQL:</para>
 ///
 /// <code><![CDATA[
+/// --PostgreSql 
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// WHERE (("Customer"."Name" = $1) 
+///   AND ("Customer"."Email" = $2) 
+///   AND ("Customer"."Phone" = $3))
+///   
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE (([Customer].[Name] = @Parameter_Name)
-///     AND ([Customer].[Email] = @Parameter_Email)
-///     AND ([Customer].[Phone] = @Parameter_Phone))
+/// WHERE (([Customer].[Name] = @Name_1) 
+///   AND ([Customer].[Email] = @Email_2)
+///   AND ([Customer].[Phone] = @Phone_3))
 /// ]]></code>
 /// </example>
 ///
@@ -41,13 +56,24 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <code language="csharp"><![CDATA[
 /// ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
 /// And and = new(equalName);
-/// SqlQuery query = customerGenerator.Select(null, null, and, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = and
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".* 
+/// FROM "Customer"
+/// WHERE ("Customer"."Name" = $1)
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE ([Customer].[Name] = @Parameter_Name)
+/// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
 public class And : LogicalOperator

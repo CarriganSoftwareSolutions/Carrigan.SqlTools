@@ -94,7 +94,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)
+    /// DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)
     /// ]]></code>
     /// </example>
     public SqlQuery DeleteById(params IEnumerable<T> entities) =>
@@ -140,7 +140,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
     /// DELETE FROM [Customer]
-    /// WHERE ([Customer].[Name] = @Parameter_Name)
+    /// WHERE ([Customer].[Name] = @Name_1)
     /// ]]></code>
     /// </example>
     /// <example>
@@ -176,7 +176,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// FROM [Order]
     /// INNER JOIN [Customer]
     /// ON ([Customer].[Id] = [Order].[CustomerId])
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
+    /// WHERE ([Customer].[Email] = @Email_1)
     /// ]]></code>
     /// </example>
     public SqlQuery Delete(Joins<T>? joins, Predicates? predicates) =>

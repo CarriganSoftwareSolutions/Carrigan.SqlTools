@@ -1,5 +1,7 @@
 using Carrigan.Core.Interfaces;
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 //TODO: QUery Builder classes need to be reevaluated IEncryption support.
@@ -13,6 +15,110 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// <remarks>
 /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the DELETE USING clause.
 /// </remarks>
+/// <example>
+/// <para>Example with null Joins and null predicates</para>
+/// <code language="csharp"><![CDATA[
+/// DeleteBuilder<Customer> deleteBuilder = new()
+/// {
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Delete(deleteBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// DELETE FROM "Customer";
+/// ]]></code>
+/// </example>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
+/// DeleteBuilder<Customer> deleteBuilder = new()
+/// {
+///     Where = columnValue
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Delete(deleteBuilder);;
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// DELETE FROM "Customer" WHERE ("Customer"."Name" = $1)
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <code language="csharp"><![CDATA[
+/// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// 
+/// DeleteBuilder<Order> deleteBuilder = new()
+/// {
+///     Usings = [TableTag.Get<Customer>()],
+///     Where = predicate
+/// };
+/// 
+/// SqlQuery query = orderGenerator.Delete(deleteBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// DELETE FROM "Order"
+/// USING "Customer" 
+/// WHERE ("Customer"."Id" = "Order"."CustomerId")
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <code language="csharp"><![CDATA[
+/// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
+/// 
+/// DeleteBuilder<Order> deleteBuilder = new()
+/// {
+///     Usings = [TableTag.Get<Customer>()],
+///     Where = new And(predicate, customerEmail)
+/// };
+/// 
+/// SqlQuery query = orderGenerator.Delete(deleteBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// DELETE FROM "Order" 
+/// USING "Customer" 
+/// WHERE (("Customer"."Id" = "Order"."CustomerId") 
+///   AND ("Customer"."Email" = $1))
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <para>Note: ColumnEqualsColumn&lt;Order, PaymentMethod&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <code language="csharp"><![CDATA[
+/// ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// 
+/// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
+/// InnerJoin<PaymentMethod> paymentMethodJoin = new(paymentMethodIdEquals);
+/// Joins<Order> joins = new(paymentMethodJoin);
+/// 
+/// ColumnValue<PaymentMethod> paymentMethodZipCode = new(nameof(PaymentMethod.ZipCode), "37040");
+/// 
+/// DeleteBuilder<Customer, Order> deleteBuilder = new()
+/// {
+///     Usings = [TableTag.Get<Order>()],
+///     Joins = joins,
+///     Where = new And(customerIdEquals, paymentMethodZipCode)
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Delete(deleteBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// DELETE FROM "Customer" 
+/// USING "Order" 
+/// INNER JOIN "PaymentMethod" 
+///    ON ("Order"."PaymentMethodId" = "PaymentMethod"."Id") 
+/// WHERE (("Customer"."Id" = "Order"."CustomerId")
+///   AND ("PaymentMethod"."ZipCode" = $1))
+/// ]]></code>
+/// </example>
 public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<T, joinsT>, IQueryBuilder
     where T : class
     where joinsT : class

@@ -1,4 +1,6 @@
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
+using System.Reflection.Emit;
 
 namespace Carrigan.SqlTools.Attributes;
 
@@ -22,11 +24,13 @@ namespace Carrigan.SqlTools.Attributes;
 /// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// using Carrigan.SqlTools.Attributes;
+/// using Carrigan.SqlTools.Base.Tests.Helpers;
+/// using Carrigan.SqlTools.Base.Tests.TestEntities;
+/// using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 /// using Carrigan.SqlTools.SqlGenerators;
-/// using Carrigan.SqlTools.Tags;
-/// using Carrigan.SqlTools.SqlQueries;
+/// using Carrigan.SqlTools.PostgreSql;
 /// using Carrigan.SqlTools.SqlServer;
+/// using Carrigan.SqlTools.Tags;
 ///
 /// internal class AliasEntity
 /// {
@@ -38,18 +42,28 @@ namespace Carrigan.SqlTools.Attributes;
 ///     public string? NoAlias { get; set; }
 /// }
 ///
-/// SelectTags tags = SelectTags.GetMany<AliasEntity>
+/// SelectTags tags = SelectTagGenerator.GetMany<AliasEntity>
 /// (
 ///     nameof(AliasEntity.Id),
 ///     nameof(AliasEntity.TestColumn),
 ///     nameof(AliasEntity.NoAlias)
 /// );
-///
+/// 
 /// SqlGenerator<AliasEntity> generator = new();
-/// SqlQuery query = generator.Select(null, null, tags, null, null, null, null);
+/// SelectBuilder<AliasEntity> selectBuilder = new()
+/// {
+///     Selects = tags
+/// };
+/// 
+/// SqlQuery query = generator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "AliasEntity"."Id", "AliasEntity"."TestColumn" AS "AnAlias", "AliasEntity"."NoAlias" 
+/// FROM "AliasEntity"
+/// 
+/// --SqlServer
 /// SELECT [AliasEntity].[Id], [AliasEntity].[TestColumn] AS [AnAlias], [AliasEntity].[NoAlias]
 /// FROM [AliasEntity]
 /// ]]></code>
@@ -57,11 +71,13 @@ namespace Carrigan.SqlTools.Attributes;
 ///
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// using Carrigan.SqlTools.Attributes;
+/// using Carrigan.SqlTools.Base.Tests.Helpers;
+/// using Carrigan.SqlTools.Base.Tests.TestEntities;
+/// using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 /// using Carrigan.SqlTools.SqlGenerators;
-/// using Carrigan.SqlTools.Tags;
-/// using Carrigan.SqlTools.SqlQueries;
+/// using Carrigan.SqlTools.PostgreSql;
 /// using Carrigan.SqlTools.SqlServer;
+/// using Carrigan.SqlTools.Tags;
 ///
 /// [Identifier("Email", "schema")]
 /// internal class EmailModel
@@ -84,8 +100,15 @@ namespace Carrigan.SqlTools.Attributes;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// UPDATE "schema"."Email" 
+/// SET "CustomerId" = $1, "Email" = $2 
+/// WHERE "Id" = $3;
+/// 
+/// --SqlServer
 /// UPDATE [schema].[Email]
-/// SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 WHERE [Id] = @Id_3;
+/// SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 
+/// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]

@@ -48,32 +48,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// SELECT Id FROM @OutputTable;
     /// ]]></code>
     /// </example>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    ///CompositePrimaryKeyTable testEntity = new()
-    ///{
-    ///    NotKey1 = 1,
-    ///    NotKey2 = 2,
-    ///    NotKey3 = 3
-    ///};
-    ///CompositePrimaryKeyTable testEntity2 = new()
-    ///{
-    ///    NotKey1 = 1,
-    ///    NotKey2 = 2,
-    ///    NotKey3 = 3
-    ///};
-    ///
-    /// SqlQuery query = _sqlGeneratorForCompositePrimaryKeyTable.InsertAutoId(testEntity, testEntity2);
-    /// ]]></code>
-    /// <para>Resulting SQL:</para>
-    /// <code><![CDATA[
-    /// DECLARE @OutputTable TABLE (Id1 INT, Id2 INT);
-    /// INSERT INTO [Ck] ([NotKey1], [NotKey2], [NotKey3])
-    /// OUTPUT INSERTED.Id1, INSERTED.Id2 INTO @OutputTable
-    /// VALUES (@NotKey1_0, @NotKey2_0, @NotKey3_0), (@NotKey1_1, @NotKey2_1, @NotKey3_1);
-    /// SELECT Id1, Id2 FROM @OutputTable;
-    /// ]]></code>
-    /// </example>
     public SqlQuery InsertAutoId(params IEnumerable<T> entities) =>
         base.BaseInsertAutoId(entities);
 
@@ -121,97 +95,30 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// IEnumerable<Customer> customers =
-    /// [
-    ///     new()
-    ///     {
-    ///         Id = 42,
-    ///         Name = "Hank",
-    ///         Email = "Hank@example.com",
-    ///         Phone = "+1(555)555-5555"
-    ///     },
-    ///     new()
-    ///     {
-    ///         Id = 732,
-    ///         Name = "Homer",
-    ///         Email = "Homer@example.com",
-    ///         Phone = "+1(555)555-1234"
-    ///     },
-    /// ];
-    ///
+    ///     [
+    ///         new()
+    ///         {
+    ///             Id = 42,
+    ///             Name = "Hank",
+    ///             Email = "Hank@example.com",
+    ///             Phone = "+1(555)555-5555"
+    ///         },
+    ///         new()
+    ///         {
+    ///             Id = 732,
+    ///             Name = "Homer",
+    ///             Email = "Homer@example.com",
+    ///             Phone = "+1(555)555-1234"
+    ///         },
+    ///     ];
     /// SqlQuery query = customerGenerator.Insert(null, null, customers);
     /// ]]></code>
     ///
     /// <para>Resulting SQL:</para>
     ///
     /// <code><![CDATA[
-    /// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone])
-    /// VALUES (@Id_0, @Name_0, @Email_0, @Phone_0),
-    ///        (@Id_1, @Name_1, @Email_1, @Phone_1);
-    /// ]]></code>
-    /// </example>
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// EntityWithTableAttribute testEntity = new()
-    /// {
-    ///     Name = "Test Name",
-    ///     DateOf = new DateTime(2023, 10, 1),
-    ///     When = "Now",
-    ///     Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" }
-    /// };
-    /// EntityWithTableAttribute testEntity2 = new()
-    /// {
-    ///     Name = "Test Name2",
-    ///     DateOf = new DateTime(2025, 12, 6),
-    ///     When = "Now",
-    ///     Address = new Address { Street = "123 Fake St", City = "Test City", PostalCode = "37067" }
-    /// };
-    ///
-    /// ColumnCollection<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
-    ///
-    ///
-    /// SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, null, testEntity, testEntity2);
-    /// ]]></code>
-    ///
-    /// <para>Resulting SQL:</para>
-    ///
-    /// <code><![CDATA[
-    /// INSERT INTO [Test] ([Id], [Name], [When])
-    /// VALUES (@Id_0, @Name_0, @When_0),
-    ///        (@Id_1, @Name_1, @When_1)
-    /// ]]></code>
-    /// </example>
-    ///
-    /// <example>
-    /// <code language="csharp"><![CDATA[
-    /// EntityWithTableAttribute testEntity = new()
-    /// {
-    ///     Name = "Test Name",
-    ///     DateOf = new DateTime(2023, 10, 1),
-    ///     When = "Now",
-    ///     Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" }
-    /// };
-    /// EntityWithTableAttribute testEntity2 = new()
-    /// {
-    ///     Name = "Test Name2",
-    ///     DateOf = new DateTime(2025, 12, 6),
-    ///     When = "Now",
-    ///     Address = new Address { Street = "123 Fake St", City = "Test City", PostalCode = "37067" }
-    /// };
-    ///
-    /// ColumnCollection<EntityWithTableAttribute> insertColumns = new("Name", "When");
-    /// ColumnCollection<EntityWithTableAttribute> returnColumns = new("Id", "DateOf");
-    ///
-    /// SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, returnColumns, testEntity, testEntity2);
-    /// ]]></code>
-    ///
-    /// <para>Resulting SQL:</para>
-    ///
-    /// <code><![CDATA[
-    /// DECLARE @OutputTable TABLE (Id UNIQUEIDENTIFIER, DateOf DATETIME2);
-    /// INSERT INTO [Test] ([Name], [When])
-    /// OUTPUT INSERTED.Id, INSERTED.DateOf INTO @OutputTable
-    /// VALUES (@Name_0, @When_0), (@Name_1, @When_1);
-    /// SELECT Id, DateOf FROM @OutputTable;
+    /// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone]) 
+    /// VALUES (@Id_1, @Name_2, @Email_3, @Phone_4), (@Id_5, @Name_6, @Email_7, @Phone_8);
     /// ]]></code>
     /// </example>
     public SqlQuery Insert(ColumnCollectionBase<T>? insertColumnCollection, ColumnCollectionBase<T>? returnColumns, params IEnumerable<T> entities) =>

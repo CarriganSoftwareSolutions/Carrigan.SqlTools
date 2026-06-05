@@ -1,5 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Sets;
 
@@ -7,6 +9,54 @@ namespace Carrigan.SqlTools.Sets;
 /// Represents a dialect-specific collection of model properties used as SQL columns.
 /// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+/// 
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.Base.Tests.Helpers;
+/// using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
+/// using Carrigan.SqlTools.Sets;
+/// using Carrigan.SqlTools.SqlGenerators;
+/// using Carrigan.SqlTools.PostgreSql;
+/// 
+/// //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+/// ColumnCollection<Customer> columns = new(nameof(Customer.Email));
+/// Customer entity = new()
+/// {
+///     Id = 42,
+///     Name = "Hank",
+///     Email = "Hank@example.gov"
+/// };
+/// SqlQuery query = customerGenerator.UpdateById(entity, columns);
+/// 
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[ 
+/// UPDATE "Customer" 
+/// SET "Email" = $1 
+/// WHERE "Id" = $2;
+/// ]]></code>
+/// </example>
+/// <example>
+/// 
+/// <code language="csharp"><![CDATA[
+/// //No CollumnCollection
+/// Customer entity = new()
+/// {
+///     Id = 42,
+///     Name = "Hank",
+///     Email = "Hank@tx.gov",
+///     Phone = "+1(555)555-5555"
+/// };
+/// SqlQuery query = customerGenerator.UpdateById(entity);
+/// 
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[ 
+/// UPDATE "Customer" 
+/// SET "Name" = $1, "Email" = $2, "Phone" = $3 
+/// WHERE "Id" = $4;
+/// ]]></code>
+/// </example>
 public class ColumnCollection<T> : ColumnCollectionBase<T> where T : class
 {
     /// <summary>

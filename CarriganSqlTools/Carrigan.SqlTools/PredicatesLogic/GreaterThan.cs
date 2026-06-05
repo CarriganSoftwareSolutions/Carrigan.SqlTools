@@ -1,3 +1,6 @@
+using Carrigan.Core.Interfaces.IModels;
+using Carrigan.SqlTools.SqlGenerators;
+
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
@@ -9,16 +12,27 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameter parameterTotal = new("Total", 1776.00m);
+/// Parameter parameterTotal = new(1776.00m, "Total");
 /// Column<Order> columnTotal = new(nameof(Order.Total));
 /// GreaterThan predicate = new(columnTotal, parameterTotal);
-/// SqlQuery query = orderGenerator.Select(null, null, predicate, null, null);
+/// SelectBuilder<Order> selectBuilder = new()
+/// {
+///     Where = predicate
+/// };
+/// 
+/// SqlQuery query = orderGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Order".* 
+/// FROM "Order" 
+/// WHERE ("Order"."Total" > $1)
+/// 
+/// -SqlServer
 /// SELECT [Order].*
 /// FROM [Order]
-/// WHERE ([Order].[Total] > @Parameter_Total)
+/// WHERE ([Order].[Total] > @Total_1)
 /// ]]></code>
 /// </example>
 public class GreaterThan : ComparisonOperator

@@ -1,3 +1,4 @@
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -22,11 +23,23 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// LeftJoin<Order> join = new(predicate);
-///
-/// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Joins = join
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSqk
+/// SELECT "Customer".* 
+/// FROM "Customer" 
+/// LEFT JOIN "Order" 
+/// ON ("Customer"."Id" = "Order"."CustomerId")
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// LEFT JOIN [Order]

@@ -1,4 +1,5 @@
 using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -42,7 +43,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer] ([Customer].[Id] = @Id_1)
+    /// DELETE FROM "Customer" WHERE ("Customer"."Id" = $1)
     /// ]]></code>
     /// </example>
     public SqlQuery Delete(T entity) =>
@@ -64,7 +65,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer];
+    /// DELETE FROM "Customer";
     /// ]]></code>
     /// </example>
     public SqlQuery DeleteAll() =>
@@ -96,7 +97,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer] WHERE ([Customer].[Id] = @Parameter_Id)
+    /// DELETE FROM "Customer" WHERE ("Customer"."Id" = $1)
     /// ]]></code>
     /// </example>
     public SqlQuery DeleteById(params IEnumerable<T> entities) =>
@@ -129,38 +130,36 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>Example with null Joins and null predicates</para>
     /// <code language="csharp"><![CDATA[
-    /// SqlQuery query = customerGenerator.Delete(null, null);
+    /// SqlQuery query = customerGenerator.Delete(null, null, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer];
+    /// DELETE FROM "Customer";
     /// ]]></code>
     /// </example>
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
-    /// SqlQuery query = customerGenerator.Delete(null, columnValue);
+    /// SqlQuery query = customerGenerator.Delete(null, null, columnValue);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer]
-    /// WHERE ([Customer].[Name] = @Parameter_Name)
+    /// DELETE FROM "Customer" 
+    /// WHERE ("Customer"."Name" = $1)
     /// ]]></code>
     /// </example>
     /// <example>
     /// <para>Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Customer> join = new(predicate);
-    ///
-    /// SqlQuery query = orderGenerator.Delete(join, null);
+    /// 
+    /// SqlQuery query = orderGenerator.Delete<Customer>([TableTag.Get<Customer>()], null, predicate);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE [Order]
-    /// FROM [Order]
-    /// INNER JOIN [Customer]
-    /// ON ([Customer].[Id] = [Order].[CustomerId])
+    /// DELETE FROM "Order"
+    /// USING "Customer" 
+    /// WHERE ("Customer"."Id" = "Order"."CustomerId")
     /// ]]></code>
     /// </example>
     /// <example>
@@ -168,19 +167,21 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-    /// InnerJoin<Customer> join = new(predicate);
-    ///
     /// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
-    ///
-    /// SqlQuery query = orderGenerator.Delete(join, customerEmail);
+    /// 
+    /// SqlQuery query = orderGenerator.Delete<Customer>
+    /// (
+    ///     [TableTag.Get<Customer>()],
+    ///     null,
+    ///     new And(predicate, customerEmail)
+    /// );
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE [Order]
-    /// FROM [Order]
-    /// INNER JOIN [Customer]
-    /// ON ([Customer].[Id] = [Order].[CustomerId])
-    /// WHERE ([Customer].[Email] = @Parameter_Email)
+    /// DELETE FROM "Order" 
+    /// USING "Customer" 
+    /// WHERE (("Customer"."Id" = "Order"."CustomerId") 
+    ///  AND ("Customer"."Email" = $1))
     /// ]]></code>
     /// </example>
     public SqlQuery Delete<joinsT>(IEnumerable<TableTag>? usings, Joins<joinsT>? joins, Predicates? predicates) where joinsT : class

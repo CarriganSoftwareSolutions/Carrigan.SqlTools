@@ -21,7 +21,12 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// LeftJoin<Order> join = new(columnValue);
-/// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Joins = join
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[

@@ -1,5 +1,6 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -13,17 +14,28 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
-/// Parameter parameterEmail = new("Email", "%@example.com");
+/// Parameter parameterEmail = new("%@example.com", "Email");
 /// Column<Customer> columnEmail = new(nameof(Customer.Email));
 /// Like predicate = new(columnEmail, parameterEmail);
-/// SqlQuery query = customerGenerator.Select(null, null, predicate, null, null);
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Where = predicate
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
+/// --PostgreSql
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// WHERE ("Customer"."Email" LIKE $1)
+/// 
+/// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
 /// WHERE ([Customer].[Email]
-/// LIKE @Parameter_Email)
+/// LIKE @Email_1)
 /// ]]></code>
 /// </example>
 public class Like : DialectOperator

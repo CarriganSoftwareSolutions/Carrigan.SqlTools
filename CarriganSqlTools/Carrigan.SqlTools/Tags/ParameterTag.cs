@@ -45,6 +45,15 @@ namespace Carrigan.SqlTools.Tags;
 /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 /// ]]></code>
 /// </example>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// --PostgreSql
+/// "schema"."UpdateThing"
+/// 
+/// --SqlServer
+/// "[schema].[UpdateThing]"
+/// ]]></code>
+/// </example>
 public class ParameterTag : StringWrapper
 {
     internal ParameterTag(string baseName) :
