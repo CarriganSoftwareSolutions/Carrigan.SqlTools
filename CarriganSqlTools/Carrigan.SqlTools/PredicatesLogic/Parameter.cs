@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
@@ -21,8 +21,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>
@@ -49,7 +49,7 @@ public class Parameter : Predicates
     /// The name is generated as "Parameter" followed by a unique suffix or prefix, depending on the dialect to ensure it does not collide with any
     /// user-supplied parameter names within the same predicate tree or query.
     /// </summary>
-    /// <param name="value"> 
+    /// <param name="value">
     /// The value to bind.
     /// </param>
     /// <param name="fieldProperties">
@@ -80,6 +80,9 @@ public class Parameter : Predicates
     /// Optional field properties that can be used to validate the parameter value before SQL generation and/or
     /// to inform SQL type inference.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public Parameter(object? value, ParameterTag parameterTag, FieldProperties fieldProperties) : base([])
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
@@ -93,6 +96,12 @@ public class Parameter : Predicates
     /// <remarks>Name is constructed from parameterTag and FieldProperties is initialized to null.</remarks>
     /// <param name="value">The value to associate with the parameter.</param>
     /// <param name="parameterTag">The tag used to construct the parameter name; must not be null.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
+    /// <exception cref="InvalidParameterIdentifierException">
+    /// Thrown when a supplied or generated SQL parameter identifier is invalid.
+    /// </exception>
     public Parameter(object? value, ParameterTag parameterTag) : base([])
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));

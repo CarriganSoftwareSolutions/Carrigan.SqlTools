@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Represents SQL's greater-than (<c>&gt;</c>) comparison operator,
@@ -16,8 +16,8 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Order].* 
-/// FROM [Order] 
+/// SELECT [Order].*
+/// FROM [Order]
 /// WHERE ([Order].[Total] > @Parameter_Total)
 /// ]]></code>
 /// </example>

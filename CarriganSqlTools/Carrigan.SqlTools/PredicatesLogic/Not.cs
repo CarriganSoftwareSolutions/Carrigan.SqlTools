@@ -1,4 +1,4 @@
-﻿//IGNORE SPELLING: equal
+//IGNORE SPELLING: equal
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 
@@ -21,8 +21,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE (NOT ([Customer].[Name] = @Parameter_Name))
 /// ]]></code>
 /// </example>

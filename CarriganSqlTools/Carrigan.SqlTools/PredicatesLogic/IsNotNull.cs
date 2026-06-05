@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -19,8 +19,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE ([Customer].[Name] IS NOT NULL)
 /// ]]></code>
 /// </example>
@@ -40,7 +40,7 @@ public class IsNotNull : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="someValue"/> is <c>null</c>.
     /// </exception>
-    public IsNotNull(Predicates someValue) : base([ValidateSomeValue(someValue)]) => 
+    public IsNotNull(Predicates someValue) : base([ValidateSomeValue(someValue)]) =>
         _someValue = someValue;
 
     private static Predicates ValidateSomeValue(Predicates someValue)

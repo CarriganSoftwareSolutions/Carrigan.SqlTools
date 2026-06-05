@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
@@ -14,11 +14,9 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <typeparam name="T">
 /// The entity or data model type that defines the table containing the referenced column.
 /// </typeparam>
-/// <example>
-/// <para>
+/// <remarks>
 /// <see cref="ColumnBase{T}"/> validates property names and throws an exception if a property name is invalid.
-/// </para>
-
+/// </remarks>
 public class ColumnBase<T> : ColumnBase where T: class
 {
     /// <summary>
@@ -64,7 +62,7 @@ public class ColumnBase<T> : ColumnBase where T: class
     /// Thrown only if the property passes validation but no matching column metadata is returned.
     /// This is not expected under normal conditions.
     /// </exception>
-    internal ColumnBase(HashSet<Type> supportedTypes, PropertyName propertyName) : base(GetColumnInfo(supportedTypes, propertyName)) => 
+    internal ColumnBase(HashSet<Type> supportedTypes, PropertyName propertyName) : base(GetColumnInfo(supportedTypes, propertyName)) =>
         PropertyName = propertyName;
 
     private static ColumnInfo GetColumnInfo(HashSet<Type> supportedTypes, PropertyName propertyName)

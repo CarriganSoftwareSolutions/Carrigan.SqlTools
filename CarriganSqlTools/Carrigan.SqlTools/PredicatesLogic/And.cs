@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Represents SQL's logical <c>AND</c> operator, used to combine two or more boolean predicates.
@@ -24,18 +24,18 @@
 ///
 /// SqlQuery query = customerGenerator.Select(null, null, and, null, null);
 /// ]]></code>
-/// 
+///
 /// <para>Resulting SQL:</para>
-/// 
+///
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// WHERE (([Customer].[Name] = @Parameter_Name) 
-///     AND ([Customer].[Email] = @Parameter_Email) 
+/// SELECT [Customer].*
+/// FROM [Customer]
+/// WHERE (([Customer].[Name] = @Parameter_Name)
+///     AND ([Customer].[Email] = @Parameter_Email)
 ///     AND ([Customer].[Phone] = @Parameter_Phone))
 /// ]]></code>
 /// </example>
-/// 
+///
 /// <example>
 /// <para>Edge case, single predicates are handled intelligently by AND.</para>
 /// <code language="csharp"><![CDATA[
@@ -45,8 +45,8 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>

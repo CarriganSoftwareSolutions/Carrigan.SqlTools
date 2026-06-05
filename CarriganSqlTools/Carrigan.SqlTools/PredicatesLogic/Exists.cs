@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlGenerators;
 
 //IGNORE SPELLING: subquery, subqueries, intellisense, exists
 
@@ -21,13 +21,13 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// );
 /// Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
 /// Exists exists = new(subQuery);
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(null, null, null, null, exists, null, null);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE (EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))
 /// ]]></code>
 /// </example>
@@ -37,7 +37,7 @@ public class Exists : SubqueryPredicateBase
     /// Initializes a new instance of the <see cref="Exists"/> class with the specified subquery.
     /// </summary>
     /// <param name="subQuery">
-    /// The subquery to evaluate for the EXISTS predicate. 
+    /// The subquery to evaluate for the EXISTS predicate.
     /// This subquery should return rows that satisfy the conditions being checked for existence.
     /// </param>
     public Exists(SubqueryBase subQuery) : base(subQuery, "EXISTS")

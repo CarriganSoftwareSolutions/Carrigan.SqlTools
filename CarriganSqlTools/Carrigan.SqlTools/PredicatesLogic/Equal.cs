@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Represents SQL's equality (<c>=</c>) comparison operator, used in <c>WHERE</c> and <c>JOIN</c> clauses.
@@ -15,8 +15,8 @@
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>

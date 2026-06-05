@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Paging;
+namespace Carrigan.SqlTools.Paging;
 
 /// <summary>
 /// Represents the base class for paging strategies, defining common properties for row offset and fetch next count aka limit and offset.
@@ -9,7 +9,7 @@ public abstract class PagingBase
     /// Gets the number of rows to skip before starting to return results. This value is used as the OFFSET in SQL paging clauses.
     /// </summary>
     public uint Offset { get; protected set; }
-    
+
     /// <summary>
     /// Gets the number of rows to return after the offset. This value is used as the FETCH NEXT or LIMIT in SQL paging clauses.
     /// </summary>
@@ -18,7 +18,7 @@ public abstract class PagingBase
     /// <summary>
     /// Initializes a new instance of the <see cref="PagingBase"/> class with default values for Offset and Next.
     /// </summary>
-    protected PagingBase() 
+    protected PagingBase()
     { }
 
     /// <summary>

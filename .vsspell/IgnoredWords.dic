@@ -18,3 +18,4 @@ bpchar
 smallint
 bigint
 parameterization
+subqueries

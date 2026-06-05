@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Base class for SQL Dialect predicates (e.g., <c>=</c>, <c>&lt;&gt;</c>, <c>&gt;</c>, <c>&lt;</c>, etc.).
@@ -23,7 +23,7 @@ public abstract class DialectOperator : Predicates
     /// <param name="left">The left-side predicate.</param>
     /// <param name="right">The right-side predicate.</param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="left"/> or <paramref name="right"/> or <paramref name="op"/> is <c>null</c>.
+    /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.
     /// </exception>
     public DialectOperator(Predicates left, Predicates right) : base([left, right])
     {

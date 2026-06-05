@@ -1,4 +1,4 @@
-﻿
+
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 
@@ -9,25 +9,11 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This class is a convenience wrapper that reduces the boilerplate required to compare a column
 /// against a constant value using the SQL equality operator (<c>=</c>).
 /// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 /// <remarks>
 /// Property name validation is performed during construction. If the provided property name does not
 /// map to a valid, eligible property on <typeparamref name="T"/>, an exception will be thrown.
 /// </remarks>
-/// <example>
-/// <para>
-/// <see cref="ColumnValueBase{T}"/> validates property names and throws an exception if a property name is invalid.
-/// </para>
-/// <code language="csharp"><![CDATA[
-/// ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
-/// SqlQuery query = customerGenerator.Select(null, null, columnValue, null, null);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// WHERE ([Customer].[Name] = @Parameter_Name)
-/// ]]></code>
-/// </example>
 public abstract class ColumnValueBase<T> : Predicates where T : class
 {
     /// <summary>

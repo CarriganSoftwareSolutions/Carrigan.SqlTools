@@ -1,4 +1,4 @@
-﻿namespace Carrigan.SqlTools.Paging;
+namespace Carrigan.SqlTools.Paging;
 
 /// <summary>
 /// Represents SQL Server’s <c>OFFSET … FETCH NEXT</c> paging feature,
@@ -53,7 +53,7 @@ public class DefinePage : PagingBase
     /// <c>OFFSET … FETCH NEXT</c> paging feature.
     /// </summary>
     /// <remarks>
-    /// This class does not modify or generate SQL directly.  
+    /// This class does not modify or generate SQL directly.
     /// When a <see cref="DefinePage"/> instance is passed to the SQL generator,
     /// the generator automatically appends an additional <c>ORDER BY</c> criterion
     /// for key columns (if not already present) to ensure stable paging results.
