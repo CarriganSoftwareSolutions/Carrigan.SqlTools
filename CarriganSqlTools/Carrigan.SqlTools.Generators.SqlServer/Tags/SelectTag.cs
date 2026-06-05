@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tags;
@@ -39,12 +39,18 @@ public sealed class SelectTag : SelectTagBase
     /// <summary>
     /// Creates a <see cref="SelectTags"/> collection containing this tag and a tag for the specified property.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
+    /// <param name="aliasName">The SQL alias name to apply.</param>
     public SelectTags Append<T>(PropertyName propertyName, AliasName? aliasName = null) where T : class =>
         new SelectTags(this).Append<T>(propertyName, aliasName);
 
     /// <summary>
     /// Creates a <see cref="SelectTags"/> collection containing this tag and a tag for the specified property.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
+    /// <param name="aliasName">The SQL alias name to apply.</param>
     [ExternalOnly]
     public SelectTags Append<T>(string propertyName, string? aliasName = null) where T : class =>
         Append<T>(new PropertyName(propertyName), AliasName.New(aliasName));
@@ -52,24 +58,30 @@ public sealed class SelectTag : SelectTagBase
     /// <summary>
     /// Creates a <see cref="SelectTags"/> collection containing this tag and the supplied tags.
     /// </summary>
+    /// <param name="selectTags">The select tags to append.</param>
     public SelectTags Concat(SelectTagsBase selectTags) =>
         new SelectTags(this).Concat(selectTags);
 
     /// <summary>
     /// Creates a <see cref="SelectTags"/> collection containing this tag and the supplied tags.
     /// </summary>
+    /// <param name="selectTags">The select tags to append.</param>
     public SelectTags Concat(params IEnumerable<SelectTagBase> selectTags) =>
         new SelectTags(this).Concat(selectTags);
 
     /// <summary>
     /// Creates a <see cref="SelectTags"/> collection containing this tag and tags for the specified properties.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="properties">The C# property names representing SQL columns or parameters.</param>
     public SelectTags Concat<T>(params IEnumerable<PropertyName> properties) where T : class =>
         new SelectTags(this).Concat<T>(properties);
 
     /// <summary>
     /// Creates a <see cref="SelectTags"/> collection containing this tag and tags for the specified properties.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="properties">The C# property names representing SQL columns or parameters.</param>
     [ExternalOnly]
     public SelectTags Concat<T>(params IEnumerable<string> properties) where T : class =>
         Concat<T>(properties.Select(name => new PropertyName(name)));

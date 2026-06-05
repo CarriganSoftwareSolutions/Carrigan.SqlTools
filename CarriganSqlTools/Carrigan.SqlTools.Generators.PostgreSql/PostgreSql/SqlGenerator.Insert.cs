@@ -1,10 +1,14 @@
-﻿using Carrigan.SqlTools.Sets;
+using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 //IGNORE SPELLING: newid, unindexed
 
 namespace Carrigan.SqlTools.PostgreSql;
 
+/// <summary>
+/// Represents the <see cref="SqlGenerator"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -59,7 +63,7 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     ///    NotKey3 = 3
     ///};
     ///
-    /// SqlQuery query = _sqlGeneratorForCompositePrimaryKeyTable.InsertAutoId(testEntity, testEntity2);     
+    /// SqlQuery query = _sqlGeneratorForCompositePrimaryKeyTable.InsertAutoId(testEntity, testEntity2);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -76,17 +80,9 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities.
     /// </summary>
-    /// <param name="insertColumnCollection">
-    /// An optional collection specifying which columns to insert. If <c>null</c>,
-    /// all mapped columns are included.
-    /// </param>
-    /// <param name="returnColumns">
-    /// An optional collection specifying which columns’ inserted values should be returned.
-    /// If <c>null</c>, no values are returned.
-    /// </param>
-    /// <param name="entities">
-    /// One or more data model instances representing the new records to insert.
-    /// </param>
+    /// <param name="insertColumnCollection">The model properties representing the SQL columns to insert.</param>
+    /// <param name="returnColumns">The model properties representing the SQL columns to return.</param>
+    /// <param name="entities">The model instances representing SQL rows or parameter sets.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated multi-row <c>INSERT</c> statement.
     /// </returns>
@@ -161,22 +157,22 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     ///     When = "Now",
     ///     Address = new Address { Street = "123 Fake St", City = "Test City", PostalCode = "37067" }
     /// };
-    /// 
+    ///
     /// ColumnCollection<EntityWithTableAttribute> insertColumns = new("Id", "Name", "When");
-    /// 
-    /// 
+    ///
+    ///
     /// SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, null, testEntity, testEntity2);
     /// ]]></code>
     ///
     /// <para>Resulting SQL:</para>
     ///
     /// <code><![CDATA[
-    /// INSERT INTO [Test] ([Id], [Name], [When]) 
-    /// VALUES (@Id_0, @Name_0, @When_0), 
+    /// INSERT INTO [Test] ([Id], [Name], [When])
+    /// VALUES (@Id_0, @Name_0, @When_0),
     ///        (@Id_1, @Name_1, @When_1)
     /// ]]></code>
     /// </example>
-
+    /// 
     /// <example>
     /// <code language="csharp"><![CDATA[
     /// EntityWithTableAttribute testEntity = new()
@@ -184,19 +180,19 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     ///     Name = "Test Name",
     ///     DateOf = new DateTime(2023, 10, 1),
     ///     When = "Now",
-    ///     Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" } 
+    ///     Address = new Address { Street = "123 Main St", City = "Test City", PostalCode = "37067" }
     /// };
     /// EntityWithTableAttribute testEntity2 = new()
     /// {
     ///     Name = "Test Name2",
-    ///     DateOf = new DateTime(2025, 12, 6), 
+    ///     DateOf = new DateTime(2025, 12, 6),
     ///     When = "Now",
     ///     Address = new Address { Street = "123 Fake St", City = "Test City", PostalCode = "37067" }
     /// };
-    /// 
+    ///
     /// ColumnCollection<EntityWithTableAttribute> insertColumns = new("Name", "When");
     /// ColumnCollection<EntityWithTableAttribute> returnColumns = new("Id", "DateOf");
-    /// 
+    ///
     /// SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.Insert(insertColumns, returnColumns, testEntity, testEntity2);
     /// ]]></code>
     ///
@@ -213,6 +209,11 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     public SqlQuery Insert(ColumnCollectionBase<T>? insertColumnCollection, ColumnCollectionBase<T>? returnColumns, params IEnumerable<T> entities) =>
         base.BaseInsert(insertColumnCollection, returnColumns, entities);
 
+    /// <summary>
+    /// Builds an INSERT SQL query for the supplied model data.
+    /// </summary>
+    /// <param name="insertQuery">The insert builder to materialize.</param>
+    /// <returns>The result of the Insert operation.</returns>
     public SqlQuery Insert(InsertBuilder<T> insertQuery) =>
         Insert(insertQuery.InsertColumns, insertQuery.ReturnColumns, insertQuery.Records);
 }

@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -8,6 +8,10 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PostgreSql;
 
+/// <summary>
+/// Represents the <see cref="SqlGenerator"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -102,6 +106,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Generates a SQL <c>DELETE</c> statement for the table represented by
     /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
+    /// <typeparam name="joinsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="joins">
     /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
     /// </param>
@@ -109,6 +114,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
     /// </param>
+    /// <param name="usings">The PostgreSQL USING tables or source expressions used by the DELETE statement.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
     /// </returns>
@@ -137,7 +143,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer] 
+    /// DELETE FROM [Customer]
     /// WHERE ([Customer].[Name] = @Parameter_Name)
     /// ]]></code>
     /// </example>
@@ -146,14 +152,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Customer> join = new(predicate);
-    /// 
+    ///
     /// SqlQuery query = orderGenerator.Delete(join, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE [Order] 
-    /// FROM [Order] 
-    /// INNER JOIN [Customer] 
+    /// DELETE [Order]
+    /// FROM [Order]
+    /// INNER JOIN [Customer]
     /// ON ([Customer].[Id] = [Order].[CustomerId])
     /// ]]></code>
     /// </example>
@@ -163,17 +169,17 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Customer> join = new(predicate);
-    /// 
+    ///
     /// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
-    /// 
+    ///
     /// SqlQuery query = orderGenerator.Delete(join, customerEmail);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
     /// DELETE [Order]
-    /// FROM [Order] 
-    /// INNER JOIN [Customer] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
+    /// FROM [Order]
+    /// INNER JOIN [Customer]
+    /// ON ([Customer].[Id] = [Order].[CustomerId])
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
@@ -194,6 +200,15 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         return base.BaseDelete(usings, joins, predicates);
     }
 
+    /// <summary>
+    /// Builds a DELETE SQL query for the supplied model data.
+    /// </summary>
+    /// <param name="usings">The PostgreSQL USING tables or source expressions used by the DELETE statement.</param>
+    /// <param name="predicates">The predicates used to build the SQL WHERE or ON clause.</param>
+    /// <returns>The result of the Delete operation.</returns>
+    /// <exception cref="InvalidTableException">
+    /// Thrown when a supplied table is not valid for the requested SQL operation.
+    /// </exception>
     public SqlQuery Delete(IEnumerable<TableTag>? usings, Predicates? predicates)
     {
         if (usings.IsNotNullOrEmpty() && usings.Contains(Table))
@@ -204,11 +219,22 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         return base.BaseDelete(usings, null, predicates);
     }
 
+    /// <summary>
+    /// Executes the <c>Delete&lt;usingsT&gt;</c> operation.
+    /// </summary>
+    /// <typeparam name="usingsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+    /// <param name="deleteQuery">The delete builder to materialize.</param>
+    /// <returns>The result of the <c>Delete&lt;usingsT&gt;</c> operation.</returns>
     public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery) where usingsT : class =>
         deleteQuery.Joins is null
             ? Delete(deleteQuery.Usings, deleteQuery.Where)
             : Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
 
+    /// <summary>
+    /// Builds a DELETE SQL query for the supplied model data.
+    /// </summary>
+    /// <param name="deleteQuery">The delete builder to materialize.</param>
+    /// <returns>The result of the Delete operation.</returns>
     public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         Delete(deleteQuery.Usings, deleteQuery.Where);
 }

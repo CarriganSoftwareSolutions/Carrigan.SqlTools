@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Attributes;
 
@@ -9,6 +9,9 @@ namespace Carrigan.SqlTools.Attributes;
 public sealed class SqlImageAttribute : SqlTypeAttribute
 {
 #pragma warning disable CS0618 // IMAGE is intentionally exposed for legacy database schemas.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlImageAttribute"/> class.
+    /// </summary>
     public SqlImageAttribute() : base(SqlServerTypesProvider.AsImage())
     { }
 #pragma warning restore CS0618

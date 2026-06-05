@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Attributes;
@@ -9,6 +9,13 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class SqlMoneyAttribute : SqlTypeAttribute
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlMoneyAttribute"/> class.
+    /// </summary>
+    /// <param name="moneySize">The SQL money type size to apply.</param>
+    /// <exception cref="NotSupportedException">
+    /// Thrown when the requested SQL type option is not supported.
+    /// </exception>
     public SqlMoneyAttribute(SizeableEnum moneySize) : base(GetFieldProperties(moneySize))
     { }
 

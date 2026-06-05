@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Interfaces;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -13,26 +13,32 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// <remarks>
 /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the UPDATE FROM clause.
 /// </remarks>
-public sealed record UpdateBuilder<T, joinsT> : QueryBuilders.UpdateBuilderBase<T, joinsT>, IQueryBuilder 
+public sealed record UpdateBuilder<T, joinsT> : QueryBuilders.UpdateBuilderBase<T, joinsT>, IQueryBuilder
     where T : class
     where joinsT : class
 {
 
     private readonly SqlGenerator<T> SqlGenerator = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UpdateBuilder{T, joinsT}"/> class.
+    /// </summary>
+    /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public UpdateBuilder(IEncryption? encryption = null) =>
         SqlGenerator = new(encryption);
 
     /// <summary>
     /// Gets or sets the tables to include in the FROM clause.
     /// </summary>
-    /// <typeparam name="T">The model type being updated.</typeparam>
-    /// <typeparam name="joinsT">The model type used as the starting point for the join collection. This type should represent one of the source tables in the FROM clause.</typeparam>
     /// <remarks>
     /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the UPDATE FROM clause.
     /// </remarks>
     public IEnumerable<TableTag>? From { get; set; }
 
+    /// <summary>
+    /// Builds a SQL query from the current builder state.
+    /// </summary>
+    /// <returns>The result of the AsSqlQuery operation.</returns>
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Update(this);
 }
@@ -51,6 +57,10 @@ public sealed record UpdateBuilder<T> : QueryBuilders.UpdateBuilderBase<T, T>, I
 
     private readonly SqlGenerator<T> SqlGenerator = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="UpdateBuilder{T, joinsT}"/> class.
+    /// </summary>
+    /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public UpdateBuilder(IEncryption? encryption = null) =>
         SqlGenerator = new(encryption);
 
@@ -61,16 +71,28 @@ public sealed record UpdateBuilder<T> : QueryBuilders.UpdateBuilderBase<T, T>, I
 
     [Obsolete(JoinsNotSupportedMessage, true)]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
+    /// <summary>
+    /// Gets the Joins value.
+    /// </summary>
     public override Joins<T>? Joins { get; set; }
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
 
     [Obsolete(JoinsNotSupportedMessage, true)]
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
+    /// <summary>
+    /// Executes the WithJoins operation.
+    /// </summary>
+    /// <param name="joins">The SQL joins used by the query.</param>
+    /// <returns>The result of the WithJoins operation.</returns>
     public override UpdateBuilder<T> WithJoins(Joins<T>? joins) =>
         this with { Joins = joins };
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
+    /// <summary>
+    /// Builds a SQL query from the current builder state.
+    /// </summary>
+    /// <returns>The result of the AsSqlQuery operation.</returns>
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Update(this);
 }

@@ -1,9 +1,13 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
+/// <summary>
+/// Represents the <see cref="Column{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public class Column<T> : ColumnBase<T>  where T : class
 {
     /// <summary>

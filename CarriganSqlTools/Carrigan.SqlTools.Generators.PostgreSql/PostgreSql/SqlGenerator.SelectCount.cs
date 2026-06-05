@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
@@ -6,6 +6,10 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.    PostgreSql;
 
+/// <summary>
+/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -53,13 +57,13 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Column<Order> totalCol = new(nameof(Order.Total));
     /// Parameter minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
-    /// 
+    ///
     /// SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT COUNT([Order].[Id]) 
-    /// FROM [Order] 
+    /// SELECT COUNT([Order].[Id])
+    /// FROM [Order]
     /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ]]></code>
     /// </example>
@@ -72,18 +76,18 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Column<Order> totalCol = new(nameof(Order.Total));
     /// Parameter minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
-    /// 
+    ///
     /// ColumnEqualsColumn<Order, Customer> columnCompare = new(nameof(Order.CustomerId), nameof(Customer.Id));
     /// Join<Customer> join = new(columnCompare);
-    /// 
+    ///
     /// SqlQuery query = orderGenerator.SelectCount(null, null, join, greaterThan);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT COUNT([Order].[Id]) 
-    /// FROM [Order] 
-    /// JOIN [Customer] 
-    /// ON ([Order].[CustomerId] = [Customer].[Id]) 
+    /// SELECT COUNT([Order].[Id])
+    /// FROM [Order]
+    /// JOIN [Customer]
+    /// ON ([Order].[CustomerId] = [Customer].[Id])
     /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ]]></code>
     /// </example>
@@ -93,24 +97,24 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// SelectTag selectTag = SelectTag.Get<Customer>("Id", "CustomerId");
-    /// 
+    ///
     /// ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join1 = new(customerIdEquals);
-    /// 
+    ///
     /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
     /// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
-    /// 
+    ///
     /// Joins<Customer> joins = new(join1, join2);
-    /// 
-    /// SqlQuery query = customerGenerator.SelectCount(true, selectTag, joins, null); 
+    ///
+    /// SqlQuery query = customerGenerator.SelectCount(true, selectTag, joins, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
     /// SELECT COUNT(DISTINCT Customer].[Id])
-    /// FROM [Customer] 
-    /// INNER JOIN [Order] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
-    /// INNER JOIN [PaymentMethod] 
+    /// FROM [Customer]
+    /// INNER JOIN [Order]
+    /// ON ([Customer].[Id] = [Order].[CustomerId])
+    /// INNER JOIN [PaymentMethod]
     /// ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
     /// ]]></code>
     /// </example>

@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 
 namespace Carrigan.SqlTools.Attributes;
 
@@ -8,9 +8,16 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class SqlDateTimeOffsetAttribute : SqlTypeAttribute
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlDateTimeOffsetAttribute"/> class.
+    /// </summary>
     public SqlDateTimeOffsetAttribute() : base(SqlServerTypesProvider.AsDateTimeOffset())
     { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlDateTimeOffsetAttribute"/> class.
+    /// </summary>
+    /// <param name="fractionalSecondPrecision">The fractional second precision to apply.</param>
     public SqlDateTimeOffsetAttribute(byte fractionalSecondPrecision) : base(SqlServerTypesProvider.AsDateTimeOffset(fractionalSecondPrecision))
     { }
 }

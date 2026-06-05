@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
@@ -20,8 +20,8 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// ORDER BY [Customer].[Name] ASC
 /// ]]></code>
 /// </example>
@@ -67,6 +67,9 @@ public class OrderBy<T> : OrderByBase where T : class
     /// Converts a single <see cref="OrderBy{T}"/> item into an <see cref="OrderBys"/> collection.
     /// </summary>
     /// <param name="orderByItem">The single order-by item to wrap.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public static implicit operator OrderBys(OrderBy<T> orderByItem)
     {
         ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));
@@ -78,6 +81,9 @@ public class OrderBy<T> : OrderByBase where T : class
     /// Converts a single <see cref="OrderBy{T}"/> item into an <see cref="OrderBysBase"/> collection.
     /// </summary>
     /// <param name="orderByItem">The single order-by item to wrap.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
     public static implicit operator OrderBysBase(OrderBy<T> orderByItem)
     {
         ArgumentNullException.ThrowIfNull(orderByItem, nameof(orderByItem));

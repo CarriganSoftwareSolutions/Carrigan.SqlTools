@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Attributes;
@@ -11,11 +11,24 @@ public sealed class SqlBinaryAttribute : SqlTypeAttribute
 {
     private const int DefaultBinaryLength = 8000;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlBinaryAttribute"/> class.
+    /// </summary>
+    /// <param name="storageTypeEnum">The SQL storage type option.</param>
     public SqlBinaryAttribute(StorageTypeEnum storageTypeEnum) : base(GetFieldProperties(storageTypeEnum))
     { }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlBinaryAttribute"/> class.
+    /// </summary>
+    /// <param name="storageTypeEnum">The SQL storage type option.</param>
+    /// <param name="size">The SQL size to apply.</param>
+    /// <exception cref="NotSupportedException">
+    /// Thrown when the requested SQL type option is not supported.
+    /// </exception>
     public SqlBinaryAttribute(StorageTypeEnum storageTypeEnum, int size) : base(GetFieldProperties(storageTypeEnum, size))
     { }
+
 
     private static FieldProperties GetFieldProperties(StorageTypeEnum storageTypeEnum, int? size = null) =>
         storageTypeEnum switch

@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

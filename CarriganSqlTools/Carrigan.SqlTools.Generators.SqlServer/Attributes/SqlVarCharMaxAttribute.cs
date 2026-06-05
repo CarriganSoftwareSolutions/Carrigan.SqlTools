@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Attributes;
@@ -9,6 +9,13 @@ namespace Carrigan.SqlTools.Attributes;
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 public sealed class SqlVarCharMaxAttribute : SqlTypeAttribute
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlVarCharMaxAttribute"/> class.
+    /// </summary>
+    /// <param name="encodingEnum">The SQL character encoding option.</param>
+    /// <exception cref="NotSupportedException">
+    /// Thrown when the requested SQL type option is not supported.
+    /// </exception>
     public SqlVarCharMaxAttribute(EncodingEnum encodingEnum) : base(GetFieldProperties(encodingEnum))
     { }
 

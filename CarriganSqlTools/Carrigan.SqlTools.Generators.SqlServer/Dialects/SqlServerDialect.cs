@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Paging;
@@ -60,9 +60,9 @@ public class SqlServerDialect : ISqlDialects
     /// <summary>
     /// Renders the fully qualified name of a database column, optionally including the table name and schema.
     /// </summary>
-    /// <param name="schema">The schema name of the table containing the column, or null to omit the schema.</param>
-    /// <param name="table">The name of the table containing the column. Cannot be null or empty.</param>
     /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
+    /// <param name="tableTag">The tableTag value.</param>
+    /// <param name="columnName">The SQL column name to apply.</param>
     /// <returns>A string representing the fully qualified column name, formatted according to the specified parameters.</returns>
     /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
     public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
@@ -277,8 +277,17 @@ public class SqlServerDialect : ISqlDialects
         else return value;
     }
 
+    /// <summary>
+    /// Executes the GetXOrSymbol operation.
+    /// </summary>
+    /// <returns>The result of the GetXOrSymbol operation.</returns>
     public ISqlFragment GetXOrSymbol() =>
         new SqlFragmentText("^");
+    /// <summary>
+    /// Executes the GetDialectLike operation.
+    /// </summary>
+    /// <param name="isCaseSensitive">The isCaseSensitive value.</param>
+    /// <returns>The result of the GetDialectLike operation.</returns>
     public ISqlFragment GetDialectLike(bool? isCaseSensitive = null)
     {
         if (isCaseSensitive is null)
@@ -299,12 +308,12 @@ public class SqlServerDialect : ISqlDialects
         true;
 
     /// <summary>
-    /// Normalizes a <see cref="DateTimeOffset"/> value. For use with SQL Server this doesn't do anything. 
+    /// Normalizes a <see cref="DateTimeOffset"/> value. For use with SQL Server this doesn't do anything.
     /// </summary>
     /// <param name="dateTimeOffset">
     /// The <see cref="DateTimeOffset"/> value to normalize.
-    /// This method is provided to allow for any necessary adjustments to the value before it is used in SQL Server operations, 
-    /// such as ensuring it is in a specific time zone or format. For SQL Server, no adjustments are necessary, 
+    /// This method is provided to allow for any necessary adjustments to the value before it is used in SQL Server operations,
+    /// such as ensuring it is in a specific time zone or format. For SQL Server, no adjustments are necessary,
     /// so the original value is returned unchanged.
     /// </param>
     /// <returns>
@@ -318,7 +327,7 @@ public class SqlServerDialect : ISqlDialects
     /// </summary>
     /// <param name="dateTime">
     /// The <see cref="DateTime"/> value to normalize. This method is provided to allow for any necessary adjustments to the value
-    /// before it is used in SQL Server operations, such as ensuring it is in a specific time zone or format. 
+    /// before it is used in SQL Server operations, such as ensuring it is in a specific time zone or format.
     /// For SQL Server, no adjustments are necessary.
     /// </param>
     /// <returns></returns>

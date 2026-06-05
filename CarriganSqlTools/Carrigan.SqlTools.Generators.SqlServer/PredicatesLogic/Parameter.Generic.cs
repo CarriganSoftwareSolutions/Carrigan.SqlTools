@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
@@ -9,6 +9,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// Represents a SQL parameter and its corresponding value for use in predicate expressions
 /// (e.g., <c>WHERE</c> or <c>JOIN</c> clauses).
 /// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// Parameter<Customer> parameterName = new(nameof(Customer.Name), "Hank");
@@ -18,8 +19,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>

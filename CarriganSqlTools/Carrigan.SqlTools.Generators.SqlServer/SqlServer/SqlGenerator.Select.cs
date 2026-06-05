@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -8,6 +8,10 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.SqlServer;
 
+/// <summary>
+/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -45,8 +49,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
+    /// SELECT [Customer].*
+    /// FROM [Customer]
     /// ORDER BY [Customer].[Email] ASC
     /// ]]></code>
     /// </example>
@@ -68,14 +72,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
     /// </param>
-    /// <param name="orderBy">
-    /// Optional ordering to compose the <c>ORDER BY</c> clause.
-    /// When <paramref name="offsetNext"/> is provided, key columns are appended to
-    /// the ordering (if not already present) to ensure stable paging semantics.
-    /// </param>
-    /// <param name="offsetNext">
-    /// Optional paging clause (<c>OFFSET … FETCH NEXT</c>).
-    /// </param>
+    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
+    /// <param name="subQuery">The subquery used as the query source.</param>
+    /// <param name="orderBys">The SQL ORDER BY items to include in the query.</param>
+    /// <param name="paging">The paging fragment to include in the query.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
     /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
@@ -92,7 +92,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </exception>
     /// <exception cref="InvalidTableException">
     /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
-    /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
+    /// <paramref name="orderBys"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     /// <example>
     /// <para>Select with join example:</para>
@@ -102,13 +102,13 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new (predicate);
-    /// 
+    ///
     /// SqlQuery query = customerGenerator.Select(null, join, null, null, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
+    /// SELECT [Customer].*
+    /// FROM [Customer]
     /// INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])
     /// ]]></code>
     /// </example>
@@ -121,17 +121,17 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
-    /// 
+    ///
     /// OrderByItem<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-    /// 
+    ///
     /// SqlQuery query = customerGenerator.Select(null, join, null, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// INNER JOIN [Order] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
+    /// SELECT [Customer].*
+    /// FROM [Customer]
+    /// INNER JOIN [Order]
+    /// ON ([Customer].[Id] = [Order].[CustomerId])
     /// ORDER BY [Order].[OrderDate] ASC
     /// ]]></code>
     /// </example>
@@ -145,22 +145,22 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
-    /// 
+    ///
     /// Column<Order> totalCol = new(nameof(Order.Total));
     /// Parameter minTotal = new("Total", 500m);
     /// GreaterThan greaterThan = new(totalCol, minTotal);
-    /// 
+    ///
     /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
-    /// 
+    ///
     /// SqlQuery query = customerGenerator.Select(null, join, greaterThan, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// INNER JOIN [Order] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
-    /// WHERE ([Order].[Total] > @Parameter_Total) 
+    /// SELECT [Customer].*
+    /// FROM [Customer]
+    /// INNER JOIN [Order]
+    /// ON ([Customer].[Id] = [Order].[CustomerId])
+    /// WHERE ([Order].[Total] > @Parameter_Total)
     /// ORDER BY [Order].[OrderDate] ASC
     /// ]]></code>
     /// </example>
@@ -171,15 +171,20 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
-    /// ORDER BY [Customer].[Id] ASC 
+    /// SELECT [Customer].*
+    /// FROM [Customer]
+    /// ORDER BY [Customer].[Id] ASC
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
     public SqlQuery Select(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBys, PagingBase? paging) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, orderBys, paging);
 
+    /// <summary>
+    /// Builds a SELECT SQL query for the supplied model data.
+    /// </summary>
+    /// <param name="selectQuery">The select builder to materialize.</param>
+    /// <returns>The result of the Select operation.</returns>
     public SqlQuery Select(SelectBuilder<T> selectQuery) =>
         Select(selectQuery.Distinct, selectQuery.Subquery, selectQuery.Selects, selectQuery.Joins, selectQuery.Where, selectQuery.OrderBys, selectQuery.Paging);
 
@@ -217,8 +222,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* 
-    /// FROM [Customer] 
+    /// SELECT [Customer].*
+    /// FROM [Customer]
     /// WHERE ([Customer].[Id] = @Parameter_Id)
     /// ]]></code>
     /// </example>

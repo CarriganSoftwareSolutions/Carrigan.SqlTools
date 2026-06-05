@@ -1,9 +1,13 @@
-﻿using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
 namespace Carrigan.SqlTools.SqlServer;
 
+/// <summary>
+/// Represents the <see cref="SqlGenerator{T}"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -40,7 +44,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </exception>
     /// <example>
     /// <para>
-    /// 
+    ///
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ProcedureExec procedureExec = new()

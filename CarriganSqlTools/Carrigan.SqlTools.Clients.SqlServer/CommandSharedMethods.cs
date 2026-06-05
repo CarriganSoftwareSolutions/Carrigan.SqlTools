@@ -1,6 +1,7 @@
 using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Clients.Core;
+using Carrigan.SqlTools.Clients.Core.Exceptions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.SqlGenerators;

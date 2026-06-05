@@ -1,4 +1,4 @@
-﻿//IGNORE SPELLING: bigint, char, datetime, datetime2, datetimeoffset, hierarchyid, int, json, nchar, ntext, nvarchar, rowversion,
+//IGNORE SPELLING: bigint, char, datetime, datetime2, datetimeoffset, hierarchyid, int, json, nchar, ntext, nvarchar, rowversion,
 //IGNORE SPELLING: smalldatetime,smallint, smallmoney, sql_variant, tinyint, uniqueidentifier, varbinary, varchar, xml, nullability
 
 using Carrigan.SqlTools.Types;
@@ -270,21 +270,25 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a SQL Server field definition using the default mapping for a CLR type.
     /// </summary>
+    /// <param name="clrType">The clrType value.</param>
     public static FieldProperties FromClrType(Type clrType) => Create(clrType);
 
     /// <summary>
     /// Creates a SQL Server field definition using the default mapping for a CLR type.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     public static FieldProperties FromClrType<T>() => FromClrType(typeof(T));
 
     /// <summary>
     /// Creates a nullable SQL Server field definition using the default mapping for a CLR type.
     /// </summary>
+    /// <param name="clrType">The clrType value.</param>
     public static FieldProperties FromNullableClrType(Type clrType) => Create(clrType, nullable: true);
 
     /// <summary>
     /// Creates a nullable SQL Server field definition using the default mapping for a CLR type.
     /// </summary>
+    /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     public static FieldProperties FromNullableClrType<T>() => FromNullableClrType(typeof(T));
 
     #endregion
@@ -294,6 +298,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>UNIQUEIDENTIFIER</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsUniqueIdentifier(bool? nullable = null) => Create("UNIQUEIDENTIFIER", nullable: nullable);
 
     #endregion
@@ -303,6 +308,8 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>CHAR(length)</c> field definition.
     /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsChar(int length, bool? nullable = null)
     {
         ValidateRange(length, 1, LIMIT_FOR_ASCII, nameof(length));
@@ -319,6 +326,8 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>VARCHAR(length)</c> field definition.
     /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsVarChar(int length, bool? nullable = null)
     {
         ValidateRange(length, 1, LIMIT_FOR_ASCII, nameof(length));
@@ -335,6 +344,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>VARCHAR(MAX)</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsVarCharMax(bool? nullable = null) =>
         Create(
             providerTypeName: "VARCHAR",
@@ -346,6 +356,8 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates an <c>NCHAR(length)</c> field definition.
     /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsNChar(int length, bool? nullable = null)
     {
         ValidateRange(length, 1, LIMIT_FOR_UNICODE, nameof(length));
@@ -362,6 +374,8 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates an <c>NVARCHAR(length)</c> field definition.
     /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsNVarChar(int length, bool? nullable = null)
     {
         ValidateRange(length, 1, LIMIT_FOR_UNICODE, nameof(length));
@@ -378,6 +392,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates an <c>NVARCHAR(MAX)</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsNVarCharMax(bool? nullable = null) =>
         Create(
             providerTypeName: "NVARCHAR",
@@ -389,6 +404,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>TEXT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     [Obsolete("Use VARCHAR(MAX) instead of TEXT.")]
     public static FieldProperties AsText(bool? nullable = null) =>
         Create(
@@ -401,6 +417,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates an <c>NTEXT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     [Obsolete("Use NVARCHAR(MAX) instead of NTEXT.")]
     public static FieldProperties AsNText(bool? nullable = null) =>
         Create(
@@ -417,6 +434,8 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>BINARY(length)</c> field definition.
     /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsBinary(int length, bool? nullable = null)
     {
         ValidateRange(length, 1, LIMIT_FOR_BYTE_ARRAY, nameof(length));
@@ -432,6 +451,8 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>VARBINARY(length)</c> field definition.
     /// </summary>
+    /// <param name="length">The SQL length to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsVarBinary(int length, bool? nullable = null)
     {
         ValidateRange(length, 1, LIMIT_FOR_BYTE_ARRAY, nameof(length));
@@ -447,6 +468,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>VARBINARY(MAX)</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsVarBinaryMax(bool? nullable = null) =>
         Create(
             providerTypeName: "VARBINARY",
@@ -457,6 +479,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates an <c>IMAGE</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     [Obsolete("Use VARBINARY(MAX) instead of IMAGE.")]
     public static FieldProperties AsImage(bool? nullable = null) =>
         Create(
@@ -468,6 +491,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>ROWVERSION</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsRowVersion(bool? nullable = null) =>
         Create(
             providerTypeName: "ROWVERSION",
@@ -479,6 +503,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>TIMESTAMP</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     [Obsolete("TIMESTAMP is a deprecated synonym for ROWVERSION. Use AsRowVersion instead.")]
     public static FieldProperties AsTimestamp(bool? nullable = null) =>
         Create(
@@ -495,6 +520,7 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>BIT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsBit(bool? nullable = null) => Create("BIT", nullable: nullable);
 
     #endregion
@@ -504,21 +530,25 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>TINYINT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsTinyInt(bool? nullable = null) => Create("TINYINT", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>SMALLINT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsSmallInt(bool? nullable = null) => Create("SMALLINT", nullable: nullable);
 
     /// <summary>
     /// Creates an <c>INT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsInt(bool? nullable = null) => Create("INT", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>BIGINT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsBigInt(bool? nullable = null) => Create("BIGINT", nullable: nullable);
 
     #endregion
@@ -528,16 +558,20 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>REAL</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsReal(bool? nullable = null) => Create("REAL", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>FLOAT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsFloat(bool? nullable = null) => Create("FLOAT", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>FLOAT(precision)</c> field definition.
     /// </summary>
+    /// <param name="precision">The SQL precision to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsFloat(byte precision, bool? nullable = null)
     {
         ValidateFloatPrecision(precision);
@@ -555,26 +589,34 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>DECIMAL</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDecimal(bool? nullable = null) => CreateDecimalType(nullable);
 
     /// <summary>
     /// Creates a <c>DECIMAL(precision)</c> field definition.
     /// </summary>
+    /// <param name="precision">The SQL precision to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDecimal(byte precision, bool? nullable = null) => CreateDecimalType(precision, nullable);
 
     /// <summary>
     /// Creates a <c>DECIMAL(precision, scale)</c> field definition.
     /// </summary>
+    /// <param name="precision">The SQL precision to apply.</param>
+    /// <param name="scale">The SQL scale to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDecimal(byte precision, byte scale, bool? nullable = null) => CreateDecimalType(precision, scale, nullable);
 
     /// <summary>
     /// Creates a <c>MONEY</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsMoney(bool? nullable = null) => Create("MONEY", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>SMALLMONEY</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsSmallMoney(bool? nullable = null) => Create("SMALLMONEY", nullable: nullable);
 
     #endregion
@@ -584,16 +626,20 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>DATE</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDate(bool? nullable = null) => Create("DATE", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>TIME</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsTime(bool? nullable = null) => Create("TIME", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>TIME(fractionalSecondsPrecision)</c> field definition.
     /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsTime(byte fractionalSecondsPrecision, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -607,16 +653,20 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>DATETIME</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDateTime(bool? nullable = null) => Create("DATETIME", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>DATETIME2</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDateTime2(bool? nullable = null) => Create("DATETIME2", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>DATETIME2(fractionalSecondsPrecision)</c> field definition.
     /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDateTime2(byte fractionalSecondsPrecision, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -630,16 +680,20 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>SMALLDATETIME</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsSmallDateTime(bool? nullable = null) => Create("SMALLDATETIME", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>DATETIMEOFFSET</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDateTimeOffset(bool? nullable = null) => Create("DATETIMEOFFSET", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>DATETIMEOFFSET(fractionalSecondsPrecision)</c> field definition.
     /// </summary>
+    /// <param name="fractionalSecondsPrecision">The fractional seconds precision to apply.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsDateTimeOffset(byte fractionalSecondsPrecision, bool? nullable = null)
     {
         ValidateFractionalSecondsPrecision(fractionalSecondsPrecision);
@@ -657,11 +711,13 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates an <c>XML</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsXml(bool? nullable = null) => Create("XML", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>JSON</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsJson(bool? nullable = null) => Create("JSON", nullable: nullable);
 
     #endregion
@@ -671,11 +727,13 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>GEOMETRY</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsGeometry(bool? nullable = null) => Create("GEOMETRY", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>GEOGRAPHY</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsGeography(bool? nullable = null) => Create("GEOGRAPHY", nullable: nullable);
 
     #endregion
@@ -685,11 +743,16 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>VECTOR(dimensions)</c> field definition.
     /// </summary>
+    /// <param name="dimensions">The vector dimension count.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsVector(int dimensions, bool? nullable = null) => CreateVectorType(dimensions, null, nullable);
 
     /// <summary>
     /// Creates a <c>VECTOR(dimensions, baseType)</c> field definition.
     /// </summary>
+    /// <param name="dimensions">The vector dimension count.</param>
+    /// <param name="baseType">The vector base type name.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsVector(int dimensions, string baseType, bool? nullable = null) => CreateVectorType(dimensions, baseType, nullable);
 
     #endregion
@@ -699,26 +762,32 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a <c>SQL_VARIANT</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsSqlVariant(bool? nullable = null) => Create("SQL_VARIANT", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>HIERARCHYID</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsHierarchyId(bool? nullable = null) => Create("HIERARCHYID", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>CURSOR</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsCursor(bool? nullable = null) => Create("CURSOR", nullable: nullable);
 
     /// <summary>
     /// Creates a <c>TABLE</c> field definition.
     /// </summary>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsTable(bool? nullable = null) => Create("TABLE", nullable: nullable);
 
     /// <summary>
     /// Creates a provider-specific SQL Server field definition.
     /// </summary>
+    /// <param name="providerTypeName">The provider-specific SQL type name.</param>
+    /// <param name="nullable">The explicit SQL nullability override, or <c>null</c> to use the default.</param>
     public static FieldProperties AsProviderSpecific(string providerTypeName, bool? nullable = null) => Create(providerTypeName, nullable: nullable);
 
     #endregion

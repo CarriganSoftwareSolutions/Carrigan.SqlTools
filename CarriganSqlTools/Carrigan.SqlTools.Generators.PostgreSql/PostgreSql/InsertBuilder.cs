@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Interfaces;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PostgreSql;
@@ -7,15 +7,23 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// Represents an SQL <c>INSERT</c> query for a specific entity type <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">
-/// The entity/model type that defines the table into which data will be inserted. 
+/// The entity/model type that defines the table into which data will be inserted.
 /// </typeparam>
 public sealed record InsertBuilder<T> : QueryBuilders.InsertBuilderBase<T>, IQueryBuilder where T : class
 {
     private readonly SqlGenerator<T> SqlGenerator = new();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="InsertBuilder"/> class.
+    /// </summary>
+    /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public InsertBuilder(IEncryption? encryption = null) =>
         SqlGenerator = new(encryption);
 
+    /// <summary>
+    /// Builds a SQL query from the current builder state.
+    /// </summary>
+    /// <returns>The result of the AsSqlQuery operation.</returns>
     public SqlQuery AsSqlQuery() =>
         SqlGenerator.Insert(this);
 }

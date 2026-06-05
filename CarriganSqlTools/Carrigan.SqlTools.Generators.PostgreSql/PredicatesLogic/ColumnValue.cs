@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 
@@ -9,6 +9,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This class is a convenience wrapper that reduces the boilerplate required to compare a column
 /// against a constant value using the SQL equality operator (<c>=</c>).
 /// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 /// <remarks>
 /// Property name validation is performed during construction. If the provided property name does not
 /// map to a valid, eligible property on <typeparamref name="T"/>, an exception will be thrown.
@@ -23,8 +24,8 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
+/// SELECT [Customer].*
+/// FROM [Customer]
 /// WHERE ([Customer].[Name] = @Parameter_Name)
 /// ]]></code>
 /// </example>

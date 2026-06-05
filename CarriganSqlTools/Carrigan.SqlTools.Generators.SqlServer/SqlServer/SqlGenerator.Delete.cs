@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
@@ -6,6 +6,10 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.SqlServer;
 
+/// <summary>
+/// Represents the <see cref="SqlGenerator"/> component.
+/// </summary>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -135,7 +139,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE FROM [Customer] 
+    /// DELETE FROM [Customer]
     /// WHERE ([Customer].[Name] = @Parameter_Name)
     /// ]]></code>
     /// </example>
@@ -144,14 +148,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Customer> join = new(predicate);
-    /// 
+    ///
     /// SqlQuery query = orderGenerator.Delete(join, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// DELETE [Order] 
-    /// FROM [Order] 
-    /// INNER JOIN [Customer] 
+    /// DELETE [Order]
+    /// FROM [Order]
+    /// INNER JOIN [Customer]
     /// ON ([Customer].[Id] = [Order].[CustomerId])
     /// ]]></code>
     /// </example>
@@ -161,23 +165,28 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Customer> join = new(predicate);
-    /// 
+    ///
     /// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
-    /// 
+    ///
     /// SqlQuery query = orderGenerator.Delete(join, customerEmail);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
     /// DELETE [Order]
-    /// FROM [Order] 
-    /// INNER JOIN [Customer] 
-    /// ON ([Customer].[Id] = [Order].[CustomerId]) 
+    /// FROM [Order]
+    /// INNER JOIN [Customer]
+    /// ON ([Customer].[Id] = [Order].[CustomerId])
     /// WHERE ([Customer].[Email] = @Parameter_Email)
     /// ]]></code>
     /// </example>
     public SqlQuery Delete(Joins<T>? joins, Predicates? predicates) =>
         base.BaseDelete(null, joins, predicates);
 
+    /// <summary>
+    /// Builds a DELETE SQL query for the supplied model data.
+    /// </summary>
+    /// <param name="deleteQuery">The delete builder to materialize.</param>
+    /// <returns>The result of the Delete operation.</returns>
     public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         Delete(deleteQuery.Joins, deleteQuery.Where);
 }

@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 
@@ -25,13 +25,13 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].* 
-/// FROM [Customer] 
-/// LEFT JOIN [Order] 
+/// SELECT [Customer].*
+/// FROM [Customer]
+/// LEFT JOIN [Order]
 ///   ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class ColumnEqualsColumn<leftT, rightT> : ColumnEqualsColumnBase<leftT, rightT> 
+public class ColumnEqualsColumn<leftT, rightT> : ColumnEqualsColumnBase<leftT, rightT>
     where leftT : class
     where rightT: class
 {
