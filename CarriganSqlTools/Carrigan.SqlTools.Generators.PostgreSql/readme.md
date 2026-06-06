@@ -43,7 +43,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
-- [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
+- [Simple ADO.NET Example With SqlQuery](#simple-ado.net-example-with-sqlquery)
 - [Data Type Mappings](#data-type-mappings)
   - [Default PostgreSQL Types](#default-postgresql-types)
   - [Supported CLR Types](#supported-clr-types)
@@ -847,7 +847,7 @@ public sealed class ExampleEncryptor : IEncryption
         byte[] combined = new byte[nonce.Length + ct.Length + tag.Length];
         Buffer.BlockCopy(nonce, 0, combined, 0, nonce.Length);
         Buffer.BlockCopy(ct, 0, combined, nonce.Length, ct.Length);
-        Buffer.BlockCopy(tag, 0, combined, nonce.Length + ct.Length, tag, 0, tag.Length);
+        Buffer.BlockCopy(tag, 0, combined, nonce.Length + ct.Length, tag.Length);
 
         return Convert.ToBase64String(combined);
     }
