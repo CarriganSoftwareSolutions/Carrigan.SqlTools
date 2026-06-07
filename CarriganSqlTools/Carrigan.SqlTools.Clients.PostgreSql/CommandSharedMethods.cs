@@ -69,7 +69,7 @@ internal static class CommandSharedMethods
     /// <see cref="Invoker{T}.Invoke(Dictionary{string, object?})"/>.
     ///
     /// <para>
-    /// Special handling is applied for SQL Server <c>xml</c> typed columns: the value is read as a string and converted
+    /// Special handling is applied for PostgreSQL <c>xml</c> typed columns: the value is read as a string and converted
     /// into a <see cref="SqlXml"/> instance for downstream consumers.
     /// </para>
     /// </remarks>

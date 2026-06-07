@@ -83,7 +83,7 @@ public class DeleteGeneratorExamples
     public void DeleteWithUsingWhereParameter()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValue<T> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
 
@@ -112,7 +112,7 @@ public class DeleteGeneratorExamples
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnEqualsColumn<Order, PaymentMethod> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValue<T> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
         ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
