@@ -42,7 +42,7 @@ namespace Carrigan.SqlTools.SqlServer;
 /// ]]></code>
 /// </example>
 /// <example>
-/// <para>Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <para>Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin<Customer> join = new(predicate);
@@ -64,7 +64,7 @@ namespace Carrigan.SqlTools.SqlServer;
 /// </example>
 /// <example>
 /// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
-/// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+/// <para>Note: ColumnValue&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin<Customer> join = new(predicate);
