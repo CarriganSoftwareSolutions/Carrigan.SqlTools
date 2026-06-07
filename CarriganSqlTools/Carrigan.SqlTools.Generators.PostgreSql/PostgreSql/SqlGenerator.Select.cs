@@ -40,7 +40,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].* FROM [Customer]
+    /// SELECT "Customer".* FROM "Customer"
     /// ]]></code>
     /// </example>
     /// <example>
@@ -50,9 +50,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// SELECT [Customer].*
-    /// FROM [Customer]
-    /// ORDER BY [Customer].[Email] ASC
+    /// SELECT "Customer".*
+    /// FROM "Customer"
+    /// ORDER BY "Customer"."Email" ASC
     /// ]]></code>
     /// </example>
     public SqlQuery SelectAll(OrderBysBase? orderBy = null) =>
@@ -62,10 +62,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT</c> from the table represented by <typeparamref name="T"/>,
     /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
-    /// <c>OFFSET … FETCH NEXT</c> clauses.
+    /// PostgreSQL paging clauses such as <c>LIMIT</c> and <c>OFFSET</c>.
     /// </summary>
     /// <param name="selects">
-    /// Optional projected columns (and result aliases). If omitted or empty, <c>[T].*</c> is selected.
+    /// Optional projected columns and result aliases. If omitted or empty, all columns from the table represented by <typeparamref name="T"/> are selected.
     /// </param>
     /// <param name="joins">
     /// Optional joins to include in the query. Omit to select only from the base table.
@@ -102,7 +102,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>Select with join example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -122,7 +122,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>Select with join and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
@@ -146,7 +146,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>Select with join, where, and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>

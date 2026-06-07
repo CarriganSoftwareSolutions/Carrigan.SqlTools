@@ -124,8 +124,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="InvalidTableException">
-    /// Thrown when a <see cref="TableTag"/> referenced by <paramref name="predicates"/> is not present
-    /// in the <paramref name="joins"/> set nor equal to the primary table.
+    /// Thrown when <paramref name="usings"/> includes the delete target table, when a join is supplied without
+    /// the required root <c>USING</c> source, or when predicates reference tables that do not participate in the statement.
     /// </exception>
     /// <example>
     /// <para>Example with null Joins and null predicates</para>
@@ -149,7 +149,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     /// <example>
-    /// <para>Note: <see cref="ColumnEqualsColumn{leftT, righT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// 
@@ -164,7 +164,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </example>
     /// <example>
     /// <para>Note: ColumnEqualsColumn&lt;Customer, Order&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
-    /// <para>Note: ColumnValues&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para>Note: ColumnValue&lt;T&gt; validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.com");
@@ -202,11 +202,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     }
 
     /// <summary>
-    /// Builds a DELETE SQL query for the supplied model data.
+    /// Creates a PostgreSQL <c>DELETE</c> statement with optional <c>USING</c> sources and a <c>WHERE</c> predicate.
     /// </summary>
-    /// <param name="usings">The PostgreSQL USING tables or source expressions used by the DELETE statement.</param>
-    /// <param name="predicates">The predicates used to build the SQL WHERE or ON clause.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the DELETE statement.</returns>
+    /// <param name="usings">The PostgreSQL <c>USING</c> tables or source expressions available to the predicate.</param>
+    /// <param name="predicates">The predicates used to build the SQL <c>WHERE</c> clause.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>DELETE</c> statement.</returns>
     /// <exception cref="InvalidTableException">
     /// Thrown when a supplied table is not valid for the requested SQL operation.
     /// </exception>
@@ -221,21 +221,21 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     }
 
     /// <summary>
-    /// Creates a PostgreSQL DELETE statement that includes a USING clause.
+    /// Creates a PostgreSQL <c>DELETE</c> statement from a builder that can include <c>USING</c> sources, joins, and a <c>WHERE</c> predicate.
     /// </summary>
-    /// <typeparam name="usingsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
-    /// <param name="deleteQuery">The delete builder to materialize.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the PostgreSQL DELETE statement.</returns>
+    /// <typeparam name="usingsT">The model type used as the root table for any supplied join chain.</typeparam>
+    /// <param name="deleteQuery">The builder containing <c>USING</c> sources, optional joins, and predicates.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>DELETE</c> statement.</returns>
     public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery) where usingsT : class =>
         deleteQuery.Joins is null
             ? Delete(deleteQuery.Usings, deleteQuery.Where)
             : Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
 
     /// <summary>
-    /// Builds a DELETE SQL query for the supplied model data.
+    /// Creates a PostgreSQL <c>DELETE</c> statement from a builder without a typed join chain.
     /// </summary>
-    /// <param name="deleteQuery">The delete builder to materialize.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the DELETE statement.</returns>
+    /// <param name="deleteQuery">The builder containing <c>USING</c> sources and predicates.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>DELETE</c> statement.</returns>
     public SqlQuery Delete(DeleteBuilder<T> deleteQuery) =>
         Delete(deleteQuery.Usings, deleteQuery.Where);
 }

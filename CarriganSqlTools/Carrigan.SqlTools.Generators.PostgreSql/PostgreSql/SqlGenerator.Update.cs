@@ -60,9 +60,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Name] = @Name, [Email] = @Email, [Phone] = @Phone
-    /// WHERE [Id] = @Id;
+    /// UPDATE "Customer"
+    /// SET "Name" = $1, "Email" = $2, "Phone" = $3
+    /// WHERE "Id" = $4;
     /// ]]></code>
     /// </example>
     /// <example>
@@ -81,9 +81,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Email] = @Email
-    /// WHERE [Id] = @Id;
+    /// UPDATE "Customer"
+    /// SET "Email" = $1
+    /// WHERE "Id" = $2;
     /// ]]></code>
     /// </example>
     public SqlQuery UpdateById(T entity, ColumnCollectionBase<T>? columns = null) =>
@@ -147,10 +147,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// UPDATE [Customer]
-    /// SET [Customer].[Name] = @ParameterSet_Name, [Customer].[Email] = @ParameterSet_Email
-    /// FROM [Customer]
-    /// WHERE (([Customer].[Id] = @Parameter_0_R_Id) OR ([Customer].[Id] = @Parameter_1_R_Id))
+    /// UPDATE "Customer"
+    /// SET "Name" = $1, "Email" = $2
+    /// WHERE (("Customer"."Id" = $3) OR ("Customer"."Id" = $4))
     /// ]]></code>
     /// </example>
     public SqlQuery UpdateByIds(T valuesEntity, ColumnCollectionBase<T>? columns, params IEnumerable<T> idEntities) =>
@@ -168,9 +167,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional column selection. When provided, only these columns are updated; when
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
-    /// <param name="from"></param>
+    /// <param name="from">
+    /// Optional PostgreSQL <c>FROM</c> sources used by predicates or joins. Do not include the update target table unless an aliased self-join is intentionally modeled elsewhere.
+    /// </param>
     /// <param name="joins">
-    /// Optional <see cref="Joins{joinsT}"/> describing tables to join for the update.
+    /// Optional <see cref="Joins{joinsT}"/> describing joins to append to the PostgreSQL <c>FROM</c> source chain.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
@@ -181,15 +182,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="InvalidTableException">
-    /// Thrown when <paramref name="predicates"/> reference tables that are not present
-    /// on the base table or in the specified <paramref name="joins"/>.
+    /// Thrown when the update target table is included in <paramref name="from"/>, when a join is supplied without the required root <c>FROM</c> source, or when predicates reference tables that do not participate in the statement.
     /// </exception>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="entity"/> is <c>null</c>.
     /// </exception>
     /// <example>
     /// <para>
-    /// Create Update SQL query with a Where clause.
+    /// Create a PostgreSQL update that uses a <c>FROM</c> source and <c>WHERE</c> predicate.
     /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
@@ -220,7 +220,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </example>
     /// <example>
     /// <para>
-    /// Create Update SQL query with Joins and a Where clause.
+    /// Create a PostgreSQL update that filters rows with a <c>WHERE</c> predicate.
     /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
@@ -270,15 +270,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         return base.BaseUpdate(entity, columns, from, joins, predicates);
     }
     /// <summary>
-    /// Creates a PostgreSQL UPDATE statement that may include FROM sources and joins.
+    /// Creates a PostgreSQL <c>UPDATE</c> statement with optional <c>FROM</c> sources and a <c>WHERE</c> predicate.
     /// </summary>
-    /// <typeparam name="joinsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
-    /// <param name="entity">The model instance representing the SQL row or parameter set.</param>
-    /// <param name="columns">The model properties representing the SQL columns to include.</param>
-    /// <param name="from">The SQL tables or source expressions used by the FROM clause.</param>
-    /// <param name="predicates">The predicates used to build the SQL WHERE or ON clause.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the PostgreSQL UPDATE statement.</returns>
-    public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Predicates? predicates) where joinsT : class
+    /// <param name="entity">The model instance that supplies values for the <c>SET</c> clause.</param>
+    /// <param name="columns">The model properties representing the SQL columns to update.</param>
+    /// <param name="from">The PostgreSQL <c>FROM</c> sources available to the predicate.</param>
+    /// <param name="predicates">The predicates used to build the SQL <c>WHERE</c> clause.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>UPDATE</c> statement.</returns>
+    public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Predicates? predicates) 
     {
         if (from.IsNotNullOrEmpty() && from.Contains(Table))
         {
@@ -289,19 +288,19 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     }
 
     /// <summary>
-    /// Creates a PostgreSQL UPDATE statement that may include FROM sources and joins.
+    /// Creates a PostgreSQL <c>UPDATE</c> statement from a builder that can include <c>FROM</c> sources, joins, and a <c>WHERE</c> predicate.
     /// </summary>
-    /// <typeparam name="joinsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
-    /// <param name="updateQuery">The update builder to materialize.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the PostgreSQL UPDATE statement.</returns>
+    /// <typeparam name="joinsT">The model type used as the root table for the supplied joins.</typeparam>
+    /// <param name="updateQuery">The builder containing values, update columns, <c>FROM</c> sources, joins, and predicates.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>UPDATE</c> statement.</returns>
     public SqlQuery Update<joinsT>(UpdateBuilder<T, joinsT> updateQuery) where joinsT : class =>
         Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
 
     /// <summary>
-    /// Builds an UPDATE SQL query for the supplied model data.
+    /// Creates a PostgreSQL <c>UPDATE</c> statement from a builder that does not include a typed join chain.
     /// </summary>
-    /// <param name="updateQuery">The update builder to materialize.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the UPDATE statement.</returns>
+    /// <param name="updateQuery">The builder containing values, update columns, <c>FROM</c> sources, and predicates.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>UPDATE</c> statement.</returns>
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>
-        Update<T>(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Where);
+        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Where);
 }

@@ -1,7 +1,7 @@
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-//IGNORE SPELLING: newid, unindexed
+//IGNORE SPELLING: unindexed
 
 namespace Carrigan.SqlTools.PostgreSql;
 
@@ -13,7 +13,7 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
 {
     /// <summary>
     /// Generates a SQL <c>INSERT</c> statement for one or more entities,
-    /// relying on database default values for key (identity, <c>NEWID()</c>) properties.
+    /// relying on database default values for key properties.
     /// </summary>
     /// <param name="entities">
     /// One or more data model instances representing the new records to insert.
@@ -41,11 +41,11 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
-    /// INSERT INTO "Customer" ("Id", "Name", "Email", "Phone") 
-    /// VALUES ($1, $2, $3, $4), ($5, $6, $7, $8);
+    /// INSERT INTO "Customer" ("Name", "Email", "Phone") 
+    /// VALUES ($1, $2, $3)
+    /// RETURNING "Id";
     /// ]]></code>
     /// </example>
-    /// <example>
     public SqlQuery InsertAutoId(params IEnumerable<T> entities) =>
         base.BaseInsertAutoId(entities);
 
@@ -62,13 +62,13 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
     /// <list type="bullet">
     /// <item>
     /// <description>
-    /// When only one entity is provided, unindexed parameter names are generated.
+    /// When one entity is provided, PostgreSQL positional parameters start at <c>$1</c>.
     /// </description>
     /// </item>
     /// <item>
     /// <description>
-    /// When multiple entities are provided, parameter names are suffixed with the row index
-    /// (for example, <c>@Name_0</c>).
+    /// When multiple entities are provided, PostgreSQL positional parameters continue sequentially across rows
+    /// (for example, <c>$5</c> after a four-column first row).
     /// </description>
     /// </item>
     /// <item>
@@ -116,10 +116,10 @@ public sealed partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : clas
         base.BaseInsert(insertColumnCollection, returnColumns, entities);
 
     /// <summary>
-    /// Builds an INSERT SQL query for the supplied model data.
+    /// Generates a PostgreSQL <c>INSERT</c> statement from an insert builder.
     /// </summary>
-    /// <param name="insertQuery">The insert builder to materialize.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the INSERT statement.</returns>
+    /// <param name="insertQuery">The builder containing insert columns, optional returned columns, and records to insert.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>INSERT</c> statement.</returns>
     public SqlQuery Insert(InsertBuilder<T> insertQuery) =>
         Insert(insertQuery.InsertColumns, insertQuery.ReturnColumns, insertQuery.Records);
 }

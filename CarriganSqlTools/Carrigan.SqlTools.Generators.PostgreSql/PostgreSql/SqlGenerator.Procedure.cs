@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.PostgreSql;
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
-    /// Creates an <see cref="SqlQuery"/> that represents a stored procedure call
+    /// Creates an <see cref="SqlQuery"/> that represents a PostgreSQL stored procedure or function call
     /// for the specified data model instance.
     /// </summary>
     /// <param name="entity">
