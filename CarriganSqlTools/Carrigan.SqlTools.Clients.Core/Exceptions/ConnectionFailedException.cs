@@ -1,7 +1,7 @@
 namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
-/// Thrown when a SQL Server connection cannot be established.
+/// Thrown when a database connection cannot be established by a Carrigan.SqlTools client package.
 /// </summary>
 public sealed class ConnectionFailedException : SqlToolsQueryException
 {

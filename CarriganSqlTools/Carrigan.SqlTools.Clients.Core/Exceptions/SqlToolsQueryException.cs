@@ -1,7 +1,7 @@
 namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 
 /// <summary>
-/// Base exception type for errors thrown by Carrigan.SqlTools.SqlServer.
+/// Base exception type for errors thrown by Carrigan.SqlTools client packages.
 /// </summary>
 public abstract class SqlToolsQueryException : Exception
 {
