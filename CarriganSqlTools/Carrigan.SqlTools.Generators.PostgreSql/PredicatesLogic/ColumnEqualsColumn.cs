@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <typeparam name="rightT">The data model representing the right-hand table in the comparison.</typeparam>
 /// <remarks>
 /// This class simplifies constructing SQL expressions such as
-/// <c>[Customer].[Id] = [Order].[CustomerId]</c>.
+/// <c>"Customer"."Id" = "Order"."CustomerId"</c>.
 /// </remarks>
 /// <example>
 /// <para>

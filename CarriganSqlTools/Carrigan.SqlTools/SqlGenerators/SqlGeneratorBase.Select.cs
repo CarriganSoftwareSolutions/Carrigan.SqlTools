@@ -42,10 +42,10 @@ public abstract partial class SqlGeneratorBase<T>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT</c> from the table represented by <typeparamref name="T"/>,
     /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
-    /// <c>OFFSET … FETCH NEXT</c> clauses.
+    /// dialect-specific paging clauses.
     /// </summary>
     /// <param name="selects">
-    /// Optional projected columns (and result aliases). If omitted or empty, <c>[T].*</c> is selected.
+    /// Optional projected columns and result aliases. If omitted or empty, all columns from the table represented by <typeparamref name="T"/> are selected.
     /// </param>
     /// <param name="joins">
     /// Optional joins to include in the query. Omit to select only from the base table.

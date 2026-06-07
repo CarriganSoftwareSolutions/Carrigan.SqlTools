@@ -44,7 +44,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
-- [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
+- [Simple ADO.NET Example With SqlQuery](#simple-ado.net-example-with-sqlquery)
 - [Data Type Mappings](#data-type-mappings)
   - [Default Parameter / Return Types](#default-parameter-return-types)
   - [Allowed Override Types](#allowed-override-types)
@@ -80,7 +80,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 
 ## Installation  
 
-Carrigan.SqlTools is available as a NuGet package:
+Carrigan.SqlTools.Generators.SqlServer is available as a NuGet package:
 
 ```powershell
 dotnet add package Carrigan.SqlTools
@@ -89,7 +89,7 @@ dotnet add package Carrigan.SqlTools
 For SQL Server execution helpers:
 
 ```powershell
-dotnet add package Carrigan.SqlTools.SqlServer
+dotnet add package Carrigan.SqlTools.Clients.SqlServer
 ```
 
 [Table of Contents](#table-of-contents)
@@ -556,9 +556,11 @@ SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 
 ---
 
+<a id="running-queries-async--non-async"></a>
+
 ## Running Queries (Async & Non-Async)
 
-The SQL Server helpers live in **Carrigan.SqlTools.SqlServer**.  
+The SQL Server helpers live in **Carrigan.SqlTools.Clients.SqlServer**.  
 These examples use `using` statements to keep the examples focused on command execution.
 
 ```csharp
@@ -569,6 +571,8 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Microsoft.Data.SqlClient;
 ```
+
+<a id="async-executenonqueryasync--executescalarasync--executereaderasynct"></a>
 
 ### Async: `ExecuteNonQueryAsync` / `ExecuteScalarAsync` / `ExecuteReaderAsync<T>`
 
@@ -599,6 +603,8 @@ object result =
 
 [Table of Contents](#table-of-contents)
 
+
+<a id="non-async-executenonquery--executescalar--executereadert"></a>
 
 ### Non-Async: `ExecuteNonQuery` / `ExecuteScalar` / `ExecuteReader<T>`
 

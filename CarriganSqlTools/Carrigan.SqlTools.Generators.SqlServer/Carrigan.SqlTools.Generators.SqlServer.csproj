@@ -23,17 +23,17 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
 
     <Description>
-      Carrigan.SqlTools is a lightweight library designed to simplify SQL generation for Microsoft SQL Server while maintaining flexibility and safety. Its primary purpose is to automatically generate SELECT, INSERT, UPDATE, and DELETE statements using reflection.
+      Carrigan.SqlTools.Generators.SqlServer provides Microsoft SQL Server-specific SQL generation support for Carrigan.SqlTools. Its primary purpose is to generate SELECT, INSERT, UPDATE, and DELETE statements using reflection and the shared Carrigan.SqlTools query model.
 
-      The library integrates with Carrigan.Core through a shared interface, which allows custom encryption logic and property-level attributes to be seamlessly applied during query generation.
+      The package integrates with Carrigan.Core through shared interfaces and property-level metadata used by the Carrigan.SqlTools model.
 
-      In addition to its automated features, Carrigan.SqlTools also supports a more manual, object-oriented approach for building SQL. This gives developers full control over advanced scenarios such as ORDER BY, JOIN, WHERE clauses, and paginated queries, while still benefiting from strong typing and built-in protections against common mistakes.
+      In addition to automated generation, the SQL Server generator supports a manual, object-oriented approach for building SQL Server statements with ORDER BY, JOIN, WHERE clauses, and paginated queries.
 
-      The library also includes an invocation class that can map a Dictionary&gt;string, object?&lt; —representing a row in a SQL table—directly to an object instance. This makes it easy to work with dynamic data sources without sacrificing type safety.
+      The generated SQL can be used with the dialect client packages, which use shared invocation infrastructure to map result rows to model instances.
 
-      Currently, Carrigan.SqlTools is focused on providing robust SQL generation specifically for SQL Server.
+      This package focuses specifically on SQL Server dialect behavior.
 
-      A companion library, Carrigan.SqlTools.SqlServer, provides a wrapper around ADO.NET to execute the generated queries, call the invoker, and handle decryption of encrypted data.
+      The companion package Carrigan.SqlTools.Clients.SqlServer provides ADO.NET execution helpers for generated SQL Server queries.
     </Description>
     <PackageTags>
       sql;sqlserver;ado.net;reflection;orm;database;crud;select;insert;update;delete;

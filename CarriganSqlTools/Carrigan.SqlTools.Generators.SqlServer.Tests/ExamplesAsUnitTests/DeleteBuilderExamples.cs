@@ -66,7 +66,7 @@ public class DeleteBuilderExamples
     public void DeleteWithJoinAndWhere()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValue<T> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Customer> join = new(predicate);
 

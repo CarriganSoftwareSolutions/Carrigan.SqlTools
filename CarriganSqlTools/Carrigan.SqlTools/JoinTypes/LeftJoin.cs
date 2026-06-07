@@ -33,7 +33,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// --PostgreSqk
+/// --PostgreSql
 /// SELECT "Customer".* 
 /// FROM "Customer" 
 /// LEFT JOIN "Order" 

@@ -26,7 +26,7 @@ public class SqlGeneratorSelectCountExamples
     [Fact]
     public void SelectCountWithWhere()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: Column<T> validates the names of the properties, and throws an error if the property isn't valid
         Column<Order> totalCol = new(nameof(Order.Total));
         Parameter minTotal = new(500m, "Total");
         GreaterThan greaterThan = new(totalCol, minTotal);
@@ -42,7 +42,7 @@ public class SqlGeneratorSelectCountExamples
     [Fact]
     public void SelectCountWithWhereAndJoin()
     {
-        //Note: ColumnEqualsColumn<leftT, righT> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid
         //Note: Column<T> validates the names of the properties, and throws an error if the property isn't valid
         Column<Order> totalCol = new(nameof(Order.Total));
         Parameter minTotal = new(500m, "Total");

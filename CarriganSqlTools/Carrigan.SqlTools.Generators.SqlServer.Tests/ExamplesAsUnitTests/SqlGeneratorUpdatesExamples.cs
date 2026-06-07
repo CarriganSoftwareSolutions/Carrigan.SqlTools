@@ -89,8 +89,8 @@ public class SqlGeneratorUpdatesExamples
     public void UpdateWithSetColumnJoinsAndWhere()
     {
         //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: Column<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValue<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Order entity = new()
         {
@@ -122,7 +122,7 @@ public class SqlGeneratorUpdatesExamples
     public void UpdateWithSetColumnWhere()
     {
         //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValue<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Customer entity = new()
         {

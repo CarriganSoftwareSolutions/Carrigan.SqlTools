@@ -67,7 +67,7 @@ public class FromReadMeMoreComplexExamples
     public void DeleteWithJoinAndWhere()
     {
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValue<T> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
         InnerJoin<Customer> join = new(predicate);
@@ -91,7 +91,7 @@ public class FromReadMeMoreComplexExamples
     [Fact]
     public void SelectCountWithWhere()
     {
-        //Note: Columns<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: Column<T> validates the names of the properties, and throws an error if the property isn't valid
         Column<Order> totalCol = new(nameof(Order.Total));
         Parameter minTotal = new(500m, "Total");
         GreaterThan greaterThan = new(totalCol, minTotal);
@@ -109,7 +109,7 @@ public class FromReadMeMoreComplexExamples
     {
         //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
         //Note: ColumnEqualsColumn<LeftT, RightT> validates the names of the properties, and throws an error if the property isn't valid
-        //Note: ColumnValues<T> validates the names of the properties, and throws an error if the property isn't valid
+        //Note: ColumnValue<T> validates the names of the properties, and throws an error if the property isn't valid
 
         Order entity = new() { Id = 10, Total = 123.45m };
 

@@ -12,7 +12,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <typeparam name="T">
 /// The entity or data model type that defines the table containing the column to compare.
 /// </typeparam>
-[Obsolete("Use ColumnValues<T> instead.")]
+[Obsolete("Use ColumnValue<T> instead.")]
 public class ByColumnValues<T> : ColumnValue<T> where T : class
 {
     /// <summary>
@@ -21,7 +21,7 @@ public class ByColumnValues<T> : ColumnValue<T> where T : class
     /// </summary>
     /// <param name="propertyName">The property name representing the column.</param>
     /// <param name="value">The value to compare against.</param>
-    [Obsolete("Use ColumnValues<T> instead.")]
+    [Obsolete("Use ColumnValue<T> instead.")]
     public ByColumnValues(PropertyName propertyName, object value) : base(propertyName, value)
     {
     }

@@ -6,7 +6,7 @@ using Carrigan.SqlTools.ReflectorCache;
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
-/// Generates SQL Server select tags from reflection metadata.
+/// Generates PostgreSQL select tags from reflection metadata.
 /// </summary>
 public static class SelectTagGenerator
 {
