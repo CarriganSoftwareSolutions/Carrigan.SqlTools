@@ -253,7 +253,11 @@ public class PostgreSqlDialect : ISqlDialects
     /// </exception>
     public object ValueConversion(object? value)
     {
-        if (value == null)
+        if (value is DateTime dateTime)
+            return (object?)NormalizeTimeZone(dateTime) ?? DBNull.Value;
+        else if (value is DateTimeOffset dateTimeOffset)
+            return (object?)NormalizeTimeZone(dateTimeOffset) ?? DBNull.Value;
+        else if (value == null)
         {
             return DBNull.Value;
         }

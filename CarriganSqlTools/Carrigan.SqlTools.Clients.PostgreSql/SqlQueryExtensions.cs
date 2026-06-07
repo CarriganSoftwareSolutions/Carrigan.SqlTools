@@ -59,10 +59,6 @@ internal static class SqlQueryExtensions
             FieldProperties fieldProperties = parameter.FieldProperties is null
                 ? PostgreSqlTypesProvider.FromClrValue(valueToUse)
                 : parameter.FieldProperties;
-            if (valueToUse is DateTime dateTime)
-                valueToUse = (object?)dialect.NormalizeTimeZone(dateTime) ?? DBNull.Value;
-            if (valueToUse is DateTimeOffset dateTimeOffset)
-                valueToUse = (object?)dialect.NormalizeTimeZone(dateTimeOffset) ?? DBNull.Value;
 
 
             NpgsqlParameter sqlParameter = new()
