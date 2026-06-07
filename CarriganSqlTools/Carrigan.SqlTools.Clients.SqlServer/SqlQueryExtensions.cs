@@ -1,4 +1,3 @@
-using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -52,12 +51,11 @@ internal static class SqlQueryExtensions
 
     internal static IEnumerable<SqlParameter> GetParameterCollection(this SqlQuery query)
     {
-        static SqlParameter GetSqlParameter(SqlFragmentParameter parameter)
+        SqlParameter GetSqlParameter(SqlFragmentParameter parameter)
         {
-            SqlServerDialect dialect = new();
-            object valueToUse = dialect.ValueConversion(parameter.Value);
+            object valueToUse = query.Dialect.ValueConversion(parameter.Value);
             FieldProperties fieldProperties = parameter.FieldProperties is null
-                ? SqlServerTypesProvider.FromClrType(valueToUse.GetType())
+                ? query.Dialect.FromClrValue(valueToUse)
                 : parameter.FieldProperties;
 
 
@@ -89,7 +87,7 @@ internal static class SqlQueryExtensions
         return query
                     .Parameters
                     .AsEnumerable()
-                    .Select(static parameter => GetSqlParameter(parameter));
+                    .Select(parameter => GetSqlParameter(parameter));
     }
 
     /// <summary>

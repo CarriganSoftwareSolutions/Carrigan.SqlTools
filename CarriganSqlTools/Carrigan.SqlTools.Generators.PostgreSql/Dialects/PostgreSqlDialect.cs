@@ -524,4 +524,18 @@ public class PostgreSqlDialect : ISqlDialects
         typeof(object),
         typeof(object[])
     ];
+
+    /// <summary>
+    /// Returns the default PostgreSQL field properties for a CLR type.
+    /// </summary>
+    /// <param name="value">
+    /// The CLR value for which to determine the default PostgreSQL field properties. 
+    /// The type of this value will be used to infer the appropriate PostgreSQL provider type name and related field properties.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance containing the default PostgreSQL field properties inferred from the CLR type of the provided value, 
+    /// including the provider type name and any relevant length, precision, scale, or array information.
+    /// </returns>
+    public FieldProperties FromClrValue(object? value) =>
+        PostgreSqlTypesProvider.FromClrValue(value);
 }

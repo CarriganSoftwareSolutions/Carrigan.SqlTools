@@ -165,4 +165,16 @@ public interface ISqlDialects
     /// determine which types can be directly mapped to SQL types and may influence how parameters are rendered and how field properties are determined for those types.
     /// </returns>
     public HashSet<Type> SupportedTypes();
+
+    /// <summary>
+    /// Determines the appropriate <see cref="FieldProperties"/> for a given CLR value based on the SQL dialect's type mapping rules. 
+    /// </summary>
+    /// <param name="value">
+    /// The CLR value for which to determine the corresponding <see cref="FieldProperties"/>. 
+    /// The method will analyze the type of the value and return the appropriate type.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance containing the properties that correspond to the CLR value according to the SQL dialect's type mapping rules.
+    /// </returns>
+    public FieldProperties FromClrValue(object? value);
 }

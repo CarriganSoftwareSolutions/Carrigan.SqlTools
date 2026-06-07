@@ -43,7 +43,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Carrigan.SqlTools.Clients.Core\Carrigan.SqlTools.Clients.Core.csproj" />
-    <ProjectReference Include="..\Carrigan.SqlTools.Generators.SqlServer\Carrigan.SqlTools.Generators.SqlServer.csproj" />
     <ProjectReference Include="..\Carrigan.SqlTools\Carrigan.SqlTools.csproj" />
   </ItemGroup>
 

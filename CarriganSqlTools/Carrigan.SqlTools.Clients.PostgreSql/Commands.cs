@@ -2,7 +2,6 @@ using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.Clients.Core.Exceptions;
 using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
 using System.Data;

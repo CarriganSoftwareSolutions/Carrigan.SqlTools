@@ -20,7 +20,7 @@ public class SqlQuery
     /// <summary>
     /// Gets the SQL dialect used to render fragments and parameter placeholders.
     /// </summary>
-    protected readonly ISqlDialects Dialect;
+    internal readonly ISqlDialects Dialect;
     /// <summary>
     /// Gets or sets the SQL command text.
     /// </summary>

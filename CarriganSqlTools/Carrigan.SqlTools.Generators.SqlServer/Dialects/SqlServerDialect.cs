@@ -409,4 +409,18 @@ public class SqlServerDialect : ISqlDialects
         // Fallback
         typeof(object)
     ];
+
+    /// <summary>
+    /// Returns the SQL Server field properties for a given CLR value, as determined by the SqlServerTypesProvider.
+    /// </summary>
+    /// <param name="value">
+    /// The CLR value for which to retrieve the corresponding SQL Server field properties. This value is used to determine the appropriate SQL Server data type and related properties, such as length, precision, scale, and nullability. 
+    /// The method will analyze the type of the provided value and return a <see cref="FieldProperties"/> instance that describes how this value should be represented in SQL Server.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance containing the SQL Server field properties that correspond to the type and characteristics of the provided CLR value. 
+    /// This includes information such as the provider type name, length, precision, scale, nullability, and any other relevant properties needed to accurately represent the value in SQL Server.
+    /// </returns>
+    public FieldProperties FromClrValue(object? value) =>
+        SqlServerTypesProvider.FromClrValue(value);
 }

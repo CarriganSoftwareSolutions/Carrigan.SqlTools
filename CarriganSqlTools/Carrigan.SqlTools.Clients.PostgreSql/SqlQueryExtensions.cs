@@ -52,14 +52,12 @@ internal static class SqlQueryExtensions
     /// </remarks>
     internal static IEnumerable<NpgsqlParameter> GetParameterCollection(this SqlQuery query)
     {
-        static NpgsqlParameter GetSqlParameter(SqlFragmentParameter parameter)
+        NpgsqlParameter GetSqlParameter(SqlFragmentParameter parameter)
         {
-            PostgreSqlDialect dialect = new();
-            object valueToUse = dialect.ValueConversion(parameter.Value);
+            object valueToUse = query.Dialect.ValueConversion(parameter.Value);
             FieldProperties fieldProperties = parameter.FieldProperties is null
-                ? PostgreSqlTypesProvider.FromClrValue(valueToUse)
+                ? query.Dialect.FromClrValue(valueToUse)
                 : parameter.FieldProperties;
-
 
             NpgsqlParameter sqlParameter = new()
             {
@@ -88,7 +86,7 @@ internal static class SqlQueryExtensions
         return query
                     .Parameters
                     .AsEnumerable()
-                    .Select(static parameter => GetSqlParameter(parameter));
+                    .Select(parameter => GetSqlParameter(parameter));
     }
 
     /// <summary>

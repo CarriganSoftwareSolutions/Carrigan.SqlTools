@@ -288,6 +288,18 @@ public static class SqlServerTypesProvider
     /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     public static FieldProperties FromNullableClrType<T>() => FromNullableClrType(typeof(T));
 
+    /// <summary>
+    /// Creates a SQL Server field definition using the default mapping for a CLR value's runtime type, treating <c>null</c> and <c>DBNull.Value</c> as nullable <c>sql_variant</c>.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static FieldProperties FromClrValue(object? value)
+    {
+        if (value is null || value == DBNull.Value)
+            return AsSqlVariant(nullable: true);
+        else
+            return Create(value.GetType());
+    }
     #endregion
 
     #region UniqueIdentifier
