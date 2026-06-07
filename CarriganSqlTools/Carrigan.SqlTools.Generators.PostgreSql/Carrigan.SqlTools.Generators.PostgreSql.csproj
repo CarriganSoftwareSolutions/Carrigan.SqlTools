@@ -27,7 +27,7 @@
 
       It supports reflection-based generation of SELECT, INSERT, UPDATE, and DELETE statements while preserving the flexibility to build queries manually through a strongly typed, object-oriented SQL construction model.
 
-      Carrigan.SqlTools.PostgreSql is intended for developers who need safe, reusable PostgreSQL query generation without adopting a full ORM. It works with Carrigan.Core attributes and shared interfaces to support property-level metadata, custom encryption workflows, object mapping, and consistent SQL generation across application code.
+      Carrigan.SqlTools.Generators.PostgreSql is intended for developers who need safe, reusable PostgreSQL query generation without adopting a full ORM. It works with Carrigan.Core attributes and shared interfaces to support property-level metadata, custom encryption workflows, object mapping, and consistent SQL generation across application code.
 
       This package focuses specifically on PostgreSQL dialect behavior and is designed to be used alongside the Carrigan.SqlTools core abstractions.
     </Description>

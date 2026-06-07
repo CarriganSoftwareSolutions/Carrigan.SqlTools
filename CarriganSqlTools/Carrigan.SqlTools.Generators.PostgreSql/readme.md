@@ -134,7 +134,7 @@ public class Customer
 
 public class Order
 {
-    [PrimaryKey] // Required attribute for certain SQL generations.
+    [PrimaryKey] // Required for key-based SQL generation methods.
     public int Id { get; set; }
     public int CustomerId { get; set; }
     public int PaymentMethodId { get; set; }
@@ -879,7 +879,7 @@ public sealed class ExampleEncryptor : IEncryption
     }
 }
 
-// Minimal IDecrypters imply mapping versions → encrypters
+// Minimal IDecrypters implementation mapping key versions to encryptors/decryptors
 
 //THIS IS JUST A SIMPLE EXAMPLE OF A ENCRYPTION CLASS
 //I AM NOT A CRYPTOGRAPHIC EXPERT, DO NOT USE THIS EXAMPLE IN A REAL SYSTEM.
