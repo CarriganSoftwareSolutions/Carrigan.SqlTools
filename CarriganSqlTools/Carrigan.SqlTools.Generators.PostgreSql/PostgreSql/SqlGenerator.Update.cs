@@ -272,12 +272,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <summary>
     /// Creates a PostgreSQL <c>UPDATE</c> statement with optional <c>FROM</c> sources and a <c>WHERE</c> predicate.
     /// </summary>
+    /// <typeparam name="joinsT">The model type used to satisfy the generic overload shape; no join is emitted by this overload.</typeparam>
     /// <param name="entity">The model instance that supplies values for the <c>SET</c> clause.</param>
     /// <param name="columns">The model properties representing the SQL columns to update.</param>
     /// <param name="from">The PostgreSQL <c>FROM</c> sources available to the predicate.</param>
     /// <param name="predicates">The predicates used to build the SQL <c>WHERE</c> clause.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>UPDATE</c> statement.</returns>
-    public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Predicates? predicates) 
+    //TODO: removed joinT it is not needed, the overload exists specifically to remove the need.
+    public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Predicates? predicates) where joinsT : class
     {
         if (from.IsNotNullOrEmpty() && from.Contains(Table))
         {
@@ -302,5 +304,5 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="updateQuery">The builder containing values, update columns, <c>FROM</c> sources, and predicates.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>UPDATE</c> statement.</returns>
     public SqlQuery Update(UpdateBuilder<T> updateQuery) =>
-        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Where);
+        Update<T>(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Where);
 }
