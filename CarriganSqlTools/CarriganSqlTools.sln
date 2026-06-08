@@ -64,6 +64,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Clients.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.Analyzers.PostgreSql", "Carrigan.SqlTools.Analyzers.PostgreSql\Carrigan.SqlTools.Analyzers.PostgreSql\Carrigan.SqlTools.Analyzers.PostgreSql.csproj", "{4A33EE82-F3FC-02D4-768E-684AB93C0633}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ConveniencePackage", "ConveniencePackage", "{7FDEC989-925E-4413-8771-40EBAF135DD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.SqlServer", "Carrigan.SqlTools.SqlServer\Carrigan.SqlTools.SqlServer.csproj", "{278F84FF-35A9-4D36-B28E-C932144A3A75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Carrigan.SqlTools.PostgreSql", "Carrigan.SqlTools.PostgreSql\Carrigan.SqlTools.PostgreSql.csproj", "{39D4AEF1-DE66-49D4-B413-E64213057F33}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -138,6 +144,14 @@ Global
 		{4A33EE82-F3FC-02D4-768E-684AB93C0633}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A33EE82-F3FC-02D4-768E-684AB93C0633}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A33EE82-F3FC-02D4-768E-684AB93C0633}.Release|Any CPU.Build.0 = Release|Any CPU
+		{278F84FF-35A9-4D36-B28E-C932144A3A75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{278F84FF-35A9-4D36-B28E-C932144A3A75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{278F84FF-35A9-4D36-B28E-C932144A3A75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{278F84FF-35A9-4D36-B28E-C932144A3A75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39D4AEF1-DE66-49D4-B413-E64213057F33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39D4AEF1-DE66-49D4-B413-E64213057F33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39D4AEF1-DE66-49D4-B413-E64213057F33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39D4AEF1-DE66-49D4-B413-E64213057F33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -159,6 +173,8 @@ Global
 		{7C57D7E7-538B-BC3D-FFDE-34B8EFEDAECE} = {DCADBC00-36FF-468E-8CA9-6063F530A5E6}
 		{85EE6F25-DB9C-4ED3-8554-F18506DB0E2A} = {4A91D235-418D-49AC-9E8F-71ED65D6C2FC}
 		{4A33EE82-F3FC-02D4-768E-684AB93C0633} = {461C9803-3F48-4F78-9198-F732CADB7CA6}
+		{278F84FF-35A9-4D36-B28E-C932144A3A75} = {7FDEC989-925E-4413-8771-40EBAF135DD3}
+		{39D4AEF1-DE66-49D4-B413-E64213057F33} = {7FDEC989-925E-4413-8771-40EBAF135DD3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7E326BD-0E69-4927-9699-75A4A950E268}

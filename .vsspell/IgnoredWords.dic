@@ -73,3 +73,9 @@ Guid
 bool
 sbyte
 dbo
+sqlserver
+mssql
+snupkg
+postgresql
+postgre
+sqltools
