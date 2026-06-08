@@ -1,4 +1,4 @@
-﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, NVARCHAR, VARBINARY, DATETIME2, Xml
+﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed
 
 using Carrigan.SqlTools.Attributes;
 

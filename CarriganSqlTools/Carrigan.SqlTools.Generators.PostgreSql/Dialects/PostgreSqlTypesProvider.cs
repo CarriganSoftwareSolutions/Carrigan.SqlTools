@@ -1,4 +1,4 @@
-// IGNORE SPELLING: bigint, bool, bytea, char, jsonb, numeric, timestamptz, uuid, varchar, varbit, xml, nullability
+// IGNORE SPELLING: jsonb, varbit
 
 using Carrigan.SqlTools.Types;
 using System.Reflection.Metadata;

@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
 
-//IGNORE SPELLING: Za ema myschema dbo
+//IGNORE SPELLING: Za ema 
 
 public class ProcedureTagTests
 {

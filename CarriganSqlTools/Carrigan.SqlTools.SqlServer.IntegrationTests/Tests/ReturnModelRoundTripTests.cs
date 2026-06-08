@@ -1,4 +1,4 @@
-﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer
+﻿//Ignore Spelling: Localdb, Respawn, Respawner
 
 using Carrigan.SqlTools.Clients.SqlServer;
 using Carrigan.SqlTools.IntegrationTests.Models;

@@ -1,4 +1,4 @@
-﻿//Ignore Spelling: bytea, timestamptz pgcrypto
+﻿//Ignore Spelling: pgcrypto
 
 using Carrigan.SqlTools.Attributes;
 using System.Xml;

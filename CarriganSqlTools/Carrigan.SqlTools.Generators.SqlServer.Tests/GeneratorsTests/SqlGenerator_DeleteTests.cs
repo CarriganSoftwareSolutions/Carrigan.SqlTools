@@ -5,8 +5,6 @@ using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 
-//IGNORE SPELLING: myschema
-
 public class SqlGenerator_DeleteTests
 {
     private readonly MockEncryption _mockEncrypter;

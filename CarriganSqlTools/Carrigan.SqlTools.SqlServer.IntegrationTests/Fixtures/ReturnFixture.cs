@@ -1,4 +1,4 @@
-﻿//IGNORE SPELLING: localdb respawner dbo
+﻿//IGNORE SPELLING: localdb respawner
 
 using Carrigan.SqlTools.IntegrationTests.Models;
 

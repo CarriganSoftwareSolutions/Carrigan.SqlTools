@@ -2,7 +2,6 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using System.Text;
 
-//IGNORE SPELLING: subquery, subqueries
 
 namespace Carrigan.SqlTools.SqlGenerators;
 

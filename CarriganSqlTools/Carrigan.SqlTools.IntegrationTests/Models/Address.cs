@@ -1,6 +1,5 @@
 namespace Carrigan.SqlTools.IntegrationTests.Models;
 
-//IGNORE SPELLING: Postgre
 
 public sealed class Address
 {

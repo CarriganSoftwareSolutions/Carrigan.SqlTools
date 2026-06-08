@@ -8,7 +8,6 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Tags;
 
-//IGNORE SPELLING: dbo
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
 

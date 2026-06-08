@@ -5,7 +5,6 @@ using System.Xml;
 using System.Xml.Linq;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.InvocationTests.TypeTests;
-//IGNORE SPELLING:
 public class SqlXmlTests
 {
     private static Dictionary<string, object?> GetTestData(object? value)

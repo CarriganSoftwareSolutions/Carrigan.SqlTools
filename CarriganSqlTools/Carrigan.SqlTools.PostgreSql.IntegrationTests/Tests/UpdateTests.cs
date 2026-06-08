@@ -1,4 +1,4 @@
-﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, , SqlServer
+﻿//Ignore Spelling: Localdb, Respawn, Respawner
 
 using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.IntegrationTests.DataSets;

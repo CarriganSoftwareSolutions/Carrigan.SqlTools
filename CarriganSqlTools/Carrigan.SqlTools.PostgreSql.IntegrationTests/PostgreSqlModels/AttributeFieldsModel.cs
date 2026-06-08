@@ -1,5 +1,4 @@
-﻿//Ignore Spelling: PostgreSql, varchar
-
+﻿
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 

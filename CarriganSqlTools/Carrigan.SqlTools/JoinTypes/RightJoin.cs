@@ -6,7 +6,6 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
-//IGNORE SPELLING: subquery, subqueries, intellisense
 
 namespace Carrigan.SqlTools.JoinTypes;
 

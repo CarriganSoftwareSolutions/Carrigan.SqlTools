@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.InternalTests;
-//IGNORE SPELLING: myschema
+
 public class TableTagTests
 {
     private static readonly ISqlDialects Dialect = new SqlServerDialect();

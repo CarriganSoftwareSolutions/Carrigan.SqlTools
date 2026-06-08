@@ -8,7 +8,6 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.QueryBuilders;
 
 
-//Ignore Spelling: subquery
 
 /// <summary>
 /// Represents the options used to build a SELECT query for the specified model type.

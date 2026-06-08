@@ -4,7 +4,7 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-//IGNORE SPELLING: newid, unindexed
+//IGNORE SPELLING: unindexed
 
 namespace Carrigan.SqlTools.SqlGenerators;
 

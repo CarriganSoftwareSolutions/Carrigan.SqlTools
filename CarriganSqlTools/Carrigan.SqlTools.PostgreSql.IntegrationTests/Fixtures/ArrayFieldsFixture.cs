@@ -1,5 +1,4 @@
-﻿//Ignore Spelling: PostgreSql
-
+﻿
 using Carrigan.SqlTools.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;

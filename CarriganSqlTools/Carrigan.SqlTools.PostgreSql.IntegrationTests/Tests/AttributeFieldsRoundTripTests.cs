@@ -1,5 +1,4 @@
-﻿//Ignore Spelling: PostgreSql, varchar
-
+﻿
 using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.PostgreSqlModels;

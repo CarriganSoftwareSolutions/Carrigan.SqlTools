@@ -1,7 +1,7 @@
 using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.SqlGenerators;
 
-//IGNORE SPELLING: subquery, subqueries, intellisense, exists
+//IGNORE SPELLING: exists
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

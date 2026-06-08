@@ -1,5 +1,4 @@
-﻿//Ignore Spelling: SqlServer, varchar, varbinary, datetime, ntext
-
+﻿
 using Carrigan.SqlTools.Clients.SqlServer;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;

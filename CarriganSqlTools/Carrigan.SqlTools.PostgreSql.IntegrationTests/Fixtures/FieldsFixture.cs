@@ -1,4 +1,4 @@
-﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
+﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed
 
 using Carrigan.SqlTools.IntegrationTests.Models;
 

@@ -1,4 +1,3 @@
-﻿//Ignore Spelling: PostgreSql, bytea, XDocument, XmlDocument
 
 using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.IntegrationTests.DataSets;

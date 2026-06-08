@@ -1,5 +1,4 @@
 ﻿using Carrigan.SqlTools.Attributes;
-//IGNORE SPELLING: newid
 namespace Carrigan.SqlTools.IntegrationTests.Models;
 
 [Identifier("ReturnModel")]

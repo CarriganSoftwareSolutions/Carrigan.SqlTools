@@ -5,7 +5,6 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 
 
-//IGNORE SPELLING: dbo
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;
 

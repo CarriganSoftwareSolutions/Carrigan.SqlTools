@@ -1,4 +1,4 @@
-﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer, Moby, Postgre
+﻿//Ignore Spelling: Localdb, Respawn, Respawner, Moby
 
 using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;

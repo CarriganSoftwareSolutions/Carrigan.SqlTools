@@ -6,7 +6,7 @@ using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 
-//IGNORE SPELLING: Shhh myschema
+//IGNORE SPELLING: Shhh
 
 
 public class SqlGenerator_ProcedureTests

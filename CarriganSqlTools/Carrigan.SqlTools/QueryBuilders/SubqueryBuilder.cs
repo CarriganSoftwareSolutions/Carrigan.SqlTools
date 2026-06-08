@@ -6,7 +6,6 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.QueryBuilders;
 
-// Ignore Spelling: subquery
 
 /// <summary>
 /// Represents the shared options used to build a subquery for the specified model type.

@@ -1,5 +1,5 @@
-﻿//Ignore Spelling: SqlTools, Localdb, Respawn, Respawner, Carrigan, SqlServer, DateOnly
-//IGNORE SPELLING: datetimes, lorem ipsum, datetime, TimeOnly, XDocument, XmlDocument
+﻿//Ignore Spelling: Localdb, Respawn, Respawner, DateOnly
+//IGNORE SPELLING: datetimes, lorem, ipsum, TimeOnly, XDocument, XmlDocument
 using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;

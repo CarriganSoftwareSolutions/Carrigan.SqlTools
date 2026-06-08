@@ -82,3 +82,6 @@ sqltools
 ushort
 uint
 ulong
+myschema
+XDocument
+xmldocument

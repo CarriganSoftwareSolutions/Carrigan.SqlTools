@@ -6,7 +6,6 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Types;
 using System.Data;
 using System.Reflection;
-//IGNORE SPELLING: dbo
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ReflectorCacheTests;
 public class ColumnInfoTests
 {

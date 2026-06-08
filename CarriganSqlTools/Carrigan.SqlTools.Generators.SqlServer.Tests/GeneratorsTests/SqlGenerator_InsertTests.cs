@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 
-//IGNORE SPELLING: myschema shhh
+//IGNORE SPELLING: shhh
 
 public class SqlGenerator_InsertTests
 {

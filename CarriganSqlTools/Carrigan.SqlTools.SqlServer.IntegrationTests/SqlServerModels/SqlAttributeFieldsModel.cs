@@ -1,5 +1,4 @@
-﻿//Ignore Spelling: SqlServer, varchar, varbinary, datetime, smalldatetime, ntext
-
+﻿
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 

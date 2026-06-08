@@ -1,7 +1,6 @@
 ﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
-//IGNORE SPELLING: Xml
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.DialectTests.PostgreSqlTests;
 

@@ -5,7 +5,6 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql;
 
 
-//IGNORE SPELLING: dbo
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
 

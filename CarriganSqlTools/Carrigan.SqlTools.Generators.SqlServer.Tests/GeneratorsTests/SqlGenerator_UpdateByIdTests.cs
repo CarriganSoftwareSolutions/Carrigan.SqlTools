@@ -11,7 +11,7 @@ using Carrigan.SqlTools.SqlServer;
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 
 
-//IGNORE SPELLING: SHHH myschema
+//IGNORE SPELLING: SHHH
 
 public class SqlGenerator_UpdateByIdTests
 {

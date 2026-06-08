@@ -1,4 +1,4 @@
-﻿//Ignore Spelling: PostgreSql, XDocument, XmlDocument
+﻿//Ignore Spelling: XDocument, XmlDocument
 
 using Carrigan.SqlTools.IntegrationTests.Models;
 using System.Xml;

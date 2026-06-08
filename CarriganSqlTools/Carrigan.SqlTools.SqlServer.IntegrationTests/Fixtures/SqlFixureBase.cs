@@ -4,7 +4,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Microsoft.Data.SqlClient;
 using Respawn;
 
-// Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
+// Ignore Spelling: Localdb, Respawn, Respawner, Reseed
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 

@@ -2,7 +2,6 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TypesTests;
-//IGNORE SPELLING: bigint
 public class FieldPropertiesTests
 {
     private static readonly SqlServerDialect Dialect = new();

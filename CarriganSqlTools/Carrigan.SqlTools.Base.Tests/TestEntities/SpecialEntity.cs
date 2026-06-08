@@ -1,6 +1,5 @@
 ﻿namespace Carrigan.SqlTools.Base.Tests.TestEntities;
 
-//IGNORE SPELLING: Enums
 
 public class SpecialEntity
 {
