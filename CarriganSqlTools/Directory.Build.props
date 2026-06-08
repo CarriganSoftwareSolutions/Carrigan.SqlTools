@@ -21,21 +21,21 @@
     <Deterministic>true</Deterministic>
 
     <!--Base Version for other projects-->
-    <BaseVersion>0.6.0</BaseVersion>
+    <BaseVersion>0.6.1</BaseVersion>
     <!-- PreRelease Status -->
-    <PreReleaseLabel></PreReleaseLabel>
+    <PreReleaseLabel>alpha</PreReleaseLabel>
 
     <!-- PreReleaseStatus / Base version: x.y.z For Base Projects -->
-    <SqlToolsBaseProjectsBaseVersion>0.6.0</SqlToolsBaseProjectsBaseVersion>
+    <SqlToolsBaseProjectsBaseVersion>0.6.1</SqlToolsBaseProjectsBaseVersion>
     <SqlToolsBaseProjectsPreReleaseLabel></SqlToolsBaseProjectsPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For SqlServer Dialect -->
-    <SqlToolsSqlServerBaseVersion>0.6.0</SqlToolsSqlServerBaseVersion>
-    <SqlToolsSqlServerPreReleaseLabel></SqlToolsSqlServerPreReleaseLabel>
+    <SqlToolsSqlServerBaseVersion>0.6.1</SqlToolsSqlServerBaseVersion>
+    <SqlToolsSqlServerPreReleaseLabel>alpha</SqlToolsSqlServerPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For PostgreSql Dialect -->
-    <SqlToolsPostgreSqlBaseVersion>0.6.0</SqlToolsPostgreSqlBaseVersion>
-    <SqlToolsPostgreSqlPreReleaseLabel></SqlToolsPostgreSqlPreReleaseLabel>
+    <SqlToolsPostgreSqlBaseVersion>0.6.1</SqlToolsPostgreSqlBaseVersion>
+    <SqlToolsPostgreSqlPreReleaseLabel>alpha</SqlToolsPostgreSqlPreReleaseLabel>
     
     <!-- Time Stamp -->
     <BuildTimeStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmm'))</BuildTimeStamp>
