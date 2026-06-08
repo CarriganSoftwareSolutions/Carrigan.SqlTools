@@ -291,8 +291,8 @@ public static class SqlServerTypesProvider
     /// <summary>
     /// Creates a SQL Server field definition using the default mapping for a CLR value's runtime type, treating <c>null</c> and <c>DBNull.Value</c> as nullable <c>sql_variant</c>.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <param name="value">The CLR value whose runtime type should be mapped to SQL Server field metadata.</param>
+    /// <returns>The SQL Server field properties for the supplied CLR value.</returns>
     public static FieldProperties FromClrValue(object? value)
     {
         if (value is null || value == DBNull.Value)

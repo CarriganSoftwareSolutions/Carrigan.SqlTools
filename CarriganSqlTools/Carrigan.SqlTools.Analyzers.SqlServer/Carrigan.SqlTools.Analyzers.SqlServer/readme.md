@@ -1,6 +1,6 @@
-﻿<a id="carrigan.sqltools.analyzers"></a>
+﻿<a id="carrigan.sqltools.analyzers.sqlserver"></a>
 
-# Carrigan.SqlTools.Analyzers
+# Carrigan.SqlTools.Analyzers.SqlServer
 
 **Custom Analyzers**
 *Status: 0.1.0
@@ -12,13 +12,13 @@
 **.NET CLI**
 
 ```bash
-dotnet add package Carrigan.SqlTools.Analyzers
+dotnet add package Carrigan.SqlTools.Analyzers.SqlServer
 ```
 
 **Package Manager**
 
 ```powershell
-Install-Package Carrigan.SqlTools.Analyzers
+Install-Package Carrigan.SqlTools.Analyzers.SqlServer
 ```
 
 ---

@@ -73,7 +73,7 @@ public class ColumnValue<T> : ColumnValueBase<T> where T : class
     /// <param name="propertyName">
     /// The property name that identifies the column on the entity type <typeparamref name="T"/>.
     /// </param>
-    /// <returns></returns>
+    /// <returns>A PostgreSQL column expression for the specified property.</returns>
     private static ColumnBase<T> CreateValue(PropertyName propertyName)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));

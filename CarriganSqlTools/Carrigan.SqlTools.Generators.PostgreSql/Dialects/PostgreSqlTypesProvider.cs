@@ -84,9 +84,9 @@ public static class PostgreSqlTypesProvider
     /// <param name="nullable">
     /// Indicates whether the field is nullable.
     /// </param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
-    /// <exception cref="ArgumentException"></exception>
+    /// <returns>The field properties for the requested PostgreSQL provider type.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when a size, precision, or scale value is outside the supported PostgreSQL range.</exception>
+    /// <exception cref="ArgumentException">Thrown when the requested provider type and modifiers form an invalid PostgreSQL field definition.</exception>
     private static FieldProperties Create
     (
         string providerTypeName,
@@ -213,7 +213,7 @@ public static class PostgreSqlTypesProvider
     /// <param name="minValue">The minimum allowed value.</param>
     /// <param name="maxValue">The maximum allowed value.</param>
     /// <param name="parameterName">The name of the parameter being validated.</param>
-    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when a size, precision, or scale value is outside the supported PostgreSQL range.</exception>
     private static void ValidateRange(int? value, bool allowNullValue, int minValue, int maxValue, string parameterName)
     {
         if (value is null)

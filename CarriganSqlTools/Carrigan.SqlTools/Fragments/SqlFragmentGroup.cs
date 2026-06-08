@@ -31,9 +31,9 @@ public class SqlFragmentGroup : ISqlFragment
         string.Join("", sqlFragments.Select(f => f.ToSql(dialect)));
 
     /// <summary>
-    /// Retrieves the collection of parameters from all SQL fragments contained within the group. This method aggregates
+    /// Retrieves the SQL parameters from all fragments contained in the group.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The SQL fragment parameters exposed by the grouped fragments.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
         sqlFragments.SelectMany(f => f.GetSqlFragmentParameters());
 

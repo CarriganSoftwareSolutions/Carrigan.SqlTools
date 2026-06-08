@@ -110,7 +110,7 @@ public interface ISqlDialects
     /// <summary>
     /// Returns the character used by the SQL dialect to represent Xor operations, such as in WHERE clauses.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The SQL fragment used to render the dialect-specific XOR operator.</returns>
     ISqlFragment GetXOrSymbol();
 
     /// <summary>
@@ -138,7 +138,7 @@ public interface ISqlDialects
     /// The <see cref="DateTimeOffset"/> value to normalize. This may involve converting the value to a specific time zone or adjusting it
     /// according to the rules of the SQL dialect. If the dialect does not require normalization, the original value is returned unchanged.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The normalized <see cref="DateTimeOffset"/> value, or the original value when the dialect does not require conversion.</returns>
     public DateTimeOffset? NormalizeTimeZone(DateTimeOffset? dateTimeOffset);
 
     /// <summary>

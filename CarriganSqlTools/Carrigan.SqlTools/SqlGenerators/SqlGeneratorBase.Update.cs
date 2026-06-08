@@ -242,7 +242,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="entity">the entity containing the values to be updated</param>
     /// <param name="updateTheseColumns">the columns to be updated</param>
     /// <param name="useTableTag">whether to use the table tag in the SQL fragments</param>
-    /// <returns></returns>
+    /// <returns>The SQL fragments that make up the <c>SET</c> clause assignments.</returns>
     private IEnumerable<ISqlFragment> GetSetFragments(T entity, IEnumerable<ColumnInfo> updateTheseColumns, bool useTableTag) =>
         updateTheseColumns
             .Select

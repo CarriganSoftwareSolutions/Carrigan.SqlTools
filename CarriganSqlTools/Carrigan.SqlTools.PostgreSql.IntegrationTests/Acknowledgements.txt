@@ -25,7 +25,7 @@ and upstream project repositories.
     https://github.com/coverlet-coverage/coverlet/blob/master/THIRD-PARTY-NOTICES.txt
 
 - Npgsql  
-    © Npgsl  
+    © Npgsql  
     Licensed under the PostgreSQL License 
     https://github.com/npgsql/npgsql
     https://github.com/npgsql/npgsql/blob/main/LICENSE
@@ -55,7 +55,7 @@ and upstream project repositories.
     https://github.com/xunit/visualstudio.xunit/blob/main/
     https://github.com/xunit/visualstudio.xunit/blob/main/License.txt
 
-SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+PostgreSQL is a trademark of the PostgreSQL Community Association of Canada. This project is not affiliated with or endorsed by the PostgreSQL project.
 
 Unless otherwise expressly stated in a given package or distribution, references
 to third-party dependencies in this package generally refer to dependencies

@@ -1,6 +1,6 @@
 ﻿namespace Carrigan.SqlTools.Base.Tests.TestEntities;
 
-//IGNORE SPELLING: descruct
+//IGNORE SPELLING: destruct
 
 internal class ColumnTable
 {

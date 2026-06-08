@@ -170,7 +170,7 @@ public class Parameter : Predicates
     /// <summary>
     /// Produces the SQL fragment for this parameter using its base name (without any disambiguating prefix).
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The SQL parameter name without dialect-specific formatting.</returns>
     internal string ToSql() =>
         Name.ToString();
 

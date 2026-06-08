@@ -25,8 +25,8 @@ public sealed class SqlDateTimeAttribute : SqlTypeAttribute
     /// <param name="sizeableEnum">
     /// The <see cref="SizeableEnum"/> value indicating the desired SQL type size. Supported values are:
     /// </param>
-    /// <returns></returns>
-    /// <exception cref="NotSupportedException"></exception>
+    /// <returns>The SQL Server field properties for the requested date/time size option.</returns>
+    /// <exception cref="NotSupportedException">Thrown when the requested date/time size option is not supported by this attribute.</exception>
     private static FieldProperties GetFieldProperties(SizeableEnum sizeableEnum) =>
         sizeableEnum switch
         {

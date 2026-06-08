@@ -96,7 +96,7 @@ internal static class SqlQueryExtensions
     /// <param name="fieldProperties">
     /// The <see cref="FieldProperties"/> containing the provider type name to map to a <see cref="SqlDbType"/>.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The <see cref="SqlDbType"/> value that matches the SQL Server provider type name.</returns>
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when the <see cref="FieldProperties.ProviderTypeName"/> does not correspond to a supported SQL Server provider type name.
     /// </exception>

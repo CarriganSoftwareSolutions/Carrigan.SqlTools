@@ -32,7 +32,6 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="identifier">The database identifier to be quoted. This can be a table name, column name, or other SQL identifier. Cannot be
     /// null.</param>
     /// <returns>A string containing the quoted identifier, suitable for safe inclusion in a SQL statement.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as this method is not yet implemented.</exception>
     public string QuoteIdentifier(string identifier) =>
         $"[{identifier}]";
 
@@ -52,7 +51,6 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="schemaName">The name of the schema to which the table belongs, or null to omit the schema from the rendered output.</param>
     /// <param name="tableName">The name of the table to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified table.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
     public string RenderTable(SchemaName? schemaName, TableName tableName) =>
         schemaName.IsNotNullOrEmpty()
             ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(tableName)}"
@@ -64,7 +62,6 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="tableTag">The tableTag value.</param>
     /// <param name="columnName">The SQL column name to apply.</param>
     /// <returns>A string representing the fully qualified column name, formatted according to the specified parameters.</returns>
-    /// <exception cref="NotImplementedException">Thrown in all cases as the method is not implemented.</exception>
     public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
                 ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName)}"
@@ -78,7 +75,9 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="insertIntoFragments">The SQL fragments representing the INSERT INTO clause, including the target table and columns.</param>
     /// <param name="insertValuesFragments">The SQL fragments representing the VALUES clause for the INSERT statement.</param>
     /// <param name="columnInfo">A collection of column metadata specifying which columns should be included in the OUTPUT clause.</param>
-    /// <returns></returns>
+    /// <returns>
+    /// SQL fragments that declare the output table, emit the insert statement, capture inserted values, and select the captured values.
+    /// </returns>
     public IEnumerable<ISqlFragment> GetInsertReturningFragments<T>(IEnumerable<ISqlFragment> insertIntoFragments, IEnumerable<ISqlFragment> insertValuesFragments, IEnumerable<ColumnInfo> columnInfo) =>
         new SqlFragmentText(ReturnTableDefinition(columnInfo))
             .Concat(insertIntoFragments)
@@ -332,8 +331,7 @@ public class SqlServerDialect : ISqlDialects
     /// before it is used in SQL Server operations, such as ensuring it is in a specific time zone or format.
     /// For SQL Server, no adjustments are necessary.
     /// </param>
-    /// <returns></returns>
-
+    /// <returns>The original <see cref="DateTime"/> value.</returns>
     public DateTime? NormalizeTimeZone(DateTime? dateTime) =>
         dateTime;
 

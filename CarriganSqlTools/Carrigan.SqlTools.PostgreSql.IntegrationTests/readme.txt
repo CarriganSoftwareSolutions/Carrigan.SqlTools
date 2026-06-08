@@ -1,4 +1,4 @@
-﻿Be sure to set the environment variable to set the connection string for your PostgreSql database.
+﻿Be sure to set the environment variable to set the connection string for your PostgreSQL database.
 
 setx CARRIGAN_SQLTOOLS_POSTGRES_CONNECTION "<YOUR_CONNECTION_STRING>"
 

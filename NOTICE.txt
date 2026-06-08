@@ -1,9 +1,13 @@
-Carrigan.Emailer
+Carrigan.SqlTools
 
-This NOTICE file applies to the Carrigan.SqlTools NuGet package only.
+This NOTICE file applies to the Carrigan.SqlTools packages and related source distributions.
 
 Copyright (c) 2025 - 2026 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0.
 
 SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+
+PostgreSQL is a trademark of the PostgreSQL Community Association of Canada. This project is not affiliated with or endorsed by the PostgreSQL project.
+
+Npgsql is an open-source PostgreSQL data provider for .NET. This project is not affiliated with or endorsed by the Npgsql project.

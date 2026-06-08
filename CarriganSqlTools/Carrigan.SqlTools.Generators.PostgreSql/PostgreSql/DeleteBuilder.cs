@@ -4,7 +4,7 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-//TODO: QUery Builder classes need to be reevaluated IEncryption support.
+//TODO: Query builder classes need to be reevaluated for IEncryption support.
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>

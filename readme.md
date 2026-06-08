@@ -142,7 +142,7 @@ This library may generate or execute SQL. Review generated SQL before using it i
 
 Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.
 
-Carrigan.SqlTools is not affiliated with or endorsed by Microsoft, the PostgreSQL project, Npgsql, or Microsoft.Data.SqlClient.
+Carrigan.SqlTools is not affiliated with or endorsed by Microsoft, the PostgreSQL project, or the Npgsql project. Microsoft.Data.SqlClient and Npgsql are referenced only to identify supported ADO.NET providers.
 
 [Table of Contents](#table-of-contents)
 

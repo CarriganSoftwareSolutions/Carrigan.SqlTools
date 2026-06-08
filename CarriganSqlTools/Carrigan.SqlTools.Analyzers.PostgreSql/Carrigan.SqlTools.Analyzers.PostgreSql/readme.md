@@ -29,4 +29,4 @@ Apache-2.0
 
 https://www.apache.org/licenses/LICENSE-2.0
 
-SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
+PostgreSQL is a trademark of the PostgreSQL Community Association of Canada. This project is not affiliated with or endorsed by the PostgreSQL project.

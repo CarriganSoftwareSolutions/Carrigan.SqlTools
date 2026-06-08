@@ -52,9 +52,9 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// The left-hand side of the predicate, representing the column to compare. This is used to construct
     /// </param>
     /// <param name="parameterValue">
-    /// The constant value to compare against the column in the generated SQL. This is used to construct
+    /// The constant value to compare against the column in the generated SQL.
     /// </param>
-    /// <returns></returns>
+    /// <returns>An equality predicate comparing the column to the generated parameter.</returns>
     protected static Equal CreateValue(ColumnBase<T> left, object? parameterValue)
     {
         Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);

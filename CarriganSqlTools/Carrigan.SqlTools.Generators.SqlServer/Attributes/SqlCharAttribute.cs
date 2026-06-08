@@ -51,7 +51,7 @@ public sealed class SqlCharAttribute : SqlTypeAttribute
     /// <param name="size">
     /// An optional SQL size to apply. If not provided, defaults will be used based on the encoding and storage type.
     /// </param>
-    /// <returns></returns>
+    /// <returns>The SQL Server field properties for the requested character encoding, storage type, and size.</returns>
     /// <exception cref="NotSupportedException">
     /// Thrown when the combination of encoding and storage type options is not supported.
     /// </exception>

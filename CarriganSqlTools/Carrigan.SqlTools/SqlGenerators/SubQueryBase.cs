@@ -52,7 +52,7 @@ public class SubqueryBase : ISqlFragment
     /// is necessary because the SQL fragments may be composed of other fragments, and we need
     /// to ensure that we have a single level of fragments when rendering the SQL text or extracting parameters.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The flattened SQL fragments for the subquery.</returns>
     public IEnumerable<ISqlFragment> Flatten() =>
         SqlFragments.Flatten();
 
