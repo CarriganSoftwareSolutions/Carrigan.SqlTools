@@ -62,7 +62,7 @@
     <PreReleaseLabel Condition="'$(PackageId)'=='Carrigan.SqlTools.Generators.SqlServer'">$(SqlToolsSqlServerPreReleaseLabel)</PreReleaseLabel>
 
     <!-- PostgreSql Dialect Projects Base Version-->
-    <BaseVersion Condition="'$(PackageId)'=='Carrigan.Clients.PostgreSql'">$(SqlToolsPostgreSqlBaseVersion)</BaseVersion>
+    <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.PostgreSql'">$(SqlToolsPostgreSqlBaseVersion)</BaseVersion>
     <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.Clients.PostgreSql'">$(SqlToolsPostgreSqlBaseVersion)</BaseVersion>
     <BaseVersion Condition="'$(PackageId)'=='Carrigan.SqlTools.Generators.PostgreSql'">$(SqlToolsPostgreSqlBaseVersion)</BaseVersion>
 

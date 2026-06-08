@@ -79,3 +79,6 @@ snupkg
 postgresql
 postgre
 sqltools
+ushort
+uint
+ulong

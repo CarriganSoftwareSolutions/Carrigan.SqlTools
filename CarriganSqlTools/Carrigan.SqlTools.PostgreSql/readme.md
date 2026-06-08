@@ -1,14 +1,12 @@
-# Carrigan.SqlTools.Generators.PostgreSql
+# Carrigan.SqlTools.PostgreSql
 
-Carrigan.SqlTools.Generators.PostgreSql is a .NET library that adds PostgreSQL-specific SQL generation to Carrigan.SqlTools while still giving you control when you need it.
+Carrigan.SqlTools.PostgreSql is a convenience package that installs PostgreSQL SQL generation and PostgreSQL client execution support for Carrigan.SqlTools.
 
-It automatically generates PostgreSQL `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements using reflection. The PostgreSQL generator also provides a safe, object-oriented API for building more advanced PostgreSQL queries.
-
-A companion package, **Carrigan.SqlTools.Clients.PostgreSql**, provides the PostgreSQL client layer for executing generated queries, mapping rows to objects, and handling decryption of encrypted properties.
+It references **Carrigan.SqlTools.Generators.PostgreSql** for PostgreSQL `SELECT`, `INSERT`, `UPDATE`, and `DELETE` generation, and **Carrigan.SqlTools.Clients.PostgreSql** for executing generated queries, mapping rows to objects, and handling decryption of encrypted properties.
 
 The transitive dependency **Carrigan.Core** provides interfaces and property attributes used for custom property-level encryption and other shared helper behavior.
 
-This package includes PostgreSQL-focused Roslyn analyzers bundled with the package to assist with safe usage patterns.
+Installing this package brings in PostgreSQL-focused Roslyn analyzers through the generator package to assist with safe usage patterns.
 
 This project is not affiliated with or endorsed by the PostgreSQL project.
 
@@ -78,8 +76,8 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - **Focused on PostgreSQL**
   SQL output targets PostgreSQL syntax and PostgreSQL type names.
 
-- **Optional execution helpers**
-  Use `Carrigan.SqlTools.Clients.PostgreSql` for async and non-async helpers that run generated queries through Npgsql.
+- **Execution helpers included**
+  Includes `Carrigan.SqlTools.Clients.PostgreSql` for async and non-async helpers that run generated queries through Npgsql.
 
 [Table of Contents](#table-of-contents)
 
@@ -87,15 +85,16 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 
 ## Installation
 
-Install the PostgreSQL generator package:
+Install the PostgreSQL convenience package when you want both PostgreSQL SQL generation and PostgreSQL execution helpers:
+
+```powershell
+dotnet add package Carrigan.SqlTools.PostgreSql
+```
+
+If you only need one side of the dialect support, you can install the generator and client packages separately:
 
 ```powershell
 dotnet add package Carrigan.SqlTools.Generators.PostgreSql
-```
-
-For PostgreSQL execution helpers:
-
-```powershell
 dotnet add package Carrigan.SqlTools.Clients.PostgreSql
 ```
 
@@ -909,7 +908,7 @@ Plug `MyDecrypters` into `ExecuteReaderAsync<T>` or `ExecuteReader<T>` to transp
 
 ## License
 
-Carrigan.SqlTools.Generators.PostgreSql
+Carrigan.SqlTools.PostgreSql
 Copyright © 2025 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

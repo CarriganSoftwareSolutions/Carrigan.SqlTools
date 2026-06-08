@@ -1,15 +1,12 @@
-﻿# Carrigan.SqlTools.Generators.SqlServer
+﻿# Carrigan.SqlTools.SqlServer
 
-Carrigan.SqlTools.Generators.SqlServer is a .NET library that simplifies SQL generation for **Microsoft SQL Server** while still giving you control when you need it.  
+Carrigan.SqlTools.SqlServer is a convenience package that installs SQL Server SQL generation and SQL Server client execution support for Carrigan.SqlTools.  
 
-It automatically generates `SELECT`, `INSERT`, `UPDATE`, and `DELETE` statements using reflection. **Carrigan.SqlTools.Generators.SqlServer** adds a safe, object-oriented API for building more advanced queries. 
-
-The companion library **Carrigan.SqlTools.Clients.SqlServer** extends the generator by wrapping ADO.NET to execute generated queries, map rows to objects, and handle decryption of encrypted properties.
+It references **Carrigan.SqlTools.Generators.SqlServer** for SQL Server `SELECT`, `INSERT`, `UPDATE`, and `DELETE` generation, and **Carrigan.SqlTools.Clients.SqlServer** for executing generated queries, mapping rows to objects, and handling decryption of encrypted properties. 
 
 The transitive dependency **Carrigan.Core** provides interfaces, property attributes for custom property-level encryption, and shared helper functionality.
 
-
-This package includes Roslyn analyzers bundled with the package to assist with safe usage patterns.
+Installing this package brings in SQL Server-focused Roslyn analyzers through the generator package to assist with safe usage patterns.
 
 SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
 
@@ -44,7 +41,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
-- [Simple ADO.NET Example With SqlQuery](#simple-ado.net-example-with-sqlquery)
+- [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
 - [Data Type Mappings](#data-type-mappings)
   - [Default Parameter / Return Types](#default-parameter-return-types)
   - [Allowed Override Types](#allowed-override-types)
@@ -80,15 +77,16 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 
 ## Installation  
 
-Carrigan.SqlTools.Generators.SqlServer is available as a NuGet package:
+Install the SQL Server convenience package when you want both SQL Server SQL generation and SQL Server execution helpers:
 
 ```powershell
-dotnet add package Carrigan.SqlTools
+dotnet add package Carrigan.SqlTools.SqlServer
 ```
 
-For SQL Server execution helpers:
+If you only need one side of the dialect support, you can install the generator and client packages separately:
 
 ```powershell
+dotnet add package Carrigan.SqlTools.Generators.SqlServer
 dotnet add package Carrigan.SqlTools.Clients.SqlServer
 ```
 
@@ -854,7 +852,7 @@ public sealed class MyDecrypters : IDecrypters
 
 ## License
 
-Carrigan.SqlTools  
+Carrigan.SqlTools.SqlServer  
 Copyright © 2025 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
