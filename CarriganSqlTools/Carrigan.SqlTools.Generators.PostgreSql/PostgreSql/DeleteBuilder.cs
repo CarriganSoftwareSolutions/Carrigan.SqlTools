@@ -1,10 +1,9 @@
 using Carrigan.Core.Interfaces;
-using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-//TODO: Query builder classes need to be reevaluated for IEncryption support.
+
 namespace Carrigan.SqlTools.PostgreSql;
 
 /// <summary>
@@ -126,7 +125,7 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
     /// <summary>
     /// Generates SQL for the builder state.
     /// </summary>
-    private readonly SqlGenerator<T> SqlGenerator = new();
+    private readonly SqlGenerator<T> SqlGenerator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeleteBuilder{T, joinsT}"/> class.
@@ -180,7 +179,7 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     /// <summary>
     /// Generates SQL for the builder state.
     /// </summary>
-    private readonly SqlGenerator<T> SqlGenerator = new();
+    private readonly SqlGenerator<T> SqlGenerator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DeleteBuilder{T}"/> class.

@@ -49,7 +49,7 @@ public sealed record InsertBuilder<T> : QueryBuilders.InsertBuilderBase<T>, IQue
     /// <summary>
     /// Generates SQL for the builder state.
     /// </summary>
-    private readonly SqlGenerator<T> SqlGenerator = new();
+    private readonly SqlGenerator<T> SqlGenerator;
     /// <summary>
     /// Initializes a new instance of the <see cref="InsertBuilder{T}"/> class.
     /// </summary>

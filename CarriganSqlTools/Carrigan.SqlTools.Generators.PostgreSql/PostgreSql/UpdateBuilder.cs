@@ -95,7 +95,7 @@ public sealed record UpdateBuilder<T, joinsT> : QueryBuilders.UpdateBuilderBase<
     /// <summary>
     /// Generates SQL for the builder state.
     /// </summary>
-    private readonly SqlGenerator<T> SqlGenerator = new();
+    private readonly SqlGenerator<T> SqlGenerator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UpdateBuilder{T, joinsT}"/> class.
@@ -138,7 +138,7 @@ public sealed record UpdateBuilder<T> : QueryBuilders.UpdateBuilderBase<T, T>, I
     /// <summary>
     /// Generates SQL for the builder state.
     /// </summary>
-    private readonly SqlGenerator<T> SqlGenerator = new();
+    private readonly SqlGenerator<T> SqlGenerator;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="UpdateBuilder{T, joinsT}"/> class.
