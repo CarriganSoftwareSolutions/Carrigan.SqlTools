@@ -1,4 +1,6 @@
-﻿# Carrigan.SqlTools
+﻿<a id="carrigan.sqltools"></a>
+
+# Carrigan.SqlTools
 <!--Ignore Spelling: dotnet sqlquery adonet decrypters encryptors-->
 
 Carrigan.SqlTools contains the shared SQL modeling, reflection, predicate, join, paging, and query-building abstractions used by the Carrigan.SqlTools dialect generator and client packages.

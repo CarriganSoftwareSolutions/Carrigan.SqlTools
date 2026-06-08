@@ -1,4 +1,6 @@
-﻿# Carrigan.SqlTools.Analyzers.PostgreSql
+﻿<a id="carrigan.sqltools.analyzers.postgresql"></a>
+
+# Carrigan.SqlTools.Analyzers.PostgreSql
 
 **Custom Analyzers**
 *Status: 0.1.0

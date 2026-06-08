@@ -1,3 +1,5 @@
+<a id="carrigan.sqltools.clients.postgresql"></a>
+
 # Carrigan.SqlTools.Clients.PostgreSql
 
 PostgreSQL client support for Carrigan.SqlTools.

@@ -1,3 +1,5 @@
+<a id="carrigan.sqltools.generators.postgresql"></a>
+
 # Carrigan.SqlTools.Generators.PostgreSql
 
 Carrigan.SqlTools.Generators.PostgreSql is a .NET library that adds PostgreSQL-specific SQL generation to Carrigan.SqlTools while still giving you control when you need it.
@@ -240,6 +242,8 @@ SqlQuery query = customerGenerator.UpdateById(entity);
 
 [Table of Contents](#table-of-contents)
 
+<a id="update-by-id-selected-columns"></a>
+
 ### Update by Id (selected columns)
 
 Key attribute required, and composite keys are supported by specifying multiple keys.
@@ -271,6 +275,8 @@ SqlQuery query = customerGenerator.Delete(entity);
 ```
 
 [Table of Contents](#table-of-contents)
+
+<a id="delete-by-id-multiple-keys"></a>
 
 ### Delete by Id (multiple keys)
 
@@ -498,6 +504,8 @@ public SqlGenerator<EmailModel> emailGenerator = new();
 public SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 ```
 
+<a id="table-column-and-key"></a>
+
 ### Table, Column and Key
 
 ```csharp
@@ -648,6 +656,8 @@ IEnumerable<Customer> customers =
 [Table of Contents](#table-of-contents)
 
 ---
+
+<a id="simple-ado.net-example-with-sqlquery"></a>
 
 ## Simple ADO.NET Example With `SqlQuery`
 

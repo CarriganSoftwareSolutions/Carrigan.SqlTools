@@ -1,4 +1,6 @@
-﻿# Carrigan.SqlTools.SqlServer
+﻿<a id="carrigan.sqltools.sqlserver"></a>
+
+# Carrigan.SqlTools.SqlServer
 
 Carrigan.SqlTools.SqlServer is a convenience package that installs SQL Server SQL generation and SQL Server client execution support for Carrigan.SqlTools.  
 
@@ -41,7 +43,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
   - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
   - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
-- [Simple ADO.NET Example With SqlQuery](#simple-adonet-example-with-sqlquery)
+- [Simple ADO.NET Example With SqlQuery](#simple-ado.net-example-with-sqlquery)
 - [Data Type Mappings](#data-type-mappings)
   - [Default Parameter / Return Types](#default-parameter-return-types)
   - [Allowed Override Types](#allowed-override-types)
@@ -223,6 +225,8 @@ SqlQuery query = customerGenerator.UpdateById(entity);
 [Table of Contents](#table-of-contents)
 
 
+<a id="update-by-id-selected-columns"></a>
+
 ### Update by Id (selected columns)
 A key attribute is required. Composite keys are supported by marking multiple key properties. 
 
@@ -249,6 +253,8 @@ SqlQuery query = customerGenerator.Delete(entity);
 
 [Table of Contents](#table-of-contents)
 
+
+<a id="delete-by-id-multiple-keys"></a>
 
 ### Delete by Id (multiple keys)
 A key attribute is required. Composite keys are supported by marking multiple key properties.
@@ -475,6 +481,8 @@ public SqlGenerator<PhoneModel> phoneGenerator = new();
 public SqlGenerator<EmailModel> emailGenerator = new();
 public SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 ```
+<a id="table-column-and-key"></a>
+
 ### Table, Column and Key
 
 ```csharp
@@ -628,6 +636,8 @@ IEnumerable<Customer> customers =
 
 ---
 
+<a id="simple-ado.net-example-with-sqlquery"></a>
+
 ## Simple ADO.NET Example With `SqlQuery`
 
 If you prefer raw ADO.NET, you can still use `SqlQuery` for the SQL text, command type, and parameters:
@@ -669,6 +679,8 @@ connection.Close();
 
 ---
 ## Data Type Mappings
+
+<a id="default-parameter-return-types"></a>
 
 ### Default Parameter / Return Types
 
@@ -728,6 +740,8 @@ connection.Close();
 [Table of Contents](#table-of-contents)
 
 ---
+
+<a id="exampleencryptor-aesgcm-based-and-idecrypters"></a>
 
 ## ExampleEncryptor (AesGcm-based) and `IDecrypters`
 

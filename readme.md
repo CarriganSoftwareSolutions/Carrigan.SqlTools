@@ -1,3 +1,5 @@
+<a id="carrigan.sqltools"></a>
+
 # Carrigan.SqlTools
 
 Carrigan.SqlTools is a multi-dialect .NET SQL toolkit for generating SQL, building query expressions, executing generated queries, mapping rows to objects, and supporting property-level encryption/decryption workflows.

@@ -1,3 +1,5 @@
+<a id="carrigan.sqltools.clients.core"></a>
+
 # Carrigan.SqlTools.Clients.Core
 
 Shared core client infrastructure for the Carrigan.SqlTools database dialect client packages.

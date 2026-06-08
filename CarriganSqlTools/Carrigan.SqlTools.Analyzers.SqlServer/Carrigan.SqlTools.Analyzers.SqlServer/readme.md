@@ -1,4 +1,6 @@
-﻿# Carrigan.SqlTools.Analyzers
+﻿<a id="carrigan.sqltools.analyzers"></a>
+
+# Carrigan.SqlTools.Analyzers
 
 **Custom Analyzers**
 *Status: 0.1.0
