@@ -16,7 +16,7 @@ public class UpdateTests
     private readonly SqlGenerator<JoinLeftTable> generator = new();
 
     [Fact]
-    public void Update_WithMultipleFroms()
+    public void Update_WithMultipleFromTables()
     {
         JoinLeftTable values = new()
         {
@@ -26,7 +26,7 @@ public class UpdateTests
         Predicates leftToRightPredicate = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
         Predicates rightToLastPredicate = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.LastId)), new Column<JoinLastTable>(nameof(JoinLastTable.Id)));
 
-        SqlQuery query = generator.Update<JoinRightTable>
+        SqlQuery query = generator.Update
         (
             values,
             updateColumns,
@@ -54,7 +54,7 @@ public class UpdateTests
         };
         ColumnCollection<JoinLeftTable> updateColumns = new(nameof(JoinLeftTable.Col1));
 
-        Assert.Throws<InvalidTableException>(() => generator.Update<JoinRightTable>(values, updateColumns, [TableTag.Get<JoinLeftTable>()], null));
+        Assert.Throws<InvalidTableException>(() => generator.Update(values, updateColumns, [TableTag.Get<JoinLeftTable>()], null));
     }
 
     [Fact]
