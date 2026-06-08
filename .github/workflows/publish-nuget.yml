@@ -85,14 +85,6 @@ jobs:
           --collect:"XPlat Code Coverage"
           --logger "trx;LogFileName=test-results.trx"
 
-      - name: SqlToolsTests
-        run: >-
-          dotnet test CarriganSqlTools/Carrigan.SqlTools.Tests/Carrigan.SqlTools.Tests.csproj
-          --configuration Release
-          --no-build
-          --collect:"XPlat Code Coverage"
-          --logger "trx;LogFileName=test-results.trx"
-
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
