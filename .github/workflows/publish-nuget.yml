@@ -1,4 +1,5 @@
-name: Publish to NuGet (version/0.x)
+#IGNORE SPELLING: trx fi
+name: Publish to NuGet (version branches)
 
 on:
   push:
@@ -36,17 +37,57 @@ jobs:
       - name: Build
         run: dotnet build CarriganSqlTools/CarriganSqlTools.sln --configuration Release --no-restore
 
-      - name: SqlToolsTests
+      - name: BaseTests
         run: >-
-          dotnet test CarriganSqlTools/Carrigan.SqlTools.Tests/Carrigan.SqlTools.Tests.csproj
+          dotnet test CarriganSqlTools/Carrigan.SqlTools.Base.Tests/Carrigan.SqlTools.Base.Tests.csproj
           --configuration Release
           --no-build
           --collect:"XPlat Code Coverage"
           --logger "trx;LogFileName=test-results.trx"
 
-      - name: SqlToolsSqlServerTests
+      - name: ClientsCoreTests
         run: >-
-          dotnet test CarriganSqlTools/Carrigan.SqlTools.SqlServer.Tests/Carrigan.SqlTools.SqlServer.Tests.csproj
+          dotnet test CarriganSqlTools/Carrigan.SqlTools.Clients.Core.Tests/Carrigan.SqlTools.Clients.Core.Tests.csproj
+          --configuration Release
+          --no-build
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=test-results.trx"
+
+      - name: ClientsPostgreSqlTests
+        run: >-
+          dotnet test CarriganSqlTools/Carrigan.SqlTools.Clients.PostgreSql.Tests/Carrigan.SqlTools.Clients.PostgreSql.Tests.csproj
+          --configuration Release
+          --no-build
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=test-results.trx"
+
+      - name: ClientsSqlServerTests
+        run: >-
+          dotnet test CarriganSqlTools/Carrigan.SqlTools.Clients.SqlServer.Tests/Carrigan.SqlTools.Clients.SqlServer.Tests.csproj
+          --configuration Release
+          --no-build
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=test-results.trx"
+
+      - name: GeneratorsPostgreSqlTests
+        run: >-
+          dotnet test CarriganSqlTools/Carrigan.SqlTools.Generators.PostgreSql.Tests/Carrigan.SqlTools.Generators.PostgreSql.Tests.csproj
+          --configuration Release
+          --no-build
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=test-results.trx"
+
+      - name: GeneratorsSqlServerTests
+        run: >-
+          dotnet test CarriganSqlTools/Carrigan.SqlTools.Generators.SqlServer.Tests/Carrigan.SqlTools.Generators.SqlServer.Tests.csproj
+          --configuration Release
+          --no-build
+          --collect:"XPlat Code Coverage"
+          --logger "trx;LogFileName=test-results.trx"
+
+      - name: SqlToolsTests
+        run: >-
+          dotnet test CarriganSqlTools/Carrigan.SqlTools.Tests/Carrigan.SqlTools.Tests.csproj
           --configuration Release
           --no-build
           --collect:"XPlat Code Coverage"
@@ -118,13 +159,18 @@ jobs:
 
   publish-alpha:
     needs: build-pack
-    if: needs.build-pack.outputs.is_alpha == 'true'
+    if: startsWith(github.ref, 'refs/heads/version/') && needs.build-pack.outputs.is_alpha == 'true'
     runs-on: ubuntu-latest
     env:
       NUGET_SOURCE: https://api.nuget.org/v3/index.json
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
     steps:
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.0.x
+
       - name: Download NuGet packages
         uses: actions/download-artifact@v8
         with:
@@ -156,7 +202,7 @@ jobs:
 
   publish-release:
     needs: build-pack
-    if: needs.build-pack.outputs.is_alpha != 'true'
+    if: startsWith(github.ref, 'refs/heads/version/') && needs.build-pack.outputs.is_alpha != 'true'
     runs-on: ubuntu-latest
     environment: nuget-release
     env:
@@ -164,6 +210,11 @@ jobs:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
     steps:
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.0.x
+
       - name: Download NuGet packages
         uses: actions/download-artifact@v8
         with:
