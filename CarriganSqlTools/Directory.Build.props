@@ -27,7 +27,7 @@
 
     <!-- PreReleaseStatus / Base version: x.y.z For Base Projects -->
     <SqlToolsBaseProjectsBaseVersion>0.6.1</SqlToolsBaseProjectsBaseVersion>
-    <SqlToolsBaseProjectsPreReleaseLabel></SqlToolsBaseProjectsPreReleaseLabel>
+    <SqlToolsBaseProjectsPreReleaseLabel>alpha</SqlToolsBaseProjectsPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For SqlServer Dialect -->
     <SqlToolsSqlServerBaseVersion>0.6.1</SqlToolsSqlServerBaseVersion>
