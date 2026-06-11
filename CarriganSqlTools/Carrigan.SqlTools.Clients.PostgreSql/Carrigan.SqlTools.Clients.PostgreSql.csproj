@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Carrigan.SqlTools.Clients.PostgreSql</PackageId>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -36,7 +36,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.0" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.4" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
   </ItemGroup>
   

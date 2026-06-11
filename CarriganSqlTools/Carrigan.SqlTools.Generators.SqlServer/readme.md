@@ -85,7 +85,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 Carrigan.SqlTools.Generators.SqlServer is available as a NuGet package:
 
 ```powershell
-dotnet add package Carrigan.SqlTools
+dotnet add package Carrigan.SqlTools.Generators.SqlServer
 ```
 
 For SQL Server execution helpers:

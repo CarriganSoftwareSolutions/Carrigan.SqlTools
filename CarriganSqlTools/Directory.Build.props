@@ -23,19 +23,19 @@
     <!--Base Version for other projects-->
     <BaseVersion>0.6.1</BaseVersion>
     <!-- PreRelease Status -->
-    <PreReleaseLabel>alpha</PreReleaseLabel>
+    <PreReleaseLabel></PreReleaseLabel>
 
     <!-- PreReleaseStatus / Base version: x.y.z For Base Projects -->
     <SqlToolsBaseProjectsBaseVersion>0.6.1</SqlToolsBaseProjectsBaseVersion>
-    <SqlToolsBaseProjectsPreReleaseLabel>alpha</SqlToolsBaseProjectsPreReleaseLabel>
+    <SqlToolsBaseProjectsPreReleaseLabel></SqlToolsBaseProjectsPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For SqlServer Dialect -->
     <SqlToolsSqlServerBaseVersion>0.6.1</SqlToolsSqlServerBaseVersion>
-    <SqlToolsSqlServerPreReleaseLabel>alpha</SqlToolsSqlServerPreReleaseLabel>
+    <SqlToolsSqlServerPreReleaseLabel></SqlToolsSqlServerPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For PostgreSql Dialect -->
     <SqlToolsPostgreSqlBaseVersion>0.6.1</SqlToolsPostgreSqlBaseVersion>
-    <SqlToolsPostgreSqlPreReleaseLabel>alpha</SqlToolsPostgreSqlPreReleaseLabel>
+    <SqlToolsPostgreSqlPreReleaseLabel></SqlToolsPostgreSqlPreReleaseLabel>
     
     <!-- Time Stamp -->
     <BuildTimeStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmm'))</BuildTimeStamp>
