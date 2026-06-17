@@ -23,7 +23,7 @@ public class JoinSubqueryTests
         new (nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
 
     private static Subquery<JoinRightTable> RightSubquery(Predicates? predicates = null, Joins<JoinRightTable>? joins = null) =>
-        RightGenerator.Subquery(null, null, joins, predicates, null, null);
+        RightGenerator.Subquery(null, null, joins, predicates, null, null, null);
 
     [Fact]
     public void Join_WithSubquery_RendersSubqueryAndAlias()
@@ -233,7 +233,7 @@ public class JoinSubqueryTests
 
         Joins<JoinLeftTable> joins = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate(), RightSubquery());
 
-        SqlQuery query = LeftGenerator.Select(null, null, selectTags, joins, null, null, null);
+        SqlQuery query = LeftGenerator.Select(null, null, selectTags, joins, null, null, null, null);
 
         Assert.Equal("SELECT [Left].[Id], [Right].[Col1] AS [RightCol1] FROM [Left] JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -247,7 +247,7 @@ public class JoinSubqueryTests
         Predicates outerPredicate = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Col2)), new Parameter("Closed", "RightCol2"));
         Joins<JoinLeftTable> joins = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate(), RightSubquery(subQueryPredicate));
 
-        SqlQuery query = LeftGenerator.Select(null, null, null, joins, outerPredicate, null, null);
+        SqlQuery query = LeftGenerator.Select(null, null, null, joins, outerPredicate, null, null, null);
 
         Assert.Equal("SELECT [Left].* FROM [Left] JOIN (SELECT [Right].* FROM [Right] WHERE ([Right].[Col1] = @RightCol1_1)) AS [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Col2] = @RightCol2_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -262,7 +262,7 @@ public class JoinSubqueryTests
         Joins<JoinRightTable> subQueryJoins = Joins<JoinRightTable>.Join<JoinLastTable>(LastOnRightPredicate());
         Joins<JoinLeftTable> joins = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate(), RightSubquery(null, subQueryJoins));
 
-        SqlQuery query = LeftGenerator.Select(null, null, null, joins, null, null, null);
+        SqlQuery query = LeftGenerator.Select(null, null, null, joins, null, null, null, null);
 
         Assert.Equal("SELECT [Left].* FROM [Left] JOIN (SELECT [Right].* FROM [Right] JOIN [Last] ON ([Right].[LastId] = [Last].[Id])) AS [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

@@ -51,7 +51,7 @@ public class SqlGeneratorSelectExamples
         InnerJoin<Order> join = new(predicate);
         Joins<Customer> joins = new(join);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null, null);
 
         string expectedQueryText =
             """
@@ -74,7 +74,7 @@ public class SqlGeneratorSelectExamples
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, orderByOrderDate, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, orderByOrderDate, null);
 
         string expectedQueryText =
             """
@@ -102,7 +102,7 @@ public class SqlGeneratorSelectExamples
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, greaterThan, orderByOrderDate, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, joins, greaterThan, null, orderByOrderDate, null);
 
         string expectedQueryText =
             """

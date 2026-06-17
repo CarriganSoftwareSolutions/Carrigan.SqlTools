@@ -14,6 +14,7 @@ public class SqlGeneratorSelectCountExamples
     private static readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SelectCountAll()
     {
         SqlQuery query = orderGenerator.SelectCount(null, null, null, null);
@@ -29,6 +30,7 @@ public class SqlGeneratorSelectCountExamples
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SelectCountWithWhere()
     {
         //Note: Column<T> validates the names of the properties, and throws an error if the property isn't valid
@@ -50,6 +52,7 @@ public class SqlGeneratorSelectCountExamples
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SelectCountWithWhereAndJoin()
     {
         //Note: ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid
@@ -75,6 +78,7 @@ public class SqlGeneratorSelectCountExamples
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SelectCountWithSelectsOnTheJoin()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid

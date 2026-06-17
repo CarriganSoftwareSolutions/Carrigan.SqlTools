@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.JoinTypes;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -21,9 +22,10 @@ public abstract partial class SqlGeneratorBase<T>
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        OrderBysBase? orderBy,
+        GroupBysBase? groupBys,
+        OrderBysBase? orderBy, 
         PagingBase? paging
-    ) =>
-        new(BaseSelectFragments(distinct, null, selects, joins, predicates, orderBy, paging), Dialect);
+) =>
+        new(BaseSelectFragments(distinct, null, selects, joins, predicates, groupBys, orderBy, paging), Dialect);
 
 }

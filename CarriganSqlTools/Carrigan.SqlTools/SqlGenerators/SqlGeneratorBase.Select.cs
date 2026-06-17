@@ -1,6 +1,7 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -36,7 +37,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// in the query (i.e., is not the base table and not included by joins).
     /// </exception>
     protected virtual SqlQuery BaseSelectAll(OrderBysBase? orderBy = null) =>
-        BaseSelect(null, null, null, null, null, orderBy, null);
+        BaseSelect(null, null, null, null, null, null, orderBy, null);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
@@ -52,6 +53,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// </param>
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
+    /// </param>
+    /// <param name="groupBys">
+    /// The optional GROUP BY clause. When provided, this will be rendered after the WHERE clause and before the ORDER BY clause.
     /// </param>
     /// <param name="orderBy">
     /// Optional ordering to compose the <c>ORDER BY</c> clause.
@@ -79,8 +83,17 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
     /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
-    protected virtual SqlQuery BaseSelect(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBy, PagingBase? paging) =>
-        new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, predicates, orderBy, paging));
+    protected virtual SqlQuery BaseSelect
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        OrderBysBase? orderBy, PagingBase? paging
+    ) =>
+        new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, predicates, groupBys, orderBy, paging));
 
     /// <summary>
     /// Builds the SQL fragments that make up a SELECT statement.
@@ -90,10 +103,22 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="selects">The optional SELECT projection list.</param>
     /// <param name="joins">The optional joins to append after the FROM source.</param>
     /// <param name="predicates">The optional WHERE predicates.</param>
+    /// <param name="groupBys">
+    /// The optional GROUP BY clause. When provided, this will be rendered after the WHERE clause and before the ORDER BY clause.
+    /// </param>
     /// <param name="orderBy">The optional ORDER BY clause.</param>
-    /// <param name="paging">The optional paging clause.</param>
     /// <returns>The SQL fragments that render the SELECT statement.</returns>
-    private IEnumerable<ISqlFragment> BaseSelectFragments(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBy, PagingBase? paging)
+    /// <param name="paging">The optional paging clause.</param>
+    private IEnumerable<ISqlFragment> BaseSelectFragments
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        OrderBysBase? orderBy, PagingBase? paging
+    )
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
@@ -133,6 +158,9 @@ public abstract partial class SqlGeneratorBase<T>
                 foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
                     yield return fragment;
             }
+
+            if(groupBys.IsNotNullOrEmpty())
+                yield return new SqlFragmentText($" {groupBys.AsGroupBy().ToSql(Dialect)}");
 
             if (orderBy.IsNotNullOrEmpty())
                 yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql(Dialect)}");
@@ -214,6 +242,6 @@ public abstract partial class SqlGeneratorBase<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(GetByKeyPredicates(entity)))), null, null);
+            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(GetByKeyPredicates(entity)))), null, null, null);
     }
 }

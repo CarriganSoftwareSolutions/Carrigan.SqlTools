@@ -21,7 +21,7 @@ public class JoinsParameterTest
         InnerJoin<PaymentMethod> join2 = new(paymentCondition);
         Joins<Customer> joins = new(join1, join2);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_1) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -31,6 +31,7 @@ public class JoinsParameterTest
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SelectCountJoinParameterTest()
     {
         ColumnValue<Order> orderCondition = new(nameof(Order.Total), 1000m);

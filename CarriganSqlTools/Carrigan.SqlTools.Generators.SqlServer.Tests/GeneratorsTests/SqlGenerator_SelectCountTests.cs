@@ -24,6 +24,7 @@ public class SqlGenerator_SelectCountTests
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SqlSelect_WithTableAttribute()
     {
         SqlQuery query = _sqlGeneratorForEntityWithTableAttribute.SelectCount(null, null, null, null);
@@ -33,6 +34,7 @@ public class SqlGenerator_SelectCountTests
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SqlSelect_InnerInnerJoin_NoPredicates_WithTableAttribute()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
@@ -44,6 +46,7 @@ public class SqlGenerator_SelectCountTests
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SqlSelect_InnerLeftJoin_NoPredicates_WithTableAttribute()
     {
         PredicatesLogic.Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
@@ -55,6 +58,7 @@ public class SqlGenerator_SelectCountTests
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SqlSelect_NoJoins_WithPredicates_WithTableAttribute()
     {
         PredicatesLogic.Predicates id = new Equal(new Column<ColumnTable>("Col1"), new Parameter(3, "Col1"));
@@ -68,6 +72,7 @@ public class SqlGenerator_SelectCountTests
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SqlSelectCount_WithInnerJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
@@ -83,6 +88,7 @@ public class SqlGenerator_SelectCountTests
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SqlSelectCount_WithLeftJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
@@ -98,6 +104,7 @@ public class SqlGenerator_SelectCountTests
     }
 
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SqlSelectCount_WithLeftAndInnerJoin_WithPredicates_WithTableAttribute()
     {
         Predicates joinId1 = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));

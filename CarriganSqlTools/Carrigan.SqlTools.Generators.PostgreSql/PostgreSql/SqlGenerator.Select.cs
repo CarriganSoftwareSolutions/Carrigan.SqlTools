@@ -1,5 +1,6 @@
 using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -173,8 +174,18 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ORDER BY "Order"."OrderDate" ASC
     /// ]]></code>
     /// </example>
-    public SqlQuery Select(bool? distinct, Subquery<T>? subQuery, SelectTagsBase? selects, Joins<T>? joins, Predicates? predicates, OrderBysBase? orderBys, PagingBase? paging) =>
-        base.BaseSelect(distinct, subQuery, selects, joins, predicates, orderBys, paging);
+    public SqlQuery Select
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        OrderBysBase? orderBys, 
+        PagingBase? paging
+) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, orderBys, paging);
 
     /// <summary>
     /// Builds a SELECT SQL query for the supplied model data.
@@ -182,7 +193,17 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="selectQuery">The select builder to materialize.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the SELECT statement.</returns>
     public SqlQuery Select(SelectBuilder<T> selectQuery) =>
-        Select(selectQuery.Distinct, selectQuery.Subquery, selectQuery.Selects, selectQuery.Joins, selectQuery.Where, selectQuery.OrderBys, selectQuery.Paging);
+        Select
+        (
+            selectQuery.Distinct,
+            selectQuery.Subquery, 
+            selectQuery.Selects, 
+            selectQuery.Joins, 
+            selectQuery.Where,
+            selectQuery.GroupBys, 
+            selectQuery.OrderBys,
+            selectQuery.Paging
+        );
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key

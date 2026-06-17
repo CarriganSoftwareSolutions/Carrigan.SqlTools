@@ -81,5 +81,4 @@ public class GroupBy<T> : GroupByBase where T : class
     /// </summary>
     internal IEnumerable<TableTag> TableTags =>
         [TableTag];
-
 }

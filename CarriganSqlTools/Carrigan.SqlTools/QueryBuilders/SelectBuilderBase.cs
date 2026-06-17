@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -39,6 +40,11 @@ public abstract record SelectBuilderBase<T> where T : class
     /// Gets or sets the WHERE predicates for the query.
     /// </summary>
     public Predicates? Where { get; set; }
+
+    /// <summary>
+    /// Gets or sets the GROUP BY clause for the query.
+    /// </summary>
+    public GroupBysBase? GroupBys { get; set; }
 
     /// <summary>
     /// Gets or sets the ORDER BY clause for the query.
@@ -103,6 +109,20 @@ public abstract record SelectBuilderBase<T> where T : class
     /// <returns>A new query instance with the specified WHERE predicates.</returns>
     public SelectBuilderBase<T> WithWhere(Predicates? where) =>
         this with { Where = where };
+
+    /// <summary>
+    /// Returns a copy of the current query with the specified GROUP BY clause.
+    /// </summary>
+    /// <param name="groupsBy">
+    /// The GROUP BY clause to apply to the query. This can be <see langword="null"/> to omit the GROUP BY clause, 
+    /// or an instance of <see cref="GroupBysBase"/> containing one or more group by items.
+    /// </param>
+    /// <returns>
+    /// A new query instance with the specified GROUP BY clause. If <paramref name="groupsBy"/> is <see langword="null"/>,
+    /// the returned query will not include a GROUP BY clause. Otherwise, the returned query will include the specified GROUP BY clause.
+    /// </returns>
+    public SelectBuilderBase<T> WithGroupBy(GroupBysBase? groupsBy) =>
+        this with { GroupBys = groupsBy };
 
     /// <summary>
     /// Returns a copy of the current query with the specified ORDER BY clause.

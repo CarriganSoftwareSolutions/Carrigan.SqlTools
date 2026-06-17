@@ -8,6 +8,7 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 public sealed class SqlGenerator_SelectCountInvalidSelectTableTests
 {
     [Fact]
+    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SelectCount_SelectsReferencesNonJoinedTable_InvalidTableException()
     {
         MockEncryption mockEncrypter = new("+Encrypted+");

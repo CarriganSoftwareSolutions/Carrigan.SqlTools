@@ -21,10 +21,10 @@ public class NotExistsTests
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null);
         NotExists notExists = new(subQuery);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, null, notExists, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, notExists, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (NOT EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -40,7 +40,7 @@ public class NotExistsTests
             new Column<Order>(nameof(Order.CustomerId)),
             new Parameter(42, "CustomerId")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null);
         NotExists notExists = new(subQuery);
         Predicates outerPredicate = new Equal
         (
@@ -49,7 +49,7 @@ public class NotExistsTests
         );
         And and = new(notExists, outerPredicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, null, and, null, null);
+        SqlQuery query = customerGenerator.Select(null, null, null, null, and, null, null, null);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ((NOT EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[CustomerId] = @CustomerId_1))) AND ([Customer].[Name] = @Name_2))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

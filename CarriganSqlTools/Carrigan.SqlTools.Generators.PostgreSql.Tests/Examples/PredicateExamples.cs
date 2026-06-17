@@ -171,7 +171,7 @@ public class PredicateExamples
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null, null);
         Exists exists = new(subQuery);
 
         SelectBuilder<Customer> selectBuilder = new()
@@ -421,7 +421,7 @@ public class PredicateExamples
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null, null);
         NotExists notExists = new(subQuery);
 
         SelectBuilder<Customer> selectBuilder = new()

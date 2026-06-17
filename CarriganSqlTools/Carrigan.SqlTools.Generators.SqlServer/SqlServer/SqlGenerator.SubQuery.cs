@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -22,10 +23,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        OrderBysBase? orderBy,
-        PagingBase? paging
+        GroupBysBase? groupsBys,
+        OrderBysBase? orderBy, PagingBase? paging
     ) =>
-        BaseSubquery(distinct, selects, joins, predicates, orderBy, paging);
+        BaseSubquery(distinct, selects, joins, predicates, groupsBys, orderBy, paging);
 
     /// <summary>
     /// Builds a subquery from the supplied subquery builder.
@@ -33,5 +34,5 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="subqueryBuilder">The subquery builder to materialize.</param>
     /// <returns>A subquery that can be used as a SQL fragment.</returns>
     public Subquery<T> Subquery(SubqueryBuilder<T> subqueryBuilder) =>
-        Subquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
+        Subquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, null, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
 }

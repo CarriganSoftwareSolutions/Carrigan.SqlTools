@@ -1,6 +1,7 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -45,7 +46,14 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
     /// </param>
-    protected virtual SqlQuery BaseSelectCount(bool? distinct, SelectTagBase? select, Joins<T>? joins, Predicates? predicates)
+    [Obsolete("Use the Select Aggregate Count instead.")]
+    protected virtual SqlQuery BaseSelectCount
+    (
+        bool? distinct,
+        SelectTagBase? select, 
+        Joins<T>? joins, 
+        Predicates? predicates
+    )
     {
         IEnumerable<ISqlFragment> GetFragments()
         {
