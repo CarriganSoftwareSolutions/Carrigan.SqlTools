@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,29 +10,29 @@ public class IsNullTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private readonly Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
+    private readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
+    private readonly Column<ColumnTable> ColumnDestructCode = new("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
+    private readonly Column<ColumnTable> ColumnFutureCity = new("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly Predicates ParameterPi = new Parameter(3.14f, "Pi");
+    private readonly Parameter ParameterPi = new(3.14f, "Pi");
     private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly Predicates ParameterElite = new Parameter(1337, "Elite");
+    private readonly Parameter ParameterElite = new(1337, "Elite");
     private readonly string ParameterEliteSql = "@Elite_1";
 
-    private readonly Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
+    private readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
     private readonly string ParameterHelloWorldSql = "@HelloWorld_1";
 
 
     [Fact]
     public void IsNull_1_ToSql()
     {
-        Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
         string innerSql = ColumnTastyPizzaExpectedSql;
 
         Predicates predicate = new IsNull(inner);
@@ -44,7 +45,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_1_ParameterCount()
     {
-        Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
 
         Predicates predicate = new IsNull(inner);
 
@@ -57,7 +58,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_2_ToSql()
     {
-        Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
         string innerSql = ColumnDestructCodeSql;
 
         Predicates predicate = new IsNull(inner);
@@ -70,7 +71,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_2_ParameterCount()
     {
-        Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
 
         Predicates predicate = new IsNull(inner);
 
@@ -83,7 +84,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_3_ToSql()
     {
-        Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
         string innerSql = ColumnFutureCitySql;
 
         Predicates predicate = new IsNull(inner);
@@ -97,7 +98,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_3_ParameterCount()
     {
-        Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
 
         Predicates predicate = new IsNull(inner);
 
@@ -110,7 +111,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_4_ToSql()
     {
-        Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
         string innerSql = ParameterPiSql;
 
         Predicates predicate = new IsNull(inner);
@@ -124,7 +125,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_4_ParameterCount()
     {
-        Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
 
         Predicates predicate = new IsNull(inner);
 
@@ -137,7 +138,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_4_ParameterValues()
     {
-        Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
 
         Predicates predicate = new IsNull(inner);
 
@@ -153,7 +154,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ToSql()
     {
-        Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
         string innerSql = ParameterEliteSql;
 
         Predicates predicate = new IsNull(inner);
@@ -167,7 +168,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ParameterCount()
     {
-        Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
 
         Predicates predicate = new IsNull(inner);
 
@@ -180,7 +181,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ParameterValue()
     {
-        Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
 
         Predicates predicate = new IsNull(inner);
 
@@ -199,7 +200,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_6_ToSql()
     {
-        Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
         string innerSql = ParameterHelloWorldSql;
 
         Predicates predicate = new IsNull(inner);
@@ -213,7 +214,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_6_ParameterCount()
     {
-        Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
 
         Predicates predicate = new IsNull(inner);
 
@@ -227,7 +228,7 @@ public class IsNullTests
     public void IsNull_6_ParameterValue()
     {
 
-        Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
 
         Predicates predicate = new IsNull(inner);
 
@@ -279,7 +280,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_1_ColumnCount()
     {
-        Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
 
         Predicates predicate = new IsNull(inner);
 
@@ -292,7 +293,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_1_ColumnName()
     {
-        Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
 
         Predicates predicate = new IsNull(inner);
 
@@ -303,7 +304,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_2_ColumnCount()
     {
-        Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
 
         Predicates predicate = new IsNull(inner);
 
@@ -316,7 +317,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_2_ColumnName()
     {
-        Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
 
         Predicates predicate = new IsNull(inner);
 
@@ -327,7 +328,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_3_ColumnCount()
     {
-        Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
 
         Predicates predicate = new IsNull(inner);
 
@@ -340,7 +341,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_3_ColumnName()
     {
-        Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
 
         Predicates predicate = new IsNull(inner);
 
@@ -351,7 +352,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_4_ColumnCount()
     {
-        Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
 
         Predicates predicate = new IsNull(inner);
 
@@ -364,7 +365,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_5_ColumnCount()
     {
-        Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
 
         Predicates predicate = new IsNull(inner);
 
@@ -377,7 +378,7 @@ public class IsNullTests
     [Fact]
     public void IsNull_6_ColumnCount()
     {
-        Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
 
         Predicates predicate = new IsNull(inner);
 

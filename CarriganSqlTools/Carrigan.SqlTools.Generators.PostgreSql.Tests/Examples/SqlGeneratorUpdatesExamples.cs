@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
 

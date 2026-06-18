@@ -1,11 +1,12 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
 /// Base class for SQL comparison predicates (e.g., <c>=</c>, <c>&lt;&gt;</c>, <c>&gt;</c>, <c>&lt;</c>, etc.).
-/// Combines two child <see cref="Predicates"/> nodes with a SQL comparison operator and
+/// Combines two child <see cref="SqlExpression"/> nodes with a SQL comparison operator and
 /// participates in recursive SQL/parameter generation.
 /// </summary>
 public abstract class ComparisonOperator : Predicates
@@ -13,12 +14,12 @@ public abstract class ComparisonOperator : Predicates
     /// <summary>
     /// The left-side predicate of the comparison.
     /// </summary>
-    private readonly Predicates _left;
+    private readonly SqlExpression _left;
 
     /// <summary>
     /// The right-side predicate of the comparison.
     /// </summary>
-    private readonly Predicates _right;
+    private readonly SqlExpression _right;
 
     /// <summary>
     /// The SQL text for the comparison operator (e.g., <c>=</c>, <c>&lt;&gt;</c>, <c>&gt;</c>, <c>&lt;</c>).
@@ -37,7 +38,7 @@ public abstract class ComparisonOperator : Predicates
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="op"/> is empty or whitespace.
     /// </exception>
-    public ComparisonOperator(Predicates left, Predicates right, string op) : base([left, right])
+    public ComparisonOperator(SqlExpression left, SqlExpression right, string op) : base([left, right])
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));

@@ -1,5 +1,6 @@
 using Carrigan.Core.Interfaces;
 using Carrigan.Core.Interfaces.IModels;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;

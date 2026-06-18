@@ -1,6 +1,7 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner
 
 using Carrigan.SqlTools.Clients.SqlServer;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;

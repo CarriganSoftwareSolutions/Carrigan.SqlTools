@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -18,12 +20,12 @@ public class LogicalOperatorTests
     [Fact]
     public void LogicalOperator_OperatorNull_ThrowsArgumentNullException() =>
         _ = Assert.Throws<ArgumentNullException>(() =>
-            new TestLogicalOperator(null!, [new Parameter(1, "P1")]));
+            new TestLogicalOperator(null!, [new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive))]));
 
     [Fact]
     public void LogicalOperator_OperatorWhitespace_ThrowsArgumentException() =>
         _ = Assert.Throws<ArgumentException>(() =>
-            new TestLogicalOperator(" ", [new Parameter(1, "P1")]));
+            new TestLogicalOperator(" ", [new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive))]));
 
     [Fact]
     public void LogicalOperator_EmptyPredicates_ThrowsArgumentNullException() =>
@@ -35,10 +37,10 @@ public class LogicalOperatorTests
     {
         TestLogicalOperator op = new("AND",
         [
-            new Parameter(1, "P1"),
+            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
         ]);
 
-        string expected = "@P1_1";
+        string expected = "[LogicalPredicateTable].[IsActive]";
         string actual = op.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
@@ -49,11 +51,11 @@ public class LogicalOperatorTests
     {
         TestLogicalOperator op = new("AND",
         [
-            new Parameter(1, "P1"),
-            new Parameter(2, "P2"),
+            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            new IsNotNull(new Parameter(1, "P1")),
         ]);
 
-        string expected = "(@P1_1 AND @P2_2)";
+        string expected = "([LogicalPredicateTable].[IsActive] AND (@P1_1 IS NOT NULL))";
         string actual = op.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);

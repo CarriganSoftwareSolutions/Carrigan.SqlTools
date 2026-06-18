@@ -1,6 +1,7 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Moby
 
 using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;

@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.SqlGenerators;
 
@@ -46,12 +47,12 @@ public class NotEqual : ComparisonOperator
     /// The left-hand operand of the comparison, typically a <see cref="ColumnBase{T}"/> instance.
     /// </param>
     /// <param name="right">
-    /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.
+    /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="SqlExpression"/> expression.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.
     /// </exception>
-    public NotEqual(Predicates left, Predicates right) : base(left, right, "<>")
+    public NotEqual(SqlExpression left, SqlExpression right) : base(left, right, "<>")
     {
     }
 }

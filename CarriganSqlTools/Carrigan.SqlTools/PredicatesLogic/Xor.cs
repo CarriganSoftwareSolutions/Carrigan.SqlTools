@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -15,7 +16,7 @@ public class Xor : DialectOperator
     /// </summary>
     /// <param name="left">The left-hand predicate operand.</param>
     /// <param name="right">The right-hand predicate operand.</param>
-    public Xor(Predicates left, Predicates right) : base(left, right)
+    public Xor(SqlExpression left, SqlExpression right) : base(left, right)
     {
     }
 

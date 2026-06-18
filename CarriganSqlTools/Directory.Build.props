@@ -21,20 +21,20 @@
     <Deterministic>true</Deterministic>
 
     <!--Base Version for other projects-->
-    <BaseVersion>0.6.2</BaseVersion>
+    <BaseVersion>0.7.0</BaseVersion>
     <!-- PreRelease Status -->
     <PreReleaseLabel>alpha</PreReleaseLabel>
 
     <!-- PreReleaseStatus / Base version: x.y.z For Base Projects -->
-    <SqlToolsBaseProjectsBaseVersion>0.6.2</SqlToolsBaseProjectsBaseVersion>
+    <SqlToolsBaseProjectsBaseVersion>0.7.0</SqlToolsBaseProjectsBaseVersion>
     <SqlToolsBaseProjectsPreReleaseLabel>alpha</SqlToolsBaseProjectsPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For SqlServer Dialect -->
-    <SqlToolsSqlServerBaseVersion>0.6.2</SqlToolsSqlServerBaseVersion>
+    <SqlToolsSqlServerBaseVersion>0.7.0</SqlToolsSqlServerBaseVersion>
     <SqlToolsSqlServerPreReleaseLabel>alpha</SqlToolsSqlServerPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For PostgreSql Dialect -->
-    <SqlToolsPostgreSqlBaseVersion>0.6.2</SqlToolsPostgreSqlBaseVersion>
+    <SqlToolsPostgreSqlBaseVersion>0.7.0</SqlToolsPostgreSqlBaseVersion>
     <SqlToolsPostgreSqlPreReleaseLabel>alpha</SqlToolsPostgreSqlPreReleaseLabel>
     
     <!-- Time Stamp -->

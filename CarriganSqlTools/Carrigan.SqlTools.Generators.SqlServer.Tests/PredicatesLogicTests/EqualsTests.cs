@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,29 +10,29 @@ public class EqualsTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private readonly Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
+    private readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
+    private readonly Column<ColumnTable> ColumnDestructCode = new("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
+    private readonly Column<ColumnTable> ColumnFutureCity = new("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly Predicates ParameterPi = new Parameter(3.14f, "Pi");
+    private readonly Parameter ParameterPi = new(3.14f, "Pi");
 
-    private readonly Predicates ParameterElite = new Parameter(1337, "Elite");
+    private readonly Parameter ParameterElite = new(1337, "Elite");
 
-    private readonly Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
+    private readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
 
 
     [Fact]
     public void Equals_ToSql1()
     {
-        Predicates left = ColumnTastyPizza;
+        Column<ColumnTable> left = ColumnTastyPizza;
         string leftSql = ColumnTastyPizzaExpectedSql;
 
-        Predicates right = ColumnDestructCode;
+        Column<ColumnTable> right = ColumnDestructCode;
         string rightSql = ColumnDestructCodeSql;
 
         Predicates predicate = new Equal(left, right);
@@ -44,9 +45,9 @@ public class EqualsTests
     [Fact]
     public void Equals1_ParameterCount()
     {
-        Predicates left = ColumnTastyPizza;
+        Column<ColumnTable> left = ColumnTastyPizza;
 
-        Predicates right = ColumnDestructCode;
+        Column<ColumnTable> right = ColumnDestructCode;
 
         Predicates predicate = new Equal(left, right);
 
@@ -58,9 +59,9 @@ public class EqualsTests
     [Fact]
     public void Equals1_ColumnCount()
     {
-        Predicates left = ColumnTastyPizza;
+        Column<ColumnTable> left = ColumnTastyPizza;
 
-        Predicates right = ColumnDestructCode;
+        Column<ColumnTable> right = ColumnDestructCode;
 
         Predicates predicate = new Equal(left, right);
 
@@ -73,23 +74,23 @@ public class EqualsTests
 
     public void Equals1_ColumnName()
     {
-        Predicates left = ColumnTastyPizza;
+        Column<ColumnTable> left = ColumnTastyPizza;
 
-        Predicates right = ColumnDestructCode;
+        Column<ColumnTable> right = ColumnDestructCode;
 
         Predicates predicate = new Equal(left, right);
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == $"[ColumnTable].[Pizza]").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
     }
 
     [Fact]
     public void Equals_ToSql2()
     {
-        Predicates left = ColumnFutureCity;
+        Column<ColumnTable> left = ColumnFutureCity;
         string leftSql = ColumnFutureCitySql;
 
-        Predicates right = ParameterPi;
+        Parameter right = ParameterPi;
         string rightSql = "@Pi_1";
 
         Predicates predicate = new Equal(left, right);
@@ -103,9 +104,9 @@ public class EqualsTests
     [Fact]
     public void Equals2_ParameterCount()
     {
-        Predicates left = ColumnFutureCity;
+        Column<ColumnTable> left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        Parameter right = ParameterPi;
 
         Predicates predicate = new Equal(left, right);
 
@@ -118,9 +119,9 @@ public class EqualsTests
     [Fact]
     public void Equals2_ParameterValues()
     {
-        Predicates left = ColumnFutureCity;
+        Column<ColumnTable> left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        Parameter right = ParameterPi;
 
         Predicates predicate = new Equal(left, right);
 
@@ -135,9 +136,9 @@ public class EqualsTests
     [Fact]
     public void Equals2_ColumnCount()
     {
-        Predicates left = ColumnFutureCity;
+        Column<ColumnTable> left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        Parameter right = ParameterPi;
 
         Predicates predicate = new Equal(left, right);
 
@@ -150,9 +151,9 @@ public class EqualsTests
 
     public void Equals2_ColumnName()
     {
-        Predicates left = ColumnFutureCity;
+        Column<ColumnTable> left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        Parameter right = ParameterPi;
 
         Predicates predicate = new Equal(left, right);
 
@@ -163,10 +164,10 @@ public class EqualsTests
     [Fact]
     public void Equals_ToSql3()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
         string leftSql = "@Elite_1";
 
-        Predicates right = ParameterHelloWorld;
+        Parameter right = ParameterHelloWorld;
         string rightSql = "@HelloWorld_2";
 
         Predicates predicate = new Equal(left, right);
@@ -180,9 +181,9 @@ public class EqualsTests
     [Fact]
     public void Equals3_ParameterCount()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
 
-        Predicates right = ParameterHelloWorld;
+        Parameter right = ParameterHelloWorld;
 
         Predicates predicate = new Equal(left, right);
 
@@ -199,9 +200,9 @@ public class EqualsTests
     [Fact]
     public void Equals3_ColumnCount()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
 
-        Predicates right = ParameterPi;
+        Parameter right = ParameterPi;
 
         Predicates predicate = new Equal(left, right);
 
@@ -214,11 +215,11 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ToSql()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
         string leftSql = "@Elite_1";
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
-        string rightSql = $"(@HelloWorld_2 AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
+        And right = new(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        string rightSql = $"((@HelloWorld_2 IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
 
         Predicates predicate = new Equal(left, right);
 
@@ -231,9 +232,9 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ParameterCount()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        And right = new(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new Equal(left, right);
 
@@ -246,9 +247,9 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ColumnCount()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        And right = new(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new Equal(left, right);
 
@@ -261,9 +262,9 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ParameterValue()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        And right = new(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new Equal(left, right);
 
@@ -283,9 +284,9 @@ public class EqualsTests
     [Fact]
     public void Equals_Nested_ColumnName()
     {
-        Predicates left = ParameterElite;
+        Parameter left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        And right = new(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new Equal(left, right);
 

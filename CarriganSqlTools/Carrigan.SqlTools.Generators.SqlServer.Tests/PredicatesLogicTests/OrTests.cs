@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -14,19 +15,19 @@ public class OrTests
         Assert.Throws<ArgumentException>(() => new Or([]));
 
     [Fact]
-    public void Or_null_ToSql() =>
+    public void Or_Null_ToSql() =>
         Assert.Throws<ArgumentNullException>(() => new Or(null!));
 
     [Fact]
     public void Or_Single_ToSql()
     {
-        And and = new(
+        Or or = new(
         [
-                new Parameter(1, "P1"),
+            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
         ]);
 
-        string expected = $"@P1_1";
-        string actual = and.ToSqlFragments(Dialect).ToSql(Dialect);
+        string expected = "[LogicalPredicateTable].[IsActive]";
+        string actual = or.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
     }
@@ -34,43 +35,18 @@ public class OrTests
     [Fact]
     public void Or_ToSql()
     {
-        Or or = new(
-        [
-            new Parameter(1, "P1"),
-            new Parameter(2, "P2"),
-            new Column<ColumnTable>("Col1"),
-            new Column<ColumnTable>("Col2"),
-            new And (
-            [
-                new Column<ColumnTable>("ColA"),
-                new Column<ColumnTable>("ColB"),
-                new Parameter(2, "PA")
-            ])
-        ]);
+        Or or = CreateOr();
 
-        string expected = $"(@P1_1 OR @P2_2 OR [ColumnTable].[Col1] OR [ColumnTable].[Col2] OR ([ColumnTable].[ColA] AND [ColumnTable].[ColB] AND @PA_3))";
+        string expected = "([LogicalPredicateTable].[IsActive] OR (@P1_1 IS NOT NULL) OR (@P2_2 IS NOT NULL) OR [LogicalPredicateTable].[IsEnabled] OR ([LogicalPredicateTable].[IsVisible] AND [LogicalPredicateTable].[IsArchived] AND (@PA_3 IS NOT NULL)))";
         string actual = or.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expected, actual);
-
     }
 
     [Fact]
     public void Or_ParameterCount()
     {
-        Or or = new(
-        [
-            new Parameter(1, "P1"),
-            new Parameter(2, "P2"),
-            new Column<ColumnTable>("Col1"),
-            new Column<ColumnTable>("Col2"),
-            new And (
-            [
-                new Column<ColumnTable>("ColA"),
-                new Column<ColumnTable>("ColB"),
-                new Parameter(2, "PA")
-            ])
-        ]);
+        Or or = CreateOr();
 
         int actual = or.DescendantParameters.Count();
         int expected = 3;
@@ -81,39 +57,26 @@ public class OrTests
     [Fact]
     public void Or_ParameterValues()
     {
-        Or or = new(
-        [
-            new Parameter(1, "P1"),
-            new Parameter(2, "P2"),
-            new Column<ColumnTable>("Col1"),
-            new Column<ColumnTable>("Col2"),
-            new And (
-            [
-                new Column<ColumnTable>("ColA"),
-                new Column<ColumnTable>("ColB"),
-                new Parameter(3, "PA")
-            ])
-        ]);
+        Or or = CreateOr(3);
 
-
-        Parameter p = or.DescendantParameters.Where(p => p.Name == "P1").Single();
-        object? nullableActual = p.Value;
+        Parameter parameter = or.DescendantParameters.Where(parameter => parameter.Name == "P1").Single();
+        object? nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         int actual = (int)nullableActual;
         int expected = 1;
 
         Assert.Equal(expected, actual);
 
-        p = or.DescendantParameters.Where(p => p.Name == "P2").Single();
-        nullableActual = p.Value;
+        parameter = or.DescendantParameters.Where(parameter => parameter.Name == "P2").Single();
+        nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
         expected = 2;
 
         Assert.Equal(expected, actual);
 
-        p = or.DescendantParameters.Where(p => p.Name == "PA").Single();
-        nullableActual = p.Value;
+        parameter = or.DescendantParameters.Where(parameter => parameter.Name == "PA").Single();
+        nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
         expected = 3;
@@ -124,19 +87,7 @@ public class OrTests
     [Fact]
     public void Or_ColumnsCount()
     {
-        Or or = new(
-        [
-                new Parameter(1, "P1"),
-                new Parameter(2, "P2"),
-                new Column<ColumnTable>("Col1"),
-                new Column<ColumnTable>("Col2"),
-                new Or (
-                [
-                    new Column<ColumnTable>("ColA"),
-                    new Column<ColumnTable>("ColB"),
-                    new Parameter(2, "PA")
-                ])
-        ]);
+        Or or = CreateOr();
 
         int actual = or.DescendantColumns.Count();
         int expected = 4;
@@ -147,37 +98,38 @@ public class OrTests
     [Fact]
     public void Or_ColumnName()
     {
-        Or or = new(
-        [
-                new Parameter(1, "P1"),
-                new Parameter(2, "P2"),
-                new Column<ColumnTable>("Col1"),
-                new Column<ColumnTable>("Col2"),
-                new Or (
-                [
-                    new Column<ColumnTable>("ColA"),
-                    new Column<ColumnTable>("ColB"),
-                    new Parameter(3, "PA")
-                ])
-        ]);
+        Or or = CreateOr();
 
-        //if the column doesn't exist an exception will be throw and the test will fail
-        ColumnBase col = or.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[ColA]").Single();
-        col = or.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[ColB]").Single();
-        col = or.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Col1]").Single();
-        col = or.DescendantColumns.Where(c => c.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Col2]").Single();
-        col = or.DescendantColumns.Where(c => c.ColumnInfo == "ColumnTable.ColA").Single();
-        col = or.DescendantColumns.Where(c => c.ColumnInfo == "ColumnTable.ColB").Single();
-        col = or.DescendantColumns.Where(c => c.ColumnInfo == "ColumnTable.Col1").Single();
-        col = or.DescendantColumns.Where(c => c.ColumnInfo == "ColumnTable.Col2").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsActive]").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsEnabled]").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsVisible]").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsArchived]").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsActive").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsEnabled").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsVisible").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsArchived").Single();
     }
 
     [Fact]
     public void Or_ContainsNullPredicate_ThrowsNullReferenceException() =>
-    Assert.Throws<NullReferenceException>(() => new Or(
-    [
-        new Parameter(1, "P1"),
-        null!,
-    ]));
+        Assert.Throws<NullReferenceException>(() => new Or(
+        [
+            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            null!,
+        ]));
 
+    private static Or CreateOr(int nestedParameterValue = 2) =>
+        new(
+        [
+            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            new IsNotNull(new Parameter(1, "P1")),
+            new IsNotNull(new Parameter(2, "P2")),
+            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsEnabled)),
+            new And(
+            [
+                new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsVisible)),
+                new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsArchived)),
+                new IsNotNull(new Parameter(nestedParameterValue, "PA")),
+            ]),
+        ]);
 }

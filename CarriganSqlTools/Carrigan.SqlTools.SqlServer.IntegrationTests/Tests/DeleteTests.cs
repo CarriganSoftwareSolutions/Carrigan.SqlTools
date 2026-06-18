@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Clients.SqlServer;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.JoinTypes;

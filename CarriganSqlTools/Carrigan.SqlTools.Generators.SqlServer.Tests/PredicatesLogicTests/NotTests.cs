@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,30 +10,30 @@ public class NotTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private readonly Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
-    private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
+    private readonly BooleanColumn<LogicalPredicateTable> ColumnIsActive = new(nameof(LogicalPredicateTable.IsActive));
+    private readonly string ColumnIsActiveSql = "[LogicalPredicateTable].[IsActive]";
 
-    private readonly Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
-    private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
-    private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
+    private readonly BooleanColumn<LogicalPredicateTable> ColumnIsVisible = new(nameof(LogicalPredicateTable.IsVisible));
+    private readonly string ColumnIsVisibleSql = "[LogicalPredicateTable].[IsVisible]";
 
-    private readonly Predicates ParameterPi = new Parameter(3.14f, "Pi");
+    private readonly BooleanColumn<LogicalPredicateTable> ColumnIsArchived = new(nameof(LogicalPredicateTable.IsArchived));
+    private readonly string ColumnIsArchivedSql = "[LogicalPredicateTable].[IsArchived]";
+
+    private readonly Parameter ParameterPi = new(3.14f, "Pi");
     private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly Predicates ParameterElite = new Parameter(1337, "Elite");
+    private readonly Parameter ParameterElite = new(1337, "Elite");
     private readonly string ParameterEliteSql = "@Elite_1";
 
-    private readonly Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
-    private readonly string ParameterHelloWorldSql = "@HelloWorld_1";
-
+    private readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
+    private readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
     [Fact]
-    public void Not_1_ToSql()
+    public void Not_BooleanColumn_ToSql()
     {
-        Predicates inner = ColumnTastyPizza;
-        string innerSql = ColumnTastyPizzaExpectedSql;
+        Predicates inner = ColumnIsActive;
+        string innerSql = ColumnIsActiveSql;
 
         Predicates predicate = new Not(inner);
 
@@ -41,12 +42,11 @@ public class NotTests
 
         Assert.Equal(expectedValue, actualValue);
     }
-    [Fact]
-    public void Not_1_ParameterCount()
-    {
-        Predicates inner = ColumnTastyPizza;
 
-        Predicates predicate = new Not(inner);
+    [Fact]
+    public void Not_BooleanColumn_ParameterCount()
+    {
+        Predicates predicate = new Not(ColumnIsActive);
 
         int expectedValue = 0;
         int actualValue = predicate.DescendantParameters.Count();
@@ -55,36 +55,30 @@ public class NotTests
     }
 
     [Fact]
-    public void Not_2_ToSql()
+    public void Not_BooleanColumn_ColumnCount()
     {
-        Predicates inner = ColumnDestructCode;
-        string innerSql = ColumnDestructCodeSql;
+        Predicates predicate = new Not(ColumnIsActive);
 
-        Predicates predicate = new Not(inner);
-
-        string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-    [Fact]
-    public void Not_2_ParameterCount()
-    {
-        Predicates inner = ColumnDestructCode;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 0;
-        int actualValue = predicate.DescendantParameters.Count();
+        int expectedValue = 1;
+        int actualValue = predicate.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
 
     [Fact]
-    public void Not_3_ToSql()
+    public void Not_BooleanColumn_ColumnName()
     {
-        Predicates inner = ColumnFutureCity;
-        string innerSql = ColumnFutureCitySql;
+        Predicates predicate = new Not(ColumnIsActive);
+
+        _ = predicate.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsActiveSql).Single();
+        _ = predicate.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsActive").Single();
+    }
+
+    [Fact]
+    public void Not_IsNotNullParameter_ToSql()
+    {
+        Predicates inner = new IsNotNull(ParameterPi);
+        string innerSql = $"({ParameterPiSql} IS NOT NULL)";
 
         Predicates predicate = new Not(inner);
 
@@ -95,38 +89,9 @@ public class NotTests
     }
 
     [Fact]
-    public void Not_3_ParameterCount()
+    public void Not_IsNotNullParameter_ParameterCount()
     {
-        Predicates inner = ColumnFutureCity;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 0;
-        int actualValue = predicate.DescendantParameters.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_4_ToSql()
-    {
-        Predicates inner = ParameterPi;
-        string innerSql = ParameterPiSql;
-
-        Predicates predicate = new Not(inner);
-
-        string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_4_ParameterCount()
-    {
-        Predicates inner = ParameterPi;
-
-        Predicates predicate = new Not(inner);
+        Predicates predicate = new Not(new IsNotNull(ParameterPi));
 
         int expectedValue = 1;
         int actualValue = predicate.DescendantParameters.Count();
@@ -135,11 +100,9 @@ public class NotTests
     }
 
     [Fact]
-    public void Not_4_ParameterValues()
+    public void Not_IsNotNullParameter_ParameterValues()
     {
-        Predicates inner = ParameterPi;
-
-        Predicates predicate = new Not(inner);
+        Predicates predicate = new Not(new IsNotNull(ParameterPi));
 
         float expectedValue = 3.14f;
         object? nullableActualValueFloat = predicate.DescendantParameters.First().Value;
@@ -149,99 +112,22 @@ public class NotTests
         Assert.Equal(expectedValue, actualValue);
     }
 
-
     [Fact]
-    public void Not_5_ToSql()
+    public void Not_IsNotNullParameter_ColumnCount()
     {
-        Predicates inner = ParameterElite;
-        string innerSql = ParameterEliteSql;
+        Predicates predicate = new Not(new IsNotNull(ParameterPi));
 
-        Predicates predicate = new Not(inner);
-
-        string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
+        int expectedValue = 0;
+        int actualValue = predicate.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_5_ParameterCount()
-    {
-        Predicates inner = ParameterElite;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 1;
-        int actualValue = predicate.DescendantParameters.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_5_ParameterValue()
-    {
-        Predicates inner = ParameterElite;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
-        Assert.NotNull(nullableActualValueInt);
-        int actualValueInt = (int)nullableActualValueInt;
-        Assert.Equal(expectedValueInt, actualValueInt);
-    }
-
-
-
-
-
-
-    [Fact]
-    public void Not_6_ToSql()
-    {
-        Predicates inner = ParameterHelloWorld;
-        string innerSql = ParameterHelloWorldSql;
-
-        Predicates predicate = new Not(inner);
-
-        string expectedValue = $"(NOT {innerSql})";
-        string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_6_ParameterCount()
-    {
-        Predicates inner = ParameterHelloWorld;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 1;
-        int actualValue = predicate.DescendantParameters.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_6_ParameterValue()
-    {
-
-        Predicates inner = ParameterHelloWorld;
-
-        Predicates predicate = new Not(inner);
-
-        string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
-
-        Assert.Equal(expectedValueString, actualValueString);
     }
 
     [Fact]
     public void Not_Nested_ToSql()
     {
-        Predicates and = new And(new Not(ParameterElite), new Not(ParameterHelloWorld), new Not(ColumnFutureCity), new Not(ColumnDestructCode));
-        string andSql = $"((NOT @Elite_1) AND (NOT @HelloWorld_2) AND (NOT {ColumnFutureCitySql}) AND (NOT {ColumnDestructCodeSql}))";
+        Predicates and = CreateNestedPredicate();
+        string andSql = $"((NOT ({ParameterEliteSql} IS NOT NULL)) AND (NOT ({ParameterHelloWorldSql} IS NOT NULL)) AND (NOT {ColumnIsVisibleSql}) AND (NOT {ColumnIsArchivedSql}))";
 
         string expectedValue = andSql;
         string actualValue = and.ToSqlFragments(Dialect).ToSql(Dialect);
@@ -252,7 +138,7 @@ public class NotTests
     [Fact]
     public void Not_Nested_ParameterCount()
     {
-        Predicates and = new And(new Not(ParameterElite), new Not(ParameterHelloWorld), new Not(ColumnFutureCity), new Not(ColumnDestructCode));
+        Predicates and = CreateNestedPredicate();
 
         int expectedValue = 2;
         int actualValue = and.DescendantParameters.Count();
@@ -263,137 +149,26 @@ public class NotTests
     [Fact]
     public void Not_Nested_ParameterValue()
     {
-        Predicates and = new And(new Not(ParameterElite), new Not(ParameterHelloWorld), new Not(ColumnFutureCity), new Not(ColumnDestructCode));
+        Predicates and = CreateNestedPredicate();
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = and.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = and.DescendantParameters.Where(parameter => parameter.Name == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)and.DescendantParameters.First(p => p.Name == "HelloWorld").Value ?? string.Empty;
+        string actualValueString = (string?)and.DescendantParameters.First(parameter => parameter.Name == "HelloWorld").Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
     }
 
     [Fact]
-    public void Not_1_ColumnCount()
-    {
-        Predicates inner = ColumnTastyPizza;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 1;
-        int actualValue = predicate.DescendantColumns.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_1_ColumnName()
-    {
-        Predicates inner = ColumnTastyPizza;
-
-        Predicates predicate = new Not(inner);
-
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Pizza").Single();
-    }
-
-    [Fact]
-    public void Not_2_ColumnCount()
-    {
-        Predicates inner = ColumnDestructCode;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 1;
-        int actualValue = predicate.DescendantColumns.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_2_ColumnName()
-    {
-        Predicates inner = ColumnDestructCode;
-
-        Predicates predicate = new Not(inner);
-
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
-    }
-
-    [Fact]
-    public void Not_3_ColumnCount()
-    {
-        Predicates inner = ColumnFutureCity;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 1;
-        int actualValue = predicate.DescendantColumns.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_3_ColumnName()
-    {
-        Predicates inner = ColumnFutureCity;
-
-        Predicates predicate = new Not(inner);
-
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
-    }
-
-    [Fact]
-    public void Not_4_ColumnCount()
-    {
-        Predicates inner = ParameterPi;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 0;
-        int actualValue = predicate.DescendantColumns.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_5_ColumnCount()
-    {
-        Predicates inner = ParameterElite;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 0;
-        int actualValue = predicate.DescendantColumns.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
-    public void Not_6_ColumnCount()
-    {
-        Predicates inner = ParameterHelloWorld;
-
-        Predicates predicate = new Not(inner);
-
-        int expectedValue = 0;
-        int actualValue = predicate.DescendantColumns.Count();
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Fact]
     public void Not_Nested_ColumnCount()
     {
-        Predicates and = new And(new Not(ParameterElite), new Not(ParameterHelloWorld), new Not(ColumnFutureCity), new Not(ColumnDestructCode));
+        Predicates and = CreateNestedPredicate();
 
         int expectedValue = 2;
-        int actualValue = and.DescendantParameters.Count();
+        int actualValue = and.DescendantColumns.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -401,16 +176,18 @@ public class NotTests
     [Fact]
     public void Not_Nested_ColumnName()
     {
-        Predicates and = new And(new Not(ParameterElite), new Not(ParameterHelloWorld), new Not(ColumnFutureCity), new Not(ColumnDestructCode));
+        Predicates and = CreateNestedPredicate();
 
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsVisibleSql).Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsArchivedSql).Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsVisible").Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsArchived").Single();
     }
 
     [Fact]
     public void Not_NullPredicate_ThrowsArgumentNullException() =>
-    Assert.Throws<ArgumentNullException>(() => new Not(null!));
+        Assert.Throws<ArgumentNullException>(() => new Not(null!));
 
+    private And CreateNestedPredicate() =>
+        new (new Not(new IsNotNull(ParameterElite)), new Not(new IsNotNull(ParameterHelloWorld)), new Not(ColumnIsVisible), new Not(ColumnIsArchived));
 }

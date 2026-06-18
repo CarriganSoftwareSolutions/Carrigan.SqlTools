@@ -1,6 +1,6 @@
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;

@@ -1,4 +1,5 @@
 using Carrigan.Core.Interfaces.IModels;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -51,7 +52,7 @@ public class LessThanEqual : ComparisonOperator
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.
     /// </exception>
-    public LessThanEqual(Predicates left, Predicates right) : base(left, right, "<=")
+    public LessThanEqual(SqlExpression left, SqlExpression right) : base(left, right, "<=")
     {
     }
 }

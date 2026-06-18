@@ -3,6 +3,7 @@ using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
@@ -222,7 +223,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             throw new NullReferenceException();
 
         if (_Encryption is not null && KeyVersionColumnInfo is not null && KeyVersionColumnInfo.Equals(column))
-            return new (column, _Encryption.Version);
+            return new(column, _Encryption.Version);
         else if (_Encryption is not null && IsEncrypted(column))
             return SqlFragmentParameter.GetEncryptedParameter(_Encryption, column, entity);
         else
@@ -230,10 +231,10 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     }
 
     /// <summary>
-    /// Creates a dialect-specific predicate column object for the supplied model property.
+    /// Creates a dialect-specific column expression for the supplied model property.
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column.</param>
-    /// <returns>A column predicate node bound to <paramref name="propertyName"/>.</returns>
+    /// <returns>A column expression node bound to <paramref name="propertyName"/>.</returns>
     protected abstract ColumnBase<T> GetColumn(PropertyName propertyName);
     /// <summary>
     /// Creates a dialect-specific column-value predicate for a reflected column and model instance.

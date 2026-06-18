@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.SqlGenerators;
@@ -40,7 +41,7 @@ public class IsNull : Predicates
     /// <summary>
     /// The predicate expression wrapped by this IsNull predicate.
     /// </summary>
-    private readonly Predicates _someValue;
+    private readonly SqlExpression _someValue;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IsNull"/> class,
@@ -54,7 +55,7 @@ public class IsNull : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="someValue"/> is <c>null</c>.
     /// </exception>
-    public IsNull(Predicates someValue) : base([ValidateSomeValue(someValue)]) =>
+    public IsNull(SqlExpression someValue) : base([ValidateSomeValue(someValue)]) =>
         _someValue = someValue;
 
     /// <summary>
@@ -65,7 +66,7 @@ public class IsNull : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="someValue"/> is <see langword="null"/>.
     /// </exception>
-    private static Predicates ValidateSomeValue(Predicates someValue)
+    private static SqlExpression ValidateSomeValue(SqlExpression someValue)
     {
         ArgumentNullException.ThrowIfNull(someValue, nameof(someValue));
         return someValue;

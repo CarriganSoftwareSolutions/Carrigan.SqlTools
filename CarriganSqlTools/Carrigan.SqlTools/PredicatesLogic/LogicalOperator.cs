@@ -1,5 +1,6 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -86,7 +87,7 @@ public abstract class LogicalOperator : Predicates
         }
 
         yield return new SqlFragmentText("(");
-        foreach (Predicates predicate in ChildNodes)
+        foreach (SqlExpression predicate in ChildNodes)
         {
             if (index > 0)
                 yield return new SqlFragmentText($" {_operator} ");

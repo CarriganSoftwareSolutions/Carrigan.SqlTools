@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,32 +10,32 @@ public class LessThanEqualsTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private readonly Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
+    private readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
+    private readonly Column<ColumnTable> ColumnDestructCode = new("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
+    private readonly Column<ColumnTable> ColumnFutureCity = new("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly Predicates ParameterPi = new Parameter(3.14f, "Pi");
+    private readonly Parameter ParameterPi = new(3.14f, "Pi");
     private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly Predicates ParameterElite = new Parameter(1337, "Elite");
+    private readonly Parameter ParameterElite = new(1337, "Elite");
     private readonly string ParameterEliteSql = "@Elite_1";
 
-    private readonly Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
+    private readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
     private readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 
     [Fact]
     public void LessThanEquals_1_ToSql()
     {
-        Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
         string leftSql = ColumnTastyPizzaExpectedSql;
 
-        Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
         string rightSql = ColumnDestructCodeSql;
 
         Predicates predicate = new LessThanEqual(left, right);
@@ -47,9 +48,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_1_ParameterCount()
     {
-        Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
 
-        Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -62,10 +63,10 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ToSql()
     {
-        Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
         string leftSql = ColumnFutureCitySql;
 
-        Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
         string rightSql = ParameterPiSql;
 
         Predicates predicate = new LessThanEqual(left, right);
@@ -79,9 +80,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ParameterCount()
     {
-        Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -94,9 +95,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ParameterValues()
     {
-        Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -111,10 +112,10 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_3_ToSql()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        Predicates right = ParameterHelloWorld;
+        SqlExpression right = ParameterHelloWorld;
         string rightSql = ParameterHelloWorldSql;
 
         Predicates predicate = new LessThanEqual(left, right);
@@ -128,9 +129,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_3_ParameterCount()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        Predicates right = ParameterHelloWorld;
+        SqlExpression right = ParameterHelloWorld;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -148,11 +149,11 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_Nested_ToSql()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
-        string rightSql = $"({ParameterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        string rightSql = $"(({ParameterHelloWorldSql} IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -165,9 +166,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_Nested_ParameterCount()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -180,9 +181,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_Nested_ParameterValue()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -201,9 +202,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_1_ColumnCount()
     {
-        Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
 
-        Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -216,9 +217,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_1_ColumnName()
     {
-        Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
 
-        Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -232,9 +233,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ColumnCount()
     {
-        Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -247,9 +248,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_2_ColumnName()
     {
-        Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -260,9 +261,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_3_ColumnCount()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -275,9 +276,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_Nested_ColumnCount()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new LessThanEqual(left, right);
 
@@ -290,9 +291,9 @@ public class LessThanEqualsTests
     [Fact]
     public void LessThanEquals_Nested_ColumnName()
     {
-        Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
         Predicates predicate = new LessThanEqual(left, right);
 

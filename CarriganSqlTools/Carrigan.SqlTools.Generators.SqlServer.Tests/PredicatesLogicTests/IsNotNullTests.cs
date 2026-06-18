@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,29 +10,29 @@ public class IsNotNullTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private readonly PredicatesLogic.Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
+    private readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");
     private readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private readonly PredicatesLogic.Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
+    private readonly Column<ColumnTable> ColumnDestructCode = new("D000destruct0");
     private readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private readonly PredicatesLogic.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
+    private readonly Column<ColumnTable> ColumnFutureCity = new("Express");
     private readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private readonly PredicatesLogic.Predicates ParameterPi = new Parameter(3.14f, "Pi");
+    private readonly Parameter ParameterPi = new(3.14f, "Pi");
     private readonly string ParameterPiSql = "@Pi_1";
 
-    private readonly PredicatesLogic.Predicates ParameterElite = new Parameter(1337, "Elite");
+    private readonly Parameter ParameterElite = new(1337, "Elite");
     private readonly string ParameterEliteSql = "@Elite_1";
 
-    private readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
+    private readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
     private readonly string ParameterHelloWorldSql = "@HelloWorld_1";
 
 
     [Fact]
     public void IsNotNull_1_ToSql()
     {
-        PredicatesLogic.Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
         string innerSql = ColumnTastyPizzaExpectedSql;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
@@ -44,7 +45,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_1_ParameterCount()
     {
-        PredicatesLogic.Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -57,7 +58,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ToSql()
     {
-        PredicatesLogic.Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
         string innerSql = ColumnDestructCodeSql;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
@@ -70,7 +71,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ParameterCount()
     {
-        PredicatesLogic.Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -83,7 +84,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ToSql()
     {
-        PredicatesLogic.Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
         string innerSql = ColumnFutureCitySql;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
@@ -97,7 +98,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ParameterCount()
     {
-        PredicatesLogic.Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -110,7 +111,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ToSql()
     {
-        PredicatesLogic.Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
         string innerSql = ParameterPiSql;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
@@ -124,7 +125,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ParameterCount()
     {
-        PredicatesLogic.Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -137,7 +138,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ParameterValues()
     {
-        PredicatesLogic.Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -153,7 +154,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ToSql()
     {
-        PredicatesLogic.Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
         string innerSql = ParameterEliteSql;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
@@ -167,7 +168,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ParameterCount()
     {
-        PredicatesLogic.Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -180,7 +181,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ParameterValue()
     {
-        PredicatesLogic.Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -195,7 +196,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ToSql()
     {
-        PredicatesLogic.Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
         string innerSql = ParameterHelloWorldSql;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
@@ -209,7 +210,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ParameterCount()
     {
-        PredicatesLogic.Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -223,7 +224,7 @@ public class IsNotNullTests
     public void IsNotNull_6_ParameterValue()
     {
 
-        PredicatesLogic.Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -276,7 +277,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_1_ColumnCount()
     {
-        PredicatesLogic.Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -289,7 +290,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_1_ColumnName()
     {
-        PredicatesLogic.Predicates inner = ColumnTastyPizza;
+        SqlExpression inner = ColumnTastyPizza;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -301,7 +302,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ColumnCount()
     {
-        PredicatesLogic.Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -314,7 +315,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_2_ColumnName()
     {
-        PredicatesLogic.Predicates inner = ColumnDestructCode;
+        SqlExpression inner = ColumnDestructCode;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -325,7 +326,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ColumnCount()
     {
-        PredicatesLogic.Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -338,7 +339,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_3_ColumnName()
     {
-        PredicatesLogic.Predicates inner = ColumnFutureCity;
+        SqlExpression inner = ColumnFutureCity;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -349,7 +350,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_4_ColumnCount()
     {
-        PredicatesLogic.Predicates inner = ParameterPi;
+        SqlExpression inner = ParameterPi;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -362,7 +363,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_5_ColumnCount()
     {
-        PredicatesLogic.Predicates inner = ParameterElite;
+        SqlExpression inner = ParameterElite;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
@@ -375,7 +376,7 @@ public class IsNotNullTests
     [Fact]
     public void IsNotNull_6_ColumnCount()
     {
-        PredicatesLogic.Predicates inner = ParameterHelloWorld;
+        SqlExpression inner = ParameterHelloWorld;
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 

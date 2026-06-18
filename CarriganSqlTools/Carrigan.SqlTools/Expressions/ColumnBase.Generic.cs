@@ -5,17 +5,17 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 
-namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Represents a model property (i.e., a table column) as a leaf node within predicate logic
-/// for SQL <c>WHERE</c> and <c>JOIN</c> clauses.
+/// Represents a model property (i.e., a table column) as a leaf node within a SQL expression tree.
 /// </summary>
 /// <typeparam name="T">
 /// The entity or data model type that defines the table containing the referenced column.
 /// </typeparam>
 /// <remarks>
 /// <see cref="ColumnBase{T}"/> validates property names and throws an exception if a property name is invalid.
+/// Predicate types consume these column expressions when building SQL <c>WHERE</c> and <c>JOIN</c> conditions.
 /// </remarks>
 public class ColumnBase<T> : ColumnBase where T: class
 {
@@ -88,7 +88,7 @@ public class ColumnBase<T> : ColumnBase where T: class
     }
 
     /// <summary>
-    /// Produces the SQL fragment represented by this column.
+    /// Produces the SQL fragment represented by this column expression.
     /// </summary>
     /// <returns>
     /// The SQL-escaped column identifier (e.g., <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>).

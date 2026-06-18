@@ -1,5 +1,7 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -422,21 +424,6 @@ public class ParameterAndColumnIdentifierTests
 
         Assert.Equal(1, query.GetParameterCount());
         Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
-    }
-
-    [Fact]
-    public void NotTest()
-    {
-        Column<ColumnIdentifiers> column = new(nameof(ColumnIdentifiers.IdentifierName));
-        Not op = new(column);
-
-        SqlQuery query = _generator.Select(null, null, null, null, op, null, null, null);
-        string expectedSql =
-            "SELECT [ColumnIdentifiers].* FROM [ColumnIdentifiers] WHERE (NOT [ColumnIdentifiers].[Identifier])";
-        string actualSql = query.QueryText;
-        Assert.Equal(expectedSql, actualSql);
-
-        Assert.Equal(0, query.GetParameterCount());
     }
 
     [Fact]

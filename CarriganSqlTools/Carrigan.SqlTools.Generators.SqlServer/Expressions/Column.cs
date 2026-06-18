@@ -3,12 +3,12 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Exceptions;
 
-namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents a dialect-specific SQL column expression for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+/// <typeparam name="T">The model type whose C# properties represent SQL columns.</typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterName = new("Hank", "Name");

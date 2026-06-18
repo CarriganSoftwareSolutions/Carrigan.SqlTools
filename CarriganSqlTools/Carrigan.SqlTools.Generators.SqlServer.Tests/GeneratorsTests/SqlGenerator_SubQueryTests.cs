@@ -2,6 +2,7 @@
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -98,7 +99,7 @@ public class SqlGenerator_SubqueryTests
     [Fact]
     public void Subquery_WithSelectFromUnjoinedTable_ThrowsInvalidTableException()
     {
-        SelectTags selects = new SelectTags(SelectTagGenerator.Get<Order>(nameof(Order.Id)));
+        SelectTags selects = new (SelectTagGenerator.Get<Order>(nameof(Order.Id)));
 
         Assert.Throws<InvalidTableException>(() =>
             customerGenerator.Subquery(null, selects, null, null, null, null, null));

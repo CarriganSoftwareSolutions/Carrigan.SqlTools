@@ -3,16 +3,16 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 
-namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Represents a SQL parameter and its corresponding value for use in predicate expressions
-/// (e.g., <c>WHERE</c> or <c>JOIN</c> clauses).
+/// Represents a SQL parameter and its corresponding value as a leaf node within a SQL expression tree.
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[
@@ -39,7 +39,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
-public class Parameter : Predicates
+public class Parameter : SqlExpression
 {
     /// <summary>
     /// The value to bind to the parameter.
@@ -175,7 +175,7 @@ public class Parameter : Predicates
         Name.ToString();
 
     /// <summary>
-    /// Produces the SQL fragment for this parameter (its final, possibly prefixed name).
+    /// Produces the SQL fragment for this parameter expression (its final, possibly prefixed name).
     /// </summary>
     /// <returns>
     /// The SQL parameter name (e.g., <c>@Parameter_Name</c> or a prefixed variant).

@@ -1,19 +1,20 @@
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.PredicatesLogic;
+namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Base class for predicate nodes that reference a single column.
+/// Base class for SQL expression nodes that reference a single reflected table column.
 /// Carries the resolved <see cref="ColumnInfo"/> and exposes the owning <see cref="TableTag"/>.
 /// </summary>
 /// <remarks>
-/// This class exists to centralize column/table metadata for predicate nodes.
+/// This class exists to centralize column/table metadata for expression nodes. Predicate types can consume
+/// these column expressions when building SQL <c>WHERE</c>, <c>JOIN</c>, and other expression-bearing clauses.
 /// </remarks>
-public abstract class ColumnBase : Predicates
+public abstract class ColumnBase : SqlExpression
 {
     /// <summary>
-    /// Gets the resolved column metadata (name, tags, etc.) used by the predicate.
+    /// Gets the resolved column metadata (name, tags, etc.) used by the expression.
     /// </summary>
     internal ColumnInfo ColumnInfo { get; }
 

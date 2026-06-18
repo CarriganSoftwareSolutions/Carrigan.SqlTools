@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
@@ -9,35 +10,35 @@ public class XorThanTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private static readonly PredicatesLogic.Predicates ColumnTastyPizza = new Column<ColumnTable>("Pizza");
+    private static readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");
     private static readonly string ColumnTastyPizzaExpectedSql = "[ColumnTable].[Pizza]";
 
-    private static readonly PredicatesLogic.Predicates ColumnDestructCode = new Column<ColumnTable>("D000destruct0");
+    private static readonly Column<ColumnTable> ColumnDestructCode = new("D000destruct0");
     private static readonly string ColumnDestructCodeSql = "[ColumnTable].[D000destruct0]";
 
-    private static readonly PredicatesLogic.Predicates ColumnFutureCity = new Column<ColumnTable>("Express");
+    private static readonly Column<ColumnTable> ColumnFutureCity = new("Express");
     private static readonly string ColumnFutureCitySql = "[ColumnTable].[Express]";
 
-    private static readonly PredicatesLogic.Predicates ParameterPi = new Parameter(3.14f, "Pi");
+    private static readonly Parameter ParameterPi = new(3.14f, "Pi");
     private static readonly string ParameterPiSql = "@Pi_1";
 
-    private static readonly PredicatesLogic.Predicates ParameterElite = new Parameter(1337, "Elite");
+    private static readonly Parameter ParameterElite = new(1337, "Elite");
     private static readonly string ParameterEliteSql = "@Elite_1";
 
-    private static readonly PredicatesLogic.Predicates ParameterHelloWorld = new Parameter("Hello World!", "HelloWorld");
+    private static readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
     private static readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 
     [Fact]
     public void Xor_1_ToSql()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
         string leftSql = ColumnTastyPizzaExpectedSql;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
         string rightSql = ColumnDestructCodeSql;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
         string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
@@ -48,11 +49,11 @@ public class XorThanTests
     [Fact]
     public void Xor_1_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValue = 0;
         int actualValue = predicate.DescendantParameters.Count();
@@ -63,13 +64,13 @@ public class XorThanTests
     [Fact]
     public void Xor_2_ToSql()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
         string leftSql = ColumnFutureCitySql;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
         string rightSql = ParameterPiSql;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
         string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
@@ -80,11 +81,11 @@ public class XorThanTests
     [Fact]
     public void Xor_2_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValue = 1;
         int actualValue = predicate.DescendantParameters.Count();
@@ -95,11 +96,11 @@ public class XorThanTests
     [Fact]
     public void Xor_2_ParameterValues()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         float expectedValue = 3.14f;
         object? nullableActualValueFloat = predicate.DescendantParameters.First().Value;
@@ -112,13 +113,13 @@ public class XorThanTests
     [Fact]
     public void Xor_3_ToSql()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        PredicatesLogic.Predicates right = ParameterHelloWorld;
+        SqlExpression right = ParameterHelloWorld;
         string rightSql = ParameterHelloWorldSql;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
         string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
@@ -129,11 +130,11 @@ public class XorThanTests
     [Fact]
     public void Xor_3_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        PredicatesLogic.Predicates right = ParameterHelloWorld;
+        SqlExpression right = ParameterHelloWorld;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValueInt = 1337;
         object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
@@ -149,13 +150,13 @@ public class XorThanTests
     [Fact]
     public void Xor_Nested_ToSql()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
         string leftSql = ParameterEliteSql;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
-        string rightSql = $"({ParameterHelloWorldSql} AND {ColumnFutureCitySql} AND {ColumnDestructCodeSql})";
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
+        string rightSql = $"(({ParameterHelloWorldSql} IS NOT NULL) AND ({ColumnFutureCitySql} IS NOT NULL) AND ({ColumnDestructCodeSql} IS NOT NULL))";
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         string expectedValue = $"({leftSql} ^ {rightSql})";
         string actualValue = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
@@ -166,11 +167,11 @@ public class XorThanTests
     [Fact]
     public void Xor_Nested_ParameterCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValue = 2;
         int actualValue = predicate.DescendantParameters.Count();
@@ -181,11 +182,11 @@ public class XorThanTests
     [Fact]
     public void Xor_Nested_ParameterValue()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValueInt = 1337;
         object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
@@ -201,11 +202,11 @@ public class XorThanTests
     [Fact]
     public void Xor_1_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValue = 2;
         int actualValue = predicate.DescendantColumns.Count();
@@ -216,11 +217,11 @@ public class XorThanTests
     [Fact]
     public void Xor_1_ColumnName()
     {
-        PredicatesLogic.Predicates left = ColumnTastyPizza;
+        SqlExpression left = ColumnTastyPizza;
 
-        PredicatesLogic.Predicates right = ColumnDestructCode;
+        SqlExpression right = ColumnDestructCode;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
@@ -232,11 +233,11 @@ public class XorThanTests
     [Fact]
     public void Xor_2_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValue = 1;
         int actualValue = predicate.DescendantColumns.Count();
@@ -247,11 +248,11 @@ public class XorThanTests
     [Fact]
     public void Xor_2_ColumnName()
     {
-        PredicatesLogic.Predicates left = ColumnFutureCity;
+        SqlExpression left = ColumnFutureCity;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
 
@@ -261,11 +262,11 @@ public class XorThanTests
     [Fact]
     public void Xor_3_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        PredicatesLogic.Predicates right = ParameterPi;
+        SqlExpression right = ParameterPi;
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValue = 0;
         int actualValue = predicate.DescendantColumns.Count();
@@ -276,11 +277,11 @@ public class XorThanTests
     [Fact]
     public void Xor_Nested_ColumnCount()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        Predicates right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         int expectedValue = 2;
         int actualValue = predicate.DescendantColumns.Count();
@@ -291,11 +292,11 @@ public class XorThanTests
     [Fact]
     public void Xor_Nested_ColumnName()
     {
-        PredicatesLogic.Predicates left = ParameterElite;
+        SqlExpression left = ParameterElite;
 
-        PredicatesLogic.Predicates right = new And(ParameterHelloWorld, ColumnFutureCity, ColumnDestructCode);
+        SqlExpression right = new And(new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
-        PredicatesLogic.Predicates predicate = new Xor(left, right);
+        SqlExpression predicate = new Xor(left, right);
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();

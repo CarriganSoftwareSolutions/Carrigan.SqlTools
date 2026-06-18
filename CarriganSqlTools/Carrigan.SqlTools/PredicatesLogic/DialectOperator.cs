@@ -1,3 +1,5 @@
+using Carrigan.SqlTools.Expressions;
+
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
@@ -10,12 +12,12 @@ public abstract class DialectOperator : Predicates
     /// <summary>
     /// The left-side predicate of the Dialect operator.
     /// </summary>
-    protected readonly Predicates _left;
+    protected readonly SqlExpression _left;
 
     /// <summary>
     /// The right-side predicate of the Dialect operator.
     /// </summary>
-    protected readonly Predicates _right;
+    protected readonly SqlExpression _right;
 
     /// <summary>
     /// Base constructor for Dialect operators.
@@ -25,7 +27,7 @@ public abstract class DialectOperator : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.
     /// </exception>
-    public DialectOperator(Predicates left, Predicates right) : base([left, right])
+    public DialectOperator(SqlExpression left, SqlExpression right) : base([left, right])
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));

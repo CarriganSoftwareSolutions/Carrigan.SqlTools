@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -68,7 +69,7 @@ public class Like : DialectOperator
     /// expression-level collation.
     /// For PostgreSQL, the default is <c>LIKE</c>, which performs a case-sensitive comparison.
     /// </remarks>
-    public Like(Predicates left, Predicates right, bool? isCaseSensitive = null) : base(left, right) =>
+    public Like(SqlExpression left, SqlExpression right, bool? isCaseSensitive = null) : base(left, right) =>
         IsCaseSensitive = isCaseSensitive;
     /// <summary>
     /// Produces the SQL fragment represented by this Dialect operator and its operands.
