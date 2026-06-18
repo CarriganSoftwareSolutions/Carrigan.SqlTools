@@ -179,11 +179,19 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
+        IEnumerable<TableTag> invalidPredicateTableTags = predicateTableTags.Except(selectableTableTags);
+
+        IEnumerable<TableTag> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
+        IEnumerable<TableTag> invalidgroupByTableTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
-        IEnumerable<TableTag> invalidTags = invalidSelectedTags.Concat(invalidPredicateTags).Concat(invalidOrderByTags).Distinct();
+
+        IEnumerable<TableTag> invalidTags = invalidSelectedTags
+            .Concat(invalidPredicateTableTags)
+            .Concat(invalidgroupByTableTags)
+            .Concat(invalidOrderByTags)
+            .Distinct();
 
         AmbiguousResultColumnException? ambiguousResultColumns = AmbiguousResultColumnException.CheckNames(selects);
         if (ambiguousResultColumns is not null)
