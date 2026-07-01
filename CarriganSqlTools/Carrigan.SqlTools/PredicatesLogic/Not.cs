@@ -45,21 +45,22 @@ public class Not : Predicates
     /// <summary>
     /// The predicate expression wrapped by this Not predicate.
     /// </summary>
-    private readonly Predicates _someValue;
+    private readonly Predicates _aPredicate;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Not"/> class,
     /// representing the SQL <c>NOT</c> operator.
     /// </summary>
-    /// <param name="someValue">
+    /// <param name="aPredicate">
     /// The boolean expression to negate. Typically another <see cref="Predicates"/> instance
     /// such as <see cref="Equal"/>, <see cref="GreaterThan"/>, or <see cref="And"/>.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="someValue"/> is <c>null</c>.
+    /// Thrown when <paramref name="aPredicate"/> is <c>null</c>.
     /// </exception>
-    public Not(Predicates someValue) : base([ValidateSomeValue(someValue)]) =>
-        _someValue = someValue;
+    public Not(Predicates aPredicate) 
+        : base([ValidateSomeValue(aPredicate)], $"(NOT {aPredicate})") =>
+        _aPredicate = aPredicate;
 
     /// <summary>
     /// Validates that the predicate being wrapped is present.
@@ -85,7 +86,7 @@ public class Not : Predicates
     {
         yield return new SqlFragmentText("(NOT ");
 
-        foreach (ISqlFragment fragment in _someValue.ToSqlFragments(dialect))
+        foreach (ISqlFragment fragment in _aPredicate.ToSqlFragments(dialect))
             yield return fragment;
 
         yield return new SqlFragmentText(")");

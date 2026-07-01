@@ -16,7 +16,8 @@ public class Xor : DialectOperator
     /// </summary>
     /// <param name="left">The left-hand predicate operand.</param>
     /// <param name="right">The right-hand predicate operand.</param>
-    public Xor(SqlExpression left, SqlExpression right) : base(left, right)
+    public Xor(SqlExpression left, SqlExpression right)
+        : base(left, right, $"({left} XOR {right})")
     {
     }
 

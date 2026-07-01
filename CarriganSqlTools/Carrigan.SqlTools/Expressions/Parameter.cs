@@ -96,7 +96,7 @@ public class Parameter : SqlExpression
     /// <exception cref="ArgumentNullException">
     /// Thrown when a required argument is <c>null</c>.
     /// </exception>
-    public Parameter(object? value, ParameterTag parameterTag, FieldProperties fieldProperties) : base([])
+    public Parameter(object? value, ParameterTag parameterTag, FieldProperties fieldProperties) : base([], parameterTag)
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         Name = new(parameterTag);
@@ -115,7 +115,7 @@ public class Parameter : SqlExpression
     /// <exception cref="InvalidParameterIdentifierException">
     /// Thrown when a supplied or generated SQL parameter identifier is invalid.
     /// </exception>
-    public Parameter(object? value, ParameterTag parameterTag) : base([])
+    public Parameter(object? value, ParameterTag parameterTag) : base([], parameterTag)
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         Name = new(parameterTag);
@@ -129,7 +129,7 @@ public class Parameter : SqlExpression
     /// <remarks>Throws ArgumentNullException if columInfo is null.</remarks>
     /// <param name="value">The value for the parameter; may be null.</param>
     /// <param name="columInfo">ColumnInfo used to obtain the parameter tag and field properties; must not be null.</param>
-    internal Parameter(object? value, ColumnInfo columInfo) : base([])
+    internal Parameter(object? value, ColumnInfo columInfo) : base([], columInfo.ParameterTag)
     {
         ArgumentNullException.ThrowIfNull(columInfo, nameof(columInfo));
         Name = new(columInfo.ParameterTag);
@@ -172,6 +172,12 @@ public class Parameter : SqlExpression
     /// </summary>
     /// <returns>The SQL parameter name without dialect-specific formatting.</returns>
     internal string ToSql() =>
+        Name.ToString();
+
+    /// <summary>
+    /// Returns the unrendered parameter name.
+    /// </summary>
+    public override string ToString() =>
         Name.ToString();
 
     /// <summary>

@@ -120,6 +120,16 @@ public abstract partial class SqlGeneratorBase<T>
         OrderBysBase? orderBy, PagingBase? paging
     )
     {
+        if ((selects is null || selects.Empty()) && groupBys.IsNotNullOrEmpty())
+            selects = GetSelectTags(groupBys!.AsGroupBy());
+
+        if (selects is not null && selects.Any())
+        {
+            IEnumerable<bool> aggregateStates = selects.All().Select(select => select.IsAggregate(groupBys));
+            if (aggregateStates.Distinct().Count() > 1)
+                throw new MixedAggregateSelectException();
+        }
+
         IEnumerable<ISqlFragment> GetFragments()
         {
             if (distinct ?? false)
@@ -178,11 +188,11 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantLeafTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTableTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidgroupByTableTags = predicateTableTags.Except(selectableTableTags);
+        IEnumerable<TableTag> invalidgroupByTableTags = groupByTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);

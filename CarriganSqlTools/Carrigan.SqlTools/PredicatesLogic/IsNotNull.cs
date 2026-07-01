@@ -22,16 +22,16 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// {
 ///     Where = notNull
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT "Customer".* 
-/// FROM "Customer" 
+/// SELECT "Customer".*
+/// FROM "Customer"
 /// WHERE ("Customer"."Name" IS NOT NULL)
-/// 
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
@@ -43,22 +43,23 @@ public class IsNotNull : Predicates
     /// <summary>
     /// The predicate expression wrapped by this IsNotNull predicate.
     /// </summary>
-    private readonly SqlExpression _someValue;
+    private readonly SqlExpression _anExpression;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IsNotNull"/> class,
     /// representing a predicate that checks whether the specified value
     /// or column is not <c>NULL</c>.
     /// </summary>
-    /// <param name="someValue">
+    /// <param name="anExpression">
     /// The expression to test for non-null.
     /// Typically a <see cref="ColumnBase{T}"/> instance representing a database column.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="someValue"/> is <c>null</c>.
+    /// Thrown when <paramref name="anExpression"/> is <c>null</c>.
     /// </exception>
-    public IsNotNull(SqlExpression someValue) : base([ValidateSomeValue(someValue)]) =>
-        _someValue = someValue;
+    public IsNotNull(SqlExpression anExpression)
+        : base([ValidateSomeValue(anExpression)], $"({anExpression} IS NOT NULL)") =>
+        _anExpression = anExpression;
 
     /// <summary>
     /// Validates that the predicate being wrapped is present.
@@ -84,7 +85,7 @@ public class IsNotNull : Predicates
     {
         yield return new SqlFragmentText("(");
 
-        foreach (ISqlFragment fragment in _someValue.ToSqlFragments(dialect))
+        foreach (ISqlFragment fragment in _anExpression.ToSqlFragments(dialect))
             yield return fragment;
 
         yield return new SqlFragmentText(" IS NOT NULL)");

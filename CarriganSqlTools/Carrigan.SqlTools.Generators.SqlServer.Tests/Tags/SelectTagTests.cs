@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -23,12 +24,12 @@ public class SelectTagTests
     public void Constructor(string columnName, string? aliasName, string expectedColumn, string? expectedAlias, string expectedSelect)
     {
         SelectTagBase selectTag  = New(columnName, aliasName);
-        Assert.Equal(expectedColumn, selectTag.ColumnTag.ToSql(Dialect));
+        Assert.Equal(expectedColumn, selectTag.WithNoAlias().ToSql(Dialect));
         if (expectedAlias is null)
             Assert.Null(selectTag.AliasTag);
 
         Assert.Equal(expectedSelect, selectTag.ToSql(Dialect));
-        Assert.True(selectTag.ColumnTag.TableTag.IsEmpty());
+        Assert.True(selectTag.TableTags.Single().IsEmpty());
     }
 
     [Theory]
@@ -216,6 +217,24 @@ public class SelectTagTests
     }
 
     [Fact]
+    public void GetAllFromSelectTagAttributes_UsesAttributeTables()
+    {
+        SelectTags selects = SelectTagGenerator.GetAll<SelectProjection>();
+
+        IEnumerable<string> expectedSql =
+        [
+            "[SelectLeft].[Id] AS [LeftId]",
+            "[SelectRight].[Name] AS [RightName]"
+        ];
+
+        IEnumerable<string> expectedTables = ["SelectLeft", "SelectRight"];
+
+        Assert.Equal(expectedSql, selects.Select(select => select.ToSql(Dialect)));
+        Assert.Equal(expectedTables, selects.GetTableTags().Select(static table => table.ToString()));
+        Assert.DoesNotContain("SelectProjection", selects.GetTableTags().Select(static table => table.ToString()));
+    }
+
+    [Fact]
     public void GetAllFromColumnIdentifiers()
     {
         IEnumerable<string> expected =
@@ -364,4 +383,23 @@ public class SelectTagTests
     [Fact]
     public void ValidGetMany_FromString() =>
         _ = SelectTagGenerator.Get<TableNameSchema>("Id", "Text");
+    private sealed class SelectLeft
+    {
+        public int Id { get; set; }
+    }
+
+    private sealed class SelectRight
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
+    private sealed class SelectProjection
+    {
+        [SelectTag<SelectLeft>(nameof(SelectLeft.Id), nameof(LeftId))]
+        public int? LeftId { get; set; }
+
+        [SelectTag<SelectRight>(nameof(SelectRight.Name), nameof(RightName))]
+        public string? RightName { get; set; }
+    }
+
 }

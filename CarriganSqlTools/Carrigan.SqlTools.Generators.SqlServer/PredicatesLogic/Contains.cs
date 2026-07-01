@@ -61,7 +61,7 @@ public class Contains<T> : Predicates where T : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="column"/> or <paramref name="parameter"/> is <c>null</c>.
     /// </exception>
-    public Contains(ColumnBase<T> column, Parameter parameter) : base([column, parameter])
+    public Contains(ColumnBase<T> column, Parameter parameter) : base([column, parameter], $"CONTAINS({parameter})")
     {
         ArgumentNullException.ThrowIfNull(column, nameof(column));
         ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));

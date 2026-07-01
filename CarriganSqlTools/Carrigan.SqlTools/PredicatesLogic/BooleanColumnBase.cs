@@ -25,7 +25,7 @@ public abstract class BooleanColumnBase<T> : Predicates where T : class
     /// <param name="column">The column expression whose data model property must be <see cref="bool"/> or nullable <see cref="bool"/>.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="column"/> does not represent a <see cref="bool"/> or nullable <see cref="bool"/> property.</exception>
-    protected BooleanColumnBase(ColumnBase<T> column) : base([ValidateColumn(column)]) =>
+    protected BooleanColumnBase(ColumnBase<T> column) : base([ValidateColumn(column)], column) =>
         _column = column;
 
     /// <summary>

@@ -164,7 +164,7 @@ public abstract partial class SqlGeneratorBase<T>
         else
         {
             IEnumerable<TableTag> selectTableTags = (usings ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
-            IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
+            IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantLeafTables?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
             if (invalidTags.Any())
                 throw new InvalidTableException(invalidTags);

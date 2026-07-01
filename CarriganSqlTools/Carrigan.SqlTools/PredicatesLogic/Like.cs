@@ -22,7 +22,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// {
 ///     Where = predicate
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
@@ -31,7 +31,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// SELECT "Customer".*
 /// FROM "Customer"
 /// WHERE ("Customer"."Email" LIKE $1)
-/// 
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
@@ -69,8 +69,18 @@ public class Like : DialectOperator
     /// expression-level collation.
     /// For PostgreSQL, the default is <c>LIKE</c>, which performs a case-sensitive comparison.
     /// </remarks>
-    public Like(SqlExpression left, SqlExpression right, bool? isCaseSensitive = null) : base(left, right) =>
+    public Like(SqlExpression left, SqlExpression right, bool? isCaseSensitive = null)
+        : base(left, right, $"({left} {GetDialectNeutralStringOperator(isCaseSensitive)} {right})") =>
         IsCaseSensitive = isCaseSensitive;
+
+    private static string GetDialectNeutralStringOperator(bool? isCaseSensitive = null) =>
+        isCaseSensitive switch
+        {
+            null => "LIKE",
+            true => "CASE SENSITIVE LIKE",
+            false => "CASE INSENSITIVE LIKE"
+        };
+
     /// <summary>
     /// Produces the SQL fragment represented by this Dialect operator and its operands.
     /// </summary>

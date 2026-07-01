@@ -4,10 +4,12 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.GroupByClause;
+using Carrigan.Core.DataTypes;
 
 namespace Carrigan.SqlTools.Expressions;
 
-public abstract class SqlExpression
+public abstract class SqlExpression : StringWrapper
 {
     /// <summary>
     /// Represents the direct children of the current expression.
@@ -18,13 +20,17 @@ public abstract class SqlExpression
     /// Base constructor for all expression classes.
     /// </summary>
     /// <param name="childExpressions">Represents all child nodes for a given expression.</param>
+    /// <param name="dialectNeutralStringRepresentation">
+    /// Represents a dialect-neutral string representation of the expression, used for debugging, logging, and key-value pairs.
+    /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="childExpressions"/> is <c>null</c>.
     /// </exception>
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="childExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    protected SqlExpression(IEnumerable<SqlExpression> childExpressions)
+    protected SqlExpression(IEnumerable<SqlExpression> childExpressions, string dialectNeutralStringRepresentation) 
+        : base (dialectNeutralStringRepresentation)
     {
         ArgumentNullException.ThrowIfNull(childExpressions, nameof(childExpressions));
 
@@ -34,18 +40,9 @@ public abstract class SqlExpression
     /// <summary>
     /// Gets all parameter expressions reachable below the current expression node.
     /// </summary>
+    // TODO: still need?
     internal IEnumerable<Parameter> DescendantParameters =>
         DescendantNodes.OfType<Parameter>();
-
-    /// <summary>
-    /// Represents all parameters that have the same unmodified parameter name.
-    /// </summary>
-    protected IEnumerable<ParameterTag> DuplicateParameters =>
-        DescendantParameters
-            .Select(static parameter => parameter.Name)
-            .GroupBy(static parameter => parameter)
-            .Where(static nameGroup => nameGroup.Count() > 1)
-            .Select(static nameGroup => nameGroup.Key);
 
     /// <summary>
     /// Retrieves all descendant expressions regardless of type.
@@ -56,34 +53,30 @@ public abstract class SqlExpression
     /// <summary>
     /// Retrieves all descendants of type <see cref="ColumnBase"/>.
     /// </summary>
+    // TODO: Still need?
     internal IEnumerable<ColumnBase> DescendantColumns =>
         DescendantNodes.OfType<ColumnBase>();
 
     /// <summary>
-    /// Retrieves all descendant expressions that are not also <see cref="ColumnBase"/> or <see cref="Parameter"/>.
-    /// These are the non-leaf operator nodes (e.g., <see cref="LogicalOperator"/>, <see cref="ComparisonOperator"/>).
+    /// Gets the table tags represented by leaf expressions directly attached to this expression.
     /// </summary>
-    internal IEnumerable<SqlExpression> DescendantExpressions =>
-        DescendantNodes.Where(static expression => expression is not Parameter && expression is not ColumnBase);
+    public virtual IEnumerable<TableTag> LeafTables => [];
 
     /// <summary>
-    /// Retrieves all direct children of type <see cref="Parameter"/>.
+    /// Gets all table tags represented by leaf expressions anywhere underneath this expression.
     /// </summary>
-    internal IEnumerable<Parameter> ChildParameters =>
-        ChildNodes.OfType<Parameter>();
+    public IEnumerable<TableTag> DescendantLeafTables =>
+        LeafTables
+            .Concat(DescendantNodes.SelectMany(static expression => expression.LeafTables))
+            .Distinct();
 
     /// <summary>
-    /// Retrieves all direct children of type <see cref="ColumnBase"/>.
+    /// Indicates whether this expression is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
     /// </summary>
-    internal IEnumerable<ColumnBase> ChildColumns =>
-        ChildNodes.OfType<ColumnBase>();
-
-    /// <summary>
-    /// Retrieves all direct children that are not also <see cref="ColumnBase"/> or <see cref="Parameter"/>.
-    /// These are the non-leaf operator nodes.
-    /// </summary>
-    internal IEnumerable<SqlExpression> ChildExpressions =>
-        ChildNodes.Where(static expression => expression is not Parameter && expression is not ColumnBase);
+    /// <param name="groupBys">The optional <c>GROUP BY</c> clause to check.</param>
+    /// <returns><c>false</c> unless an expression type overrides this method.</returns>
+    public virtual bool IsAggregate(GroupBysBase? groupBys) =>
+        false;
 
     /// <summary>
     /// Generates the SQL fragments for this expression tree.

@@ -6,6 +6,8 @@ namespace Carrigan.SqlTools.Tags;
 /// </summary>
 internal sealed class ReflectedSelectTag : SelectTagBase
 {
+    private readonly ReflectedSelectTag? WithNoAliasProperty;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ReflectedSelectTag"/> class.
     /// </summary>
@@ -17,11 +19,15 @@ internal sealed class ReflectedSelectTag : SelectTagBase
     /// </param>
     internal ReflectedSelectTag(ColumnTag columnTag, AliasTag? aliasTag = null) : base(columnTag, aliasTag)
     {
+        if (aliasTag is not null)
+            WithNoAliasProperty = new(columnTag);
+        else
+            WithNoAliasProperty = null;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WithNoAlias"/> class.
     /// </summary>
     public override SelectTagBase WithNoAlias() =>
-        new ReflectedSelectTag(ColumnTag);
+        WithNoAliasProperty is null ? this : WithNoAliasProperty;
 }

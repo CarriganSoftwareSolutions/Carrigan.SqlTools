@@ -5,7 +5,6 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.Expressions;
 
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;

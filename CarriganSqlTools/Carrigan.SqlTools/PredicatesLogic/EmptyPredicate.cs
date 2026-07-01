@@ -12,7 +12,7 @@ internal class EmptyPredicate : Predicates
     /// <summary>
     /// Initializes a new empty predicate with no child predicates.
     /// </summary>
-    internal EmptyPredicate() : base([])
+    internal EmptyPredicate() : base([], string.Empty)
     {
     }
 

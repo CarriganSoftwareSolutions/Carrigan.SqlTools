@@ -53,7 +53,8 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public LogicalOperator(string op, params IEnumerable<Predicates> predicates) : base(predicates)
+    public LogicalOperator(string op, params IEnumerable<Predicates> predicates)
+        : base(predicates, string.Join(op, $"({predicates.Select(predicate => predicate)})"))
     {
         ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
         ArgumentNullException.ThrowIfNull(op, nameof(op));

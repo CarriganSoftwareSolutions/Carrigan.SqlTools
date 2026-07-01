@@ -43,7 +43,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// with the composed predicate as a child node.
     /// </summary>
     /// <param name="equal">The composed <see cref="Equal"/> predicate.</param>
-    private ColumnValueBase(Equal equal) : base([equal]) =>
+    private ColumnValueBase(Equal equal) : base([equal], equal) =>
         value = equal;
 
     /// <summary>

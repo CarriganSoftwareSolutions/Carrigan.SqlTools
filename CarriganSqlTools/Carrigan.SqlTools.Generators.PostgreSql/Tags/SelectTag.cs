@@ -1,5 +1,6 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -25,6 +26,25 @@ public sealed class SelectTag : SelectTagBase
     /// <param name="aliasName">An optional alias to use for this projection.</param>
     [ExternalOnly]
     public SelectTag(string propertyName, string? aliasName = null) : this(new PropertyName(propertyName), AliasName.New(aliasName))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
+    /// </summary>
+    /// <param name="sqlExpression">The SQL expression to project.</param>
+    /// <param name="aliasName">An optional alias to use for this projection.</param>
+    public SelectTag(SqlExpression sqlExpression, AliasName? aliasName = null) : base(sqlExpression, AliasTag.New(aliasName))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
+    /// </summary>
+    /// <param name="sqlExpression">The SQL expression to project.</param>
+    /// <param name="aliasName">An optional alias to use for this projection.</param>
+    [ExternalOnly]
+    public SelectTag(SqlExpression sqlExpression, string? aliasName) : this(sqlExpression, AliasName.New(aliasName))
     {
     }
 
@@ -87,6 +107,15 @@ public sealed class SelectTag : SelectTagBase
         Concat<T>(properties.Select(name => new PropertyName(name)));
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTag"/> class using an already resolved expression and alias tag.
+    /// </summary>
+    /// <param name="sqlExpression">The SQL expression to project.</param>
+    /// <param name="aliasTag">An optional alias to use for this projection.</param>
+    internal SelectTag(SqlExpression sqlExpression, AliasTag? aliasTag) : base(sqlExpression, aliasTag)
+    {
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class using reflection-resolved column and alias tags.
     /// </summary>
     /// <param name="columnTag">The fully qualified column identifier to project.</param>
@@ -99,5 +128,5 @@ public sealed class SelectTag : SelectTagBase
     /// Creates a new <see cref="SelectTag"/> instance with the same column as the current instance but without any alias.
     /// </summary>
     public override SelectTag WithNoAlias() =>
-        new(ColumnTag);
+        new(SqlExpression);
 }

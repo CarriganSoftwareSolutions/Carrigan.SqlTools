@@ -9,8 +9,8 @@ public class SelectTagsTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private static SelectTagBase New(string columnName, string? aliasName) =>
-        new SelectTag(new PropertyName(columnName), AliasName.New(aliasName));
+    private static SelectTag New(string columnName, string? aliasName) =>
+        new (new PropertyName(columnName), AliasName.New(aliasName));
 
     private static readonly SelectTagBase a = New("SomeColumn", null);
     private static readonly SelectTagBase b = New("OtherColumn", null);
@@ -45,7 +45,7 @@ public class SelectTagsTests
     [Fact]
     public void Empty()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
     }
@@ -53,7 +53,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyNew()
     {
-        SelectTags selectTags = new SelectTags(d);
+        SelectTags selectTags = new (d);
         Assert.False(selectTags.Empty());
         Assert.True(selectTags.Any());
         Assert.Single(selectTags.All());
@@ -66,7 +66,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyAppendProperty()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append<Order>("Id", "Override");
@@ -85,7 +85,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyAppendPropertyName()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append<Order>(new("Id"), new("Override"));
@@ -104,7 +104,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyAppend()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append(a);
@@ -123,7 +123,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyConcat()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
@@ -143,7 +143,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyConcatSelects()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
@@ -165,7 +165,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyConcatPropertyString()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat<Order>("Id", "CustomerId", "PaymentMethodId", "OrderDate", "Total");
@@ -187,7 +187,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyConcatPropertiesFromGets()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat
@@ -216,7 +216,7 @@ public class SelectTagsTests
     [Fact]
     public void NotEmptyConcatPropertiesFromGetMany()
     {
-        SelectTags selectTags = new SelectTags();
+        SelectTags selectTags = new ();
         Assert.True(selectTags.Empty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat

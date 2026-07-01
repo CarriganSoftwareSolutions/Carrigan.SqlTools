@@ -38,7 +38,8 @@ public abstract class ComparisonOperator : Predicates
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="op"/> is empty or whitespace.
     /// </exception>
-    public ComparisonOperator(SqlExpression left, SqlExpression right, string op) : base([left, right])
+    public ComparisonOperator(SqlExpression left, SqlExpression right, string op)
+        : base([left, right], $"({left} {op} {right})")
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));

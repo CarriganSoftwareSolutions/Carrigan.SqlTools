@@ -41,22 +41,23 @@ public class IsNull : Predicates
     /// <summary>
     /// The predicate expression wrapped by this IsNull predicate.
     /// </summary>
-    private readonly SqlExpression _someValue;
+    private readonly SqlExpression _anExpression;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IsNull"/> class,
     /// representing a predicate that checks whether the specified value
     /// or column is <c>NULL</c>.
     /// </summary>
-    /// <param name="someValue">
+    /// <param name="anExpression">
     /// The expression to test for null.
     /// Typically a <see cref="ColumnBase{T}"/> instance representing a database column.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="someValue"/> is <c>null</c>.
+    /// Thrown when <paramref name="anExpression"/> is <c>null</c>.
     /// </exception>
-    public IsNull(SqlExpression someValue) : base([ValidateSomeValue(someValue)]) =>
-        _someValue = someValue;
+    public IsNull(SqlExpression anExpression) 
+        : base([ValidateSomeValue(anExpression)], $"({anExpression} IS NULL)") =>
+        _anExpression = anExpression;
 
     /// <summary>
     /// Validates that the predicate being wrapped is present.
@@ -82,7 +83,7 @@ public class IsNull : Predicates
     {
         yield return new SqlFragmentText("(");
 
-        foreach (ISqlFragment fragment in _someValue.ToSqlFragments(dialect))
+        foreach (ISqlFragment fragment in _anExpression.ToSqlFragments(dialect))
             yield return fragment;
 
         yield return new SqlFragmentText(" IS NULL)");

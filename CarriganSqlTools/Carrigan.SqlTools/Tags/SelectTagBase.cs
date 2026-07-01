@@ -1,21 +1,23 @@
 using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
-/// Represents a SELECT projection tag for a single column, consisting of a fully qualified
-/// column identifier and an optional alias.
+/// Represents a SELECT projection tag for a single SQL expression, consisting of the expression
+/// and an optional alias.
 /// </summary>
 public abstract class SelectTagBase : StringWrapper, ISqlFragment
 {
     /// <summary>
-    /// The fully qualified column identifier for this select item.
+    /// The SQL expression projected by this select item.
     /// </summary>
-    internal readonly ColumnTag ColumnTag;
+    public SqlExpression SqlExpression { get; }
 
     /// <summary>
     /// The optional alias applied to this select item.
@@ -31,7 +33,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// Thrown when a required argument is <c>null</c>.
     /// </exception>
     protected SelectTagBase(PropertyName propertyName, AliasName? aliasName = null)
-        : this(CreateColumnTag(propertyName), AliasTag.New(aliasName))
+        : this(new ColumnTagExpression(CreateColumnTag(propertyName)), AliasTag.New(aliasName))
     {
     }
 
@@ -41,10 +43,39 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// <param name="columnTag">The column identifier to select.</param>
     /// <param name="aliasTag">The optional alias to apply to the selected column.</param>
     internal SelectTagBase(ColumnTag columnTag, AliasTag? aliasTag = null)
-        : base(aliasTag.IsNullOrWhiteSpace() ? columnTag : $"{columnTag} AS {aliasTag}")
+        : this(new ColumnTagExpression(columnTag), aliasTag)
     {
-        ColumnTag = columnTag;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTagBase"/> class.
+    /// </summary>
+    /// <param name="sqlExpression">The SQL expression to select.</param>
+    /// <param name="aliasTag">The optional alias to apply to the selected expression.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
+    /// </exception>
+    protected SelectTagBase(SqlExpression sqlExpression, AliasTag? aliasTag = null)
+        : base(CreateBaseValue(sqlExpression, aliasTag))
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
+
+        SqlExpression = sqlExpression;
         AliasTag = aliasTag;
+    }
+
+
+    /// <summary>
+    /// Creates the string-wrapper value for an expression select item.
+    /// </summary>
+    private static string CreateBaseValue(SqlExpression sqlExpression, AliasTag? aliasTag)
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
+
+        if (aliasTag.IsNotNullOrWhiteSpace())
+            return $"{sqlExpression} AS {aliasTag}";
+        else
+            return sqlExpression.ToString();
     }
 
     /// <summary>
@@ -63,11 +94,36 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     }
 
     /// <summary>
+    /// Gets the simple column tag represented by a column-shaped expression, when applicable.
+    /// </summary>
+    private static ColumnTag? GetSimpleColumnTag(SqlExpression sqlExpression) =>
+        sqlExpression switch
+        {
+            ColumnBase column => column.ColumnInfo.ColumnTag,
+            ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
+            _ => null
+        };
+
+    /// <summary>
+    /// Gets the table tags that participate in this select expression.
+    /// </summary>
+    internal IEnumerable<TableTag> TableTags =>
+        SqlExpression.DescendantLeafTables;
+
+    /// <summary>
     /// Gets the expected result set column name for this projection, choosing the alias
-    /// when present or the underlying column name when no alias exists.
+    /// when present, the underlying column name for simple columns, or the expression text otherwise.
     /// </summary>
     internal ResultColumnName ResultColumnName =>
-        new(AliasTag?.ToString() ?? ColumnTag.ColumnName);
+        new(AliasTag?.ToString() ?? GetSimpleColumnTag(SqlExpression)?.ColumnName.ToString() ?? SqlExpression.ToString());
+
+    /// <summary>
+    /// Indicates whether this select item is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
+    /// </summary>
+    /// <param name="groupBys">The optional <c>GROUP BY</c> clause to check.</param>
+    /// <returns>The aggregate status of the underlying expression or column.</returns>
+    public bool IsAggregate(GroupBysBase? groupBys) =>
+        SqlExpression.IsAggregate(groupBys);
 
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
@@ -86,12 +142,16 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
         [];
 
     /// <summary>
-    /// Renders the selected column and optional alias using the supplied SQL dialect.
+    /// Renders the selected expression and optional alias using the supplied SQL dialect.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render identifiers.</param>
     /// <returns>The rendered SELECT-list fragment.</returns>
-    public string ToSql(ISqlDialects dialect) =>
-        AliasTag is null ? ColumnTag.ToSql(dialect) : $"{ColumnTag.ToSql(dialect)} AS {AliasTag.ToSql(dialect)}";
+    public string ToSql(ISqlDialects dialect)
+    {
+        string selectSql = SqlExpression.ToSqlFragments(dialect).ToSql(dialect);
+
+        return AliasTag is null ? selectSql : $"{selectSql} AS {AliasTag.ToSql(dialect)}";
+    }
 
     /// <summary>
     /// Creates an equivalent select tag without an alias.

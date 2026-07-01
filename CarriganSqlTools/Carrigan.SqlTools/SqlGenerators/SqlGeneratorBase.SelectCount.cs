@@ -86,10 +86,10 @@ public abstract partial class SqlGeneratorBase<T>
         }
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
 
-        TableTag selectedTableTag = select?.ColumnTag?.TableTag ?? Table;
-        IEnumerable<TableTag> invalidSelectedTags = new[] { selectedTableTag }.Except(selectableTableTags);
+        IEnumerable<TableTag> selectedTableTags = select?.TableTags ?? [Table];
+        IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantColumns?.Select(static col => col.TableTag)?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantLeafTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];

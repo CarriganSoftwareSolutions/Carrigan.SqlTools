@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -269,5 +270,11 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// Creates the dialect-specific select-tag collection for all supported mapped columns.
     /// </summary>
     protected abstract SelectTagsBase GetAllSelectTags();
+
+    /// <summary>
+    /// Creates the dialect-specific select-tag collection for the supplied group-by columns.
+    /// </summary>
+    /// <param name="groupBys">The group-by columns to project.</param>
+    protected abstract SelectTagsBase GetSelectTags(GroupBysBase groupBys);
 
 }

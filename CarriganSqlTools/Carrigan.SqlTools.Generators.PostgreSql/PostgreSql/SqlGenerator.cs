@@ -2,6 +2,7 @@ using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
@@ -31,6 +32,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <returns>The selectable tags resolved from the model type.</returns>
     protected override SelectTagsBase GetAllSelectTags() =>
         SelectTagGenerator.GetAll<T>();
+
+    /// <summary>
+    /// Gets selectable tags for the supplied GROUP BY columns.
+    /// </summary>
+    /// <param name="groupBys">The group-by columns to project.</param>
+    /// <returns>The select tags resolved from the group-by columns.</returns>
+    protected override SelectTagsBase GetSelectTags(GroupBysBase groupBys) =>
+        SelectTagGenerator.GetMany(groupBys);
     /// <summary>
     /// Creates a dialect-specific column expression for a model property.
     /// </summary>

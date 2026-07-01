@@ -65,7 +65,7 @@ public abstract class SelectTagsBase : ISqlFragment, IEnumerable<SelectTagBase>
     /// </summary>
     internal IEnumerable<TableTag> GetTableTags() =>
         _selectTags
-            .Select(select => select.ColumnTag.TableTag)
+            .SelectMany(static select => select.TableTags)
             .Distinct();
 
     /// <summary>

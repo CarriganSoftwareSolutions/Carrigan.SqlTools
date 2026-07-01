@@ -3,6 +3,7 @@ using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Tags;
 
 
@@ -58,6 +59,21 @@ public abstract class GroupBysBase
         ArgumentNullException.ThrowIfNull(groupByItem, nameof(groupByItem));
 
         return _groupByItems.Contains(groupByItem);
+    }
+
+    /// <summary>
+    /// Determines whether a column expression is present in the <c>GROUP BY</c> clause.
+    /// </summary>
+    /// <param name="column">The column expression to check.</param>
+    /// <returns><c>true</c> when the column appears in the <c>GROUP BY</c>; otherwise, <c>false</c>.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="column"/> is <c>null</c>.
+    /// </exception>
+    public bool Contains(ColumnBase column)
+    {
+        ArgumentNullException.ThrowIfNull(column, nameof(column));
+
+        return _groupByItems.Any(groupByItem => groupByItem.ColumnInfo.ColumnTag == column.ColumnInfo.ColumnTag);
     }
 
     /// <summary>

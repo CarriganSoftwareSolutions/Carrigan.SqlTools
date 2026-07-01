@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Expressions;
@@ -25,14 +26,29 @@ public abstract class ColumnBase : SqlExpression
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="columnInfo"/> is <c>null</c>.
     /// </exception>
-    protected ColumnBase(ColumnInfo columnInfo) : base([])
+    protected ColumnBase(ColumnInfo columnInfo) : base([], columnInfo)
     {
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ColumnInfo = columnInfo;
     }
 
     /// <summary>
-    /// Gets the table tag that owns this column.
+    /// Gets the table tag represented by this column leaf expression.
     /// </summary>
-    internal TableTag TableTag => ColumnInfo.ColumnTag.TableTag;
+    public override IEnumerable<TableTag> LeafTables =>
+        [ColumnInfo.ColumnTag.TableTag];
+
+    /// <summary>
+    /// Indicates whether this column is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
+    /// </summary>
+    /// <param name="groupBys">The <c>GROUP BY</c> clause to check.</param>
+    /// <returns><c>true</c> when this column is included in <paramref name="groupBys"/>; otherwise, <c>false</c>.</returns>
+    public override bool IsAggregate(GroupBysBase? groupBys) =>
+        groupBys?.Contains(this) ?? false;
+
+    /// <summary>
+    /// Returns the unquoted column tag representation.
+    /// </summary>
+    public override string ToString() =>
+        ColumnInfo.ColumnTag.ToString();
 }

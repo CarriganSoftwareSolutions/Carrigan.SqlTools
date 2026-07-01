@@ -23,8 +23,24 @@ public class SubqueryPredicateBase : Predicates
     /// </summary>
     /// <param name="subQueryBase">The subquery to include in the predicate.</param>
     /// <param name="command">The SQL command (e.g., "EXISTS", "IN") to use.</param>
-    protected SubqueryPredicateBase(SubqueryBase subQueryBase, string command) : base([]) =>
-        Fragments = [new SqlFragmentText($"({command} "), subQueryBase, new SqlFragmentText(")")];
+    protected SubqueryPredicateBase(SubqueryBase subQueryBase, string command)
+        : base([], string.Join(' ', ToSqlFragments(subQueryBase, command).Select(fragments => fragments.ToString()))) => 
+        Fragments = ToSqlFragments(subQueryBase, command);
+
+    /// <summary>
+    /// Converts the subquery and command into a sequence of SQL fragments for rendering.
+    /// </summary>
+    /// <param name="subQueryBase">
+    /// The subquery to include in the predicate. This is an instance of <see cref="SubqueryBase"/> that represents the SQL subquery.
+    /// </param>
+    /// <param name="command">The SQL command (e.g., "EXISTS", "IN") to use.</param>
+    /// <returns>An enumerable of <see cref="ISqlFragment"/> representing the SQL fragments of the subquery predicate.</returns>
+    /// <remarks>
+    /// This is a helper function for the one time generation stored in the property <see cref="Fragments"/>
+    /// The internal method should be used for the final render.
+    /// </remarks>
+    private static IEnumerable<ISqlFragment> ToSqlFragments(SubqueryBase subQueryBase, string command) =>
+        [new SqlFragmentText($"({command} "), subQueryBase, new SqlFragmentText(")")];
 
     /// <summary>
     /// Converts the predicate into a sequence of SQL fragments for rendering.

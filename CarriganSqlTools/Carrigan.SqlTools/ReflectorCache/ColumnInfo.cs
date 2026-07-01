@@ -76,6 +76,17 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     internal readonly AliasName? AliasName;
 
     /// <summary>
+    /// The source column selected for this property in SELECT clauses.
+    /// This may differ from <see cref="ColumnTag"/> when a <see cref="SelectTagAttribute"/> maps a projection property to another model.
+    /// </summary>
+    internal readonly ColumnTag SelectColumnTag;
+
+    /// <summary>
+    /// The alias used when this property is selected.
+    /// </summary>
+    internal readonly AliasTag? SelectAliasTag;
+
+    /// <summary>
     /// The <see cref="Tags.SelectTagBase"/> used to represent this column
     /// in SELECT clauses, including alias handling.
     /// </summary>
@@ -154,7 +165,18 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
 
         SelectTagAttribute? selectTagAttribute = SelectTagAttribute.GetAttribute(propertyInfo);
 
-        SelectTag = selectTagAttribute?.SelectTag ?? new ReflectedSelectTag(ColumnTag, AliasTag.New(aliasName));
+        if (selectTagAttribute is null)
+        {
+            SelectColumnTag = ColumnTag;
+            SelectAliasTag = AliasTag.New(aliasName);
+            SelectTag = new ReflectedSelectTag(SelectColumnTag, SelectAliasTag);
+        }
+        else
+        {
+            SelectColumnTag = selectTagAttribute.ColumnTag ?? ColumnTag;
+            SelectAliasTag = selectTagAttribute.AliasTag;
+            SelectTag = selectTagAttribute.SelectTag ?? new ReflectedSelectTag(SelectColumnTag, SelectAliasTag);
+        }
 
         IsKeyPart = keys.Contains(propertyInfo);
         IsEncrypted = propertyInfo.GetCustomAttribute<EncryptedAttribute>() != null;

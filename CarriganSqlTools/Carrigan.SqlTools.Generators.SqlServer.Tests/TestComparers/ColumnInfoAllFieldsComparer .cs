@@ -7,7 +7,7 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TestComparers;
 
 /// <summary>
 /// Compares two <see cref="ColumnInfo"/> instances by ALL of their internal readonly properties:
-/// ColumnTag, ColumnName, PropertyInfo, PropertyName, ParameterTag, SelectTag,
+/// ColumnTag, ColumnName, PropertyInfo, PropertyName, ParameterTag, SelectColumnTag, SelectAliasTag, SelectTag,
 /// IsKeyPart, IsEncrypted, IsKeyVersionProperty.
 /// </summary>
 public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
@@ -27,6 +27,8 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
             && EqualityComparer<PropertyInfo>.Default.Equals(left.PropertyInfo, right.PropertyInfo)
             && EqualityComparer<PropertyName>.Default.Equals(left.PropertyName, right.PropertyName)
             && EqualityComparer<ParameterTag>.Default.Equals(left.ParameterTag, right.ParameterTag)
+            && EqualityComparer<ColumnTag>.Default.Equals(left.SelectColumnTag, right.SelectColumnTag)
+            && EqualityComparer<AliasTag>.Default.Equals(left.SelectAliasTag, right.SelectAliasTag)
             && EqualityComparer<SelectTagBase>.Default.Equals(left.SelectTag, right.SelectTag)
             && EqualityComparer<AliasName>.Default.Equals(left.AliasName, right.AliasName)
             && left.IsKeyPart == right.IsKeyPart
@@ -46,6 +48,8 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
         hashCode.Add(obj.PropertyInfo, EqualityComparer<PropertyInfo>.Default);
         hashCode.Add(obj.PropertyName, EqualityComparer<PropertyName>.Default);
         hashCode.Add(obj.ParameterTag, EqualityComparer<ParameterTag>.Default);
+        hashCode.Add(obj.SelectColumnTag, EqualityComparer<ColumnTag>.Default);
+        hashCode.Add(obj.SelectAliasTag, EqualityComparer<AliasTag?>.Default);
         hashCode.Add(obj.SelectTag, EqualityComparer<SelectTagBase>.Default);
         hashCode.Add(obj.IsKeyPart);
         hashCode.Add(obj.IsEncrypted);

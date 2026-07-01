@@ -212,6 +212,24 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
+    /// Resolves the column metadata used by <see cref="SelectTagAttribute{T}"/> for the provided property.
+    /// </summary>
+    /// <param name="propertyName">The property whose SELECT projection metadata should be resolved.</param>
+    /// <returns>The reflected column metadata for <paramref name="propertyName"/>.</returns>
+    /// <remarks>
+    /// This method does not filter out unsupported types for a given dialect.
+    /// This is intended for use only with Reflection based SelectTags generated from attributes.
+    /// We can get away with this because the attribute should only be applied to valid types.
+    /// It is still a good to filter out unsupported types when using this method.
+    /// </remarks>
+    internal static ColumnInfo GetSelectColumnInfo(PropertyName propertyName)
+    {
+        ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
+
+        return _ColumnInfoCache.Get(propertyName);
+    }
+
+    /// <summary>
     /// A collection of <see cref="ReflectorCache.ColumnInfo"/> objects representing
     /// encryption key version columns, if present on <typeparamref name="T"/>.
     /// </summary>
@@ -405,9 +423,9 @@ public class SqlToolsReflectorCache<T>
         if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
             throw new InvalidSqlIdentifierException(aliasName);
 
-        ColumnTag columnTag = columnInfo.SelectTag.ColumnTag;
+        ColumnTag columnTag = columnInfo.SelectColumnTag;
         AliasTag? aliasTag = aliasName is null
-            ? columnInfo.SelectTag.AliasTag
+            ? columnInfo.SelectAliasTag
             : AliasTag.New(aliasName);
 
         return selectTagFactory(columnTag, aliasTag);

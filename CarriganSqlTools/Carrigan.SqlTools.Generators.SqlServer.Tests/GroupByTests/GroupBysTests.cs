@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GroupByTests;
 
@@ -190,11 +191,20 @@ public class GroupBysTests
     }
 
     [Fact]
-    public void Contains_WithNullItem_ThrowsArgumentNullException()
+    public void Contains_WithNullItem_ThrowsArgumentNullException_NullColumnBase()
     {
         GroupBys groupBy = new(new GroupBy<Address>("Street"));
 
-        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Contains(null!));
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Contains((ColumnBase)(null!)));
+        Assert.Equal("column", exception.ParamName);
+    }
+
+    [Fact]
+    public void Contains_WithNullItem_ThrowsArgumentNullException_NullGroupByBase()
+    {
+        GroupBys groupBy = new(new GroupBy<Address>("Street"));
+
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Contains((GroupByBase)(null!)));
         Assert.Equal("groupByItem", exception.ParamName);
     }
 

@@ -1,7 +1,6 @@
 using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;

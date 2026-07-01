@@ -11,6 +11,16 @@ namespace Carrigan.SqlTools.Attributes;
 public abstract class SelectTagAttribute : Attribute
 {
     /// <summary>
+    /// Gets or initializes the fully qualified source column selected by this attribute.
+    /// </summary>
+    internal ColumnTag? ColumnTag { get; init; }
+
+    /// <summary>
+    /// Gets or initializes the alias applied by this attribute.
+    /// </summary>
+    internal AliasTag? AliasTag { get; init; }
+
+    /// <summary>
     /// Gets or initializes the reflected SELECT projection metadata created by the concrete generic attribute.
     /// </summary>
     internal SelectTagBase? SelectTag { get; init; }
@@ -60,7 +70,16 @@ public class SelectTagAttribute<T> : SelectTagAttribute
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="propertyName"/> does not map to a valid selected property on <typeparamref name="T"/>.
     /// </exception>
-    internal SelectTagAttribute(PropertyName propertyName, AliasName? aliasName = null) =>
-        SelectTag = SqlToolsReflectorCache<T>
-            .GetSelectTag(propertyName, aliasName);
+    internal SelectTagAttribute(PropertyName propertyName, AliasName? aliasName = null)
+    {
+        ColumnInfo columnInfo = SqlToolsReflectorCache<T>.GetSelectColumnInfo(propertyName);
+        ColumnTag columnTag = columnInfo.SelectColumnTag;
+        AliasTag? aliasTag = aliasName is null
+            ? columnInfo.SelectAliasTag
+            : AliasTag.New(aliasName);
+
+        ColumnTag = columnTag;
+        AliasTag = aliasTag;
+        SelectTag = new ReflectedSelectTag(columnTag, aliasTag);
+    }
 }

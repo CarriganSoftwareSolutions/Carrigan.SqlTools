@@ -1,7 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
