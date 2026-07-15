@@ -54,7 +54,7 @@ public static class SelectTagGenerator
             (
                 propertyName,
                 DialectStatics.SupportedTypes,
-                static (columnTag, aliasTag) => new SelectTag(new ColumnTagExpression(columnTag), aliasTag),
+                static (sqlExpression, aliasTag) => new SelectTag(sqlExpression, aliasTag),
                 aliasName
             );
 

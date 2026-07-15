@@ -4,6 +4,7 @@ using Carrigan.Core.ReflectionCaching;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Tags;
@@ -148,7 +149,7 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<selectTagT> CreateAllSelectTags<selectTagT>
     (
         HashSet<Type> supportedTypes,
-        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory
+        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory
     )
         where selectTagT : SelectTagBase =>
             GetColumnInfo(supportedTypes)
@@ -357,7 +358,7 @@ public class SqlToolsReflectorCache<T>
     (
         PropertyName propertyName,
         HashSet<Type> supportedTypes,
-        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory,
+        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory,
         AliasName? aliasName = null
     )
         where selectTagT : SelectTagBase
@@ -381,7 +382,7 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<selectTagT> CreateSelectTags<selectTagT>
     (
         HashSet<Type> supportedTypes,
-        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory,
+        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory,
         params IEnumerable<PropertyName> propertyNames
     )
         where selectTagT : SelectTagBase
@@ -406,14 +407,14 @@ public class SqlToolsReflectorCache<T>
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
         ColumnInfo columnInfo = _ColumnInfoCache.Get(propertyName);
-        return CreateSelectTag(columnInfo, aliasName, static (columnTag, aliasTag) => new ReflectedSelectTag(columnTag, aliasTag));
+        return CreateSelectTag(columnInfo, aliasName, static (sqlExpression, aliasTag) => new ReflectedSelectTag(sqlExpression, aliasTag));
     }
 
     private static selectTagT CreateSelectTag<selectTagT>
     (
         ColumnInfo columnInfo,
         AliasName? aliasName,
-        Func<ColumnTag, AliasTag?, selectTagT> selectTagFactory
+        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory
     )
         where selectTagT : SelectTagBase
     {
@@ -423,12 +424,12 @@ public class SqlToolsReflectorCache<T>
         if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
             throw new InvalidSqlIdentifierException(aliasName);
 
-        ColumnTag columnTag = columnInfo.SelectColumnTag;
+        SqlExpression sqlExpression = columnInfo.SelectTag.SqlExpression;
         AliasTag? aliasTag = aliasName is null
             ? columnInfo.SelectAliasTag
             : AliasTag.New(aliasName);
 
-        return selectTagFactory(columnTag, aliasTag);
+        return selectTagFactory(sqlExpression, aliasTag);
     }
 
 }

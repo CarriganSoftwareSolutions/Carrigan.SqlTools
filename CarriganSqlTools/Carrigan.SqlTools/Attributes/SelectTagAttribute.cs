@@ -21,16 +21,22 @@ public abstract class SelectTagAttribute : Attribute
     internal AliasTag? AliasTag { get; init; }
 
     /// <summary>
-    /// Gets or initializes the reflected SELECT projection metadata created by the concrete generic attribute.
+    /// Gets or initializes the reflected SELECT projection metadata created by the concrete attribute.
     /// </summary>
     internal SelectTagBase? SelectTag { get; init; }
 
     /// <summary>
-    /// Gets the first generic SELECT projection attribute applied to a model property.
+    /// Indicates whether the decorated property's result-column name should be used as the default alias
+    /// when the attribute does not provide an explicit alias.
+    /// </summary>
+    internal bool UseDecoratedPropertyNameAsDefaultAlias { get; init; }
+
+    /// <summary>
+    /// Gets the first SELECT projection attribute applied to a model property.
     /// </summary>
     /// <param name="propertyInfo">The reflected property to inspect for SELECT projection metadata.</param>
     /// <returns>
-    /// The applied <see cref="SelectTagAttribute{T}"/> instance when one is present; otherwise, <see langword="null"/>.
+    /// The applied <see cref="SelectTagAttribute"/> instance when one is present; otherwise, <see langword="null"/>.
     /// </returns>
     /// <exception cref="ArgumentNullException">
     /// Thrown by reflection when <paramref name="propertyInfo"/> is <see langword="null"/>.
@@ -39,9 +45,7 @@ public abstract class SelectTagAttribute : Attribute
         propertyInfo
             .GetCustomAttributes(inherit: true)
             .OfType<SelectTagAttribute>()
-            .FirstOrDefault(attribute =>
-                attribute.GetType().IsGenericType &&
-                attribute.GetType().GetGenericTypeDefinition() == typeof(SelectTagAttribute<>));
+            .FirstOrDefault();
 }
 
 /// <summary>

@@ -1,3 +1,5 @@
+using Carrigan.SqlTools.Expressions;
+
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
@@ -17,10 +19,21 @@ internal sealed class ReflectedSelectTag : SelectTagBase
     /// <param name="aliasTag">
     /// The <see cref="AliasTag"/> representing the alias metadata for this select tag.
     /// </param>
-    internal ReflectedSelectTag(ColumnTag columnTag, AliasTag? aliasTag = null) : base(columnTag, aliasTag)
+    internal ReflectedSelectTag(ColumnTag columnTag, AliasTag? aliasTag = null)
+        : this(new ColumnTagExpression(columnTag), aliasTag)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ReflectedSelectTag"/> class from a resolved SQL expression.
+    /// </summary>
+    /// <param name="sqlExpression">The SQL expression represented by this select tag.</param>
+    /// <param name="aliasTag">The optional alias applied to the selected expression.</param>
+    internal ReflectedSelectTag(SqlExpression sqlExpression, AliasTag? aliasTag = null)
+        : base(sqlExpression, aliasTag)
     {
         if (aliasTag is not null)
-            WithNoAliasProperty = new(columnTag);
+            WithNoAliasProperty = new(sqlExpression);
         else
             WithNoAliasProperty = null;
     }

@@ -175,7 +175,13 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         {
             SelectColumnTag = selectTagAttribute.ColumnTag ?? ColumnTag;
             SelectAliasTag = selectTagAttribute.AliasTag;
-            SelectTag = selectTagAttribute.SelectTag ?? new ReflectedSelectTag(SelectColumnTag, SelectAliasTag);
+
+            if (SelectAliasTag is null && selectTagAttribute.UseDecoratedPropertyNameAsDefaultAlias)
+                SelectAliasTag = AliasTag.New(aliasName ?? new AliasName(columnName));
+
+            SelectTag = selectTagAttribute.SelectTag is null
+                ? new ReflectedSelectTag(SelectColumnTag, SelectAliasTag)
+                : new ReflectedSelectTag(selectTagAttribute.SelectTag.SqlExpression, SelectAliasTag);
         }
 
         IsKeyPart = keys.Contains(propertyInfo);
