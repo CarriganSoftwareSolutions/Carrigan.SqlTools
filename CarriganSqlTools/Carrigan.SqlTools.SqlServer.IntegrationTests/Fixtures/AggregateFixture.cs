@@ -5,9 +5,9 @@ using Carrigan.SqlTools.SqlServer.IntegrationTests.Inserts;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 
-public sealed class DeleteFixture : SqlFixtureBase
+public sealed class AggregateFixture : SqlFixtureBase
 {
-    public DeleteFixture()
+    public AggregateFixture()
         : base
         (
             [
