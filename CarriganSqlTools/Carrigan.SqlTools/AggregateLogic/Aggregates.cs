@@ -47,8 +47,22 @@ public abstract class Aggregates : SqlExpression
 
         if (ChildNodes.Any())
         {
-            foreach (ISqlFragment fragment in ChildNodes.SelectMany(expression => expression.ToSqlFragments(dialect)).JoinFragments(", "))
-                yield return fragment;
+            bool isFirstExpression = true;
+
+            foreach (SqlExpression expression in ChildNodes)
+            {
+                if (!isFirstExpression)
+                {
+                    yield return new SqlFragmentText(", ");
+                }
+
+                foreach (ISqlFragment fragment in expression.ToSqlFragments(dialect))
+                {
+                    yield return fragment;
+                }
+
+                isFirstExpression = false;
+            }
         }
         else
             yield return new SqlFragmentText("*");

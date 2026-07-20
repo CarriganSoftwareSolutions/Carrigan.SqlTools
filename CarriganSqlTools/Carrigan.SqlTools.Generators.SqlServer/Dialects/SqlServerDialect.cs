@@ -221,6 +221,20 @@ public class SqlServerDialect : ISqlDialects
         }
         else
         {
+            string declaration = GetTypeAndSize(fieldProperties);
+
+            return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
+        }
+    }
+
+    private static string GetTypeAndSize(FieldProperties fieldProperties)
+    {
+        if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
+        {
+            return string.Empty;
+        }
+        else
+        {
             bool RequiresLengthDeclaration() =>
                 fieldProperties.ProviderTypeName is "CHAR" or "VARCHAR" or "NCHAR" or "NVARCHAR" or "BINARY" or "VARBINARY" or "VECTOR";
 
@@ -252,7 +266,7 @@ public class SqlServerDialect : ISqlDialects
                 declaration += $"({fieldProperties.Length})";
             }
 
-            return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
+            return declaration;
         }
     }
 
@@ -348,7 +362,7 @@ public class SqlServerDialect : ISqlDialects
     ///     <item><description>Integer values, including <see cref="byte"/>, <see cref="sbyte"/>, <see cref="short"/>, <see cref="int"/>, <see cref="long"/>, and their nullable variants.</description></item>
     ///     <item><description>Numeric values, including <see cref="float"/>, <see cref="double"/>, <see cref="decimal"/>, and their nullable variants.</description></item>
     ///     <item><description>Date and time values, including <see cref="DateTime"/>, <see cref="DateOnly"/>, <see cref="TimeOnly"/>, <see cref="DateTimeOffset"/>, and their nullable variants.</description></item>
-    ///     <item><description>XML values, including <see cref="System.Xml.Linq.XDocument"/> and <see cref="System.Xml.XmlDocument"/>.</description></item>
+    ///     <item><description>XML values, including <see cref="XDocument"/> and <see cref="XmlDocument"/>.</description></item>
     ///     <item><description><see cref="object"/> as a fallback type for unmapped values.</description></item>
     /// </list>
     /// </returns>
@@ -401,8 +415,8 @@ public class SqlServerDialect : ISqlDialects
         typeof(DateTimeOffset?),
 
         // XML
-        typeof(System.Xml.Linq.XDocument),
-        typeof(System.Xml.XmlDocument),
+        typeof(XDocument),
+        typeof(XmlDocument),
 
         // Fallback
         typeof(object)
@@ -421,4 +435,26 @@ public class SqlServerDialect : ISqlDialects
     /// </returns>
     public FieldProperties FromClrValue(object? value) =>
         SqlServerTypesProvider.FromClrValue(value);
+
+    /// <summary>
+    /// Renders the appropriate SQL Cast type declaration for a given <see cref="FieldProperties"/> instance according to the SQL dialect's type mapping rules.
+    /// </summary>
+    /// <param name="fiedProperties">
+    /// The <see cref="FieldProperties"/> instance containing the properties that define the SQL type to be rendered.
+    /// This includes information such as length, precision, scale, and other relevant attributes.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance containing the rendered SQL Cast type declaration that corresponds to the provided <see cref="FieldProperties"/> according to the SQL dialect's type mapping rules.
+    /// </returns>
+    public string RenderCastType(FieldProperties fieldProperties)
+    {
+        if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
+        {
+            return string.Empty;
+        }
+        else
+        {
+            return SqlServerDialect.GetTypeAndSize(fieldProperties);
+        }
+    }
 }

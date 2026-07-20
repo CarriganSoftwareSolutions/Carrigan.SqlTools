@@ -54,7 +54,13 @@ public static class CustomerBookAggregateDataSet
 
         Assert.Equal(expected.Gender, actual.Gender);
         Assert.Equal(expected.Title, actual.Title);
-        Assert.Equal(expected.Average, actual.Average);
+        if (expected.Average is null)
+            Assert.Null(actual.Average);
+        else
+        {
+            Assert.NotNull(actual.Average);
+            Assert.Equal(expected.Average.Value, actual.Average.Value, 2);
+        }
         Assert.Equal(expected.Max, actual.Max);
         Assert.Equal(expected.Min, actual.Min);
         Assert.Equal(expected.Count, actual.Count);
@@ -67,7 +73,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "Adventures of Huckleberry Finn",
-            Average = 48,
+            Average = 48.000000m,
             Max = 72,
             Min = 24,
             Count = 2,
@@ -77,7 +83,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "Adventures of Huckleberry Finn",
-            Average = 46,
+            Average = 46.500000m,
             Max = 64,
             Min = 29,
             Count = 2,
@@ -87,7 +93,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "Alice's Adventures in Wonderland",
-            Average = 48,
+            Average = 48.000000m,
             Max = 72,
             Min = 24,
             Count = 2,
@@ -97,7 +103,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "Alice's Adventures in Wonderland",
-            Average = 54,
+            Average = 54.400000m,
             Max = 64,
             Min = 45,
             Count = 5,
@@ -107,7 +113,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "Dracula",
-            Average = 55,
+            Average = 55.333333m,
             Max = 72,
             Min = 27,
             Count = 3,
@@ -117,7 +123,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "Dracula",
-            Average = 57,
+            Average = 57.666666m,
             Max = 64,
             Min = 45,
             Count = 3,
@@ -127,7 +133,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "Frankenstein",
-            Average = 48,
+            Average = 48.750000m,
             Max = 72,
             Min = 31,
             Count = 4,
@@ -137,7 +143,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "Frankenstein",
-            Average = 52,
+            Average = 52.333333m,
             Max = 64,
             Min = 29,
             Count = 3,
@@ -147,7 +153,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "Moby-Dick",
-            Average = 59,
+            Average = 59.500000m,
             Max = 61,
             Min = 58,
             Count = 2,
@@ -157,7 +163,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "Moby-Dick",
-            Average = 38,
+            Average = 38.000000m,
             Max = 39,
             Min = 37,
             Count = 2,
@@ -167,7 +173,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "Pride and Prejudice",
-            Average = 61,
+            Average = 61.000000m,
             Max = 61,
             Min = 61,
             Count = 1,
@@ -177,7 +183,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "Pride and Prejudice",
-            Average = 48,
+            Average = 48.000000m,
             Max = 51,
             Min = 45,
             Count = 2,
@@ -187,7 +193,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "The Adventures of Sherlock Holmes",
-            Average = 57,
+            Average = 57.000000m,
             Max = 79,
             Min = 34,
             Count = 3,
@@ -197,7 +203,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "The Adventures of Sherlock Holmes",
-            Average = 57,
+            Average = 57.666666m,
             Max = 64,
             Min = 45,
             Count = 3,
@@ -207,7 +213,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "The Count of Monte Cristo",
-            Average = 60,
+            Average = 60.000000m,
             Max = 72,
             Min = 43,
             Count = 4,
@@ -217,7 +223,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "The Count of Monte Cristo",
-            Average = 73,
+            Average = 73.500000m,
             Max = 83,
             Min = 64,
             Count = 2,
@@ -227,7 +233,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "The Picture of Dorian Gray",
-            Average = 53,
+            Average = 53.000000m,
             Max = 58,
             Min = 43,
             Count = 3,
@@ -237,7 +243,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "The Picture of Dorian Gray",
-            Average = 30,
+            Average = 30.500000m,
             Max = 39,
             Min = 22,
             Count = 2,
@@ -247,7 +253,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'F',
             Title = "The Time Machine",
-            Average = 57,
+            Average = 57.750000m,
             Max = 72,
             Min = 34,
             Count = 4,
@@ -257,7 +263,7 @@ public static class CustomerBookAggregateDataSet
         {
             Gender = 'M',
             Title = "The Time Machine",
-            Average = 60,
+            Average = 60.000000m,
             Max = 64,
             Min = 56,
             Count = 2,

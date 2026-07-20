@@ -169,6 +169,17 @@ public class PostgreSqlDialect : ISqlDialects
     {
         ArgumentNullException.ThrowIfNull(fieldProperties);
 
+        string declaration = GetTypeAndSize(fieldProperties);
+        if (declaration.IsEmpty())
+            return declaration;
+        else
+            return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
+    }
+
+    private static string GetTypeAndSize(FieldProperties fieldProperties)
+    {
+        ArgumentNullException.ThrowIfNull(fieldProperties);
+
         if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
         {
             return string.Empty;
@@ -200,8 +211,9 @@ public class PostgreSqlDialect : ISqlDialects
         if (fieldProperties.IsArray is not null && fieldProperties.IsArray.Value)
             declaration += "[]";
 
-        return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
+        return declaration;
     }
+
 
     /// <summary>
     /// Determines whether the specified PostgreSQL provider type name requires a length declaration when rendering field properties.
@@ -538,4 +550,17 @@ public class PostgreSqlDialect : ISqlDialects
     /// </returns>
     public FieldProperties FromClrValue(object? value) =>
         PostgreSqlTypesProvider.FromClrValue(value);
+
+    /// <summary>
+    /// Renders the appropriate SQL Cast type declaration for a given <see cref="FieldProperties"/> instance according to the SQL dialect's type mapping rules.
+    /// </summary>
+    /// <param name="fiedProperties">
+    /// The <see cref="FieldProperties"/> instance containing the properties that define the SQL type to be rendered.
+    /// This includes information such as length, precision, scale, and other relevant attributes.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance containing the rendered SQL Cast type declaration that corresponds to the provided <see cref="FieldProperties"/> according to the SQL dialect's type mapping rules.
+    /// </returns>
+    public string RenderCastType(FieldProperties fieldProperties) =>
+        GetTypeAndSize(fieldProperties);
 }

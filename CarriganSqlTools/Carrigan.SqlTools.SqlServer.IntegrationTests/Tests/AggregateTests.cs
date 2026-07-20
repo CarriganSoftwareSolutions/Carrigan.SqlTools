@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Clients.SqlServer;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
@@ -10,6 +11,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
 using System.Reflection.Emit;
 
@@ -36,7 +38,7 @@ public class AggregateTests : IClassFixture<AggregateFixture>
 
             //TODO: SelectTags for Aggregate expressions will throw an exception if no alias is provided, this needs bullet proofing.
 
-            new SelectTag(new Avg( new Column<Customer>(nameof(Customer.Age))), "Average"),
+            new SelectTag(new Avg(new Cast(new Column<Customer>(nameof(Customer.Age)), SqlServerTypesProvider.AsDecimal())), "Average"),
 
             new SelectTag(new Max(new Column<Customer>(nameof(Customer.Age))), "Max"),
 

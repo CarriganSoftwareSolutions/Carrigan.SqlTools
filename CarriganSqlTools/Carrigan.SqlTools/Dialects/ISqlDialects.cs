@@ -177,4 +177,16 @@ public interface ISqlDialects
     /// A <see cref="FieldProperties"/> instance containing the properties that correspond to the CLR value according to the SQL dialect's type mapping rules.
     /// </returns>
     public FieldProperties FromClrValue(object? value);
+
+    /// <summary>
+    /// Renders the appropriate SQL Cast type declaration for a given <see cref="FieldProperties"/> instance according to the SQL dialect's type mapping rules.
+    /// </summary>
+    /// <param name="fiedProperties">
+    /// The <see cref="FieldProperties"/> instance containing the properties that define the SQL type to be rendered.
+    /// This includes information such as length, precision, scale, and other relevant attributes.
+    /// </param>
+    /// <returns>
+    /// A <see cref="FieldProperties"/> instance containing the rendered SQL Cast type declaration that corresponds to the provided <see cref="FieldProperties"/> according to the SQL dialect's type mapping rules.
+    /// </returns>
+    public string RenderCastType(FieldProperties fieldProperties);
 }
