@@ -66,6 +66,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
     /// <c>OFFSET … FETCH NEXT</c> clauses.
     /// </summary>
+    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
+    /// <param name="subQuery">The subquery used as the query source.</param>
     /// <param name="selects">
     /// Optional projected columns (and result aliases). If omitted or empty, <c>[T].*</c> is selected.
     /// </param>
@@ -75,10 +77,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
     /// </param>
-    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
-    /// <param name="subQuery">The subquery used as the query source.</param>
     /// <param name="orderBys">The SQL ORDER BY items to include in the query.</param>
     /// <param name="paging">The paging fragment to include in the query.</param>
+    /// <param name="groupBys">
+    /// Optional grouping items to include in the query.
+    /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
     /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
@@ -106,7 +109,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new (predicate);
     ///
-    /// SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -127,7 +130,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// 
     /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
-    /// SqlQuery query = customerGenerator.Select(null, null,  null, join, null, orderByOrderDate, null);
+    /// SqlQuery query = customerGenerator.Select(null, null,  null, join, null, null, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -155,7 +158,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// 
     /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
-    /// SqlQuery query = customerGenerator.Select(null, null, null, join, greaterThan, orderByOrderDate, null);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, join, greaterThan, null, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -188,9 +191,23 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Joins<T>? joins,
         Predicates? predicates,
         GroupBysBase? groupBys,
-        OrderBysBase? orderBys, PagingBase? paging
+        OrderBysBase? orderBys, 
+        PagingBase? paging
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, orderBys, paging);
+
+    [Obsolete("Use the overload with OrderBysBase argument.")]
+    public SqlQuery Select
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        OrderBysBase? orderBys,
+        PagingBase? paging
+    ) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, orderBys, paging);
 
     /// <summary>
     /// Builds a SELECT SQL query for the supplied model data.

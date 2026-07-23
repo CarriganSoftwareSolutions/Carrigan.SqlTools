@@ -66,6 +66,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
     /// PostgreSQL paging clauses such as <c>LIMIT</c> and <c>OFFSET</c>.
     /// </summary>
+    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
+    /// <param name="subQuery">The subquery used as the query source.</param>
     /// <param name="selects">
     /// Optional projected columns and result aliases. If omitted or empty, all columns from the table represented by <typeparamref name="T"/> are selected.
     /// </param>
@@ -80,8 +82,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// When <paramref name="paging"/> is provided, key columns are appended to
     /// the ordering (if not already present) to ensure stable paging semantics.
     /// </param>
-    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
-    /// <param name="subQuery">The subquery used as the query source.</param>
     /// <param name="paging">The paging fragment to include in the query.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
@@ -111,7 +111,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// InnerJoin<Order> join = new(predicate);
     /// Joins<Customer> joins = new(join);
     /// 
-    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -134,7 +134,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// 
     /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
-    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, orderByOrderDate, null);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -163,7 +163,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// 
     /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
-    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, greaterThan, orderByOrderDate, null);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, greaterThan, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[
@@ -187,6 +187,19 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         PagingBase? paging
 ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, orderBys, paging);
+
+    [Obsolete("Use the overload with OrderBysBase argument.")]
+    public SqlQuery Select
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        OrderBysBase? orderBys,
+        PagingBase? paging
+) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, orderBys, paging);
 
     /// <summary>
     /// Builds a SELECT SQL query for the supplied model data.

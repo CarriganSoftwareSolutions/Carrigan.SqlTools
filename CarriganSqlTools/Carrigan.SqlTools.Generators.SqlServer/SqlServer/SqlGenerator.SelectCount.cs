@@ -122,7 +122,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
     /// </param>
-    [Obsolete("Use a Aggregate Selects instead.")]
+    [Obsolete("Use the Aggregate Select \"COUNT\" instead.")]
     public SqlQuery SelectCount(bool? distinct, SelectTagBase? select, Joins<T>? joins, Predicates? predicates) =>
         base.BaseSelectCount(distinct, select, joins, predicates);
 }

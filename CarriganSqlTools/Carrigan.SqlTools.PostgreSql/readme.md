@@ -36,6 +36,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Delete with Using and Where](#delete-with-using-and-where)
   - [Select Count With Where](#select-count-with-where)
   - [Update with From and Where](#update-with-from-and-where)
+  - [Aggregate Expression Examples](#aggregate-expression-examples)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -479,6 +480,47 @@ SqlQuery query = orderGenerator.Update(updateBuilder);
 ```
 
 [Table of Contents](#table-of-contents)
+
+### Aggregate Expression Examples
+
+```csharp
+Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+        SelectTagGenerator.Get<Grades>(nameof(Grades.CourseCode)),
+        new SelectTag(new Average(gradePoint), "AverageGradePoint"),
+        new SelectTag(new Sum(gradePoint), "TotalGradePoints"),
+        new SelectTag(new Min(gradePoint), "MinimumGradePoint"),
+        new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
+        new SelectTag(new Count(gradePoint), "GradePointCount")
+    ),
+    GroupBys = GroupBys
+        .New<Grades>(nameof(Grades.StudentId))
+        .Append<Grades>(nameof(Grades.CourseCode))
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+
+//  SELECT 
+//      "Grades"."StudentId", 
+//      "Grades"."CourseCode", 
+//      AVG("Grades"."GradePoint") AS "AverageGradePoint", 
+//      SUM("Grades"."GradePoint") AS "TotalGradePoints",
+//      MIN("Grades"."GradePoint") AS "MinimumGradePoint", 
+//      MAX("Grades"."GradePoint") AS "MaximumGradePoint", 
+//      COUNT("Grades"."GradePoint") AS "GradePointCount" 
+//  FROM "Grades" 
+//  GROUP BY 
+//      "Grades"."StudentId",
+//      "Grades"."CourseCode"
+```
+
+[Table of Contents](#table-of-contents)
+
 
 ---
 
