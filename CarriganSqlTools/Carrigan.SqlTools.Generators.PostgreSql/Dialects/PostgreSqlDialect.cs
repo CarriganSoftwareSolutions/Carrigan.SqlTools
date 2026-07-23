@@ -169,17 +169,6 @@ public class PostgreSqlDialect : ISqlDialects
     {
         ArgumentNullException.ThrowIfNull(fieldProperties);
 
-        string declaration = GetTypeAndSize(fieldProperties);
-        if (declaration.IsEmpty())
-            return declaration;
-        else
-            return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
-    }
-
-    private static string GetTypeAndSize(FieldProperties fieldProperties)
-    {
-        ArgumentNullException.ThrowIfNull(fieldProperties);
-
         if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
         {
             return string.Empty;
@@ -211,9 +200,11 @@ public class PostgreSqlDialect : ISqlDialects
         if (fieldProperties.IsArray is not null && fieldProperties.IsArray.Value)
             declaration += "[]";
 
-        return declaration;
+        if (declaration.IsEmpty())
+            return declaration;
+        else
+            return $"{declaration} {(fieldProperties.IsNullable ? "NULL" : "NOT NULL")}";
     }
-
 
     /// <summary>
     /// Determines whether the specified PostgreSQL provider type name requires a length declaration when rendering field properties.
@@ -561,6 +552,20 @@ public class PostgreSqlDialect : ISqlDialects
     /// <returns>
     /// A <see cref="FieldProperties"/> instance containing the rendered SQL Cast type declaration that corresponds to the provided <see cref="FieldProperties"/> according to the SQL dialect's type mapping rules.
     /// </returns>
-    public string RenderCastType(FieldProperties fieldProperties) =>
-        GetTypeAndSize(fieldProperties);
+    public string RenderCastType(FieldProperties fieldProperties)
+    {
+        ArgumentNullException.ThrowIfNull(fieldProperties);
+
+        if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
+        {
+            return string.Empty;
+        }
+
+        string declaration = fieldProperties.ProviderTypeName.ToUpperInvariant();
+
+        if (fieldProperties.IsArray is not null && fieldProperties.IsArray.Value)
+            declaration += "[]";
+
+        return declaration;
+    }
 }

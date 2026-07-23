@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -59,6 +60,36 @@ public static class SelectTagGenerator
             );
 
     /// <summary>
+    /// Creates a select tag for the specified property on <typeparamref name="T"/> with a cast type.
+    /// </summary>
+    /// <typeparam name="T">
+    /// 
+    /// </typeparam>
+    /// <param name="propertyName">
+    /// The C# property name representing the SQL column or parameter.
+    /// </param>
+    /// <param name="aliasName">
+    /// The SQL alias name to apply.
+    /// </param>
+    /// <param name="castType">
+    /// The type to cast the column or parameter to.
+    /// </param>
+    /// <returns>
+    /// A select tag for the specified property with the cast type.
+    /// </returns>
+    public static SelectTag Get<T>(PropertyName propertyName, AliasName aliasName, FieldProperties castType) where T : class =>
+
+        SqlToolsReflectorCache<T>
+            .CreateSelectTag
+            (
+                propertyName,
+                DialectStatics.SupportedTypes,
+                (sqlExpression, aliasTag) => new SelectTag(new Cast(sqlExpression, castType), aliasTag),
+                aliasName
+            );
+
+
+    /// <summary>
     /// Creates a select tag for the specified property on <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
@@ -67,6 +98,31 @@ public static class SelectTagGenerator
     [ExternalOnly]
     public static SelectTag Get<T>(string propertyName, string? aliasName = null) where T : class =>
         Get<T>(new PropertyName(propertyName), AliasName.New(aliasName));
+
+    /// <summary>
+    /// Creates a select tag for the specified property on <typeparamref name="T"/> with a cast type.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The model type whose C# properties represent SQL columns or parameters.
+    /// </typeparam>
+    /// <param name="propertyName">
+    /// The C# property name representing the SQL column or parameter.
+    /// </param>
+    /// <param name="aliasName">
+    /// The SQL alias name to apply.
+    /// </param>
+    /// <param name="castType">
+    /// The type to cast the column or parameter to.
+    /// </param>
+    /// <returns>
+    /// A select tag for the specified property with the cast type.
+    /// </returns>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when the alias name is null or empty.
+    /// </exception>
+    [ExternalOnly]
+    public static SelectTag Get<T>(string propertyName, string aliasName, FieldProperties castType) where T : class =>
+        Get<T>(new PropertyName(propertyName), AliasName.New(aliasName) ?? throw new NullReferenceException($"{nameof(aliasName)} parameter is null or empty."), castType);
 
     /// <summary>
     /// Creates select tags for the specified properties on <typeparamref name="T"/>.

@@ -16,7 +16,7 @@ public sealed class CastTests
     [Fact]
     public void SelectTag_WithCast_RendersExpectedSql()
     {
-        string expected = "CAST(\"Customer\".\"Id\" AS VARCHAR(100)) AS \"IdText\"";
+        string expected = "CAST(\"Customer\".\"Id\" AS VARCHAR) AS \"IdText\"";
         Cast cast = new
         (
             new Column<Customer>(nameof(Customer.Id)),
@@ -32,7 +32,7 @@ public sealed class CastTests
     [Fact]
     public void Select_WithCastAroundAggregate_RendersExpectedGroupedQuery()
     {
-        string expected = "SELECT \"Customer\".\"Name\", AVG(CAST(\"Customer\".\"Id\" AS NUMERIC(18, 2))) AS \"AverageId\" FROM \"Customer\" GROUP BY \"Customer\".\"Name\"";
+        string expected = "SELECT \"Customer\".\"Name\", AVG(CAST(\"Customer\".\"Id\" AS NUMERIC)) AS \"AverageId\" FROM \"Customer\" GROUP BY \"Customer\".\"Name\"";
         SqlGenerator<Customer> generator = new();
         GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
 

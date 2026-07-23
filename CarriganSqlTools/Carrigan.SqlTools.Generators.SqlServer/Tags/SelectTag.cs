@@ -129,4 +129,13 @@ public sealed class SelectTag : SelectTagBase
     /// </summary>
     public override SelectTag WithNoAlias() =>
         new(SqlExpression);
+
+    /// <summary>
+    /// Implicitly creates a new <see cref="SelectTagsBase"/> instance from a single <see cref="SelectTag"/>.
+    /// </summary>
+    /// <param name="selectTag">
+    /// The <see cref="SelectTag"/> instance to convert into a <see cref="SelectTagsBase"/> collection.
+    /// </param>
+    public static implicit operator SelectTagsBase(SelectTag selectTag) =>
+        new SelectTags(selectTag);
 }

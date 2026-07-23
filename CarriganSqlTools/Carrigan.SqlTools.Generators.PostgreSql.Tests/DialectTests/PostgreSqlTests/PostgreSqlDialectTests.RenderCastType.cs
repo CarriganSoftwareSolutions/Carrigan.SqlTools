@@ -18,7 +18,7 @@ public partial class PostgreSqlDialectTests
     [Fact]
     public void RenderCastType_RendersLengthWithoutNullability()
     {
-        string expected = "VARCHAR(100)";
+        string expected = "VARCHAR";
 
         string actual = Dialect.RenderCastType(PostgreSqlTypesProvider.AsVarChar(100, false, true));
 
@@ -28,7 +28,7 @@ public partial class PostgreSqlDialectTests
     [Fact]
     public void RenderCastType_RendersPrecisionAndScaleWithoutNullability()
     {
-        string expected = "NUMERIC(18, 2)";
+        string expected = "NUMERIC";
 
         string actual = Dialect.RenderCastType(PostgreSqlTypesProvider.AsNumeric(18, 2, false, true));
 
@@ -38,7 +38,7 @@ public partial class PostgreSqlDialectTests
     [Fact]
     public void RenderCastType_RendersTemporalArrayWithoutNullability()
     {
-        string expected = "TIMESTAMP(6) WITH TIME ZONE[]";
+        string expected = "TIMESTAMP WITH TIME ZONE[]";
 
         string actual = Dialect.RenderCastType(PostgreSqlTypesProvider.AsTimestampWithTimeZone(6, true, true));
 

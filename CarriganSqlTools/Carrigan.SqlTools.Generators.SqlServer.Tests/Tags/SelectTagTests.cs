@@ -3,15 +3,18 @@ using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
 public class SelectTagTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private static SelectTagBase New(string columnName, string? aliasName) =>
-        new SelectTag(new PropertyName(columnName), AliasName.New(aliasName));
+    private static SelectTag New(string columnName, string? aliasName) =>
+        new (new PropertyName(columnName), AliasName.New(aliasName));
 
     private static readonly SelectTagBase a = New("SomeColumn", null);
     private static readonly SelectTagBase b = New("OtherColumn", null);
@@ -383,6 +386,24 @@ public class SelectTagTests
     [Fact]
     public void ValidGetMany_FromString() =>
         _ = SelectTagGenerator.Get<TableNameSchema>("Id", "Text");
+
+    [Fact]
+    public void SelectTagWithCast()
+    {
+        SelectTag selectTag = SelectTagGenerator.Get<SelectLeft>("Id", "Id", SqlServerTypesProvider.AsVarCharMax());
+        SelectBuilder<SelectLeft> selectBuilder = new()
+        {
+            Selects = selectTag
+        };
+
+        SqlGenerator<SelectLeft> sqlGenerator = new();
+        SqlQuery query = sqlGenerator.Select(selectBuilder);
+
+        string expectedQuery = "SELECT CAST([SelectLeft].[Id] AS VARCHAR(MAX)) AS [Id] FROM [SelectLeft]";
+
+        Assert.Equal(expectedQuery, query.QueryText);
+    }
+
     private sealed class SelectLeft
     {
         public int Id { get; set; }
@@ -401,5 +422,4 @@ public class SelectTagTests
         [SelectTag<SelectRight>(nameof(SelectRight.Name), nameof(RightName))]
         public string? RightName { get; set; }
     }
-
 }
