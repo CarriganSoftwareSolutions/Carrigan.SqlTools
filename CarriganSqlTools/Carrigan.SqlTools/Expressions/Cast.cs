@@ -18,7 +18,7 @@ public class Cast : SqlExpression
     /// <summary>
     /// Initializes the properties of the field to which the expression is being cast.
     /// </summary>
-    public FieldProperties FiedProperties { get; init; }
+    public FieldProperties FieldProperties { get; init; }
 
     /// <summary>
     /// Initializes a <c>CAST(expression AS type)</c> expression.
@@ -26,13 +26,13 @@ public class Cast : SqlExpression
     /// <param name="sqlExpression">
     /// The expression to cast.
     /// </param>
-    /// <param name="fiedProperties">
+    /// <param name="fieldProperties">
     /// The properties of the field to which the expression is being cast.
     /// </param>
-    public Cast(SqlExpression sqlExpression, FieldProperties fiedProperties) : base ([sqlExpression], GetDialectNeutralString(sqlExpression, fiedProperties))
+    public Cast(SqlExpression sqlExpression, FieldProperties fieldProperties) : base ([sqlExpression], GetDialectNeutralString(sqlExpression, fieldProperties))
     {
         SqlExpression = sqlExpression;
-        FiedProperties = fiedProperties;
+        FieldProperties = fieldProperties;
     }
 
     /// <summary>
@@ -41,14 +41,14 @@ public class Cast : SqlExpression
     /// <param name="sqlExpression">
     /// The expression to cast.
     /// </param>
-    /// <param name="fiedProperties">
+    /// <param name="fieldProperties">
     /// The properties of the field to which the expression is being cast.
     /// </param>
     /// <returns>
     /// A string representing the <c>CAST</c> expression in a dialect-neutral format.
     /// </returns>
-    private static string GetDialectNeutralString(SqlExpression sqlExpression, FieldProperties fiedProperties) =>
-        $"CAST({sqlExpression} AS {fiedProperties.BaseType})";
+    private static string GetDialectNeutralString(SqlExpression sqlExpression, FieldProperties fieldProperties) =>
+        $"CAST({sqlExpression} AS {fieldProperties.BaseType})";
 
     /// <summary>
     /// Determines whether the cast expression is valid in an aggregate SELECT list.
@@ -78,7 +78,7 @@ public class Cast : SqlExpression
         {
             yield return sqlFragment;
         }
-        yield return new SqlFragmentText($" AS {dialect.RenderCastType(FiedProperties)}");
+        yield return new SqlFragmentText($" AS {dialect.RenderCastType(FieldProperties)}");
         yield return new SqlFragmentText(")");
     }
 }

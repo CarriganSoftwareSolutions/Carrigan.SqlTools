@@ -14,7 +14,6 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// <summary>
 /// Contains SQL generation members for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -76,6 +75,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </param>
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
+    /// </param>
+    /// <param name="groupBys">
+    /// Optional grouped columns used to compose the <c>GROUP BY</c> clause.
     /// </param>
     /// <param name="orderBys">
     /// Optional ordering to compose the <c>ORDER BY</c> clause.

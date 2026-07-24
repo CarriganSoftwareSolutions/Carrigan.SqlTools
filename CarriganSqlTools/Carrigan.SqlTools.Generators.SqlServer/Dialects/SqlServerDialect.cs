@@ -32,8 +32,13 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="identifier">The database identifier to be quoted. This can be a table name, column name, or other SQL identifier. Cannot be
     /// null.</param>
     /// <returns>A string containing the quoted identifier, suitable for safe inclusion in a SQL statement.</returns>
-    public string QuoteIdentifier(string identifier) =>
-        $"[{identifier}]";
+    public string QuoteIdentifier(string identifier)
+    {
+        ArgumentNullException.ThrowIfNull(identifier);
+
+        string escapedIdentifier = identifier.Replace("]", "]]", StringComparison.Ordinal);
+        return $"[{escapedIdentifier}]";
+    }
 
     /// <summary>
     /// Generates a string representation of the specified database procedure, optionally within a given schema.
@@ -215,6 +220,8 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>A string representing the SQL declaration for the specified field properties.</returns>
     public string RenderFieldProperties(FieldProperties fieldProperties)
     {
+        ArgumentNullException.ThrowIfNull(fieldProperties);
+
         if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
         {
             return string.Empty;
@@ -235,15 +242,17 @@ public class SqlServerDialect : ISqlDialects
         }
         else
         {
+            string normalizedProviderTypeName = SqlServerTypesProvider.NormalizeProviderTypeName(fieldProperties.ProviderTypeName);
+
             bool RequiresLengthDeclaration() =>
-                fieldProperties.ProviderTypeName is "CHAR" or "VARCHAR" or "NCHAR" or "NVARCHAR" or "BINARY" or "VARBINARY" or "VECTOR";
+                normalizedProviderTypeName is "CHAR" or "VARCHAR" or "NCHAR" or "NVARCHAR" or "BINARY" or "VARBINARY" or "VECTOR";
 
-
-            string declaration = fieldProperties.ProviderTypeName.ToUpperInvariant();
+            string declaration = normalizedProviderTypeName;
 
             if (declaration == "VECTOR" && fieldProperties.Length is not null && fieldProperties.BaseType.IsNotNullOrWhiteSpace())
             {
-                declaration += $"({fieldProperties.Length}, {fieldProperties.BaseType.ToUpperInvariant()})";
+                string normalizedBaseType = SqlServerTypesProvider.NormalizeProviderTypeName(fieldProperties.BaseType);
+                declaration += $"({fieldProperties.Length}, {normalizedBaseType})";
             }
             else if (fieldProperties.IsMax == true)
             {
@@ -439,15 +448,17 @@ public class SqlServerDialect : ISqlDialects
     /// <summary>
     /// Renders the appropriate SQL Cast type declaration for a given <see cref="FieldProperties"/> instance according to the SQL dialect's type mapping rules.
     /// </summary>
-    /// <param name="fiedProperties">
+    /// <param name="fieldProperties">
     /// The <see cref="FieldProperties"/> instance containing the properties that define the SQL type to be rendered.
     /// This includes information such as length, precision, scale, and other relevant attributes.
     /// </param>
     /// <returns>
-    /// A <see cref="FieldProperties"/> instance containing the rendered SQL Cast type declaration that corresponds to the provided <see cref="FieldProperties"/> according to the SQL dialect's type mapping rules.
+    /// The SQL type declaration corresponding to the provided <see cref="FieldProperties"/> according to the dialect's type mapping rules.
     /// </returns>
     public string RenderCastType(FieldProperties fieldProperties)
     {
+        ArgumentNullException.ThrowIfNull(fieldProperties);
+
         if (fieldProperties.ProviderTypeName.IsNullOrWhiteSpace())
         {
             return string.Empty;

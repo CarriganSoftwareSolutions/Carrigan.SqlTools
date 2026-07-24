@@ -44,4 +44,20 @@ public partial class SqlServerDialectTests
 
         Assert.Equal(expected, actual);
     }
+    [Fact]
+    public void RenderCastType_Throws_WhenProviderTypeNameContainsSqlSyntax() =>
+        Assert.Throws<ArgumentException>(() => Dialect.RenderCastType(new FieldProperties
+        {
+            ProviderTypeName = "INT); DROP TABLE AuditLog; --"
+        }));
+
+    [Fact]
+    public void RenderCastType_Throws_WhenVectorBaseTypeContainsSqlSyntax() =>
+        Assert.Throws<ArgumentException>(() => Dialect.RenderCastType(new FieldProperties
+        {
+            ProviderTypeName = "VECTOR",
+            Length = 3,
+            BaseType = "FLOAT32); DROP TABLE AuditLog; --"
+        }));
+
 }

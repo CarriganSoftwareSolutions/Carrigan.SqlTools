@@ -961,7 +961,7 @@ Plug `MyDecrypters` into `ExecuteReaderAsync<T>` or `ExecuteReader<T>` to transp
 ## License
 
 Carrigan.SqlTools.PostgreSql
-Copyright © 2025 Carrigan Software Solutions LLC
+Copyright © 2025-2026 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 

@@ -27,7 +27,8 @@ public class PostgreSqlDialect : ISqlDialects
     {
         ArgumentNullException.ThrowIfNull(identifier);
 
-        return $"\"{identifier.Replace("\"", "\"\"")}\"";
+        string escapedIdentifier = identifier.Replace("\"", "\"\"", StringComparison.Ordinal);
+        return $"\"{escapedIdentifier}\"";
     }
 
     /// <summary>
@@ -174,7 +175,7 @@ public class PostgreSqlDialect : ISqlDialects
             return string.Empty;
         }
 
-        string declaration = fieldProperties.ProviderTypeName.ToUpperInvariant();
+        string declaration = PostgreSqlTypesProvider.NormalizeProviderTypeName(fieldProperties.ProviderTypeName);
 
         if (declaration == "VECTOR" && fieldProperties.Length is not null)
         {
@@ -545,12 +546,12 @@ public class PostgreSqlDialect : ISqlDialects
     /// <summary>
     /// Renders the appropriate SQL Cast type declaration for a given <see cref="FieldProperties"/> instance according to the SQL dialect's type mapping rules.
     /// </summary>
-    /// <param name="fiedProperties">
+    /// <param name="fieldProperties">
     /// The <see cref="FieldProperties"/> instance containing the properties that define the SQL type to be rendered.
     /// This includes information such as length, precision, scale, and other relevant attributes.
     /// </param>
     /// <returns>
-    /// A <see cref="FieldProperties"/> instance containing the rendered SQL Cast type declaration that corresponds to the provided <see cref="FieldProperties"/> according to the SQL dialect's type mapping rules.
+    /// The SQL type declaration corresponding to the provided <see cref="FieldProperties"/> according to the dialect's type mapping rules.
     /// </returns>
     public string RenderCastType(FieldProperties fieldProperties)
     {
@@ -561,7 +562,7 @@ public class PostgreSqlDialect : ISqlDialects
             return string.Empty;
         }
 
-        string declaration = fieldProperties.ProviderTypeName.ToUpperInvariant();
+        string declaration = PostgreSqlTypesProvider.NormalizeProviderTypeName(fieldProperties.ProviderTypeName);
 
         if (fieldProperties.IsArray is not null && fieldProperties.IsArray.Value)
             declaration += "[]";

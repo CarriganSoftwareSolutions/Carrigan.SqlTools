@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <summary>
 /// Represents a SQL NOT EXISTS predicate that evaluates a subquery and is true when the subquery returns no rows.
 /// </summary>
-/// <remarks>Constructed with a <see cref="SubqueryPredicateBase"/> that supplies the subquery. Produces the SQL fragment <c>NOT EXISTS (&lt;subquery&gt;)</c> and relies on <see cref="SubQueryPredicateBase"/> for rendering and parameterization.</remarks>
+/// <remarks>Constructed with a <see cref="SubqueryPredicateBase"/> that supplies the subquery. Produces the SQL fragment <c>NOT EXISTS (&lt;subquery&gt;)</c> and relies on <see cref="SubqueryPredicateBase"/> for rendering and parameterization.</remarks>
 ///
 /// <example>
 /// <code language="csharp"><![CDATA[

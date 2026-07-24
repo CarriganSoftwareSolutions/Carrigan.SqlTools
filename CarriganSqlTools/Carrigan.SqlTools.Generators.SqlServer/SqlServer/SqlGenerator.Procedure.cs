@@ -7,7 +7,6 @@ namespace Carrigan.SqlTools.SqlServer;
 /// <summary>
 /// Contains SQL generation members for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
@@ -35,8 +34,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </exception>
     /// <exception cref="NullReferenceException">
     /// Thrown if a mapped column lacks a <see cref="ParameterTag"/> during parameter generation.
-    /// This can surface indirectly from
-    /// <see cref="GetSqlParameter(ReflectorCache.ColumnInfo, T)"/>.
     /// </exception>
     /// <exception cref="ArgumentException">
     /// Thrown when one or more procedure parameters resolve to the same <see cref="ParameterTag"/>,

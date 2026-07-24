@@ -104,7 +104,7 @@ public abstract class GroupBysBase
     public abstract GroupBysBase Append(GroupByBase groupByItem);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GroupBy{T}"/> class,
+    /// Initializes a new instance of the <see cref="GroupByBase"/> class,
     /// specifying the table type <typeparamref name="T"/>, the property name.
     /// Then creates a new <c>GROUP BY</c> clause with
     /// the specified <see cref="GroupByBase"/> appended.
@@ -127,7 +127,7 @@ public abstract class GroupBysBase
     public abstract GroupBysBase Append<T>(PropertyName propertyName) where T : class;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GroupBy{T}"/> class,
+    /// Initializes a new instance of the <see cref="GroupByBase"/> class,
     /// specifying the table type <typeparamref name="T"/>, the property name.
     /// Then creates a new <c>GROUP BY</c> clause with
     /// the specified <see cref="GroupByBase"/> appended.

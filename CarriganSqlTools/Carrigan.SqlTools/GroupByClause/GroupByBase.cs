@@ -16,9 +16,16 @@ public abstract class GroupByBase : StringWrapper, ISqlFragment
     /// </summary>
     internal ColumnInfo ColumnInfo { get; init; }
 
+    /// <summary>
+    /// Gets the table tag associated with the grouped column.
+    /// </summary>
     internal TableTag TableTag =>
         ColumnInfo.ColumnTag.TableTag;
 
+    /// <summary>
+    /// Initializes a grouped-column specification from reflected column metadata.
+    /// </summary>
+    /// <param name="columnInfo">The grouped column metadata.</param>
     public GroupByBase(ColumnInfo columnInfo) : base(columnInfo.ColumnTag) => 
         ColumnInfo = columnInfo;
 

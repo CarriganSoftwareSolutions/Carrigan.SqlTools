@@ -99,7 +99,7 @@ public class OrderBy<T> : OrderByBase where T : class
     }
 
     /// <summary>
-    /// The <see cref="Tags.ColumnInfo"/> that specifies the column being ordered.
+    /// The <see cref="ColumnInfo"/> that specifies the column being ordered.
     /// </summary>
     internal override ColumnInfo ColumnInfo { get; }
 

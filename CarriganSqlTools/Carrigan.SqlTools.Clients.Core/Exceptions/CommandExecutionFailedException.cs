@@ -45,7 +45,22 @@ public sealed class CommandExecutionFailedException : SqlToolsQueryException
     /// Thrown when a required argument is <c>null</c>.
     /// </exception>
     public CommandExecutionFailedException(string operation, SqlQuery query, Exception innerException)
-        : base(BuildMessage(operation, query), innerException)
+        : this(operation, query, false, innerException)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CommandExecutionFailedException"/> class.
+    /// </summary>
+    /// <param name="operation">The command operation that failed.</param>
+    /// <param name="query">The SQL query being executed.</param>
+    /// <param name="hasTransaction">Whether the command was associated with a transaction.</param>
+    /// <param name="innerException">The exception that caused this exception.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when a required argument is <c>null</c>.
+    /// </exception>
+    public CommandExecutionFailedException(string operation, SqlQuery query, bool hasTransaction, Exception innerException)
+        : base(BuildMessage(operation, query, hasTransaction), innerException)
     {
         ArgumentNullException.ThrowIfNull(operation);
         ArgumentNullException.ThrowIfNull(query);
@@ -54,6 +69,7 @@ public sealed class CommandExecutionFailedException : SqlToolsQueryException
         Operation = operation;
         QueryText = query.QueryText;
         CommandType = query.CommandType;
+        HasTransaction = hasTransaction;
         ParameterNames = query.Parameters.Select(parameters => parameters.ToString() ?? string.Empty).Materialize(NullOptionsEnum.FilteredOut);
     }
 
@@ -64,7 +80,8 @@ public sealed class CommandExecutionFailedException : SqlToolsQueryException
     /// The command operation that failed, such as "ExecuteNonQuery" or "ExecuteReader".
     /// </param>
     /// <param name="query">The SQL query being executed.</param>
+    /// <param name="hasTransaction">Whether the command was associated with a transaction.</param>
     /// <returns>The constructed exception message.</returns>
-    private static string BuildMessage(string operation, SqlQuery query) =>
-        $"{operation} failed. CommandType='{query.CommandType}', Parameters={query.Parameters.Count()}.";
+    private static string BuildMessage(string operation, SqlQuery query, bool hasTransaction) =>
+        $"{operation} failed. CommandType='{query.CommandType}', Parameters={query.Parameters.Count()}, HasTransaction={hasTransaction}.";
 }

@@ -26,7 +26,7 @@ internal class ColumnInfoCache<typeT>
 {
     /// <summary>
     /// The read-only dictionary that serves as the core cache.
-    /// Keys are <see cref="PropertyName"/> values derived from <see cref="PropertyInfo.Name"/>.
+    /// Keys are <see cref="PropertyName"/> values derived from the associated <see cref="MemberInfo.Name"/>.
     /// </summary>
     private readonly IReadOnlyDictionary<PropertyName, ColumnInfo> _cache;
 
@@ -35,7 +35,7 @@ internal class ColumnInfoCache<typeT>
     /// </summary>
     /// <param name="data">
     /// An enumeration of tuples mapping a <see cref="PropertyInfo"/> to its cached value.
-    /// The cache key is created from <see cref="PropertyInfo.Name"/>.
+    /// The cache key is created from the associated <see cref="MemberInfo.Name"/>.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="data"/> is <c>null</c>.
@@ -120,7 +120,7 @@ internal class ColumnInfoCache<typeT>
     /// Creates an <see cref="InvalidPropertyException{typeT}"/> that includes any invalid
     /// property names—if any are found—or returns <c>null</c> when all are valid.
     /// </summary>
-    /// <param name="supportedType"></param>
+    /// <param name="supportedTypes">The CLR types supported by the active SQL dialect.</param>
     /// <returns>
     /// An <see cref="InvalidPropertyException{typeT}"/> if any names are invalid; otherwise, <c>null</c>.
     /// </returns>

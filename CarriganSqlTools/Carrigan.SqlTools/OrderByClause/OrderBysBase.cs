@@ -89,7 +89,7 @@ public abstract class OrderBysBase
     public abstract OrderBysBase Append(OrderByBase orderByItem);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
+    /// Initializes a new instance of the <see cref="OrderBysBase"/> class,
     /// specifying the table type <typeparamref name="T"/>, the property name,
     /// and the desired sort direction. Then creates a new <c>ORDER BY</c> clause with
     /// the specified <see cref="OrderByBase"/> appended.
@@ -113,7 +113,7 @@ public abstract class OrderBysBase
     public abstract OrderBysBase Append<T>(PropertyName propertyName, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending) where T : class;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="OrderBy{T}"/> class,
+    /// Initializes a new instance of the <see cref="OrderBysBase"/> class,
     /// specifying the table type <typeparamref name="T"/>, the property name,
     /// and the desired sort direction. Then creates a new <c>ORDER BY</c> clause with
     /// the specified <see cref="OrderByBase"/> appended.

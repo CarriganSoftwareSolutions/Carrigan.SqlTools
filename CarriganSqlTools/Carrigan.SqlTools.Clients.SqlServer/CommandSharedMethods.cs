@@ -27,6 +27,14 @@ namespace Carrigan.SqlTools.Clients.SqlServer;
 internal static class CommandSharedMethods
 {
     /// <summary>
+    /// Secure settings for parsing XML values returned by the database.
+    /// </summary>
+    private static readonly XmlReaderSettings _xmlReaderSettings = new()
+    {
+        DtdProcessing = DtdProcessing.Prohibit,
+        XmlResolver = null
+    };
+    /// <summary>
     /// Creates a <see cref="DbCommand"/> populated from a <see cref="SqlQuery"/>.
     /// </summary>
     /// <param name="query">The query text, command type, and parameters to apply.</param>
@@ -97,7 +105,7 @@ internal static class CommandSharedMethods
                 else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
                 {
                     using StringReader stringReader = new( dataReader.GetString(i));
-                    using XmlReader xmlReader = XmlReader.Create(stringReader);
+                    using XmlReader xmlReader = XmlReader.Create(stringReader, _xmlReaderSettings);
                     rowData.Add(currentColumnName, new SqlXml(xmlReader));
                 }
                 else

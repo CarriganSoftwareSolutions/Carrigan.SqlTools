@@ -140,6 +140,8 @@ See the dialect READMEs for complete examples and type mapping details.
 
 This library may generate or execute SQL. Review generated SQL before using it in production systems and always test against non-production databases first.
 
+Data values are parameterized, but SQL identifiers and provider type names are SQL syntax and cannot be database parameters. Build schema metadata and query structures from trusted application configuration rather than directly from untrusted user input.
+
 Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.
 
 Carrigan.SqlTools is not affiliated with or endorsed by Microsoft, the PostgreSQL project, or the Npgsql project. Microsoft.Data.SqlClient and Npgsql are referenced only to identify supported ADO.NET providers.
@@ -151,7 +153,7 @@ Carrigan.SqlTools is not affiliated with or endorsed by Microsoft, the PostgreSQ
 ## License
 
 Carrigan.SqlTools  
-Copyright © 2025 Carrigan Software Solutions LLC
+Copyright © 2025-2026 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 

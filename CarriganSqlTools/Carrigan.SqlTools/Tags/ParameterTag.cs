@@ -44,7 +44,6 @@ namespace Carrigan.SqlTools.Tags;
 ///
 /// SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 /// ]]></code>
-/// </example>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql

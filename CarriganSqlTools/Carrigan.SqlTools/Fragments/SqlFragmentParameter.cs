@@ -144,7 +144,7 @@ public class SqlFragmentParameter : ISqlFragment
     /// <param name="dialect">The SQL dialect to use for rendering.</param>
     /// <returns>The SQL parameter name produced by the wrapped <see cref="Parameter"/>.</returns>
     /// <remarks>
-    /// Any exception thrown by <see cref="Parameter.ParameterTag"/> will be propagated to the caller.
+    /// Any exception thrown by <see cref="ParameterTag"/> will be propagated to the caller.
     /// </remarks>
     public string ToSql(ISqlDialects dialect) =>
         //Note: ToString will not render the final parameter text by itself.

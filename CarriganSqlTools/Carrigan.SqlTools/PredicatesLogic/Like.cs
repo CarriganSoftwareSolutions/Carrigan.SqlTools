@@ -84,14 +84,7 @@ public class Like : DialectOperator
     /// <summary>
     /// Produces the SQL fragment represented by this Dialect operator and its operands.
     /// </summary>
-    /// <param name="prefix">
-    /// A disambiguation prefix accumulated during predicate-tree traversal.
-    /// Used to ensure parameter names are unique when duplicates exist.
-    /// </param>
-    /// <param name="duplicates">
-    /// The set of user-supplied <see cref="ParameterTag"/> values detected as duplicates.
-    /// Leaf nodes use this to decide if the <paramref name="prefix"/> should be applied.
-    /// </param>
+    /// <param name="dialect">The SQL dialect used to render the comparison operator and operands.</param>
     /// <returns>
     /// A SQL fragment in the form <c>(&lt;left-sql&gt; OP &lt;right-sql&gt;)</c>, e.g.,
     /// <c>([T].[Col] = @Parameter_Col)</c>.

@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Types;
 using System.Xml;
 using System.Xml.Linq;
@@ -62,6 +63,14 @@ public static class SqlServerTypesProvider
     #region Helper Methods
 
     /// <summary>
+    /// Normalizes and validates a SQL Server provider type name.
+    /// </summary>
+    /// <param name="providerTypeName">The provider type name to validate.</param>
+    /// <returns>The normalized provider type name.</returns>
+    internal static string NormalizeProviderTypeName(string providerTypeName) =>
+        SqlTypeNameValidator.Normalize(providerTypeName);
+
+    /// <summary>
     /// Creates a SQL Server field definition.
     /// </summary>
     private static FieldProperties Create(
@@ -76,7 +85,7 @@ public static class SqlServerTypesProvider
         string? baseType = null,
         bool? nullable = null)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(providerTypeName);
+        string normalizedProviderTypeName = NormalizeProviderTypeName(providerTypeName);
 
         if (length is <= 0)
         {
@@ -103,7 +112,7 @@ public static class SqlServerTypesProvider
             Scale = scale,
             FractionalSecondsPrecision = fractionalSecondsPrecision,
             IsNullable = nullable ?? DEFAULT_IS_NULLABLE,
-            ProviderTypeName = providerTypeName.ToUpperInvariant(),
+            ProviderTypeName = normalizedProviderTypeName,
             BaseType = baseType?.ToUpperInvariant()
         };
     }

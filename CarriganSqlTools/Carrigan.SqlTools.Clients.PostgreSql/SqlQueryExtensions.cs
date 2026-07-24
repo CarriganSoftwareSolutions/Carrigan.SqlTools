@@ -38,7 +38,7 @@ internal static class SqlQueryExtensions
     ///         <description>
     ///         Determines the correct <see cref="NpgsqlDbType"/> using the associated
     ///         <see cref="FieldProperties"/> if present, or derives one automatically
-    ///         via <see cref="PostgreSqlTypesProvider.FromClrType"/> if no explicit SQL type was provided.
+    ///         via <see cref="ISqlDialects.FromClrValue"/> if no explicit SQL type was provided.
     ///         </description>
     ///     </item>
     ///     <item>

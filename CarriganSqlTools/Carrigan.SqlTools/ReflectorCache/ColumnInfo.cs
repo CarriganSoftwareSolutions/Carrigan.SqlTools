@@ -196,7 +196,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// The <see cref="Type"/> of the property to evaluate for SQL array semantics.
     /// </param>
     /// <returns>
-    /// <c>true</c> if the property type is an array (excluding <see cref="byte[]"/>); otherwise, <c>false</c>.
+    /// <c>true</c> if the property type is an array (excluding <see cref="byte"/>[]); otherwise, <c>false</c>.
     /// </returns>
     private static bool IsSqlArray(Type propertyType) =>
         propertyType.IsArray && propertyType != typeof(byte[]);

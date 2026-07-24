@@ -39,10 +39,9 @@ public interface ISqlDialects
     /// <summary>
     /// Renders a fully qualified column name for use in SQL statements.
     /// </summary>
-    /// <remarks>If <paramref name="schema"/> is provided, the output includes the schema and table names. If
-    /// <paramref name="includeTable"/> is false, only the column name is rendered.</remarks>
-    /// <param name="schema">The optional schema name that qualifies the table. May be null to omit the schema.</param>
-    /// <param name="table">The name of the table containing the column. Cannot be null or empty.</param>
+    /// <remarks>If <paramref name="includeTable"/> is false, only the column name is rendered.</remarks>
+    /// <param name="tableTag">The table tag that qualifies the column.</param>
+    /// <param name="columnName">The column name to render.</param>
     /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
     /// <returns>A string containing the rendered column name, optionally qualified by table and schema as specified.</returns>
     string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true);
@@ -181,12 +180,12 @@ public interface ISqlDialects
     /// <summary>
     /// Renders the appropriate SQL Cast type declaration for a given <see cref="FieldProperties"/> instance according to the SQL dialect's type mapping rules.
     /// </summary>
-    /// <param name="fiedProperties">
+    /// <param name="fieldProperties">
     /// The <see cref="FieldProperties"/> instance containing the properties that define the SQL type to be rendered.
     /// This includes information such as length, precision, scale, and other relevant attributes.
     /// </param>
     /// <returns>
-    /// A <see cref="FieldProperties"/> instance containing the rendered SQL Cast type declaration that corresponds to the provided <see cref="FieldProperties"/> according to the SQL dialect's type mapping rules.
+    /// The SQL type declaration corresponding to the provided <see cref="FieldProperties"/> according to the dialect's type mapping rules.
     /// </returns>
     public string RenderCastType(FieldProperties fieldProperties);
 }

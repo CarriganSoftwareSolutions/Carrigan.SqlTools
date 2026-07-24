@@ -5,8 +5,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 namespace Carrigan.SqlTools.SqlGenerators;
 
 /// <summary>
-/// Represents a subquery that can be used as part of a larger SQL query. This class is typically returned by
-/// methods like <see cref="SqlGeneratorBase{T}.Subquery"/> and is designed to be consumed by predicates such as
+/// Represents a subquery that can be used as part of a larger SQL query. This is designed to be consumed by predicates such as
 /// <see cref="Exists"/> or to build complex queries.
 /// </summary>
 /// <typeparam name="T">

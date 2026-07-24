@@ -35,8 +35,7 @@ internal static class SqlQueryExtensions
     ///     <item>
     ///         <description>
     ///         Determines the correct SqlDbType using the associated
-    ///         <see cref="FieldProperties"/> if present, or derives one automatically
-    ///         via <see cref="SqlServerTypesProvider.FromClrType"/> if no explicit SQL type was provided.
+    ///         <see cref="FieldProperties"/> if present, or derives one automatically.
     ///         </description>
     ///     </item>
     ///     <item>

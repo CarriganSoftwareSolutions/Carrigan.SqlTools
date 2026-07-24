@@ -197,7 +197,7 @@ public class InvalidSqlIdentifierException: Exception
     /// Initializes a new instance of the <see cref="InvalidSqlIdentifierException"/> class
     /// for an invalid alias name.
     /// </summary>
-    /// <param name="name">The invalid alias name.</param>
+    /// <param name="names">The invalid alias names.</param>
     internal InvalidSqlIdentifierException(params IEnumerable<AliasName> names) :
         base(CreateMessage(names))
     {
@@ -206,7 +206,7 @@ public class InvalidSqlIdentifierException: Exception
     /// <summary>
     /// Builds an error message describing an invalid alias name.
     /// </summary>
-    /// <param name="name">The invalid alias name.</param>
+    /// <param name="names">The invalid alias names.</param>
     /// <returns>A formatted error message.</returns>
     private static string CreateMessage(params IEnumerable<AliasName> names) =>
         $"The following alias names do not follow the SQL naming convention: "

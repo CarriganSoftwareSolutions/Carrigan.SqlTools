@@ -75,6 +75,6 @@ Dialect-specific behavior, such as identifier quoting, parameter rendering, data
 ## License
 
 Carrigan.SqlTools  
-Copyright © 2025 Carrigan Software Solutions LLC
+Copyright © 2025-2026 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0.

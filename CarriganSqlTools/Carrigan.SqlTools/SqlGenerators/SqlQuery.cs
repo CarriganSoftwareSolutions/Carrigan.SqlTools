@@ -96,20 +96,13 @@ public class SqlQuery
     /// <summary>
     /// Retrieves the value of a parameter by its name (for unit testing).
     /// </summary>
-    /// <typeparam name="T">The expected type of the parameter value.</typeparam>
     /// <param name="parameterTestName">The parameter name to look up.</param>
-    /// <returns>The parameter value cast to <typeparamref name="T"/>.</returns>
+    /// <returns>The stored parameter value, or <c>null</c>.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="parameterTestName"/> is <c>null</c>.
     /// </exception>
     /// <exception cref="KeyNotFoundException">
     /// Thrown when <paramref name="parameterTestName"/> is not present in <see cref="Parameters"/>.
-    /// </exception>
-    /// <exception cref="InvalidCastException">
-    /// Thrown when the stored parameter value cannot be cast to <typeparamref name="T"/>.
-    /// </exception>
-    /// <exception cref="NullReferenceException">
-    /// Thrown when the stored parameter value is <c>null</c> and cannot be unboxed to <typeparamref name="T"/>.
     /// </exception>
     internal object? GetParameterValue(string parameterTestName)
     {

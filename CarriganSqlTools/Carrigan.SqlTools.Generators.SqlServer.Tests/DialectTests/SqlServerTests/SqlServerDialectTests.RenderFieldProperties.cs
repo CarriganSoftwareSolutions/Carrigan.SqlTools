@@ -126,4 +126,15 @@ public partial class SqlServerDialectTests
 
         Assert.Equal("VECTOR(3, FLOAT16) NOT NULL", actual);
     }
+    [Fact]
+    public void RenderFieldProperties_Throws_WhenProviderTypeNameContainsSqlSyntax() =>
+        Assert.Throws<ArgumentException>(() => Dialect.RenderFieldProperties(new FieldProperties
+        {
+            ProviderTypeName = "INT); DROP TABLE AuditLog; --"
+        }));
+
+    [Fact]
+    public void RenderFieldProperties_Throws_WhenFieldPropertiesIsNull() =>
+        Assert.Throws<ArgumentNullException>(() => Dialect.RenderFieldProperties(null!));
+
 }

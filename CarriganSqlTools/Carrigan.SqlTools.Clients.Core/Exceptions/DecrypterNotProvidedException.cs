@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.Clients.Core.Exceptions;
 /// This exception is typically raised when materializing query results into <typeparamref name="T"/>
 /// (for example, via <c>Commands.ExecuteReader&lt;T&gt;</c> or <c>CommandsAsync.ExecuteReaderAsync&lt;T&gt;</c>)
 /// and the model declares one or more properties marked as encrypted (for example, with <c>[Encrypted]</c>),
-/// but the caller does not provide an <see cref="Core.Interfaces.IDecrypters"/> instance.
+/// but the caller does not provide an <see cref="Carrigan.Core.Interfaces.IDecrypters"/> instance.
 ///
 /// <para><b>Example scenario:</b></para>
 /// A model type includes encrypted properties and you call <c>ExecuteReader&lt;T&gt;</c> without providing

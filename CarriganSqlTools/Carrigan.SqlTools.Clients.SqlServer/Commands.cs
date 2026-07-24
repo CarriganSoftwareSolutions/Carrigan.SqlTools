@@ -82,7 +82,7 @@ public static class Commands
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteNonQuery), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteNonQuery), query, transaction is not null, exception);
         }
         finally
         {
@@ -133,7 +133,7 @@ public static class Commands
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteScalar), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteScalar), query, transaction is not null, exception);
         }
         finally
         {
@@ -208,7 +208,7 @@ public static class Commands
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteReader), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteReader), query, transaction is not null, exception);
         }
         finally
         {

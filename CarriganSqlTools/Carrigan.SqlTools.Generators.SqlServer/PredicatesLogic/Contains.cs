@@ -56,7 +56,7 @@ public class Contains<T> : Predicates where T : class
     /// The left-hand operand, representing the full-text indexed column (<see cref="ColumnBase{T}"/>).
     /// </param>
     /// <param name="parameter">
-    /// The right-hand operand, representing the search term parameter (<see cref="Predicates.Parameter"/>).
+    /// The right-hand operand, representing the search term parameter (<see cref="Parameter"/>).
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="column"/> or <paramref name="parameter"/> is <c>null</c>.

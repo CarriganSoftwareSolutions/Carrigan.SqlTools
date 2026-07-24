@@ -66,7 +66,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.
     /// </summary>
-
+    /// <param name="dialect">The SQL dialect used to render the predicate.</param>
     /// <returns>
     /// The SQL fragment represented by this predicate, e.g., <c>[T].[Column] = @Parameter_Column</c>.
     /// </returns>

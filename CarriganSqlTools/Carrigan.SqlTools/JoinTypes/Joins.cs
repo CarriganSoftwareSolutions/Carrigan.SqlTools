@@ -413,7 +413,6 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <summary>
     /// Creates a <see cref="Joins{leftT}"/> collection containing a single join.
     /// </summary>
-    /// <typeparam name="leftT">The model type used as the starting table for the join collection.</typeparam>
     /// <param name="joins">The SQL join to place in the collection.</param>
     /// <returns>A join collection containing <paramref name="joins"/>.</returns>
     public static implicit operator Joins<leftT>(JoinBase joins) => new (joins);

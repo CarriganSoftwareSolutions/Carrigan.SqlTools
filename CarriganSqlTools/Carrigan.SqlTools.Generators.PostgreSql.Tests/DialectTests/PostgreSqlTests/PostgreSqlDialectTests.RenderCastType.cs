@@ -44,4 +44,11 @@ public partial class PostgreSqlDialectTests
 
         Assert.Equal(expected, actual);
     }
+    [Fact]
+    public void RenderCastType_Throws_WhenProviderTypeNameContainsSqlSyntax() =>
+        Assert.Throws<ArgumentException>(() => Dialect.RenderCastType(new FieldProperties
+        {
+            ProviderTypeName = "INTEGER); DROP TABLE audit_log; --"
+        }));
+
 }

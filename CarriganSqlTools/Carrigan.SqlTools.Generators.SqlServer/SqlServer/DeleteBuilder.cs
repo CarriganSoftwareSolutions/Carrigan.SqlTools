@@ -11,7 +11,6 @@ namespace Carrigan.SqlTools.SqlServer;
 /// Builds DELETE query options for the specified model type.
 /// </summary>
 /// <typeparam name="T">The model type being deleted.</typeparam>
-
 /// <example>
 /// <para>Example with null Joins and null predicates</para>
 /// <code language="csharp"><![CDATA[

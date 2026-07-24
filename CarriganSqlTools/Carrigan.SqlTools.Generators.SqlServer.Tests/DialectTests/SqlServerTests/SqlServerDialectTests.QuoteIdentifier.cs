@@ -6,6 +6,7 @@ public partial class SqlServerDialectTests
     [InlineData("Customer", "[Customer]")]
     [InlineData("Order", "[Order]")]
     [InlineData("Customer Name", "[Customer Name]")]
+    [InlineData("Customer]Archive", "[Customer]]Archive]")]
     public void QuoteIdentifier_ReturnsBracketedIdentifier(string identifier, string expected)
     {
         string actual = Dialect.QuoteIdentifier(identifier);

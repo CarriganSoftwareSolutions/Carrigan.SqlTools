@@ -1,5 +1,6 @@
 // IGNORE SPELLING: jsonb, varbit
 
+using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Types;
 using System.Reflection.Metadata;
 using System.Xml;
@@ -45,7 +46,29 @@ public static class PostgreSqlTypesProvider
     /// </summary>
     private const int LIMIT_FOR_VECTOR_MIN_DIMENSIONS = 1;
 
+    /// <summary>
+    /// PostgreSQL built-in type names that contain whitespace.
+    /// </summary>
+    private static readonly HashSet<string> _multiWordTypeNames = new(StringComparer.Ordinal)
+    {
+        "BIT VARYING",
+        "CHARACTER VARYING",
+        "DOUBLE PRECISION",
+        "TIME WITH TIME ZONE",
+        "TIME WITHOUT TIME ZONE",
+        "TIMESTAMP WITH TIME ZONE",
+        "TIMESTAMP WITHOUT TIME ZONE"
+    };
+
     #region Helper Methods
+
+    /// <summary>
+    /// Normalizes and validates a PostgreSQL provider type name.
+    /// </summary>
+    /// <param name="providerTypeName">The provider type name to validate.</param>
+    /// <returns>The normalized provider type name.</returns>
+    internal static string NormalizeProviderTypeName(string providerTypeName) =>
+        SqlTypeNameValidator.Normalize(providerTypeName, _multiWordTypeNames);
 
     /// <summary>
     /// Centralized factory method for creating <see cref="FieldProperties"/> instances with validation.
@@ -101,7 +124,7 @@ public static class PostgreSqlTypesProvider
         string? baseType = null,
         bool? nullable = null)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(providerTypeName);
+        string normalizedProviderTypeName = NormalizeProviderTypeName(providerTypeName);
 
         if (length is <= 0)
             throw new ArgumentOutOfRangeException(nameof(length), length, "Length must be greater than zero when specified.");
@@ -125,7 +148,7 @@ public static class PostgreSqlTypesProvider
             Scale = scale,
             FractionalSecondsPrecision = fractionalSecondsPrecision,
             IsNullable = nullable ?? DEFAULT_IS_NULLABLE,
-            ProviderTypeName = providerTypeName.ToUpperInvariant(),
+            ProviderTypeName = normalizedProviderTypeName,
             BaseType = baseType?.ToUpperInvariant(),
             IsArray = isArray
         };
@@ -228,11 +251,11 @@ public static class PostgreSqlTypesProvider
     }
 
     /// <summary>
-    /// Validates that a nullable byte value falls within a specified range, with an option to allow null values.
+    /// Validates that a nullable integer value for character length falls within the allowed range for PostgreSQL character types.
     /// </summary>
     /// <param name="length">
-    /// The nullable byte value to validate. If <paramref name="allowNullValue"/> is <see langword="true"/>, this can be <see langword="null"/>; otherwise,
-    /// it must have a value within the specified range.
+    /// The nullable integer value representing the character length to validate. If this value is specified (i.e., not null), it must be greater than zero and less
+    /// than or equal to the defined limit for character length.
     /// </param>
     private static void ValidateCharacterLength(int? length) =>
         ValidateRange(length, true, 1, LIMIT_FOR_CHARACTER_LENGTH, nameof(length));

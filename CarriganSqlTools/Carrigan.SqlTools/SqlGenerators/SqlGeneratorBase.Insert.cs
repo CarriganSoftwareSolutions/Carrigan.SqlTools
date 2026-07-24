@@ -11,7 +11,6 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// <summary>
 /// Contains shared SQL generation members for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public abstract partial class SqlGeneratorBase<T>
 {
     /// <summary>
@@ -21,9 +20,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="columns">
     /// The collection of <see cref="ColumnInfo"/> objects that identify the columns to insert.
     /// </param>
-    /// <param name="i">
-    /// Optional zero-based index used to append a unique index to each parameter name.
-    /// If <c>null</c>, no index is appended and unindexed parameter names are used.
+    /// <param name="entity">
+    /// The entity instance that supplies the values for the generated parameters.
     /// </param>
     /// <returns>
     /// An <see cref="IEnumerable{SqlFragment}"/> representing the <c>VALUES</c> list for one row,
@@ -45,9 +43,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="columns">
     /// The collection of <see cref="ColumnInfo"/> objects that identify the columns to insert.
     /// </param>
-    /// <param name="i">
-    /// Optional zero-based index used to append a unique index to each parameter name.
-    /// If <c>null</c>, no index is appended and unindexed parameter names are used.
+    /// <param name="entity">
+    /// The entity instance that supplies the values for the generated parameters.
     /// </param>
     /// <returns>
     /// A <see cref="SqlFragmentGroup"/> representing the <c>VALUES</c> list for one row,

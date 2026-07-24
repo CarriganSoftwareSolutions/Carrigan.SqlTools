@@ -283,6 +283,9 @@ public sealed class SqlTypeAttributeAnalyzer : DiagnosticAnalyzer
 
     #endregion
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SqlTypeAttributeAnalyzer"/> class.
+    /// </summary>
     public SqlTypeAttributeAnalyzer()
     {
     }

@@ -136,4 +136,11 @@ public partial class PostgreSqlDialectTests
     [Fact]
     public void RenderFieldProperties_NullFieldProperties_Exception() =>
         Assert.Throws<ArgumentNullException>(() => Dialect.RenderFieldProperties(null!));
+    [Fact]
+    public void RenderFieldProperties_SqlSyntax_ThrowsArgumentException() =>
+        Assert.Throws<ArgumentException>(() => Dialect.RenderFieldProperties(new FieldProperties
+        {
+            ProviderTypeName = "INTEGER); DROP TABLE audit_log; --"
+        }));
+
 }

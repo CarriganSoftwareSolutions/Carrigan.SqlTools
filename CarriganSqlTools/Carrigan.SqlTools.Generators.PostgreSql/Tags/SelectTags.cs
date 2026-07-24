@@ -21,11 +21,6 @@ public sealed class SelectTags : SelectTagsBase
     /// </summary>
     /// <param name="selectTags">The SELECT projection tags to place in the new collection.</param>
     /// <returns>A new concrete SELECT tag collection.</returns>
-    /// <summary>
-    /// Creates a concrete SELECT projection collection from the supplied tags.
-    /// </summary>
-    /// <param name="selectTags">The SELECT projection tags to place in the new collection.</param>
-    /// <returns>A new concrete SELECT tag collection.</returns>
     protected override SelectTags New(params IEnumerable<SelectTagBase> selectTags) =>
         new(selectTags);
 

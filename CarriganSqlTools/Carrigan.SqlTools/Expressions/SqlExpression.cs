@@ -9,6 +9,9 @@ using Carrigan.Core.DataTypes;
 
 namespace Carrigan.SqlTools.Expressions;
 
+/// <summary>
+/// Represents a node in a SQL expression tree that can be rendered for a specific dialect.
+/// </summary>
 public abstract class SqlExpression : StringWrapper
 {
     /// <summary>
@@ -83,7 +86,7 @@ public abstract class SqlExpression : StringWrapper
     /// </summary>
     /// <remarks>
     /// Before rendering, this method computes duplicate user-supplied parameter names and
-    /// passes that set to the recursive <see cref="ToSqlFragments()"/> overload,
+    /// passes that set to the recursive <see cref="ToSqlFragments"/> overload,
     /// which may add disambiguating prefixes to produce unique parameter names.
     /// </remarks>
     /// <returns>The SQL fragments represented by this expression tree.</returns>

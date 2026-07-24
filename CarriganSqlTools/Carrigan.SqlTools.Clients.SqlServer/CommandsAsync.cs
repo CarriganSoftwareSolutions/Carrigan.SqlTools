@@ -82,7 +82,7 @@ public static class CommandsAsync
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteNonQueryAsync), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteNonQueryAsync), query, transaction is not null, exception);
         }
         finally
         {
@@ -133,7 +133,7 @@ public static class CommandsAsync
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteScalarAsync), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteScalarAsync), query, transaction is not null, exception);
         }
         finally
         {
@@ -209,7 +209,7 @@ public static class CommandsAsync
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)
         {
-            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteReaderAsync), query, exception);
+            throw SqlToolsErrorFactory.ExecutionFailed(nameof(ExecuteReaderAsync), query, transaction is not null, exception);
         }
         finally
         {

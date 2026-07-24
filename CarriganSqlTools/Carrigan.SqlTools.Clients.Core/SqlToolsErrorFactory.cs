@@ -25,13 +25,14 @@ internal static class SqlToolsErrorFactory
     /// </summary>
     /// <param name="operation">The operation being performed when command execution failed.</param>
     /// <param name="query">The SQL query that failed to execute.</param>
+    /// <param name="hasTransaction">Whether the command was associated with a transaction.</param>
     /// <param name="exception">The exception that caused command execution to fail.</param>
     /// <returns>The wrapped command execution failure exception.</returns>
     /// <exception cref="ArgumentNullException">
     /// <paramref name="operation"/>, <paramref name="query"/>, or <paramref name="exception"/> is <see langword="null"/>.
     /// </exception>
-    internal static CommandExecutionFailedException ExecutionFailed(string operation, SqlQuery query, Exception exception) =>
-        new(operation, query, exception);
+    internal static CommandExecutionFailedException ExecutionFailed(string operation, SqlQuery query, bool hasTransaction, Exception exception) =>
+        new(operation, query, hasTransaction, exception);
 
     /// <summary>
     /// Creates an exception for a failed data reader operation.
