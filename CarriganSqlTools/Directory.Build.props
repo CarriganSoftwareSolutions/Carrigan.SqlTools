@@ -3,6 +3,12 @@
     <RunAnalyzers>true</RunAnalyzers>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);CS1570;CS1572;CS1573;NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -11,7 +17,7 @@
 
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <_CurrentYear>$([System.DateTime]::UtcNow.ToString('yyyy'))</_CurrentYear>
-    <Copyright>© $(_CurrentYear) $(Company)</Copyright>
+    <Copyright>© 2025-$(_CurrentYear) $(Company)</Copyright>
 
     <RepositoryUrl>https://github.com/CarriganSoftwareSolutions/Carrigan.SqlTools</RepositoryUrl>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

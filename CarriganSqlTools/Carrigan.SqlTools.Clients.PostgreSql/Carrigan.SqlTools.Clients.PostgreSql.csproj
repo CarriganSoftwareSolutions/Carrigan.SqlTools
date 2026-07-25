@@ -36,7 +36,7 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.4" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.5" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
   </ItemGroup>
   
