@@ -193,7 +193,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         OrderBysBase? orderBys, 
         PagingBase? paging
     ) =>
-        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, orderBys, paging);
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, null, orderBys, paging);
 
     [Obsolete("Use the overload with OrderBysBase argument.")]
     public SqlQuery Select
@@ -206,7 +206,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         OrderBysBase? orderBys,
         PagingBase? paging
     ) =>
-        base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, orderBys, paging);
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, null, orderBys, paging);
 
     /// <summary>
     /// Builds a SELECT SQL query for the supplied model data.

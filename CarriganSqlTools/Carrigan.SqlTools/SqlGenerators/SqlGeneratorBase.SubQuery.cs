@@ -20,11 +20,11 @@ public abstract partial class SqlGeneratorBase<T>
         bool? distinct,
         SelectTagsBase? selects,
         Joins<T>? joins,
-        Predicates? predicates,
+        Predicates? where,
         GroupBysBase? groupBys,
-        OrderBysBase? orderBy, 
-        PagingBase? paging
-) =>
-        new(BaseSelectFragments(distinct, null, selects, joins, predicates, groupBys, orderBy, paging), Dialect);
+        Predicates having,
+        OrderBysBase? orderBy, PagingBase? paging
+    ) =>
+        new(BaseSelectFragments(distinct, null, selects, joins, where, groupBys, having, orderBy, paging), Dialect);
 
 }

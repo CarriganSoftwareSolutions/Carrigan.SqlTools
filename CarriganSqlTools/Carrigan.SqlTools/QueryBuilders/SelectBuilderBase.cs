@@ -47,6 +47,11 @@ public abstract record SelectBuilderBase<T> where T : class
     public GroupBysBase? GroupBys { get; set; }
 
     /// <summary>
+    /// Gets or sets the Having predicates for the query.
+    /// </summary>
+    public Predicates? Having { get; set; }
+
+    /// <summary>
     /// Gets or sets the ORDER BY clause for the query.
     /// </summary>
     public OrderBysBase? OrderBys { get; set; }
@@ -123,6 +128,14 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </returns>
     public SelectBuilderBase<T> WithGroupBy(GroupBysBase? groupsBy) =>
         this with { GroupBys = groupsBy };
+
+    /// <summary>
+    /// Returns a copy of the current query with the specified HAVING predicates.
+    /// </summary>
+    /// <param name="having">The HAVING predicates to apply to the query.</param>
+    /// <returns>A new query instance with the specified HAVING predicates.</returns>
+    public SelectBuilderBase<T> WithHaving(Predicates? having) =>
+        this with { Having = having };
 
     /// <summary>
     /// Returns a copy of the current query with the specified ORDER BY clause.

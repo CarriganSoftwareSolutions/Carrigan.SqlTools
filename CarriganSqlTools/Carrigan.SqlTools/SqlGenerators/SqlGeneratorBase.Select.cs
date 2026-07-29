@@ -36,7 +36,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// in the query (i.e., is not the base table and not included by joins).
     /// </exception>
     protected virtual SqlQuery BaseSelectAll(OrderBysBase? orderBy = null) =>
-        BaseSelect(null, null, null, null, null, null, orderBy, null);
+        BaseSelect(null, null, null, null, null, null, null, orderBy, null);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
@@ -50,11 +50,14 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="joins">
     /// Optional joins to include in the query. Omit to select only from the base table.
     /// </param>
-    /// <param name="predicates">
+    /// <param name="where">
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
     /// </param>
     /// <param name="groupBys">
     /// The optional GROUP BY clause. When provided, this will be rendered after the WHERE clause and before the ORDER BY clause.
+    /// </param>
+    /// <param name="having">
+    /// Optional filter predicates to compose the <c>HAVING</c> clause.
     /// </param>
     /// <param name="orderBy">
     /// Optional ordering to compose the <c>ORDER BY</c> clause.
@@ -66,7 +69,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="paging">The paging fragment to include in the query.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
-    /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
+    /// <c>Parameters</c> contain values from <paramref name="where"/> and any joins.
     /// </returns>
     /// <remarks>
     /// When providing <paramref name="selects"/>, you will almost certainly need a different model
@@ -79,7 +82,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
     /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
+    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="where"/>, or
     /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     protected virtual SqlQuery BaseSelect
@@ -88,11 +91,13 @@ public abstract partial class SqlGeneratorBase<T>
         Subquery<T>? subQuery,
         SelectTagsBase? selects,
         Joins<T>? joins,
-        Predicates? predicates,
+        Predicates? where,
         GroupBysBase? groupBys,
-        OrderBysBase? orderBy, PagingBase? paging
-    ) =>
-        new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, predicates, groupBys, orderBy, paging));
+        Predicates? having, 
+        OrderBysBase? orderBy, 
+        PagingBase? paging
+) =>
+        new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, where, groupBys, having, orderBy, paging));
 
     /// <summary>
     /// Builds the SQL fragments that make up a SELECT statement.
@@ -101,22 +106,25 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="subQuery">The optional subquery used as the FROM source.</param>
     /// <param name="selects">The optional SELECT projection list.</param>
     /// <param name="joins">The optional joins to append after the FROM source.</param>
-    /// <param name="predicates">The optional WHERE predicates.</param>
+    /// <param name="where">The optional WHERE predicates.</param>
     /// <param name="groupBys">
     /// The optional GROUP BY clause. When provided, this will be rendered after the WHERE clause and before the ORDER BY clause.
     /// </param>
+    /// <param name="having">The optional HAVING predicates.</param>
     /// <param name="orderBy">The optional ORDER BY clause.</param>
-    /// <returns>The SQL fragments that render the SELECT statement.</returns>
     /// <param name="paging">The optional paging clause.</param>
+    /// <returns>The SQL fragments that render the SELECT statement.</returns>
     private IEnumerable<ISqlFragment> BaseSelectFragments
     (
         bool? distinct,
         Subquery<T>? subQuery,
         SelectTagsBase? selects,
         Joins<T>? joins,
-        Predicates? predicates,
+        Predicates? where,
         GroupBysBase? groupBys,
-        OrderBysBase? orderBy, PagingBase? paging
+        Predicates? having, 
+        OrderBysBase? orderBy, 
+        PagingBase? paging
     )
     {
         if ((selects is null || selects.Empty()) && groupBys.IsNotNullOrEmpty())
@@ -160,16 +168,24 @@ public abstract partial class SqlGeneratorBase<T>
                     yield return fragment;
             }
 
-            if (predicates is not null)
+            if (where is not null)
             {
                 yield return new SqlFragmentText($" WHERE ");
 
-                foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
+                foreach (ISqlFragment fragment in where.ToSqlFragments(Dialect))
                     yield return fragment;
             }
 
             if(groupBys.IsNotNullOrEmpty())
                 yield return new SqlFragmentText($" {groupBys.AsGroupBy().ToSql(Dialect)}");
+
+            if (having is not null)
+            {
+                yield return new SqlFragmentText($" HAVING ");
+
+                foreach (ISqlFragment fragment in having.ToSqlFragments(Dialect))
+                    yield return fragment;
+            }
 
             if (orderBy.IsNotNullOrEmpty())
                 yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql(Dialect)}");
@@ -187,7 +203,7 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantLeafTables?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. where?.DescendantLeafTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTableTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
@@ -259,6 +275,6 @@ public abstract partial class SqlGeneratorBase<T>
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(GetByKeyPredicates(entity)))), null, null, null);
+            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(GetByKeyPredicates(entity)))), null, null, null, null);
     }
 }

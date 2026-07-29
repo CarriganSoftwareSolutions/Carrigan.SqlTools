@@ -25,7 +25,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         GroupBysBase? groupsBys,
         OrderBysBase? orderBy, PagingBase? paging
     ) =>
-        BaseSubquery(distinct, selects, joins, predicates, groupsBys, orderBy, paging);
+        BaseSubquery(distinct, selects, joins, predicates, groupsBys, null, orderBy, paging);
 
     /// <summary>
     /// Builds a subquery from the supplied subquery builder.
