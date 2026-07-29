@@ -120,10 +120,9 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// <summary>
     /// Indicates whether this select item is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
     /// </summary>
-    /// <param name="groupBys">The optional <c>GROUP BY</c> clause to check.</param>
     /// <returns>The aggregate status of the underlying expression or column.</returns>
-    public bool IsAggregate(GroupBysBase? groupBys) =>
-        SqlExpression.IsAggregate(groupBys);
+    public bool IsAggregate() =>
+        SqlExpression.IsAggregate();
 
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
@@ -158,4 +157,25 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// </summary>
     /// <returns>A copy of this tag without an alias.</returns>
     public abstract SelectTagBase WithNoAlias();
+
+    /// <summary>
+    /// Indicates whether this select item matches the supplied <c>GROUP BY</c> clause.
+    /// </summary>
+    /// <param name="groupByBase">
+    /// The <c>GROUP BY</c> clause to compare against this select item.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if this select item matches the supplied <c>GROUP BY</c> clause; otherwise, <c>false</c>.
+    /// </returns>
+    public bool MatchesGroupBy(GroupByBase groupByBase)
+    {
+        ColumnTag? columnTag = SqlExpression switch
+        {
+            ColumnBase column => column.ColumnInfo.ColumnTag,
+            ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
+            _ => null
+        };
+
+        return columnTag is not null && columnTag == groupByBase.ColumnInfo.ColumnTag;
+    }
 }

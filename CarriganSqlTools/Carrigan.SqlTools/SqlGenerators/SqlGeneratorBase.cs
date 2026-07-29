@@ -174,6 +174,19 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     }
 
     /// <summary>
+    /// Validates that predicates intended for a <c>WHERE</c> clause do not contain aggregate expressions.
+    /// </summary>
+    /// <param name="predicates">The optional <c>WHERE</c> predicate tree to validate.</param>
+    /// <exception cref="AggregateExpressionInWhereClauseException">
+    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
+    /// </exception>
+    private static void ValidateWherePredicates(Predicates? predicates)
+    {
+        if (predicates?.ContainsAggregate() ?? false)
+            throw new AggregateExpressionInWhereClauseException();
+    }
+
+    /// <summary>
     /// Builds an <see cref="And"/> predicate for selecting a record by its key columns.
     /// </summary>
     /// <param name="entity">

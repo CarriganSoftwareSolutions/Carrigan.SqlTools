@@ -76,10 +76,35 @@ public abstract class SqlExpression : StringWrapper
     /// <summary>
     /// Indicates whether this expression is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
     /// </summary>
-    /// <param name="groupBys">The optional <c>GROUP BY</c> clause to check.</param>
     /// <returns><c>false</c> unless an expression type overrides this method.</returns>
-    public virtual bool IsAggregate(GroupBysBase? groupBys) =>
+    public virtual bool IsAggregate() =>
         false;
+
+    /// <summary>
+    /// Aggregate functions are valid aggregate SELECT expressions.
+    /// </summary>
+    /// <param name="groupBys">The optional <c>GROUP BY</c> clause.</param>
+    /// <returns>Always <c>true</c>.</returns>
+    [Obsolete("Use the overload with no parameters instead.")]
+    public bool IsAggregate(GroupBysBase? groupBys) =>
+        IsAggregate();
+
+    /// <summary>
+    /// Indicates whether this expression tree contains any aggregate expressions.
+    /// </summary>
+    /// <returns><c>true</c> if the expression tree contains any aggregate expressions; otherwise, <c>false</c>.</returns>
+    public bool ContainsAggregate() =>
+        IsAggregate() || ChildNodes.Any(ContainsAggregate);
+
+    /// <summary>
+    /// Indicates whether the specified expression tree contains any aggregate expressions. 
+    /// </summary>
+    /// <param name="expression">
+    /// The expression tree to check for aggregate expressions.
+    /// </param>
+    /// <returns><c>true</c> if the expression tree contains any aggregate expressions; otherwise, <c>false</c>.</returns>
+    public static bool ContainsAggregate(SqlExpression expression) =>
+        expression.ContainsAggregate();
 
     /// <summary>
     /// Generates the SQL fragments for this expression tree.

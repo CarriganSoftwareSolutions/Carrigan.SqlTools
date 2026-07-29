@@ -174,6 +174,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="entity"/> is <c>null</c>.
     /// </exception>
+    /// <exception cref="AggregateExpressionInWhereClauseException">
+    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
+    /// </exception>
     /// <param name="predicates">
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
@@ -181,6 +184,7 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual SqlQuery BaseUpdate(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, JoinsBase? joins, Predicates? predicates)
     {
         ArgumentNullException.ThrowIfNull(entity);
+        ValidateWherePredicates(predicates);
 
         IEnumerable<ColumnInfo> updateTheseColumns =
             [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : GetGetColumnInfoLessKeys(SupportedTypes))];

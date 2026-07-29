@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
@@ -60,23 +61,46 @@ public class SqlGenerator_AggregateSelectTests
     [Fact]
     public void AggregateExpressions_AreAggregate()
     {
-        Assert.True(new Count().IsAggregate(null));
-        Assert.True(new Count(new Column<Customer>(nameof(Customer.Id))).IsAggregate(null));
-        Assert.True(new Sum(new Column<Order>(nameof(Order.Total))).IsAggregate(null));
-        Assert.True(new Avg(new Column<Order>(nameof(Order.Total))).IsAggregate(null));
-        Assert.True(new Average(new Column<Order>(nameof(Order.Total))).IsAggregate(null));
-        Assert.True(new Min(new Column<Order>(nameof(Order.Total))).IsAggregate(null));
-        Assert.True(new Max(new Column<Order>(nameof(Order.Total))).IsAggregate(null));
+        Assert.True(new Count().IsAggregate());
+        Assert.True(new Count(new Column<Customer>(nameof(Customer.Id))).IsAggregate());
+        Assert.True(new Sum(new Column<Order>(nameof(Order.Total))).IsAggregate());
+        Assert.True(new Avg(new Column<Order>(nameof(Order.Total))).IsAggregate());
+        Assert.True(new Average(new Column<Order>(nameof(Order.Total))).IsAggregate());
+        Assert.True(new Min(new Column<Order>(nameof(Order.Total))).IsAggregate());
+        Assert.True(new Max(new Column<Order>(nameof(Order.Total))).IsAggregate());
     }
 
     [Fact]
-    public void Column_IsAggregateOnlyWhenContainedInGroupBy()
+    public void Column_IsNotAggregate()
     {
-        GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
+        Assert.False(new Column<Customer>(nameof(Customer.Email)).IsAggregate());
+        Assert.False(new Column<Customer>(nameof(Customer.Name)).IsAggregate());
+    }
 
-        Assert.True(new Column<Customer>(nameof(Customer.Name)).IsAggregate(groupBys));
-        Assert.False(new Column<Customer>(nameof(Customer.Email)).IsAggregate(groupBys));
-        Assert.False(new Column<Customer>(nameof(Customer.Name)).IsAggregate(null));
+    [Fact]
+    public void ContainsAggregate_WithNestedAggregate_ReturnsTrue()
+    {
+        SqlExpression expression = new LessThan
+        (
+            new Min(new Column<Customer>(nameof(Customer.Id))),
+            new Parameter(1)
+        );
+
+        Assert.True(expression.ContainsAggregate());
+        Assert.True(SqlExpression.ContainsAggregate(expression));
+    }
+
+    [Fact]
+    public void ContainsAggregate_WithoutAggregate_ReturnsFalse()
+    {
+        SqlExpression expression = new LessThan
+        (
+            new Column<Customer>(nameof(Customer.Id)),
+            new Parameter(1)
+        );
+
+        Assert.False(expression.ContainsAggregate());
+        Assert.False(SqlExpression.ContainsAggregate(expression));
     }
 
     [Fact]
@@ -102,16 +126,12 @@ public class SqlGenerator_AggregateSelectTests
 
     [Fact]
     public void SelectTag_IsAggregate_DelegatesToSqlExpression()
-    {
-        GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
+    {       
+        SelectTag columnSelect = SelectTagGenerator.Get<Customer>(nameof(Customer.Name));
+        SelectTag aggregateSelect = new(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount");
 
-        SelectTag groupedColumn = SelectTagGenerator.Get<Customer>(nameof(Customer.Name));
-        SelectTag aggregate = new(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount");
-        SelectTag ungroupedColumn = SelectTagGenerator.Get<Customer>(nameof(Customer.Email));
-
-        Assert.True(groupedColumn.IsAggregate(groupBys));
-        Assert.True(aggregate.IsAggregate(groupBys));
-        Assert.False(ungroupedColumn.IsAggregate(groupBys));
+        Assert.False(columnSelect.IsAggregate());
+        Assert.True(aggregateSelect.IsAggregate());
     }
 
     [Fact]

@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GroupByTests;
 
@@ -188,6 +189,31 @@ public class GroupBysTests
 
         Assert.False(groupBy.Contains(city));
         Assert.False(groupBy.Contains(columnTable));
+    }
+
+    [Fact]
+    public void Contains_Select()
+    {
+        GroupBy<Address> street = new("Street");
+        GroupBy<Address> city = new("City");
+        GroupBys groupBy = new(street);
+
+        SelectTag streetSelectTag = SelectTagGenerator.Get<Address>("Street");
+        SelectTag citySelectTag = SelectTagGenerator.Get<Address>("City");
+
+        Assert.True(groupBy.Contains(streetSelectTag));
+        Assert.False(groupBy.Contains(citySelectTag));
+    }
+
+    [Fact]
+    public void Contains_WithColumnExpressionSelectTag_ReturnsExpectedResult()
+    {
+        GroupBys groupBy = new(new GroupBy<Address>(nameof(Address.Street)));
+        SelectTag streetSelectTag = new(new Column<Address>(nameof(Address.Street)));
+        SelectTag citySelectTag = new(new Column<Address>(nameof(Address.City)));
+
+        Assert.True(groupBy.Contains(streetSelectTag));
+        Assert.False(groupBy.Contains(citySelectTag));
     }
 
     [Fact]

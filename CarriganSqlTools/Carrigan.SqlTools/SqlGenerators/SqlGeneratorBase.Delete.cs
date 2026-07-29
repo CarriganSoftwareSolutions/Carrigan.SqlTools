@@ -114,12 +114,17 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when a <see cref="TableTag"/> referenced by <paramref name="predicates"/> is not present
     /// in the <paramref name="joins"/> set nor equal to the primary table.
     /// </exception>
+    /// <exception cref="AggregateExpressionInWhereClauseException">
+    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
+    /// </exception>
     /// <param name="predicates">
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
     /// </param>
     protected virtual SqlQuery BaseDelete(IEnumerable<TableTag>? usings, JoinsBase? joins, Predicates? predicates)
     {
+        ValidateWherePredicates(predicates);
+
         IEnumerable<ISqlFragment> GetFragments()
         {
             yield return new SqlFragmentText("DELETE");
