@@ -42,6 +42,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when any table referenced by <paramref name="select"/> or <paramref name="predicates"/> (or by their columns)
     /// is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
+    /// <exception cref="AggregateExpressionInWhereClauseException">
+    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
+    /// </exception>
     /// <param name="predicates">
     /// Optional filter predicates to compose the <c>WHERE</c> clause for the count.
     /// </param>
@@ -54,6 +57,8 @@ public abstract partial class SqlGeneratorBase<T>
         Predicates? predicates
     )
     {
+        ValidateWherePredicates(predicates);
+
         IEnumerable<ISqlFragment> GetFragments()
         {
             if (distinct ?? false)

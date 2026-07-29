@@ -37,14 +37,6 @@ internal sealed class ColumnTagExpression : SqlExpression
         [ColumnTag.TableTag];
 
     /// <summary>
-    /// Indicates whether this column is included in the supplied <c>GROUP BY</c> clause.
-    /// </summary>
-    /// <param name="groupBys">The <c>GROUP BY</c> clause to check.</param>
-    /// <returns><c>true</c> when this column appears in <paramref name="groupBys"/>; otherwise, <c>false</c>.</returns>
-    public override bool IsAggregate(GroupBysBase? groupBys) =>
-        groupBys?.AsEnumerable().Any(groupBy => groupBy.ColumnInfo.ColumnTag == ColumnTag) ?? false;
-
-    /// <summary>
     /// Produces the SQL fragment represented by this column expression.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render identifiers.</param>

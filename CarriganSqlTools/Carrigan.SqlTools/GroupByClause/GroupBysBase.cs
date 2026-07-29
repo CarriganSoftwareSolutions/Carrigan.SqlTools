@@ -62,6 +62,20 @@ public abstract class GroupBysBase
     }
 
     /// <summary>
+    /// Determines whether the specified <paramref name="selectTagBase"/> is present
+    /// in the <c>GROUP BY</c> clause.
+    /// </summary>
+    /// <param name="selectTagBase">The select tag to check.</param>
+    /// <returns>
+    /// <c>true</c> if the tag is contained in this <c>GROUP BY</c>; otherwise, <c>false</c>.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="selectTagBase"/> is <c>null</c>.
+    /// </exception>
+    public bool Contains(SelectTagBase selectTagBase) =>
+        _groupByItems.Any(selectTagBase.MatchesGroupBy);
+
+    /// <summary>
     /// Determines whether a column expression is present in the <c>GROUP BY</c> clause.
     /// </summary>
     /// <param name="column">The column expression to check.</param>

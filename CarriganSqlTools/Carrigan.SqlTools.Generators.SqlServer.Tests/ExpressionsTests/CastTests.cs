@@ -54,14 +54,13 @@ public sealed class CastTests
     [Fact]
     public void IsAggregate_DelegatesToGroupedColumnExpression()
     {
-        GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
         Cast cast = new
         (
-            new Column<Customer>(nameof(Customer.Name)),
+            new Average(new Column<Customer>(nameof(Customer.Id))),
             SqlServerTypesProvider.AsNVarChar(100)
         );
 
-        bool actual = cast.IsAggregate(groupBys);
+        bool actual = cast.IsAggregate();
 
         Assert.True(actual);
     }

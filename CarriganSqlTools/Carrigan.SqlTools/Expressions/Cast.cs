@@ -53,14 +53,12 @@ public class Cast : SqlExpression
     /// <summary>
     /// Determines whether the cast expression is valid in an aggregate SELECT list.
     /// </summary>
-    /// <param name="groupBys">
     /// The optional <c>GROUP BY</c> clause used to validate grouped column expressions.
-    /// </param>
     /// <returns>
     /// The aggregate status of the expression being cast.
     /// </returns>
-    public override bool IsAggregate(GroupBysBase? groupBys) =>
-        SqlExpression.IsAggregate(groupBys);
+    public override bool IsAggregate() =>
+        SqlExpression.IsAggregate();
 
     /// <summary>
     /// Generates the SQL fragments for the <c>CAST</c> expression based on the specified SQL dialect.

@@ -39,14 +39,6 @@ public abstract class ColumnBase : SqlExpression
         [ColumnInfo.ColumnTag.TableTag];
 
     /// <summary>
-    /// Indicates whether this column is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
-    /// </summary>
-    /// <param name="groupBys">The <c>GROUP BY</c> clause to check.</param>
-    /// <returns><c>true</c> when this column is included in <paramref name="groupBys"/>; otherwise, <c>false</c>.</returns>
-    public override bool IsAggregate(GroupBysBase? groupBys) =>
-        groupBys?.Contains(this) ?? false;
-
-    /// <summary>
     /// Returns the unquoted column tag representation.
     /// </summary>
     public override string ToString() =>

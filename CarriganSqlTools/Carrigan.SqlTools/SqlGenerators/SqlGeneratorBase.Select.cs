@@ -82,6 +82,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
     /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
+    /// <exception cref="AggregateExpressionInWhereClauseException">
+    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
+    /// </exception>
     protected virtual SqlQuery BaseSelect
     (
         bool? distinct,
@@ -119,12 +122,14 @@ public abstract partial class SqlGeneratorBase<T>
         OrderBysBase? orderBy, PagingBase? paging
     )
     {
+        ValidateWherePredicates(predicates);
+
         if ((selects is null || selects.Empty()) && groupBys.IsNotNullOrEmpty())
             selects = GetSelectTags(groupBys!.AsGroupBy());
 
         if (selects is not null && selects.Any())
         {
-            IEnumerable<bool> aggregateStates = selects.All().Select(select => select.IsAggregate(groupBys));
+            IEnumerable<bool> aggregateStates = selects.All().Select(select => select.IsAggregate() || (groupBys?.Contains(select) ?? false));
             if (aggregateStates.Distinct().Count() > 1)
                 throw new MixedAggregateSelectException();
         }
