@@ -22,7 +22,7 @@ public class NotExistsTests
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null, null);
         NotExists notExists = new(subQuery);
 
         SqlQuery query = customerGenerator.Select(null, null, null, null, notExists, null, null, null);
@@ -41,7 +41,7 @@ public class NotExistsTests
             new Column<Order>(nameof(Order.CustomerId)),
             new Parameter(42, "CustomerId")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null, null);
         NotExists notExists = new(subQuery);
         Predicates outerPredicate = new Equal
         (

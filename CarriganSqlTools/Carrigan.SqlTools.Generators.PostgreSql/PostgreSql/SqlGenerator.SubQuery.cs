@@ -16,6 +16,38 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <summary>
     /// Gets the SQL fragment that starts a subquery expression.
     /// </summary>
+    private Subquery<T> PrivateSubquery
+    (
+        bool? distinct,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        Predicates? having,
+        OrderBysBase? orderBy, PagingBase? paging
+) =>
+        BaseSubquery(distinct, selects, joins, predicates, groupBys, having, orderBy, paging);
+
+    /// <summary>
+    /// Gets the SQL fragment that starts a subquery expression.
+    /// </summary>
+    [Obsolete("Use the overloaded method with the subqueryBuilder argument.")]
+    public Subquery<T> Subquery
+    (
+        bool? distinct,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        Predicates? having,
+        OrderBysBase? orderBy, PagingBase? paging
+) =>
+        PrivateSubquery(distinct, selects, joins, predicates, groupBys, having, orderBy, paging);
+
+    /// <summary>
+    /// Gets the SQL fragment that starts a subquery expression.
+    /// </summary>
+    [Obsolete("Use the overloaded method with the subqueryBuilder argument.")]
     public Subquery<T> Subquery
     (
         bool? distinct,
@@ -26,7 +58,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         OrderBysBase? orderBy, 
         PagingBase? paging
 ) =>
-        BaseSubquery(distinct, selects, joins, predicates, groupBys, null, orderBy, paging);
+        PrivateSubquery(distinct, selects, joins, predicates, groupBys, null, orderBy, paging);
 
 
     /// <summary>
@@ -35,5 +67,5 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="subqueryBuilder">The subquery builder to materialize.</param>
     /// <returns>A subquery that can be used as a SQL fragment.</returns>
     public Subquery<T> Subquery(SubqueryBuilder<T> subqueryBuilder) =>
-        Subquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, null, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
+        PrivateSubquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, subqueryBuilder.GroupBys, subqueryBuilder.Having, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
 }

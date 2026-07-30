@@ -79,12 +79,12 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="groupBys">
     /// Optional grouped columns used to compose the <c>GROUP BY</c> clause.
     /// </param>
+    /// <param name="having"></param>
     /// <param name="orderBys">
     /// Optional ordering to compose the <c>ORDER BY</c> clause.
     /// When <paramref name="paging"/> is provided, key columns are appended to
     /// the ordering (if not already present) to ensure stable paging semantics.
     /// </param>
-    /// <param name="paging">The paging fragment to include in the query.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
     /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
@@ -177,6 +177,23 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ORDER BY "Order"."OrderDate" ASC
     /// ]]></code>
     /// </example>
+    /// <param name="paging">The paging fragment to include in the query.</param>
+    [Obsolete("Use the overload with selectBuilder argument.")]
+    public SqlQuery Select
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        Predicates? having,
+        OrderBysBase? orderBys,
+        PagingBase? paging
+    ) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
+
+    [Obsolete("Use the overload with selectBuilder argument.")]
     public SqlQuery Select
     (
         bool? distinct,
@@ -187,10 +204,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         GroupBysBase? groupBys,
         OrderBysBase? orderBys, 
         PagingBase? paging
-) =>
+    ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, null, orderBys, paging);
 
-    [Obsolete("Use the overload with OrderBysBase argument.")]
+    [Obsolete("Use the overload with selectBuilder argument.")]
     public SqlQuery Select
     (
         bool? distinct,
@@ -200,25 +217,39 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Predicates? predicates,
         OrderBysBase? orderBys,
         PagingBase? paging
-) =>
+    ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, null, orderBys, paging);
+
+    private SqlQuery PrivateSelect
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        Predicates? having,
+        OrderBysBase? orderBys, PagingBase? paging
+) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
 
     /// <summary>
     /// Builds a SELECT SQL query for the supplied model data.
     /// </summary>
-    /// <param name="selectQuery">The select builder to materialize.</param>
+    /// <param name="selectBuilder">The select builder to materialize.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the SELECT statement.</returns>
-    public SqlQuery Select(SelectBuilder<T> selectQuery) =>
-        Select
+    public SqlQuery Select(SelectBuilder<T> selectBuilder) =>
+        PrivateSelect
         (
-            selectQuery.Distinct,
-            selectQuery.Subquery, 
-            selectQuery.Selects, 
-            selectQuery.Joins, 
-            selectQuery.Where,
-            selectQuery.GroupBys, 
-            selectQuery.OrderBys,
-            selectQuery.Paging
+            selectBuilder.Distinct,
+            selectBuilder.Subquery, 
+            selectBuilder.Selects, 
+            selectBuilder.Joins, 
+            selectBuilder.Where,
+            selectBuilder.GroupBys, 
+            selectBuilder.Having,
+            selectBuilder.OrderBys,
+            selectBuilder.Paging
         );
 
     /// <summary>

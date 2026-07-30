@@ -77,6 +77,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
     /// </param>
     /// <param name="orderBys">The SQL ORDER BY items to include in the query.</param>
+    /// <param name="having">The SQL HAVING clause to include in the query.</param>
     /// <param name="paging">The paging fragment to include in the query.</param>
     /// <param name="groupBys">
     /// Optional grouping items to include in the query.
@@ -182,6 +183,22 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
+    [Obsolete("Use the overload with selectBuilder argument.")]
+    public SqlQuery Select
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        Predicates? having,
+        OrderBysBase? orderBys,
+        PagingBase? paging
+    ) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
+
+    [Obsolete("Use the overload with selectBuilder argument.")]
     public SqlQuery Select
     (
         bool? distinct,
@@ -195,7 +212,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, null, orderBys, paging);
 
-    [Obsolete("Use the overload with OrderBysBase argument.")]
+    [Obsolete("Use the overload with selectBuilder argument.")]
     public SqlQuery Select
     (
         bool? distinct,
@@ -208,13 +225,27 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, null, orderBys, paging);
 
+    private SqlQuery PrivateSelect
+    (
+        bool? distinct,
+        Subquery<T>? subQuery,
+        SelectTagsBase? selects,
+        Joins<T>? joins,
+        Predicates? predicates,
+        GroupBysBase? groupBys,
+        Predicates? having,
+        OrderBysBase? orderBys,
+        PagingBase? paging
+    ) =>
+        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
+
     /// <summary>
     /// Builds a SELECT SQL query for the supplied model data.
     /// </summary>
     /// <param name="selectQuery">The select builder to materialize.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the SELECT statement.</returns>
     public SqlQuery Select(SelectBuilder<T> selectQuery) =>
-        Select
+        PrivateSelect
         (
             selectQuery.Distinct,
             selectQuery.Subquery,
@@ -222,6 +253,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
             selectQuery.Joins,
             selectQuery.Where,
             selectQuery.GroupBys,
+            selectQuery.Having,
             selectQuery.OrderBys, 
             selectQuery.Paging
         );

@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -32,6 +33,16 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// Gets or sets the WHERE predicates for the subquery.
     /// </summary>
     public Predicates? Where { get; set; }
+
+    /// <summary>
+    /// Gets or sets the GroupBys predicates for the subquery.
+    /// </summary>
+    public GroupBysBase? GroupBys { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Having predicates for the subquery.
+    /// </summary>
+    public Predicates? Having { get; set; }
 
     /// <summary>
     /// Gets or sets the ORDER BY clause for the subquery.

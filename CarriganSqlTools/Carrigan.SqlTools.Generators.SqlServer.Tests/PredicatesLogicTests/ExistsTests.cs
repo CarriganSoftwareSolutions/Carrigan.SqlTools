@@ -20,7 +20,7 @@ public class ExistsTests
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null, null);
         Exists exists = new(subQuery);
 
         SqlQuery query = customerGenerator.Select(null, null, null, null, exists, null, null, null);
@@ -39,7 +39,7 @@ public class ExistsTests
             new Column<Order>(nameof(Order.CustomerId)),
             new Parameter(42, "CustomerId")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null);
+        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, subQueryPredicate, null, null, null, null);
         Exists exists = new(subQuery);
         Predicates outerPredicate = new Equal
         (

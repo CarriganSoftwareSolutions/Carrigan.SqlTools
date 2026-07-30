@@ -86,7 +86,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     /// <exception cref="AggregateExpressionInWhereClauseException">
-    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
+    /// Thrown when <paramref name="where"/> contains an aggregate expression.
     /// </exception>
     protected virtual SqlQuery BaseSelect
     (
@@ -130,7 +130,7 @@ public abstract partial class SqlGeneratorBase<T>
         PagingBase? paging
     )
     {
-        ValidateWherePredicates(predicates);
+        ValidateWherePredicates(where);
 
         if ((selects is null || selects.Empty()) && groupBys.IsNotNullOrEmpty())
             selects = GetSelectTags(groupBys!.AsGroupBy());
