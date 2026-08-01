@@ -220,7 +220,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, null, orderBys, paging);
 
-    private SqlQuery PrivateSelect
+    internal SqlQuery InternalSelect
     (
         bool? distinct,
         Subquery<T>? subQuery,
@@ -229,7 +229,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Predicates? predicates,
         GroupBysBase? groupBys,
         Predicates? having,
-        OrderBysBase? orderBys, PagingBase? paging
+        OrderBysBase? orderBys, 
+        PagingBase? paging
 ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
 
@@ -239,7 +240,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="selectBuilder">The select builder to materialize.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the SELECT statement.</returns>
     public SqlQuery Select(SelectBuilder<T> selectBuilder) =>
-        PrivateSelect
+        InternalSelect
         (
             selectBuilder.Distinct,
             selectBuilder.Subquery, 

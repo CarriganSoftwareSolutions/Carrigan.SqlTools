@@ -12,6 +12,9 @@ public class SelectLimitOffsetTests
     private readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffset()
     {
         LimitOffset limitOffset = new(25, 50);
@@ -23,6 +26,9 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithOrderBy()
     {
         LimitOffset limitOffset = new(25, 50);
@@ -35,6 +41,9 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithDescendingOrderBy()
     {
         LimitOffset limitOffset = new(25, 50);
@@ -47,6 +56,9 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithFirstPage()
     {
         LimitOffset limitOffset = new(25, 0);
@@ -58,6 +70,9 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithSingleRowLimit()
     {
         LimitOffset limitOffset = new(1, 50);

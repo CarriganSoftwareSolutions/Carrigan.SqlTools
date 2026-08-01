@@ -49,7 +49,14 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new Join<Order>(joinPredicate, subquery);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
-        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null, null);
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = join
+        };
+
+        SqlQuery query = CustomerSqlGenerator.Select(selectBuilder);
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 

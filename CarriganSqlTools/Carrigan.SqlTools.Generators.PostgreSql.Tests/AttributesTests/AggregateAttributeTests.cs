@@ -13,7 +13,7 @@ public sealed class AggregateAttributeTests
         SqlGenerator<AggregateSource> generator = new();
         SelectTags selects = SelectTagGenerator.GetAll<AggregateProjection>();
 
-        SqlQuery query = generator.Select(null, null, selects, null, null, null, null, null);
+        SqlQuery query = generator.InternalSelect(null, null, selects, null, null, null, null, null, null);
 
         Assert.Equal(
             "SELECT AVG(\"AggregateSource\".\"Amount\") AS \"AverageAmount\", " +
@@ -31,7 +31,7 @@ public sealed class AggregateAttributeTests
         SqlGenerator<AggregateSource> generator = new();
         SelectTags selects = SelectTagGenerator.GetAll<CountStarProjection>();
 
-        SqlQuery query = generator.Select(null, null, selects, null, null, null, null, null);
+        SqlQuery query = generator.InternalSelect(null, null, selects, null, null, null, null, null, null);
 
         Assert.Equal("SELECT COUNT(*) AS \"TotalCount\" FROM \"AggregateSource\"", query.QueryText);
         Assert.Empty(selects.GetTableTags());

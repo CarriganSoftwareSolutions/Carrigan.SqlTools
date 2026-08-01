@@ -44,7 +44,11 @@ public class SqlGeneratorSelectExamples
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
     }
+
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoin()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -65,6 +69,9 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoinsAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -88,6 +95,9 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoinsWhereAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid

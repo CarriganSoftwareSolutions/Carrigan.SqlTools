@@ -30,7 +30,12 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new Join<Order>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
-        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null, null);
+        SelectBuilder<Customer> customerSelectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = join
+        };
+        SqlQuery query = CustomerSqlGenerator.Select(customerSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -79,7 +84,12 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new InnerJoin<Order>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
-        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null, null);
+        SelectBuilder<Customer> customerSelectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = join
+        };
+        SqlQuery query = CustomerSqlGenerator.Select(customerSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -128,7 +138,12 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new LeftJoin<Order>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
-        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, join, null, null, null, null);
+        SelectBuilder<Customer> customerSelectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = join
+        };
+        SqlQuery query = CustomerSqlGenerator.Select(customerSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -183,7 +198,12 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         JoinBase join = new RightJoin<Customer>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
-        SqlQuery query = OrderSqlGenerator.Select(null, null, selectTags, join, null, null, null, null);
+        SelectBuilder<Order> orderSelectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = join
+        };
+        SqlQuery query = OrderSqlGenerator.Select(orderSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<CustomerOrder> customerOrders = await CommandsAsync.ExecuteReaderAsync<CustomerOrder>(query, null, unitTestConnection);
 
@@ -238,7 +258,12 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Left, Right> joinPredicate = new(nameof(Left.Id), nameof(Right.Id));
         JoinBase join = new FullJoin<Right>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<LeftRight>();
-        SqlQuery query = LeftSqlGenerator.Select(null, null, selectTags, join, null, null, null, null);
+        SelectBuilder<Left> leftSelectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = join
+        };
+        SqlQuery query = LeftSqlGenerator.Select(leftSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
 
@@ -259,7 +284,12 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     {
         JoinBase join = new CrossJoin<Right>();
         SelectTags selectTags = SelectTagGenerator.GetAll<LeftRight>();
-        SqlQuery query = LeftSqlGenerator.Select(null, null, selectTags, join, null, null, null, null);
+        SelectBuilder<Left> leftSelectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = join
+        };
+        SqlQuery query = LeftSqlGenerator.Select(leftSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<LeftRight> leftRights = await CommandsAsync.ExecuteReaderAsync<LeftRight>(query, null, unitTestConnection);
 
@@ -308,7 +338,13 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = SelectTagGenerator.GetAll<Book>();
         OrderBy<Book> orderByItems = new (nameof(Book.Id));
-        SqlQuery query = CustomerSqlGenerator.Select(null, null, selectTags, joins, null, null, orderByItems, null);
+        SelectBuilder<Customer> customerSelectBuilder = new()
+        {
+            Selects = selectTags,
+            Joins = joins,
+            OrderBys = orderByItems
+        };
+        SqlQuery query = CustomerSqlGenerator.Select(customerSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
 
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
@@ -338,7 +374,14 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = SelectTagGenerator.GetAll<Book>();
         OrderBy<Book> orderByItems = new(nameof(Book.Id));
-        SqlQuery query = CustomerSqlGenerator.Select(true, null, selectTags, joins, null, null, orderByItems, null);
+        SelectBuilder<Customer> customerSelectBuilder = new()
+        {
+            Distinct = true,
+            Selects = selectTags,
+            Joins = joins,
+            OrderBys = orderByItems
+        };
+        SqlQuery query = CustomerSqlGenerator.Select(customerSelectBuilder);
         await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
 
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);

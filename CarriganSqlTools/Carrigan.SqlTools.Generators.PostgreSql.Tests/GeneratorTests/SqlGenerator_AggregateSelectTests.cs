@@ -17,7 +17,7 @@ public sealed class SqlGenerator_AggregateSelectTests
         SqlGenerator<Customer> generator = new();
         SelectTags selects = new(new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount"));
 
-        SqlQuery query = generator.Select(null, null, selects, null, null, null, null, null);
+        SqlQuery query = generator.InternalSelect(null, null, selects, null, null, null, null, null, null);
 
         Assert.Equal("SELECT COUNT(\"Customer\".\"Id\") AS \"TotalCount\" FROM \"Customer\"", query.QueryText);
     }
@@ -28,7 +28,7 @@ public sealed class SqlGenerator_AggregateSelectTests
         SqlGenerator<Customer> generator = new();
         SelectTags selects = new(new SelectTag(new Count(), "TotalCount"));
 
-        SqlQuery query = generator.Select(null, null, selects, null, null, null, null, null);
+        SqlQuery query = generator.InternalSelect(null, null, selects, null, null, null, null, null, null);
 
         Assert.Equal("SELECT COUNT(*) AS \"TotalCount\" FROM \"Customer\"", query.QueryText);
     }
@@ -39,7 +39,7 @@ public sealed class SqlGenerator_AggregateSelectTests
         SqlGenerator<Customer> generator = new();
         GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
 
-        SqlQuery query = generator.Select(null, null, null, null, null, groupBys, null, null);
+        SqlQuery query = generator.InternalSelect(null, null, null, null, null, groupBys, null, null, null);
 
         Assert.Equal("SELECT \"Customer\".\"Name\" FROM \"Customer\" GROUP BY \"Customer\".\"Name\"", query.QueryText);
     }
@@ -55,7 +55,7 @@ public sealed class SqlGenerator_AggregateSelectTests
             new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount")
         );
 
-        SqlQuery query = generator.Select(null, null, selects, null, null, groupBys, null, null);
+        SqlQuery query = generator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
 
         Assert.Equal("SELECT \"Customer\".\"Name\", COUNT(\"Customer\".\"Id\") AS \"TotalCount\" FROM \"Customer\" GROUP BY \"Customer\".\"Name\"", query.QueryText);
     }
@@ -70,6 +70,6 @@ public sealed class SqlGenerator_AggregateSelectTests
             new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount")
         );
 
-        Assert.Throws<MixedAggregateSelectException>(() => generator.Select(null, null, selects, null, null, null, null, null));
+        Assert.Throws<MixedAggregateSelectException>(() => generator.InternalSelect(null, null, selects, null, null, null, null, null, null));
     }
 }

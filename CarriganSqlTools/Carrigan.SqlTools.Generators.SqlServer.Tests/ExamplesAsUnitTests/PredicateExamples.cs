@@ -156,6 +156,9 @@ public class PredicateExamples
 
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void PredicateExists()
     {
         Predicates orderTotalGreaterThan = new GreaterThan
@@ -356,6 +359,9 @@ public class PredicateExamples
     }
 
     [Fact]
+#pragma warning disable CA1041 // Provide ObsoleteAttribute message
+    [Obsolete]
+#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void PredicateNotExists()
     {
         Predicates orderTotalGreaterThan = new GreaterThan
