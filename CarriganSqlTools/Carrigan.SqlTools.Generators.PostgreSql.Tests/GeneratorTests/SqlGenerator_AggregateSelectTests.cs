@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
@@ -11,10 +12,12 @@ namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.GeneratorTests;
 
 public sealed class SqlGenerator_AggregateSelectTests
 {
+    private static readonly SqlGenerator<Grades> gradesGenerator = new();
+    private static readonly SqlGenerator<Customer> generator = new();
+
     [Fact]
     public void Select_WithAggregateOnly_AllowsAggregateSelectList()
     {
-        SqlGenerator<Customer> generator = new();
         SelectTags selects = new(new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount"));
 
         SqlQuery query = generator.InternalSelect(null, null, selects, null, null, null, null, null, null);
@@ -25,7 +28,6 @@ public sealed class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_WithCountStar_AllowsAggregateSelectListWithoutSelectedTableTag()
     {
-        SqlGenerator<Customer> generator = new();
         SelectTags selects = new(new SelectTag(new Count(), "TotalCount"));
 
         SqlQuery query = generator.InternalSelect(null, null, selects, null, null, null, null, null, null);
@@ -36,7 +38,6 @@ public sealed class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_WithGroupBysAndNoSelects_UsesGroupByColumnsAsSelects()
     {
-        SqlGenerator<Customer> generator = new();
         GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
 
         SqlQuery query = generator.InternalSelect(null, null, null, null, null, groupBys, null, null, null);
@@ -47,7 +48,6 @@ public sealed class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_WithGroupedColumnAndAggregate_AllowsAggregateSelectList()
     {
-        SqlGenerator<Customer> generator = new();
         GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
         SelectTags selects = new
         (
@@ -63,7 +63,6 @@ public sealed class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_WithMixedAggregateAndNonAggregateSelects_Throws()
     {
-        SqlGenerator<Customer> generator = new();
         SelectTags selects = new
         (
             SelectTagGenerator.Get<Customer>(nameof(Customer.Name)),
@@ -71,5 +70,26 @@ public sealed class SqlGenerator_AggregateSelectTests
         );
 
         Assert.Throws<MixedAggregateSelectException>(() => generator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+    }
+
+
+    [Fact]
+    public void Select_WithGroupedColumnAndAggregateAndHaving_AllowsAggregateSelectList()
+    {
+        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber));
+        Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
+
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+            SelectTagGenerator.Get<Grades>(nameof(Grades.AcademicYear)),
+            SelectTagGenerator.Get<Grades>(nameof(Grades.SemesterNumber)),
+            new SelectTag(semesterGpa, "SemesterGPA")
+        );
+
+        Predicates having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"));
+
+        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
+        Assert.Equal("SELECT \"Grades\".\"StudentId\", \"Grades\".\"AcademicYear\", \"Grades\".\"SemesterNumber\", AVG(\"Grades\".\"GradePoint\") AS \"SemesterGPA\" FROM \"Grades\" GROUP BY \"Grades\".\"StudentId\", \"Grades\".\"AcademicYear\", \"Grades\".\"SemesterNumber\" HAVING (AVG(\"Grades\".\"GradePoint\") > $1)", query.QueryText);
     }
 }
