@@ -39,6 +39,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Select Count With Where](#select-count-with-where)
   - [Update with From and Where](#update-with-from-and-where)
   - [Aggregate Expression Examples](#aggregate-expression-examples)
+  - [Having Examples](#having-examples)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -522,7 +523,43 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 
 [Table of Contents](#table-of-contents)
 
+---
 
+## Having Examples
+```csharp
+Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+        SelectTagGenerator.Get<Grades>(nameof(Grades.AcademicYear)),
+        SelectTagGenerator.Get<Grades>(nameof(Grades.SemesterNumber)),
+        new SelectTag(semesterGpa, "SemesterGPA")
+    ),
+    GroupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber)),
+    Having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"))
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+
+//  SELECT 
+//      "Grades"."StudentId", 
+//      "Grades"."AcademicYear", 
+//      "Grades"."SemesterNumber", 
+//      AVG("Grades"."GradePoint") AS "SemesterGPA" 
+//  FROM 
+//      "Grades" 
+//  GROUP BY 
+//      "Grades"."StudentId", 
+//      "Grades"."AcademicYear", 
+//      "Grades"."SemesterNumber" 
+//  HAVING 
+//      (AVG("Grades"."GradePoint") > $1)
+```
+
+[Table of Contents"(#table-of-contents)
 
 ---
 

@@ -166,7 +166,7 @@ public class FromReadMeMoreComplexExamples
     }
 
     [Fact]
-    public void SelectGradePointAggregatesByStudentAndCourse()
+    public void SelectWithAggregatesAndGroupBys()
     {
         Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
 
@@ -196,5 +196,29 @@ public class FromReadMeMoreComplexExamples
         );
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
+    }
+
+
+    [Fact]
+    public void SelectWithAggregatesGroupBysAndHaving()
+    {
+        Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
+
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+                SelectTagGenerator.Get<Grades>(nameof(Grades.AcademicYear)),
+                SelectTagGenerator.Get<Grades>(nameof(Grades.SemesterNumber)),
+                new SelectTag(semesterGpa, "SemesterGPA")
+            ),
+            GroupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber)),
+            Having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"))
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+
+        Assert.Equal("SELECT \"Grades\".\"StudentId\", \"Grades\".\"AcademicYear\", \"Grades\".\"SemesterNumber\", AVG(\"Grades\".\"GradePoint\") AS \"SemesterGPA\" FROM \"Grades\" GROUP BY \"Grades\".\"StudentId\", \"Grades\".\"AcademicYear\", \"Grades\".\"SemesterNumber\" HAVING (AVG(\"Grades\".\"GradePoint\") > $1)", query.QueryText);
     }
 }
