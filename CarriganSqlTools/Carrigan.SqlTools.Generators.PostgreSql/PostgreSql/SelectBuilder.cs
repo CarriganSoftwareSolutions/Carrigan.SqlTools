@@ -104,12 +104,7 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// ]]></code>
 /// </example>
 /// <example>
-/// <para>Select with join, where, and order by example:</para>
-/// <para>
-/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-/// Note: <see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-/// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-/// </para>
+/// <para>Select with aggregate expressions and <c>GROUP BY</c>:</para>
 /// <code language="csharp"><![CDATA[
 /// Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
 /// 
@@ -125,53 +120,47 @@ namespace Carrigan.SqlTools.PostgreSql;
 ///         new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
 ///         new SelectTag(new Count(gradePoint), "GradePointCount")
 ///     ),
-///     GroupBys = GroupBys
-///         .New<Grades>(nameof(Grades.StudentId))
-///         .Append<Grades>(nameof(Grades.CourseCode))
+///     GroupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.CourseCode))
 /// };
 /// 
 /// SqlQuery query = selectBuilder.AsSqlQuery();
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT 
-///     "Grades"."StudentId", 
-///     "Grades"."AcademicYear", 
-///     "Grades"."SemesterNumber", 
-///     AVG("Grades"."GradePoint") AS "SemesterGPA" 
-/// FROM 
-///     "Grades" 
+/// SELECT
+///     "Grades"."StudentId",
+///     "Grades"."CourseCode",
+///     AVG("Grades"."GradePoint") AS "AverageGradePoint",
+///     SUM("Grades"."GradePoint") AS "TotalGradePoints",
+///     MIN("Grades"."GradePoint") AS "MinimumGradePoint",
+///     MAX("Grades"."GradePoint") AS "MaximumGradePoint",
+///     COUNT("Grades"."GradePoint") AS "GradePointCount"
+/// FROM "Grades"
 /// GROUP BY 
-///     "Grades"."StudentId", 
-///     "Grades"."AcademicYear", 
-///     "Grades"."SemesterNumber" 
+///     "Grades"."StudentId",
+///     "Grades"."CourseCode"
 /// ]]></code>
 /// </example>
 /// <example>
-/// <para>Select with join, where, and order by example:</para>
-/// <para>
-/// Note: <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-/// Note: <see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-/// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
-/// </para>
+/// <para>Select with aggregate expressions, <c>GROUP BY</c>, and <c>HAVING</c>:</para>
 /// <code language="csharp"><![CDATA[
-/// Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
+/// Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
 /// 
 /// SelectBuilder<Grades> selectBuilder = new()
 /// {
 ///     Selects = new SelectTags
 ///     (
 ///         SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
-///         SelectTagGenerator.Get<Grades>(nameof(Grades.CourseCode)),
-///         new SelectTag(new Average(gradePoint), "AverageGradePoint"),
-///         new SelectTag(new Sum(gradePoint), "TotalGradePoints"),
-///         new SelectTag(new Min(gradePoint), "MinimumGradePoint"),
-///         new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
-///         new SelectTag(new Count(gradePoint), "GradePointCount")
+///         SelectTagGenerator.Get<Grades>(nameof(Grades.AcademicYear)),
+///         SelectTagGenerator.Get<Grades>(nameof(Grades.SemesterNumber)),
+///         new SelectTag(semesterGpa, "SemesterGPA")
 ///     ),
-///     GroupBys = GroupBys
-///         .New<Grades>(nameof(Grades.StudentId))
-///         .Append<Grades>(nameof(Grades.CourseCode)),
+///     GroupBys = GroupBys.New<Grades>
+///     (
+///         nameof(Grades.StudentId),
+///         nameof(Grades.AcademicYear),
+///         nameof(Grades.SemesterNumber)
+///     ),
 ///     Having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"))
 /// };
 /// 
@@ -179,17 +168,17 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT 
-///     "Grades"."StudentId", 
-///     "Grades"."AcademicYear", 
-///     "Grades"."SemesterNumber", 
-///     AVG("Grades"."GradePoint") AS "SemesterGPA" 
+/// SELECT
+///     "Grades"."StudentId",
+///     "Grades"."AcademicYear",
+///     "Grades"."SemesterNumber",
+///     AVG("Grades"."GradePoint") AS "SemesterGPA"
 /// FROM 
 ///     "Grades" 
-/// GROUP BY 
-///     "Grades"."StudentId", 
-///     "Grades"."AcademicYear", 
-///     "Grades"."SemesterNumber" 
+/// GROUP BY
+///     "Grades"."StudentId",
+///     "Grades"."AcademicYear",
+///     "Grades"."SemesterNumber"
 /// HAVING 
 ///     (AVG("Grades"."GradePoint") > $1)
 /// ]]></code>

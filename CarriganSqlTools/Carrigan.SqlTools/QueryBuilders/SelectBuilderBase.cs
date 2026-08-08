@@ -47,7 +47,7 @@ public abstract record SelectBuilderBase<T> where T : class
     public GroupBysBase? GroupBys { get; set; }
 
     /// <summary>
-    /// Gets or sets the Having predicates for the query.
+    /// Gets or sets the <c>HAVING</c> predicates for the query.
     /// </summary>
     public Predicates? Having { get; set; }
 

@@ -41,8 +41,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT</c> from the table represented by <typeparamref name="T"/>,
-    /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
-    /// dialect-specific paging clauses.
+    /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>GROUP BY</c>, <c>HAVING</c>,
+    /// <c>ORDER BY</c>, and dialect-specific paging clauses.
     /// </summary>
     /// <param name="selects">
     /// Optional projected columns and result aliases. If omitted or empty, all columns from the table represented by <typeparamref name="T"/> are selected.
@@ -69,7 +69,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="paging">The paging fragment to include in the query.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
-    /// <c>Parameters</c> contain values from <paramref name="where"/> and any joins.
+    /// <c>Parameters</c> contain values from joins, <paramref name="where"/>, and <paramref name="having"/>.
     /// </returns>
     /// <remarks>
     /// When providing <paramref name="selects"/>, you will almost certainly need a different model
@@ -82,8 +82,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
     /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="where"/>, or
-    /// <paramref name="orderBy"/> is not the base table nor included by <paramref name="joins"/>.
+    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="where"/>,
+    /// <paramref name="groupBys"/>, <paramref name="having"/>, or <paramref name="orderBy"/>
+    /// is not the base table nor included by <paramref name="joins"/>.
     /// </exception>
     /// <exception cref="AggregateExpressionInWhereClauseException">
     /// Thrown when <paramref name="where"/> contains an aggregate expression.
@@ -214,12 +215,16 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidgroupByTableTags = groupByTableTags.Except(selectableTableTags);
 
+        IEnumerable<TableTag> havingTableTags = [.. having?.DescendantLeafTables?.Distinct() ?? []];
+        IEnumerable<TableTag> invalidHavingTableTags = havingTableTags.Except(selectableTableTags);
+
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> invalidTags = invalidSelectedTags
             .Concat(invalidPredicateTableTags)
             .Concat(invalidgroupByTableTags)
+            .Concat(invalidHavingTableTags)
             .Concat(invalidOrderByTags)
             .Distinct();
 

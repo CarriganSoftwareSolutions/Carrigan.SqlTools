@@ -3,7 +3,7 @@
 # Carrigan.SqlTools
 <!--Ignore Spelling: encryptors-->
 
-Carrigan.SqlTools contains the shared SQL modeling, reflection, predicate, join, paging, and query-building abstractions used by the Carrigan.SqlTools dialect generator and client packages.
+Carrigan.SqlTools contains the shared SQL modeling, reflection, predicate, join, grouping, paging, and query-building abstractions used by the Carrigan.SqlTools dialect generator and client packages.
 
 This package is the core foundation for dialect-specific generators such as **Carrigan.SqlTools.Generators.SqlServer** and **Carrigan.SqlTools.Generators.PostgreSql**. Most applications should reference a dialect generator package directly instead of using this package by itself.
 
@@ -54,7 +54,7 @@ dotnet add package Carrigan.SqlTools.Clients.PostgreSql
 - SQL fragment types and query containers.
 - Table, column, alias, parameter, procedure, and result-column identifier wrappers.
 - Reflection caches used to map C# model classes and properties to SQL tables, columns, and parameters.
-- Predicate, join, order-by, paging, and query-builder base types.
+- Predicate, join, group-by, HAVING, order-by, paging, and query-builder base types.
 - Common attributes such as `IdentifierAttribute`, `PrimaryKeyAttribute`, `ParameterAttribute`, `AliasAttribute`, and `SelectTagAttribute`.
 - Shared exception types used by the generator packages.
 

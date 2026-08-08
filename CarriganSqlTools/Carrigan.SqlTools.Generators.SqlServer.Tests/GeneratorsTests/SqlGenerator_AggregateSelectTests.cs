@@ -191,4 +191,56 @@ public class SqlGenerator_AggregateSelectTests
         SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
         Assert.Equal("SELECT [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber], AVG([Grades].[GradePoint]) AS [SemesterGPA] FROM [Grades] GROUP BY [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber] HAVING (AVG([Grades].[GradePoint]) > @HonorRollGpa_1)", query.QueryText);
     }
+
+    [Fact]
+    public void Select_WithHavingFromUnjoinedTable_ThrowsInvalidTableException()
+    {
+        Predicates having = new GreaterThan
+        (
+            new Sum(new Column<Order>(nameof(Order.Total))),
+            new Parameter(100m, "MinimumTotal")
+        );
+
+        Assert.Throws<InvalidTableException>(() => customerGenerator.InternalSelect(null, null, null, null, null, null, having, null, null));
+    }
+
+    [Fact]
+    public void Select_WithWhereAndHaving_PreservesParameterOrder()
+    {
+        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId));
+        Average averageGradePoint = new(new Column<Grades>(nameof(Grades.GradePoint)));
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+            new SelectTag(averageGradePoint, "AverageGradePoint")
+        );
+        Predicates where = new GreaterThan
+        (
+            new Column<Grades>(nameof(Grades.AcademicYear)),
+            new Parameter(2000, "MinimumYear")
+        );
+        Predicates having = new GreaterThan
+        (
+            averageGradePoint,
+            new Parameter(3.5m, "MinimumGpa")
+        );
+
+        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, where, groupBys, having, null, null);
+
+        Assert.Equal("SELECT [Grades].[StudentId], AVG([Grades].[GradePoint]) AS [AverageGradePoint] FROM [Grades] WHERE ([Grades].[AcademicYear] > @MinimumYear_1) GROUP BY [Grades].[StudentId] HAVING (AVG([Grades].[GradePoint]) > @MinimumGpa_2)", query.QueryText);
+        Assert.Equal(2, query.Parameters.Count());
+    }
+
+    [Fact]
+    public void Select_WithAggregateOnlyHavingWithoutGroupBy_RendersExpectedSql()
+    {
+        Count count = new();
+        SelectTags selects = new(new SelectTag(count, "TotalCount"));
+        Predicates having = new GreaterThan(count, new Parameter(1, "MinimumCount"));
+
+        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, having, null, null);
+
+        Assert.Equal("SELECT COUNT(*) AS [TotalCount] FROM [Customer] HAVING (COUNT(*) > @MinimumCount_1)", query.QueryText);
+    }
+
 }

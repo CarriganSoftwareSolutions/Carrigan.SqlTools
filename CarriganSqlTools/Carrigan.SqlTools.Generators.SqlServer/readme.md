@@ -67,7 +67,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   Interfaces and property-level attributes enable property-level encryption and decryption.
 
 - **Manual query builder**  
-  Safely construct advanced SQL with `JOIN`, predicates (e.g., `Equal`, `GreaterThan`, `IsNull`, `Like`, `And`, `Or`, `Xor`, `Not`), `ORDER BY`, and pagination (`OFFSET/FETCH NEXT`).
+  Safely construct advanced SQL with `JOIN`, predicates (e.g., `Equal`, `GreaterThan`, `IsNull`, `Like`, `And`, `Or`, `Xor`, `Not`), `GROUP BY`, `HAVING`, `ORDER BY`, and pagination (`OFFSET/FETCH NEXT`).
 
 - **Dictionary → object mapping**  
   Use the invocation system to populate typed models from database rows.

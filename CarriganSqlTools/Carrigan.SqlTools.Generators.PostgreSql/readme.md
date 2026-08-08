@@ -71,7 +71,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   Interfaces and property-level attributes enable property-level encryption and decryption.
 
 - **Manual query builder**
-  Safely construct advanced SQL with `JOIN`, predicates such as `Equal`, `GreaterThan`, `IsNull`, `Like`, `And`, `Or`, `Xor`, and `Not`, `ORDER BY`, and PostgreSQL pagination through `LimitOffset`.
+  Safely construct advanced SQL with `JOIN`, predicates such as `Equal`, `GreaterThan`, `IsNull`, `Like`, `And`, `Or`, `Xor`, and `Not`, `GROUP BY`, `HAVING`, `ORDER BY`, and PostgreSQL pagination through `LimitOffset`.
 
 - **PostgreSQL-specific predicate behavior**
   `LIKE` remains case-sensitive by default. Case-insensitive matching uses PostgreSQL `ILIKE` when requested.
@@ -559,7 +559,7 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 //      (AVG("Grades"."GradePoint") > $1)
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 

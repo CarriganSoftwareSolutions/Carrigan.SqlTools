@@ -1,4 +1,4 @@
-using Carrigan.Core.Enums;
+﻿using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
@@ -8,7 +8,7 @@ using Carrigan.SqlTools.Expressions;
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// Base type for all SQL predicate nodes used to compose <c>WHERE</c> and <c>JOIN</c> conditions.
+/// Base type for all SQL predicate nodes used to compose <c>WHERE</c>, <c>HAVING</c>, and <c>JOIN</c> conditions.
 /// Supports recursive SQL generation and parameter collection (with automatic de-duplication/prefixing).
 /// </summary>
 public abstract class Predicates : SqlExpression

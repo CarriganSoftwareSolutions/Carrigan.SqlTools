@@ -23,7 +23,7 @@
       Convenience package for SQL Server support in Carrigan.SqlTools. References the SQL Server SQL generator and SQL Server client packages so applications can install SQL Server query generation and execution support from one package.
     </Description>
     <PackageTags>
-      sql;sqlserver;mssql;database;query-builder;sql-generator;data-access;ado-net;crud;select;insert;update;delete;joins;where;order-by;pagination;object-mapping;strongly-typed;carrigan-sqltools
+      sql;sqlserver;mssql;database;query-builder;sql-generator;data-access;ado-net;crud;select;insert;update;delete;joins;where;group-by;having;order-by;pagination;object-mapping;strongly-typed;carrigan-sqltools
     </PackageTags>
   </PropertyGroup>
 

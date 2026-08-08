@@ -35,12 +35,12 @@ public abstract record SubqueryBuilderBase<T> where T : class
     public Predicates? Where { get; set; }
 
     /// <summary>
-    /// Gets or sets the GroupBys predicates for the subquery.
+    /// Gets or sets the <c>GROUP BY</c> clause for the subquery.
     /// </summary>
     public GroupBysBase? GroupBys { get; set; }
 
     /// <summary>
-    /// Gets or sets the Having predicates for the subquery.
+    /// Gets or sets the <c>HAVING</c> predicates for the subquery.
     /// </summary>
     public Predicates? Having { get; set; }
 
@@ -99,6 +99,22 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// <returns>A new subquery instance with the specified WHERE predicates.</returns>
     public SubqueryBuilderBase<T> WithWhere(Predicates? where) =>
         this with { Where = where };
+
+    /// <summary>
+    /// Returns a copy of the current subquery with the specified GROUP BY clause.
+    /// </summary>
+    /// <param name="groupBy">The GROUP BY clause to apply to the subquery.</param>
+    /// <returns>A new subquery instance with the specified GROUP BY clause.</returns>
+    public SubqueryBuilderBase<T> WithGroupBy(GroupBysBase? groupBy) =>
+        this with { GroupBys = groupBy };
+
+    /// <summary>
+    /// Returns a copy of the current subquery with the specified HAVING predicates.
+    /// </summary>
+    /// <param name="having">The HAVING predicates to apply to the subquery.</param>
+    /// <returns>A new subquery instance with the specified HAVING predicates.</returns>
+    public SubqueryBuilderBase<T> WithHaving(Predicates? having) =>
+        this with { Having = having };
 
     /// <summary>
     /// Returns a copy of the current subquery with the specified ORDER BY clause.

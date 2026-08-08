@@ -19,41 +19,41 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 ---
 
 ## Table of Contents
-- [Features"(#features)
-- [Installation"(#installation)
-- [Getting Started Examples"(#getting-started-examples)
-  - [Select All Rows"(#select-all-rows)
-  - [Select by Id"(#select-by-id)
-  - [Insert"(#insert)
-  - [Insert with Auto Id"(#insert-with-auto-id)
-  - [Update by Id"(#update-by-id)
-  - [Update by Id (selected columns)"(#update-by-id-selected-columns)
-  - [Delete"(#delete)
-  - [Delete by Id (multiple keys)"(#delete-by-id-multiple-keys)
-- [More Complex Examples"(#more-complex-examples)
-  - [Select with Joins and Order By"(#select-with-joins-and-order-by)
-  - [Select with Two Part Order By"(#select-with-two-part-order-by)
-  - [Delete with Using and Where"(#delete-with-using-and-where)
-  - [Select Count With Where"(#select-count-with-where)
-  - [Update with From and Where"(#update-with-from-and-where)
-  - [Aggregate Expression Examples"(#aggregate-expression-examples)
-  - [Having  Examples"(#having-examples)
-- [Attribute Examples"(#attribute-examples)
-  - [Table, Column and Key"(#table-column-and-key)
-  - [Identifier and Primary Key"(#identifier-and-primary-key)
-  - [Procedure and Parameter"(#procedure-and-parameter)
-- [Running Queries (Async & Non-Async)"(#running-queries-async--non-async)
-  - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>"(#async-executenonqueryasync--executescalarasync--executereaderasynct)
-  - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>"(#non-async-executenonquery--executescalar--executereadert)
-- [Simple ADO.NET Example With SqlQuery"(#simple-ado.net-example-with-sqlquery)
-- [Data Type Mappings"(#data-type-mappings)
-  - [Default PostgreSQL Types"(#default-postgresql-types)
-  - [Supported CLR Types"(#supported-clr-types)
-  - [PostgreSQL Type Override Attributes"(#postgresql-type-override-attributes)
-  - [Analyzer Warnings"(#analyzer-warnings)
-  - [Arrays"(#arrays)
-- [ExampleEncryptor (AesGcm-based) and IDecrypters"(#exampleencryptor-aesgcm-based-and-idecrypters)
-- [License"(#license)
+- [Features](#features)
+- [Installation](#installation)
+- [Getting Started Examples](#getting-started-examples)
+  - [Select All Rows](#select-all-rows)
+  - [Select by Id](#select-by-id)
+  - [Insert](#insert)
+  - [Insert with Auto Id](#insert-with-auto-id)
+  - [Update by Id](#update-by-id)
+  - [Update by Id (selected columns)](#update-by-id-selected-columns)
+  - [Delete](#delete)
+  - [Delete by Id (multiple keys)](#delete-by-id-multiple-keys)
+- [More Complex Examples](#more-complex-examples)
+  - [Select with Joins and Order By](#select-with-joins-and-order-by)
+  - [Select with Two Part Order By](#select-with-two-part-order-by)
+  - [Delete with Using and Where](#delete-with-using-and-where)
+  - [Select Count With Where](#select-count-with-where)
+  - [Update with From and Where](#update-with-from-and-where)
+  - [Aggregate Expression Examples](#aggregate-expression-examples)
+  - [Having Examples](#having-examples)
+- [Attribute Examples](#attribute-examples)
+  - [Table, Column and Key](#table-column-and-key)
+  - [Identifier and Primary Key](#identifier-and-primary-key)
+  - [Procedure and Parameter](#procedure-and-parameter)
+- [Running Queries (Async & Non-Async)](#running-queries-async--non-async)
+  - [Async: ExecuteNonQueryAsync / ExecuteScalarAsync / ExecuteReaderAsync\<T>](#async-executenonqueryasync--executescalarasync--executereaderasynct)
+  - [Non-Async: ExecuteNonQuery / ExecuteScalar / ExecuteReader\<T>](#non-async-executenonquery--executescalar--executereadert)
+- [Simple ADO.NET Example With SqlQuery](#simple-ado.net-example-with-sqlquery)
+- [Data Type Mappings](#data-type-mappings)
+  - [Default PostgreSQL Types](#default-postgresql-types)
+  - [Supported CLR Types](#supported-clr-types)
+  - [PostgreSQL Type Override Attributes](#postgresql-type-override-attributes)
+  - [Analyzer Warnings](#analyzer-warnings)
+  - [Arrays](#arrays)
+- [ExampleEncryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
+- [License](#license)
 
 ---
 
@@ -69,7 +69,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   Interfaces and property-level attributes enable property-level encryption and decryption.
 
 - **Manual query builder**
-  Safely construct advanced SQL with `JOIN`, predicates such as `Equal`, `GreaterThan`, `IsNull`, `Like`, `And`, `Or`, `Xor`, and `Not`, `ORDER BY`, and PostgreSQL pagination through `LimitOffset`.
+  Safely construct advanced SQL with `JOIN`, predicates such as `Equal`, `GreaterThan`, `IsNull`, `Like`, `And`, `Or`, `Xor`, and `Not`, `GROUP BY`, `HAVING`, `ORDER BY`, and PostgreSQL pagination through `LimitOffset`.
 
 - **PostgreSQL-specific predicate behavior**
   `LIKE` remains case-sensitive by default. Case-insensitive matching uses PostgreSQL `ILIKE` when requested.
@@ -83,7 +83,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - **Execution helpers included**
   Includes `Carrigan.SqlTools.Clients.PostgreSql` for async and non-async helpers that run generated queries through Npgsql.
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -102,7 +102,7 @@ dotnet add package Carrigan.SqlTools.Generators.PostgreSql
 dotnet add package Carrigan.SqlTools.Clients.PostgreSql
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -128,7 +128,7 @@ using System.Text;
 // Example data models
 public class Customer
 {
-    [PrimaryKey" // note: PrimaryKey takes precedence over Key for the SQL generator.
+    [PrimaryKey] // note: PrimaryKey takes precedence over Key for the SQL generator.
     public int Id { get; set; }
     public string Name { get; set; } = "";
     public string Email { get; set; } = "";
@@ -137,7 +137,7 @@ public class Customer
 
 public class Order
 {
-    [PrimaryKey" // Required for key-based SQL generation methods.
+    [PrimaryKey] // Required for key-based SQL generation methods.
     public int Id { get; set; }
     public int CustomerId { get; set; }
     public int PaymentMethodId { get; set; }
@@ -150,7 +150,7 @@ public SqlGenerator<Customer> customerGenerator = new();
 public SqlGenerator<Order> orderGenerator = new();
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Select All Rows
 
@@ -159,7 +159,7 @@ SqlQuery query = customerGenerator.SelectAll();
 // SELECT "Customer".* FROM "Customer"
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Select by Id
 
@@ -174,7 +174,7 @@ SqlQuery query = customerGenerator.SelectById(entity);
 // WHERE ("Customer"."Id" = $1)
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Insert
 
@@ -189,7 +189,7 @@ Customer entity = new()
 
 InsertBuilder<Customer> insertBuilder = new()
 {
-    Records = [entity"
+    Records = [entity]
 };
 
 SqlQuery query = customerGenerator.Insert(insertBuilder);
@@ -198,7 +198,7 @@ SqlQuery query = customerGenerator.Insert(insertBuilder);
 // VALUES ($1, $2, $3, $4);
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Insert with Auto Id
 
@@ -219,7 +219,7 @@ SqlQuery query = customerGenerator.InsertAutoId(entity);
 // RETURNING "Id";
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Update by Id
 
@@ -241,7 +241,7 @@ SqlQuery query = customerGenerator.UpdateById(entity);
 // WHERE "Id" = $4;
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 <a id="update-by-id-selected-columns"></a>
 
@@ -261,7 +261,7 @@ SqlQuery query = customerGenerator.UpdateById(entity, columns);
 // WHERE "Id" = $2;
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Delete
 
@@ -275,7 +275,7 @@ SqlQuery query = customerGenerator.Delete(entity);
 // WHERE ("Customer"."Id" = $1)
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 <a id="delete-by-id-multiple-keys"></a>
 
@@ -284,7 +284,7 @@ SqlQuery query = customerGenerator.Delete(entity);
 Key attribute required, and composite keys are supported by specifying multiple keys.
 
 ```csharp
-Customer[" entities = [new() { Id = 1 }, new() { Id = 2 }";
+Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
 
 // DELETE FROM "Customer"
@@ -292,7 +292,7 @@ SqlQuery query = customerGenerator.DeleteById(entities);
 //    OR ("Customer"."Id" = $2))
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -316,7 +316,7 @@ using Carrigan.SqlTools.Tags;
 // Example data models
 public class Customer
 {
-    [PrimaryKey"
+    [PrimaryKey]
     public int Id { get; set; }
     public string Name { get; set; } = "";
     public string Email { get; set; } = "";
@@ -325,7 +325,7 @@ public class Customer
 
 public class Order
 {
-    [PrimaryKey"
+    [PrimaryKey]
     public int Id { get; set; }
     public int CustomerId { get; set; }
     public int PaymentMethodId { get; set; }
@@ -365,7 +365,7 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 // ORDER BY "Order"."OrderDate" ASC
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Select with Two Part Order By
 
@@ -398,7 +398,7 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 //          "Order"."OrderDate" ASC
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Delete with Using and Where
 
@@ -414,7 +414,7 @@ ColumnValue<Customer> customerEmail = new(nameof(Customer.Email), "spam@example.
 
 DeleteBuilder<Order> deleteBuilder = new()
 {
-    Usings = [TableTag.Get<Customer>()",
+    Usings = [TableTag.Get<Customer>()],
     Where = new And(predicate, customerEmail)
 };
 
@@ -425,7 +425,7 @@ SqlQuery query = orderGenerator.Delete(deleteBuilder);
 //   AND ("Customer"."Email" = $1))
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Select Count With Where
 
@@ -443,7 +443,7 @@ SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
 // WHERE ("Order"."Total" > $1)
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Update with From and Where
 
@@ -467,7 +467,7 @@ UpdateBuilder<Order> updateBuilder = new()
 {
     Values = entity,
     UpdateColumns = columnCollection,
-    From = [TableTag.Get<Customer>()",
+    From = [TableTag.Get<Customer>()],
     Where = new And(predicate, customerEmailEquals)
 };
 
@@ -480,7 +480,7 @@ SqlQuery query = orderGenerator.Update(updateBuilder);
 //   AND ("Customer"."Email" = $2))
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Aggregate Expression Examples
 
@@ -520,11 +520,12 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 //      "Grades"."CourseCode"
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
 ## Having Examples
+
 ```csharp
 Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
 
@@ -537,28 +538,31 @@ SelectBuilder<Grades> selectBuilder = new()
         SelectTagGenerator.Get<Grades>(nameof(Grades.SemesterNumber)),
         new SelectTag(semesterGpa, "SemesterGPA")
     ),
-    GroupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber)),
+    GroupBys = GroupBys.New<Grades>
+    (
+        nameof(Grades.StudentId),
+        nameof(Grades.AcademicYear),
+        nameof(Grades.SemesterNumber)
+    ),
     Having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"))
 };
 
 SqlQuery query = selectBuilder.AsSqlQuery();
 
-//  SELECT 
-//      "Grades"."StudentId", 
-//      "Grades"."AcademicYear", 
-//      "Grades"."SemesterNumber", 
-//      AVG("Grades"."GradePoint") AS "SemesterGPA" 
-//  FROM 
-//      "Grades" 
-//  GROUP BY 
-//      "Grades"."StudentId", 
-//      "Grades"."AcademicYear", 
-//      "Grades"."SemesterNumber" 
-//  HAVING 
-//      (AVG("Grades"."GradePoint") > @HonorRollGpa_1)
+// SELECT
+//     "Grades"."StudentId",
+//     "Grades"."AcademicYear",
+//     "Grades"."SemesterNumber",
+//     AVG("Grades"."GradePoint") AS "SemesterGPA"
+// FROM "Grades"
+// GROUP BY
+//     "Grades"."StudentId",
+//     "Grades"."AcademicYear",
+//     "Grades"."SemesterNumber"
+// HAVING (AVG("Grades"."GradePoint") > $1)
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -566,7 +570,7 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 
 Use `SqlGenerator<T>` to produce a **`SqlQuery`** with `QueryText`, `CommandType`, and `Parameters`.
 
-You can use the `[Table"` attribute from `System.ComponentModel.DataAnnotations.Schema` to override the table name. When no table attribute or `IdentifierAttribute` is present, the table name is assumed to be the same as the class name. You can also specify a schema name.
+You can use the `[Table]` attribute from `System.ComponentModel.DataAnnotations.Schema` to override the table name. When no table attribute or `IdentifierAttribute` is present, the table name is assumed to be the same as the class name. You can also specify a schema name.
 
 All examples use `using` statements to keep code clean.
 
@@ -588,13 +592,13 @@ public SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 ### Table, Column and Key
 
 ```csharp
-[Table("Phone", Schema="schema")"
+[Table("Phone", Schema="schema")]
 internal class PhoneModel
 {
-    [Key"
+    [Key]
     public int Id { get; set; }
     public int CustomerId { get; set; }
-    [Column("Phone")"
+    [Column("Phone")]
     public string? PhoneNumber { get; set; }
 }
 
@@ -612,18 +616,18 @@ SqlQuery query = phoneGenerator.UpdateById(phone);
 // WHERE "Id" = $3;
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Identifier and Primary Key
 
 ```csharp
-[Identifier("Email", "schema")"
+[Identifier("Email", "schema")]
 internal class EmailModel
 {
-    [PrimaryKey"
+    [PrimaryKey]
     public int Id { get; set; }
     public int CustomerId { get; set; }
-    [Identifier("Email")"
+    [Identifier("Email")]
     public string? EmailAddress { get; set; }
 }
 
@@ -641,15 +645,15 @@ SqlQuery query = emailGenerator.UpdateById(email);
 // WHERE "Id" = $3;
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Procedure and Parameter
 
 ```csharp
-[Identifier("UpdateThing", "schema")"
+[Identifier("UpdateThing", "schema")]
 internal class ProcedureExec
 {
-    [Parameter("SomeValue")"
+    [Parameter("SomeValue")]
     public string? ValueColumn { get; set; }
 }
 
@@ -663,7 +667,7 @@ SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
 // "schema"."UpdateThing"
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -709,16 +713,16 @@ object? result =
     await CommandsAsync.ExecuteScalarAsync(query, transaction, connection);
 ```
 
-[ExampleEncryptor (AesGcm-based) and IDecrypters"(#exampleencryptor-aesgcm-based-and-idecrypters)
+[ExampleEncryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 <a id="non-async-executenonquery--executescalar--executereadert"></a>
 
 ### Non-Async: `ExecuteNonQuery` / `ExecuteScalar` / `ExecuteReader<T>`
 
 ```csharp
-Customer[" toDelete = [new Customer { Id = 7 }";
+Customer[] toDelete = [new Customer { Id = 7 }];
 SqlQuery query = customerGenerator.DeleteById(toDelete);
 
 NpgsqlConnection connection = new("Host=localhost;Database=AppDb;Username=app;Password=password");
@@ -732,7 +736,7 @@ IEnumerable<Customer> customers =
     Commands.ExecuteReader<Customer>(query, transaction, connection, decrypters);
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -772,7 +776,7 @@ using NpgsqlDataReader reader = command.ExecuteReader();
 // ... map rows, or use the Carrigan.SqlTools client helpers ...
 ```
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -785,7 +789,7 @@ using NpgsqlDataReader reader = command.ExecuteReader();
 | Guid             | UUID                    |
 | string           | TEXT                    |
 | char             | CHAR(1)                 |
-| byte["           | BYTEA                   |
+| byte[]           | BYTEA                   |
 | bool             | BOOLEAN                 |
 | byte             | SMALLINT                |
 | sbyte            | SMALLINT                |
@@ -807,25 +811,25 @@ using NpgsqlDataReader reader = command.ExecuteReader();
 | XmlDocument      | XML                     |
 | object           | TEXT fallback for type-based mapping; UNKNOWN for null value-based mapping |
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Supported CLR Types
 
-The PostgreSQL dialect supports nullable forms and array forms for the supported scalar types where applicable. `byte["` is treated as PostgreSQL `BYTEA`, not as an array of small integers. `byte["["` is supported as an array of `BYTEA` values.
+The PostgreSQL dialect supports nullable forms and array forms for the supported scalar types where applicable. `byte[]` is treated as PostgreSQL `BYTEA`, not as an array of small integers. `byte[][]` is supported as an array of `BYTEA` values.
 
 Supported categories include:
 
 - UUID values: `Guid`, `Guid?`, and arrays.
 - Text values: `string`, `char`, `char?`, and arrays.
-- Binary values: `byte["` and `byte["["`.
+- Binary values: `byte[]` and `byte[][]`.
 - Boolean values: `bool`, `bool?`, and arrays.
 - Integer values: signed and unsigned integer types, nullable forms, and arrays.
 - Numeric values: `float`, `double`, `decimal`, nullable forms, and arrays.
 - Date and time values: `DateTime`, `DateOnly`, `TimeOnly`, `TimeSpan`, `DateTimeOffset`, nullable forms, and arrays.
 - XML values: `XDocument`, `XmlDocument`, and arrays.
-- Fallback values: `object` and `object["`.
+- Fallback values: `object` and `object[]`.
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### PostgreSQL Type Override Attributes
 
@@ -842,7 +846,7 @@ PostgreSQL override attributes derive from `SqlTypeAttribute` and can be applied
 | `PostgreSqlNumericAttribute` | `NUMERIC` | optional precision `1` through `255`; optional precision and scale | `decimal`; `float` and `double` are allowed but may produce precision warnings |
 | `PostgreSqlMoneyAttribute` | `MONEY` | none | `decimal`, `double`, and `float`; produces a discouraged-type analyzer warning |
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Analyzer Warnings
 
@@ -855,23 +859,23 @@ The PostgreSQL analyzer reports:
 
 No PostgreSQL-specific type override attribute is currently classified as obsolete by the analyzer.
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ### Arrays
 
-The PostgreSQL dialect supports PostgreSQL array declarations by rendering `["` after the PostgreSQL type name.
+The PostgreSQL dialect supports PostgreSQL array declarations by rendering `[]` after the PostgreSQL type name.
 
 Examples:
 
 ```text
-INTEGER[" NOT NULL
-NUMERIC(18, 2)[" NOT NULL
-TIMESTAMP(6) WITH TIME ZONE[" NOT NULL
+INTEGER[] NOT NULL
+NUMERIC(18, 2)[] NOT NULL
+TIMESTAMP(6) WITH TIME ZONE[] NOT NULL
 ```
 
-Array type detection is based on CLR array property types and supported SQL type attributes. `byte["` is special-cased as `BYTEA`; it is not treated as an array declaration. `byte["["` represents an array of `BYTEA` values.
+Array type detection is based on CLR array property types and supported SQL type attributes. `byte[]` is special-cased as `BYTEA`; it is not treated as an array declaration. `byte[][]` represents an array of `BYTEA` values.
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -892,9 +896,9 @@ using Carrigan.Core.Interfaces;
 
 public sealed class ExampleNonceGenerator : INonceGenerator
 {
-    public byte[" GenerateNonce()
+    public byte[] GenerateNonce()
     {
-        byte[" nonce = new byte[12"; // 96-bit nonce
+        byte[] nonce = new byte[12]; // 96-bit nonce
         RandomNumberGenerator.Fill(nonce);
         return nonce;
     }
@@ -902,14 +906,14 @@ public sealed class ExampleNonceGenerator : INonceGenerator
 
 public sealed class ExampleEncryptor : IEncryption
 {
-    private readonly byte[" _key;
+    private readonly byte[] _key;
     private const int TagSize = 16;
 
     public int? Version => 1;
 
-    public byte[" KeyBytes => _key;
+    public byte[] KeyBytes => _key;
 
-    public ExampleEncryptor(byte[" key)
+    public ExampleEncryptor(byte[] key)
     {
         if (key == null || key.Length != 32)
             throw new ArgumentException("Key must be 32 bytes.");
@@ -922,10 +926,10 @@ public sealed class ExampleEncryptor : IEncryption
         if (plainText == null)
             return null;
 
-        byte[" pt = Encoding.UTF8.GetBytes(plainText);
-        byte[" ct = new byte[pt.Length";
-        byte[" nonce = new byte[12";
-        byte[" tag = new byte[TagSize";
+        byte[] pt = Encoding.UTF8.GetBytes(plainText);
+        byte[] ct = new byte[pt.Length];
+        byte[] nonce = new byte[12];
+        byte[] tag = new byte[TagSize];
         RandomNumberGenerator.Fill(nonce);
 
         using (AesGcm gcm = new AesGcm(_key, TagSize))
@@ -933,7 +937,7 @@ public sealed class ExampleEncryptor : IEncryption
             gcm.Encrypt(nonce, pt, ct, tag);
         }
 
-        byte[" combined = new byte[nonce.Length + ct.Length + tag.Length";
+        byte[] combined = new byte[nonce.Length + ct.Length + tag.Length];
         Buffer.BlockCopy(nonce, 0, combined, 0, nonce.Length);
         Buffer.BlockCopy(ct, 0, combined, nonce.Length, ct.Length);
         Buffer.BlockCopy(tag, 0, combined, nonce.Length + ct.Length, tag.Length);
@@ -946,18 +950,18 @@ public sealed class ExampleEncryptor : IEncryption
         if (cipherText == null)
             return null;
 
-        byte[" combined = Convert.FromBase64String(cipherText);
-        byte[" nonce = new byte[12";
-        byte[" tag = new byte[TagSize";
+        byte[] combined = Convert.FromBase64String(cipherText);
+        byte[] nonce = new byte[12];
+        byte[] tag = new byte[TagSize];
 
         int cipherLen = combined.Length - nonce.Length - tag.Length;
-        byte[" ct = new byte[cipherLen";
+        byte[] ct = new byte[cipherLen];
 
         Buffer.BlockCopy(combined, 0, nonce, 0, nonce.Length);
         Buffer.BlockCopy(combined, nonce.Length, ct, 0, ct.Length);
         Buffer.BlockCopy(combined, nonce.Length + ct.Length, tag, 0, tag.Length);
 
-        byte[" pt = new byte[ct.Length";
+        byte[] pt = new byte[ct.Length];
 
         using (AesGcm gcm = new AesGcm(_key, TagSize))
         {
@@ -992,7 +996,7 @@ public sealed class MyDecrypters : IDecrypters
 
 Plug `MyDecrypters` into `ExecuteReaderAsync<T>` or `ExecuteReader<T>` to transparently decrypt properties annotated in your models.
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 
@@ -1003,7 +1007,7 @@ Copyright © 2025-2026 Carrigan Software Solutions LLC
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
 
-[Table of Contents"(#table-of-contents)
+[Table of Contents](#table-of-contents)
 
 ---
 

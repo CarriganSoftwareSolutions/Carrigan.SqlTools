@@ -62,8 +62,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT</c> from the table represented by <typeparamref name="T"/>,
-    /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
-    /// <c>OFFSET … FETCH NEXT</c> clauses.
+    /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>GROUP BY</c>, <c>HAVING</c>,
+    /// <c>ORDER BY</c>, and <c>OFFSET … FETCH NEXT</c> clauses.
     /// </summary>
     /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
     /// <param name="subQuery">The subquery used as the query source.</param>
@@ -77,14 +77,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional filter predicates to compose the <c>WHERE</c> clause.
     /// </param>
     /// <param name="orderBys">The SQL ORDER BY items to include in the query.</param>
-    /// <param name="having">The SQL HAVING clause to include in the query.</param>
+    /// <param name="having">Optional predicates to compose the <c>HAVING</c> clause.</param>
     /// <param name="paging">The paging fragment to include in the query.</param>
     /// <param name="groupBys">
     /// Optional grouping items to include in the query.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
-    /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
+    /// <c>Parameters</c> contain values from joins, <paramref name="predicates"/>, and <paramref name="having"/>.
     /// </returns>
     /// <remarks>
     /// When providing <paramref name="selects"/>, you will almost certainly need a different model
@@ -97,8 +97,12 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
     /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
-    /// <paramref name="orderBys"/> is not the base table nor included by <paramref name="joins"/>.
+    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>,
+    /// <paramref name="groupBys"/>, <paramref name="having"/>, or <paramref name="orderBys"/>
+    /// is not the base table nor included by <paramref name="joins"/>.
+    /// </exception>
+    /// <exception cref="AggregateExpressionInWhereClauseException">
+    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
     /// </exception>
     /// <example>
     /// <para>Select with join example:</para>

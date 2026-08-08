@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <PackageId>Carrigan.SqlTools.Generators.SqlServer</PackageId>
@@ -27,7 +27,7 @@
 
       The package integrates with Carrigan.Core through shared interfaces and property-level metadata used by the Carrigan.SqlTools model.
 
-      In addition to automated generation, the SQL Server generator supports a manual, object-oriented approach for building SQL Server statements with ORDER BY, JOIN, WHERE clauses, and paginated queries.
+      In addition to automated generation, the SQL Server generator supports a manual, object-oriented approach for building SQL Server statements with JOIN, WHERE, GROUP BY, HAVING, ORDER BY, and paginated queries.
 
       The generated SQL can be used with the dialect client packages, which use shared invocation infrastructure to map result rows to model instances.
 
@@ -37,7 +37,7 @@
     </Description>
     <PackageTags>
       sql;sqlserver;ado.net;reflection;orm;database;crud;select;insert;update;delete;
-      query-builder;object-mapper;encryption;attributes;pagination;joins;where;order-by
+      query-builder;object-mapper;encryption;attributes;pagination;joins;where;group-by;having;order-by
     </PackageTags>
     <AnalysisLevel>latest</AnalysisLevel>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
@@ -65,8 +65,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer.Tests" />
   </ItemGroup>
 
 </Project>

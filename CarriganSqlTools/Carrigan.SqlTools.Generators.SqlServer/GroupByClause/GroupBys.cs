@@ -94,18 +94,18 @@ public class GroupBys : GroupBysBase
     /// <typeparam name="T">
     /// The entity/model type that defines the table containing the property to group by.
     /// </typeparam>
-    /// <param name="propertyNames">The property representing the column to group by.</param>
+    /// <param name="propertyName">The property representing the column to group by.</param>
     /// <returns>
-    /// A new <see cref="GroupBysBase"/> instance containing one <see cref="GroupBy{T}"/> item.
+    /// A new <see cref="GroupBys"/> instance containing one <see cref="GroupBy{T}"/> item.
     /// </returns>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown when <paramref name="propertyNames"/> does not map to a valid column on <typeparamref name="T"/>.
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the resolved column metadata does not contain exactly one match.
     /// </exception>
-    public static GroupBys New<T>(params IEnumerable<PropertyName> propertyNames) where T : class =>
-        new (propertyNames.Select(propertyName => new GroupBy<T>(propertyName)));
+    public static GroupBys New<T>(PropertyName propertyName) where T : class =>
+        new(new GroupBy<T>(propertyName));
 
     /// <summary>
     /// Creates a new <c>GROUP BY</c> clause containing a single item for the specified
@@ -114,18 +114,72 @@ public class GroupBys : GroupBysBase
     /// <typeparam name="T">
     /// The entity/model type that defines the table containing the property to group by.
     /// </typeparam>
-    /// <param name="propertyNames">The name of the property representing the column to group by.</param>
+    /// <param name="propertyName">The name of the property representing the column to group by.</param>
     /// <returns>
-    /// A new <see cref="GroupBysBase"/> instance containing one <see cref="GroupBy{T}"/> item.
+    /// A new <see cref="GroupBys"/> instance containing one <see cref="GroupBy{T}"/> item.
     /// </returns>
     /// <exception cref="Exceptions.InvalidPropertyException{T}">
-    /// Thrown when <paramref name="propertyNames"/> does not map to a valid column on <typeparamref name="T"/>.
+    /// Thrown when <paramref name="propertyName"/> does not map to a valid column on <typeparamref name="T"/>.
     /// </exception>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the resolved column metadata does not contain exactly one match.
     /// </exception>
-    public static GroupBys New<T>(params IEnumerable<string> propertyNames) where T : class =>
-        New<T>(propertyNames.Select(propertyName => new PropertyName(propertyName)));
+    public static GroupBys New<T>(string propertyName) where T : class =>
+        New<T>(new PropertyName(propertyName));
+
+    /// <summary>
+    /// Creates a new <c>GROUP BY</c> clause containing one item for each specified
+    /// property on <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The entity/model type that defines the table containing the properties to group by.
+    /// </typeparam>
+    /// <param name="propertyNames">The properties representing the columns to group by.</param>
+    /// <returns>
+    /// A new <see cref="GroupBys"/> instance containing one <see cref="GroupBy{T}"/> item per property.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyNames"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when any property does not map to a valid column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when resolved column metadata does not contain exactly one match for a property.
+    /// </exception>
+    public static GroupBys New<T>(params IEnumerable<PropertyName> propertyNames) where T : class
+    {
+        ArgumentNullException.ThrowIfNull(propertyNames);
+
+        return new(propertyNames.Select(propertyName => new GroupBy<T>(propertyName)));
+    }
+
+    /// <summary>
+    /// Creates a new <c>GROUP BY</c> clause containing one item for each specified
+    /// property name on <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The entity/model type that defines the table containing the properties to group by.
+    /// </typeparam>
+    /// <param name="propertyNames">The names of the properties representing the columns to group by.</param>
+    /// <returns>
+    /// A new <see cref="GroupBys"/> instance containing one <see cref="GroupBy{T}"/> item per property name.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="propertyNames"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="Exceptions.InvalidPropertyException{T}">
+    /// Thrown when any property name does not map to a valid column on <typeparamref name="T"/>.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when resolved column metadata does not contain exactly one match for a property.
+    /// </exception>
+    public static GroupBys New<T>(params IEnumerable<string> propertyNames) where T : class
+    {
+        ArgumentNullException.ThrowIfNull(propertyNames);
+
+        return New<T>(propertyNames.Select(propertyName => new PropertyName(propertyName)));
+    }
 
     /// <summary>
     /// Gets an empty <c>GROUP BY</c> clause.

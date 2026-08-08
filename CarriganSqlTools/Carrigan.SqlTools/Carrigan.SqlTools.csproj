@@ -21,14 +21,14 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
     
     <Description>
-      Carrigan.SqlTools provides the shared SQL modeling, reflection, predicate, join, paging, and query-building abstractions used by the Carrigan.SqlTools dialect generator and client packages.
+      Carrigan.SqlTools provides the shared SQL modeling, reflection, predicate, join, grouping, HAVING, paging, and query-building abstractions used by the Carrigan.SqlTools dialect generator and client packages.
 
       Dialect-specific SQL rendering belongs in packages such as Carrigan.SqlTools.Generators.SqlServer and Carrigan.SqlTools.Generators.PostgreSql. Client execution helpers belong in packages such as Carrigan.SqlTools.Clients.SqlServer and Carrigan.SqlTools.Clients.PostgreSql.
 
       Most application projects should reference a dialect-specific generator or client package directly. This package is intended as the common foundation for those packages and for shared infrastructure that needs Carrigan.SqlTools model types.
     </Description>
     <PackageTags>
-      sql;database;query-builder;sql-generator;reflection;attributes;predicates;joins;where;order-by;pagination;object-mapping;dialect-abstractions;carrigan-sqltools
+      sql;database;query-builder;sql-generator;reflection;attributes;predicates;joins;where;group-by;having;order-by;pagination;object-mapping;dialect-abstractions;carrigan-sqltools
     </PackageTags>
     <AnalysisLevel>latest</AnalysisLevel>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>

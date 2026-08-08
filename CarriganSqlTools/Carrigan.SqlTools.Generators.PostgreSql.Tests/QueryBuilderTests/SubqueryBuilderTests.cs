@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+﻿using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
@@ -9,6 +11,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using System.Data;
+using Carrigan.SqlTools.QueryBuilders;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.QueryBuilderTests;
 
@@ -38,4 +41,47 @@ public class SubqueryBuilderTests
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hank");
     }
+
+    [Fact]
+    public void SubqueryBuilder_WithGroupByAndHaving_RendersExpectedSql()
+    {
+        SqlGenerator<Grades> gradesGenerator = new();
+        Average averageGradePoint = new(new Column<Grades>(nameof(Grades.GradePoint)));
+        SubqueryBuilder<Grades> subqueryBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+                new SelectTag(averageGradePoint, "AverageGradePoint")
+            ),
+            GroupBys = GroupBys.New<Grades>(nameof(Grades.StudentId)),
+            Having = new GreaterThan(averageGradePoint, new Parameter(3.5m, "MinimumGpa"))
+        };
+
+        Subquery<Grades> subquery = gradesGenerator.Subquery(subqueryBuilder);
+        SqlQuery query = new(Dialect, CommandType.Text, subquery.Flatten());
+
+        Assert.Equal(
+            "(SELECT \"Grades\".\"StudentId\", AVG(\"Grades\".\"GradePoint\") AS \"AverageGradePoint\" FROM \"Grades\" GROUP BY \"Grades\".\"StudentId\" HAVING (AVG(\"Grades\".\"GradePoint\") > $1))",
+            query.QueryText);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 3.5m);
+    }
+
+    [Fact]
+    public void SubqueryBuilder_WithGroupByAndHavingFluentMethods_ReturnsUpdatedCopy()
+    {
+        SubqueryBuilder<Grades> original = new();
+        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId));
+        Average averageGradePoint = new(new Column<Grades>(nameof(Grades.GradePoint)));
+        Predicates having = new GreaterThan(averageGradePoint, new Parameter(3.5m, "MinimumGpa"));
+
+        SubqueryBuilderBase<Grades> updated = original.WithGroupBy(groupBys).WithHaving(having);
+
+        Assert.Null(original.GroupBys);
+        Assert.Null(original.Having);
+        Assert.Same(groupBys, updated.GroupBys);
+        Assert.Same(having, updated.Having);
+    }
+
 }

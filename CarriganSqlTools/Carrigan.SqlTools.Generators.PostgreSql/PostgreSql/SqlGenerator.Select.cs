@@ -62,8 +62,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT</c> from the table represented by <typeparamref name="T"/>,
-    /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>ORDER BY</c>, and
-    /// PostgreSQL paging clauses such as <c>LIMIT</c> and <c>OFFSET</c>.
+    /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>GROUP BY</c>, <c>HAVING</c>,
+    /// <c>ORDER BY</c>, and PostgreSQL paging clauses such as <c>LIMIT</c> and <c>OFFSET</c>.
     /// </summary>
     /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
     /// <param name="subQuery">The subquery used as the query source.</param>
@@ -79,7 +79,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="groupBys">
     /// Optional grouped columns used to compose the <c>GROUP BY</c> clause.
     /// </param>
-    /// <param name="having"></param>
+    /// <param name="having">Optional predicates to compose the <c>HAVING</c> clause.</param>
     /// <param name="orderBys">
     /// Optional ordering to compose the <c>ORDER BY</c> clause.
     /// When <paramref name="paging"/> is provided, key columns are appended to
@@ -87,7 +87,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
-    /// <c>Parameters</c> contain values from <paramref name="predicates"/> and any joins.
+    /// <c>Parameters</c> contain values from joins, <paramref name="predicates"/>, and <paramref name="having"/>.
     /// </returns>
     /// <remarks>
     /// When providing <paramref name="selects"/>, you will almost certainly need a different model
@@ -100,8 +100,12 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Thrown when <paramref name="selects"/> defines duplicate or ambiguous result column names.
     /// </exception>
     /// <exception cref="InvalidTableException">
-    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>, or
-    /// <paramref name="orderBys"/> is not the base table nor included by <paramref name="joins"/>.
+    /// Thrown when any table referenced by <paramref name="selects"/>, <paramref name="predicates"/>,
+    /// <paramref name="groupBys"/>, <paramref name="having"/>, or <paramref name="orderBys"/>
+    /// is not the base table nor included by <paramref name="joins"/>.
+    /// </exception>
+    /// <exception cref="AggregateExpressionInWhereClauseException">
+    /// Thrown when <paramref name="predicates"/> contains an aggregate expression.
     /// </exception>
     /// <example>
     /// <para>Select with join example:</para>
@@ -165,7 +169,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// 
     /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
-    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, greaterThan, orderByOrderDate, null);
+    /// SqlQuery query = customerGenerator.Select(null, null, null, joins, greaterThan, null, orderByOrderDate, null);
     /// ]]></code>
     /// <para>Resulting SQL:</para>
     /// <code><![CDATA[

@@ -23,7 +23,7 @@
       Convenience package for PostgreSQL support in Carrigan.SqlTools. References the PostgreSQL SQL generator and PostgreSQL client packages so applications can install PostgreSQL query generation and execution support from one package.
     </Description>
     <PackageTags>
-      sql;postgresql;postgres;npgsql;database;query-builder;sql-generator;data-access;crud;select;insert;update;delete;joins;where;order-by;pagination;limit;offset;object-mapping;strongly-typed;carrigan-sqltools
+      sql;postgresql;postgres;npgsql;database;query-builder;sql-generator;data-access;crud;select;insert;update;delete;joins;where;group-by;having;order-by;pagination;limit;offset;object-mapping;strongly-typed;carrigan-sqltools
     </PackageTags>
   </PropertyGroup>
 
