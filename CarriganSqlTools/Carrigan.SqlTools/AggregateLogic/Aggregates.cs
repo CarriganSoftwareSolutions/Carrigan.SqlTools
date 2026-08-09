@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.AggregateLogic;
 /// <summary>
 /// Base class for SQL aggregate expressions.
 /// </summary>
-public abstract class Aggregates : SqlExpression
+public abstract class Aggregates : NumericExpression
 {
     /// <summary>
     /// The aggregate function name to render.
