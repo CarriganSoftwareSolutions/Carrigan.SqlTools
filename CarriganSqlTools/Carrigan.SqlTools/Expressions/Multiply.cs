@@ -27,7 +27,7 @@ public class Multiply : ArithmeticExpression
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public Multiply(IEnumerable<NumericExpression> numericExpressions) : base("*", numericExpressions)
+    public Multiply(params IEnumerable<NumericExpression> numericExpressions) : base("*", numericExpressions)
     {
     }
 }

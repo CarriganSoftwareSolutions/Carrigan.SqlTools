@@ -27,7 +27,7 @@ public class Modulo : ArithmeticExpression
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public Modulo(IEnumerable<NumericExpression> numericExpressions) : base("%", numericExpressions)
+    public Modulo(params IEnumerable<NumericExpression> numericExpressions) : base("%", numericExpressions)
     {
     }
 }

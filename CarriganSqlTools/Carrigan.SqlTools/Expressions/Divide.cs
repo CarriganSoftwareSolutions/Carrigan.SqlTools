@@ -27,7 +27,7 @@ public class Divide : ArithmeticExpression
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public Divide(IEnumerable<NumericExpression> numericExpressions) : base("/", numericExpressions)
+    public Divide(params IEnumerable<NumericExpression> numericExpressions) : base("/", numericExpressions)
     {
     }
 }

@@ -27,7 +27,7 @@ public class Add : ArithmeticExpression
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public Add(IEnumerable<NumericExpression> numericExpressions) : base("+", numericExpressions)
+    public Add(params IEnumerable<NumericExpression> numericExpressions) : base("+", numericExpressions)
     {
     }
 }
