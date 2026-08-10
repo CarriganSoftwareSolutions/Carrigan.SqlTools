@@ -62,11 +62,21 @@ public class Column<T> : ColumnBase<T>  where T : class
     {
     }
 
-    //TODO: create analyzer to warn when using about degraded type protection
+    /// <summary>
+    /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="NumericColumn{T}"/>.
+    /// </summary>
+    /// <param name="column">
+    /// The <see cref="Column{T}"/> instance to convert.
+    /// </param>
     public static implicit operator NumericColumn<T>(Column<T> column) =>
         new(column);
 
-    //TODO: create analyzer to warn when using about degraded type protection
+    /// <summary>
+    /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="NumericExpression"/>.
+    /// </summary>
+    /// <param name="column">
+    /// The <see cref="Column{T}"/> instance to convert.
+    /// </param>
     public static implicit operator NumericExpression(Column<T> column) =>
         new NumericColumn<T>(column);
 }

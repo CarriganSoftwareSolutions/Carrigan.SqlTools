@@ -1,61 +1,42 @@
 using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
+using System.Numerics;
+
+//TODO: unit tests.
 
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Represents a reflected model property that maps to a numeric SQL column and can be used directly as a predicate.
+/// Represents a SQL Server column numeric expression for a reflected model property declared as a numeric type.
 /// </summary>
-/// <typeparam name="T">The entity or data model type that defines the table containing the referenced numeric column.</typeparam>
+/// <typeparam name="modelT">The entity or data model type that defines the table containing the referenced numeric column.</typeparam>
 /// <remarks>
-/// This predicate is intended for SQL dialects that allow a numeric-valued column expression in predicate contexts.
-/// The referenced C# property must be declared as a numeric type or nullable a numeric type.
-/// Note: Note numeric type is being used in a broader sense (i.e. short, int, long, float, double, decimal)
-/// as opposed to a literal programming language type (ex: numeric is a type postgre sql)
+/// Note: the term numeric is being used more generally to describe types that numeric in nature, not a specific numeric type.
 /// </remarks>
-public abstract class NumericColumnBase<T> : NumericExpression where T : class
+public class NumericColumn<modelT> : NumericColumnBase<modelT>
+    where modelT : class
 {
     /// <summary>
-    /// The validated column expression represented by this predicate.
+    /// Initializes a new <see cref="NumericColumn{modelT}"/> using a <see cref="PropertyName"/> wrapper.
     /// </summary>
-    private readonly ColumnBase<T> _column;
-
-    /// <summary>
-    /// Initializes a new <see cref="NumericColumnBase{T}"/> instance from a reflected column expression.
-    /// </summary>
-    /// <param name="column">The column expression whose data model property must be of a numeric type or nullable numeric type.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="column"/> does not represent a numeric type or nullable numeric type property.</exception>
-    protected NumericColumnBase(ColumnBase<T> column) : base([ValidateColumn(column)], column) =>
-        _column = column;
-
-    /// <summary>
-    /// Validates that the supplied column represents a numeric type or nullable numeric type property in the data model.
-    /// </summary>
-    /// <param name="column">The column expression to validate.</param>
-    /// <returns>The validated column expression.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when the reflected property type is not numeric type or nullable numeric type.</exception>
-    private static ColumnBase<T> ValidateColumn(ColumnBase<T> column)
+    /// <param name="propertyName">The C# property name wrapper that represents the numeric SQL column.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when the referenced property is not declared as numeric type (ex short, int, long, float, double, decimal).</exception>
+    internal NumericColumn(PropertyName propertyName) : base(new Column<modelT>(propertyName))
     {
-        ArgumentNullException.ThrowIfNull(column, nameof(column));
-
-        Type columnType = column.ColumnInfo.Type;
-        if (columnType.IsNumericType() is false)
-            throw new ArgumentException($"{column.ColumnInfo.PropertyName} must represent a numeric property on {typeof(T).Name} to be used as a numeric predicate.", nameof(column));
-
-        return column;
     }
 
     /// <summary>
-    /// Produces the SQL fragment represented by the underlying numeric column.
+    /// Initializes a new <see cref="NumericColumn{modelT}"/> instance using a dialect-specific column expression.
     /// </summary>
-    /// <param name="dialect">The SQL dialect for which to generate the fragment.</param>
-    /// <returns>The SQL fragment represented by the underlying numeric column.</returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    /// <param name="column">
+    /// The column expression whose reflected data model property must be numeric in nature.
+    /// </param>
+    internal NumericColumn(Column<modelT> column) : base(column)
     {
-        foreach (ISqlFragment fragment in _column.ToSqlFragments(dialect))
-            yield return fragment;
+        if (column.ColumnInfo.Type.IsNumericType() is false)
+            throw new NonNumericValueException(column.ColumnInfo.Type);
     }
 }
