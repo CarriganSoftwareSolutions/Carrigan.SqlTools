@@ -111,7 +111,7 @@ public class SqlFragmentParameter : ISqlFragment
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="parameter"/> is <c>null</c>.
     /// </exception>
-    internal SqlFragmentParameter(Parameter parameter) : this(parameter.Name, parameter.FieldProperties, parameter.Value)
+    internal SqlFragmentParameter(IParameter parameter) : this(parameter.Name, parameter.FieldProperties, parameter.Value)
     { }
 
     /// <summary>

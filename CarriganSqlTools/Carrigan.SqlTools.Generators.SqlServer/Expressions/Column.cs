@@ -62,4 +62,11 @@ public class Column<T> : ColumnBase<T>  where T : class
     {
     }
 
+    //TODO: create analyzer to warn when using about degraded type protection
+    public static implicit operator NumericColumn<T>(Column<T> column) =>
+        new(column);
+
+    //TODO: create analyzer to warn when using about degraded type protection
+    public static implicit operator NumericExpression(Column<T> column) =>
+        new NumericColumn<T>(column);
 }

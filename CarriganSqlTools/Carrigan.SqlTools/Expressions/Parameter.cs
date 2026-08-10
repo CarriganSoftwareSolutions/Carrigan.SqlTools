@@ -39,23 +39,23 @@ namespace Carrigan.SqlTools.Expressions;
 /// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
-public class Parameter : SqlExpression
+public class Parameter : SqlExpression, IParameter
 {
     /// <summary>
     /// The value to bind to the parameter.
     /// </summary>
-    internal readonly object? Value;
+    public object? Value { get; init; }
 
     /// <summary>
     /// The parameter’s tag (name + metadata). A prefix may be added during SQL generation
     /// to ensure uniqueness when duplicate user-supplied names occur.
     /// </summary>
-    internal readonly ParameterTag Name;
+    public ParameterTag Name { get; init; }
 
     /// <summary>
     /// Optional field properties that can be used to validate the parameter value before SQL generation and/or to inform SQL type inference.
     /// </summary>
-    internal readonly FieldProperties? FieldProperties;
+    public FieldProperties? FieldProperties { get; init; }
 
     /// <summary>
     /// Initializes a new instance of <see cref="Parameter"/> with an auto-generated name.
@@ -68,7 +68,7 @@ public class Parameter : SqlExpression
     /// <param name="fieldProperties">
     /// Optional field properties that can be used to validate the parameter value before SQL generation and/or to inform SQL type inference.
     /// </param>
-    public Parameter(object? value, FieldProperties fieldProperties) :this(value, new ParameterTag("Parameter"), fieldProperties)
+    public Parameter(object? value, FieldProperties fieldProperties) : this(value, new ParameterTag("Parameter"), fieldProperties)
     {
     }
 
@@ -190,4 +190,12 @@ public class Parameter : SqlExpression
     {
         yield return new SqlFragmentParameter(this);
     }
+
+    //TODO: create Roslyn analyzer to warn against using this.
+    public static implicit operator NumericParameter(Parameter parameter) =>
+        new (parameter);
+
+    //TODO: create Roslyn analyzer to warn against using this.
+    public static implicit operator NumericExpression(Parameter parameter) =>
+        new NumericParameter(parameter);
 }
