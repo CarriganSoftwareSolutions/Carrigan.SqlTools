@@ -1,4 +1,6 @@
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using System.Numerics;
 
@@ -92,7 +94,9 @@ public class NumericColumn<modelT> : NumericColumnBase<modelT>
     /// <param name="column">
     /// The column expression whose reflected data model property must be numeric in nature.
     /// </param>
-    protected NumericColumn(Column<modelT> column) : base(column)
+    internal NumericColumn(Column<modelT> column) : base(column)
     {
+        if (column.ColumnInfo.Type.IsNumericType() is false)
+            throw new NonNumericValueException(column.ColumnInfo.Type);
     }
 }
