@@ -22,6 +22,7 @@ public class ColumnBase<T> : ColumnBase where T: class
     /// <summary>
     /// The name of the property representing the column.
     /// </summary>
+    //TODO: Unit test.
     internal PropertyName PropertyName { get; }
 
     /// <summary>

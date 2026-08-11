@@ -2,6 +2,7 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -62,14 +63,26 @@ public class Column<T> : ColumnBase<T>  where T : class
     {
     }
 
+    #region Implicitly Convert all Column<T>s into the numeric and bool Inheritance Chain
     /// <summary>
     /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="NumericColumn{T}"/>.
     /// </summary>
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
+    //TODO: create Roslyn analyzer to warn about loss of type safety.
     public static implicit operator NumericColumn<T>(Column<T> column) =>
         new(column);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="NumericColumn{T}"/>.
+    /// </summary>
+    /// <param name="column">
+    /// The <see cref="Column{T}"/> instance to convert.
+    /// </param>
+    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    public static implicit operator NumericColumnBase<T>(Column<T> column) =>
+        new NumericColumn<T>(column);
 
     /// <summary>
     /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="NumericExpression"/>.
@@ -77,6 +90,67 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
+    //TODO: create Roslyn analyzer to warn about loss of type safety.
     public static implicit operator NumericExpression(Column<T> column) =>
         new NumericColumn<T>(column);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="BooleanColumn{T}"/>.
+    /// </summary>
+    /// <param name="column">
+    /// The <see cref="Column{T}"/> instance to convert.
+    /// </param>
+    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    public static implicit operator BooleanColumn<T>(Column<T> column) =>
+        new(column);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="BooleanColumnBase{T}"/>.
+    /// </summary>
+    /// <param name="column">
+    /// The <see cref="Column{T}"/> instance to convert.
+    /// </param>
+    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    public static implicit operator BooleanColumnBase<T>(Column<T> column) =>
+        new BooleanColumn<T>(column);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="Predicates"/>.
+    /// </summary>
+    /// <param name="column">
+    /// The <see cref="Column{T}"/> instance to convert.
+    /// </param>
+    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    public static implicit operator Predicates(Column<T> column) =>
+        new BooleanColumn<T>(column);
+    #endregion
+
+    #region Implicitly Convert numeric and bool Inheritance Chain to Column<T>, but not the final concrete numeric bool class.
+    /// <summary>
+    /// Implicitly converts a <see cref="NumericColumn{T}"/> to a <see cref="Column{T}"/>.
+    /// </summary>
+    /// <param name="numericColumnBase">
+    /// The <see cref="NumericColumn{T}"/> instance to convert.
+    /// </param>
+    public static implicit operator Column<T>(NumericColumnBase<T> numericColumnBase) =>
+        new(numericColumnBase.PropertyName);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="BooleanColumn{T}"/> to a <see cref="Column{T}"/>.
+    /// </summary>
+    /// <param name="booleanColumn">
+    /// The <see cref="BooleanColumn{T}"/> instance to convert.
+    /// </param>
+    public static implicit operator Column<T>(BooleanColumn<T> booleanColumn) =>
+        new(booleanColumn.PropertyName);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="BooleanColumnBase{T}"/> to a <see cref="Column{T}"/>.
+    /// </summary>
+    /// <param name="booleanColumn">
+    /// The <see cref="BooleanColumnBase{T}"/> instance to convert.
+    /// </param>
+    public static implicit operator Column<T>(BooleanColumnBase<T> booleanColumn) =>
+        new(booleanColumn.PropertyName);
+    #endregion
 }
