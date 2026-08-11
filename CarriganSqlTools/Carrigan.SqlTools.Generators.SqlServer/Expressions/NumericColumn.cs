@@ -39,4 +39,31 @@ public class NumericColumn<modelT> : NumericColumnBase<modelT>
         if (column.ColumnInfo.Type.IsNumericType() is false)
             throw new NonNumericValueException(column.ColumnInfo.Type);
     }
+
+    /// <summary>
+    /// Implicitly converts a <see cref="NumericColumn{modelT}"/> to a <see cref="Column{T}"/>.
+    /// </summary>
+    /// <param name="numericColumn">
+    /// The <see cref="NumericColumn{modelT}"/> instance to convert.
+    /// </param>
+    public static implicit operator Column<modelT>(NumericColumn<modelT> numericColumn) =>
+        new(numericColumn.PropertyName);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="NumericColumn{modelT}"/> to a <see cref="ColumnBase{T}"/>.
+    /// </summary>
+    /// <param name="numericColumn">
+    /// The <see cref="NumericColumn{modelT}"/> instance to convert.
+    /// </param>
+    public static implicit operator ColumnBase<modelT>(NumericColumn<modelT> numericColumn) =>
+        new Column<modelT>(numericColumn.PropertyName);
+
+    /// <summary>
+    /// Implicitly converts a <see cref="NumericColumn{modelT}"/> to a <see cref="ColumnBase"/>.
+    /// </summary>
+    /// <param name="numericColumn">
+    /// The <see cref="NumericColumn{modelT}"/> instance to convert.
+    /// </param>
+    public static implicit operator ColumnBase(NumericColumn<modelT> numericColumn) =>
+        new Column<modelT>(numericColumn.PropertyName);
 }
