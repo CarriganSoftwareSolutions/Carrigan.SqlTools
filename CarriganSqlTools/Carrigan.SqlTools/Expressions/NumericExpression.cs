@@ -24,4 +24,15 @@ public abstract class NumericExpression : SqlExpression
         : base(childExpressions, dialectNeutralStringRepresentation)
     {
     }
+
+    /// <summary>
+    /// Implicitly converts a <see cref="Parameter"/> to a <see cref="NumericExpression"/> by wrapping it in a <see cref="NumericParameter"/>.
+    /// </summary>
+    /// <param name="parameter">
+    /// The <see cref="Parameter"/> to convert to a <see cref="NumericExpression"/>.
+    /// </param>
+    //TODO: create Roslyn analyzer to warn against using this.
+    //TODO: unite tests
+    public static implicit operator NumericExpression(Parameter parameter) =>
+        new NumericParameter(parameter);
 }

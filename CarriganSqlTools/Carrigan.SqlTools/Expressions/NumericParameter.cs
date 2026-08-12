@@ -21,6 +21,16 @@ public class NumericParameter<T> : NumericParameter
     where T : INumber<T>
 {
     /// <summary>
+    /// Initializes a new instance of <see cref="NumericParameter{T}"/> from an existing <see cref="Parameter"/> instance.
+    /// </summary>
+    /// <param name="parameter">
+    /// The existing <see cref="Parameter"/> instance from which to create the new <see cref="NumericParameter{T}"/>.
+    /// </param>
+    protected NumericParameter(Parameter parameter) : base (parameter)
+    {
+    }
+
+    /// <summary>
     /// Initializes a new instance of <see cref="NumericParameter{T}"/> with an auto-generated name.
     /// The name is generated as "Parameter" followed by a unique suffix or prefix, depending on the dialect to ensure it does not collide with any
     /// user-supplied parameter names within the same predicate tree or query.
@@ -102,6 +112,26 @@ public class NumericParameter<T> : NumericParameter
     public NumericParameter(T? value, string parameter) : this(value, new ParameterTag(parameter))
     {
     }
+
+    /// <summary>
+    /// Defines an implicit conversion from a <see cref="Parameter"/> to a <see cref="NumericParameter{T}"/>.
+    /// </summary>
+    /// <param name="parameter">
+    /// The <see cref="Parameter"/> instance to convert.
+    /// </param>
+    //TODO: create Roslyn analyzer to warn against using this.
+    //TODO: unite tests
+    public static implicit operator NumericParameter<T>(Parameter parameter) =>
+        new(parameter);
+
+    /// <summary>
+    /// Defines an implicit conversion from a <see cref="NumericParameter{T}"/> to a <see cref="Parameter"/>.
+    /// </summary>
+    /// <param name="parameter">
+    /// The <see cref="NumericParameter{T}"/> instance to convert.
+    /// </param>
+    public static implicit operator Parameter(NumericParameter<T> parameter) =>
+        new(parameter.Value, parameter.Name, parameter.FieldProperties);
 }
 
 public class NumericParameter : NumericExpression, IParameter
@@ -129,7 +159,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="parameter">
     /// The existing <see cref="Parameter"/> instance from which to create the new <see cref="NumericParameter"/>.
     /// </param>
-    internal NumericParameter(Parameter parameter) : this(parameter.Value, parameter.Name, parameter.FieldProperties)
+    protected NumericParameter(Parameter parameter) : this(parameter.Value, parameter.Name, parameter.FieldProperties)
     {
     }
 
@@ -296,9 +326,34 @@ public class NumericParameter : NumericExpression, IParameter
         yield return new SqlFragmentParameter(this);
     }
 
+    /// <summary>
+    /// Validates that the provided value is of a numeric type. If the value is not numeric, a <see cref="NonNumericValueException"/> is thrown.
+    /// </summary>
+    /// <param name="value">The value to validate.</param>
+    /// <exception cref="NonNumericValueException">Thrown if the value is not a numeric type.</exception>
     private static void ValidateType(object? value)
     {
         if (value.GetUnderlyingType()?.IsNumericType() ?? false)
             throw new NonNumericValueException(value.GetUnderlyingType());
     }
+
+    /// <summary>
+    /// Defines an implicit conversion from a <see cref="Parameter"/> to a <see cref="NumericParameter{T}"/>.
+    /// </summary>
+    /// <param name="parameter">
+    /// The <see cref="Parameter"/> instance to convert.
+    /// </param>
+    //TODO: create Roslyn analyzer to warn against using this.
+    //TODO: unite tests
+    public static implicit operator NumericParameter(Parameter parameter) =>
+        new(parameter);
+
+    /// <summary>
+    /// Defines an implicit conversion from a <see cref="NumericParameter"/> to a <see cref="Parameter"/>.
+    /// </summary>
+    /// <param name="parameter">
+    /// The <see cref="NumericParameter"/> instance to convert.
+    /// </param>
+    public static implicit operator Parameter(NumericParameter parameter) =>
+        new (parameter.Value, parameter.Name, parameter.FieldProperties);
 }

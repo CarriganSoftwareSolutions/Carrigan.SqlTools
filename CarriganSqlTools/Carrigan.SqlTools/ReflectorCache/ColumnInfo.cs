@@ -1,6 +1,7 @@
 using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
@@ -44,6 +45,22 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// Represents an explicit SQL field-mapping override supplied by a <see cref="SqlTypeAttribute"/>, if any.
     /// </summary>
     internal readonly FieldProperties? FieldProperties;
+
+    /// <summary>
+    /// Gets the <see cref="FieldProperties"/> for this column.
+    /// </summary>
+    /// <param name="sqlDialects">
+    /// The <see cref="ISqlDialects"/> used to resolve the default field properties
+    /// for the property's CLR type when no explicit SQL type mapping is defined.
+    /// </param>
+    /// <returns>
+    /// The <see cref="FieldProperties"/> defined by a <see cref="SqlTypeAttribute"/>, if present;
+    /// otherwise, the default field properties for <see cref="Type"/> as defined by
+    /// <paramref name="sqlDialects"/>.
+    /// </returns>
+    //TODO: Unit tests.
+    internal FieldProperties FieldPropertiesOrDefault(ISqlDialects sqlDialects) =>
+        FieldProperties ?? sqlDialects.GetDefaultFieldPropertiesByClrType(Type);
 
     /// <summary>
     /// Gets the CLR type declared by the reflected model property.

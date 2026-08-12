@@ -2,10 +2,7 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 
@@ -96,31 +93,12 @@ public class Parameter : SqlExpression, IParameter
     /// <exception cref="ArgumentNullException">
     /// Thrown when a required argument is <c>null</c>.
     /// </exception>
-    public Parameter(object? value, ParameterTag parameterTag, FieldProperties fieldProperties) : base([], parameterTag)
+    public Parameter(object? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) : base([], parameterTag)
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         Name = new(parameterTag);
         Value = value;
         FieldProperties = fieldProperties;
-    }
-    /// <summary>
-    /// Initializes a new Parameter with the specified value and parameter tag.
-    /// </summary>
-    /// <remarks>Name is constructed from parameterTag and FieldProperties is initialized to null.</remarks>
-    /// <param name="value">The value to associate with the parameter.</param>
-    /// <param name="parameterTag">The tag used to construct the parameter name; must not be null.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when a required argument is <c>null</c>.
-    /// </exception>
-    /// <exception cref="InvalidParameterIdentifierException">
-    /// Thrown when a supplied or generated SQL parameter identifier is invalid.
-    /// </exception>
-    public Parameter(object? value, ParameterTag parameterTag) : base([], parameterTag)
-    {
-        ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
-        Name = new(parameterTag);
-        Value = value;
-        FieldProperties = null;
     }
 
     /// <summary>
@@ -190,12 +168,4 @@ public class Parameter : SqlExpression, IParameter
     {
         yield return new SqlFragmentParameter(this);
     }
-
-    //TODO: create Roslyn analyzer to warn against using this.
-    public static implicit operator NumericParameter(Parameter parameter) =>
-        new (parameter);
-
-    //TODO: create Roslyn analyzer to warn against using this.
-    public static implicit operator NumericExpression(Parameter parameter) =>
-        new NumericParameter(parameter);
 }

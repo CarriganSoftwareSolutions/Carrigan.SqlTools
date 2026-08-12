@@ -28,6 +28,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
+//TODO: unit tests
 public class Parameter<modelT> : Parameter where modelT : class
 {
     /// <summary>
@@ -38,6 +39,7 @@ public class Parameter<modelT> : Parameter where modelT : class
     public Parameter(PropertyName propertyName, object? value) : base(value, SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName))
     {
     }
+
     /// <summary>
     /// Initializes a new instance of the Parameter class with the specified property name and value.
     /// </summary>
@@ -49,4 +51,16 @@ public class Parameter<modelT> : Parameter where modelT : class
     public Parameter(string propertyName, object? value) : this(new PropertyName(propertyName), value)
     {
     }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="Parameter"/> from an existing <see cref="NumericParameter"/> instance.
+    /// </summary>
+    /// <param name="numericParameter">
+    /// The <see cref="NumericParameter"/> instance from which to initialize the new <see cref="Parameter"/> instance.
+    /// </param>
+    /// <remarks>
+    /// Only use for implicit operator.
+    /// </remarks>
+    internal Parameter(NumericParameter numericParameter) : base (numericParameter.Value, numericParameter.Name, numericParameter.FieldProperties) 
+    { }
 }
