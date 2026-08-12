@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.Expressions;
@@ -62,5 +63,14 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// Only use for implicit operator.
     /// </remarks>
     internal Parameter(NumericParameter numericParameter) : base (numericParameter.Value, numericParameter.Name, numericParameter.FieldProperties) 
+    { }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="Parameter"/> from an existing <see cref="BooleanParameter"/> instance.
+    /// </summary>
+    /// <param name="booleanParameter">
+    /// The <see cref="BooleanParameter"/> instance from which to initialize the new <see cref="Parameter"/> instance.
+    /// </param>
+    internal Parameter(BooleanParameter booleanParameter) : base (booleanParameter.Value, booleanParameter.Name, booleanParameter.FieldProperties)
     { }
 }
