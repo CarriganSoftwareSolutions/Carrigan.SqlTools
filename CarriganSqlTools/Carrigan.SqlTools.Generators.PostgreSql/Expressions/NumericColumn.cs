@@ -40,6 +40,7 @@ public class NumericColumn<modelT> : NumericColumnBase<modelT>
             throw new NonNumericValueException(column.ColumnInfo.Type);
     }
 
+    #region implicit operators to allow the concrete Numeric Column class to act as a regular column.
     /// <summary>
     /// Implicitly converts a <see cref="NumericColumn{modelT}"/> to a <see cref="Column{T}"/>.
     /// </summary>
@@ -66,4 +67,5 @@ public class NumericColumn<modelT> : NumericColumnBase<modelT>
     /// </param>
     public static implicit operator ColumnBase(NumericColumn<modelT> numericColumn) =>
         new Column<modelT>(numericColumn.PropertyName);
+    #endregion
 }
