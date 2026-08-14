@@ -333,7 +333,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <exception cref="NonNumericValueException">Thrown if the value is not a numeric type.</exception>
     private static void ValidateType(object? value)
     {
-        if (value.GetUnderlyingType()?.IsNumericType() ?? false)
+        if (value.GetUnderlyingType().IsNotNumericType())
             throw new NonNumericValueException(value.GetUnderlyingType());
     }
 

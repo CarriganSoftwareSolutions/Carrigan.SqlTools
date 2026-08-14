@@ -144,7 +144,7 @@ public class BooleanParameter : Predicates, IParameter
     /// <exception cref="NonNumericValueException">Thrown if the value is not a boolean type.</exception>
     private static void ValidateType(object? value)
     {
-        if (value.GetUnderlyingType()?.IsBoolType() ?? false)
+        if (value.GetUnderlyingType().IsNotBoolType())
             throw new NonNumericValueException(value.GetUnderlyingType());
     }
 
