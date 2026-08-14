@@ -159,7 +159,8 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="parameter">
     /// The existing <see cref="Parameter"/> instance from which to create the new <see cref="NumericParameter"/>.
     /// </param>
-    protected NumericParameter(Parameter parameter) : this(parameter.Value, parameter.Name, parameter.FieldProperties)
+    //NOTE: This needs to be internal or it won't be called by the implicit operator
+    internal NumericParameter(Parameter parameter) : this(parameter.Value, parameter.Name, parameter.FieldProperties)
     {
     }
 
