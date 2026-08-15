@@ -37,7 +37,7 @@ public interface ISqlFragment
     /// Gets the parameters that are referenced by this fragment.
     /// </summary>
     /// <returns>An enumerable collection of <see cref="SqlFragmentParameter"/> objects referenced by this fragment.</returns>
-    IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters();
+    IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect);
 
     /// <summary>
     /// Returns a flattened sequence of all child SQL fragments contained within this fragment.

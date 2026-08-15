@@ -59,7 +59,7 @@ public class SqlGenerator_SubqueryTests
 
         Subquery<Customer> subQuery = customerGenerator.Subquery(null, null, null, predicate, null, null, null);
 
-        IEnumerable<SqlFragmentParameter> parameters = [.. subQuery.GetSqlFragmentParameters()];
+        IEnumerable<SqlFragmentParameter> parameters = [.. subQuery.GetSqlFragmentParameters(Dialect)];
 
         Assert.Single(parameters);
         SqlQueryTestHelper.AssertParameterValue(parameters, "@CustomerId_1", 42);

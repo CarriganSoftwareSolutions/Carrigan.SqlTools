@@ -42,7 +42,7 @@ public abstract class GroupByBase : StringWrapper, ISqlFragment
     /// <remarks>Enumeration is deferred; callers should materialize the sequence if it will be iterated
     /// multiple times or accessed concurrently.</remarks>
     /// <returns>A sequence of <see cref="SqlFragmentParameter"/> values referenced by the SQL fragment; empty if there are no parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
 
     /// <summary>

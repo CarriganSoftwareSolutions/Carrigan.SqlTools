@@ -158,7 +158,7 @@ public class SqlFragmentParameter : ISqlFragment
     /// Retrieves the parameters contained within this fragment for later materialization.
     /// </summary>
     /// <returns>An enumerable collection containing the single <see cref="Parameter"/> wrapped by this fragment.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters()
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect)
     {
         yield return this;
     }
