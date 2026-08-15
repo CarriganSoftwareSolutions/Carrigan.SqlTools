@@ -137,8 +137,8 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
     /// <returns>An empty sequence because SELECT projection fragments do not contain SQL parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-        [];
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        SqlExpression.IsNotNullOrEmpty() ? SqlExpression.GetSqlFragmentParameters(dialect) : [];
 
     /// <summary>
     /// Renders the selected expression and optional alias using the supplied SQL dialect.

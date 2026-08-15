@@ -40,6 +40,6 @@ public class SqlFragmentTextTests
     {
         SqlFragmentText fragment = new("SELECT 1");
 
-        Assert.Empty(fragment.GetSqlFragmentParameters());
+        Assert.Empty(fragment.GetSqlFragmentParameters(Dialect));
     }
 }

@@ -65,7 +65,7 @@ public class SubqueryBase : ISqlFragment
     /// An enumerable sequence of <see cref="SqlFragmentParameter"/> objects that represent the parameters defined
     /// within the SQL fragments of this subquery.
     /// </returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         SqlFragments.GetSqlFragmentParameters(Dialect);
 
     /// <summary>
