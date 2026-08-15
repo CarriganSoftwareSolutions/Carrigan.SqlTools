@@ -163,7 +163,7 @@ internal class ColumnTag : StringWrapper, ISqlFragment
     /// Returns an empty enumeration, as <see cref="ColumnTag"/> does not contain any parameters.
     /// </summary>
     /// <returns>an empty enumeration </returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
 
     /// <summary>

@@ -34,7 +34,7 @@ public class OrderByBaseTests
 
     [Fact]
     public void GetSqlFragmentParameters_ReturnsEmptyCollection() =>
-        Assert.Empty(new OrderBy<Address>("Street").GetSqlFragmentParameters());
+        Assert.Empty(new OrderBy<Address>("Street").GetSqlFragmentParameters(Dialect));
 
     [Fact]
     public void ToSql_UsesColumnTagAndSortDirection() =>

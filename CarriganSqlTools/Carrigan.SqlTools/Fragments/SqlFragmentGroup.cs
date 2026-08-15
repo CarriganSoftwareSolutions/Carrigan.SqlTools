@@ -34,8 +34,8 @@ public class SqlFragmentGroup : ISqlFragment
     /// Retrieves the SQL parameters from all fragments contained in the group.
     /// </summary>
     /// <returns>The SQL fragment parameters exposed by the grouped fragments.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-        sqlFragments.SelectMany(f => f.GetSqlFragmentParameters());
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        sqlFragments.SelectMany(sqlFragment => sqlFragment.GetSqlFragmentParameters(dialect));
 
     /// <summary>
     /// Returns a flattened sequence of all SQL fragments contained within this fragment and its descendants.

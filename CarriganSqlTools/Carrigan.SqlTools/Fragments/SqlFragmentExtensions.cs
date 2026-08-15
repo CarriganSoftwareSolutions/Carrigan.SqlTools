@@ -65,7 +65,7 @@ internal static class SqlFragmentExtensions
 
         return sqlFragments
             .RenderFinalFragmentEnumeration(dialect)
-            .SelectMany(fragment => fragment.GetSqlFragmentParameters());
+            .SelectMany(fragment => fragment.GetSqlFragmentParameters(dialect));
     }
 
     /// <summary>
