@@ -154,8 +154,8 @@ public abstract class SelectTagsBase : ISqlFragment, IEnumerable<SelectTagBase>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
     /// <returns>The SQL fragment parameters required to render this tag.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-        [];
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        _selectTags.SelectMany(select => select.GetSqlFragmentParameters(dialect));
 
     /// <summary>
     /// Returns the SQL text for all select tags represented by this instance as a comma-separated list.

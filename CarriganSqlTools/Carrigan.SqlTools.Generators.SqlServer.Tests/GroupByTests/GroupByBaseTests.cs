@@ -34,7 +34,7 @@ public class GroupByBaseTests
 
     [Fact]
     public void GetSqlFragmentParameters_ReturnsEmptyCollection() =>
-        Assert.Empty(new GroupBy<Address>("Street").GetSqlFragmentParameters());
+        Assert.Empty(new GroupBy<Address>("Street").GetSqlFragmentParameters(Dialect));
 
     [Fact]
     public void ToSql_UsesColumnTag() =>

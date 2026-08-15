@@ -59,7 +59,7 @@ public class AliasTag : StringWrapper, ISqlFragment
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
     /// <returns>An empty sequence because alias fragments do not contain SQL parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
 
     /// <summary>
