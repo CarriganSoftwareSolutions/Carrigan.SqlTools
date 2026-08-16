@@ -44,5 +44,5 @@ public class SqlFragmentText : ISqlFragment
     /// Returns an enumerable collection containing the current SQL fragment instance.
     /// </summary>
     /// <returns>An <see cref="IEnumerable{SqlFragment}"/> that contains only this instance.</returns>
-    public IEnumerable<ISqlFragment> Flatten() => [this];
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => [this];
 }

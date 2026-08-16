@@ -32,7 +32,7 @@ public class SqlFragmentTests
         public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
             [];
 
-        public IEnumerable<ISqlFragment> Flatten() => [this];
+        public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => [this];
     }
 
     [Fact]

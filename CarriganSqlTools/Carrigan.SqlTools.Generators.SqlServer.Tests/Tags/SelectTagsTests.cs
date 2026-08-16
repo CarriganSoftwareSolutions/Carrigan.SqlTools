@@ -315,6 +315,6 @@ public class SelectTagsTests
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
 
-        SqlQueryTestHelper.AssertParameterValue(sqlQuery, "Parameter", 2);
+        SqlQueryTestHelper.AssertParameterValue(sqlQuery, "@Parameter_1", 2);
     }
 }

@@ -68,7 +68,7 @@ public abstract class OrderByBase : ISqlFragment, IEquatable<OrderByBase>
     /// Yields the instance as a single-item sequence of <see cref="ISqlFragment"/>.
     /// </summary>
     /// <returns>A sequence of <see cref="ISqlFragment"/> containing the instance.</returns>
-    public IEnumerable<ISqlFragment> Flatten() =>
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) =>
         [this];
 
     /// <summary>

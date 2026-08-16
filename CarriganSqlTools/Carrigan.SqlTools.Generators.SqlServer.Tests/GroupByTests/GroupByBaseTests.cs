@@ -26,7 +26,7 @@ public class GroupByBaseTests
     {
         GroupBy<Address> item = new("Street");
 
-        IEnumerable<ISqlFragment> fragments = item.Flatten();
+        IEnumerable<ISqlFragment> fragments = item.Flatten(Dialect);
 
         ISqlFragment fragment = Assert.Single(fragments);
         Assert.Same(item, fragment);
