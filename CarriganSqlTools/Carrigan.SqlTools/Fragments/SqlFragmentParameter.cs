@@ -167,5 +167,5 @@ public class SqlFragmentParameter : ISqlFragment
     /// Returns a flattened sequence of all SQL fragments contained within this fragment and its descendants.
     /// </summary>
     /// <returns>An enumerable collection containing this fragment as a single element.</returns>
-    public IEnumerable<ISqlFragment> Flatten() => [this];
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => [this];
 }

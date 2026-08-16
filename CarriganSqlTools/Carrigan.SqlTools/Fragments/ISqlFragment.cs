@@ -23,6 +23,10 @@ public interface ISqlFragment
     /// </summary>
     internal static readonly ISqlFragment Semicolon = new SqlFragmentText(";");
     /// <summary>
+    /// Represents a SQL statement terminator.
+    /// </summary>
+    internal static readonly ISqlFragment CommaSpace = new SqlFragmentText(", ");
+    /// <summary>
     /// Represents the current platform newline sequence.
     /// </summary>
     internal static readonly ISqlFragment NewLine = new SqlFragmentText(Environment.NewLine);
@@ -44,7 +48,11 @@ public interface ISqlFragment
     /// </summary>
     /// <remarks>Use this method to enumerate all nested SQL fragments in a single, flat sequence, regardless
     /// of their original hierarchical structure.</remarks>
+    /// <param name="dialect">
+    /// The SQL dialect used to render identifiers, literals, and final parameter names. 
+    /// This parameter ensures that the flattened fragments are compatible with the target database system.
+    /// </param>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects representing the flattened structure of this
     /// fragment. The collection may be empty if there are no child fragments.</returns>
-    IEnumerable<ISqlFragment> Flatten();
+    IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect);
 }
