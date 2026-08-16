@@ -29,10 +29,10 @@ public class SqlFragmentTests
         public string ToSql(ISqlDialects dialect) =>
             _sql;
 
-        public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+        public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
             [];
 
-        public IEnumerable<ISqlFragment> Flatten() => [this];
+        public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => [this];
     }
 
     [Fact]

@@ -26,7 +26,7 @@ public class OrderByBaseTests
     {
         OrderBy<Address> item = new("Street");
 
-        IEnumerable<ISqlFragment> fragments = item.Flatten();
+        IEnumerable<ISqlFragment> fragments = item.Flatten(Dialect);
 
         ISqlFragment fragment = Assert.Single(fragments);
         Assert.Same(item, fragment);
@@ -34,7 +34,7 @@ public class OrderByBaseTests
 
     [Fact]
     public void GetSqlFragmentParameters_ReturnsEmptyCollection() =>
-        Assert.Empty(new OrderBy<Address>("Street").GetSqlFragmentParameters());
+        Assert.Empty(new OrderBy<Address>("Street").GetSqlFragmentParameters(Dialect));
 
     [Fact]
     public void ToSql_UsesColumnTagAndSortDirection() =>

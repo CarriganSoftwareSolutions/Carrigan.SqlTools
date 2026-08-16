@@ -1,20 +1,17 @@
-﻿using Carrigan.SqlTools.AggregateLogic;
-using Carrigan.SqlTools.Base.Tests.Helpers;
+﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.QueryBuilders;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Dialects;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 public class SelectTagsTests
 {
-    private static readonly SqlServerDialect Dialect = new();
+    private static readonly PostgreSqlDialect Dialect = new();
     private static readonly SqlGenerator<Order> OrderSqlGenerator = new();
 
     private static SelectTag New(string columnName, string? aliasName) =>
@@ -25,10 +22,10 @@ public class SelectTagsTests
     private static readonly SelectTagBase c = New("SomeColumn", "SomeAlias");
     private static readonly SelectTagBase d = New("OtherColumn", "SomeAlias");
 
-    private static readonly string aExpectedString = "[SomeColumn]";
-    private static readonly string bExpectedString = "[OtherColumn]";
-    private static readonly string cExpectedString = "[SomeColumn] AS [SomeAlias]";
-    private static readonly string dExpectedString = "[OtherColumn] AS [SomeAlias]";
+    private static readonly string aExpectedString = "\"SomeColumn\"";
+    private static readonly string bExpectedString = "\"OtherColumn\"";
+    private static readonly string cExpectedString = "\"SomeColumn\" AS \"SomeAlias\"";
+    private static readonly string dExpectedString = "\"OtherColumn\" AS \"SomeAlias\"";
 
     [Fact]
     public void ResultColumnNames() 
@@ -85,9 +82,9 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(Dialect));
+        Assert.Equal("\"Order\".\"Id\" AS \"Override\"", selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
+        Assert.Equal("\"Order\"", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -104,9 +101,9 @@ public class SelectTagsTests
         Assert.False(selectTagsAlpha.Empty());
         Assert.True(selectTagsAlpha.Any());
 
-        Assert.Equal("[Order].[Id] AS [Override]", selectTagsAlpha.ToSql(Dialect));
+        Assert.Equal("\"Order\".\"Id\" AS \"Override\"", selectTagsAlpha.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
+        Assert.Equal("\"Order\"", selectTagsAlpha.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -187,9 +184,9 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
+        Assert.Equal($"\"Order\".\"Id\", \"Order\".\"CustomerId\", \"Order\".\"PaymentMethodId\", \"Order\".\"OrderDate\", \"Order\".\"Total\"", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
+        Assert.Equal("\"Order\"", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -216,9 +213,9 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id] AS [Override], [Order].[CustomerId] AS [Override2], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
+        Assert.Equal($"\"Order\".\"Id\" AS \"Override\", \"Order\".\"CustomerId\" AS \"Override2\", \"Order\".\"PaymentMethodId\", \"Order\".\"OrderDate\", \"Order\".\"Total\"", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
+        Assert.Equal("\"Order\"", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
@@ -241,32 +238,32 @@ public class SelectTagsTests
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
 
-        Assert.Equal($"[Order].[Id], [Order].[CustomerId], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total]", selectTagsBeta.ToSql(Dialect));
+        Assert.Equal($"\"Order\".\"Id\", \"Order\".\"CustomerId\", \"Order\".\"PaymentMethodId\", \"Order\".\"OrderDate\", \"Order\".\"Total\"", selectTagsBeta.ToSql(Dialect));
 
-        Assert.Equal("[Order]", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
+        Assert.Equal("\"Order\"", selectTagsBeta.GetTableTags().Single().ToSql(Dialect));
     }
 
     [Fact]
     public void AppendInvalidPropertyStringException() =>
-        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>("InvalidColumn")));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SelectTags()).Append<Order>("InvalidColumn")));
     [Fact]
     public void AppendInvalidAliasStringException() =>
-        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>("Id", "123Invalid")));
+        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SelectTags()).Append<Order>("Id", "123Invalid")));
 
     [Fact]
     public void AppendInvalidPropertyNameException() =>
-        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>(new("InvalidColumn"))));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SelectTags()).Append<Order>(new("InvalidColumn"))));
     [Fact]
     public void AppendInvalidAliasNameException() =>
-        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Append<Order>(new("Id"), new("123Invalid"))));
+        Assert.Throws<InvalidSqlIdentifierException>((Func<object?>)(() => (new SelectTags()).Append<Order>(new("Id"), new("123Invalid"))));
 
 
     [Fact]
     public void ConcatInvalidPropertyStringException() =>
-        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Concat<Order>("InvalidColumn")));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SelectTags()).Concat<Order>("InvalidColumn")));
     [Fact]
     public void ConcatInvalidPropertyNameException() =>
-        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SqlTools.Tags.SelectTags()).Concat<Order>(new PropertyName("InvalidColumn"))));
+        Assert.Throws<InvalidPropertyException<Order>>((Func<object?>)(() => (new SelectTags()).Concat<Order>(new PropertyName("InvalidColumn"))));
 
 
     [Fact]
@@ -301,7 +298,7 @@ public class SelectTagsTests
             SelectTagGenerator.Get<Order>("PaymentMethodId"),
             SelectTagGenerator.Get<Order>("OrderDate"),
             SelectTagGenerator.Get<Order>("Total"),
-            new SelectTag(new Parameter(2), "Param")
+            new SelectTag(new Parameter(2, "Param"), "Param")
         );
 
         SelectBuilder<Order> orderBuilder = new()
@@ -309,12 +306,12 @@ public class SelectTagsTests
             Selects = selectTags
         };
 
-        string expectedSql = $"SELECT [Order].[Id] AS [Override], [Order].[CustomerId] AS [Override2], [Order].[PaymentMethodId], [Order].[OrderDate], [Order].[Total], @Parameter_1 AS [Param] FROM [Order]";
+        string expectedSql = $"SELECT \"Order\".\"Id\" AS \"Override\", \"Order\".\"CustomerId\" AS \"Override2\", \"Order\".\"PaymentMethodId\", \"Order\".\"OrderDate\", \"Order\".\"Total\", $1 AS \"Param\" FROM \"Order\"";
 
         SqlQuery sqlQuery = OrderSqlGenerator.Select(orderBuilder);
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
 
-        SqlQueryTestHelper.AssertParameterValue(sqlQuery, "@Parameter_1", 2);
+        SqlQueryTestHelper.AssertParameterValue(sqlQuery, "$1", 2);
     }
 }

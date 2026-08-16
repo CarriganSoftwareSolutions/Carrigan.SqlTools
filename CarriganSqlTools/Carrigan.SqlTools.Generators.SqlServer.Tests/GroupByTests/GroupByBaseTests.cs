@@ -26,7 +26,7 @@ public class GroupByBaseTests
     {
         GroupBy<Address> item = new("Street");
 
-        IEnumerable<ISqlFragment> fragments = item.Flatten();
+        IEnumerable<ISqlFragment> fragments = item.Flatten(Dialect);
 
         ISqlFragment fragment = Assert.Single(fragments);
         Assert.Same(item, fragment);
@@ -34,7 +34,7 @@ public class GroupByBaseTests
 
     [Fact]
     public void GetSqlFragmentParameters_ReturnsEmptyCollection() =>
-        Assert.Empty(new GroupBy<Address>("Street").GetSqlFragmentParameters());
+        Assert.Empty(new GroupBy<Address>("Street").GetSqlFragmentParameters(Dialect));
 
     [Fact]
     public void ToSql_UsesColumnTag() =>

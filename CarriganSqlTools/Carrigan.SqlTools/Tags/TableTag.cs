@@ -185,7 +185,7 @@ public class TableTag : StringWrapper, ISqlFragment
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
     /// <returns>A single-item sequence containing this table tag.</returns>
-    public IEnumerable<ISqlFragment> Flatten()
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
     {
         yield return this;
     }
@@ -193,7 +193,7 @@ public class TableTag : StringWrapper, ISqlFragment
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
     /// <returns>An empty sequence because table-name fragments do not contain SQL parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
 
     /// <summary>

@@ -567,4 +567,31 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Assert.Equal(4.6m, book.AverageReview);
         Assert.Equal(string.Empty, book.Description);
     }
+
+    [Fact]
+    public async Task SelectParameter()
+    {
+        Column<Book> id = new(nameof(Book.Id));
+        Parameter value = new(5, nameof(Book.Id));
+
+        SelectTags selectTags = new
+        (
+            new SelectTag(new Parameter(1), "Param")
+        );
+
+        Equal where = new (id, value);
+        SelectBuilder<Book> selectBuilder = new()
+        {
+            Selects = selectTags,
+            Where = where
+        };
+
+        SqlQuery query = BookSqlGenerator.Select(selectBuilder);
+
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<SelectParameterModel> records = await CommandsAsync.ExecuteReaderAsync<SelectParameterModel>(query, null, unitTestConnection);
+
+        SelectParameterModel record = records.Single();
+        Assert.Equal(1, record.Param);
+    }
 }
