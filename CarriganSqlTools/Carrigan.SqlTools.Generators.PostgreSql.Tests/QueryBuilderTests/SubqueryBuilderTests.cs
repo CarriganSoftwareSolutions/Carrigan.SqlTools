@@ -31,7 +31,7 @@ public class SubqueryBuilderTests
 
         Subquery<Customer> subquery = customerGenerator.Subquery(subqueryBuilder);
 
-        SqlQuery query = new(Dialect, CommandType.Text, subquery.Flatten());
+        SqlQuery query = new(Dialect, CommandType.Text, subquery.Flatten(Dialect));
 
         Assert.Equal("(SELECT DISTINCT \"Customer\".\"Id\", \"Customer\".\"Name\" FROM \"Customer\" WHERE (\"Customer\".\"Name\" = $1) ORDER BY \"Customer\".\"Name\" ASC, \"Customer\".\"Id\" ASC LIMIT 25 OFFSET 50)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
