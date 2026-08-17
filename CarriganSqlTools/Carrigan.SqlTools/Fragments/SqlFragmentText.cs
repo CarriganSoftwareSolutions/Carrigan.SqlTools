@@ -37,12 +37,12 @@ public class SqlFragmentText : ISqlFragment
     /// Gets the parameters contained in this fragment. Since this fragment represents literal SQL text, it does not contain any parameters.
     /// </summary>
     /// <returns>An empty enumerable collection, as this fragment does not contain any parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
 
     /// <summary>
     /// Returns an enumerable collection containing the current SQL fragment instance.
     /// </summary>
     /// <returns>An <see cref="IEnumerable{SqlFragment}"/> that contains only this instance.</returns>
-    public IEnumerable<ISqlFragment> Flatten() => [this];
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => [this];
 }

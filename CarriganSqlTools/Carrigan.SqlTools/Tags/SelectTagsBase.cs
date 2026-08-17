@@ -145,22 +145,20 @@ public abstract class SelectTagsBase : ISqlFragment, IEnumerable<SelectTagBase>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
     /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>
-    public IEnumerable<ISqlFragment> Flatten()
-    {
-        yield return this;
-    }
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) =>
+        _selectTags.JoinFragments(ISqlFragment.CommaSpace).SelectMany(fragment => fragment.Flatten(dialect));
 
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
     /// <returns>The SQL fragment parameters required to render this tag.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-        [];
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        _selectTags.SelectMany(select => select.GetSqlFragmentParameters(dialect));
 
     /// <summary>
     /// Returns the SQL text for all select tags represented by this instance as a comma-separated list.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render the fragment.</param>
     public string ToSql(ISqlDialects dialect) =>
-        string.Join(", ", _selectTags.Select(selectTag => selectTag.ToSql(dialect)));
+        Flatten(dialect).ToSql(dialect);
 }

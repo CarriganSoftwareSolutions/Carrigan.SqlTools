@@ -119,6 +119,15 @@ public abstract class SqlExpression : StringWrapper
     internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 
     /// <summary>
+    /// Gets the SQL parameters contained by this expression tree.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the fragments.</param>
+    /// <returns>The SQL fragment parameters required to render this expression tree.</returns>
+    internal IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        ToSqlFragments(dialect).SelectMany(sqlFragment => sqlFragment.GetSqlFragmentParameters(dialect));
+
+
+    /// <summary>
     /// Recursively enumerates every child expression below the supplied expression collection.
     /// </summary>
     /// <param name="expressions">The expression collection whose descendants should be enumerated.</param>

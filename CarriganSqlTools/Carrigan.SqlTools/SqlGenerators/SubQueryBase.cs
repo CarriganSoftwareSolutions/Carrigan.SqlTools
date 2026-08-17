@@ -52,9 +52,12 @@ public class SubqueryBase : ISqlFragment
     /// is necessary because the SQL fragments may be composed of other fragments, and we need
     /// to ensure that we have a single level of fragments when rendering the SQL text or extracting parameters.
     /// </summary>
+    /// <param name="dialect">
+    /// The SQL dialect to use for rendering the fragments of this subquery.
+    /// </param>
     /// <returns>The flattened SQL fragments for the subquery.</returns>
-    public IEnumerable<ISqlFragment> Flatten() =>
-        SqlFragments.Flatten();
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) =>
+        SqlFragments.Flatten(dialect);
 
     /// <summary>
     /// Extracts the parameters from the SQL fragments of this subquery. This method traverses the fragments
@@ -65,7 +68,7 @@ public class SubqueryBase : ISqlFragment
     /// An enumerable sequence of <see cref="SqlFragmentParameter"/> objects that represent the parameters defined
     /// within the SQL fragments of this subquery.
     /// </returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         SqlFragments.GetSqlFragmentParameters(Dialect);
 
     /// <summary>
@@ -84,7 +87,8 @@ public class SubqueryBase : ISqlFragment
     public string ToSql(ISqlDialects dialect)
     {
         StringBuilder stringBuilder = new();
-        foreach (ISqlFragment fragment in SqlFragments.Flatten())
+
+        foreach (ISqlFragment fragment in SqlFragments.Flatten(dialect))
         {
             stringBuilder.Append(fragment.ToSql(dialect));
         }

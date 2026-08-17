@@ -51,7 +51,7 @@ public class AliasTag : StringWrapper, ISqlFragment
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
     /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>
-    public IEnumerable<ISqlFragment> Flatten()
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
     {
         yield return this;
     }
@@ -59,7 +59,7 @@ public class AliasTag : StringWrapper, ISqlFragment
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
     /// <returns>An empty sequence because alias fragments do not contain SQL parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
 
     /// <summary>

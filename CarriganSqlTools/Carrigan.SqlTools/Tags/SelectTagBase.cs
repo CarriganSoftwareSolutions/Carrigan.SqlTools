@@ -128,29 +128,34 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
     /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>
-    public IEnumerable<ISqlFragment> Flatten()
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
     {
-        yield return this;
+
+        foreach(ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect))
+        {
+            yield return sqlFragment;
+        }
+        if(AliasTag is not null)
+        {
+            yield return new SqlFragmentText(" AS ");
+            yield return AliasTag;
+        }
     }
 
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
     /// <returns>An empty sequence because SELECT projection fragments do not contain SQL parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-        [];
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        SqlExpression.IsNotNullOrEmpty() ? SqlExpression.GetSqlFragmentParameters(dialect) : [];
 
     /// <summary>
     /// Renders the selected expression and optional alias using the supplied SQL dialect.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render identifiers.</param>
     /// <returns>The rendered SELECT-list fragment.</returns>
-    public string ToSql(ISqlDialects dialect)
-    {
-        string selectSql = SqlExpression.ToSqlFragments(dialect).ToSql(dialect);
-
-        return AliasTag is null ? selectSql : $"{selectSql} AS {AliasTag.ToSql(dialect)}";
-    }
+    public string ToSql(ISqlDialects dialect) =>
+        Flatten(dialect).ToSql(dialect);
 
     /// <summary>
     /// Creates an equivalent select tag without an alias.

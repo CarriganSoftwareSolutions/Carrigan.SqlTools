@@ -154,7 +154,7 @@ internal class ColumnTag : StringWrapper, ISqlFragment
     /// <summary>
     /// Initializes a new instance of the <see cref="Flatten"/> class.
     /// </summary>
-    public IEnumerable<ISqlFragment> Flatten()
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
     {
         yield return this;
     }
@@ -163,7 +163,7 @@ internal class ColumnTag : StringWrapper, ISqlFragment
     /// Returns an empty enumeration, as <see cref="ColumnTag"/> does not contain any parameters.
     /// </summary>
     /// <returns>an empty enumeration </returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
 
     /// <summary>
