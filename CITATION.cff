@@ -6,7 +6,7 @@ authors:
   - family-names: "Carrigan"
     given-names: "Jonathan"
     alias: "Carrigan Software Solutions LLC"
-version: "0.8.1"
+version: "0.8.2"
 date-released: "2026-08-17"
 repository-code: "https://github.com/CarriganSoftwareSolutions/Carrigan.SqlTools"
 url: "https://github.com/CarriganSoftwareSolutions/Carrigan.SqlTools"

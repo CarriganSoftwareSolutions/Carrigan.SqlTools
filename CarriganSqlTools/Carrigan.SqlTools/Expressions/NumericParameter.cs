@@ -159,7 +159,8 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="parameter">
     /// The existing <see cref="Parameter"/> instance from which to create the new <see cref="NumericParameter"/>.
     /// </param>
-    protected NumericParameter(Parameter parameter) : this(parameter.Value, parameter.Name, parameter.FieldProperties)
+    //NOTE: This needs to be internal or it won't be called by the implicit operator
+    internal NumericParameter(Parameter parameter) : this(parameter.Value, parameter.Name, parameter.FieldProperties)
     {
     }
 
@@ -333,7 +334,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <exception cref="NonNumericValueException">Thrown if the value is not a numeric type.</exception>
     private static void ValidateType(object? value)
     {
-        if (value.GetUnderlyingType()?.IsNumericType() ?? false)
+        if (value.GetUnderlyingType().IsNotNumericType())
             throw new NonNumericValueException(value.GetUnderlyingType());
     }
 
