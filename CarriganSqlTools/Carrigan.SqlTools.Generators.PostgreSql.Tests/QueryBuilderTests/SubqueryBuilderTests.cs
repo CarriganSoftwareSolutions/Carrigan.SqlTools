@@ -59,7 +59,7 @@ public class SubqueryBuilderTests
         };
 
         Subquery<Grades> subquery = gradesGenerator.Subquery(subqueryBuilder);
-        SqlQuery query = new(Dialect, CommandType.Text, subquery.Flatten());
+        SqlQuery query = new(Dialect, CommandType.Text, subquery.Flatten(Dialect));
 
         Assert.Equal(
             "(SELECT \"Grades\".\"StudentId\", AVG(\"Grades\".\"GradePoint\") AS \"AverageGradePoint\" FROM \"Grades\" GROUP BY \"Grades\".\"StudentId\" HAVING (AVG(\"Grades\".\"GradePoint\") > $1))",
