@@ -1,31 +1,31 @@
 ﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Dialects;
+using System.Xml;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 public class SelectTagsTests
 {
     private static readonly PostgreSqlDialect Dialect = new();
     private static readonly SqlGenerator<Order> OrderSqlGenerator = new();
-
-    private static SelectTag New(string columnName, string? aliasName) =>
-        new (new PropertyName(columnName), AliasName.New(aliasName));
+    private static SelectTagBase New(string columnName, string? aliasName) =>
+        new SelectTag<SomeTable>(new PropertyName(columnName), AliasName.New(aliasName));
 
     private static readonly SelectTagBase a = New("SomeColumn", null);
     private static readonly SelectTagBase b = New("OtherColumn", null);
     private static readonly SelectTagBase c = New("SomeColumn", "SomeAlias");
     private static readonly SelectTagBase d = New("OtherColumn", "SomeAlias");
 
-    private static readonly string aExpectedString = "\"SomeColumn\"";
-    private static readonly string bExpectedString = "\"OtherColumn\"";
-    private static readonly string cExpectedString = "\"SomeColumn\" AS \"SomeAlias\"";
-    private static readonly string dExpectedString = "\"OtherColumn\" AS \"SomeAlias\"";
+    private static readonly string aExpectedString = "\"SomeTable\".\"SomeColumn\"";
+    private static readonly string bExpectedString = "\"SomeTable\".\"OtherColumn\"";
+    private static readonly string cExpectedString = "\"SomeTable\".\"SomeColumn\" AS \"SomeAlias\"";
+    private static readonly string dExpectedString = "\"SomeTable\".\"OtherColumn\" AS \"SomeAlias\"";
 
     [Fact]
     public void ResultColumnNames() 
@@ -65,7 +65,7 @@ public class SelectTagsTests
 
         Assert.Equal(dExpectedString, selectTags.ToSql(Dialect));
 
-        Assert.True(selectTags.GetTableTags().Single().IsEmpty());
+        Assert.False(selectTags.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class SelectTagsTests
 
         Assert.Equal(aExpectedString, selectTagsAlpha.ToSql(Dialect));
 
-        Assert.True(selectTagsAlpha.GetTableTags().Single().IsEmpty());
+        Assert.False(selectTagsAlpha.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class SelectTagsTests
 
         Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsAlpha.ToSql(Dialect));
 
-        Assert.True(selectTagsAlpha.GetTableTags().Single().IsEmpty());
+        Assert.False(selectTagsAlpha.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public class SelectTagsTests
 
         Assert.Equal($"{aExpectedString}, {bExpectedString}, {cExpectedString}, {dExpectedString}", selectTagsBeta.ToSql(Dialect));
 
-        Assert.True(selectTagsBeta.GetTableTags().Single().IsEmpty());
+        Assert.False(selectTagsBeta.GetTableTags().Single().IsEmpty());
     }
 
     [Fact]
@@ -313,5 +313,11 @@ public class SelectTagsTests
         Assert.Equal(expectedSql, sqlQuery.QueryText);
 
         SqlQueryTestHelper.AssertParameterValue(sqlQuery, "$1", 2);
+    }
+
+    private class SomeTable
+    {
+        public int SomeColumn { get; set; }
+        public int OtherColumn { get; set; }
     }
 }
