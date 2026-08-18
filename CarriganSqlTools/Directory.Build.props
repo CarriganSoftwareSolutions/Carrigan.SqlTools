@@ -27,20 +27,20 @@
     <Deterministic>true</Deterministic>
 
     <!--Base Version for other projects-->
-    <BaseVersion>0.8.1</BaseVersion>
+    <BaseVersion>0.8.2</BaseVersion>
     <!-- PreRelease Status -->
     <PreReleaseLabel></PreReleaseLabel>
 
     <!-- PreReleaseStatus / Base version: x.y.z For Base Projects -->
-    <SqlToolsBaseProjectsBaseVersion>0.8.1</SqlToolsBaseProjectsBaseVersion>
+    <SqlToolsBaseProjectsBaseVersion>0.8.2</SqlToolsBaseProjectsBaseVersion>
     <SqlToolsBaseProjectsPreReleaseLabel></SqlToolsBaseProjectsPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For SqlServer Dialect -->
-    <SqlToolsSqlServerBaseVersion>0.8.1</SqlToolsSqlServerBaseVersion>
+    <SqlToolsSqlServerBaseVersion>0.8.2</SqlToolsSqlServerBaseVersion>
     <SqlToolsSqlServerPreReleaseLabel></SqlToolsSqlServerPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For PostgreSql Dialect -->
-    <SqlToolsPostgreSqlBaseVersion>0.8.1</SqlToolsPostgreSqlBaseVersion>
+    <SqlToolsPostgreSqlBaseVersion>0.8.2</SqlToolsPostgreSqlBaseVersion>
     <SqlToolsPostgreSqlPreReleaseLabel></SqlToolsPostgreSqlPreReleaseLabel>
     
     <!-- Time Stamp -->
