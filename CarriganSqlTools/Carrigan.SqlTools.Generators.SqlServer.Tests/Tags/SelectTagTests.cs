@@ -18,8 +18,8 @@ public class SelectTagTests
     private static readonly SelectTagBase d = New("OtherColumn", "SomeAlias");
 
     [Theory]
-    [InlineData("SomeColumn", null, "[SomeColumn]", null, "[SomeColumn]")]
-    [InlineData("SomeColumn", "SomeAlias", "[SomeColumn]", "SomeAlias", "[SomeColumn] AS [SomeAlias]")]
+    [InlineData("SomeColumn", null, "[SomeTable].[SomeColumn]", null, "[SomeTable].[SomeColumn]")]
+    [InlineData("SomeColumn", "SomeAlias", "[SomeTable].[SomeColumn]", "SomeAlias", "[SomeTable].[SomeColumn] AS [SomeAlias]")]
     public void Constructor(string columnName, string? aliasName, string expectedColumn, string? expectedAlias, string expectedSelect)
     {
         SelectTagBase selectTag  = New(columnName, aliasName);
@@ -28,7 +28,7 @@ public class SelectTagTests
             Assert.Null(selectTag.AliasTag);
 
         Assert.Equal(expectedSelect, selectTag.ToSql(Dialect));
-        Assert.True(selectTag.ColumnTag.TableTag.IsEmpty());
+        Assert.False(selectTag.ColumnTag.TableTag.IsEmpty());
     }
 
     [Theory]
@@ -266,8 +266,8 @@ public class SelectTagTests
     }
 
     [Theory]
-    [InlineData("SomeColumn", null, "[SomeColumn]")]
-    [InlineData("SomeColumn", "SomeAlias", "[SomeColumn] AS [SomeAlias]")]
+    [InlineData("SomeColumn", null, "[SomeTable].[SomeColumn]")]
+    [InlineData("SomeColumn", "SomeAlias", "[SomeTable].[SomeColumn] AS [SomeAlias]")]
     public void Equality(string columnName, string? aliasName, string expectedSelect)
     {
         SelectTagBase select = New(columnName, aliasName);
