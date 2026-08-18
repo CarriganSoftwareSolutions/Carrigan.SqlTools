@@ -52,6 +52,24 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     }
 
     [Fact]
+    public async Task SelectBookIdById()
+    {
+        SelectTags selectTags = new(new SelectTag<Book>(nameof(Book.Id)));
+        ColumnValue<Book> columnValue = new(nameof(Book.Id), 5);
+        SelectBuilder<Book> selectBuilder = new()
+        {
+            Selects = selectTags,
+            Where = columnValue
+        };
+        SqlQuery query = BookSqlGenerator.Select(selectBuilder);
+        await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<BookId> books = await CommandsAsync.ExecuteReaderAsync<BookId>(query, null, unitTestConnection);
+
+        Assert.Single(books);
+        Assert.Equal(5, books.Single().Id);
+    }
+
+    [Fact]
     public async Task And()
     {
         Predicates year = new ColumnValue<Book>(nameof(Book.YearPublished), 1890);

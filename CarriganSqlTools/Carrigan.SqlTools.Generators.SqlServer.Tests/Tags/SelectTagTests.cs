@@ -13,8 +13,8 @@ public class SelectTagTests
 {
     private static readonly SqlServerDialect Dialect = new();
 
-    private static SelectTag New(string columnName, string? aliasName) =>
-        new (new PropertyName(columnName), AliasName.New(aliasName));
+    private static SelectTagBase New(string columnName, string? aliasName) =>
+        new SelectTag<SomeTable>(new PropertyName(columnName), AliasName.New(aliasName));
 
     private static readonly SelectTagBase a = New("SomeColumn", null);
     private static readonly SelectTagBase b = New("OtherColumn", null);
@@ -22,8 +22,8 @@ public class SelectTagTests
     private static readonly SelectTagBase d = New("OtherColumn", "SomeAlias");
 
     [Theory]
-    [InlineData("SomeColumn", null, "[SomeColumn]", null, "[SomeColumn]")]
-    [InlineData("SomeColumn", "SomeAlias", "[SomeColumn]", "SomeAlias", "[SomeColumn] AS [SomeAlias]")]
+    [InlineData("SomeColumn", null, "[SomeTable].[SomeColumn]", null, "[SomeTable].[SomeColumn]")]
+    [InlineData("SomeColumn", "SomeAlias", "[SomeTable].[SomeColumn]", "SomeAlias", "[SomeTable].[SomeColumn] AS [SomeAlias]")]
     public void Constructor(string columnName, string? aliasName, string expectedColumn, string? expectedAlias, string expectedSelect)
     {
         SelectTagBase selectTag  = New(columnName, aliasName);
@@ -32,7 +32,6 @@ public class SelectTagTests
             Assert.Null(selectTag.AliasTag);
 
         Assert.Equal(expectedSelect, selectTag.ToSql(Dialect));
-        Assert.True(selectTag.TableTags.Single().IsEmpty());
     }
 
     [Theory]
@@ -288,8 +287,8 @@ public class SelectTagTests
     }
 
     [Theory]
-    [InlineData("SomeColumn", null, "[SomeColumn]")]
-    [InlineData("SomeColumn", "SomeAlias", "[SomeColumn] AS [SomeAlias]")]
+    [InlineData("SomeColumn", null, "[SomeTable].[SomeColumn]")]
+    [InlineData("SomeColumn", "SomeAlias", "[SomeTable].[SomeColumn] AS [SomeAlias]")]
     public void Equality(string columnName, string? aliasName, string expectedSelect)
     {
         SelectTagBase select = New(columnName, aliasName);
@@ -421,5 +420,10 @@ public class SelectTagTests
 
         [SelectTag<SelectRight>(nameof(SelectRight.Name), nameof(RightName))]
         public string? RightName { get; set; }
+    }   
+    private class SomeTable
+    {
+        public int SomeColumn { get; set; }
+        public int OtherColumn { get; set; }
     }
 }
