@@ -1,33 +1,68 @@
 using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
-/// Represents a dialect package's concrete SELECT projection tag for a single column.
+/// Represents a dialect package's concrete SELECT projection tag for a single column, strongly typed to a model class.
 /// </summary>
-public sealed class SelectTag : SelectTagBase
+/// <typeparam name="modelT">
+/// The model type whose C# properties represent SQL columns or parameters.
+/// </typeparam>
+public sealed class SelectTag<modelT> : SelectTag where modelT : class
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided property and optional alias names.
+    /// Initializes a new instance of the <see cref="SelectTag{modelT}"/> class using the provided property and optional alias names.
     /// </summary>
-    /// <param name="propertyName">The property/column name to project.</param>
-    /// <param name="aliasName">An optional alias to use for this projection.</param>
-    public SelectTag(PropertyName propertyName, AliasName? aliasName = null) : base(propertyName, aliasName)
-    {
-    }
+    /// <param name="propertyName">
+    /// The property/column name to project, strongly typed to the model class <typeparamref name="modelT"/>.
+    /// </param>
+    /// <param name="aliasName">
+    /// An optional alias to use for this projection.
+    /// </param>
+    public SelectTag(PropertyName propertyName, AliasName? aliasName = null) : base(GetColumnInfo(propertyName), GetAliasTag(propertyName, aliasName))
+    { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided property and optional alias names.
+    /// Initializes a new instance of the <see cref="SelectTag{modelT}"/> class using the provided property name and optional alias name.
     /// </summary>
-    /// <param name="propertyName">The property/column name to project.</param>
-    /// <param name="aliasName">An optional alias to use for this projection.</param>
-    [ExternalOnly]
-    public SelectTag(string propertyName, string? aliasName = null) : this(new PropertyName(propertyName), AliasName.New(aliasName))
+    /// <param name="propertyName">
+    /// The property/column name to project, strongly typed to the model class <typeparamref name="modelT"/>.
+    /// </param>
+    /// <param name="aliasName">
+    /// An optional alias to use for this projection.
+    /// </param>
+    public SelectTag(string propertyName, AliasName? aliasName = null) : this(new PropertyName(propertyName), aliasName)
     {
     }
 
+    private static ColumnTag GetColumnInfo(PropertyName propertyName) =>
+        SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName).ColumnTag;
+    private static AliasTag? GetAliasTag(PropertyName propertyName, AliasName? aliasName) =>
+        aliasName is null
+            ? SelectTag<modelT>.GetAliasTagFromColumnInfo(SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName))
+            : AliasTag.New(aliasName);
+    private static AliasTag? GetAliasTagFromColumnInfo(ColumnInfo columnInfo) =>
+        columnInfo.SelectTag?.AliasTag ?? AliasTag.New(columnInfo.AliasName);
+
+}
+
+/// <summary>
+/// Represents a dialect package's concrete SELECT projection tag for a single column.
+/// </summary>
+public class SelectTag : SelectTagBase
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTag"/> class using reflection-resolved column and alias tags.
+    /// </summary>
+    /// <param name="columnTag">The fully qualified column identifier to project.</param>
+    /// <param name="aliasTag">An optional alias to use for this projection.</param>
+    internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null) : base(columnTag, aliasTag)
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
@@ -112,15 +147,6 @@ public sealed class SelectTag : SelectTagBase
     /// <param name="sqlExpression">The SQL expression to project.</param>
     /// <param name="aliasTag">An optional alias to use for this projection.</param>
     internal SelectTag(SqlExpression sqlExpression, AliasTag? aliasTag) : base(sqlExpression, aliasTag)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTag"/> class using reflection-resolved column and alias tags.
-    /// </summary>
-    /// <param name="columnTag">The fully qualified column identifier to project.</param>
-    /// <param name="aliasTag">An optional alias to use for this projection.</param>
-    internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null) : base(columnTag, aliasTag)
     {
     }
 
