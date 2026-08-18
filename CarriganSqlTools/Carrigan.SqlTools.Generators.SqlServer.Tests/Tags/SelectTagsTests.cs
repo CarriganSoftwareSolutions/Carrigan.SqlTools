@@ -10,7 +10,7 @@ public class SelectTagsTests
     private static readonly SqlServerDialect Dialect = new();
 
     private static SelectTagBase New(string columnName, string? aliasName) =>
-        new SelectTag(new PropertyName(columnName), AliasName.New(aliasName));
+        new SelectTag<SomeTable>(new PropertyName(columnName), AliasName.New(aliasName));
 
     private static readonly SelectTagBase a = New("SomeColumn", null);
     private static readonly SelectTagBase b = New("OtherColumn", null);
@@ -281,4 +281,10 @@ public class SelectTagsTests
     [Fact]
     public void GetManyInvalidPropertyNameException() =>
         Assert.Throws<InvalidPropertyException<Order>>(() => SelectTagGenerator.GetMany<Order>(new PropertyName("InvalidColumn")));
+
+    private class SomeTable
+    {
+        public int SomeColumn { get; set; }
+        public int OtherColumn { get; set; }
+    }
 }
