@@ -57,7 +57,7 @@ public class ArithmeticExamples
     }
 
     [Fact]
-    public void SubtractColumnAndParameter()
+    public void DivideColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
         {
@@ -65,23 +65,23 @@ public class ArithmeticExamples
             (
                 new SelectTag
                 (
-                    new Subtract
+                    new Divide
                     (
                         new Column<Grades>(nameof(Grades.CreditHours)),
-                        new Parameter(1)
+                        new Parameter(2)
                     )
                 )
             )
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" - $1) FROM \"Grades\"";
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" / $1) FROM \"Grades\"";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
 
     [Fact]
-    public void SubtractNumericColumnAndParameter()
+    public void DivideNumericColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
         {
@@ -89,17 +89,17 @@ public class ArithmeticExamples
             (
                 new SelectTag
                 (
-                    new Subtract
+                    new Divide
                     (
                         new NumericColumn<Grades>(nameof(Grades.CreditHours)),
-                        new NumericParameter(1)
+                        new NumericParameter(2)
                     )
                 )
             )
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" - $1) FROM \"Grades\"";
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" / $1) FROM \"Grades\"";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -153,7 +153,7 @@ public class ArithmeticExamples
     }
 
     [Fact]
-    public void MultiplyColumnAndParameter()
+    public void ModColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
         {
@@ -161,7 +161,7 @@ public class ArithmeticExamples
             (
                 new SelectTag
                 (
-                    new Multiply
+                    new Mod
                     (
                         new Column<Grades>(nameof(Grades.CreditHours)),
                         new Parameter(2)
@@ -171,13 +171,13 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" * $1) FROM \"Grades\"";
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" % $1) FROM \"Grades\"";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
 
     [Fact]
-    public void MultiplyNumericColumnAndParameter()
+    public void ModNumericColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
         {
@@ -185,7 +185,7 @@ public class ArithmeticExamples
             (
                 new SelectTag
                 (
-                    new Multiply
+                    new Mod
                     (
                         new NumericColumn<Grades>(nameof(Grades.CreditHours)),
                         new NumericParameter(2)
@@ -195,55 +195,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" * $1) FROM \"Grades\"";
-
-        Assert.Equal(expectedSql, sqlQuery.QueryText);
-    }
-
-    [Fact]
-    public void DivideColumnAndParameter()
-    {
-        SelectBuilder<Grades> selectBuilder = new()
-        {
-            Selects = new SelectTags
-            (
-                new SelectTag
-                (
-                    new Divide
-                    (
-                        new Column<Grades>(nameof(Grades.CreditHours)),
-                        new Parameter(2)
-                    )
-                )
-            )
-        };
-
-        SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" / $1) FROM \"Grades\"";
-
-        Assert.Equal(expectedSql, sqlQuery.QueryText);
-    }
-
-    [Fact]
-    public void DivideNumericColumnAndParameter()
-    {
-        SelectBuilder<Grades> selectBuilder = new()
-        {
-            Selects = new SelectTags
-            (
-                new SelectTag
-                (
-                    new Divide
-                    (
-                        new NumericColumn<Grades>(nameof(Grades.CreditHours)),
-                        new NumericParameter(2)
-                    )
-                )
-            )
-        };
-
-        SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" / $1) FROM \"Grades\"";
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" % $1) FROM \"Grades\"";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -297,7 +249,7 @@ public class ArithmeticExamples
     }
 
     [Fact]
-    public void ModColumnAndParameter()
+    public void MultiplyColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
         {
@@ -305,7 +257,7 @@ public class ArithmeticExamples
             (
                 new SelectTag
                 (
-                    new Mod
+                    new Multiply
                     (
                         new Column<Grades>(nameof(Grades.CreditHours)),
                         new Parameter(2)
@@ -315,13 +267,13 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" % $1) FROM \"Grades\"";
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" * $1) FROM \"Grades\"";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
 
     [Fact]
-    public void ModNumericColumnAndParameter()
+    public void MultiplyNumericColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
         {
@@ -329,7 +281,7 @@ public class ArithmeticExamples
             (
                 new SelectTag
                 (
-                    new Mod
+                    new Multiply
                     (
                         new NumericColumn<Grades>(nameof(Grades.CreditHours)),
                         new NumericParameter(2)
@@ -339,7 +291,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" % $1) FROM \"Grades\"";
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" * $1) FROM \"Grades\"";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -386,6 +338,54 @@ public class ArithmeticExamples
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
         string expectedSql = "SELECT (-\"Grades\".\"CreditHours\") FROM \"Grades\"";
+
+        Assert.Equal(expectedSql, sqlQuery.QueryText);
+    }
+
+    [Fact]
+    public void SubtractColumnAndParameter()
+    {
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Subtract
+                    (
+                        new Column<Grades>(nameof(Grades.CreditHours)),
+                        new Parameter(1)
+                    )
+                )
+            )
+        };
+
+        SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" - $1) FROM \"Grades\"";
+
+        Assert.Equal(expectedSql, sqlQuery.QueryText);
+    }
+
+    [Fact]
+    public void SubtractNumericColumnAndParameter()
+    {
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Subtract
+                    (
+                        new NumericColumn<Grades>(nameof(Grades.CreditHours)),
+                        new NumericParameter(1)
+                    )
+                )
+            )
+        };
+
+        SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" - $1) FROM \"Grades\"";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
