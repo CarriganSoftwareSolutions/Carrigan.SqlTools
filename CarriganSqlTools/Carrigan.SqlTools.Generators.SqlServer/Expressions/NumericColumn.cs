@@ -24,7 +24,7 @@ public class NumericColumn<modelT> : NumericColumnBase<modelT>
     /// <param name="propertyName">The C# property name wrapper that represents the numeric SQL column.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyName"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when the referenced property is not declared as numeric type (ex short, int, long, float, double, decimal).</exception>
-    internal NumericColumn(PropertyName propertyName) : base(new Column<modelT>(propertyName))
+    public NumericColumn(PropertyName propertyName) : base(new Column<modelT>(propertyName))
     {
     }
 
@@ -37,7 +37,7 @@ public class NumericColumn<modelT> : NumericColumnBase<modelT>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyName"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when the referenced property is not declared as numeric type (ex short, int, long, float, double, decimal).</exception>
     [ExternalOnly]
-    internal NumericColumn(string propertyName) : this(new PropertyName(propertyName))
+    public NumericColumn(string propertyName) : this(new PropertyName(propertyName))
     {
     }
 
