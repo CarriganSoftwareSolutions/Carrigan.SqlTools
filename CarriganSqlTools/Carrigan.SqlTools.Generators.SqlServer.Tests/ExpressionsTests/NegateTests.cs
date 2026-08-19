@@ -1,0 +1,31 @@
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Tags;
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
+public class NegateTests
+{
+    private readonly SqlGenerator<Grades> gradesGenerator = new();
+    [Fact]
+    public void TestNumericNegate()
+    {
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Negate
+                    (
+                        new NumericColumn<Grades>(nameof(Grades.CreditHours))
+                    )
+                )
+            )
+        };
+        SqlQuery sqlQuery = gradesGenerator.Select(selectBuilder);
+        string actualText = sqlQuery.QueryText;
+        string expectedText = "SELECT (-[Grades].[CreditHours]) FROM [Grades]";
+        Assert.Equal(expectedText, actualText);
+    }
+}
