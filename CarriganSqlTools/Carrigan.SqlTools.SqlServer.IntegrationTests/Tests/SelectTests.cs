@@ -65,8 +65,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         await using SqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
         IEnumerable<BookId> books = await CommandsAsync.ExecuteReaderAsync<BookId>(query, null, unitTestConnection);
 
-        Assert.Single(books);
-        Assert.Equal(5, books.Single().Id);
+        Assert.Equal(5, Assert.Single(books).Id);
     }
 
     [Fact]

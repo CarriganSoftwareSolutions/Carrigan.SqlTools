@@ -43,8 +43,7 @@ public sealed class HavingTests : IClassFixture<HavingFixture>
                 )
             ];
 
-            Assert.Single(rows);
-            GradesDataSet.Validate(rows[0], expected);
+            GradesDataSet.Validate(Assert.Single(rows), expected);
         }
     }
 

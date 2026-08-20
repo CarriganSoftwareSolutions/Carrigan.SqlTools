@@ -96,8 +96,15 @@ internal static class SqlQueryTestHelper
         Assert.Equal(expectedParameterName, sqlQuery.ParametersAsDictionary.Single().Key.ToString());
     }
 
-    internal static object? GetParameterValue(SqlQuery sqlQuery, string parameterName) =>
-        sqlQuery.GetParameterValue(parameterName);
+    internal static object? GetParameterValue(SqlQuery sqlQuery, string parameterName)
+    {
+        ParameterTag tag = new(parameterName);
+
+        if (sqlQuery.ParametersAsDictionary.ContainsKey(new ParameterTag(tag)))
+            return sqlQuery.ParametersAsDictionary[tag];
+        else
+            throw new KeyNotFoundException($"Parameter '{parameterName}' was not found.");
+    }
     internal static void AssertParameterValue(IEnumerable<SqlFragmentParameter> parameters, string parameterName, object? expectedValue)
     {
         SqlFragmentParameter parameter = Assert.Single

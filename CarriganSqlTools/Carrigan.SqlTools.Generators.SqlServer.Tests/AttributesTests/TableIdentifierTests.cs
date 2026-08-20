@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 
@@ -98,8 +99,9 @@ public class TableIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal("Test", (string?)query.GetParameterValue("@Text_2"));
-        Assert.Equal(guid, (Guid?)query.GetParameterValue("@Id_1"));
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@Text_2", "Test");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", guid);
     }
 
     [Fact]
@@ -121,7 +123,7 @@ public class TableIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal("Test", (string?)query.GetParameterValue("@Text_2"));
-        Assert.Equal(guid, (Guid?)query.GetParameterValue("@Id_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@Text_2", "Test");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", guid);
     }
 }

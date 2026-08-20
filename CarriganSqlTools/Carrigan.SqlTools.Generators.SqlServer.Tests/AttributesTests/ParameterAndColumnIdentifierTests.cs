@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;
@@ -80,7 +81,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeIdParameter_1", 1);
     }
     [Fact]
     public void DeleteAllTest()
@@ -105,8 +106,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_1"));
-        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_2"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeIdParameter_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeColumnParameter_2", 3);
     }
 
     [Fact]
@@ -118,8 +119,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_1"));
-        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_2"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeIdParameter_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeColumnParameter_2", 3);
     }
 
     [Fact]
@@ -130,7 +131,7 @@ public class ParameterAndColumnIdentifierTests
         string expected = ModifyInsertQueryWithReturn("INSERT INTO [SomeSchema].[SomeTable] ([SomeColumn])", "VALUES (@SomeColumnParameter_1)", "UNIQUEIDENTIFIER");
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeColumnParameter_1", 3);
     }
 
     [Fact]
@@ -142,8 +143,9 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_2"));
-        Assert.Equal(3, (int?)query.GetParameterValue("@SomeColumnParameter_1"));
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeIdParameter_2", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeColumnParameter_1", 3);
     }
 
     [Fact]
@@ -155,9 +157,10 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(3, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@SomeIdParameter_2"));
-        Assert.Equal(6, (int?)query.GetParameterValue("@SomeIdParameter_3"));
-        Assert.Equal(13, (int?)query.GetParameterValue("@SomeColumnParameter_1"));
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeIdParameter_2", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeIdParameter_3", 6);
+        SqlQueryTestHelper.AssertParameterValue(query, "@SomeColumnParameter_1", 13);
     }
 
     [Fact]
@@ -227,8 +230,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
-        Assert.Equal(2, (int?)query.GetParameterValue("@p2_2"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@p2_2", 2);
     }
 
     [Fact]
@@ -259,7 +262,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -272,7 +275,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expected, actual);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@IdParameter_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@IdParameter_1", 1);
     }
 
     [Fact]
@@ -288,7 +291,7 @@ public class ParameterAndColumnIdentifierTests
 
         Assert.Equal(expected, actual);
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -305,7 +308,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -322,7 +325,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -339,7 +342,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -388,7 +391,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -405,7 +408,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -422,7 +425,7 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(1, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
     }
 
     [Fact]
@@ -443,8 +446,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
-        Assert.Equal(2, (int?)query.GetParameterValue("@p2_2"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@p2_2", 2);
     }
 
     [Fact]
@@ -465,8 +468,8 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(2, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
-        Assert.Equal(2, (int?)query.GetParameterValue("@p2_2"));
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@p2_2", 2);
     }
 
     [Fact]
@@ -480,10 +483,11 @@ public class ParameterAndColumnIdentifierTests
         Assert.Equal(expectedSql, actualSql);
 
         Assert.Equal(5, query.GetParameterCount());
-        Assert.Equal(1, (int?)query.GetParameterValue("@IdParameter_1"));
-        Assert.Equal(2, (int?)query.GetParameterValue("@PropertyParameter_2"));
-        Assert.Equal(3, (int?)query.GetParameterValue("@ColumnParameter_3"));
-        Assert.Equal(4, (int?)query.GetParameterValue("@IdentifierParameter_4"));
-        Assert.Equal(5, (int?)query.GetParameterValue("@IdentifierOverrideParameter_5"));
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@IdParameter_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@PropertyParameter_2", 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "@ColumnParameter_3", 3);
+        SqlQueryTestHelper.AssertParameterValue(query, "@IdentifierParameter_4", 4);
+        SqlQueryTestHelper.AssertParameterValue(query, "@IdentifierOverrideParameter_5", 5);
     }
 }
