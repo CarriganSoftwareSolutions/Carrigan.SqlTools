@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 
-namespace Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.SqlTypes;
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TestEntities.Exceptionals.SqlTypes;
 
 public sealed class SqlTypeMismatchAttributeEntity
 {

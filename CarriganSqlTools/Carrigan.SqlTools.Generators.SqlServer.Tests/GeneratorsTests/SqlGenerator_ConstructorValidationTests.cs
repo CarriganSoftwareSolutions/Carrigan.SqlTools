@@ -9,6 +9,7 @@ using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.SqlTypes;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Table;
 using Carrigan.SqlTools.Base.Tests.TestEntities.NotExceptional;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Generators.SqlServer.Tests.TestEntities.Exceptionals.SqlTypes;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlServer;

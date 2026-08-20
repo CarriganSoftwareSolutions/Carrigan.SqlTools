@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
@@ -49,22 +50,8 @@ public sealed class SqlQueryTests
 
         Assert.Equal(2, query.GetParameterCount());
 
-        Assert.Equal(1, (int?)query.GetParameterValue("@p1_1"));
-        Assert.Equal(2, (int?)query.GetParameterValue("@p2_2"));
-    }
+        SqlQueryTestHelper.AssertParameterValue(query, "@p1_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@p2_2", 2);
 
-    [Fact]
-    public void GetParameterValue_NotFound_Exception()
-    {
-        List<ISqlFragment> sql =
-        [
-            new SqlFragmentText("SELECT "),
-            new SqlFragmentParameter(new ParameterTag("@p1"), null, 1),
-            new SqlFragmentText(" "),
-            new SqlFragmentParameter(new ParameterTag("@p2"), null, 2)
-        ];
-        SqlQuery query = new(Dialect, CommandType.Text, sql);
-
-        Assert.Throws<KeyNotFoundException>(() => (int?)query.GetParameterValue("@missing"));
     }
 }

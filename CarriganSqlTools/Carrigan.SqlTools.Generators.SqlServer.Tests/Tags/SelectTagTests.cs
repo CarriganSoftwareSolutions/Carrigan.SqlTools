@@ -12,8 +12,8 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
 public class SelectTagTests
 {
     private static readonly SqlServerDialect Dialect = new();
-    private static SelectTagBase New(string columnName, string? aliasName) =>
-        new SelectTag<SomeTable>(new PropertyName(columnName), AliasName.New(aliasName));
+    private static SelectTag<SomeTable> New(string columnName, string? aliasName) =>
+        new (new PropertyName(columnName), AliasName.New(aliasName));
 
     private static readonly SelectTagBase a = New("SomeColumn", null);
     private static readonly SelectTagBase b = New("OtherColumn", null);

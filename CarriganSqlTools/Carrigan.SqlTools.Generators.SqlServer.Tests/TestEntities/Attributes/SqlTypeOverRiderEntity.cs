@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Types;
 
-namespace Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.TestEntities.Attributes;
 
 public sealed class SqlTypeOverRiderEntity
 {

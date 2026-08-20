@@ -1,3 +1,4 @@
+using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
@@ -70,7 +71,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    [TypeSafetyLoss]
     public static implicit operator NumericColumn<T>(Column<T> column) =>
         new(column);
 
@@ -80,7 +81,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    [TypeSafetyLoss]
     public static implicit operator NumericColumnBase<T>(Column<T> column) =>
         new NumericColumn<T>(column);
 
@@ -90,7 +91,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    [TypeSafetyLoss]
     public static implicit operator NumericExpression(Column<T> column) =>
         new NumericColumn<T>(column);
 
@@ -100,7 +101,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    [TypeSafetyLoss]
     public static implicit operator BooleanColumn<T>(Column<T> column) =>
         new(column);
 
@@ -110,7 +111,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    [TypeSafetyLoss]
     public static implicit operator BooleanColumnBase<T>(Column<T> column) =>
         new BooleanColumn<T>(column);
 
@@ -120,7 +121,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn about loss of type safety.
+    [TypeSafetyLoss]
     public static implicit operator Predicates(Column<T> column) =>
         new BooleanColumn<T>(column);
     #endregion

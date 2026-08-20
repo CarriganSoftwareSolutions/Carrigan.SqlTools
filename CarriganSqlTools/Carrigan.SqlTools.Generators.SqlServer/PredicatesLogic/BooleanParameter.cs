@@ -1,3 +1,4 @@
+using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
@@ -101,8 +102,8 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// <param name="parameter">
     /// The <see cref="Parameter"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn against using this.
     //TODO: unite tests
+    [TypeSafetyLoss]
     public static implicit operator BooleanParameter<modelT>(Parameter parameter) =>
         new (parameter);
 
@@ -112,8 +113,8 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// <param name="parameter">
     /// The <see cref="Parameter{modelT}"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn against using this.
     //TODO: unite tests
+    [TypeSafetyLoss]
     public static implicit operator BooleanParameter<modelT>(Parameter<modelT> parameter) =>
         new (parameter);
 

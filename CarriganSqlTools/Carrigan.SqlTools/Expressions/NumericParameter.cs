@@ -1,3 +1,4 @@
+using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
@@ -119,8 +120,8 @@ public class NumericParameter<T> : NumericParameter
     /// <param name="parameter">
     /// The <see cref="Parameter"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn against using this.
     //TODO: unite tests
+    [TypeSafetyLoss]
     public static implicit operator NumericParameter<T>(Parameter parameter) =>
         new(parameter);
 
@@ -344,8 +345,8 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="parameter">
     /// The <see cref="Parameter"/> instance to convert.
     /// </param>
-    //TODO: create Roslyn analyzer to warn against using this.
     //TODO: unite tests
+    [TypeSafetyLoss]
     public static implicit operator NumericParameter(Parameter parameter) =>
         new(parameter);
 

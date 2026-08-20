@@ -94,28 +94,6 @@ public class SqlQuery
     }
 
     /// <summary>
-    /// Retrieves the value of a parameter by its name (for unit testing).
-    /// </summary>
-    /// <param name="parameterTestName">The parameter name to look up.</param>
-    /// <returns>The stored parameter value, or <c>null</c>.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// <paramref name="parameterTestName"/> is <c>null</c>.
-    /// </exception>
-    /// <exception cref="KeyNotFoundException">
-    /// Thrown when <paramref name="parameterTestName"/> is not present in <see cref="Parameters"/>.
-    /// </exception>
-    internal object? GetParameterValue(string parameterTestName)
-    {
-        ArgumentNullException.ThrowIfNull(parameterTestName);
-        ParameterTag tag = new (parameterTestName);
-
-        if (ParametersAsDictionary.ContainsKey(new ParameterTag(tag)))
-            return ParametersAsDictionary[tag];
-        else
-            throw new KeyNotFoundException($"Parameter '{parameterTestName}' was not found.");
-    }
-
-    /// <summary>
     /// Returns the total number of parameters (for unit testing).
     /// </summary>
     /// <returns>The number of items in the <see cref="Parameters"/> dictionary.</returns>
