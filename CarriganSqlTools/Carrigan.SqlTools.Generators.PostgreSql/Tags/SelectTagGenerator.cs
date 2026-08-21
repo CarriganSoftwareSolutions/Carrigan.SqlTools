@@ -18,7 +18,7 @@ public static class SelectTagGenerator
     /// </summary>
     /// <param name="sqlExpression">The SQL expression to select.</param>
     /// <param name="aliasName">The SQL alias name to apply.</param>
-    public static SelectTag Get(SqlExpression sqlExpression, AliasName? aliasName = null) =>
+    public static SelectTag Get(SqlExpression sqlExpression, AliasName aliasName) =>
         new(sqlExpression, aliasName);
 
     /// <summary>

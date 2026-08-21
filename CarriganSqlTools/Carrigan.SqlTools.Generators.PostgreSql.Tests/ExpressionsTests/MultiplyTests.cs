@@ -26,7 +26,8 @@ public class MultiplyTests
                     (
                         new NumericColumn<Grades>(nameof(Grades.CreditHours)),
                         new Parameter(1)
-                    )
+                    ),
+                    "ArthemicResult"
                 )
             )
         };
@@ -34,7 +35,7 @@ public class MultiplyTests
 
         SqlQuery sqlQuery = gradesGenerator.Select(selectBuilder);
         string actualText = sqlQuery.QueryText;
-        string expectedText = "SELECT (\"Grades\".\"CreditHours\" * $1) FROM \"Grades\"";
+        string expectedText = "SELECT (\"Grades\".\"CreditHours\" * $1) AS \"ArthemicResult\" FROM \"Grades\"";
 
 
         Assert.Equal(expectedText, actualText);
@@ -58,7 +59,8 @@ public class MultiplyTests
                         new NumericColumn<Grades>(nameof(Grades.CreditHours)),
                         new Parameter(1),
                         new Parameter(2)
-                    )
+                    ),
+                    "ArthemicResult"
                 )
             )
         };
@@ -66,7 +68,7 @@ public class MultiplyTests
 
         SqlQuery sqlQuery = gradesGenerator.Select(selectBuilder);
         string actualText = sqlQuery.QueryText;
-        string expectedText = "SELECT (\"Grades\".\"CreditHours\" * $1 * $2) FROM \"Grades\"";
+        string expectedText = "SELECT (\"Grades\".\"CreditHours\" * $1 * $2) AS \"ArthemicResult\" FROM \"Grades\"";
 
 
         Assert.Equal(expectedText, actualText);

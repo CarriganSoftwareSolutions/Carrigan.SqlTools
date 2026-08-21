@@ -29,14 +29,15 @@ public class SubtractTests
                     (
                         new NumericColumn<Grades>(nameof(Grades.CreditHours)),
                         new Parameter(1)
-                    )
+                    ),
+                    "ArthemicResult"
                 )
             )
         };
 
         SqlQuery sqlQuery = gradesGenerator.Select(selectBuilder);
         string actualText = sqlQuery.QueryText;
-        string expectedText = "SELECT ([Grades].[CreditHours] - @Parameter_1) FROM [Grades]";
+        string expectedText = "SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedText, actualText);
 
@@ -57,14 +58,15 @@ public class SubtractTests
                         new NumericColumn<Grades>(nameof(Grades.CreditHours)),
                         new Parameter(1),
                         new Parameter(2)
-                    )
+                    ),
+                    "ArthemicResult"
                 )
             )
         };
 
         SqlQuery sqlQuery = gradesGenerator.Select(selectBuilder);
         string actualText = sqlQuery.QueryText;
-        string expectedText = "SELECT ([Grades].[CreditHours] - @Parameter_1 - @Parameter_2) FROM [Grades]";
+        string expectedText = "SELECT ([Grades].[CreditHours] - @Parameter_1 - @Parameter_2) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedText, actualText);
 

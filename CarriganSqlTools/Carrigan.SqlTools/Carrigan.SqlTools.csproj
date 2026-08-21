@@ -46,8 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.6-alpha.202608210432" />
-    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.6-alpha.202608210432" PrivateAssets="all" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.6-alpha.202608210855" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.6-alpha.202608210855" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="All" />
   </ItemGroup>
 
