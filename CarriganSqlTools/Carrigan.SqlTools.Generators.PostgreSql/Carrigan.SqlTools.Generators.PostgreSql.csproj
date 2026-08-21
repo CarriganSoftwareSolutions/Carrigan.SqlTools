@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>Carrigan.SqlTools.Generators.PostgreSql</PackageId>
     <RootNamespace>Carrigan.SqlTools</RootNamespace>
@@ -43,7 +43,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.6-alpha.202608200602" PrivateAssets="all" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.6-alpha.202608210432" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="All" />
   </ItemGroup>
 

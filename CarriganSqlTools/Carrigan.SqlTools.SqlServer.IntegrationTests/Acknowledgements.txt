@@ -17,7 +17,7 @@ and upstream project repositories.
     https://github.com/dotnet/runtime/blob/main/LICENSE.TXT  
     https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT
 
-- coverlet.collector  
+- coverlet.MTP  
     © Contributors  
     Licensed under the MIT License  
     https://github.com/coverlet-coverage/coverlet/tree/master
@@ -30,13 +30,6 @@ and upstream project repositories.
     https://github.com/dotnet/SqlClient/
     https://github.com/dotnet/SqlClient/blob/main/LICENSE
     https://github.com/dotnet/SqlClient/blob/main/NOTICE.txt
-
-- Microsoft.NET.Test.Sdk  
-    © Microsoft Corporation  
-    Licensed under the MIT License  
-    https://github.com/microsoft/vstest/blob/main/
-    https://github.com/microsoft/vstest/blob/main/LICENSE
-    https://github.com/microsoft/vstest/blob/main/THIRD-PARTY-NOTICES.txt
     
 - Respawn
     @ Jimmy Bogard
@@ -49,12 +42,6 @@ and upstream project repositories.
     Licensed under the Apache License, Version 2.0  
     https://github.com/xunit/xunit/blob/main/
     https://github.com/xunit/xunit/blob/main/LICENSE
-
-- xunit.runner.visualstudio  
-    © xUnit contributors  
-    Licensed under the Apache License, Version 2.0  
-    https://github.com/xunit/visualstudio.xunit/blob/main/
-    https://github.com/xunit/visualstudio.xunit/blob/main/License.txt
 
 SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
 
