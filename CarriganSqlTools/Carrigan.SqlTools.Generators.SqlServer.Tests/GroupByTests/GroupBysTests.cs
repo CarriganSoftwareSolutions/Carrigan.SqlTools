@@ -209,8 +209,8 @@ public class GroupBysTests
     public void Contains_WithColumnExpressionSelectTag_ReturnsExpectedResult()
     {
         GroupBys groupBy = new(new GroupBy<Address>(nameof(Address.Street)));
-        SelectTag streetSelectTag = new(new Column<Address>(nameof(Address.Street)));
-        SelectTag citySelectTag = new(new Column<Address>(nameof(Address.City)));
+        SelectTag<Address> streetSelectTag = new(nameof(Address.Street));
+        SelectTag<Address> citySelectTag = new(nameof(Address.City));
 
         Assert.True(groupBy.Contains(streetSelectTag));
         Assert.False(groupBy.Contains(citySelectTag));

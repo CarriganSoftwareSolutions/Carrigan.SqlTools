@@ -21,13 +21,14 @@ public class NegateTests
                     new Negate
                     (
                         new NumericColumn<Grades>(nameof(Grades.CreditHours))
-                    )
+                    ),
+                    "ArthemicResult"
                 )
             )
         };
         SqlQuery sqlQuery = gradesGenerator.Select(selectBuilder);
         string actualText = sqlQuery.QueryText;
-        string expectedText = "SELECT (-\"Grades\".\"CreditHours\") FROM \"Grades\"";
+        string expectedText = "SELECT (-\"Grades\".\"CreditHours\") AS \"ArthemicResult\" FROM \"Grades\"";
         Assert.Equal(expectedText, actualText);
     }
 }

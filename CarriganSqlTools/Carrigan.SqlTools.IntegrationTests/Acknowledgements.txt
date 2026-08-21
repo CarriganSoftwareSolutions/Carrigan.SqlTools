@@ -28,6 +28,12 @@ limited to:
     © James Newkirk, Brad Wilson, and xUnit contributors  
     Licensed under the Apache License, Version 2.0  
     https://github.com/xunit/xunit/blob/main/LICENSE
+    
+- Respawn
+    @ Jimmy Bogard
+    Licensed under the Apache License, Version 2.0  
+    https://github.com/jbogard/Respawn/blob/main/
+    https://github.com/jbogard/Respawn/blob/master/LICENSE
 
 Unless otherwise expressly stated in a given package or distribution, references
 to third-party dependencies in this repository generally refer to dependencies
