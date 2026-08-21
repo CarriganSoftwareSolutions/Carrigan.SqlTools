@@ -108,7 +108,7 @@ public class NumericParameter<modelT, T> : NumericParameter<T>
     /// <param name="parameter">
     /// The <see cref="Parameter{modelT}"/> instance to convert.
     /// </param>
-    //TODO: unit tests
+    //TODO: unit test
     [TypeSafetyLoss]
     public static implicit operator NumericParameter<modelT, T>(Parameter<modelT> parameter) =>
         new (parameter);
