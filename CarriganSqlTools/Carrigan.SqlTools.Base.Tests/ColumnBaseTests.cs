@@ -42,6 +42,8 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
     protected virtual IEnumerable<string> NotMappedProperties => [];
 
+    //protected abstract IEnumerable<string> NumericProperties { get; }
+
     protected TableTag ExpectedTableTag =>
         new(SchemaName, TableName);
 
@@ -59,124 +61,106 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
     protected void ValidateSqlFragment(string propertyName)
     {
-        ColumnBase columnBase = NewColumn(propertyName);
+        void Test(SqlExpression expression)
+        {
+            string actual = expression?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
+            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName]);
 
-        string actual = columnBase?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
-        string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName]);
-
-        Assert.Equal(expected, actual);
-
-        columnBase = NewColumn(new PropertyName(propertyName));
-
-        actual = columnBase?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
-
-        Assert.Equal(expected, actual);
-
-        SqlExpression sqlExpression = NewColumnAsExpression(propertyName);
-
-        actual = sqlExpression.ToSqlFragments(Dialect).ToSql(Dialect);
-
-        Assert.Equal(expected, actual);
-
-        sqlExpression = NewColumnAsExpression(new PropertyName(propertyName));
-
-        actual = sqlExpression.ToSqlFragments(Dialect).ToSql(Dialect);
-
-        Assert.Equal(expected, actual);
+            Assert.Equal(expected, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
+        Test(NewColumnAsExpression(propertyName));
+        Test(NewColumnAsExpression(new PropertyName(propertyName)));
     }
 
     protected void ValidateExpectedPropertyColumnTag(string propertyName)
     {
-        ColumnBase columnBase = NewColumn(propertyName);
-        ColumnTag actual = columnBase.ColumnInfo.ColumnTag;
-        ColumnTag expected = ExpectedPropertyColumnTag[propertyName];
-        Assert.Equal(expected, actual);
-
-        columnBase = NewColumn(new PropertyName(propertyName));
-        actual = columnBase.ColumnInfo.ColumnTag;
-        Assert.Equal(expected, actual);
+        void Test(ColumnBase columnBase)
+        {
+            ColumnTag actual = columnBase.ColumnInfo.ColumnTag;
+            ColumnTag expected = ExpectedPropertyColumnTag[propertyName];
+            Assert.Equal(expected, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
     }
 
     protected void ValidateExpectedPropertyColumnName(string propertyName)
     {
-        ColumnBase columnBase = NewColumn(propertyName);
-        ColumnName actual = columnBase.ColumnInfo.ColumnTag.ColumnName;
-        ColumnName expected = ExpectedPropertyColumnName[propertyName];
-        Assert.Equal(expected, actual);
-
-        columnBase = NewColumn(new PropertyName(propertyName));
-        actual = columnBase.ColumnInfo.ColumnTag.ColumnName;
-        Assert.Equal(expected, actual);
+        void Test(ColumnBase columnBase)
+        {
+            ColumnName actual = columnBase.ColumnInfo.ColumnTag.ColumnName;
+            ColumnName expected = ExpectedPropertyColumnName[propertyName];
+            Assert.Equal(expected, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
     }
 
     protected void ValidateExpectedPropertyTableTag(string propertyName)
     {
-        ColumnBase columnBase = NewColumn(propertyName);
-        TableTag actual = columnBase.ColumnInfo.ColumnTag.TableTag;
-        TableTag expected = ExpectedTableTag;
-        Assert.Equal(expected, actual);
-
-        columnBase = NewColumn(new PropertyName(propertyName));
-        actual = columnBase.ColumnInfo.ColumnTag.TableTag;
-        Assert.Equal(expected, actual);
+        void Test(ColumnBase columnBase)
+        {
+            TableTag actual = columnBase.ColumnInfo.ColumnTag.TableTag;
+            TableTag expected = ExpectedTableTag;
+            Assert.Equal(expected, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
     }
 
     protected void ValidateExpectedPropertyTableName(string propertyName)
     {
-        ColumnBase columnBase = NewColumn(propertyName);
-        TableName actual = columnBase.ColumnInfo.ColumnTag.TableTag.TableName;
-        TableName expected = ExpectedTableName;
-        Assert.Equal(expected, actual);
-
-        columnBase = NewColumn(new PropertyName(propertyName));
-        actual = columnBase.ColumnInfo.ColumnTag.TableTag.TableName;
-        Assert.Equal(expected, actual);
+        void Test(ColumnBase columnBase)
+        {
+            TableName actual = columnBase.ColumnInfo.ColumnTag.TableTag.TableName;
+            TableName expected = ExpectedTableName;
+            Assert.Equal(expected, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
     }
 
     protected void ValidateExpectedPropertySchemaName(string propertyName)
     {
-        ColumnBase columnBase = NewColumn(propertyName);
-        SchemaName? actual = columnBase.ColumnInfo.ColumnTag.TableTag.SchemaName;
-        SchemaName? expected = ExpectedScehemaName;
-        if (expected is null)
-            Assert.Null(actual);
-        else
-            Assert.Equal(expected, actual);
-
-        columnBase = NewColumn(new PropertyName(propertyName));
-        actual = columnBase.ColumnInfo.ColumnTag.TableTag.SchemaName;
-        if (expected is null)
-            Assert.Null(actual);
-        else
-            Assert.Equal(expected, actual);
+        void Test(ColumnBase columnBase)
+        {
+            SchemaName? actual = columnBase.ColumnInfo.ColumnTag.TableTag.SchemaName;
+            SchemaName? expected = ExpectedScehemaName;
+            if (expected is null)
+                Assert.Null(actual);
+            else
+                Assert.Equal(expected, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
     }
 
     protected void ValidateNoDescendantParameters(string propertyName)
     {
-        ColumnBase column = NewColumn(propertyName);
-        int expectedValue = 0;
-        int actual = column.DescendantParameters.Count();
+        static void Test(ColumnBase columnBase)
+        {
+            int expectedValue = 0;
+            int actual = columnBase.DescendantParameters.Count();
 
-        Assert.Equal(expectedValue, actual);
-
-        column = NewColumn(new PropertyName(propertyName));
-        actual = column.DescendantParameters.Count();
-
-        Assert.Equal(expectedValue, actual);
+            Assert.Equal(expectedValue, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
     }
 
     protected void ValidateNoDescendantColumns(string propertyName)
     {
-        ColumnBase column = NewColumn(propertyName);
-        int expectedValue = 0;
-        int actual = column.DescendantColumns.Count();
+        static void Test(ColumnBase columnBase)
+        {
+            int expectedValue = 0;
+            int actual = columnBase.DescendantColumns.Count();
 
-        Assert.Equal(expectedValue, actual);
-
-        column = NewColumn(new PropertyName(propertyName));
-        actual = column.DescendantColumns.Count();
-
-        Assert.Equal(expectedValue, actual);
+            Assert.Equal(expectedValue, actual);
+        }
+        Test(NewColumn(propertyName));
+        Test(NewColumn(new PropertyName(propertyName)));
     }
 
     protected void RunValidationMethod(Action<string> action)
