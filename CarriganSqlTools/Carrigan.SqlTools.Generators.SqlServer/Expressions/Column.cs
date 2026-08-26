@@ -137,15 +137,6 @@ public class Column<T> : ColumnBase<T> where T : class
         new(numericColumnBase.PropertyName);
 
     /// <summary>
-    /// Implicitly converts a <see cref="BooleanColumn{T}"/> to a <see cref="Column{T}"/>.
-    /// </summary>
-    /// <param name="booleanColumn">
-    /// The <see cref="BooleanColumn{T}"/> instance to convert.
-    /// </param>
-    public static implicit operator Column<T>(BooleanColumn<T> booleanColumn) =>
-        new(booleanColumn.PropertyName);
-
-    /// <summary>
     /// Implicitly converts a <see cref="BooleanColumnBase{T}"/> to a <see cref="Column{T}"/>.
     /// </summary>
     /// <param name="booleanColumn">

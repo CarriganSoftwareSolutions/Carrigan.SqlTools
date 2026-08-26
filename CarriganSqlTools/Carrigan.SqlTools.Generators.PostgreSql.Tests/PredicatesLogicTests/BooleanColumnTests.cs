@@ -4,18 +4,18 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.PredicatesLogicTests;
 
 public class BooleanColumnTests
 {
-    private static readonly SqlServerDialect Dialect = new();
+    private static readonly PostgreSqlDialect Dialect = new();
 
     [Fact]
     public void Constructor_BoolColumn()
     {
         BooleanColumn<LogicalPredicateTable> booleanColumn = new(nameof(LogicalPredicateTable.IsActive));
 
-        string expectedValue = "[LogicalPredicateTable].[IsActive]";
+        string expectedValue = "\"LogicalPredicateTable\".\"IsActive\"";
         string actualValue = booleanColumn.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
@@ -26,7 +26,7 @@ public class BooleanColumnTests
     {
         BooleanColumn<LogicalPredicateTable> booleanColumn = new(nameof(LogicalPredicateTable.IsVisible));
 
-        string expectedValue = "[LogicalPredicateTable].[IsVisible]";
+        string expectedValue = "\"LogicalPredicateTable\".\"IsVisible\"";
         string actualValue = booleanColumn.ToSqlFragments(Dialect).ToSql(Dialect);
 
         Assert.Equal(expectedValue, actualValue);
