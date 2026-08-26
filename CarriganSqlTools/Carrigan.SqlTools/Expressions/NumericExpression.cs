@@ -1,5 +1,6 @@
 ﻿
 
+using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 
@@ -31,8 +32,8 @@ public abstract class NumericExpression : SqlExpression
     /// <param name="parameter">
     /// The <see cref="Parameter"/> to convert to a <see cref="NumericExpression"/>.
     /// </param>
-    //TODO: create Roslyn analyzer to warn against using this.
     //TODO: unite tests
+    [TypeSafetyLoss]
     public static implicit operator NumericExpression(Parameter parameter) =>
         new NumericParameter(parameter);
 }

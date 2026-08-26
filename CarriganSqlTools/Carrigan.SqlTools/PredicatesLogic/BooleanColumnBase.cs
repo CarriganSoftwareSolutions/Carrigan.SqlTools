@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -48,7 +49,7 @@ public abstract class BooleanColumnBase<T> : Predicates where T : class
 
         Type columnType = column.ColumnInfo.Type;
         if (columnType != typeof(bool) && columnType != typeof(bool?))
-            throw new ArgumentException($"{column.ColumnInfo.PropertyName} must represent a bool or bool? property on {typeof(T).Name} to be used as a boolean predicate.", nameof(column));
+            throw new NonBooleanValueException($"{column.ColumnInfo.PropertyName} must represent a bool or bool? property on {typeof(T).Name} to be used as a boolean predicate.");
 
         return column;
     }

@@ -146,7 +146,7 @@ public class BooleanParameter : Predicates, IParameter
     private static void ValidateType(object? value)
     {
         if (value.GetUnderlyingType().IsNotBoolType())
-            throw new NonNumericValueException(value.GetUnderlyingType());
+            throw new NonBooleanValueException(value.GetUnderlyingType());
     }
 
     /// <summary>

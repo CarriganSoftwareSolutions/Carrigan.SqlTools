@@ -1,8 +1,8 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -51,7 +51,7 @@ public abstract class NumericColumnBase<T> : NumericExpression where T : class
 
         Type columnType = column.ColumnInfo.Type;
         if (columnType.IsNumericType() is  false)
-            throw new ArgumentException($"{column.ColumnInfo.PropertyName} must represent a numeric property on {typeof(T).Name} to be used as a numeric predicate.", nameof(column));
+            throw new NonNumericValueException($"{column.ColumnInfo.PropertyName} must represent a numeric property on {typeof(T).Name} to be used as a numeric predicate.");
 
         return column;
     }

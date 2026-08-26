@@ -114,12 +114,12 @@ public class TableTag : StringWrapper, ISqlFragment
     /// <summary>
     /// The optional schema that qualifies the table name.
     /// </summary>
-    private readonly SchemaName? SchemaName;
+    internal readonly SchemaName? SchemaName;
 
     /// <summary>
     /// The table identifier without the schema qualifier.
     /// </summary>
-    private readonly TableName TableName;
+    internal readonly TableName TableName;
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>
