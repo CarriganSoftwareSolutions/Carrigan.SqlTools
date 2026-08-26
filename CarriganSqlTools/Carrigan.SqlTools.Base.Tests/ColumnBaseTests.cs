@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
+using System.Linq.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests;
 
@@ -24,6 +25,21 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
     protected abstract SqlExpression NewColumnAsExpression(PropertyName propertyName);
 
+
+
+    protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(string propertyName);
+    protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(PropertyName propertyName);
+
+    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBaseModelType(string propertyName);
+    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBaseModelType(PropertyName propertyName);
+
+    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBase(string propertyName);
+    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBase(PropertyName propertyName);
+
+    protected abstract ColumnBase NewNumericColumnBaseModelTypeToColumnModelType(string propertyName);
+    protected abstract ColumnBase NewNumericColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
+
+
     protected KeyValuePair<string, ColumnName> NewKvp(string propertyName, string ColumnName) =>
         new (propertyName, new ColumnName(ColumnName));
 
@@ -42,7 +58,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
     protected virtual IEnumerable<string> NotMappedProperties => [];
 
-    //protected abstract IEnumerable<string> NumericProperties { get; }
+    protected abstract IEnumerable<string> NumericProperties { get; }
 
     protected TableTag ExpectedTableTag =>
         new(SchemaName, TableName);
@@ -50,13 +66,79 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
     protected TableName ExpectedTableName =>
         new(TableName);
 
-    protected SchemaName? ExpectedScehemaName =>
+    protected SchemaName? ExpectedSchemaName =>
         IdentifierTypes.SchemaName.New(SchemaName);
 
     protected abstract string ExpectSqlFragment(string expectedColumnName);
 
     protected ColumnBaseTests()
     {
+    }
+
+    private void RunSubMethod(Action<ColumnBase> test, string propertyName)
+    {
+        test(NewColumn(propertyName));
+        test(NewColumn(new PropertyName(propertyName)));
+        if (NumericProperties.Contains(propertyName))
+        {
+
+            test(NewNumericColumnModelTypeToColumnModelType(propertyName));
+            test(NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
+
+            test(NewNumericColumnModelTypeToColumnBaseModelType(propertyName));
+            test(NewNumericColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
+
+            test(NewNumericColumnModelTypeToColumnBase(propertyName));
+            test(NewNumericColumnModelTypeToColumnBase(new PropertyName(propertyName)));
+
+            test(NewNumericColumnBaseModelTypeToColumnModelType(propertyName));
+            test(NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
+        }
+        else
+        {
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnModelType(propertyName));
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
+
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBaseModelType(propertyName));
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
+
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBase(propertyName));
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBase(new PropertyName(propertyName)));
+
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnBaseModelTypeToColumnModelType(propertyName));
+            Assert.Throws<NonNumericValueException>(() => NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
+        }
+    }
+    private void RunExceptionalTests(Func<Action, object?> exceptionTest, string? propertyName)
+    {
+        exceptionTest(() => NewColumn(propertyName!));
+        exceptionTest(() => NewColumn(new PropertyName(propertyName)));
+
+        exceptionTest(() => NewNumericColumnModelTypeToColumnModelType(propertyName!));
+        exceptionTest(() => NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
+
+        exceptionTest(() => NewNumericColumnModelTypeToColumnBaseModelType(propertyName!));
+        exceptionTest(() => NewNumericColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
+
+        exceptionTest(() => NewNumericColumnModelTypeToColumnBase(propertyName!));
+        exceptionTest(() => NewNumericColumnModelTypeToColumnBase(new PropertyName(propertyName)));
+
+        exceptionTest(() => NewNumericColumnBaseModelTypeToColumnModelType(propertyName!));
+        exceptionTest(() => NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
+
+    }
+
+
+    protected void ValidateColumnSqlFragments(string propertyName)
+    {
+        void Test(ColumnBase columnBase)
+        {
+            string actual = columnBase?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
+            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName]);
+
+            Assert.Equal(expected, actual);
+        }
+        RunSubMethod(Test, propertyName);
     }
 
     protected void ValidateSqlFragment(string propertyName)
@@ -82,8 +164,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
             ColumnTag expected = ExpectedPropertyColumnTag[propertyName];
             Assert.Equal(expected, actual);
         }
-        Test(NewColumn(propertyName));
-        Test(NewColumn(new PropertyName(propertyName)));
+        RunSubMethod(Test, propertyName);
     }
 
     protected void ValidateExpectedPropertyColumnName(string propertyName)
@@ -94,8 +175,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
             ColumnName expected = ExpectedPropertyColumnName[propertyName];
             Assert.Equal(expected, actual);
         }
-        Test(NewColumn(propertyName));
-        Test(NewColumn(new PropertyName(propertyName)));
+        RunSubMethod(Test, propertyName);
     }
 
     protected void ValidateExpectedPropertyTableTag(string propertyName)
@@ -106,8 +186,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
             TableTag expected = ExpectedTableTag;
             Assert.Equal(expected, actual);
         }
-        Test(NewColumn(propertyName));
-        Test(NewColumn(new PropertyName(propertyName)));
+        RunSubMethod(Test, propertyName);
     }
 
     protected void ValidateExpectedPropertyTableName(string propertyName)
@@ -118,8 +197,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
             TableName expected = ExpectedTableName;
             Assert.Equal(expected, actual);
         }
-        Test(NewColumn(propertyName));
-        Test(NewColumn(new PropertyName(propertyName)));
+        RunSubMethod(Test, propertyName);
     }
 
     protected void ValidateExpectedPropertySchemaName(string propertyName)
@@ -127,14 +205,13 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         void Test(ColumnBase columnBase)
         {
             SchemaName? actual = columnBase.ColumnInfo.ColumnTag.TableTag.SchemaName;
-            SchemaName? expected = ExpectedScehemaName;
+            SchemaName? expected = ExpectedSchemaName;
             if (expected is null)
                 Assert.Null(actual);
             else
                 Assert.Equal(expected, actual);
         }
-        Test(NewColumn(propertyName));
-        Test(NewColumn(new PropertyName(propertyName)));
+        RunSubMethod(Test, propertyName);
     }
 
     protected void ValidateNoDescendantParameters(string propertyName)
@@ -146,8 +223,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
             Assert.Equal(expectedValue, actual);
         }
-        Test(NewColumn(propertyName));
-        Test(NewColumn(new PropertyName(propertyName)));
+        RunSubMethod(Test, propertyName);
     }
 
     protected void ValidateNoDescendantColumns(string propertyName)
@@ -159,8 +235,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
             Assert.Equal(expectedValue, actual);
         }
-        Test(NewColumn(propertyName));
-        Test(NewColumn(new PropertyName(propertyName)));
+        RunSubMethod(Test, propertyName);
     }
 
     protected void RunValidationMethod(Action<string> action)
@@ -175,35 +250,21 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
     {
         foreach (string propertyName in NotMappedProperties)
         {
-            Assert.Throws<InvalidPropertyException<modelT>>(() => NewColumn(propertyName));
-            Assert.Throws<InvalidPropertyException<modelT>>(() => NewColumn(new PropertyName(propertyName)));
+            RunExceptionalTests(Assert.Throws<InvalidPropertyException<modelT>>, propertyName);
         }
     }
 
     [Fact]
     public void Constructor_ArgumentNullException() =>
-        Assert.Throws<ArgumentNullException>(() => NewColumn(null!));
-
-    [Fact]
-    public void Constructor_ArgumentNullException_FromPropertyName() =>
-        Assert.Throws<ArgumentNullException>(() => NewColumn((PropertyName)null!));
+            RunExceptionalTests(Assert.Throws<InvalidPropertyException<modelT>>, null);
 
     [Fact]
     public void Constructor_InvalidPropertyException_EmptyString() =>
-        Assert.Throws<InvalidPropertyException<modelT>>(() => NewColumn(string.Empty));
-    [Fact]
-    public void Constructor_InvalidPropertyException_FromEmptyPropertyName() =>
-        Assert.Throws<InvalidPropertyException<modelT>>(() => NewColumn(new PropertyName(string.Empty)));
+            RunExceptionalTests(Assert.Throws<InvalidPropertyException<modelT>>, string.Empty);
 
     [Fact]
     public void Constructor_InvalidPropertyException_From_BadPropertyName() =>
-        Assert.Throws<InvalidPropertyException<modelT>>(() => 
-        NewColumn("C#"));
-
-    [Fact]
-    public void Constructor_InvalidPropertyException_FromBadPropertyName() =>
-        Assert.Throws<InvalidPropertyException<modelT>>(() =>
-        NewColumn(new PropertyName("C#")));
+            RunExceptionalTests(Assert.Throws<InvalidPropertyException<modelT>>, "C#");
 
     [Fact]
     public void Run_ValidateNoDescendantParameters() =>
@@ -213,6 +274,9 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
     public void Run_ValidateNoDescendantColumns() =>
         RunValidationMethod(ValidateNoDescendantColumns);
 
+    [Fact]
+    public void Run_ValidateColumnSqlFragments() =>
+        RunValidationMethod(ValidateColumnSqlFragments);
     [Fact]
     public void Run_ValidateSqlFragment() =>
         RunValidationMethod(ValidateSqlFragment);

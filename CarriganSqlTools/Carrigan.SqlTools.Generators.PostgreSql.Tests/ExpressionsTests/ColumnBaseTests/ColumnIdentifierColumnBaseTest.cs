@@ -21,6 +21,9 @@ public class ColumnIdentifierColumnBaseTest : PostgreSqlColumnBaseTest<ColumnIde
     protected override string TableName =>
         "ColumnIdentifiers";
 
+    protected override IEnumerable<string> NumericProperties =>
+        ["Id", "Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
     new
     (

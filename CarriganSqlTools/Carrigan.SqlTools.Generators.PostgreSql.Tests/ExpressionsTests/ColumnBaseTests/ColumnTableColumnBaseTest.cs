@@ -20,6 +20,9 @@ public class ColumnTableColumnBaseTest : PostgreSqlColumnBaseTest<ColumnTable>
     protected override string TableName =>
         "ColumnTable";
 
+    protected override IEnumerable<string> NumericProperties =>
+        [];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
         new([NewKvp("Col1"), NewKvp("Col2"), NewKvp("ColA"), NewKvp("ColB"), NewKvp("Pizza"), NewKvp("D000destruct0"), NewKvp("Express"),]);
 

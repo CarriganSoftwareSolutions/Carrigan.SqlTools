@@ -12,6 +12,9 @@ public class EntityWithSchemaColumnBaseTest : PostgreSqlColumnBaseTest<EntityWit
     protected override string TableName =>
         "EntityWithSchema";
 
+    protected override IEnumerable<string> NumericProperties =>
+        ["Id"];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
         new([NewKvp("Id"), NewKvp("Description")]);
 
