@@ -23,6 +23,9 @@ public class SqlTypeEntityColumnBaseTest : PostgreSqlColumnBaseTest<SqlTypeEntit
             nameof(SqlTypeEntity.DoubleValue)
         ];
 
+    protected override IEnumerable<string> BooleanProperties =>
+        [nameof(NullableTestEntity.BoolValue)];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
     new
     (

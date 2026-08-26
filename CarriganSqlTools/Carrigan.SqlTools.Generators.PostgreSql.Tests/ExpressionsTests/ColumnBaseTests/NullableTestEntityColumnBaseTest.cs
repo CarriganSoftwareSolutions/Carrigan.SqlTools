@@ -32,6 +32,9 @@ public class NullableTestEntityColumnBaseTest : PostgreSqlColumnBaseTest<Nullabl
             nameof(NullableTestEntity.DoubleValue)
         ];
 
+    protected override IEnumerable<string> BooleanProperties =>
+        [nameof(NullableTestEntity.BoolValue)];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
     new
     (

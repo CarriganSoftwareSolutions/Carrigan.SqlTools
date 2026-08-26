@@ -27,7 +27,6 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         NewColumn(propertyName);
 
 
-
     protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(string propertyName);
     protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(PropertyName propertyName);
 
@@ -39,6 +38,19 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
     protected abstract ColumnBase NewNumericColumnBaseModelTypeToColumnModelType(string propertyName);
     protected abstract ColumnBase NewNumericColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
+
+
+    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnModelType(string propertyName);
+    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnModelType(PropertyName propertyName);
+
+    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBaseModelType(string propertyName);
+    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBaseModelType(PropertyName propertyName);
+
+    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBase(string propertyName);
+    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBase(PropertyName propertyName);
+
+    protected abstract ColumnBase NewBooleanColumnBaseModelTypeToColumnModelType(string propertyName);
+    protected abstract ColumnBase NewBooleanColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
 
 
     protected KeyValuePair<string, ColumnName> NewKvp(string propertyName, string ColumnName) =>
@@ -61,6 +73,8 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
     protected abstract IEnumerable<string> NumericProperties { get; }
 
+    protected abstract IEnumerable<string> BooleanProperties { get; }
+
     protected TableTag ExpectedTableTag =>
         new(SchemaName, TableName);
 
@@ -82,7 +96,6 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         test(NewColumn(new PropertyName(propertyName)));
         if (NumericProperties.Contains(propertyName))
         {
-
             test(NewNumericColumnModelTypeToColumnModelType(propertyName));
             test(NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
 
@@ -109,11 +122,40 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
             Assert.Throws<NonNumericValueException>(() => NewNumericColumnBaseModelTypeToColumnModelType(propertyName));
             Assert.Throws<NonNumericValueException>(() => NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
         }
+        if (BooleanProperties.Contains(propertyName))
+        {
+            test(NewBooleanColumnModelTypeToColumnModelType(propertyName));
+            test(NewBooleanColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
+
+            test(NewBooleanColumnModelTypeToColumnBaseModelType(propertyName));
+            test(NewBooleanColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
+
+            test(NewBooleanColumnModelTypeToColumnBase(propertyName));
+            test(NewBooleanColumnModelTypeToColumnBase(new PropertyName(propertyName)));
+
+            test(NewBooleanColumnBaseModelTypeToColumnModelType(propertyName));
+            test(NewBooleanColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
+        }
+        else
+        {
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnModelTypeToColumnModelType(propertyName));
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
+
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnModelTypeToColumnBaseModelType(propertyName));
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
+
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnModelTypeToColumnBase(propertyName));
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnModelTypeToColumnBase(new PropertyName(propertyName)));
+
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnBaseModelTypeToColumnModelType(propertyName));
+            Assert.Throws<NonBooleanValueException>(() => NewBooleanColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
+        }
     }
     private void RunExceptionalTests(Func<Action, object?> exceptionTest, string? propertyName)
     {
         exceptionTest(() => NewColumn(propertyName!));
         exceptionTest(() => NewColumn(new PropertyName(propertyName)));
+
 
         exceptionTest(() => NewNumericColumnModelTypeToColumnModelType(propertyName!));
         exceptionTest(() => NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
@@ -127,6 +169,18 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         exceptionTest(() => NewNumericColumnBaseModelTypeToColumnModelType(propertyName!));
         exceptionTest(() => NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
 
+
+        exceptionTest(() => NewBooleanColumnModelTypeToColumnModelType(propertyName!));
+        exceptionTest(() => NewBooleanColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
+
+        exceptionTest(() => NewBooleanColumnModelTypeToColumnBaseModelType(propertyName!));
+        exceptionTest(() => NewBooleanColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
+
+        exceptionTest(() => NewBooleanColumnModelTypeToColumnBase(propertyName!));
+        exceptionTest(() => NewBooleanColumnModelTypeToColumnBase(new PropertyName(propertyName)));
+
+        exceptionTest(() => NewBooleanColumnBaseModelTypeToColumnModelType(propertyName!));
+        exceptionTest(() => NewBooleanColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
     }
 
 

@@ -24,6 +24,9 @@ public class ColumnIdentifierColumnBaseTest : SqlServerColumnBaseTest<ColumnIden
     protected override IEnumerable<string> NumericProperties =>
         ["Id", "Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"];
 
+    protected override IEnumerable<string> BooleanProperties =>
+        [];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
     new
     (

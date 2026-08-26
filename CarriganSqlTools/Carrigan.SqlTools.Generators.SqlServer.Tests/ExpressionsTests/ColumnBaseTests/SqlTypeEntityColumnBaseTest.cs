@@ -32,6 +32,9 @@ public class SqlTypeEntityColumnBaseTest : SqlServerColumnBaseTest<SqlTypeEntity
             nameof(SqlTypeEntity.DoubleValue)
         ];
 
+    protected override IEnumerable<string> BooleanProperties =>
+        [nameof(SqlTypeEntity.BoolValue)];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
     new
     (

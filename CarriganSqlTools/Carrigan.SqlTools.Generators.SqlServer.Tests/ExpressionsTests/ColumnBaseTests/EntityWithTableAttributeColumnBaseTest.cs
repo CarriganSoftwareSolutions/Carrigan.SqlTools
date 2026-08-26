@@ -15,6 +15,9 @@ public class EntityWithTableAttributeColumnBaseTest : SqlServerColumnBaseTest<En
     protected override IEnumerable<string> NumericProperties =>
         [];
 
+    protected override IEnumerable<string> BooleanProperties =>
+        [];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
         new([NewKvp("Id"), NewKvp("Name"), NewKvp("DateOf"), NewKvp("When")]);
 

@@ -23,6 +23,9 @@ public class ColumnTableColumnBaseTest : SqlServerColumnBaseTest<ColumnTable>
     protected override IEnumerable<string> NumericProperties =>
         [];
 
+    protected override IEnumerable<string> BooleanProperties =>
+        [];
+
     internal override Dictionary<string, ColumnName> ExpectedPropertyColumnName =>
         new([NewKvp("Col1"), NewKvp("Col2"), NewKvp("ColA"), NewKvp("ColB"), NewKvp("Pizza"), NewKvp("D000destruct0"), NewKvp("Express"),]);
 
