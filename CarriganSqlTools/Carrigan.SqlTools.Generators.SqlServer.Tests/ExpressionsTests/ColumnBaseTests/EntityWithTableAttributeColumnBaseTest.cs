@@ -25,9 +25,4 @@ public class EntityWithTableAttributeColumnBaseTest : SqlServerColumnBaseTest<En
         new Column<EntityWithTableAttribute>(propertyName);
     protected override ColumnBase NewColumn(PropertyName propertyName) =>
         new Column<EntityWithTableAttribute>(propertyName);
-
-    protected override SqlExpression NewColumnAsExpression(string propertyName) =>
-        NewColumn(propertyName);
-    protected override SqlExpression NewColumnAsExpression(PropertyName propertyName) =>
-        NewColumn(propertyName);
 }

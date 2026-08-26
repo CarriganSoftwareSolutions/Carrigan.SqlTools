@@ -22,9 +22,4 @@ public class EntityWithSchemaColumnBaseTest : SqlServerColumnBaseTest<EntityWith
         new Column<EntityWithSchema>(propertyName);
     protected override ColumnBase NewColumn(PropertyName propertyName) =>
         new Column<EntityWithSchema>(propertyName);
-
-    protected override SqlExpression NewColumnAsExpression(string propertyName) =>
-        NewColumn(propertyName);
-    protected override SqlExpression NewColumnAsExpression(PropertyName propertyName) =>
-        NewColumn(propertyName);
 }

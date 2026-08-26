@@ -40,9 +40,4 @@ public class ColumnIdentifierColumnBaseTest : PostgreSqlColumnBaseTest<ColumnIde
         new Column<ColumnIdentifiers>(propertyName);
     protected override ColumnBase NewColumn(PropertyName propertyName) =>
         new Column<ColumnIdentifiers>(propertyName);
-
-    protected override SqlExpression NewColumnAsExpression(string propertyName) =>
-        NewColumn(propertyName);
-    protected override SqlExpression NewColumnAsExpression(PropertyName propertyName) =>
-        NewColumn(propertyName);
 }

@@ -21,9 +21,10 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
 
     protected abstract ColumnBase NewColumn(PropertyName propertyName);
 
-    protected abstract SqlExpression NewColumnAsExpression(string propertyName);
-
-    protected abstract SqlExpression NewColumnAsExpression(PropertyName propertyName);
+    protected SqlExpression NewColumnAsExpression(string propertyName) =>
+        NewColumn(propertyName);
+    protected SqlExpression NewColumnAsExpression(PropertyName propertyName) =>
+        NewColumn(propertyName);
 
 
 
