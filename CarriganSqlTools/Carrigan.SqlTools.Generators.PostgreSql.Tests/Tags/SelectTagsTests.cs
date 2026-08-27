@@ -7,7 +7,6 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using System.Xml;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 public class SelectTagsTests

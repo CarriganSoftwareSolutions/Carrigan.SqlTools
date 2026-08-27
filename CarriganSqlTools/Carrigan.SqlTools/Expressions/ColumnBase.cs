@@ -1,5 +1,4 @@
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Expressions;

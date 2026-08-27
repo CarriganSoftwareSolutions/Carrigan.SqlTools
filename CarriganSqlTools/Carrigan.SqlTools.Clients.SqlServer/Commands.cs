@@ -1,11 +1,11 @@
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Clients.Core;
+using Carrigan.SqlTools.Clients.Core.Exceptions;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.SqlGenerators;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Data.Common;
-using Carrigan.SqlTools.Clients.Core.Exceptions;
-using Carrigan.SqlTools.Exceptions;
 
 namespace Carrigan.SqlTools.Clients.SqlServer;
 

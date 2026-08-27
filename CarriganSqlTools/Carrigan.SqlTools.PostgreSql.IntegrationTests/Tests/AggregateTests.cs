@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
@@ -9,7 +10,6 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Tags;
 using Npgsql;
 

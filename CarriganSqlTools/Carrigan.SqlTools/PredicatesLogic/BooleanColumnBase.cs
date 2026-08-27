@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -20,6 +21,9 @@ public abstract class BooleanColumnBase<T> : Predicates where T : class
     /// The validated column expression represented by this predicate.
     /// </summary>
     private readonly ColumnBase<T> _column;
+
+    internal ColumnInfo ColumnInfo =>
+        _column.ColumnInfo;
 
     /// <summary>
     /// Gets the C# property name that represents the boolean SQL column.

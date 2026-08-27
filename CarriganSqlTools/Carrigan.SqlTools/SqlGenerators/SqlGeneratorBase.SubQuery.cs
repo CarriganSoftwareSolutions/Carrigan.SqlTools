@@ -1,5 +1,5 @@
-using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;

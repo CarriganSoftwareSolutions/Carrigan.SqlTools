@@ -1,11 +1,10 @@
-﻿using Carrigan.Core.Enums;
+﻿using Carrigan.Core.DataTypes;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.GroupByClause;
-using Carrigan.Core.DataTypes;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Expressions;
 

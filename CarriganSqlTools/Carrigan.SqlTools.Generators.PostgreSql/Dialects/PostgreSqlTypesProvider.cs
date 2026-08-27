@@ -2,7 +2,6 @@
 
 using Carrigan.SqlTools.RegularExpressions;
 using Carrigan.SqlTools.Types;
-using System.Reflection.Metadata;
 using System.Xml;
 using System.Xml.Linq;
 

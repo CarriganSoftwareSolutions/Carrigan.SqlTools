@@ -1,6 +1,5 @@
 using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
-using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Clients.Core;
 using Carrigan.SqlTools.Clients.Core.Exceptions;
 using Carrigan.SqlTools.Exceptions;
@@ -9,7 +8,6 @@ using Carrigan.SqlTools.Invocation;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Reflection;

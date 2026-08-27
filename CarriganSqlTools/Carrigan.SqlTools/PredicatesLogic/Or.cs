@@ -1,5 +1,3 @@
-using Carrigan.SqlTools.SqlGenerators;
-
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>

@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;

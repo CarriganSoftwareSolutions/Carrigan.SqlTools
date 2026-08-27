@@ -5,9 +5,9 @@ using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.Tags;
 using Microsoft.Data.SqlClient;
 

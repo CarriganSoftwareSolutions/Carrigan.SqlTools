@@ -9,7 +9,6 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.Tags;
 using Microsoft.Data.SqlClient;
-using System.Net.NetworkInformation;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 

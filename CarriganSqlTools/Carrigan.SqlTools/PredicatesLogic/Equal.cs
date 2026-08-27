@@ -1,6 +1,4 @@
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

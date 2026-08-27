@@ -1,4 +1,3 @@
-using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;

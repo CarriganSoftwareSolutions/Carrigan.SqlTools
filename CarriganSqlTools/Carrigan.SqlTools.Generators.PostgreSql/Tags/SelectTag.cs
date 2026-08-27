@@ -1,7 +1,7 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.Tags;

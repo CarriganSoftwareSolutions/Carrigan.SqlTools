@@ -1,9 +1,4 @@
-﻿using Carrigan.Core.Enums;
-using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Expressions;
+﻿using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

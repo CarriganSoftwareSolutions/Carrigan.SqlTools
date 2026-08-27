@@ -1,31 +1,23 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿
+
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
-using System.Linq.Expressions;
 
-namespace Carrigan.SqlTools.Base.Tests;
+namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public abstract class ColumnBaseTests<modelT> where modelT : class
+public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where modelT : class
 {
-    protected abstract ISqlDialects Dialect { get; }
-
-    protected abstract string? SchemaName { get; }
-
-    protected abstract string TableName { get; }
-
     protected abstract ColumnBase NewColumn(string propertyName);
-
     protected abstract ColumnBase NewColumn(PropertyName propertyName);
 
     protected SqlExpression NewColumnAsExpression(string propertyName) =>
         NewColumn(propertyName);
     protected SqlExpression NewColumnAsExpression(PropertyName propertyName) =>
         NewColumn(propertyName);
-
 
     protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(string propertyName);
     protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(PropertyName propertyName);
@@ -53,38 +45,9 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
     protected abstract ColumnBase NewBooleanColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
 
 
-    protected KeyValuePair<string, ColumnName> NewKvp(string propertyName, string ColumnName) =>
-        new (propertyName, new ColumnName(ColumnName));
-
-    protected KeyValuePair<string, ColumnName> NewKvp(string propertyName) =>
-        new(propertyName, new ColumnName(propertyName));
-
-    internal Dictionary<string, ColumnTag> ExpectedPropertyColumnTag =>
-    new
-    (
-        ExpectedPropertyColumnName.
-            Keys.
-            Select(key => new KeyValuePair<string, ColumnTag>(key, new ColumnTag(new TableTag(SchemaName, TableName), ExpectedPropertyColumnName[key])))
-    );
-
-    internal abstract Dictionary<string, ColumnName> ExpectedPropertyColumnName { get; }
-
-    protected virtual IEnumerable<string> NotMappedProperties => [];
-
     protected abstract IEnumerable<string> NumericProperties { get; }
 
     protected abstract IEnumerable<string> BooleanProperties { get; }
-
-    protected TableTag ExpectedTableTag =>
-        new(SchemaName, TableName);
-
-    protected TableName ExpectedTableName =>
-        new(TableName);
-
-    protected SchemaName? ExpectedSchemaName =>
-        IdentifierTypes.SchemaName.New(SchemaName);
-
-    protected abstract string ExpectSqlFragment(string expectedColumnName);
 
     protected ColumnBaseTests()
     {
@@ -184,7 +147,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
     }
 
 
-    protected void ValidateColumnSqlFragments(string propertyName)
+    protected override void ValidateColumnSqlFragments(string propertyName)
     {
         void Test(ColumnBase columnBase)
         {
@@ -196,7 +159,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void ValidateSqlFragment(string propertyName)
+    protected override void ValidateSqlFragment(string propertyName)
     {
         void Test(SqlExpression expression)
         {
@@ -211,7 +174,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         Test(NewColumnAsExpression(new PropertyName(propertyName)));
     }
 
-    protected void ValidateExpectedPropertyColumnTag(string propertyName)
+    protected override void ValidateExpectedPropertyColumnTag(string propertyName)
     {
         void Test(ColumnBase columnBase)
         {
@@ -222,7 +185,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void ValidateExpectedPropertyColumnName(string propertyName)
+    protected override void ValidateExpectedPropertyColumnName(string propertyName)
     {
         void Test(ColumnBase columnBase)
         {
@@ -233,7 +196,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void ValidateExpectedPropertyTableTag(string propertyName)
+    protected override void ValidateExpectedPropertyTableTag(string propertyName)
     {
         void Test(ColumnBase columnBase)
         {
@@ -244,7 +207,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void ValidateExpectedPropertyTableName(string propertyName)
+    protected override void ValidateExpectedPropertyTableName(string propertyName)
     {
         void Test(ColumnBase columnBase)
         {
@@ -255,7 +218,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void ValidateExpectedPropertySchemaName(string propertyName)
+    protected override void ValidateExpectedPropertySchemaName(string propertyName)
     {
         void Test(ColumnBase columnBase)
         {
@@ -269,7 +232,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void ValidateNoDescendantParameters(string propertyName)
+    protected override void ValidateNoDescendantParameters(string propertyName)
     {
         static void Test(ColumnBase columnBase)
         {
@@ -281,7 +244,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void ValidateNoDescendantColumns(string propertyName)
+    protected override void ValidateNoDescendantColumns(string propertyName)
     {
         static void Test(ColumnBase columnBase)
         {
@@ -293,15 +256,7 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
         RunSubMethod(Test, propertyName);
     }
 
-    protected void RunValidationMethod(Action<string> action)
-    {
-        foreach (string propertyName in ExpectedPropertyColumnTag.Keys)
-        {
-            action(propertyName);
-        }
-    }
-
-    protected void ValidateNotMapped()
+    protected override void ValidateNotMapped()
     {
         foreach (string propertyName in NotMappedProperties)
         {
@@ -332,9 +287,6 @@ public abstract class ColumnBaseTests<modelT> where modelT : class
     [Fact]
     public void Run_ValidateColumnSqlFragments() =>
         RunValidationMethod(ValidateColumnSqlFragments);
-    [Fact]
-    public void Run_ValidateSqlFragment() =>
-        RunValidationMethod(ValidateSqlFragment);
 
     [Fact]
     public void Run_ValidateExpectedPropertyColumnTag() =>
