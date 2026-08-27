@@ -6,7 +6,6 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
 public class SelectTagTests

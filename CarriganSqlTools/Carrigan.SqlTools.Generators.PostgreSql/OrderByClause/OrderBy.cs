@@ -1,9 +1,7 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByClause;

@@ -2,7 +2,6 @@ using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;

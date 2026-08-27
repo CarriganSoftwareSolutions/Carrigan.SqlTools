@@ -2,8 +2,8 @@ using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
 

@@ -1,6 +1,4 @@
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.PostgreSql;
-using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.OrderByClause;
 

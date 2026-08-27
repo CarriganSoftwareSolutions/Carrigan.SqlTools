@@ -1,4 +1,3 @@
-using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.SqlGenerators;
 
 //IGNORE SPELLING: exists

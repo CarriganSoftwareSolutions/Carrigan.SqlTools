@@ -5,7 +5,6 @@ using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Aliases;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Ambiguous;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Columns;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Parameters;
-using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.SqlTypes;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Exceptionals.Table;
 using Carrigan.SqlTools.Base.Tests.TestEntities.NotExceptional;
 using Carrigan.SqlTools.Exceptions;

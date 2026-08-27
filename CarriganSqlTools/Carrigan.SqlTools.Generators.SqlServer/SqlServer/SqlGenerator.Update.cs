@@ -1,4 +1,3 @@
-using Carrigan.Core.Interfaces.IModels;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;

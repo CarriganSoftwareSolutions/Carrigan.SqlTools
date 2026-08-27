@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -22,6 +23,12 @@ public abstract class NumericColumnBase<T> : NumericExpression where T : class
     /// The validated column expression represented by this predicate.
     /// </summary>
     private readonly ColumnBase<T> _column;
+
+    /// <summary>
+    /// Gets the <see cref="ColumnInfo"/> of the reflected model property represented by this predicate.
+    /// </summary>
+    internal ColumnInfo ColumnInfo =>
+        _column.ColumnInfo;
 
     /// <summary>
     /// Gets the <see cref="PropertyName"/> of the reflected model property represented by this predicate.

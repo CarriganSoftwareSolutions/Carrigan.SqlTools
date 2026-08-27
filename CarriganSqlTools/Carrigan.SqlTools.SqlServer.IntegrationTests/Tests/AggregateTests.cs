@@ -11,9 +11,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.Tags;
-using Carrigan.SqlTools.Types;
 using Microsoft.Data.SqlClient;
-using System.Reflection.Emit;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 

@@ -1,8 +1,8 @@
 using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
+using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;

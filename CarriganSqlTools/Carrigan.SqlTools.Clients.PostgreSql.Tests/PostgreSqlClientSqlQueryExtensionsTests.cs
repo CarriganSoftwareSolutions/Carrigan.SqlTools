@@ -1,4 +1,3 @@
-using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Types;
 using NpgsqlTypes;
 using System.Reflection;
