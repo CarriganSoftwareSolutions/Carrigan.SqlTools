@@ -1,17 +1,17 @@
-﻿using Carrigan.SqlTools.GroupByClause;
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.QueryBuilders;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-using Carrigan.SqlTools.QueryBuilders;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.QueryBuilderTests;
 

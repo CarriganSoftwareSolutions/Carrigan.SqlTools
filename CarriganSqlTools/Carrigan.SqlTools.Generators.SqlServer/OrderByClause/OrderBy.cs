@@ -2,8 +2,6 @@ using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.OrderByClause;

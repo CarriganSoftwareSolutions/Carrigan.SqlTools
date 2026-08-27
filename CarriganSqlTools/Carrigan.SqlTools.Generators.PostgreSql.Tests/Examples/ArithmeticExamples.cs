@@ -1,7 +1,7 @@
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;

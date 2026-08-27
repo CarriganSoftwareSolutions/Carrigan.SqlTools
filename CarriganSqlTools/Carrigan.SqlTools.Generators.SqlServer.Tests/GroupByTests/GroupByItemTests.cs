@@ -1,8 +1,8 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GroupByTests;
 

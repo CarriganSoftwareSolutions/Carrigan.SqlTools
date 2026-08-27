@@ -1,11 +1,9 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
-using System.Linq.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 

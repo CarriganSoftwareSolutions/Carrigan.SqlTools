@@ -1,6 +1,5 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Expressions;

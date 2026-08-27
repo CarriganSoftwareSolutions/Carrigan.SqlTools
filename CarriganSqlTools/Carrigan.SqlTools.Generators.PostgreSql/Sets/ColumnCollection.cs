@@ -1,7 +1,5 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Sets;
 

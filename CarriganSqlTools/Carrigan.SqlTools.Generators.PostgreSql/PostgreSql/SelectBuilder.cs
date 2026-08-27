@@ -1,13 +1,8 @@
 using Carrigan.Core.Interfaces;
-using Carrigan.Core.Interfaces.IModels;
-using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.GroupByClause;
-using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
-using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PostgreSql;
 

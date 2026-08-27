@@ -1,5 +1,4 @@
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.AggregateLogic;
 

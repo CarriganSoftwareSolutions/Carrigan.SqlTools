@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-namespace Carrigan.SqlTools.Expressions;
+﻿namespace Carrigan.SqlTools.Expressions;
 
 
 /// <summary>
