@@ -96,6 +96,16 @@ public class Column<T> : ColumnBase<T>  where T : class
         new NumericColumn<T>(column);
 
     /// <summary>
+    /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="BooleanColumn{T}"/>.
+    /// </summary>
+    /// <param name="column">
+    /// The <see cref="Column{T}"/> instance to convert.
+    /// </param>
+    [TypeSafetyLoss]
+    public static implicit operator BooleanColumn<T>(Column<T> column) =>
+        new(column);
+
+    /// <summary>
     /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="BooleanColumnBase{T}"/>.
     /// </summary>
     /// <param name="column">
@@ -114,6 +124,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     [TypeSafetyLoss]
     public static implicit operator Predicates(Column<T> column) =>
         new BooleanColumn<T>(column);
+
     #endregion
 
     #region Implicitly Convert numeric and bool Inheritance Chain to Column<T>, but not the final concrete numeric bool class.
