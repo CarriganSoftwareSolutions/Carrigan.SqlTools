@@ -7,7 +7,7 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using System.Linq.Expressions;
 
-namespace Carrigan.SqlTools.Base.Tests;
+namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public abstract class ColumnBaseTests<modelT> where modelT : class
 {
