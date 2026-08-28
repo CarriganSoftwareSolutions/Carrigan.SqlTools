@@ -73,4 +73,31 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// </param>
     internal Parameter(BooleanParameter booleanParameter) : base (booleanParameter.Value, booleanParameter.Name, booleanParameter.FieldProperties)
     { }
+
+    /// <summary>
+    /// Defines an implicit conversion from a <see cref="NumericParameter"/> to a <see cref="Parameter{modelT}"/>.
+    /// </summary>
+    /// <param name="numericParamete">
+    /// The <see cref="NumericParameter"/> instance to convert.
+    /// </param>
+    public static implicit operator Parameter<modelT>(NumericParameter numericParamete) =>
+        new(numericParamete);
+
+    /// <summary>
+    /// Defines an implicit conversion from a <see cref="Parameter{modelT}"/> to a <see cref="NumericParameter"/>.
+    /// </summary>
+    /// <param name="parameter">
+    /// The <see cref="Parameter{modelT}"/> instance to convert.
+    /// </param>
+    public static implicit operator NumericParameter(Parameter<modelT> parameter) =>
+        new(parameter);
+
+    /// <summary>
+    /// Defines an implicit conversion from a <see cref="Parameter{modelT}"/> to a <see cref="NumericExpression"/>.
+    /// </summary>
+    /// <param name="parameter">
+    /// The <see cref="Parameter{modelT}"/> instance to convert.
+    /// </param>
+    public static implicit operator NumericExpression(Parameter<modelT> parameter) =>
+        new NumericParameter(parameter);
 }
