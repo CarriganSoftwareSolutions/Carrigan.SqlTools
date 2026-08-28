@@ -92,28 +92,6 @@ public class NumericParameter<modelT, T> : NumericParameter<T>
     }
 
     /// <summary>
-    /// Defines an implicit conversion from a <see cref="Parameter"/> to a <see cref="NumericParameter{modelT, T}"/>.
-    /// </summary>
-    /// <param name="parameter">
-    /// The <see cref="Parameter"/> instance to convert.
-    /// </param>
-    //TODO: unite tests
-    [TypeSafetyLoss]
-    public static implicit operator NumericParameter<modelT, T>(Parameter parameter) =>
-        new (parameter);
-
-    /// <summary>
-    /// Defines an implicit conversion from a <see cref="Parameter{modelT}"/> to a <see cref="NumericParameter{modelT, T}"/>.
-    /// </summary>
-    /// <param name="parameter">
-    /// The <see cref="Parameter{modelT}"/> instance to convert.
-    /// </param>
-    //TODO: unit test
-    [TypeSafetyLoss]
-    public static implicit operator NumericParameter<modelT, T>(Parameter<modelT> parameter) =>
-        new (parameter);
-
-    /// <summary>
     /// Defines an implicit conversion from a <see cref="NumericParameter{modelT, T}"/> to a <see cref="Parameter"/>.
     /// </summary>
     /// <param name="parameter">
