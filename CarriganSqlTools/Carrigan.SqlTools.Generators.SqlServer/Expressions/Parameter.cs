@@ -75,15 +75,6 @@ public class Parameter<modelT> : Parameter where modelT : class
     { }
 
     /// <summary>
-    /// Defines an implicit conversion from a <see cref="NumericParameter"/> to a <see cref="Parameter{modelT}"/>.
-    /// </summary>
-    /// <param name="numericParamete">
-    /// The <see cref="NumericParameter"/> instance to convert.
-    /// </param>
-    public static implicit operator Parameter<modelT>(NumericParameter numericParamete) =>
-        new(numericParamete);
-
-    /// <summary>
     /// Defines an implicit conversion from a <see cref="Parameter{modelT}"/> to a <see cref="NumericParameter"/>.
     /// </summary>
     /// <param name="parameter">
