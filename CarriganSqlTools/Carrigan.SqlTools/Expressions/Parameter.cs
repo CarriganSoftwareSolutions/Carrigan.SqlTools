@@ -1,3 +1,4 @@
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
@@ -70,14 +71,6 @@ public class Parameter : SqlExpression, IParameter
     }
 
     /// <summary>
-    /// Initializes a new Parameter instance with the specified value and a default ParameterTag named "Parameter".
-    /// </summary>
-    /// <param name="value">The value to associate with the parameter; may be null.</param>
-    public Parameter(object? value) : this(value, new ParameterTag("Parameter"))
-    {
-    }
-
-    /// <summary>
     /// Initializes a new instance of <see cref="Parameter"/> with a validated <see cref="ParameterTag"/>.
     /// </summary>
     /// <remarks>
@@ -134,14 +127,16 @@ public class Parameter : SqlExpression, IParameter
     public Parameter(object? value, string parameter, FieldProperties fieldProperties) : this(value, new ParameterTag(parameter), fieldProperties)
     {
     }
+
     /// <summary>
-    /// Initializes a new Parameter instance from the specified value and parameter name by creating a ParameterTag.
+    /// Initializes a new Parameter instance with the specified value and a default ParameterTag named "Parameter".
     /// </summary>
-    /// <remarks>Delegates to the constructor that accepts a ParameterTag.</remarks>
     /// <param name="value">The value to associate with the parameter; may be null.</param>
-    /// <param name="parameter">The parameter name used to create a ParameterTag.</param>
+    /// <param name="parameterName"> 
+    /// Optional parameter name to use for the ParameterTag; if null, a default name "Parameter" will be used.
+    /// </param>
     [ExternalOnly]
-    public Parameter(object? value, string parameter) : this(value, new ParameterTag(parameter))
+    public Parameter(object? value, string? parameterName = null) : this(value, new ParameterTag(parameterName.IsNotNullOrEmpty() ? parameterName : "Parameter"))
     {
     }
 
