@@ -39,15 +39,7 @@ public class NumericParameter<T> : NumericParameter
     /// <param name="fieldProperties">
     /// Optional field properties that can be used to validate the parameter value before SQL generation and/or to inform SQL type inference.
     /// </param>
-    public NumericParameter(T? value, FieldProperties fieldProperties) :base(value, fieldProperties)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new Parameter instance with the specified value and a default ParameterTag named "Parameter".
-    /// </summary>
-    /// <param name="value">The value to associate with the parameter; may be null.</param>
-    public NumericParameter(T? value) : base(value)
+    public NumericParameter(T? value, FieldProperties? fieldProperties = null) : base(value, fieldProperties)
     {
     }
 
@@ -96,18 +88,7 @@ public class NumericParameter<T> : NumericParameter
     /// Thrown when <paramref name="parameter"/> is invalid (including <c>null</c>, empty, or failing identifier validation).
     /// </exception>
     [ExternalOnly]
-    public NumericParameter(T? value, string parameter, FieldProperties fieldProperties) : this(value, new ParameterTag(parameter), fieldProperties)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new Parameter instance from the specified value and parameter name by creating a ParameterTag.
-    /// </summary>
-    /// <remarks>Delegates to the constructor that accepts a ParameterTag.</remarks>
-    /// <param name="value">The value to associate with the parameter; may be null.</param>
-    /// <param name="parameter">The parameter name used to create a ParameterTag.</param>
-    [ExternalOnly]
-    public NumericParameter(T? value, string parameter) : this(value, new ParameterTag(parameter))
+    public NumericParameter(T? value, string parameter, FieldProperties? fieldProperties = null) : this(value, new ParameterTag(parameter), fieldProperties)
     {
     }
 
@@ -162,7 +143,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="fieldProperties">
     /// Optional field properties that can be used to validate the parameter value before SQL generation and/or to inform SQL type inference.
     /// </param>
-    internal NumericParameter(object? value, FieldProperties fieldProperties) : this(value, new ParameterTag("Parameter"), fieldProperties)
+    internal NumericParameter(object? value, FieldProperties? fieldProperties = null) : this(value, new ParameterTag("Parameter"), fieldProperties)
     {
     }
 
@@ -181,31 +162,8 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value and field properties.
     /// </returns>
-    public static NumericParameter<T> New<T>(T? value, FieldProperties fieldProperties) where T : INumber<T> =>
+    public static NumericParameter<T> New<T>(T? value, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new(value, fieldProperties);
-
-    /// <summary>
-    /// Initializes a new Parameter instance with the specified value and a default ParameterTag named "Parameter".
-    /// </summary>
-    /// <param name="value">The value to associate with the parameter; may be null.</param>
-    internal NumericParameter(object? value) : this(value, new ParameterTag("Parameter"))
-    {
-    }
-
-    /// <summary>
-    /// Creates a new <see cref="NumericParameter{T}"/> instance with the specified numeric value.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The numeric type of the value, constrained to types that implement <see cref="INumber{T}"/>.
-    /// </typeparam>
-    /// <param name="value">
-    /// The numeric value to bind to the parameter.
-    /// </param>
-    /// <returns>
-    /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value.
-    /// </returns>
-    public static NumericParameter<T> New<T>(T value) where T : INumber<T> =>
-        new (value);
 
     /// <summary>
     /// Initializes a new instance of <see cref="NumericParameter{T}"/> with a validated <see cref="ParameterTag"/>.
@@ -250,7 +208,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
-    public static NumericParameter<T> New<T>(T value, ParameterTag parmeterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
+    public static NumericParameter<T> New<T>(T? value, ParameterTag parmeterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new (value, parmeterTag, fieldProperties);
 
     /// <summary>
@@ -272,7 +230,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
     [ExternalOnly]
-    public static NumericParameter<T> New<T>(T value, string parmeterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
+    public static NumericParameter<T> New<T>(T? value, string parmeterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new(value, new ParameterTag(parmeterTag), fieldProperties);
 
     /// <summary>
