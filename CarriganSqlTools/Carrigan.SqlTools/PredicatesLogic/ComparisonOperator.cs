@@ -64,7 +64,7 @@ public abstract class ComparisonOperator : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="dialect"/> is <c>null</c>.
     /// </exception>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         ArgumentNullException.ThrowIfNull(dialect);
 

@@ -267,7 +267,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// The SQL parameter name (e.g., <c>@Parameter_Name</c> or a prefixed variant).
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentParameter(this);
     }

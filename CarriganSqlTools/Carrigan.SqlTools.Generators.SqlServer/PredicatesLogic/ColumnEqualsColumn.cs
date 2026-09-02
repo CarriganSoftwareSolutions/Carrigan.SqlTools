@@ -37,7 +37,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 ///   ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class ColumnEqualsColumn<leftT, rightT> : ColumnEqualsColumnBase<leftT, rightT>
+public class ColumnEqualsColumn<leftT, rightT> : Equal
     where leftT : class
     where rightT: class
 {

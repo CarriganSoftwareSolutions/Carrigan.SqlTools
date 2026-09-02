@@ -21,5 +21,5 @@ internal class EmptyPredicate : Predicates
     /// </summary>
     /// <param name="dialect">The SQL dialect parameter is unused because no SQL is emitted.</param>
     /// <returns>An empty SQL fragment sequence.</returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) => [];
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) => [];
 }

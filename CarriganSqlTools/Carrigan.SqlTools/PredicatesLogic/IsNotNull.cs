@@ -79,7 +79,7 @@ public class IsNotNull : Predicates
     /// <returns>
     /// A SQL string representing the <c>IS NOT NULL</c> condition.
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("(");
 

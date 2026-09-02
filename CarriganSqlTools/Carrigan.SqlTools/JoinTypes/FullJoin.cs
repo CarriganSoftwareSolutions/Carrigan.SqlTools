@@ -14,10 +14,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// The data model representing the right-side table being joined.
 /// </typeparam>
 /// <example>
-/// <para>
-/// Note: <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates property names and throws an exception
-/// if a property name is invalid.
-/// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// FullJoin<Order> join = new(predicate);
@@ -130,7 +126,7 @@ public class FullJoin<rightT> : JoinBase where rightT : class
     /// Any exception thrown while rendering the predicate tree will be propagated to the caller.
     /// </remarks>
     ///
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (_predicates is null || _predicates is EmptyPredicate)
             throw new InvalidOperationException("FULL JOIN requires at least one predicate for the ON clause.");

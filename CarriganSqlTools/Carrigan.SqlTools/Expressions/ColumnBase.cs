@@ -11,12 +11,12 @@ namespace Carrigan.SqlTools.Expressions;
 /// This class exists to centralize column/table metadata for expression nodes. Predicate types can consume
 /// these column expressions when building SQL <c>WHERE</c>, <c>JOIN</c>, and other expression-bearing clauses.
 /// </remarks>
-public abstract class ColumnBase : SqlExpression
+public abstract class ColumnBase : SqlExpression, IColumnBase
 {
     /// <summary>
     /// Gets the resolved column metadata (name, tags, etc.) used by the expression.
     /// </summary>
-    internal ColumnInfo ColumnInfo { get; }
+    public ColumnInfo ColumnInfo { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnBase"/> class.

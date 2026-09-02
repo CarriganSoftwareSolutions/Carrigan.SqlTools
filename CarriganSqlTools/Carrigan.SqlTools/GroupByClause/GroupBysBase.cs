@@ -83,7 +83,7 @@ public abstract class GroupBysBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="column"/> is <c>null</c>.
     /// </exception>
-    public bool Contains(ColumnBase column)
+    public bool Contains(IColumnBase column)
     {
         ArgumentNullException.ThrowIfNull(column, nameof(column));
 

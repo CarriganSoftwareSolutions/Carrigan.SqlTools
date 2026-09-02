@@ -75,7 +75,7 @@ public abstract class LogicalOperator : Predicates
     /// predicate’s SQL without adding the operator; otherwise returns the predicates joined by the
     /// operator and wrapped in parentheses.
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         int index = 0;
 

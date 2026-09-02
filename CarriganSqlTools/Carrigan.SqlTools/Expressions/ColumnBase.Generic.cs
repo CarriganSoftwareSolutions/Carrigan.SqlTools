@@ -17,13 +17,13 @@ namespace Carrigan.SqlTools.Expressions;
 /// <see cref="ColumnBase{T}"/> validates property names and throws an exception if a property name is invalid.
 /// Predicate types consume these column expressions when building SQL <c>WHERE</c> and <c>JOIN</c> conditions.
 /// </remarks>
-public class ColumnBase<T> : ColumnBase where T: class
+public class ColumnBase<T> : ColumnBase, IColumnBase<T> where T: class
 {
     /// <summary>
     /// The name of the property representing the column.
     /// </summary>
     //TODO: Unit test.
-    internal PropertyName PropertyName { get; }
+    public PropertyName PropertyName { get; }
 
     /// <summary>
     /// Creates a standardized <see cref="ArgumentException"/> for an invalid <paramref name="propertyName"/>.
@@ -94,7 +94,7 @@ public class ColumnBase<T> : ColumnBase where T: class
     /// <returns>
     /// The SQL-escaped column identifier (e.g., <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>).
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return ColumnInfo.ColumnTag;
     }

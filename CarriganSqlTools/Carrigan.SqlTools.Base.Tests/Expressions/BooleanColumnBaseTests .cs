@@ -167,7 +167,7 @@ public abstract class BooleanColumnBaseTests<modelT> : ColumnTestsBase<modelT> w
     {
         static void Test(BooleanColumnBase<modelT> columnBase)
         {
-            int expectedValue = 1;
+            int expectedValue = 0;
             int actual = columnBase.DescendantColumns.Count();
 
             Assert.Equal(expectedValue, actual);

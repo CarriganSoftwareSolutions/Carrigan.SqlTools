@@ -166,7 +166,7 @@ public abstract class NumericColumnBaseTests<modelT> : ColumnTestsBase<modelT> w
     {
         static void Test(NumericColumnBase<modelT> columnBase)
         {
-            int expectedValue = 1;
+            int expectedValue = 0;
             int actual = columnBase.DescendantColumns.Count();
 
             Assert.Equal(expectedValue, actual);
