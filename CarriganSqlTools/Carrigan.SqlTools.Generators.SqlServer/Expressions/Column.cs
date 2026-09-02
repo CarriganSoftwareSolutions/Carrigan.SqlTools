@@ -30,7 +30,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
-public class Column<T> : ColumnBase<T> where T : class
+public class Column<T> : ColumnBase<T>, IColumnBase<T> where T : class
 {
     /// <summary>
     /// Initializes a new <see cref="ColumnBase{T}"/> using a property name.
@@ -126,7 +126,6 @@ public class Column<T> : ColumnBase<T> where T : class
         new BooleanColumn<T>(column);
     #endregion
 
-    #region Implicitly Convert numeric and bool Inheritance Chain to Column<T>, but not the final concrete numeric bool class.
     /// <summary>
     /// Implicitly converts a <see cref="NumericColumn{T}"/> to a <see cref="Column{T}"/>.
     /// </summary>
@@ -144,5 +143,4 @@ public class Column<T> : ColumnBase<T> where T : class
     /// </param>
     public static implicit operator Column<T>(BooleanColumnBase<T> booleanColumn) =>
         new(booleanColumn.PropertyName);
-    #endregion
 }

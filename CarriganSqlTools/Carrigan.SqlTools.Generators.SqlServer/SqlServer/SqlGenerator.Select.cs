@@ -105,9 +105,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </exception>
     /// <example>
     /// <para>Select with join example:</para>
-    /// <para>
-    /// Note: <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
-    /// </para>
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new (predicate);
@@ -124,7 +121,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>Select with join and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[
@@ -147,7 +143,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>Select with join, where, and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>

@@ -26,10 +26,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// If a join references a table that has not yet been introduced, an <see cref="InvalidTableException"/> is thrown.
 /// </remarks>
 /// <example>
-/// <para>
-/// Note: <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates property names and throws an exception
-/// if a property name is invalid.
-/// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 /// InnerJoin<Order> join1 = new(predicate);
@@ -66,10 +62,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ]]></code>
 /// </example>
 /// <example>
-/// <para>
-/// Note: <see cref="ColumnEqualsColumnBase{Customer, Order}"/> validates property names and throws an exception
-/// if a property name is invalid.
-/// </para>
 /// <code language="csharp"><![CDATA[
 /// SelectTags selectTags =
 ///     SelectTagGenerator.Get<Customer>("Id", "CustomerId")
@@ -359,7 +351,7 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <remarks>
     /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
     /// </remarks>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         if (ValidatedJoints.Count() == 1)
             return ValidatedJoints.SelectMany(join => join.ToSqlFragments(dialect));

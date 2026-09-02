@@ -68,7 +68,7 @@ public class Cast : SqlExpression
     /// <returns>
     /// An enumerable of <see cref="ISqlFragment"/> representing the <c>CAST</c> expression in the specified SQL dialect.
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("CAST(");
         foreach(ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect))

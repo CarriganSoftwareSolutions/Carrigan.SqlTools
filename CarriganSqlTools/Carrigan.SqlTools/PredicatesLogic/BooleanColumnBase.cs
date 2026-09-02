@@ -15,14 +15,14 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This predicate is intended for SQL dialects that allow a boolean-valued column expression in predicate contexts.
 /// The referenced C# property must be declared as <see cref="bool"/> or nullable <see cref="bool"/>.
 /// </remarks>
-public abstract class BooleanColumnBase<T> : Predicates where T : class
+public abstract class BooleanColumnBase<T> : Predicates, IColumnBase  where T : class
 {
     /// <summary>
     /// The validated column expression represented by this predicate.
     /// </summary>
     private readonly ColumnBase<T> _column;
 
-    internal ColumnInfo ColumnInfo =>
+    public ColumnInfo ColumnInfo =>
         _column.ColumnInfo;
 
     /// <summary>
@@ -37,25 +37,17 @@ public abstract class BooleanColumnBase<T> : Predicates where T : class
     /// <param name="column">The column expression whose data model property must be <see cref="bool"/> or nullable <see cref="bool"/>.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="column"/> does not represent a <see cref="bool"/> or nullable <see cref="bool"/> property.</exception>
-    protected BooleanColumnBase(ColumnBase<T> column) : base([ValidateColumn(column)], column) =>
-        _column = column;
-
-    /// <summary>
-    /// Validates that the supplied column represents a boolean property in the data model.
-    /// </summary>
-    /// <param name="column">The column expression to validate.</param>
-    /// <returns>The validated column expression.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when the reflected property type is not <see cref="bool"/> or nullable <see cref="bool"/>.</exception>
-    private static ColumnBase<T> ValidateColumn(ColumnBase<T> column)
+    protected BooleanColumnBase(ColumnBase<T> column) : base([], column)
     {
+        //IMPORTANT NOTE: Do not pass column to the base as a child node. That is wrong, and will cause duplicate Columns in the ancestry tree.
+        //Ask me how I know, rhetorically speaking, don't actually ask.
         ArgumentNullException.ThrowIfNull(column, nameof(column));
 
         Type columnType = column.ColumnInfo.Type;
         if (columnType != typeof(bool) && columnType != typeof(bool?))
             throw new NonBooleanValueException($"{column.ColumnInfo.PropertyName} must represent a bool or bool? property on {typeof(T).Name} to be used as a boolean predicate.");
 
-        return column;
+        _column = column;
     }
 
     /// <summary>
@@ -63,7 +55,7 @@ public abstract class BooleanColumnBase<T> : Predicates where T : class
     /// </summary>
     /// <param name="dialect">The SQL dialect for which to generate the fragment.</param>
     /// <returns>The SQL fragment represented by the underlying boolean column.</returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         foreach (ISqlFragment fragment in _column.ToSqlFragments(dialect))
             yield return fragment;

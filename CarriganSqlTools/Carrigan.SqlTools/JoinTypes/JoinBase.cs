@@ -62,5 +62,5 @@ public abstract class JoinBase
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
     ///
-    internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
+    public abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 }

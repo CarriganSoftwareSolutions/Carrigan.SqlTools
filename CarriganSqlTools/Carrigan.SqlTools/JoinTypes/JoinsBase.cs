@@ -31,5 +31,5 @@ public abstract class JoinsBase
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render join targets and predicates.</param>
     /// <returns>The SQL fragments that make up the rendered join clauses.</returns>
-    internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
+    public abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 }

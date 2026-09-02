@@ -108,7 +108,7 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
     /// instance.</returns>
     ///
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText(" CROSS JOIN ");
         if (Subquery is not null)

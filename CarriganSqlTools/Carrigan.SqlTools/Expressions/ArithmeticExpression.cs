@@ -34,7 +34,7 @@ public abstract class ArithmeticExpression : NumericExpression
         _operator = operation;
     }
 
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         int index = 0;
 

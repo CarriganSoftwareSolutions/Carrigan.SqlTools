@@ -99,7 +99,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     private static ColumnTag? GetSimpleColumnTag(SqlExpression sqlExpression) =>
         sqlExpression switch
         {
-            ColumnBase column => column.ColumnInfo.ColumnTag,
+            IColumnBase column => column.ColumnInfo.ColumnTag,
             ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
             _ => null
         };
@@ -176,7 +176,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     {
         ColumnTag? columnTag = SqlExpression switch
         {
-            ColumnBase column => column.ColumnInfo.ColumnTag,
+            IColumnBase column => column.ColumnInfo.ColumnTag,
             ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
             _ => null
         };

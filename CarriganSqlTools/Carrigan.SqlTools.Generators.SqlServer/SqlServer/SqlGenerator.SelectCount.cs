@@ -69,7 +69,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates the names of the properties, and throws an error if a property isn't valid
     /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
@@ -93,7 +92,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="ColumnEqualsColumnBase{leftT, rightT}"/> validates the names of the properties, and throws an error if a property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// SelectTag selectTag = SelectTag.Get<Customer>("Id", "CustomerId");

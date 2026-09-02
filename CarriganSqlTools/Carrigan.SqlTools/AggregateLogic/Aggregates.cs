@@ -39,7 +39,7 @@ public abstract class Aggregates : NumericExpression
     /// <summary>
     /// Produces the SQL fragment represented by this aggregate expression.
     /// </summary>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText($"{FunctionName}(");
 

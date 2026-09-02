@@ -42,25 +42,17 @@ public abstract class NumericColumnBase<T> : NumericExpression where T : class
     /// <param name="column">The column expression whose data model property must be of a numeric type or nullable numeric type.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="column"/> does not represent a numeric type or nullable numeric type property.</exception>
-    protected NumericColumnBase(ColumnBase<T> column) : base([ValidateColumn(column)], column) =>
-        _column = column;
-
-    /// <summary>
-    /// Validates that the supplied column represents a numeric type or nullable numeric type property in the data model.
-    /// </summary>
-    /// <param name="column">The column expression to validate.</param>
-    /// <returns>The validated column expression.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when the reflected property type is not numeric type or nullable numeric type.</exception>
-    private static ColumnBase<T> ValidateColumn(ColumnBase<T> column)
+    protected NumericColumnBase(ColumnBase<T> column) : base([], column)
     {
+        //IMPORTANT NOTE: Do not pass column to the base as a child node. That is wrong, and will cause duplicate Columns in the ancestry tree.
+        //Ask me how I know, rhetorically speaking, don't actually ask.
         ArgumentNullException.ThrowIfNull(column, nameof(column));
 
         Type columnType = column.ColumnInfo.Type;
-        if (columnType.IsNumericType() is  false)
+        if (columnType.IsNumericType() is false)
             throw new NonNumericValueException($"{column.ColumnInfo.PropertyName} must represent a numeric property on {typeof(T).Name} to be used as a numeric predicate.");
 
-        return column;
+        _column = column;
     }
 
     /// <summary>
@@ -68,9 +60,18 @@ public abstract class NumericColumnBase<T> : NumericExpression where T : class
     /// </summary>
     /// <param name="dialect">The SQL dialect for which to generate the fragment.</param>
     /// <returns>The SQL fragment represented by the underlying numeric column.</returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         foreach (ISqlFragment fragment in _column.ToSqlFragments(dialect))
             yield return fragment;
     }
+
+    /// <summary>
+    /// Returns a string that represents the underlying numeric column.
+    /// </summary>
+    /// <returns>
+    /// A string representation of the underlying numeric column.
+    /// </returns>
+    public override string ToString() =>
+        _column.ToString();
 }
