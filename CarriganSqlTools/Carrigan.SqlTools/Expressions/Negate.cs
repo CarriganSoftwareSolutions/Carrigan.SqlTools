@@ -89,7 +89,7 @@ public class Negate : NumericExpression
     /// <returns>
     /// An enumerable of <see cref="ISqlFragment"/> representing the Negate expression in SQL.
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("(-");
         foreach (ISqlFragment fragment in ChildNodes.Single().ToSqlFragments(dialect))

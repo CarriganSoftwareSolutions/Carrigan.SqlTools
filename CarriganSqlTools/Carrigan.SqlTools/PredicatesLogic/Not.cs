@@ -80,7 +80,7 @@ public class Not : Predicates
     /// <returns>
     /// A SQL string representing the negated predicate.
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("(NOT ");
 

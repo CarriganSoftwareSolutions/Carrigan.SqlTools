@@ -47,22 +47,4 @@ public class BooleanColumn<T> : BooleanColumnBase<T> where T : class
     /// </param>
     public static implicit operator Column<T>(BooleanColumn<T> booleanColumn) =>
         new(booleanColumn.PropertyName);
-
-    /// <summary>
-    /// Implicitly converts a <see cref="BooleanColumn{T}"/> to a <see cref="ColumnBase{T}"/>.
-    /// </summary>
-    /// <param name="booleanColumn">
-    /// The <see cref="BooleanColumn{T}"/> instance to convert.
-    /// </param>
-    public static implicit operator ColumnBase<T>(BooleanColumn<T> booleanColumn) =>
-        new Column<T>(booleanColumn.PropertyName);
-
-    /// <summary>
-    /// Implicitly converts a <see cref="BooleanColumn{T}"/> to a <see cref="ColumnBase"/>.
-    /// </summary>
-    /// <param name="booleanColumn">
-    /// The <see cref="BooleanColumn{T}"/> instance to convert.
-    /// </param>
-    public static implicit operator ColumnBase(BooleanColumn<T> booleanColumn) =>
-        new Column<T>(booleanColumn.PropertyName);
 }

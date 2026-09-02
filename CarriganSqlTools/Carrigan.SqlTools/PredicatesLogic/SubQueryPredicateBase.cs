@@ -54,6 +54,6 @@ public class SubqueryPredicateBase : Predicates
     /// <returns>
     /// An enumerable of <see cref="ISqlFragment"/> that represents the SQL fragments of the subquery predicate.
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) =>
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) =>
         Fragments;
 }

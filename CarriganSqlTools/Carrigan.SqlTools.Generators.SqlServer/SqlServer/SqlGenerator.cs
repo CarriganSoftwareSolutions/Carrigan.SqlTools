@@ -51,6 +51,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <returns>A dialect-specific column expression for the requested property.</returns>
     protected override ColumnBase<T> GetColumn(PropertyName propertyName) =>
         new Column<T>(propertyName);
+
     /// <summary>
     /// Creates a dialect-specific column-value expression from reflected column metadata and an entity instance.
     /// </summary>

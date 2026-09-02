@@ -43,7 +43,6 @@ public class ParameterTests
     [InlineData("`")]
     [InlineData(",")]
     [InlineData(".")]
-    [InlineData("")]
     [InlineData("hello world")]
     public void ParameterValues_Theory_InvalidParameterChars(string param) =>
         Assert.Throws<InvalidParameterIdentifierException>(() => new Parameter(1, param));

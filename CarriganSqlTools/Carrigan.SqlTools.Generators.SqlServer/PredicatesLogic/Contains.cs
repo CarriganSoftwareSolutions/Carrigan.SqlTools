@@ -39,7 +39,7 @@ public class Contains<T> : Predicates where T : class
     /// <summary>
     /// The column expression searched by the full-text predicate.
     /// </summary>
-    private readonly ColumnBase<T> _column;
+    private readonly IColumnBase<T> _column;
 
     /// <summary>
     /// The search-condition parameter rendered as the second argument to <c>CONTAINS</c>.
@@ -58,7 +58,7 @@ public class Contains<T> : Predicates where T : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="column"/> or <paramref name="parameter"/> is <c>null</c>.
     /// </exception>
-    public Contains(ColumnBase<T> column, Parameter parameter) : base([column, parameter], $"CONTAINS({parameter})")
+    public Contains(IColumnBase<T> column, Parameter parameter) : base([new Column<T>(column.PropertyName), parameter], $"CONTAINS({parameter})")
     {
         ArgumentNullException.ThrowIfNull(column, nameof(column));
         ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));
@@ -73,7 +73,7 @@ public class Contains<T> : Predicates where T : class
     /// <returns>
     /// A SQL fragment of the form <c>CONTAINS(&lt;column&gt;, &lt;parameter&gt;)</c>.
     /// </returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("CONTAINS(");
 

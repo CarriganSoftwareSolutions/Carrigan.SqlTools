@@ -70,7 +70,7 @@ public class ColumnValueTests
         string expectedString;
         string actualString;
 
-        ColumnBase column;
+        IColumnBase column;
 
         column = byColumnValues.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Col1").First();
         expectedString = "[ColumnTable].[Col1]";

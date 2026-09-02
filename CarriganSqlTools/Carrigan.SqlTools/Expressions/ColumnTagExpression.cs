@@ -40,7 +40,7 @@ internal sealed class ColumnTagExpression : SqlExpression
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render identifiers.</param>
     /// <returns>The SQL fragment for the resolved column tag.</returns>
-    internal override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return ColumnTag;
     }

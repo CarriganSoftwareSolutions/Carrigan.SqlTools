@@ -53,11 +53,11 @@ public abstract class SqlExpression : StringWrapper
         GetAllDescendantExpressions(ChildNodes);
 
     /// <summary>
-    /// Retrieves all descendants of type <see cref="ColumnBase"/>.
+    /// Retrieves all descendants of type <see cref="IColumnBase"/>.
     /// </summary>
     // TODO: Still need?
-    internal IEnumerable<ColumnBase> DescendantColumns =>
-        DescendantNodes.OfType<ColumnBase>();
+    internal IEnumerable<IColumnBase> DescendantColumns =>
+        DescendantNodes.OfType<IColumnBase>();
 
     /// <summary>
     /// Gets the table tags represented by leaf expressions directly attached to this expression.
@@ -115,7 +115,7 @@ public abstract class SqlExpression : StringWrapper
     /// </remarks>
     /// <returns>The SQL fragments represented by this expression tree.</returns>
 
-    internal abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
+    public abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 
     /// <summary>
     /// Gets the SQL parameters contained by this expression tree.
