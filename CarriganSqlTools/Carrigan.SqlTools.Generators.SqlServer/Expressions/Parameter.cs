@@ -37,7 +37,20 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// </summary>
     /// <param name="propertyName">The property name that identifies the model property represented by the parameter.</param>
     /// <param name="value">Value to assign to the parameter; may be null.</param>
-    public Parameter(PropertyName propertyName, object? value) : base(value, SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName))
+    public Parameter(PropertyName propertyName, object? value) : this(SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName), value)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="Parameter"/> that resolves parameter metadata from the specified <see cref="ColumnInfo"/> and uses the provided value.
+    /// </summary>
+    /// <param name="columnInfo">
+    /// The <see cref="ColumnInfo"/> that contains metadata about the model property represented by the parameter.
+    /// </param>
+    /// <param name="value">
+    /// The value to assign to the parameter; may be null.
+    /// </param>
+    private Parameter(ColumnInfo columnInfo, object? value) : base(value, columnInfo.ParameterTag, columnInfo.FieldPropertiesOrDefault(new SqlServerDialect()))
     {
     }
 

@@ -1,6 +1,7 @@
 using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
@@ -34,7 +35,20 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// <param name="propertyName">
     /// The name of the property for which to create a parameter.
     /// </param>
-    public BooleanParameter(bool value, PropertyName propertyName) : base(value, GetParameterTag(propertyName), GetFieldProperties(propertyName))
+    public BooleanParameter(bool value, PropertyName propertyName) : this(value, GetColumnInfo(propertyName))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="BooleanParameter{modelT}"/> using a <see cref="ColumnInfo"/> wrapper.
+    /// </summary>
+    /// <param name="value">
+    /// The numeric value to bind to the parameter; may be null.
+    /// </param>
+    /// <param name="columnInfo">
+    /// The <see cref="ColumnInfo"/> instance that provides metadata about the model property represented by the parameter.
+    /// </param>
+    private BooleanParameter(bool value, ColumnInfo columnInfo) : base(value, columnInfo.ParameterTag, columnInfo.FieldPropertiesOrDefault(new PostgreSqlDialect()))
     {
     }
 
@@ -53,28 +67,15 @@ public class BooleanParameter<modelT> : BooleanParameter
     }
 
     /// <summary>
-    /// Retrieves the <see cref="ParameterTag"/> for the specified property name from the reflector cache.
+    /// Retrieves and validates the reflected column metadata for the specified model property.
     /// </summary>
-    /// <param name="propertyName">
-    /// The name of the property for which to retrieve the parameter tag.
-    /// </param>
-    /// <returns>
-    /// The <see cref="ParameterTag"/> associated with the specified property name.
-    /// </returns>
-    private static ParameterTag GetParameterTag(PropertyName propertyName) =>
-        SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectBaseStatics.SupportedTypes, propertyName).ParameterTag;
-
-    /// <summary>
-    /// Retrieves the <see cref="FieldProperties"/> for the specified property name from the reflector cache.
-    /// </summary>
-    /// <param name="propertyName">
-    /// The name of the property for which to retrieve the field properties.
-    /// </param>
-    /// <returns>
-    /// The <see cref="FieldProperties"/> associated with the specified property name.
-    /// </returns>
-    private static FieldProperties GetFieldProperties(PropertyName propertyName) =>
-        SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectBaseStatics.SupportedTypes, propertyName).FieldPropertiesOrDefault(new PostgreSqlDialect());
+    private static ColumnInfo GetColumnInfo(PropertyName propertyName)
+    {
+        ColumnInfo columnInfo = SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectBaseStatics.SupportedTypes, propertyName);
+        if (columnInfo.Type != typeof(bool) && columnInfo.Type != typeof(bool?))
+            throw new NonBooleanValueException($"{columnInfo.PropertyName} must represent a bool or bool? property on {typeof(modelT).Name} to be used as a boolean parameter.");
+        return columnInfo;
+    }
 
     /// <summary>
     /// Initializes a new instance of <see cref="BooleanParameter{modelT}"/> from an existing <see cref="Parameter"/> instance.
