@@ -74,8 +74,10 @@ public class BooleanParameterTests
 
     private static void RunParameterTests(string parameterName)
     {
+        RunParameterTest(ParameterTest, NewParameterFromBooleanParameter, null, parameterName);
         RunParameterTest(ParameterTest, NewParameterFromBooleanParameter, false, parameterName);
         RunParameterTest(ParameterTest, NewParameterFromBooleanParameter, true, parameterName);
+        RunParameterTest(ParameterTest, NewParameterFromBooleanParameter, null, new ParameterTag(parameterName));
         RunParameterTest(ParameterTest, NewParameterFromBooleanParameter, false, new ParameterTag(parameterName));
         RunParameterTest(ParameterTest, NewParameterFromBooleanParameter, true, new ParameterTag(parameterName));
     }

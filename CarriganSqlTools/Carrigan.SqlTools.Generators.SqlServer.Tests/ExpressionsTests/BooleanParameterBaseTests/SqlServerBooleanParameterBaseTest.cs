@@ -14,9 +14,9 @@ public abstract class SqlServerBooleanParameterBaseTest<modelT> : BooleanParamet
     protected override string ExpectSqlFragment(ParameterTag parameterTag) =>
         $"@{parameterTag}_1";
 
-    protected override BooleanParameter NewBooleanParameter(string propertyName, bool value) =>
+    protected override BooleanParameter NewBooleanParameter(string propertyName, bool? value) =>
         new BooleanParameter<modelT>(value, propertyName);
 
-    protected override BooleanParameter NewBooleanParameter(PropertyName propertyName, bool value) =>
+    protected override BooleanParameter NewBooleanParameter(PropertyName propertyName, bool? value) =>
         new BooleanParameter<modelT>(value, propertyName);
 }

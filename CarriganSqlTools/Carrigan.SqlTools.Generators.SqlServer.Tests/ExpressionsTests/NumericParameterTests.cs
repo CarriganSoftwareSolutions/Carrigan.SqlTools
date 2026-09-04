@@ -85,6 +85,13 @@ public class NumericParameterTests
         RunExceptionTest<long>(exceptionTest, NewParameterFromNumericParameterType, parameterName);
         RunExceptionTest<float>(exceptionTest, NewParameterFromNumericParameterType, parameterName);
         RunExceptionTest<double>(exceptionTest, NewParameterFromNumericParameterType, parameterName);
+
+        RunExceptionTest<decimal>(exceptionTest, NewParameterFromNumericParameter, parameterName);
+        RunExceptionTest<short>(exceptionTest, NewParameterFromNumericParameter, parameterName);
+        RunExceptionTest<int>(exceptionTest, NewParameterFromNumericParameter, parameterName);
+        RunExceptionTest<long>(exceptionTest, NewParameterFromNumericParameter, parameterName);
+        RunExceptionTest<float>(exceptionTest, NewParameterFromNumericParameter, parameterName);
+        RunExceptionTest<double>(exceptionTest, NewParameterFromNumericParameter, parameterName);
     }
 
     #endregion
@@ -137,6 +144,20 @@ public class NumericParameterTests
         RunParameterTest<float>(ParameterTest, NewParameterFromNumericParameterType, new ParameterTag(parameterName));
         RunParameterTest<double>(ParameterTest, NewParameterFromNumericParameterType, new ParameterTag(parameterName));
         RunParameterTest<decimal>(ParameterTest, NewParameterFromNumericParameterType, new ParameterTag(parameterName));
+
+        RunParameterTest<short>(ParameterTest, NewParameterFromNumericParameter, parameterName);
+        RunParameterTest<int>(ParameterTest, NewParameterFromNumericParameter, parameterName);
+        RunParameterTest<long>(ParameterTest, NewParameterFromNumericParameter, parameterName);
+        RunParameterTest<float>(ParameterTest, NewParameterFromNumericParameter, parameterName);
+        RunParameterTest<double>(ParameterTest, NewParameterFromNumericParameter, parameterName);
+        RunParameterTest<decimal>(ParameterTest, NewParameterFromNumericParameter, parameterName);
+
+        RunParameterTest<short>(ParameterTest, NewParameterFromNumericParameter, new ParameterTag(parameterName));
+        RunParameterTest<int>(ParameterTest, NewParameterFromNumericParameter, new ParameterTag(parameterName));
+        RunParameterTest<long>(ParameterTest, NewParameterFromNumericParameter, new ParameterTag(parameterName));
+        RunParameterTest<float>(ParameterTest, NewParameterFromNumericParameter, new ParameterTag(parameterName));
+        RunParameterTest<double>(ParameterTest, NewParameterFromNumericParameter, new ParameterTag(parameterName));
+        RunParameterTest<decimal>(ParameterTest, NewParameterFromNumericParameter, new ParameterTag(parameterName));
     }
 
     #endregion

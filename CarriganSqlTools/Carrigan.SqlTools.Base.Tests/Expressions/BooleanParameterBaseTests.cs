@@ -9,8 +9,8 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public abstract class BooleanParameterBaseTests<modelT> : ParameterTestsBase<modelT> where modelT : class
 {
-    protected abstract BooleanParameter NewBooleanParameter(string propertyName, bool value);
-    protected abstract BooleanParameter NewBooleanParameter(PropertyName propertyName, bool value);
+    protected abstract BooleanParameter NewBooleanParameter(string propertyName, bool? value);
+    protected abstract BooleanParameter NewBooleanParameter(PropertyName propertyName, bool? value);
     protected abstract string ExpectSqlFragment(ParameterTag parameterTag);
     protected abstract IEnumerable<string> BooleanProperties { get; }
 

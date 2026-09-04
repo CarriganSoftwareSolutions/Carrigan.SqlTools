@@ -30,12 +30,12 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// Initializes a new instance of <see cref="BooleanParameter{modelT}"/> using a <see cref="PropertyName"/> wrapper.
     /// </summary>
     /// <param name="value">
-    /// The numeric value to bind to the parameter; may be null.
+    /// The boolean value to bind to the parameter; may be null.
     /// </param>
     /// <param name="propertyName">
     /// The name of the property for which to create a parameter.
     /// </param>
-    public BooleanParameter(bool value, PropertyName propertyName) : this(value, GetColumnInfo(propertyName))
+    public BooleanParameter(bool? value, PropertyName propertyName) : this(value, GetColumnInfo(propertyName))
     {
     }
 
@@ -43,12 +43,12 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// Initializes a new instance of <see cref="BooleanParameter{modelT}"/> using a <see cref="ColumnInfo"/> wrapper.
     /// </summary>
     /// <param name="value">
-    /// The numeric value to bind to the parameter; may be null.
+    /// The boolean value to bind to the parameter; may be null.
     /// </param>
     /// <param name="columnInfo">
     /// The <see cref="ColumnInfo"/> instance that provides metadata about the model property represented by the parameter.
     /// </param>
-    private BooleanParameter(bool value, ColumnInfo columnInfo) : base(value, columnInfo.ParameterTag, columnInfo.FieldPropertiesOrDefault(new PostgreSqlDialect()))
+    private BooleanParameter(bool? value, ColumnInfo columnInfo) : base(value, columnInfo.ParameterTag, columnInfo.FieldPropertiesOrDefault(new PostgreSqlDialect()))
     {
     }
 
@@ -56,13 +56,13 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// Initializes a new instance of <see cref="BooleanParameter{modelT}"/> using a string property name.
     /// </summary>
     /// <param name="value">
-    /// The numeric value to bind to the parameter; may be null.
+    /// The boolean value to bind to the parameter; may be null.
     /// </param>
     /// <param name="propertyName">
     /// The name of the property for which to create a parameter.
     /// </param>
     [ExternalOnly]
-    public BooleanParameter(bool value, string propertyName) : this(value, new PropertyName(propertyName))
+    public BooleanParameter(bool? value, string propertyName) : this(value, new PropertyName(propertyName))
     {
     }
 
@@ -137,4 +137,3 @@ public class BooleanParameter<modelT> : BooleanParameter
     public static implicit operator Parameter<modelT> (BooleanParameter<modelT> parameter) =>
         new (parameter);
 }
-

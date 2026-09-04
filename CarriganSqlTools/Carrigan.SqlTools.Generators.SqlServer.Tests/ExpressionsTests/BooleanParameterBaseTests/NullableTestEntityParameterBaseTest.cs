@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests.BooleanParameterBaseTests;
@@ -9,6 +10,13 @@ public class NullableTestEntityParameterBaseTest : SqlServerBooleanParameterBase
         [
             nameof(NullableTestEntity.BoolValue)
         ];
+
+    [Fact]
+    public void Constructor_NullBooleanValue()
+    {
+        BooleanParameter parameter = new BooleanParameter<NullableTestEntity>(null, nameof(NullableTestEntity.BoolValue));
+        Assert.Null(parameter.Value);
+    }
 
     internal override Dictionary<string, ParameterTag> ExpectedPropertyParameterTag =>
     new

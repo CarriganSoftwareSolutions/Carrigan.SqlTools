@@ -282,7 +282,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
 
     private static void AssertPrices(IEnumerable<BookIdAndPrice> records, Dictionary<int, double?> expectedValues)
     {
-        BookIdAndPrice[] actualRecords = records.ToArray();
+        BookIdAndPrice[] actualRecords = [.. records];
 
         Assert.Equal(expectedValues.Count, actualRecords.Length);
 
