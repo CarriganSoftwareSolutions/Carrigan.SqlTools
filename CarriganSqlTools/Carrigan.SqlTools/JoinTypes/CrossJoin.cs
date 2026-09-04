@@ -96,18 +96,10 @@ public class CrossJoin<rightT> : JoinBase where rightT : class
         SqlToolsReflectorCache<rightT>.Table;
 
     /// <summary>
-    /// Converts the current <see cref="CrossJoin{rightT}"/> instance to its <see cref="ISqlFragment"/> representation.
-    /// </summary>
-    /// <param name="dialect"></param>
-    /// <returns>
-    /// A <see cref="ISqlFragment"/> representing the <c>CROSS JOIN</c> clause.
-    /// </returns><see cref="ISqlFragment"/>
-    /// <summary>
     /// Generates the SQL fragments representing the <c>CROSS JOIN</c> operation.
     /// </summary>
-    /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this
-    /// instance.</returns>
-    ///
+    /// <param name="dialect">The SQL dialect used to render the joined table or subquery.</param>
+    /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this instance.</returns>
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText(" CROSS JOIN ");

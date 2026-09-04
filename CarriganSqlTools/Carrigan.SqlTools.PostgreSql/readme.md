@@ -38,6 +38,13 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Update with From and Where](#update-with-from-and-where)
   - [Aggregate Expression Examples](#aggregate-expression-examples)
   - [Having Examples](#having-examples)
+- [Arithmetic Examples](#arithmetic-examples)
+    - [Add Examples](#add-examples)
+    - [Divide Examples](#divide-examples)
+    - [Minus Examples](#minus-examples)
+    - [Mod Examples](#mod-examples)
+    - [Multiply Examples](#multiply-examples)
+    - [Negate Examples](#negate-examples)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -303,14 +310,15 @@ Use `SqlGenerator<T>` to produce a **`SqlQuery`** with `QueryText`, `CommandType
 All examples use the following `using` statements to keep code clean.
 
 ```csharp
-using Carrigan.SqlTools.Base.Tests.Helpers;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 
 // Example data models
@@ -565,6 +573,172 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 [Table of Contents](#table-of-contents)
 
 ---
+
+## Arithmetic Examples
+
+### Add Examples
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Add
+            (
+                new Column<Grades>(nameof(Grades.CreditHours)),
+                new Parameter(1)
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+
+//  SELECT (\"Grades\".\"CreditHours\" + @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Divide Examples
+```csharp
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Divide
+            (
+                new Column<Grades>(nameof(Grades.CreditHours)),
+                new Parameter(2)
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+
+SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+
+//  SELECT (\"Grades\".\"CreditHours\" / @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Minus Examples
+```csharp
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Minus
+            (
+                new Column<Grades>(nameof(Grades.CreditHours)),
+                new Parameter(1)
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+
+SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+
+//  SELECT (\"Grades\".\"CreditHours\" - @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Mod Examples
+```csharp
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Mod
+            (
+                new Column<Grades>(nameof(Grades.CreditHours)),
+                new Parameter(2)
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+
+SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+
+//  SELECT (\"Grades\".\"CreditHours\" % @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Multiply Examples
+```csharp
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Multiply
+            (
+                new Column<Grades>(nameof(Grades.CreditHours)),
+                new Parameter(2)
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+
+SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+
+//  SELECT (\"Grades\".\"CreditHours\" * @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Negate Examples
+```csharp
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Negate
+            (
+                new Column<Grades>(nameof(Grades.CreditHours))
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+
+//  SELECT (-\"Grades\".\"CreditHours\") AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
 
 ## Attribute Examples
 

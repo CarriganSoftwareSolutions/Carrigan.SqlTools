@@ -8,7 +8,7 @@ using Carrigan.SqlTools.IdentifierTypes;
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Represents a SQL Server column numeric expression for a reflected model property declared as a numeric type.
+/// Represents a PostgreSQL column numeric expression for a reflected model property declared as a numeric type.
 /// </summary>
 /// <typeparam name="modelT">The entity or data model type that defines the table containing the referenced numeric column.</typeparam>
 /// <remarks>

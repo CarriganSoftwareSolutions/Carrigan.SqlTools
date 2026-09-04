@@ -16,9 +16,6 @@ namespace Carrigan.SqlTools.Exceptions;
 /// this exception is thrown.
 /// </para>
 /// </remarks>
-/// <summary>
-/// Indicates that the configured encryption key-version property uses an unsupported CLR type.
-/// </summary>
 /// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 public sealed class InvalidKeyVersionPropertyTypeException<T> : Exception
 //TODO: create an analyzer to enforce the int requirement
