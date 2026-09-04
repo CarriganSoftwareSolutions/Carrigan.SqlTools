@@ -1,5 +1,8 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
@@ -31,4 +34,18 @@ public class NegateTests
         string expectedText = "SELECT (-\"Grades\".\"CreditHours\") AS \"ArthemicResult\" FROM \"Grades\"";
         Assert.Equal(expectedText, actualText);
     }
+    [Fact]
+    public void TestNumericNegate_LooseColumn()
+    {
+        Negate negate = new(new Column<Grades>(nameof(Grades.CreditHours)));
+        string actualText = negate.ToSqlFragments(new PostgreSqlDialect()).ToSql(new PostgreSqlDialect());
+        string expectedText = "(-\"Grades\".\"CreditHours\")";
+
+        Assert.Equal(expectedText, actualText);
+    }
+
+    [Fact]
+    public void TestNumericNegate_NonNumeric_Exception() =>
+        Assert.Throws<NonNumericValueException>(() => new Negate(new Column<Grades>(nameof(Grades.CourseCode))));
+
 }

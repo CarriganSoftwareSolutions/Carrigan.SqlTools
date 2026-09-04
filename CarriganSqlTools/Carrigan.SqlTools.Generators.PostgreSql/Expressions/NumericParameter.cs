@@ -1,6 +1,8 @@
 using Carrigan.Core.Attributes;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
@@ -38,38 +40,47 @@ public class NumericParameter<modelT, T> : NumericParameter<T>
     /// <param name="propertyName">
     /// The name of the property for which to create a parameter.
     /// </param>
-    public NumericParameter(T? value, PropertyName propertyName) : base(value, GetParameterTag(propertyName), GetFieldProperties(propertyName))
+    public NumericParameter(T? value, PropertyName propertyName) : this(value, GetColumnInfo(propertyName))
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="NumericParameter{T}"/> using reflected column metadata.
+    /// </summary>
+    /// <param name="value">
+    /// The numeric value to bind to the parameter; may be null.
+    /// </param>
+    /// <param name="columnInfo">
+    /// The <see cref="ColumnInfo"/> that contains metadata about the model property represented by the parameter.
+    /// </param>
+    private NumericParameter(T? value, ColumnInfo columnInfo) : base(value, columnInfo.ParameterTag, columnInfo.FieldPropertiesOrDefault(new PostgreSqlDialect()))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="NumericParameter{T}"/> using a property name string.
+    /// </summary>
+    /// <param name="value">
+    /// The numeric value to bind to the parameter; may be null.
+    /// </param>
+    /// <param name="propertyName">
+    /// The name of the property for which to create a parameter.
+    /// </param>
     [ExternalOnly]
     public NumericParameter(T? value, string propertyName) : this(value, new PropertyName(propertyName))
     {
     }
 
     /// <summary>
-    /// Retrieves the <see cref="ParameterTag"/> for the specified property name from the reflector cache.
+    /// Retrieves and validates the reflected column metadata for the specified model property.
     /// </summary>
-    /// <param name="propertyName">
-    /// The name of the property for which to retrieve the parameter tag.
-    /// </param>
-    /// <returns>
-    /// The <see cref="ParameterTag"/> associated with the specified property name.
-    /// </returns>
-    private static ParameterTag GetParameterTag(PropertyName propertyName) =>
-        SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectBaseStatics.SupportedTypes, propertyName).ParameterTag;
-
-    /// <summary>
-    /// Retrieves the <see cref="FieldProperties"/> for the specified property name from the reflector cache.
-    /// </summary>
-    /// <param name="propertyName">
-    /// The name of the property for which to retrieve the field properties.
-    /// </param>
-    /// <returns>
-    /// The <see cref="FieldProperties"/> associated with the specified property name.
-    /// </returns>
-    private static FieldProperties GetFieldProperties(PropertyName propertyName) =>
-        SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectBaseStatics.SupportedTypes, propertyName).FieldPropertiesOrDefault(new PostgreSqlDialect());
+    private static ColumnInfo GetColumnInfo(PropertyName propertyName)
+    {
+        ColumnInfo columnInfo = SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectBaseStatics.SupportedTypes, propertyName);
+        if (columnInfo.Type.IsNumericType() is false)
+            throw new NonNumericValueException($"{columnInfo.PropertyName} must represent a numeric property on {typeof(modelT).Name} to be used as a numeric parameter.");
+        return columnInfo;
+    }
 
     /// <summary>
     /// Initializes a new instance of <see cref="NumericParameter{T}"/> from an existing <see cref="Parameter"/> instance.
