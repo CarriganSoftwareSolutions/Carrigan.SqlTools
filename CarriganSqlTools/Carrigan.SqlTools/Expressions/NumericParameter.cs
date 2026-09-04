@@ -199,7 +199,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="value">
     /// The numeric value to bind to the parameter.
     /// </param>
-    /// <param name="parmeterTag">
+    /// <param name="parameterTag">
     /// The base parameter tag (name + metadata) to use for the parameter.
     /// </param>
     /// <param name="fieldProperties">
@@ -208,8 +208,8 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
-    public static NumericParameter<T> New<T>(T? value, ParameterTag parmeterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
-        new (value, parmeterTag, fieldProperties);
+    public static NumericParameter<T> New<T>(T? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
+        new (value, parameterTag, fieldProperties);
 
     /// <summary>
     /// Creates a new <see cref="NumericParameter{T}"/> instance with the specified numeric value and a parameter name.
@@ -220,7 +220,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="value">
     /// The numeric value to bind to the parameter.
     /// </param>
-    /// <param name="parmeterTag">
+    /// <param name="parameterTag">
     /// The base parameter tag (name + metadata) to use for the parameter.
     /// </param>
     /// <param name="fieldProperties">
@@ -230,8 +230,8 @@ public class NumericParameter : NumericExpression, IParameter
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
     [ExternalOnly]
-    public static NumericParameter<T> New<T>(T? value, string parmeterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
-        new(value, new ParameterTag(parmeterTag), fieldProperties);
+    public static NumericParameter<T> New<T>(T? value, string parameterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
+        new(value, new ParameterTag(parameterTag), fieldProperties);
 
     /// <summary>
     /// Creates a Parameter using the provided value and ColumnInfo to set the parameter name and field properties.
@@ -279,8 +279,9 @@ public class NumericParameter : NumericExpression, IParameter
     /// <exception cref="NonNumericValueException">Thrown if the value is not a numeric type.</exception>
     private static void ValidateType(object? value)
     {
-        if (value.GetUnderlyingType().IsNotNumericType())
-            throw new NonNumericValueException(value.GetUnderlyingType());
+        Type? underlyingType = value.GetUnderlyingType();
+        if (underlyingType is not null && underlyingType.IsNotNumericType())
+            throw new NonNumericValueException(underlyingType);
     }
 
     /// <summary>

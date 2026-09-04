@@ -10,8 +10,6 @@ using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
-//TODO: Examples and Unit test
-
 public class BooleanParameter : Predicates, IParameter
 {
     /// <summary>
@@ -138,14 +136,15 @@ public class BooleanParameter : Predicates, IParameter
     }
 
     /// <summary>
-    /// Validates that the provided value is of a bool type. If the value is not boolean, a <see cref="NonNumericValueException"/> is thrown.
+    /// Validates that the provided value is either <see langword="null"/> or a boolean value.
     /// </summary>
     /// <param name="value">The value to validate.</param>
-    /// <exception cref="NonNumericValueException">Thrown if the value is not a boolean type.</exception>
+    /// <exception cref="NonBooleanValueException">Thrown if a non-null value is not a boolean type.</exception>
     private static void ValidateType(object? value)
     {
-        if (value.GetUnderlyingType().IsNotBoolType())
-            throw new NonBooleanValueException(value.GetUnderlyingType());
+        Type? underlyingType = value.GetUnderlyingType();
+        if (underlyingType is not null && underlyingType.IsNotBoolType())
+            throw new NonBooleanValueException(underlyingType);
     }
 
     /// <summary>
