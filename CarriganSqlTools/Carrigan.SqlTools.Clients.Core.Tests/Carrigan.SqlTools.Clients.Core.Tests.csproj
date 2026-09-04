@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.6-alpha.202609040249" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.6" />
     <PackageReference Include="coverlet.MTP" Version="10.0.1" />
     <PackageReference Include="xunit.v3" Version="4.0.0" />
   </ItemGroup>
