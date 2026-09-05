@@ -30,6 +30,10 @@ public interface ISqlFragment
     /// Represents the current platform newline sequence.
     /// </summary>
     internal static readonly ISqlFragment NewLine = new SqlFragmentText(Environment.NewLine);
+    /// <summary>
+    /// Represents an opening parenthesis in SQL syntax.
+    /// </summary>
+    internal static readonly ISqlFragment CloseParentheses = new SqlFragmentText(")");
 
     /// <summary>
     /// Converts this fragment into its SQL representation.
