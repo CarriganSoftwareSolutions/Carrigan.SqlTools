@@ -23,7 +23,7 @@ public abstract class Aggregates : NumericExpression
     /// Thrown when <paramref name="functionName"/> or <paramref name="expressions"/> is <c>null</c>.
     /// </exception>
     protected Aggregates(string functionName, params IEnumerable<SqlExpression> expressions)
-        : base(expressions, ToBaseString(functionName, expressions))
+        : base(expressions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(functionName, nameof(functionName));
         FunctionName = functionName;
@@ -35,6 +35,12 @@ public abstract class Aggregates : NumericExpression
     /// <returns>Always <c>true</c>.</returns>
     public override bool IsAggregate() =>
         true;
+
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the aggregate expression.
+    /// </summary>
+    public override string ToString() =>
+        ChildNodes.Any() ? $"{FunctionName}({string.Join(", ", ChildNodes)})" : $"{FunctionName}(*)";
 
     /// <summary>
     /// Produces the SQL fragment represented by this aggregate expression.
@@ -68,11 +74,4 @@ public abstract class Aggregates : NumericExpression
         yield return new SqlFragmentText(")");
     }
 
-    /// <summary>
-    /// Returns an unquoted dialect neutral aggregate expression representation.
-    /// </summary>
-    private static string ToBaseString(string functionName, params IEnumerable<SqlExpression> expressions) =>
-        expressions.Any()
-            ? $"{functionName}({string.Join(", ", expressions)})"
-            : $"{functionName}(*)";
 }

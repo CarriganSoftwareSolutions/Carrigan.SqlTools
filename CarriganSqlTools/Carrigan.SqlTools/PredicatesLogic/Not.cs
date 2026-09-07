@@ -57,7 +57,7 @@ public class Not : Predicates
     /// Thrown when <paramref name="aPredicate"/> is <c>null</c>.
     /// </exception>
     public Not(Predicates aPredicate) 
-        : base([ValidateSomeValue(aPredicate)], $"(NOT {aPredicate})") =>
+        : base([ValidateSomeValue(aPredicate)]) =>
         _aPredicate = aPredicate;
 
     /// <summary>
@@ -73,6 +73,12 @@ public class Not : Predicates
         ArgumentNullException.ThrowIfNull(someValue, nameof(someValue));
         return someValue;
     }
+
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the predicate.
+    /// </summary>
+    public override string ToString() =>
+        $"(NOT {_aPredicate})";
 
     /// <summary>
     /// Generates the SQL fragment represented by this <c>NOT</c> predicate.

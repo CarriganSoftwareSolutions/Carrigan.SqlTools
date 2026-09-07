@@ -54,7 +54,7 @@ public class IsNull : Predicates
     /// Thrown when <paramref name="anExpression"/> is <c>null</c>.
     /// </exception>
     public IsNull(SqlExpression anExpression) 
-        : base([ValidateSomeValue(anExpression)], $"({anExpression} IS NULL)") =>
+        : base([ValidateSomeValue(anExpression)]) =>
         _anExpression = anExpression;
 
     /// <summary>
@@ -70,6 +70,12 @@ public class IsNull : Predicates
         ArgumentNullException.ThrowIfNull(someValue, nameof(someValue));
         return someValue;
     }
+
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the predicate.
+    /// </summary>
+    public override string ToString() =>
+        $"({_anExpression} IS NULL)";
 
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.

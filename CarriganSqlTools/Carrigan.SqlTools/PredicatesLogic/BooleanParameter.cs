@@ -87,7 +87,7 @@ public class BooleanParameter : Predicates, IParameter
     /// <exception cref="ArgumentNullException">
     /// Thrown when a required argument is <c>null</c>.
     /// </exception>
-    internal BooleanParameter(object? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) : base([], parameterTag)
+    internal BooleanParameter(object? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) : base([])
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         ValidateType(value);
@@ -102,7 +102,7 @@ public class BooleanParameter : Predicates, IParameter
     /// <remarks>Throws ArgumentNullException if columInfo is null.</remarks>
     /// <param name="value">The value for the parameter; may be null.</param>
     /// <param name="columInfo">ColumnInfo used to obtain the parameter tag and field properties; must not be null.</param>
-    internal BooleanParameter(object? value, ColumnInfo columInfo) : base([], columInfo.ParameterTag)
+    internal BooleanParameter(object? value, ColumnInfo columInfo) : base([])
     {
         ArgumentNullException.ThrowIfNull(columInfo, nameof(columInfo));
         ValidateType(value);

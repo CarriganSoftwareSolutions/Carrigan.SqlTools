@@ -72,7 +72,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// with the composed predicate as a child node.
     /// </summary>
     /// <param name="equal">The composed <see cref="Equal"/> predicate.</param>
-    private ColumnValueBase(Equal equal) : base([equal], equal) =>
+    private ColumnValueBase(Equal equal) : base([equal]) =>
         value = equal;
 
     /// <summary>
@@ -125,6 +125,12 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
 
         return new Equal(left, right);
     }
+
+    /// <summary>
+    /// Returns the diagnostic representation of the composed equality predicate.
+    /// </summary>
+    public override string ToString() =>
+        value.ToString() ?? string.Empty;
 
     /// <summary>
     /// Produces the SQL fragment represented by this predicate.

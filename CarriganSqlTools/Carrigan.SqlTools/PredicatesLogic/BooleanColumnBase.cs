@@ -37,7 +37,7 @@ public abstract class BooleanColumnBase<T> : Predicates, IColumnBase  where T : 
     /// <param name="column">The column expression whose data model property must be <see cref="bool"/> or nullable <see cref="bool"/>.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="column"/> does not represent a <see cref="bool"/> or nullable <see cref="bool"/> property.</exception>
-    protected BooleanColumnBase(ColumnBase<T> column) : base([], column)
+    protected BooleanColumnBase(ColumnBase<T> column) : base([])
     {
         //IMPORTANT NOTE: Do not pass column to the base as a child node. That is wrong, and will cause duplicate Columns in the ancestry tree.
         //Ask me how I know, rhetorically speaking, don't actually ask.
@@ -49,6 +49,12 @@ public abstract class BooleanColumnBase<T> : Predicates, IColumnBase  where T : 
 
         _column = column;
     }
+
+    /// <summary>
+    /// Returns a string that represents the underlying boolean column.
+    /// </summary>
+    public override string ToString() =>
+        _column.ToString();
 
     /// <summary>
     /// Produces the SQL fragment represented by the underlying boolean column.

@@ -23,7 +23,7 @@ internal sealed class ColumnTagExpression : SqlExpression
     /// Initializes a new instance of the <see cref="ColumnTagExpression"/> class.
     /// </summary>
     /// <param name="columnTag">The resolved column tag to represent.</param>
-    internal ColumnTagExpression(ColumnTag columnTag) : base([], columnTag)
+    internal ColumnTagExpression(ColumnTag columnTag) : base([])
     {
         ArgumentNullException.ThrowIfNull(columnTag, nameof(columnTag));
         ColumnTag = columnTag;

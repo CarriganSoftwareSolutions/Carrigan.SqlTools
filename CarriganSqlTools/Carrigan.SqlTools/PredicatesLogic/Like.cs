@@ -68,11 +68,17 @@ public class Like : DialectOperator
     /// For PostgreSQL, the default is <c>LIKE</c>, which performs a case-sensitive comparison.
     /// </remarks>
     public Like(SqlExpression left, SqlExpression right, bool? isCaseSensitive = null)
-        : base(left, right, $"({left} {GetDialectNeutralStringOperator(isCaseSensitive)} {right})") =>
+        : base(left, right) =>
         IsCaseSensitive = isCaseSensitive;
 
-    private static string GetDialectNeutralStringOperator(bool? isCaseSensitive = null) =>
-        isCaseSensitive switch
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the LIKE predicate.
+    /// </summary>
+    public override string ToString() =>
+        $"({_left} {GetDiagnosticOperator()} {_right})";
+
+    private string GetDiagnosticOperator() =>
+        IsCaseSensitive switch
         {
             null => "LIKE",
             true => "CASE SENSITIVE LIKE",

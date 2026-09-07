@@ -69,7 +69,7 @@ public class Negate : NumericExpression
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="numericExpression"/> is <c>null</c>.
     /// </exception>
-    public Negate(NumericExpression numericExpression) : base([ValidateNumericExpression(numericExpression)], $"(-{numericExpression})")
+    public Negate(NumericExpression numericExpression) : base([ValidateNumericExpression(numericExpression)])
     {
     }
 
@@ -78,6 +78,12 @@ public class Negate : NumericExpression
         ArgumentNullException.ThrowIfNull(numericExpression, nameof(numericExpression));
         return numericExpression;
     }
+
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the negated expression.
+    /// </summary>
+    public override string ToString() =>
+        $"(-{ChildNodes.Single()})";
 
     /// <summary>
     /// Converts the Negate expression to SQL fragments.

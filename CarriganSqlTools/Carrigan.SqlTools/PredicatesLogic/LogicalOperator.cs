@@ -52,14 +52,11 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public LogicalOperator(string op, params IEnumerable<Predicates> predicates)
-        : this(ValidateOperator(op), ValidatePredicates(predicates))
+    public LogicalOperator(string op, params IEnumerable<Predicates> predicates) : base(ValidatePredicates(predicates))
     {
-    }
-
-    private LogicalOperator(string op, IReadOnlyList<Predicates> predicates)
-        : base(predicates, ToDialectNeutralString(op, predicates)) =>
+        ValidateOperator(op);
         _operator = op;
+    }
 
     private static string ValidateOperator(string op)
     {
@@ -71,21 +68,23 @@ public abstract class LogicalOperator : Predicates
         return op;
     }
 
-    private static IReadOnlyList<Predicates> ValidatePredicates(IEnumerable<Predicates> predicates)
+    private static IEnumerable<Predicates> ValidatePredicates(IEnumerable<Predicates> predicates)
     {
         ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
 
-        Predicates[] predicateArray = [.. predicates];
-        if (predicateArray.Length == 0)
+        if (predicates.None())
             throw new ArgumentException($"{nameof(predicates)} must contain at least one value.", nameof(predicates));
-        if (predicateArray.Any(static predicate => predicate is null))
+        if (predicates.Any(static predicate => predicate is null))
             throw new NullReferenceException($"{nameof(predicates)} cannot contain null values.");
 
-        return predicateArray;
+        return predicates;
     }
 
-    private static string ToDialectNeutralString(string op, IReadOnlyList<Predicates> predicates) =>
-        predicates.Count == 1 ? predicates[0].ToString() : $"({string.Join($" {op} ", predicates)})";
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the logical expression.
+    /// </summary>
+    public override string ToString() =>
+        (ChildNodes.Count() == 1 ? ChildNodes.Single().ToString() : $"({string.Join($" {_operator} ", ChildNodes)})") ?? string.Empty;
 
     /// <summary>
     /// Generates the SQL fragment represented by this logical operator.

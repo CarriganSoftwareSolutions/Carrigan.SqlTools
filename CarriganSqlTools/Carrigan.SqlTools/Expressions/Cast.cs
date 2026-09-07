@@ -28,26 +28,17 @@ public class Cast : SqlExpression
     /// <param name="fieldProperties">
     /// The properties of the field to which the expression is being cast.
     /// </param>
-    public Cast(SqlExpression sqlExpression, FieldProperties fieldProperties) : base ([sqlExpression], GetDialectNeutralString(sqlExpression, fieldProperties))
+    public Cast(SqlExpression sqlExpression, FieldProperties fieldProperties) : base([sqlExpression])
     {
         SqlExpression = sqlExpression;
         FieldProperties = fieldProperties;
     }
 
     /// <summary>
-    /// Generates a dialect-neutral SQL string for the <c>CAST</c> expression.
+    /// Returns a dialect-neutral diagnostic representation of the cast expression.
     /// </summary>
-    /// <param name="sqlExpression">
-    /// The expression to cast.
-    /// </param>
-    /// <param name="fieldProperties">
-    /// The properties of the field to which the expression is being cast.
-    /// </param>
-    /// <returns>
-    /// A string representing the <c>CAST</c> expression in a dialect-neutral format.
-    /// </returns>
-    private static string GetDialectNeutralString(SqlExpression sqlExpression, FieldProperties fieldProperties) =>
-        $"CAST({sqlExpression} AS {fieldProperties.BaseType})";
+    public override string ToString() =>
+        $"CAST({SqlExpression} AS {FieldProperties.BaseType})";
 
     /// <summary>
     /// Determines whether the cast expression is valid in an aggregate SELECT list.
