@@ -42,7 +42,7 @@ public abstract class NumericColumnBase<T> : NumericExpression where T : class
     /// <param name="column">The column expression whose data model property must be of a numeric type or nullable numeric type.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="column"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="column"/> does not represent a numeric type or nullable numeric type property.</exception>
-    protected NumericColumnBase(ColumnBase<T> column) : base([], column)
+    protected NumericColumnBase(ColumnBase<T> column) : base([])
     {
         //IMPORTANT NOTE: Do not pass column to the base as a child node. That is wrong, and will cause duplicate Columns in the ancestry tree.
         //Ask me how I know, rhetorically speaking, don't actually ask.

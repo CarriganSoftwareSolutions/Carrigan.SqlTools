@@ -39,7 +39,7 @@ public abstract class ComparisonOperator : Predicates
     /// Thrown when <paramref name="op"/> is empty or whitespace.
     /// </exception>
     public ComparisonOperator(SqlExpression left, SqlExpression right, string op)
-        : base([left, right], $"({left} {op} {right})")
+        : base([left, right])
     {
         ArgumentNullException.ThrowIfNull(left, nameof(left));
         ArgumentNullException.ThrowIfNull(right, nameof(right));
@@ -52,6 +52,12 @@ public abstract class ComparisonOperator : Predicates
         _right = right;
         _operator = op;
     }
+
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the comparison expression.
+    /// </summary>
+    public override string ToString() =>
+        $"({_left} {_operator} {_right})";
 
     /// <summary>
     /// Produces the SQL fragment represented by this comparison operator and its operands.

@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 
@@ -58,7 +58,7 @@ public class Contains<T> : Predicates where T : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="column"/> or <paramref name="parameter"/> is <c>null</c>.
     /// </exception>
-    public Contains(IColumnBase<T> column, Parameter parameter) : base([new Column<T>(column.PropertyName), parameter], $"CONTAINS({parameter})")
+    public Contains(IColumnBase<T> column, Parameter parameter) : base([new Column<T>(column.PropertyName), parameter])
     {
         ArgumentNullException.ThrowIfNull(column, nameof(column));
         ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));

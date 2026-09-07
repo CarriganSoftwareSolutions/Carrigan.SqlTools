@@ -24,7 +24,7 @@ public class SubqueryPredicateBase : Predicates
     /// <param name="subQueryBase">The subquery to include in the predicate.</param>
     /// <param name="command">The SQL command (e.g., "EXISTS", "IN") to use.</param>
     protected SubqueryPredicateBase(SubqueryBase subQueryBase, string command)
-        : base([], string.Join(' ', ToSqlFragments(subQueryBase, command).Select(fragments => fragments.ToString()))) => 
+        : base([]) =>
         Fragments = ToSqlFragments(subQueryBase, command);
 
     /// <summary>
@@ -41,6 +41,12 @@ public class SubqueryPredicateBase : Predicates
     /// </remarks>
     private static IEnumerable<ISqlFragment> ToSqlFragments(SubqueryBase subQueryBase, string command) =>
         [new SqlFragmentText($"({command} "), subQueryBase, new SqlFragmentText(")")];
+
+    /// <summary>
+    /// Returns the diagnostic representation of the stored subquery predicate fragments.
+    /// </summary>
+    public override string ToString() =>
+        string.Join(' ', Fragments.Select(static fragment => fragment.ToString()));
 
     /// <summary>
     /// Converts the predicate into a sequence of SQL fragments for rendering.

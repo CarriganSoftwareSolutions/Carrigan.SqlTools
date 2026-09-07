@@ -17,9 +17,15 @@ public class Xor : DialectOperator
     /// <param name="left">The left-hand predicate operand.</param>
     /// <param name="right">The right-hand predicate operand.</param>
     public Xor(SqlExpression left, SqlExpression right)
-        : base(left, right, $"({left} XOR {right})")
+        : base(left, right)
     {
     }
+
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the XOR predicate.
+    /// </summary>
+    public override string ToString() =>
+        $"({_left} XOR {_right})";
 
     /// <summary>
     /// Produces the SQL fragment represented by this Dialect operator and its operands.

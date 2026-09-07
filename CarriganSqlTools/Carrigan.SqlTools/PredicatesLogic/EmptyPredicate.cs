@@ -12,9 +12,15 @@ internal class EmptyPredicate : Predicates
     /// <summary>
     /// Initializes a new empty predicate with no child predicates.
     /// </summary>
-    internal EmptyPredicate() : base([], string.Empty)
+    internal EmptyPredicate() : base([])
     {
     }
+
+    /// <summary>
+    /// Returns an empty diagnostic representation because this predicate emits no SQL.
+    /// </summary>
+    public override string ToString() =>
+        string.Empty;
 
     /// <summary>
     /// Returns no fragments because this predicate intentionally emits no SQL.

@@ -34,7 +34,7 @@ public abstract class ArithmeticExpression : NumericExpression
     }
 
     private ArithmeticExpression(IEnumerable<NumericExpression> numericExpressions, string operation)
-        : base(numericExpressions, ToDialectNeutralString(operation, numericExpressions)) =>
+        : base(numericExpressions) =>
         _operator = operation;
 
     private static string ValidateOperation(string operation)
@@ -60,8 +60,11 @@ public abstract class ArithmeticExpression : NumericExpression
         return numericExpressions;
     }
 
-    private static string ToDialectNeutralString(string operation, IEnumerable<NumericExpression> numericExpressions) =>
-        numericExpressions.Count() == 1 ? numericExpressions.ElementAt(0).ToString() : $"({string.Join($" {operation} ", numericExpressions)})";
+    /// <summary>
+    /// Returns a dialect-neutral diagnostic representation of the arithmetic expression.
+    /// </summary>
+    public override string ToString() =>
+        (ChildNodes.Count() == 1 ? ChildNodes.Single().ToString() : $"({string.Join($" {_operator} ", ChildNodes)})") ?? string.Empty;
 
     /// <summary>
     /// Converts the arithmetic expression to SQL fragments for the supplied dialect.

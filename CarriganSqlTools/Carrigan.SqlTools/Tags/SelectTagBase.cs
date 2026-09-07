@@ -75,7 +75,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
         if (aliasTag.IsNotNullOrWhiteSpace())
             return $"{sqlExpression} AS {aliasTag}";
         else
-            return sqlExpression.ToString();
+            return sqlExpression.ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -147,7 +147,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// </summary>
     /// <returns>An empty sequence because SELECT projection fragments do not contain SQL parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
-        SqlExpression.IsNotNullOrEmpty() ? SqlExpression.GetSqlFragmentParameters(dialect) : [];
+        SqlExpression.GetSqlFragmentParameters(dialect);
 
     /// <summary>
     /// Renders the selected expression and optional alias using the supplied SQL dialect.

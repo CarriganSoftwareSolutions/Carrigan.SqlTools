@@ -25,7 +25,7 @@ public abstract class ColumnBase : SqlExpression, IColumnBase
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="columnInfo"/> is <c>null</c>.
     /// </exception>
-    protected ColumnBase(ColumnInfo columnInfo) : base([], columnInfo)
+    protected ColumnBase(ColumnInfo columnInfo) : base([])
     {
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ColumnInfo = columnInfo;
