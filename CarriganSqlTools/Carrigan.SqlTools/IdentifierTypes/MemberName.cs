@@ -5,7 +5,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 
 /// <summary>
 /// Represents a strongly typed wrapper for a CLR member name (for example, a property name),
-/// providing type safety and consistent comparison semantics through the <see cref="StringWrapper"/> base class.
+/// providing type safety and consistent comparison semantics through the <see cref="TextWrapper"/> base class.
 /// </summary>
 /// <remarks>
 /// This type is used internally to retain the originating CLR member name when generating SQL,
@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// This wrapper does not validate SQL identifier rules. SQL identifier validation is performed by the SQL generator.
 /// </para>
 /// </remarks>
-internal sealed class MemberName : StringWrapper
+internal sealed class MemberName : TextWrapper
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MemberName"/> class.

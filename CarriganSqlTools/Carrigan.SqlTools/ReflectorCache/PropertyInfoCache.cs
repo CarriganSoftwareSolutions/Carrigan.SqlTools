@@ -56,7 +56,7 @@ internal class PropertyInfoCache<typeT>
             ArgumentNullException.ThrowIfNull(tuple.Item1, nameof(data));
             ArgumentNullException.ThrowIfNull(tuple.Item2, nameof(data));
 
-            ResultColumnName key = new(tuple.Item1);
+            ResultColumnName key = tuple.Item1;
 
             if (cache.ContainsKey(key))
                 throw new ArgumentException($"Duplicate {nameof(ResultColumnName)} detected: {key}.", nameof(data));

@@ -152,11 +152,11 @@ public class NotTests
         Predicates and = CreateNestedPredicate();
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = and.DescendantParameters.Where(parameter => parameter.Name == "Elite").First().Value;
+        object? nullableActualValueInt = and.DescendantParameters.Where(parameter => parameter.Name.ToString() == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)and.DescendantParameters.First(parameter => parameter.Name == "HelloWorld").Value ?? string.Empty;
+        string actualValueString = (string?)and.DescendantParameters.First(parameter => parameter.Name.ToString() == "HelloWorld").Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);

@@ -12,7 +12,7 @@ namespace Carrigan.SqlTools.Tags;
 /// Represents a SELECT projection tag for a single SQL expression, consisting of the expression
 /// and an optional alias.
 /// </summary>
-public abstract class SelectTagBase : StringWrapper, ISqlFragment
+public abstract class SelectTagBase : TextWrapper, ISqlFragment
 {
     /// <summary>
     /// The SQL expression projected by this select item.
@@ -66,7 +66,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
 
 
     /// <summary>
-    /// Creates the string-wrapper value for an expression select item.
+    /// Creates the text-wrapper value for an expression select item.
     /// </summary>
     private static string CreateBaseValue(SqlExpression sqlExpression, AliasTag? aliasTag)
     {
@@ -90,7 +90,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
-        return new(new ColumnName(propertyName));
+        return new(new ColumnName(propertyName.ToString()));
     }
 
     /// <summary>

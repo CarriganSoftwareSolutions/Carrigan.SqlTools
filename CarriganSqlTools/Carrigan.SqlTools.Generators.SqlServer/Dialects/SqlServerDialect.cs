@@ -47,8 +47,8 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>A string containing the rendered representation of the specified procedure.</returns>
     public string RenderProcedureTag(ProcedureTag procedure) =>
         procedure.SchemaName.IsNotNullOrEmpty()
-            ? $"{QuoteIdentifier(procedure.SchemaName)}.{QuoteIdentifier(procedure.ProcedureName)}"
-            : QuoteIdentifier(procedure.ProcedureName);
+            ? $"{QuoteIdentifier(procedure.SchemaName!.ToString())}.{QuoteIdentifier(procedure.ProcedureName.ToString())}"
+            : QuoteIdentifier(procedure.ProcedureName.ToString());
 
     /// <summary>
     /// Generates a string representation of the specified database table, optionally qualified by schema.
@@ -58,8 +58,8 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>A string containing the rendered representation of the specified table.</returns>
     public string RenderTable(SchemaName? schemaName, TableName tableName) =>
         schemaName.IsNotNullOrEmpty()
-            ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(tableName)}"
-            : QuoteIdentifier(tableName);
+            ? $"{QuoteIdentifier(schemaName!.ToString())}.{QuoteIdentifier(tableName.ToString())}"
+            : QuoteIdentifier(tableName.ToString());
     /// <summary>
     /// Renders the fully qualified name of a database column, optionally including the table name and schema.
     /// </summary>
@@ -69,8 +69,8 @@ public class SqlServerDialect : ISqlDialects
     /// <returns>A string representing the fully qualified column name, formatted according to the specified parameters.</returns>
     public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
-                ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName)}"
-                : QuoteIdentifier(columnName);
+                ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName.ToString())}"
+                : QuoteIdentifier(columnName.ToString());
 
 
     /// <summary>
@@ -138,11 +138,11 @@ public class SqlServerDialect : ISqlDialects
     /// </returns>
     private static string ReturnSelectName<T>(ColumnInfo columnInfo)
     {
-        string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo);
-        if (resultColumnName != columnInfo.ColumnName)
+        string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo).ToString();
+        if (resultColumnName != columnInfo.ColumnName.ToString())
             return $"{columnInfo.ColumnName} AS {resultColumnName}";
         else
-            return columnInfo.ColumnName;
+            return columnInfo.ColumnName.ToString();
     }
 
     /// <summary>

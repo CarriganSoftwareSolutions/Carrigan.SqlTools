@@ -155,27 +155,27 @@ public class BooleanParameterTests
         bool actualBool;
         bool expectedBool;
 
-        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "$1").Value!;
+        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "$1").Value!;
         expectedBool = false;
         Assert.Equal(expectedBool, actualBool);
 
-        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "$2").Value!;
+        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "$2").Value!;
         expectedBool = true;
         Assert.Equal(expectedBool, actualBool);
 
-        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "$3").Value!;
+        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "$3").Value!;
         expectedBool = false;
         Assert.Equal(expectedBool, actualBool);
 
-        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "$4").Value!;
+        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "$4").Value!;
         expectedBool = true;
         Assert.Equal(expectedBool, actualBool);
 
-        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "$5").Value!;
+        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "$5").Value!;
         expectedBool = false;
         Assert.Equal(expectedBool, actualBool);
 
-        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "$6").Value!;
+        actualBool = (bool)predicate.ToSqlFragments(BooleanParameterTests.Dialect).GetSqlFragmentParameters(BooleanParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "$6").Value!;
         expectedBool = true;
         Assert.Equal(expectedBool, actualBool);
     }

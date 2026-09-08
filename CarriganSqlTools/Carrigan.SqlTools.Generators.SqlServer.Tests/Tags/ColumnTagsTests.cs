@@ -17,7 +17,7 @@ public class ColumnTagsTests
         TableTag tableTag = new(schemaName, tableName);
         ColumnTag actual = new(tableTag, new ColumnName(columnName));
 
-        Assert.Equal(expected, actual.ColumnName);
+        Assert.Equal(expected, actual.ColumnName.ToString());
     }
 
     [Theory]
@@ -191,25 +191,20 @@ public class ColumnTagsTests
     }
 
 
-    //implicit operator → string and ToString()
+    // ToString()
     [Theory]
     [InlineData("S", "T", "C", "S.T.C")]
     [InlineData(null, "T", "C", "T.C")]
     [InlineData("", "T", "C", "T.C")]
-    public void ImplicitStringAndToString_AreEquivalent(string? schema, string table, string column, string expected)
+    public void ToString_ReturnsExpectedValue(string? schema, string table, string column, string expected)
     {
         TableTag tableTag = new(schema, table);
         ColumnTag colTag = new(tableTag, new ColumnName(column));
 
-        // implicit cast
-        string viaImplicit = colTag;
-        Assert.Equal(expected, viaImplicit);
-
-        // ToString()
         Assert.Equal(expected, colTag.ToString());
     }
 
-    //IEquatable<ColumnTag>.Equals()
+    // Equality
     [Fact]
     public void Equals_SameUnderlyingTag_ReturnsTrue()
     {
@@ -257,7 +252,7 @@ public class ColumnTagsTests
         Assert.Equal(a.GetHashCode(), b.GetHashCode());
     }
 
-    // IEqualityComparer<ColumnTag>
+    // Equality comparer behavior
     [Fact]
     public void Comparer_EqualsAndHashCode_ViaIEqualityComparer()
     {
@@ -272,7 +267,7 @@ public class ColumnTagsTests
         Assert.Equal(a.GetHashCode(), comparer.GetHashCode(b));
     }
 
-    // IComparable<ColumnTag>.CompareTo()
+    // Comparison behavior
     [Fact]
     public void CompareTo_SortsByUnderlyingStringOrdinal()
     {

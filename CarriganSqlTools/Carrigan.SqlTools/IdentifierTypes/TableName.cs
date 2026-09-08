@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// length constraints, etc.). SQL identifier rules are validated by the SQL generator.
 /// </para>
 /// </remarks>
-public class TableName : StringWrapper
+public class TableName : TextWrapper
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TableName"/> class.

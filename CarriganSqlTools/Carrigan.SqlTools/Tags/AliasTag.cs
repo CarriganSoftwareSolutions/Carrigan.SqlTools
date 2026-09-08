@@ -11,22 +11,22 @@ namespace Carrigan.SqlTools.Tags;
 /// </summary>
 /// <remarks>
 /// <para>
-/// This type wraps an <see cref="AliasName"/> value and uses <see cref="StringWrapper"/> to provide
+/// This type wraps an <see cref="AliasName"/> value and uses <see cref="TextWrapper"/> to provide
 /// consistent equality, ordering, and hashing semantics.
 /// </para>
 /// <para>
 /// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
-/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
+/// if this instance is compared against a different <see cref="TextWrapper"/> that uses a different
 /// <see cref="StringComparison"/> mode.
 /// </para>
 /// </remarks>
-public class AliasTag : StringWrapper, ISqlFragment
+public class AliasTag : TextWrapper, ISqlFragment
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasTag"/> class.
     /// </summary>
     /// <param name="aliasName">The alias name to associate with this tag.</param>
-    public AliasTag(AliasName aliasName) : base(aliasName, StringComparison.Ordinal)
+    public AliasTag(AliasName aliasName) : base(aliasName.ToString(), StringComparison.Ordinal)
     {
     }
 
@@ -68,5 +68,5 @@ public class AliasTag : StringWrapper, ISqlFragment
     /// <param name="dialect">The SQL dialect used to quote the alias identifier.</param>
     /// <returns>The quoted alias identifier.</returns>
     public string ToSql(ISqlDialects dialect) =>
-        dialect.QuoteIdentifier(this);
+        dialect.QuoteIdentifier(ToString());
 }

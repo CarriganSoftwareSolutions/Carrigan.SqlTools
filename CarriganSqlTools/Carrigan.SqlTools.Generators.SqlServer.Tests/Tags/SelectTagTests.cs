@@ -75,7 +75,7 @@ public class SelectTagTests
     public void GetFromTableNameSchema_String(string property, string? alias, string expected)
     {
         SelectTagBase select = SelectTagGenerator.Get<TableNameSchema>(property, alias);
-        Assert.Equal(expected, select);
+        Assert.Equal(expected, select.ToString());
         Assert.Equal(expected, select.ToString());
     }
 
@@ -94,7 +94,7 @@ public class SelectTagTests
     public void GetFromIdentifierNameSchema_String(string property, string? alias, string expected)
     {
         SelectTagBase select = SelectTagGenerator.Get<IdentifierNameSchema>(property, alias);
-        Assert.Equal(expected, select);
+        Assert.Equal(expected, select.ToString());
         Assert.Equal(expected, select.ToString());
     }
 
@@ -354,7 +354,7 @@ public class SelectTagTests
 
     [Fact]
     public void InvalidGet_PropertyExceptionPropertyName() => 
-        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTagGenerator.Get<TableNameSchema>(new("NotAProperty"), new("ValidAlias")));
+        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTagGenerator.Get<TableNameSchema>(new PropertyName("NotAProperty"), new("ValidAlias")));
 
     [Fact]
     public void InvalidGet_SqlIdentifierExceptionAliasString() =>
@@ -362,7 +362,7 @@ public class SelectTagTests
 
     [Fact]
     public void InvalidGet_PropertyExceptionAliasName() =>
-        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTagGenerator.Get<TableNameSchema>(new("Id"), new("123")));
+        Assert.Throws<InvalidSqlIdentifierException>(() => SelectTagGenerator.Get<TableNameSchema>(new PropertyName("Id"), new("123")));
 
     [Fact]
     public void ValidGet_FromString() =>
@@ -370,7 +370,7 @@ public class SelectTagTests
 
     [Fact]
     public void ValidGet_FromName() =>
-        _ = SelectTagGenerator.Get<TableNameSchema>(new("Id"), new("ValidAlias"));
+        _ = SelectTagGenerator.Get<TableNameSchema>(new PropertyName("Id"), new("ValidAlias"));
 
 
     [Fact]
@@ -379,7 +379,7 @@ public class SelectTagTests
 
     [Fact]
     public void InvalidGetMany_PropertyExceptionPropertyName() =>
-        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTagGenerator.Get<TableNameSchema>(new("NotAProperty")));
+        Assert.Throws<InvalidPropertyException<TableNameSchema>>(() => SelectTagGenerator.Get<TableNameSchema>(new PropertyName("NotAProperty")));
     [Fact]
     public void ValidGetMany_FromString() =>
         _ = SelectTagGenerator.Get<TableNameSchema>("Id", "Text");

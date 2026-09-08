@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
@@ -59,7 +60,7 @@ public class OrTests
     {
         Or or = CreateOr(3);
 
-        Parameter parameter = or.DescendantParameters.Where(parameter => parameter.Name == "P1").Single();
+        Parameter parameter = or.DescendantParameters.Where(parameter => parameter.Name == new ParameterTag("P1")).Single();
         object? nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         int actual = (int)nullableActual;
@@ -67,7 +68,7 @@ public class OrTests
 
         Assert.Equal(expected, actual);
 
-        parameter = or.DescendantParameters.Where(parameter => parameter.Name == "P2").Single();
+        parameter = or.DescendantParameters.Where(parameter => parameter.Name == new ParameterTag("P2")).Single();
         nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
@@ -75,7 +76,7 @@ public class OrTests
 
         Assert.Equal(expected, actual);
 
-        parameter = or.DescendantParameters.Where(parameter => parameter.Name == "PA").Single();
+        parameter = or.DescendantParameters.Where(parameter => parameter.Name == new ParameterTag("PA")).Single();
         nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;

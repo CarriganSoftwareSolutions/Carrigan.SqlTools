@@ -89,7 +89,7 @@ public class Parameter : SqlExpression, IParameter
     public Parameter(object? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) : base([])
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
-        Name = new(parameterTag);
+        Name = new(parameterTag.ToString());
         Value = value;
         FieldProperties = fieldProperties;
     }
@@ -103,7 +103,7 @@ public class Parameter : SqlExpression, IParameter
     internal Parameter(object? value, ColumnInfo columInfo) : base([])
     {
         ArgumentNullException.ThrowIfNull(columInfo, nameof(columInfo));
-        Name = new(columInfo.ParameterTag);
+        Name = new(columInfo.ParameterTag.ToString());
         Value = value;
         FieldProperties = columInfo.FieldProperties;
     }

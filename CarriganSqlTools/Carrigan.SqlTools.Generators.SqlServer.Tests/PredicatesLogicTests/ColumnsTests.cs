@@ -13,7 +13,10 @@ public  class ColumnsTests
 
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_Null() =>
-        Assert.Throws<ArgumentNullException>(() => new Column<ColumnTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => new Column<ColumnTable>((PropertyName)null!));
+    [Fact]
+    public void ColumnValues_One_Constructor_NullColumnException_Null_asString() =>
+        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new Column<ColumnTable>((string)null!));
 
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_EmptyString() =>
@@ -91,7 +94,7 @@ public  class ColumnsTests
 
         Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnInfo.ColumnTag.ToSql(Dialect));
         Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnInfo);
-        Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnInfo.ColumnTag);
+        Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnInfo.ColumnTag.ToString());
     }
 
     [Fact]

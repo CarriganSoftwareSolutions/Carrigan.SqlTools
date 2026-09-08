@@ -238,9 +238,8 @@ public class TableTagTests
 
         // Assert
         Assert.Equal(expected, tableTag.ToString());
-        // Test implicit conversion to string.
-        string implicitString = tableTag;
-        Assert.Equal(expected, implicitString);
+        string tableTagString = tableTag.ToString();
+        Assert.Equal(expected, tableTagString);
     }
 
     [Fact]
@@ -271,8 +270,8 @@ public class TableTagTests
 
         // Assert
         Assert.Equal(expected, tableTag.ToString());
-        string implicitString = tableTag;
-        Assert.Equal(expected, implicitString);
+        string tableTagString = tableTag.ToString();
+        Assert.Equal(expected, tableTagString);
     }
 
 
@@ -341,7 +340,7 @@ public class TableTagTests
     }
 
     [Fact]
-    public void ImplicitConversionToString_String()
+    public void ToString_ReturnsFormattedTag_String()
     {
         // Arrange
         string schemaName = "dbo";
@@ -350,7 +349,7 @@ public class TableTagTests
         string expected = "dbo.ValidTable";
 
         // Act
-        string result = tableTag;  // Implicit conversion to string
+        string result = tableTag.ToString();
 
         // Assert
         Assert.Equal(expected, result);
@@ -366,20 +365,18 @@ public class TableTagTests
         // Act
         TableTag actualTag = TableTag.Get(entityType);
 
-        // Assert: compare string representations (implicit conversion and ToString())
+        // Assert: compare string representations
         Assert.Equal(expectedTag.ToString(), actualTag.ToString());
     }
 
     [Fact]
-    public void ImplicitConversion_ShouldReturnSameString_AsToString()
+    public void ToString_FromGet_ReturnsExpectedString()
     {
         // Arrange
         Type entityType = typeof(EntityWithSchema);
         TableTag tagFromGet = TableTag.Get(entityType);
-        string tagAsStringFromToString = tagFromGet.ToString();
-        string tagAsStringFromImplicit = tagFromGet;
+        string tagAsString = tagFromGet.ToString();
 
-        // Assert: both conversion methods yield the same result
-        Assert.Equal(tagAsStringFromToString, tagAsStringFromImplicit);
+        Assert.Equal("myschema.EntityWithSchema", tagAsString);
     }
 }

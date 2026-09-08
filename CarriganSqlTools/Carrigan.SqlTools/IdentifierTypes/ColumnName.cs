@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// <summary>
 /// Represents a strongly typed wrapper for an SQL column identifier,
 /// providing type safety and consistent comparison semantics through the
-/// <see cref="StringWrapper"/> base class.
+/// <see cref="TextWrapper"/> base class.
 /// </summary>
 /// <remarks>
 /// In Carrigan.SqlTools, properties on a table model represent SQL columns.
@@ -17,7 +17,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// reserved words, length constraints, etc.). Those rules are validated by the SQL generator.
 /// </para>
 /// </remarks>
-public class ColumnName : StringWrapper
+public class ColumnName : TextWrapper
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnName"/> class.

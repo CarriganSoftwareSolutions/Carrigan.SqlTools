@@ -95,11 +95,11 @@ public class ColumnInfoTests
         ColumnInfo columnInfo = new(schema, table, property, keys);
 
         Assert.Equal(expectedColumnTag, columnInfo.ColumnTag.ToSql(Dialect));
-        Assert.Equal(expectedColumnName, columnInfo.ColumnName);
+        Assert.Equal(expectedColumnName, columnInfo.ColumnName.ToString());
         Assert.Equal(expectedTableTag, columnInfo.ColumnTag.TableTag.ToSql(Dialect));
         Assert.Equal(expectedPropertyName, columnInfo.PropertyInfo.Name);
-        Assert.Equal(expectedPropertyName, columnInfo.PropertyName);
-        Assert.Equal(parameterTag, columnInfo.ParameterTag);
+        Assert.Equal(expectedPropertyName, columnInfo.PropertyName.ToString());
+        Assert.Equal(parameterTag, columnInfo.ParameterTag.ToString());
 
         if(expectedAliasName is null)
         {
@@ -110,8 +110,8 @@ public class ColumnInfoTests
         {
             Assert.NotNull(columnInfo.AliasName);
             Assert.NotNull(columnInfo.SelectTag.AliasTag);
-            Assert.Equal(expectedAliasName, columnInfo.AliasName);
-            Assert.Equal(expectedAliasName, columnInfo.SelectTag.AliasTag);
+            Assert.Equal(expectedAliasName, columnInfo.AliasName.ToString());
+            Assert.Equal(expectedAliasName, columnInfo.SelectTag.AliasTag.ToString());
         }
 
         Assert.Equal(expectedSelectTag, columnInfo.SelectTag.ToSql(Dialect));

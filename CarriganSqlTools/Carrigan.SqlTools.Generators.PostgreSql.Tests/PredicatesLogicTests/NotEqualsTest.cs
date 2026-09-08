@@ -135,11 +135,11 @@ public class NotEqualsTests
 
         Predicates predicate = new NotEqual(left, right);
 
-        int expectedValueInt = 1337; object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
+        int expectedValueInt = 1337; object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name.ToString() == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name.ToString() == "HelloWorld").First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -187,11 +187,11 @@ public class NotEqualsTests
         Predicates predicate = new NotEqual(left, right);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name.ToString() == "Elite").First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.DescendantParameters.First(p => p.Name == "HelloWorld").Value ?? string.Empty;
+        string actualValueString = (string?)predicate.DescendantParameters.First(p => p.Name.ToString() == "HelloWorld").Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);

@@ -194,7 +194,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
             SelectAliasTag = selectTagAttribute.AliasTag;
 
             if (SelectAliasTag is null && selectTagAttribute.UseDecoratedPropertyNameAsDefaultAlias)
-                SelectAliasTag = AliasTag.New(aliasName ?? new AliasName(columnName));
+                SelectAliasTag = AliasTag.New(aliasName ?? new AliasName(columnName.ToString()));
 
             SelectTag = selectTagAttribute.SelectTag is null
                 ? new ReflectedSelectTag(SelectColumnTag, SelectAliasTag)
@@ -233,7 +233,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     public static implicit operator string(ColumnInfo value)
     {
         ArgumentNullException.ThrowIfNull(value, nameof(value));
-        return value.ColumnTag;
+        return value.ColumnTag.ToString();
     }
 
     /// <summary>

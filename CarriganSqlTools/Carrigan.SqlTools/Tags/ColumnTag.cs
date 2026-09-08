@@ -11,11 +11,11 @@ namespace Carrigan.SqlTools.Tags;
 /// <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>.
 /// </summary>
 /// <remarks>
-/// This type uses <see cref="StringWrapper"/> to provide consistent equality, ordering,
+/// This type uses <see cref="TextWrapper"/> to provide consistent equality, ordering,
 /// and hashing semantics (case-insensitive via <see cref="StringComparison.OrdinalIgnoreCase"/>).
 /// <para>
 /// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
-/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
+/// if this instance is compared against a different <see cref="TextWrapper"/> that uses a different
 /// <see cref="StringComparison"/> mode.
 /// </para>
 /// </remarks>
@@ -106,7 +106,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
-internal class ColumnTag : StringWrapper, ISqlFragment
+internal class ColumnTag : TextWrapper, ISqlFragment
 {
     /// <summary>
     /// The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.
@@ -135,7 +135,7 @@ internal class ColumnTag : StringWrapper, ISqlFragment
     /// </summary>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
     internal ColumnTag(ColumnName columnName)
-        : base(columnName, StringComparison.OrdinalIgnoreCase)
+        : base(columnName.ToString(), StringComparison.OrdinalIgnoreCase)
     {
         ColumnName = columnName;
         TableTag = new(SchemaName.New(null), new TableName(null));

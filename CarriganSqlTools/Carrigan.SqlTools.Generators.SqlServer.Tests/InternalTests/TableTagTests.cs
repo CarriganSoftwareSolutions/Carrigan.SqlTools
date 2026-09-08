@@ -10,19 +10,19 @@ public class TableTagTests
     [Fact]
     public void TableTag_FromClassName_NoAttributes_Test()
     {
-        Assert.Equal("EntityWithoutTableAttribute", SqlGenerator<EntityWithoutTableAttribute>.Table);
+        Assert.Equal("EntityWithoutTableAttribute", SqlGenerator<EntityWithoutTableAttribute>.Table.ToString());
         Assert.Equal("[EntityWithoutTableAttribute]", SqlGenerator<EntityWithoutTableAttribute>.Table.ToSql(Dialect));
     }
     [Fact]
     public void TableTag_FromAttributeName_NoSchemaAttributes_Test()
     {
-        Assert.Equal("Test", SqlGenerator<EntityWithTableAttribute>.Table);
+        Assert.Equal("Test", SqlGenerator<EntityWithTableAttribute>.Table.ToString());
         Assert.Equal("[Test]", SqlGenerator<EntityWithTableAttribute>.Table.ToSql(Dialect));
     }
     [Fact]
     public void TableTag_FromAttributeName_AndSchemaAttributes_Test()
     {
-        Assert.Equal("myschema.EntityWithSchema", SqlGenerator<EntityWithSchema>.Table);
+        Assert.Equal("myschema.EntityWithSchema", SqlGenerator<EntityWithSchema>.Table.ToString());
         Assert.Equal("[myschema].[EntityWithSchema]", SqlGenerator<EntityWithSchema>.Table.ToSql(Dialect));
     }
 }

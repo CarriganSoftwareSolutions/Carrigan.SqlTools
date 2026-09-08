@@ -9,7 +9,7 @@ namespace Carrigan.SqlTools.GroupByClause;
 /// <summary>
 /// Represents a single-column specification within a SQL <c>GROUP BY</c> clause.
 /// </summary>
-public abstract class GroupByBase : StringWrapper, ISqlFragment
+public abstract class GroupByBase : TextWrapper, ISqlFragment
 {
     /// <summary>
     /// Gets the <see cref="ColumnInfo"/> associated with this item.
@@ -26,7 +26,7 @@ public abstract class GroupByBase : StringWrapper, ISqlFragment
     /// Initializes a grouped-column specification from reflected column metadata.
     /// </summary>
     /// <param name="columnInfo">The grouped column metadata.</param>
-    public GroupByBase(ColumnInfo columnInfo) : base(columnInfo.ColumnTag) => 
+    public GroupByBase(ColumnInfo columnInfo) : base(columnInfo.ColumnTag.ToString()) => 
         ColumnInfo = columnInfo;
 
     /// <summary>

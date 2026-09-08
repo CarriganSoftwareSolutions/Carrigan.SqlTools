@@ -14,7 +14,7 @@ internal static class SqlQueryTestHelper
         SqlFragmentParameter enumerableParameter = Assert.Single
         (
             sqlQuery.Parameters,
-            parameter => parameter.ParameterTag == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
 
         Assert.Equal(expectedValue, enumerableParameter.Value);
@@ -22,7 +22,7 @@ internal static class SqlQueryTestHelper
         KeyValuePair<ParameterTag, object?> dictionaryParameter = Assert.Single
         (
             sqlQuery.ParametersAsDictionary,
-            parameter => parameter.Key == parameterName
+            parameter => parameter.Key.ToString() == parameterName
         );
 
         Assert.Equal(expectedValue, dictionaryParameter.Value);
@@ -43,13 +43,13 @@ internal static class SqlQueryTestHelper
         Assert.DoesNotContain
         (
             sqlQuery.Parameters,
-            parameter => parameter.ParameterTag == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
 
         Assert.DoesNotContain
         (
             sqlQuery.ParametersAsDictionary,
-            parameter => parameter.Key == parameterName
+            parameter => parameter.Key.ToString() == parameterName
         );
 
         if (parameterName.StartsWith('@') is false)
@@ -65,13 +65,13 @@ internal static class SqlQueryTestHelper
         Assert.Single
         (
             sqlQuery.Parameters,
-            parameter => parameter.ParameterTag == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
 
         Assert.Single
         (
             sqlQuery.ParametersAsDictionary,
-            parameter => parameter.Key == parameterName
+            parameter => parameter.Key.ToString() == parameterName
         );
     }
 
@@ -79,8 +79,8 @@ internal static class SqlQueryTestHelper
     {
         ArgumentNullException.ThrowIfNull(sqlQuery);
 
-        Assert.Single(sqlQuery.Parameters);
-        Assert.Single(sqlQuery.ParametersAsDictionary);
+        _ = Assert.Single(sqlQuery.Parameters);
+        _ = Assert.Single(sqlQuery.ParametersAsDictionary);
         Assert.Equal(expectedValue, sqlQuery.Parameters.Single().Value);
         Assert.Equal(expectedValue, sqlQuery.ParametersAsDictionary.Single().Value);
     }
@@ -90,8 +90,8 @@ internal static class SqlQueryTestHelper
         ArgumentNullException.ThrowIfNull(sqlQuery);
         ArgumentNullException.ThrowIfNull(expectedParameterName);
 
-        Assert.Single(sqlQuery.Parameters);
-        Assert.Single(sqlQuery.ParametersAsDictionary);
+        _ = Assert.Single(sqlQuery.Parameters);
+        _ = Assert.Single(sqlQuery.ParametersAsDictionary);
         Assert.Equal(expectedParameterName, sqlQuery.Parameters.Single().ParameterTag.ToString());
         Assert.Equal(expectedParameterName, sqlQuery.ParametersAsDictionary.Single().Key.ToString());
     }
@@ -100,8 +100,8 @@ internal static class SqlQueryTestHelper
     {
         ParameterTag tag = new(parameterName);
 
-        if (sqlQuery.ParametersAsDictionary.ContainsKey(new ParameterTag(tag)))
-            return sqlQuery.ParametersAsDictionary[tag];
+        if (sqlQuery.ParametersAsDictionary.TryGetValue(tag, out object? value))
+            return value;
         else
             throw new KeyNotFoundException($"Parameter '{parameterName}' was not found.");
     }
@@ -110,7 +110,7 @@ internal static class SqlQueryTestHelper
         SqlFragmentParameter parameter = Assert.Single
         (
             parameters,
-            parameter => parameter.ParameterTag == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
 
         Assert.Equal(expectedValue, parameter.Value);

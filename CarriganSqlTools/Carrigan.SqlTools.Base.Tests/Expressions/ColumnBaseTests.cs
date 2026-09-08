@@ -152,7 +152,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
         void Test(ColumnBase columnBase)
         {
             string actual = columnBase?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
-            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName]);
+            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName].ToString());
 
             Assert.Equal(expected, actual);
         }
@@ -164,7 +164,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
         void Test(SqlExpression expression)
         {
             string actual = expression?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
-            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName]);
+            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName].ToString());
 
             Assert.Equal(expected, actual);
         }

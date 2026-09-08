@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.Tags;
 /// The <c>[Schema]</c> segment is included only when explicitly provided.
 /// </summary>
 /// <remarks>
-/// This type uses <see cref="StringWrapper"/> to provide consistent equality, ordering,
+/// This type uses <see cref="TextWrapper"/> to provide consistent equality, ordering,
 /// and hashing semantics (case-sensitive via <see cref="StringComparison.Ordinal"/>).
 /// </remarks>
 /// <example>
@@ -101,7 +101,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
-public class TableTag : StringWrapper, ISqlFragment
+public class TableTag : TextWrapper, ISqlFragment
 {
     /// <summary>
     /// Gets the reflected table tag for the specified model type.
@@ -132,7 +132,7 @@ public class TableTag : StringWrapper, ISqlFragment
     /// </exception>
     ///
     internal TableTag(SchemaName? schemaName, TableName tableName)
-        : base(schemaName.IsNotNullOrEmpty() ? $"{ schemaName}.{tableName}" : tableName, StringComparison.Ordinal)
+        : base(schemaName.IsNotNullOrEmpty() ? $"{ schemaName}.{tableName}" : tableName.ToString(), StringComparison.Ordinal)
     {
         TableName = tableName;
         SchemaName = schemaName;

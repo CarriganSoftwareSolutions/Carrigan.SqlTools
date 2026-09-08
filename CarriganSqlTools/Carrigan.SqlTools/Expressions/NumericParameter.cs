@@ -185,7 +185,7 @@ public class NumericParameter : NumericExpression, IParameter
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         ValidateType(value);
-        Name = new(parameterTag);
+        Name = new(parameterTag.ToString());
         Value = value;
         FieldProperties = fieldProperties;
     }
@@ -243,7 +243,7 @@ public class NumericParameter : NumericExpression, IParameter
     {
         ArgumentNullException.ThrowIfNull(columInfo, nameof(columInfo));
         ValidateType(value);
-        Name = new(columInfo.ParameterTag);
+        Name = new(columInfo.ParameterTag.ToString());
         Value = value;
         FieldProperties = columInfo.FieldProperties;
     }

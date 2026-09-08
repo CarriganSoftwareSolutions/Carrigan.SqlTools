@@ -1,6 +1,7 @@
 ﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
@@ -20,7 +21,7 @@ public class AliasAttributeTests
         Assert.NotNull(property);
         IEnumerable<AliasAttribute> aliasAttributes = property.GetCustomAttributes<AliasAttribute>();
         Assert.NotEmpty(aliasAttributes);
-        Assert.Equal("AnAlias", aliasAttributes.Single().Name);
+        Assert.Equal(new AliasName("AnAlias"), aliasAttributes.Single().Name);
     }
 
     [Fact]

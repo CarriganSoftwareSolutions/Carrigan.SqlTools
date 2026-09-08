@@ -18,7 +18,7 @@ internal static class SqlFragmentExtensions
     /// <returns>A parameter fragment using the final rendered parameter name.</returns>
     private static SqlFragmentParameter RenderFinalParameter(ISqlDialects dialect, SqlFragmentParameter parameter, int index)
     {
-        string finalParameterName = dialect.RenderFinalParameterName(parameter.ParameterTag, index);
+        string finalParameterName = dialect.RenderFinalParameterName(parameter.ParameterTag.ToString(), index);
         return new (parameter, new ParameterTag (finalParameterName));
     }
 

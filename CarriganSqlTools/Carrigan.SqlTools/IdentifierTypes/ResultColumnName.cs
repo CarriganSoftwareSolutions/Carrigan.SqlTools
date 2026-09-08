@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// and result materialization components.
 /// </para>
 /// </remarks>
-public class ResultColumnName : StringWrapper
+public class ResultColumnName : TextWrapper
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ResultColumnName"/> class.

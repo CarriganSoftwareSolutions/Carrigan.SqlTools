@@ -81,8 +81,8 @@ public class AliasTagTests
         AliasTag tag2 = new(nameWrapper2);
         Assert.Equal(tag1, tag2);
         Assert.Equal(tag2, tag1);
-        Assert.Equal(string.Empty, tag1);
-        Assert.Equal(string.Empty, tag2);
+        Assert.Equal(string.Empty, tag1.ToString());
+        Assert.Equal(string.Empty, tag2.ToString());
     }
 
     [Fact]
@@ -96,8 +96,8 @@ public class AliasTagTests
         AliasTag tag2 = new(nameWrapper2);
         Assert.Equal(tag1, tag2);
         Assert.Equal(tag2, tag1);
-        Assert.Equal(string.Empty, tag1);
-        Assert.Equal(string.Empty, tag2);
+        Assert.Equal(string.Empty, tag1.ToString());
+        Assert.Equal(string.Empty, tag2.ToString());
     }
 
     [Fact]
@@ -109,8 +109,8 @@ public class AliasTagTests
         AliasTag tag2 = new(nameWrapper2);
         Assert.Equal(tag1, tag2);
         Assert.Equal(tag2, tag1);
-        Assert.Equal(eStr, tag1);
-        Assert.Equal(eStr, tag2);
+        Assert.Equal(eStr, tag1.ToString());
+        Assert.Equal(eStr, tag2.ToString());
     }
 
     [Fact]
@@ -122,8 +122,8 @@ public class AliasTagTests
         AliasTag tag2 = new(nameWrapper2);
         Assert.True(tag1 == tag2);
         Assert.True(tag2 == tag1);
-        Assert.True(string.Empty == tag1);
-        Assert.True(string.Empty == tag2);
+        Assert.True(string.Empty == tag1.ToString());
+        Assert.True(string.Empty == tag2.ToString());
     }
 
     [Fact]
@@ -135,8 +135,8 @@ public class AliasTagTests
         AliasTag tag2 = new(nameWrapper2);
         Assert.True(tag1 == tag2);
         Assert.True(tag2 == tag1);
-        Assert.True(string.Empty == tag1);
-        Assert.True(string.Empty == tag2);
+        Assert.True(string.Empty == tag1.ToString());
+        Assert.True(string.Empty == tag2.ToString());
     }
 
     [Fact]
@@ -149,10 +149,10 @@ public class AliasTagTests
         Assert.True(tag1 == tag2);
         Assert.True(tag2 == tag1);
 
-        bool test = eStr == tag1;
-        bool test2 = eStr != tag1;
-        bool test3 = eStr == tag1;
-        bool test4 = eStr != tag2;
+        bool test = eStr == tag1.ToString();
+        bool test2 = eStr != tag1.ToString();
+        bool test3 = eStr == tag1.ToString();
+        bool test4 = eStr != tag2.ToString();
 
         Assert.True(tag1 == tag2);
         Assert.True(tag2 == tag1);
@@ -277,7 +277,7 @@ public class AliasTagTests
         AliasTag tag1 = new(nameWrapper1);
         AliasTag tag2 = new(nameWrapper2);
         Assert.NotEqual(tag1, tag2);
-        Assert.NotEqual(empty, tag2);
+        Assert.NotEqual(empty, tag2.ToString());
     }
 
     [Fact]
@@ -288,7 +288,7 @@ public class AliasTagTests
         AliasTag tag1 = new(nameWrapper1);
         AliasTag tag2 = new(nameWrapper2);
         Assert.NotEqual(tag1, tag2);
-        Assert.NotEqual(empty, tag2);
+        Assert.NotEqual(empty, tag2.ToString());
     }
 
     [Fact]
@@ -299,7 +299,7 @@ public class AliasTagTests
         AliasTag tag1 = new(nameWrapper1);
         AliasTag tag2 = new(nameWrapper2);
         Assert.NotEqual(tag1, tag2);
-        Assert.NotEqual(eStr, tag2);
+        Assert.NotEqual(eStr, tag2.ToString());
     }
 
     [Fact]
@@ -310,7 +310,7 @@ public class AliasTagTests
         AliasTag tag1 = new(nameWrapper1);
         AliasTag tag2 = new(nameWrapper2);
         Assert.True(tag1 != tag2);
-        Assert.True(empty != tag2);
+        Assert.True(empty != tag2.ToString());
     }
 
     [Fact]
@@ -321,7 +321,7 @@ public class AliasTagTests
         AliasTag tag1 = new(nameWrapper1);
         AliasTag tag2 = new(nameWrapper2);
         Assert.True(tag1 != tag2);
-        Assert.True(empty != tag2);
+        Assert.True(empty != tag2.ToString());
     }
 
     [Fact]
@@ -336,11 +336,11 @@ public class AliasTagTests
     }
 
     [Fact]
-    public void ImplicitConversion_ToString_AssignmentAndInterpolation()
+    public void ToString_AssignmentAndInterpolation()
     {
         AliasName a = new(eStr);
         AliasTag aTag = new(a);
-        string assigned = aTag;
+        string assigned = aTag.ToString();
         string interpolated = $"{aTag}";
 
         Assert.Equal(eStr, assigned);

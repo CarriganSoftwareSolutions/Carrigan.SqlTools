@@ -421,7 +421,7 @@ public class SqlToolsReflectorCache<T>
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));
 
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
+        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName.ToString()))
             throw new InvalidSqlIdentifierException(aliasName);
 
         SqlExpression sqlExpression = columnInfo.SelectTag.SqlExpression;

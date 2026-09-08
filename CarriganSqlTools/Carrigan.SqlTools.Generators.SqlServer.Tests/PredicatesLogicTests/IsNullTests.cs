@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
@@ -186,7 +187,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         Assert.Equal(expectedValueInt, actualValueInt);
@@ -233,7 +234,7 @@ public class IsNullTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == new ParameterTag("HelloWorld")).First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueString, actualValueString);
     }
@@ -267,11 +268,11 @@ public class IsNullTests
         Predicates and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = and.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = and.DescendantParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)and.DescendantParameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)and.DescendantParameters.Where(p => p.Name == new ParameterTag("HelloWorld")).First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
