@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 
 public class AliasTagTests
 {
