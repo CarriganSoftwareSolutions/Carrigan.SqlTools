@@ -275,8 +275,13 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </returns>
     public bool Equals(ColumnInfo? other)
     {
-        if (other is null) return false;
-        return string.Equals(this, other, StringComparison.OrdinalIgnoreCase);
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (other is null)
+            return false;
+
+        return ColumnTag.Equals(other.ColumnTag);
     }
 
     /// <summary>
