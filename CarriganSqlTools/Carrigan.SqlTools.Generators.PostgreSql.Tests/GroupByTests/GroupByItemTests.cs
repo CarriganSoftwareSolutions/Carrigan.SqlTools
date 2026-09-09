@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.GroupByClause;
@@ -6,15 +6,15 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using System.Reflection;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GroupByTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.GroupByTests;
 
 public class GroupByItemTests
 {
-    private static readonly ISqlDialects Dialect = new SqlServerDialect();
+    private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
 
     [Theory]
-    [InlineData("Street", "[Address].[Street]")]
-    [InlineData("City", "[Address].[City]")]
+    [InlineData("Street", "\"Address\".\"Street\"")]
+    [InlineData("City", "\"Address\".\"City\"")]
     public void Constructor_WithStringPropertyName_CreatesExpectedSql(string propertyName, string expectedSql)
     {
         GroupBy<Address> groupByItem = new(propertyName);
@@ -29,12 +29,12 @@ public class GroupByItemTests
 
         GroupBy<Address> groupByItem = new(propertyName);
 
-        Assert.Equal("[Address].[City]", groupByItem.ToSql(Dialect));
+        Assert.Equal("\"Address\".\"City\"", groupByItem.ToSql(Dialect));
     }
 
     [Fact]
     public void Constructor() =>
-        Assert.Equal("[Address].[City]", new GroupBy<Address>("City").ToSql(Dialect));
+        Assert.Equal("\"Address\".\"City\"", new GroupBy<Address>("City").ToSql(Dialect));
 
     [Fact]
     public void Constructor_WithInvalidPropertyName_ThrowsInvalidPropertyException() =>

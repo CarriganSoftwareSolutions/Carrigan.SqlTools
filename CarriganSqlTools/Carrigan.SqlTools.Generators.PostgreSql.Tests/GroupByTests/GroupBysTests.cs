@@ -6,11 +6,11 @@ using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GroupByTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.GroupByTests;
 
 public class GroupBysTests
 {
-    private static readonly ISqlDialects Dialect = new SqlServerDialect();
+    private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
 
     [Fact]
     public void Empty_ReturnsEmptyGroupBy()
@@ -61,7 +61,7 @@ public class GroupBysTests
 
         Assert.False(groupBy.IsEmpty());
         Assert.Single(groupBy.TableTags);
-        Assert.Equal("GROUP BY [Address].[City]", groupBy.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\"", groupBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class GroupBysTests
         Assert.False(groupBy.IsEmpty());
         Assert.Single(groupByItems);
         Assert.Single(groupBy.TableTags);
-        Assert.Equal("GROUP BY [Address].[City]", groupBy.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\"", groupBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class GroupBysTests
         Assert.False(groupBy.IsEmpty());
         Assert.Single(groupByItems);
         Assert.Single(groupBy.TableTags);
-        Assert.Equal("GROUP BY [Address].[City]", groupBy.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\"", groupBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class GroupBysTests
         GroupBys groupBy = new(city, street);
 
         Assert.Equal(2, groupBy.TableTags.Count());
-        Assert.Equal("GROUP BY [Address].[City], [Address].[Street]", groupBy.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\", \"Address\".\"Street\"", groupBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class GroupBysTests
         GroupBys groupBy = new(address, columnTable, booleanColumnTable);
 
         Assert.Equal(3, groupBy.TableTags.Count());
-        Assert.Equal("GROUP BY [Address].[City], [ColumnTable].[D000destruct0], [BooleanColumnTable].[Id]", groupBy.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\", \"ColumnTable\".\"D000destruct0\", \"BooleanColumnTable\".\"Id\"", groupBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -247,7 +247,7 @@ public class GroupBysTests
         Assert.Empty(original.TableTags);
         Assert.False(appended.IsEmpty());
         Assert.Single(appended.TableTags);
-        Assert.Equal("GROUP BY [Address].[Street]", appended.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"Street\"", appended.ToSql(Dialect));
     }
 
     [Fact]
@@ -267,8 +267,8 @@ public class GroupBysTests
 
         GroupBys appended = original.Append<Address>(propertyName);
 
-        Assert.Equal("GROUP BY [Address].[City]", original.ToSql(Dialect));
-        Assert.Equal("GROUP BY [Address].[City], [Address].[Street]", appended.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\"", original.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\", \"Address\".\"Street\"", appended.ToSql(Dialect));
     }
 
     [Fact]
@@ -278,8 +278,8 @@ public class GroupBysTests
 
         GroupBys appended = original.Append<Address>("Street");
 
-        Assert.Equal("GROUP BY [Address].[City]", original.ToSql(Dialect));
-        Assert.Equal("GROUP BY [Address].[City], [Address].[Street]", appended.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\"", original.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\", \"Address\".\"Street\"", appended.ToSql(Dialect));
     }
 
     [Fact]
@@ -307,8 +307,8 @@ public class GroupBysTests
         List<GroupByBase> expectedAppendedItems = [initial, street, columnTable];
         Assert.Equal(expectedOriginalItems, originalItems);
         Assert.Equal(expectedAppendedItems, appendedItems);
-        Assert.Equal("GROUP BY [Address].[City]", original.ToSql(Dialect));
-        Assert.Equal("GROUP BY [Address].[City], [Address].[Street], [ColumnTable].[D000destruct0]", appended.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\"", original.ToSql(Dialect));
+        Assert.Equal("GROUP BY \"Address\".\"City\", \"Address\".\"Street\", \"ColumnTable\".\"D000destruct0\"", appended.ToSql(Dialect));
     }
 
     [Fact]
