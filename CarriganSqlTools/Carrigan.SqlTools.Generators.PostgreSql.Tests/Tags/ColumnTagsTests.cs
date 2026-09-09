@@ -2,11 +2,11 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 
 public class ColumnTagsTests
 {
-    private static readonly SqlServerDialect Dialect = new();
+    private static readonly PostgreSqlDialect Dialect = new();
 
     [Theory]
     [InlineData("Franks", "Sloppy", "Pizza", "Pizza")]
@@ -21,9 +21,9 @@ public class ColumnTagsTests
     }
 
     [Theory]
-    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy]")]
-    [InlineData(null, "Sloppy", "Pizza", "[Sloppy]")]
-    [InlineData("", "Sloppy", "Pizza", "[Sloppy]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "\"Franks\".\"Sloppy\"")]
+    [InlineData(null, "Sloppy", "Pizza", "\"Sloppy\"")]
+    [InlineData("", "Sloppy", "Pizza", "\"Sloppy\"")]
     public void ColumnTagTable(string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tableTag = new(schemaName, tableName);
@@ -33,9 +33,9 @@ public class ColumnTagsTests
     }
 
     [Theory]
-    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
-    [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
-    [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "\"Franks\".\"Sloppy\".\"Pizza\"")]
+    [InlineData(null, "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
+    [InlineData("", "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
     public void Col_Tag_Tests_3_Params(string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tableTag = new(schemaName, tableName);
@@ -45,9 +45,9 @@ public class ColumnTagsTests
     }
 
     [Theory]
-    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
-    [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
-    [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "\"Franks\".\"Sloppy\".\"Pizza\"")]
+    [InlineData(null, "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
+    [InlineData("", "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
     public void Col_Tag_Tests_3_Params_ExplicitToString(string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tableTag = new(schemaName, tableName);
@@ -57,9 +57,9 @@ public class ColumnTagsTests
     }
 
     [Theory]
-    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
-    [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
-    [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "\"Franks\".\"Sloppy\".\"Pizza\"")]
+    [InlineData(null, "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
+    [InlineData("", "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
     public void Col_Tag_Tests_3_Params_ExplicitToString_UseTable (string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tableTag = new(schemaName, tableName);
@@ -69,9 +69,9 @@ public class ColumnTagsTests
     }
 
     [Theory]
-    [InlineData("Franks", "Sloppy", "Pizza", "[Pizza]")]
-    [InlineData(null, "Sloppy", "Pizza", "[Pizza]")]
-    [InlineData("", "Sloppy", "Pizza", "[Pizza]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "\"Pizza\"")]
+    [InlineData(null, "Sloppy", "Pizza", "\"Pizza\"")]
+    [InlineData("", "Sloppy", "Pizza", "\"Pizza\"")]
     public void Col_Tag_Tests_3_Params_ExplicitToString_DoNotUseTable(string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tableTag = new(schemaName, tableName);
@@ -160,9 +160,9 @@ public class ColumnTagsTests
          _ = new ColumnTag(new TableTag(schemaName, tableName!), new ColumnName(columnName!));
 
     [Theory]
-    [InlineData("Franks", "Sloppy", "Pizza", "[Franks].[Sloppy].[Pizza]")]
-    [InlineData(null, "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
-    [InlineData("", "Sloppy", "Pizza", "[Sloppy].[Pizza]")]
+    [InlineData("Franks", "Sloppy", "Pizza", "\"Franks\".\"Sloppy\".\"Pizza\"")]
+    [InlineData(null, "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
+    [InlineData("", "Sloppy", "Pizza", "\"Sloppy\".\"Pizza\"")]
     public void Col_Tag_Tests_2_Params(string? schemaName, string tableName, string columnName, string expected)
     {
         TableTag tg = new(schemaName, tableName);
