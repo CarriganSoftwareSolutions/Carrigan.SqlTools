@@ -3,17 +3,16 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
-//IGNORE SPELLING: ema
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 
 public class ProcedureTagTests
 {
-    private static readonly SqlServerDialect Dialect = new();
+    private static readonly PostgreSqlDialect Dialect = new();
 
     [Theory]
-    [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
-    [InlineData(null, "Pizza", "[Pizza]")]
-    [InlineData("", "Pizza", "[Pizza]")]
+    [InlineData("Franks", "Pizza", "\"Franks\".\"Pizza\"")]
+    [InlineData(null, "Pizza", "\"Pizza\"")]
+    [InlineData("", "Pizza", "\"Pizza\"")]
     public void ToSql(string? schemaName, string procedureName, string expected)
     {
         ProcedureTag procedureTag = new(schemaName, procedureName);
@@ -371,7 +370,7 @@ public class ProcedureTagTests
         ProcedureTag procedureTag = new(null, "ValidProcedure");
 
         Assert.Equal("ValidProcedure", procedureTag.ToString());
-        Assert.Equal("[ValidProcedure]", procedureTag.ToSql(Dialect));
+        Assert.Equal("\"ValidProcedure\"", procedureTag.ToSql(Dialect));
     }
 
     [Fact]
@@ -380,14 +379,16 @@ public class ProcedureTagTests
         ProcedureTag procedureTag = new("dbo", "ValidProcedure");
 
         Assert.Equal("dbo.ValidProcedure", procedureTag.ToString());
-        Assert.Equal("[dbo].[ValidProcedure]", procedureTag.ToSql(Dialect));
+        Assert.Equal("\"dbo\".\"ValidProcedure\"", procedureTag.ToSql(Dialect));
     }
 
     [Fact]
     public void Get_ShouldReturnExpectedProcedureTag_ForEntityWithSchema()
     {
         ProcedureTag expected = new("myschema", "EntityWithSchema");
+#pragma warning disable CA2263 // Prefer generic overload when type is known
         ProcedureTag actual = ProcedureTag.Get(typeof(EntityWithSchema));
+#pragma warning restore CA2263 // Prefer generic overload when type is known
 
         Assert.Equal(expected, actual);
         Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
@@ -396,7 +397,9 @@ public class ProcedureTagTests
     [Fact]
     public void ToString_FromGet_ReturnsExpectedString()
     {
+#pragma warning disable CA2263 // Prefer generic overload when type is known
         ProcedureTag procedureTag = ProcedureTag.Get(typeof(EntityWithSchema));
+#pragma warning restore CA2263 // Prefer generic overload when type is known
 
         Assert.Equal("myschema.EntityWithSchema", procedureTag.ToString());
     }
