@@ -3,16 +3,20 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 
 public class TableTagTests
-{
-    private static readonly SqlServerDialect Dialect = new();
+{    private readonly ITestOutputHelper _output;
+
+    public TableTagTests(ITestOutputHelper output) => 
+        _output = output;
+
+    private static readonly PostgreSqlDialect Dialect = new();
 
     [Theory]
-    [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
-    [InlineData(null, "Pizza", "[Pizza]")]
-    [InlineData("", "Pizza", "[Pizza]")]
+    [InlineData("Franks", "Pizza", "\"Franks\".\"Pizza\"")]
+    [InlineData(null, "Pizza", "\"Pizza\"")]
+    [InlineData("", "Pizza", "\"Pizza\"")]
     public void ToSql(string? schemaName, string tableName, string expected)
     {
         TableTag tableTag = new(schemaName, tableName);
@@ -214,15 +218,13 @@ public class TableTagTests
     {
         TableTag tableTag = new("Schema", "Table");
         TableTag? nullTableTag = null;
-        bool flag;
+
         Assert.False(tableTag == nullTableTag);
         Assert.False(nullTableTag == tableTag);
         Assert.True(tableTag != nullTableTag);
         Assert.True(nullTableTag != tableTag);
-        flag = nullTableTag == null;
-        Assert.True(flag);
-        flag = nullTableTag != null;
-        Assert.False(flag);
+        Assert.Null(nullTableTag);
+        Assert.NotNull(tableTag);
     }
 
     [Fact]

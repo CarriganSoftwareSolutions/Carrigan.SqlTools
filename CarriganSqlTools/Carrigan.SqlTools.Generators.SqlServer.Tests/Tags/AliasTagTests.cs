@@ -63,8 +63,10 @@ public class AliasTagTests
         AliasTag aliasTag = new(new AliasName("Alias"));
 
         Assert.True(aliasTag.Equals(aliasTag));
+#pragma warning disable CS1718 // Comparison made to same variable
         Assert.True(aliasTag == aliasTag);
         Assert.False(aliasTag != aliasTag);
+#pragma warning restore CS1718 // Comparison made to same variable
     }
 
     [Fact]
@@ -191,13 +193,17 @@ public class AliasTagTests
     {
         AliasTag aliasTag = new(new AliasName("Alias"));
         AliasTag? nullAliasTag = null;
+        bool nullIsNull;
+        bool nullIsNotNull;
 
         Assert.False(aliasTag == nullAliasTag);
         Assert.False(nullAliasTag == aliasTag);
         Assert.True(aliasTag != nullAliasTag);
         Assert.True(nullAliasTag != aliasTag);
-        Assert.True(nullAliasTag == null);
-        Assert.False(nullAliasTag != null);
+        nullIsNull = nullAliasTag == null;
+        nullIsNotNull = nullAliasTag != null;
+        Assert.True(nullIsNull);
+        Assert.False(nullIsNotNull);
     }
 
     [Fact]
