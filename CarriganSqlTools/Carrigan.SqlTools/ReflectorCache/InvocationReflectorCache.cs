@@ -110,9 +110,9 @@ internal static class InvocationReflectorCache<T>
 
         return new
         (
-            propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name?.ToString().GetValueOrNull()
-                ?? propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
-                ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
+            propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name?.ToString()
+                ?? propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name
+                ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name
                 ?? propertyInfo.Name
         );
     }

@@ -155,12 +155,12 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
         ArgumentNullException.ThrowIfNull(keys, nameof(keys));
 
         string columnName =
-            propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
-            ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
+            propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name
+            ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name
             ?? propertyInfo.Name;
 
         string parameterName =
-            propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name?.GetValueOrNull()
+            propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name
             ?? columnName;
 
         AliasName? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;

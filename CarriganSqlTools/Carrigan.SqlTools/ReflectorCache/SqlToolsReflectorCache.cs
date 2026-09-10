@@ -266,21 +266,21 @@ public class SqlToolsReflectorCache<T>
         TableAttribute? tableAttribute = Type.GetCustomAttribute<TableAttribute>();
 
         string? schemaName =
-            identifierAttribute?.Schema?.ToString().GetValueOrNull()
-                ?? tableAttribute?.Schema?.GetValueOrNull();
+            identifierAttribute?.Schema
+                ?? tableAttribute?.Schema;
 
         SchemaName = SchemaName.New(schemaName);
 
         TableName = new
         (
-            identifierAttribute?.Name?.ToString().GetValueOrNull()
-                ?? tableAttribute?.Name?.GetValueOrNull()
+            identifierAttribute?.Name
+                ?? tableAttribute?.Name
                 ?? Type.Name
         );
 
         ProcedureName = new
         (
-            identifierAttribute?.Name?.ToString().GetValueOrNull()
+            identifierAttribute?.Name
                 ?? Type.Name
         );
 

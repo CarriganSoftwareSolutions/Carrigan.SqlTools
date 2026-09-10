@@ -1,5 +1,4 @@
 using Carrigan.Core.Extensions;
-using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;

@@ -91,7 +91,7 @@ public class BooleanParameter : Predicates, IParameter
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         ValidateType(value);
-        Name = new(parameterTag.ToString());
+        Name = parameterTag;
         Value = value;
         FieldProperties = fieldProperties;
     }
@@ -106,7 +106,7 @@ public class BooleanParameter : Predicates, IParameter
     {
         ArgumentNullException.ThrowIfNull(columInfo, nameof(columInfo));
         ValidateType(value);
-        Name = new(columInfo.ParameterTag.ToString());
+        Name = columInfo.ParameterTag;
         Value = value;
         FieldProperties = columInfo.FieldProperties;
     }
