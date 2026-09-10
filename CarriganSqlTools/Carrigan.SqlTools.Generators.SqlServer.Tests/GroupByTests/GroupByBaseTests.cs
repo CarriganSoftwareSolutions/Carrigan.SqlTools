@@ -44,14 +44,4 @@ public class GroupByBaseTests
     public void ToSql_UsesColumnTag() =>
         Assert.Equal("[Address].[City]", new GroupBy<Address>("City").ToSql(Dialect));
 
-    [Fact]
-    public void EmptyAndWhiteSpaceContracts_DelegateToColumnTag()
-    {
-        GroupByBase item = new GroupBy<Address>("Street");
-
-        Assert.False(item.IsEmpty());
-        Assert.True(item.IsNotEmpty());
-        Assert.False(item.IsWhiteSpace());
-        Assert.True(item.IsNotWhiteSpace());
-    }
 }

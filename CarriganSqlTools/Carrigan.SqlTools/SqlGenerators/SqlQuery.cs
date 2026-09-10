@@ -1,8 +1,6 @@
 using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.Tags;
 using System.Data;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -33,21 +31,6 @@ public class SqlQuery
                 ? SqlFragments.Where(fragment => fragment is not SqlFragmentParameter).ToSql(Dialect)
                 : SqlFragments.ToSql(Dialect)
             : throw new ArgumentException(null, nameof(SqlFragments));
-
-    /// <summary>
-    /// Gets or sets the parameter values for this command,
-    /// keyed by <see cref="ParameterTag"/>.
-    /// </summary>
-    /// <remarks>
-    /// This is now reserved for internal testing methods.
-    /// </remarks>
-    [ExternalOnly]
-    internal Dictionary<ParameterTag, object?> ParametersAsDictionary => new
-    (
-        Parameters
-            .Select(parameter => new KeyValuePair<ParameterTag, object?>(parameter.ParameterTag, parameter.Value))
-    );
-
 
     /// <summary>
     /// Gets the rendered SQL parameters keyed by their final dialect-specific names.
@@ -93,10 +76,5 @@ public class SqlQuery
         CommandType = commandType;
     }
 
-    /// <summary>
-    /// Returns the total number of parameters (for unit testing).
-    /// </summary>
-    /// <returns>The number of items in the <see cref="Parameters"/> dictionary.</returns>
-    internal int GetParameterCount() =>
-        Parameters.Count();
+
 }

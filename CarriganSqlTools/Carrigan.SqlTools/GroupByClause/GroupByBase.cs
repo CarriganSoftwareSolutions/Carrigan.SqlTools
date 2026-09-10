@@ -1,4 +1,3 @@
-using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.ReflectorCache;
@@ -16,9 +15,7 @@ namespace Carrigan.SqlTools.GroupByClause;
 public abstract class GroupByBase :
     IEquatable<GroupByBase>,
     IEqualityOperators<GroupByBase, GroupByBase, bool>,
-    ISqlFragment,
-    IWhiteSpace,
-    IEmpty
+    ISqlFragment
 {
     /// <summary>
     /// Gets the <see cref="ColumnInfo"/> associated with this item.
@@ -97,30 +94,6 @@ public abstract class GroupByBase :
     /// </summary>
     public static bool operator !=(GroupByBase? left, GroupByBase? right) =>
         !(left == right);
-
-    /// <summary>
-    /// Indicates whether the grouped column name is empty or consists only of whitespace characters.
-    /// </summary>
-    public bool IsWhiteSpace() =>
-        ColumnInfo.ColumnTag.IsWhiteSpace();
-
-    /// <summary>
-    /// Indicates whether the grouped column name contains at least one non-whitespace character.
-    /// </summary>
-    public bool IsNotWhiteSpace() =>
-        IsWhiteSpace() == false;
-
-    /// <summary>
-    /// Indicates whether the grouped column name is empty.
-    /// </summary>
-    public bool IsEmpty() =>
-        ColumnInfo.ColumnTag.IsEmpty();
-
-    /// <summary>
-    /// Indicates whether the grouped column name is not empty.
-    /// </summary>
-    public bool IsNotEmpty() =>
-        IsEmpty() == false;
 
     /// <summary>
     /// Yields the instance as a single-item sequence of <see cref="ISqlFragment"/>.
