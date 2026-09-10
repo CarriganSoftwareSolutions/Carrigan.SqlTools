@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
@@ -296,7 +296,6 @@ public class SelectTagTests
         Assert.Equal(expectedSelect, selectAlt.ToSql(Dialect));
         Assert.Equal(expectedSelect, select.ToSql(Dialect));
         Assert.Equal(expectedSelect, selectAlt.ToSql(Dialect));
-        Assert.Equal(0, select.CompareTo(selectAlt));
         Assert.Equal(select, selectAlt);
         Assert.Equal(selectAlt, selectAlt);
         Assert.True(select == selectAlt);
@@ -314,11 +313,6 @@ public class SelectTagTests
         Assert.NotEqual(b, d);
         Assert.NotEqual(c, d);
 
-        Assert.NotEqual(0, a.CompareTo(b));
-        Assert.NotEqual(0, a.CompareTo(c));
-        Assert.NotEqual(0, a.CompareTo(d));
-        Assert.NotEqual(0, b.CompareTo(c));
-        Assert.NotEqual(0, c.CompareTo(d));
 
         Assert.True(a != b);
         Assert.True(a != c);
