@@ -102,7 +102,7 @@ public class AndTests
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsVisible\"").Single();
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsArchived\"").Single();
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToString() == "LogicalPredicateTable.IsArchived").Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsArchived").Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
     [Fact]

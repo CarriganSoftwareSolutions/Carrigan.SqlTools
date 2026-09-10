@@ -104,10 +104,10 @@ public class OrTests
         _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsEnabled\"").Single();
         _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsVisible\"").Single();
         _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsArchived\"").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsActive").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsEnabled").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsVisible").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsArchived").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsEnabled").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
+        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
     [Fact]

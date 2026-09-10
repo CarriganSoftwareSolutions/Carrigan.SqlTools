@@ -6,6 +6,7 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.ReflectorCache;
@@ -26,7 +27,7 @@ namespace Carrigan.SqlTools.ReflectorCache;
 /// <see cref="AliasAttribute"/>, <see cref="EncryptedAttribute"/>,
 /// <see cref="KeyVersionAttribute"/>, and <see cref="ParameterAttribute"/>.
 /// </remarks>
-public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqualityComparer<ColumnInfo>
+public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo, ColumnInfo, bool>
 {
     /// <summary>
     /// The fully qualified <see cref="Tags.ColumnTag"/> that represents
@@ -194,7 +195,7 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
             SelectAliasTag = selectTagAttribute.AliasTag;
 
             if (SelectAliasTag is null && selectTagAttribute.UseDecoratedPropertyNameAsDefaultAlias)
-                SelectAliasTag = AliasTag.New(aliasName ?? new AliasName(columnName.ToString()));
+                SelectAliasTag = AliasTag.New(aliasName ?? new AliasName(columnName));
 
             SelectTag = selectTagAttribute.SelectTag is null
                 ? new ReflectedSelectTag(SelectColumnTag, SelectAliasTag)
@@ -219,51 +220,11 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
         propertyType.IsArray && propertyType != typeof(byte[]);
 
     /// <summary>
-    /// Implicitly converts a <see cref="ColumnInfo"/> to its fully qualified SQL
-    /// string representation in the format <c>[Schema].[Table].[Column]</c>.
+    /// Returns the fully qualified textual representation of this <see cref="ColumnInfo"/>.
     /// </summary>
-    /// <param name="value">The <see cref="ColumnInfo"/> to convert.</param>
-    /// <returns>
-    /// A SQL-formatted string representing the column name, including schema
-    /// and table context where applicable.
-    /// </returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="value"/> is <c>null</c>.
-    /// </exception>
-    public static implicit operator string(ColumnInfo value)
-    {
-        ArgumentNullException.ThrowIfNull(value, nameof(value));
-        return value.ColumnTag.ToString();
-    }
-
-    /// <summary>
-    /// Returns the SQL string representation of this <see cref="ColumnInfo"/> instance,
-    /// equivalent to its implicit conversion to <see cref="string"/>.
-    /// </summary>
-    /// <returns>
-    /// The SQL-formatted identifier string for this column.
-    /// </returns>
-    public override string ToString()
-        => this;
-
-    /// <summary>
-    /// Compares this <see cref="ColumnInfo"/> to another instance to determine
-    /// their relative sort order, using the <see cref="ColumnTag"/> as the comparison key.
-    /// </summary>
-    /// <param name="other">The <see cref="ColumnInfo"/> to compare with the current instance.</param>
-    /// <returns>
-    /// A signed integer indicating the relative order of the two objects:
-    /// <c>0</c> if equal, a negative value if this instance precedes
-    /// <paramref name="other"/>, or a positive value if it follows.
-    /// </returns>
-    /// <remarks>
-    /// The comparison is case-insensitive and uses <see cref="StringComparison.OrdinalIgnoreCase"/>.
-    /// </remarks>
-    public int CompareTo(ColumnInfo? other)
-    {
-        if (other is null) return 1;
-        return string.Compare(this, other, StringComparison.OrdinalIgnoreCase);
-    }
+    /// <returns>The textual representation of <see cref="ColumnTag"/>.</returns>
+    public override string ToString() =>
+        ColumnTag.ToString();
 
     /// <summary>
     /// Determines whether this instance and another <see cref="ColumnInfo"/> represent
@@ -310,31 +271,16 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// <summary>
     /// Determines whether two <see cref="ColumnInfo"/> instances represent the same column.
     /// </summary>
-    /// <param name="x">The x value.</param>
-    /// <param name="y">The y value.</param>
-    public bool Equals(ColumnInfo? x, ColumnInfo? y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (x is null || y is null) return false;
-        return x.Equals(y);
-    }
-
-    /// <summary>
-    /// Returns a hash code for the specified <see cref="ColumnInfo"/> instance.
-    /// </summary>
-    /// <param name="obj">The obj value.</param>
-    public int GetHashCode(ColumnInfo obj) =>
-        obj is null ? throw new ArgumentNullException(nameof(obj)) : obj.GetHashCode();
-
-    /// <summary>
-    /// Determines whether two <see cref="ColumnInfo"/> instances represent the same column.
-    /// </summary>
     /// <param name="left">The left predicate or value.</param>
     /// <param name="right">The right predicate or value.</param>
     public static bool operator ==(ColumnInfo? left, ColumnInfo? right)
     {
-        if (ReferenceEquals(left, right)) return true;
-        if (left is null || right is null) return false;
+        if (ReferenceEquals(left, right))
+            return true;
+
+        if (left is null || right is null)
+            return false;
+
         return left.Equals(right);
     }
 
@@ -343,19 +289,6 @@ public class ColumnInfo : IComparable<ColumnInfo>, IEquatable<ColumnInfo>, IEqua
     /// </summary>
     /// <param name="left">The left predicate or value.</param>
     /// <param name="right">The right predicate or value.</param>
-    public static bool operator !=(ColumnInfo? left, ColumnInfo? right)
-    {
-        return !(left == right);
-    }
-
-    /// <summary>
-    /// Determines whether this <see cref="ColumnInfo"/> instance represents an empty or invalid column
-    /// (for debugging or validation purposes).
-    /// </summary>
-    /// <returns>
-    /// <c>true</c> if the string representation of this column is <c>null</c>,
-    /// empty, or whitespace; otherwise, <c>false</c>.
-    /// </returns>
-    internal bool IsEmpty() =>
-        ToString().IsNullOrWhiteSpace();
+    public static bool operator !=(ColumnInfo? left, ColumnInfo? right) =>
+        !(left == right);
 }

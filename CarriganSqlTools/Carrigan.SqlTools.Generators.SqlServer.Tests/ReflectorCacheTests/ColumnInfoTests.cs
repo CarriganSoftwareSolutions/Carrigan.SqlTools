@@ -128,28 +128,16 @@ public class ColumnInfoTests
         Assert.Equal(expectedIsEncrypted, columnInfo.IsEncrypted);
         Assert.Equal(expectedIsKeyVersionProperty, columnInfo.IsKeyVersionProperty);
 
-        Assert.False(columnInfo.IsEmpty());
 
     }
 
-    [Fact]
-    public void CompareTo_EquivalentInstances()
-    {
-        ColumnInfo left = CreateColumnInfo("Id");
-        ColumnInfo right = CreateColumnInfo("Id");
-
-        Assert.Equal(0, left.CompareTo(right));
-        Assert.Equal(0, right.CompareTo(left));
-    }
 
     [Fact]
-    public void CompareTo_DifferentColumns()
+    public void ToString_ReturnsColumnTagRepresentation()
     {
-        ColumnInfo left = CreateColumnInfo("Id");
-        ColumnInfo right = CreateColumnInfo("Property");
+        ColumnInfo columnInfo = CreateColumnInfo("Id", "dbo", "ColumnIdentifiersTable");
 
-        Assert.NotEqual(0, left.CompareTo(right));
-        Assert.NotEqual(0, right.CompareTo(left));
+        Assert.Equal("dbo.ColumnIdentifiersTable.Id", columnInfo.ToString());
     }
 
     [Fact]
@@ -508,11 +496,5 @@ public class ColumnInfoTests
         Assert.Throws<ArgumentNullException>(() => new ColumnInfo(null, new("ColumnIdentifiersTable"), property, null!));
     }
 
-    [Fact]
-    public void ImplicitString_Null_Exception()
-    {
-        ColumnInfo? value = null;
-        Assert.Throws<ArgumentNullException>(() => _ = (string)value!);
-    }
 
 }

@@ -224,8 +224,8 @@ public class NotEqualsTests
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Pizza\"").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"D000destruct0\"").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Pizza").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Pizza").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
     }
 
     [Fact]
@@ -253,7 +253,7 @@ public class NotEqualsTests
         Predicates predicate = new NotEqual(left, right);
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Express\"").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 
     [Fact]
@@ -297,8 +297,8 @@ public class NotEqualsTests
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"D000destruct0\"").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Express\"").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 
     [Fact]
