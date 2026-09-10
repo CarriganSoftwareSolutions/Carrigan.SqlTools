@@ -1,6 +1,7 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.Types;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -32,6 +33,43 @@ public class Cast : SqlExpression
     {
         SqlExpression = sqlExpression;
         FieldProperties = fieldProperties;
+    }
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is Cast cast && base.EqualsCore(other) &&  FieldPropertiesEqual(FieldProperties, cast.FieldProperties);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        base.AddToHashCode(ref hashCode);
+        AddFieldPropertiesToHashCode(ref hashCode, FieldProperties);
+    }
+
+    private static bool FieldPropertiesEqual(FieldProperties left, FieldProperties right) =>
+        left.Length == right.Length &&
+        left.IsMax == right.IsMax &&
+        left.IsUnicode == right.IsUnicode &&
+        left.IsFixedLength == right.IsFixedLength &&
+        left.Precision == right.Precision &&
+        left.Scale == right.Scale &&
+        left.FractionalSecondsPrecision == right.FractionalSecondsPrecision &&
+        left.IsNullable == right.IsNullable &&
+        string.Equals(left.ProviderTypeName, right.ProviderTypeName, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(left.BaseType, right.BaseType, StringComparison.OrdinalIgnoreCase) &&
+        left.IsArray == right.IsArray;
+
+    private static void AddFieldPropertiesToHashCode(ref HashCode hashCode, FieldProperties fieldProperties)
+    {
+        hashCode.Add(fieldProperties.Length);
+        hashCode.Add(fieldProperties.IsMax);
+        hashCode.Add(fieldProperties.IsUnicode);
+        hashCode.Add(fieldProperties.IsFixedLength);
+        hashCode.Add(fieldProperties.Precision);
+        hashCode.Add(fieldProperties.Scale);
+        hashCode.Add(fieldProperties.FractionalSecondsPrecision);
+        hashCode.Add(fieldProperties.IsNullable);
+        hashCode.Add(fieldProperties.ProviderTypeName, StringComparer.OrdinalIgnoreCase);
+        hashCode.Add(fieldProperties.BaseType, StringComparer.OrdinalIgnoreCase);
+        hashCode.Add(fieldProperties.IsArray);
     }
 
     /// <summary>

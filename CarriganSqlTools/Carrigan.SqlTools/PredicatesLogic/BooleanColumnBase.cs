@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -15,7 +16,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This predicate is intended for SQL dialects that allow a boolean-valued column expression in predicate contexts.
 /// The referenced C# property must be declared as <see cref="bool"/> or nullable <see cref="bool"/>.
 /// </remarks>
-public abstract class BooleanColumnBase<T> : Predicates, IColumnBase  where T : class
+public abstract class BooleanColumnBase<T> : Predicates, IColumnBase, IColumnExpressionIdentity where T : class
 {
     /// <summary>
     /// The validated column expression represented by this predicate.
@@ -49,6 +50,9 @@ public abstract class BooleanColumnBase<T> : Predicates, IColumnBase  where T : 
 
         _column = column;
     }
+
+    ColumnTag IColumnExpressionIdentity.EqualityColumnTag =>
+        ColumnInfo.ColumnTag;
 
     /// <summary>
     /// Returns a string that represents the underlying boolean column.

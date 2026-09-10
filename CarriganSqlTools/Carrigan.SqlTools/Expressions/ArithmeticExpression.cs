@@ -1,6 +1,7 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -58,6 +59,18 @@ public abstract class ArithmeticExpression : NumericExpression
             throw new NullReferenceException($"{nameof(numericExpressions)} cannot contain null values.");
 
         return numericExpressions;
+    }
+
+    protected override object EqualityContract =>
+        typeof(ArithmeticExpression);
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is ArithmeticExpression arithmeticExpression && string.Equals(_operator, arithmeticExpression._operator, StringComparison.Ordinal) && base.EqualsCore(other);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(_operator, StringComparer.Ordinal);
+        base.AddToHashCode(ref hashCode);
     }
 
     /// <summary>

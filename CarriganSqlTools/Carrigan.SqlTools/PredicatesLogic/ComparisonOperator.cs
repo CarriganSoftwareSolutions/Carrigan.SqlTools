@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -51,6 +52,18 @@ public abstract class ComparisonOperator : Predicates
         _left = left;
         _right = right;
         _operator = op;
+    }
+
+    protected override object EqualityContract =>
+        typeof(ComparisonOperator);
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is ComparisonOperator comparisonOperator && string.Equals(_operator, comparisonOperator._operator, StringComparison.Ordinal) && base.EqualsCore(other);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(_operator, StringComparer.Ordinal);
+        base.AddToHashCode(ref hashCode);
     }
 
     /// <summary>

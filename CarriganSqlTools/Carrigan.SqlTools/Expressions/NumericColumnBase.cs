@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -17,7 +18,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// Note: Note numeric type is being used in a broader sense (i.e. short, int, long, float, double, decimal)
 /// as opposed to a literal programming language type (ex: numeric is a type postgre sql)
 /// </remarks>
-public abstract class NumericColumnBase<T> : NumericExpression where T : class
+public abstract class NumericColumnBase<T> : NumericExpression, IColumnExpressionIdentity where T : class
 {
     /// <summary>
     /// The validated column expression represented by this predicate.
@@ -54,6 +55,9 @@ public abstract class NumericColumnBase<T> : NumericExpression where T : class
 
         _column = column;
     }
+
+    ColumnTag IColumnExpressionIdentity.EqualityColumnTag =>
+        ColumnInfo.ColumnTag;
 
     /// <summary>
     /// Produces the SQL fragment represented by the underlying numeric column.

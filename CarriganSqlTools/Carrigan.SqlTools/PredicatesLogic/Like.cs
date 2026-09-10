@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -70,6 +71,15 @@ public class Like : DialectOperator
     public Like(SqlExpression left, SqlExpression right, bool? isCaseSensitive = null)
         : base(left, right) =>
         IsCaseSensitive = isCaseSensitive;
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is Like like &&  IsCaseSensitive == like.IsCaseSensitive && base.EqualsCore(other);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(IsCaseSensitive);
+        base.AddToHashCode(ref hashCode);
+    }
 
     /// <summary>
     /// Returns a dialect-neutral diagnostic representation of the LIKE predicate.

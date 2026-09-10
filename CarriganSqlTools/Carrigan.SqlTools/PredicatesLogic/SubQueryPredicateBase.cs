@@ -1,6 +1,9 @@
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.SqlGenerators;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -16,6 +19,9 @@ public class SubqueryPredicateBase : Predicates
     /// </summary>
     protected readonly IEnumerable<ISqlFragment> Fragments;
 
+    private readonly SubqueryBase _subQueryBase;
+    private readonly string _command;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SubqueryPredicateBase"/> class with the specified subquery
     /// and command (e.g., "EXISTS", "IN", or a comparison operator). The constructor constructs the appropriate
@@ -24,8 +30,12 @@ public class SubqueryPredicateBase : Predicates
     /// <param name="subQueryBase">The subquery to include in the predicate.</param>
     /// <param name="command">The SQL command (e.g., "EXISTS", "IN") to use.</param>
     protected SubqueryPredicateBase(SubqueryBase subQueryBase, string command)
-        : base([]) =>
+        : base([])
+    {
+        _subQueryBase = subQueryBase;
+        _command = command;
         Fragments = ToSqlFragments(subQueryBase, command);
+    }
 
     /// <summary>
     /// Converts the subquery and command into a sequence of SQL fragments for rendering.
@@ -41,6 +51,15 @@ public class SubqueryPredicateBase : Predicates
     /// </remarks>
     private static IEnumerable<ISqlFragment> ToSqlFragments(SubqueryBase subQueryBase, string command) =>
         [new SqlFragmentText($"({command} "), subQueryBase, new SqlFragmentText(")")];
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is SubqueryPredicateBase subqueryPredicate && ReferenceEquals(_subQueryBase, subqueryPredicate._subQueryBase) && string.Equals(_command, subqueryPredicate._command, StringComparison.Ordinal);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(RuntimeHelpers.GetHashCode(_subQueryBase));
+        hashCode.Add(_command, StringComparer.Ordinal);
+    }
 
     /// <summary>
     /// Returns the diagnostic representation of the stored subquery predicate fragments.

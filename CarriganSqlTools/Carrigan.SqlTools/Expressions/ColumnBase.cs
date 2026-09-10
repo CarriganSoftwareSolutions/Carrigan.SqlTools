@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// This class exists to centralize column/table metadata for expression nodes. Predicate types can consume
 /// these column expressions when building SQL <c>WHERE</c>, <c>JOIN</c>, and other expression-bearing clauses.
 /// </remarks>
-public abstract class ColumnBase : SqlExpression, IColumnBase
+public abstract class ColumnBase : SqlExpression, IColumnBase, IColumnExpressionIdentity
 {
     /// <summary>
     /// Gets the resolved column metadata (name, tags, etc.) used by the expression.
@@ -30,6 +30,9 @@ public abstract class ColumnBase : SqlExpression, IColumnBase
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ColumnInfo = columnInfo;
     }
+
+    ColumnTag IColumnExpressionIdentity.EqualityColumnTag =>
+        ColumnInfo.ColumnTag;
 
     /// <summary>
     /// Gets the table tag represented by this column leaf expression.

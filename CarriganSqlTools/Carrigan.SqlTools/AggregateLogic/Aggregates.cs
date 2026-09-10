@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.AggregateLogic;
 
@@ -27,6 +28,20 @@ public abstract class Aggregates : NumericExpression
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(functionName, nameof(functionName));
         FunctionName = functionName;
+    }
+
+    protected override object EqualityContract =>
+        typeof(Aggregates);
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is Aggregates aggregate &&
+        string.Equals(FunctionName, aggregate.FunctionName, StringComparison.OrdinalIgnoreCase) &&
+        base.EqualsCore(other);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(FunctionName, StringComparer.OrdinalIgnoreCase);
+        base.AddToHashCode(ref hashCode);
     }
 
     /// <summary>
