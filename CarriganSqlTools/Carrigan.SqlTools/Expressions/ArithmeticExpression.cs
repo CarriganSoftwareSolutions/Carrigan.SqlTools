@@ -74,12 +74,6 @@ public abstract class ArithmeticExpression : NumericExpression
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the arithmetic expression.
-    /// </summary>
-    public override string ToString() =>
-        (ChildNodes.Count() == 1 ? ChildNodes.Single().ToString() : $"({string.Join($" {_operator} ", ChildNodes)})") ?? string.Empty;
-
-    /// <summary>
     /// Converts the arithmetic expression to SQL fragments for the supplied dialect.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render each child expression.</param>

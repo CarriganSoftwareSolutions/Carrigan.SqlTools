@@ -200,15 +200,16 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         (left == right) == false;
 
     /// <summary>
-    /// Generates the SQL fragments for this expression tree.
+    /// Returns a dialect-neutral SQL representation of this expression by rendering its SQL fragments through the neutral diagnostic dialect.
     /// </summary>
-    /// <remarks>
-    /// Before rendering, this method computes duplicate user-supplied parameter names and
-    /// passes that set to the recursive <see cref="ToSqlFragments"/> overload,
-    /// which may add disambiguating prefixes to produce unique parameter names.
-    /// </remarks>
-    /// <returns>The SQL fragments represented by this expression tree.</returns>
+    public override string ToString() =>
+        ToSqlFragments(NeutralDialect.Instance).ToSql(NeutralDialect.Instance);
 
+    /// <summary>
+    /// Generates the SQL fragments for this expression tree using the supplied SQL dialect.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to render dialect-dependent fragments.</param>
+    /// <returns>The SQL fragments represented by this expression tree.</returns>
     public abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 
     /// <summary>

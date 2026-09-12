@@ -1,4 +1,3 @@
-using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -150,7 +149,7 @@ public abstract class SelectTagBase :
     /// Returns the dialect-neutral diagnostic representation of this select item.
     /// </summary>
     public override string ToString() =>
-        AliasTag.IsNotNullOrWhiteSpace() ? $"{SqlExpression} AS {AliasTag}" : SqlExpression.ToString() ?? string.Empty;
+        ToSql(NeutralDialect.Instance);
 
     /// <summary>
     /// Determines whether this select item projects the same expression with the same alias as another select item.

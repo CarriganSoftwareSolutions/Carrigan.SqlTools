@@ -94,12 +94,6 @@ public abstract class LogicalOperator : Predicates
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the logical expression.
-    /// </summary>
-    public override string ToString() =>
-        (ChildNodes.Count() == 1 ? ChildNodes.Single().ToString() : $"({string.Join($" {_operator} ", ChildNodes)})") ?? string.Empty;
-
-    /// <summary>
     /// Generates the SQL fragment represented by this logical operator.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render each child predicate.</param>

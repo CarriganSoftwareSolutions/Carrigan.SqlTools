@@ -119,12 +119,6 @@ public class BooleanParameter : Predicates, IParameter
         Name.ToString();
 
     /// <summary>
-    /// Returns the unrendered parameter name.
-    /// </summary>
-    public override string ToString() =>
-        Name.ToString();
-
-    /// <summary>
     /// Produces the SQL fragment for this parameter expression (its final, possibly prefixed name).
     /// </summary>
     /// <returns>

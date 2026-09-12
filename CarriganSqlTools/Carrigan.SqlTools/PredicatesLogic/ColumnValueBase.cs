@@ -127,12 +127,6 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     }
 
     /// <summary>
-    /// Returns the diagnostic representation of the composed equality predicate.
-    /// </summary>
-    public override string ToString() =>
-        value.ToString() ?? string.Empty;
-
-    /// <summary>
     /// Produces the SQL fragment represented by this predicate.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render the predicate.</param>

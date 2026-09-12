@@ -67,12 +67,6 @@ public abstract class ComparisonOperator : Predicates
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the comparison expression.
-    /// </summary>
-    public override string ToString() =>
-        $"({_left} {_operator} {_right})";
-
-    /// <summary>
     /// Produces the SQL fragment represented by this comparison operator and its operands.
     /// </summary>
     /// <param name="dialect">The SQL dialect for which to generate the fragment.</param>

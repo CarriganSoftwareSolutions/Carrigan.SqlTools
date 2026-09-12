@@ -70,12 +70,4 @@ public abstract class NumericColumnBase<T> : NumericExpression, IColumnExpressio
             yield return fragment;
     }
 
-    /// <summary>
-    /// Returns a string that represents the underlying numeric column.
-    /// </summary>
-    /// <returns>
-    /// A string representation of the underlying numeric column.
-    /// </returns>
-    public override string ToString() =>
-        _column.ToString();
 }

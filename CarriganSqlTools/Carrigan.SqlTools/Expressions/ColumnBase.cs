@@ -40,9 +40,4 @@ public abstract class ColumnBase : SqlExpression, IColumnBase, IColumnExpression
     public override IEnumerable<TableTag> LeafTables =>
         [ColumnInfo.ColumnTag.TableTag];
 
-    /// <summary>
-    /// Returns the unquoted column tag representation.
-    /// </summary>
-    public override string ToString() =>
-        ColumnInfo.ColumnTag.ToString();
 }

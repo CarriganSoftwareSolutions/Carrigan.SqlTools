@@ -62,12 +62,6 @@ public class SubqueryPredicateBase : Predicates
     }
 
     /// <summary>
-    /// Returns the diagnostic representation of the stored subquery predicate fragments.
-    /// </summary>
-    public override string ToString() =>
-        string.Join(' ', Fragments.Select(static fragment => fragment.ToString()));
-
-    /// <summary>
     /// Converts the predicate into a sequence of SQL fragments for rendering.
     /// This method returns the fragments that make up the subquery predicate,
     /// which will be used by the SQL generator to produce the final SQL string.

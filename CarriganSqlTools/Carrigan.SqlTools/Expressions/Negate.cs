@@ -80,12 +80,6 @@ public class Negate : NumericExpression
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the negated expression.
-    /// </summary>
-    public override string ToString() =>
-        $"(-{ChildNodes.Single()})";
-
-    /// <summary>
     /// Converts the Negate expression to SQL fragments.
     /// </summary>
     /// <param name="dialect">

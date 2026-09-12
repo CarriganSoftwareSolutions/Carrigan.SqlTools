@@ -73,12 +73,6 @@ public class Cast : SqlExpression
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the cast expression.
-    /// </summary>
-    public override string ToString() =>
-        $"CAST({SqlExpression} AS {FieldProperties.BaseType})";
-
-    /// <summary>
     /// Determines whether the cast expression is valid in an aggregate SELECT list.
     /// </summary>
     /// The optional <c>GROUP BY</c> clause used to validate grouped column expressions.

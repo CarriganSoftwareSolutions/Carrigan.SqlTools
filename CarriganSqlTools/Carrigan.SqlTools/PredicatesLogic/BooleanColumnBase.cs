@@ -55,12 +55,6 @@ public abstract class BooleanColumnBase<T> : Predicates, IColumnBase, IColumnExp
         ColumnInfo.ColumnTag;
 
     /// <summary>
-    /// Returns a string that represents the underlying boolean column.
-    /// </summary>
-    public override string ToString() =>
-        _column.ToString();
-
-    /// <summary>
     /// Produces the SQL fragment represented by the underlying boolean column.
     /// </summary>
     /// <param name="dialect">The SQL dialect for which to generate the fragment.</param>

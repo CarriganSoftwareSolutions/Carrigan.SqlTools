@@ -82,20 +82,6 @@ public class Like : DialectOperator
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the LIKE predicate.
-    /// </summary>
-    public override string ToString() =>
-        $"({_left} {GetDiagnosticOperator()} {_right})";
-
-    private string GetDiagnosticOperator() =>
-        IsCaseSensitive switch
-        {
-            null => "LIKE",
-            true => "CASE SENSITIVE LIKE",
-            false => "CASE INSENSITIVE LIKE"
-        };
-
-    /// <summary>
     /// Produces the SQL fragment represented by this Dialect operator and its operands.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render the comparison operator and operands.</param>

@@ -48,9 +48,4 @@ internal sealed class ColumnTagExpression : SqlExpression, IColumnExpressionIden
         yield return ColumnTag;
     }
 
-    /// <summary>
-    /// Returns the unquoted column tag representation.
-    /// </summary>
-    public override string ToString() =>
-        ColumnTag.ToString();
 }

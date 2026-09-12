@@ -52,12 +52,6 @@ public abstract class Aggregates : NumericExpression
         true;
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the aggregate expression.
-    /// </summary>
-    public override string ToString() =>
-        ChildNodes.Any() ? $"{FunctionName}({string.Join(", ", ChildNodes)})" : $"{FunctionName}(*)";
-
-    /// <summary>
     /// Produces the SQL fragment represented by this aggregate expression.
     /// </summary>
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
