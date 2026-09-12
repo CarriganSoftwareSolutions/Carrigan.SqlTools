@@ -18,7 +18,7 @@ public class Coalesce : SqlExpression
     public override IEnumerable<TableTag> LeafTables { get; }
 
     
-    public Coalesce(params IEnumerable<SqlExpression> values) : base([], ToDialectNeutralString(values))
+    public Coalesce(params IEnumerable<SqlExpression> values) : base([])
     {
         IEnumerable<TableTag> GetLeafTables()
         {
@@ -30,9 +30,6 @@ public class Coalesce : SqlExpression
         Values = ValidateValues(values);
         LeafTables = GetLeafTables();
     }
-
-    private static string ToDialectNeutralString(IEnumerable<SqlExpression> values) =>
-        $"COALESCE({string.Join(", ", Values.Select(value => value.ToString()))}"
 
     private static IEnumerable<SqlExpression> ValidateValues(IEnumerable<SqlExpression> values)
     {
