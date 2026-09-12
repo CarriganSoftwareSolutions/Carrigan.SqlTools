@@ -66,7 +66,7 @@ public abstract class BooleanColumnBaseTests<modelT> : ColumnTestsBase<modelT> w
         void Test(BooleanColumnBase<modelT> columnBase)
         {
             string actual = columnBase?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
-            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName]);
+            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName].ToString());
 
             Assert.Equal(expected, actual);
         }
@@ -78,7 +78,7 @@ public abstract class BooleanColumnBaseTests<modelT> : ColumnTestsBase<modelT> w
         void Test(SqlExpression expression)
         {
             string actual = expression?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
-            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName]);
+            string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName].ToString());
 
             Assert.Equal(expected, actual);
         }

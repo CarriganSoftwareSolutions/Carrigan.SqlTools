@@ -6,14 +6,14 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// <summary>
 /// Represents a strongly typed wrapper for a SQL stored procedure name,
 /// providing type safety and consistent comparison semantics through the
-/// <see cref="StringWrapper"/> base class.
+/// <see cref="TextWrapper"/> base class.
 /// </summary>
 /// <remarks>
 /// This type represents the procedure identifier itself (not the schema).
 /// Schema qualification, reserved word handling, invalid character rules, and length constraints
 /// are validated by the SQL generator.
 /// </remarks>
-public class ProcedureName : StringWrapper
+public class ProcedureName : TextWrapper
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ProcedureName"/> class.

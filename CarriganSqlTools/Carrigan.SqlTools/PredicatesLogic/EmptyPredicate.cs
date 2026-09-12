@@ -17,12 +17,6 @@ internal class EmptyPredicate : Predicates
     }
 
     /// <summary>
-    /// Returns an empty diagnostic representation because this predicate emits no SQL.
-    /// </summary>
-    public override string ToString() =>
-        string.Empty;
-
-    /// <summary>
     /// Returns no fragments because this predicate intentionally emits no SQL.
     /// </summary>
     /// <param name="dialect">The SQL dialect parameter is unused because no SQL is emitted.</param>

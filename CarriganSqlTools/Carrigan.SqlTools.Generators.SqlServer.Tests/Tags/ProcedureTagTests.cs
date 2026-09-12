@@ -1,24 +1,38 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
+//IGNORE SPELLING: ema
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
-
-//IGNORE SPELLING: Za ema 
 
 public class ProcedureTagTests
 {
-    private static readonly ISqlDialects Dialect =  new SqlServerDialect();
+    private static readonly SqlServerDialect Dialect = new();
+
     [Theory]
     [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
     [InlineData(null, "Pizza", "[Pizza]")]
     [InlineData("", "Pizza", "[Pizza]")]
-    public void Procedure_Tag_Tests(string? schemaName, string name, string expected)
+    public void ToSql(string? schemaName, string procedureName, string expected)
     {
-        string actual = new ProcedureTag(schemaName, name).ToSql(Dialect);
+        ProcedureTag procedureTag = new(schemaName, procedureName);
 
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected, procedureTag.ToSql(Dialect));
+    }
+
+    [Theory]
+    [InlineData("Franks", "Pizza", "Franks.Pizza")]
+    [InlineData(null, "Pizza", "Pizza")]
+    [InlineData("", "Pizza", "Pizza")]
+    [InlineData(null, "", "")]
+    [InlineData(null, " ", " ")]
+    public void ToString_Value(string? schemaName, string procedureName, string expected)
+    {
+        ProcedureTag procedureTag = new(schemaName, procedureName);
+
+        Assert.Equal(expected, procedureTag.ToString());
+        Assert.Equal(expected, $"{procedureTag}");
     }
 
     [Theory]
@@ -28,312 +42,362 @@ public class ProcedureTagTests
     [InlineData("Franks", null)]
     [InlineData(null, null)]
     [InlineData("", null)]
-    //These unit tests originally enforced exceptions being throw when you create a procedure tag
-    //However, this is now checked in the SqlGenerator's constructor.
-    //I kept the tests, in case I forget I moved them on purpose.
-    public void Procedure_Tag_Tests_Argument_Exception(string? schemaName, string? procedureName) => 
+    public void Constructor_AllowsEmptyOrNullProcedureName(string? schemaName, string? procedureName) =>
         _ = new ProcedureTag(schemaName, procedureName!);
 
+    [Fact]
+    public void Equals_SameReference()
+    {
+        ProcedureTag procedureTag = new("Schema", "Procedure");
+
+        Assert.True(procedureTag.Equals(procedureTag));
+#pragma warning disable CS1718 // Comparison made to same variable
+        Assert.True(procedureTag == procedureTag);
+        Assert.False(procedureTag != procedureTag);
+#pragma warning restore CS1718 // Comparison made to same variable
+    }
+
+    [Fact]
+    public void Equals_EquivalentInstances()
+    {
+        ProcedureTag left = new("Schema", "Procedure");
+        ProcedureTag right = new("Schema", "Procedure");
+
+        Assert.True(left.Equals(right));
+        Assert.True(right.Equals(left));
+        Assert.Equal(left, right);
+        Assert.Equal(right, left);
+    }
+
+    [Fact]
+    public void Equals_Transitive()
+    {
+        ProcedureTag first = new("Schema", "Procedure");
+        ProcedureTag second = new("Schema", "Procedure");
+        ProcedureTag third = new("Schema", "Procedure");
+
+        Assert.True(first.Equals(second));
+        Assert.True(second.Equals(third));
+        Assert.True(first.Equals(third));
+    }
+
+    [Fact]
+    public void Equals_NullAndEmptySchema()
+    {
+        ProcedureTag noSchema = new((SchemaName?)null, new ProcedureName("Procedure"));
+        ProcedureTag emptySchema = new(new SchemaName(string.Empty), new ProcedureName("Procedure"));
+
+        Assert.True(noSchema.Equals(emptySchema));
+        Assert.True(emptySchema.Equals(noSchema));
+        Assert.True(noSchema == emptySchema);
+        Assert.False(noSchema != emptySchema);
+        Assert.Equal(noSchema.GetHashCode(), emptySchema.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_DifferentSchema()
+    {
+        ProcedureTag left = new("SchemaOne", "Procedure");
+        ProcedureTag right = new("SchemaTwo", "Procedure");
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_DifferentProcedure()
+    {
+        ProcedureTag left = new("Schema", "ProcedureOne");
+        ProcedureTag right = new("Schema", "ProcedureTwo");
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_SchemaPresenceMatters()
+    {
+        ProcedureTag left = new(null, "Procedure");
+        ProcedureTag right = new("Schema", "Procedure");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_SchemaIsCaseSensitive()
+    {
+        ProcedureTag left = new("Schema", "Procedure");
+        ProcedureTag right = new("schema", "Procedure");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_ProcedureIsCaseSensitive()
+    {
+        ProcedureTag left = new("Schema", "Procedure");
+        ProcedureTag right = new("Schema", "procedure");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_PreservesWhitespace()
+    {
+        ProcedureTag left = new("Schema", "Procedure");
+        ProcedureTag right = new("Schema", " Procedure ");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_UsesStructuralIdentity_NotFormattedText()
+    {
+        ProcedureTag left = new("A.B", "C");
+        ProcedureTag right = new("A", "B.C");
+
+        Assert.Equal(left.ToString(), right.ToString());
+        Assert.False(left.Equals(right));
+        Assert.False(left == right);
+        Assert.True(left != right);
+    }
+
+    [Fact]
+    public void Equals_Null()
+    {
+        ProcedureTag procedureTag = new("Schema", "Procedure");
+        ProcedureTag? other = null;
+
+        Assert.False(procedureTag.Equals(other));
+        Assert.False(procedureTag.Equals((object?)null));
+    }
+
+    [Fact]
+    public void Equals_ObjectEquivalent()
+    {
+        ProcedureTag procedureTag = new("Schema", "Procedure");
+        object other = new ProcedureTag("Schema", "Procedure");
+
+        Assert.True(procedureTag.Equals(other));
+    }
+
+    [Fact]
+    public void Equals_ObjectWrongType()
+    {
+        ProcedureTag procedureTag = new("Schema", "Procedure");
+        object other = new ProcedureName("Procedure");
+
+        Assert.False(procedureTag.Equals(other));
+    }
+
+    [Fact]
+    public void EqualOperator_EquivalentInstances()
+    {
+        ProcedureTag left = new("Schema", "Procedure");
+        ProcedureTag right = new("Schema", "Procedure");
+
+        Assert.True(left == right);
+        Assert.True(right == left);
+        Assert.False(left != right);
+        Assert.False(right != left);
+    }
+
+    [Fact]
+    public void EqualOperator_DifferentInstances()
+    {
+        ProcedureTag left = new("SchemaOne", "Procedure");
+        ProcedureTag right = new("SchemaTwo", "Procedure");
+
+        Assert.False(left == right);
+        Assert.False(right == left);
+        Assert.True(left != right);
+        Assert.True(right != left);
+    }
+
+    [Fact]
+    public void EqualOperator_Null()
+    {
+        ProcedureTag procedureTag = new("Schema", "Procedure");
+        ProcedureTag? nullProcedureTag = null;
+        ProcedureTag? secondNullProcedureTag = null;
+
+        Assert.False(procedureTag == nullProcedureTag);
+        Assert.False(nullProcedureTag == procedureTag);
+        Assert.True(procedureTag != nullProcedureTag);
+        Assert.True(nullProcedureTag != procedureTag);
+        Assert.True(nullProcedureTag == secondNullProcedureTag);
+        Assert.False(nullProcedureTag != secondNullProcedureTag);
+    }
+
+    [Fact]
+    public void GetHashCode_EquivalentInstances()
+    {
+        ProcedureTag left = new("Schema", "Procedure");
+        ProcedureTag right = new("Schema", "Procedure");
+
+        Assert.Equal(left, right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+    }
+
+    [Fact]
+    public void DictionaryKey_EquivalentInstance()
+    {
+        ProcedureTag storedKey = new("Schema", "Procedure");
+        ProcedureTag lookupKey = new("Schema", "Procedure");
+        Dictionary<ProcedureTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.True(dictionary.ContainsKey(lookupKey));
+        Assert.Equal(3.14159m, dictionary[lookupKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_NullAndEmptySchema()
+    {
+        ProcedureTag storedKey = new((SchemaName?)null, new ProcedureName("Procedure"));
+        ProcedureTag lookupKey = new(new SchemaName(string.Empty), new ProcedureName("Procedure"));
+        Dictionary<ProcedureTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.True(dictionary.ContainsKey(lookupKey));
+        Assert.Equal(3.14159m, dictionary[lookupKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_DifferentSchema()
+    {
+        ProcedureTag storedKey = new("SchemaOne", "Procedure");
+        ProcedureTag lookupKey = new("SchemaTwo", "Procedure");
+        Dictionary<ProcedureTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
+    }
+
+    [Fact]
+    public void DictionaryKey_DifferentProcedure()
+    {
+        ProcedureTag storedKey = new("Schema", "ProcedureOne");
+        ProcedureTag lookupKey = new("Schema", "ProcedureTwo");
+        Dictionary<ProcedureTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
+    }
+
+    [Fact]
+    public void DictionaryKey_EquivalentAssignmentReplacesValue()
+    {
+        ProcedureTag firstKey = new("Schema", "Procedure");
+        ProcedureTag secondKey = new("Schema", "Procedure");
+        Dictionary<ProcedureTag, decimal> dictionary = [];
+        dictionary[firstKey] = 3.14159m;
+        dictionary[secondKey] = 2.71828m;
+
+        Assert.Single(dictionary);
+        Assert.Equal(2.71828m, dictionary[firstKey]);
+        Assert.Equal(2.71828m, dictionary[secondKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_IsCaseSensitive()
+    {
+        ProcedureTag storedKey = new("Schema", "Procedure");
+        ProcedureTag lookupKey = new("schema", "Procedure");
+        Dictionary<ProcedureTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
+    }
+
+    [Fact]
+    public void HashSet_EquivalentInstance()
+    {
+        ProcedureTag storedValue = new("Schema", "Procedure");
+        ProcedureTag lookupValue = new("Schema", "Procedure");
+        HashSet<ProcedureTag> set = [storedValue];
+
+        Assert.Contains(lookupValue, set);
+    }
+
     [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void ProcedureTag_Comparisons(string? schema1, string? procedure1, string? schema2, string? procedure2)
+    [InlineData(null, "", true, true)]
+    [InlineData(null, " ", false, true)]
+    [InlineData(null, "Procedure", false, false)]
+    [InlineData("Schema", "", false, false)]
+    public void EmptyAndWhiteSpaceContracts(string? schemaName, string procedureName, bool expectedEmpty, bool expectedWhiteSpace)
     {
-        ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
-        ProcedureTag? tag2 = procedure2.IsNotNullOrEmpty() ? new ProcedureTag(schema2, procedure2) : null;
+        ProcedureTag procedureTag = new(schemaName, procedureName);
 
-        string? tagString1 = procedure1.IsNotNullOrEmpty() ? $"[{schema1}].[{procedure1}]" : null;
-        string? tagString2 = procedure2.IsNotNullOrEmpty() ? $"[{schema2}].[{procedure2}]" : null;
-
-
-        int expectedValue = string.Compare(tagString1, tagString2, StringComparison.Ordinal);
-        int actualValue = tag1!.CompareTo(tag2);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void ProcedureTag_Equals(string? schema1, string? procedure1, string? schema2, string? procedure2)
-    {
-        ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
-        ProcedureTag? tag2 = procedure2.IsNotNullOrEmpty() ? new ProcedureTag(schema2, procedure2) : null;
-
-        string? tagString1 = procedure1.IsNotNullOrEmpty() ? $"[{schema1}].[{procedure1}]" : null;
-        string? tagString2 = procedure2.IsNotNullOrEmpty() ? $"[{schema2}].[{procedure2}]" : null;
-
-
-        bool expectedValue = tagString1!.Equals(tagString2);
-        bool actualValue = tag1!.Equals(tag2);
-
-        Assert.Equal(expectedValue, actualValue);
+        Assert.Equal(expectedEmpty, procedureTag.IsEmpty());
+        Assert.Equal(!expectedEmpty, procedureTag.IsNotEmpty());
+        Assert.Equal(expectedWhiteSpace, procedureTag.IsWhiteSpace());
+        Assert.Equal(!expectedWhiteSpace, procedureTag.IsNotWhiteSpace());
     }
 
     [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void ProcedureTag_EqualsObject(string? schema1, string? procedure1, string? schema2, string? procedure2)
+    [InlineData("Invalid Procedure")]
+    [InlineData("123Invalid")]
+    [InlineData("Role;DROP")]
+    // These tests document that identifier validation occurs in the SQL generator rather than ProcedureTag construction.
+    public void Constructor_AllowsProcedureNamesValidatedLater(string procedureName)
     {
-        ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
-        ProcedureTag? tag2 = procedure2.IsNotNullOrEmpty() ? new ProcedureTag(schema2, procedure2) : null;
+        ProcedureTag procedureTag = new("dbo", procedureName);
 
-        string? tagString1 = procedure1.IsNotNullOrEmpty() ? $"[{schema1}].[{procedure1}]" : null;
-        string? tagString2 = procedure2.IsNotNullOrEmpty() ? $"[{schema2}].[{procedure2}]" : null;
-
-
-        bool expectedValue = tagString1!.Equals(tagString2);
-        bool actualValue = tag1!.Equals((object?)tag2);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void ProcedureTag_EqualsEquals(string? schema1, string? procedure1, string? schema2, string? procedure2)
-    {
-        ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
-        ProcedureTag? tag2 = procedure2.IsNotNullOrEmpty() ? new ProcedureTag(schema2, procedure2) : null;
-
-        string? tagString1 = procedure1.IsNotNullOrEmpty() ? $"[{schema1}].[{procedure1}]" : null;
-        string? tagString2 = procedure2.IsNotNullOrEmpty() ? $"[{schema2}].[{procedure2}]" : null;
-
-        bool expectedValue = tagString1 == tagString2;
-        bool actualValue = tag1 == tag2;
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void ProcedureTag_NotEquals(string? schema1, string? procedure1, string? schema2, string? procedure2)
-    {
-        ProcedureTag? tag1 = procedure1.IsNotNullOrEmpty() ? new ProcedureTag(schema1, procedure1) : null;
-        ProcedureTag? tag2 = procedure2.IsNotNullOrEmpty() ? new ProcedureTag(schema2, procedure2) : null;
-
-        string? tagString1 = procedure1.IsNotNullOrEmpty() ? $"[{schema1}].[{procedure1}]" : null;
-        string? tagString2 = procedure2.IsNotNullOrEmpty() ? $"[{schema2}].[{procedure2}]" : null;
-
-        bool expectedValue = tagString1 != tagString2;
-        bool actualValue = tag1 != tag2;
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-    [Fact]
-    public void ProcedureTag_Equals_BothNull_ReturnsTrue()
-    {
-        // Since the comparison methods are on ProcedureTag itself, we just need an instance.
-        ProcedureTag comparer = new("Schema", "Procedure");
-
-        bool result = comparer.Equals(null, null);
-
-        Assert.True(result, "Both null references should be considered equal.");
-    }
-
-    [Fact]
-    public void ProcedureTag__Equals_OneNullOneNonNull_ReturnsFalse()
-    {
-        ProcedureTag comparer = new("Schema", "Procedure");
-        ProcedureTag nonNullTag = new("Schema", "Procedure");
-
-        bool result = comparer.Equals(null, nonNullTag);
-
-        Assert.False(result, "Null and non-null should not be equal.");
-    }
-
-    [Fact]
-    public void ProcedureTag_Equals_SameValues_ReturnsTrue()
-    {
-        ProcedureTag comparer = new("Schema", "Procedure");
-        ProcedureTag tag1 = new("Schema", "Procedure");
-        ProcedureTag tag2 = new("Schema", "Procedure");
-
-        bool result = comparer.Equals(tag1, tag2);
-
-        Assert.True(result, "Tags with the same schema/Procedure strings should be equal.");
-    }
-
-    [Fact]
-    public void ProcedureTag_Equals_DifferentValues_ReturnsFalse()
-    {
-        ProcedureTag comparer = new("Schema", "Procedure");
-        ProcedureTag tag1 = new("SchemaA", "ProcedureA");
-        ProcedureTag tag2 = new("SchemaB", "ProcedureB");
-
-        bool result = comparer.Equals(tag1, tag2);
-
-        Assert.False(result, "Tags with different schema/Procedure strings should not be equal.");
-    }
-
-    [Fact]
-    public void ProcedureTag_GetHashCode_SameValues_ReturnsSameHash()
-    {
-        ProcedureTag comparer = new("Schema", "Procedure");
-        ProcedureTag tag1 = new("MySchema", "MyProcedure");
-        ProcedureTag tag2 = new("MySchema", "MyProcedure");
-
-        int hash1 = comparer.GetHashCode(tag1);
-        int hash2 = comparer.GetHashCode(tag2);
-
-        Assert.Equal(hash1, hash2);
-    }
-
-    [Fact]
-    public void ProcedureTag_GetHashCode_DifferentValues_ReturnsDifferentHash()
-    {
-        ProcedureTag comparer = new("Schema", "Procedure");
-        ProcedureTag tag1 = new("Schema1", "procedure1");
-        ProcedureTag tag2 = new("Schema2", "procedure2");
-
-        int hash1 = comparer.GetHashCode(tag1);
-        int hash2 = comparer.GetHashCode(tag2);
-
-        Assert.NotEqual(hash1, hash2);
-    }
-
-
-    [Fact]
-    public void Constructor_ValidWithoutSchema_ShouldReturnFormattedTag()
-    {
-        // Arrange
-        string procedureName = "ValidProcedure"; // passes pattern e.g. "^[A-Za-z_@#][A-Za-z0-9_@$#]*$"
-        string expected = "[ValidProcedure]";
-
-        // Act
-        ProcedureTag ProcedureTag = new(null, procedureName);
-
-        // Assert
-        Assert.Equal(expected, ProcedureTag.ToSql(Dialect));
-        // Test implicit conversion to string.
-        string implicitString = ProcedureTag;
-        Assert.Equal(procedureName, implicitString);
-    }
-
-    [Fact]
-    public void Constructor_ValidWithSchema_ShouldReturnFormattedTag()
-    {
-        // Arrange
-        string schemaName = "dbo";
-        string ProcedureName = "ValidProcedure";
-        string expected = "[dbo].[ValidProcedure]";
-
-        // Act
-        ProcedureTag ProcedureTag = new(schemaName, ProcedureName);
-
-        // Assert
-        Assert.Equal(expected, ProcedureTag.ToSql(Dialect));
-        string implicitString = ProcedureTag;
-        Assert.Equal($"{schemaName}.{ProcedureName}", implicitString);
+        Assert.Equal(procedureName, procedureTag.ProcedureName.ToString());
     }
 
     [Theory]
-    [InlineData("Invalid Procedure")]    // Contains space.
-    [InlineData("123Invalid")]       // Starts with digit.
-    [InlineData("Role;DROP")]        // Contains a semicolon.
-    //These unit tests originally enforced exceptions being throw when you create a procedure tag
-    //However, this is now checked in the SqlGenerator's constructor.
-    //I kept the tests, in case I forget I moved them on purpose.
-    public void Constructor_InvalidProcedureName_ShouldThrowSqlNamePatternException(string invalidProcedure)
+    [InlineData("Invalid Schema")]
+    [InlineData("123Schema")]
+    [InlineData("Sch;ema")]
+    // These tests document that identifier validation occurs in the SQL generator rather than ProcedureTag construction.
+    public void Constructor_AllowsSchemaNamesValidatedLater(string schemaName)
     {
-        // Arrange
-        string schemaName = "dbo";
+        ProcedureTag procedureTag = new(schemaName, "ValidProcedure");
 
-        // Act & Assert
-        _ = new ProcedureTag(schemaName, invalidProcedure);
-    }
-
-    [Theory]
-    [InlineData("Invalid Schema")]   // Contains space.
-    [InlineData("123Schema")]        // Starts with digit.
-    [InlineData("Sch;ema")]          // Contains special characters.
-    //These unit tests originally enforced exceptions being throw when you create a procedure tag
-    //However, this is now checked in the SqlGenerator's constructor.
-    //I kept the tests, in case I forget I moved them on purpose.
-    public void Constructor_InvalidSchemaName_ShouldThrowSqlNamePatternException(string invalidSchema)
-    {
-        // Arrange
-        string ProcedureName = "ValidProcedure";
-
-        // Act & Assert
-        _ = new ProcedureTag(invalidSchema, ProcedureName);
+        Assert.Equal(schemaName, procedureTag.SchemaName!.ToString());
     }
 
     [Fact]
-    public void ToString_ReturnsFormattedTag()
+    public void Constructor_ValidWithoutSchema()
     {
-        // Arrange
-        string schemaName = "dbo";
-        string ProcedureName = "ValidProcedure";
-        ProcedureTag ProcedureTag = new(schemaName, ProcedureName);
-        string expected = "[dbo].[ValidProcedure]";
+        ProcedureTag procedureTag = new(null, "ValidProcedure");
 
-        // Act
-        string result = ProcedureTag.ToSql(Dialect);
-
-        // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal("ValidProcedure", procedureTag.ToString());
+        Assert.Equal("[ValidProcedure]", procedureTag.ToSql(Dialect));
     }
 
     [Fact]
-    public void ImplicitConversionToString_ReturnsFormattedTag()
+    public void Constructor_ValidWithSchema()
     {
-        // Arrange
-        string schemaName = "dbo";
-        string ProcedureName = "ValidProcedure";
-        ProcedureTag ProcedureTag = new(schemaName, ProcedureName);
-        string expected = "[dbo].[ValidProcedure]";
+        ProcedureTag procedureTag = new("dbo", "ValidProcedure");
 
-        // Act
-        string result = ProcedureTag.ToSql(Dialect);  // Implicit conversion to string
-
-        // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal("dbo.ValidProcedure", procedureTag.ToString());
+        Assert.Equal("[dbo].[ValidProcedure]", procedureTag.ToSql(Dialect));
     }
 
     [Fact]
     public void Get_ShouldReturnExpectedProcedureTag_ForEntityWithSchema()
     {
-        // Arrange
-        Type entityType = typeof(EntityWithSchema);
-        ProcedureTag expectedTag = new("myschema", "EntityWithSchema");
+        ProcedureTag expected = new("myschema", "EntityWithSchema");
+        ProcedureTag actual = ProcedureTag.Get(typeof(EntityWithSchema));
 
-        // Act
-        ProcedureTag actualTag = ProcedureTag.Get(entityType);
-
-        // Assert: compare string representations (implicit conversion and ToString())
-        Assert.Equal(expectedTag.ToString(), actualTag.ToString());
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     [Fact]
-    public void ImplicitConversion_ShouldReturnSameString_AsToString()
+    public void ToString_FromGet_ReturnsExpectedString()
     {
-        // Arrange
-        Type entityType = typeof(EntityWithSchema);
-        ProcedureTag tagFromGet = ProcedureTag.Get(entityType);
-        string tagAsStringFromToString = tagFromGet.ToString();
-        string tagAsStringFromImplicit = tagFromGet;
+        ProcedureTag procedureTag = ProcedureTag.Get(typeof(EntityWithSchema));
 
-        // Assert: both conversion methods yield the same result
-        Assert.Equal(tagAsStringFromToString, tagAsStringFromImplicit);
+        Assert.Equal("myschema.EntityWithSchema", procedureTag.ToString());
     }
 }

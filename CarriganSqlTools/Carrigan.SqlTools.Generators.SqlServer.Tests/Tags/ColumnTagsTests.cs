@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
@@ -17,7 +17,7 @@ public class ColumnTagsTests
         TableTag tableTag = new(schemaName, tableName);
         ColumnTag actual = new(tableTag, new ColumnName(columnName));
 
-        Assert.Equal(expected, actual.ColumnName);
+        Assert.Equal(expected, actual.ColumnName.ToString());
     }
 
     [Theory]
@@ -191,189 +191,271 @@ public class ColumnTagsTests
     }
 
 
-    //implicit operator → string and ToString()
+    // ToString()
     [Theory]
     [InlineData("S", "T", "C", "S.T.C")]
     [InlineData(null, "T", "C", "T.C")]
     [InlineData("", "T", "C", "T.C")]
-    public void ImplicitStringAndToString_AreEquivalent(string? schema, string table, string column, string expected)
+    public void ToString_ReturnsExpectedValue(string? schema, string table, string column, string expected)
     {
         TableTag tableTag = new(schema, table);
-        ColumnTag colTag = new(tableTag, new ColumnName(column));
+        ColumnTag columnTag = new(tableTag, new ColumnName(column));
 
-        // implicit cast
-        string viaImplicit = colTag;
-        Assert.Equal(expected, viaImplicit);
-
-        // ToString()
-        Assert.Equal(expected, colTag.ToString());
-    }
-
-    //IEquatable<ColumnTag>.Equals()
-    [Fact]
-    public void Equals_SameUnderlyingTag_ReturnsTrue()
-    {
-        TableTag tableTag = new("S", "T");
-        ColumnTag a = new(tableTag, new ColumnName("C"));
-        ColumnTag b = new(tableTag, new ColumnName("C"));
-
-        Assert.True(a.Equals(b));
-        Assert.True(b.Equals(a));
+        Assert.Equal(expected, columnTag.ToString());
+        Assert.Equal(expected, $"{columnTag}");
     }
 
     [Fact]
-    public void Equals_DifferentUnderlyingTag_ReturnsFalse()
+    public void ToString_UnqualifiedColumn_ReturnsColumnName()
     {
-        TableTag tableTag = new("S", "T");
-        ColumnTag a = new(tableTag, new ColumnName("C1"));
-        ColumnTag b = new(tableTag, new ColumnName("C2"));
+        ColumnTag columnTag = new(new ColumnName("Column"));
 
-        Assert.False(a.Equals(b));
-        Assert.False(b.Equals(a));
-    }
-
-    // == and != operators
-    [Fact]
-    public void EqualityOperator_WorksLikeEquals()
-    {
-        TableTag tableTag = new("S", "T");
-        ColumnTag x = new(tableTag, new ColumnName("C"));
-        ColumnTag y = new(tableTag, new ColumnName("C"));
-        ColumnTag z = new(tableTag, new ColumnName("Different"));
-
-        Assert.True(x == y);
-        Assert.False(x == z);
-        Assert.True(x != z);
-    }
-
-    // GetHashCode consistency
-    [Fact]
-    public void GetHashCode_EqualInstances_HaveSameHash()
-    {
-        TableTag tableTag = new("S", "T");
-        ColumnTag a = new(tableTag, new ColumnName("C"));
-        ColumnTag b = new(tableTag, new ColumnName("C"));
-
-        Assert.Equal(a.GetHashCode(), b.GetHashCode());
-    }
-
-    // IEqualityComparer<ColumnTag>
-    [Fact]
-    public void Comparer_EqualsAndHashCode_ViaIEqualityComparer()
-    {
-        TableTag tableTag = new("S", "T");
-        ColumnTag a = new(tableTag, new ColumnName("C"));
-        ColumnTag b = new(tableTag, new ColumnName("C"));
-        ColumnTag c = new(tableTag, new ColumnName("Other"));
-        ColumnTag comparer = new(tableTag, new ColumnName("D"));
-
-        Assert.True(comparer.Equals(a, b));
-        Assert.False(comparer.Equals(a, c));
-        Assert.Equal(a.GetHashCode(), comparer.GetHashCode(b));
-    }
-
-    // IComparable<ColumnTag>.CompareTo()
-    [Fact]
-    public void CompareTo_SortsByUnderlyingStringOrdinal()
-    {
-        TableTag tableTag = new("S", "T");
-        ColumnTag lower = new(tableTag, new ColumnName("A"));
-        ColumnTag higher = new(tableTag, new ColumnName("B"));
-
-        Assert.True(lower.CompareTo(higher) < 0);
-        Assert.True(higher.CompareTo(lower) > 0);
-        Assert.Equal(0, lower.CompareTo(new ColumnTag(tableTag, new ColumnName("A"))));
-    }
-
-    // Sorting a list of ColumnTags
-    [Fact]
-    public void Sort_ListOfColumnTags_OrdersLexicographically()
-    {
-        TableTag tableTag = new("S", "T");
-        ColumnTag charlie = new(tableTag, new ColumnName("Charlie"));
-        ColumnTag bravo = new(tableTag, new ColumnName("Bravo"));
-        ColumnTag alpha = new(tableTag, new ColumnName("Alpha"));
-            
-        List<ColumnTag> tags =
-            [
-                charlie,
-                bravo,
-                alpha
-            ];
-
-        tags.Sort();
-
-        Assert.Equal(alpha, tags[0]);
-        Assert.Equal(bravo, tags[1]);
-        Assert.Equal(charlie, tags[2]);
-    }
-
-    // Using ColumnTag as dictionary key
-    [Fact]
-    public void DictionaryKey_RetrievalByEquivalentColumnTag_Works()
-    {
-        Dictionary<ColumnTag, string> dict = [];
-        TableTag tableTag = new("S", "T");
-        ColumnTag key1 = new(tableTag, new ColumnName("C"));
-        dict[key1] = "value";
-
-
-        ColumnTag key2 = new(tableTag, new ColumnName("C"));
-        Assert.True(dict.ContainsKey(key2));
-        Assert.Equal("value", dict[key2]);
-    }
-
-    //  Null comparisons
-    [Fact]
-    public void CompareTo_Null_IsGreaterThanNull()
-    {
-        TableTag tableTag = new("S", "T");
-        ColumnTag columnTag = new(tableTag, new ColumnName("C"));
-        Assert.True(columnTag.CompareTo(null) > 0);
+        Assert.Equal("Column", columnTag.ToString());
     }
 
     [Fact]
-    public void Equals_Null_ReturnsFalse()
+    public void Equals_SameReference()
     {
-        TableTag tableTag = new("S", "T");
-        ColumnTag columnTag = new(tableTag, new ColumnName("C"));
-        Assert.False(columnTag.Equals(null));
-        Assert.NotNull(columnTag);
-        Assert.NotNull(columnTag);
-        Assert.NotNull(columnTag);
-        Assert.NotNull(columnTag);
+        ColumnTag columnTag = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+
+        Assert.True(columnTag.Equals(columnTag));
+#pragma warning disable CS1718 // Comparison made to same variable
+        Assert.True(columnTag == columnTag);
+        Assert.False(columnTag != columnTag);
+#pragma warning restore CS1718 // Comparison made to same variable
     }
 
     [Fact]
-    public void Equals_DifferentCase_ReturnsTrue()
+    public void Equals_EquivalentInstances()
     {
-        ColumnTag lower = new(new TableTag("s", "t"), new ColumnName("c"));
-        ColumnTag upper = new(new TableTag("S", "T"), new ColumnName("C"));
+        ColumnTag left = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag right = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+
+        Assert.True(left.Equals(right));
+        Assert.True(right.Equals(left));
+        Assert.Equal(left, right);
+        Assert.Equal(right, left);
+    }
+
+    [Fact]
+    public void Equals_Transitive()
+    {
+        ColumnTag first = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag second = new(new TableTag("schema", "table"), new ColumnName("column"));
+        ColumnTag third = new(new TableTag("SCHEMA", "TABLE"), new ColumnName("COLUMN"));
+
+        Assert.True(first.Equals(second));
+        Assert.True(second.Equals(third));
+        Assert.True(first.Equals(third));
+    }
+
+    [Fact]
+    public void Equals_NullAndEmptySchema()
+    {
+        ColumnTag noSchema = new(new TableTag((SchemaName?)null, new TableName("Table")), new ColumnName("Column"));
+        ColumnTag emptySchema = new(new TableTag(new SchemaName(string.Empty), new TableName("Table")), new ColumnName("Column"));
+
+        Assert.True(noSchema.Equals(emptySchema));
+        Assert.True(emptySchema.Equals(noSchema));
+        Assert.True(noSchema == emptySchema);
+        Assert.False(noSchema != emptySchema);
+        Assert.Equal(noSchema.GetHashCode(), emptySchema.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_DifferentSchema()
+    {
+        ColumnTag left = new(new TableTag("SchemaOne", "Table"), new ColumnName("Column"));
+        ColumnTag right = new(new TableTag("SchemaTwo", "Table"), new ColumnName("Column"));
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_DifferentTable()
+    {
+        ColumnTag left = new(new TableTag("Schema", "TableOne"), new ColumnName("Column"));
+        ColumnTag right = new(new TableTag("Schema", "TableTwo"), new ColumnName("Column"));
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_DifferentColumn()
+    {
+        ColumnTag left = new(new TableTag("Schema", "Table"), new ColumnName("ColumnOne"));
+        ColumnTag right = new(new TableTag("Schema", "Table"), new ColumnName("ColumnTwo"));
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_SchemaTableAndColumnAreCaseInsensitive()
+    {
+        ColumnTag lower = new(new TableTag("schema", "table"), new ColumnName("column"));
+        ColumnTag upper = new(new TableTag("SCHEMA", "TABLE"), new ColumnName("COLUMN"));
 
         Assert.True(lower.Equals(upper));
         Assert.True(upper.Equals(lower));
-    }
-
-    [Fact]
-    public void GetHashCode_DifferentCase_EqualInstances_HaveSameHash()
-    {
-        ColumnTag lower = new(new TableTag("s", "t"), new ColumnName("c"));
-        ColumnTag upper = new(new TableTag("S", "T"), new ColumnName("C"));
-
+        Assert.True(lower == upper);
+        Assert.False(lower != upper);
         Assert.Equal(lower.GetHashCode(), upper.GetHashCode());
     }
 
     [Fact]
-    public void DictionaryKey_RetrievalByDifferentCaseColumnTag_Works()
+    public void Equals_PreservesWhitespace()
     {
-        Dictionary<ColumnTag, string> dict = [];
-        ColumnTag keyLower = new(new TableTag("s", "t"), new ColumnName("c"));
-        dict[keyLower] = "value";
+        ColumnTag left = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag right = new(new TableTag("Schema", "Table"), new ColumnName(" Column "));
 
-        ColumnTag keyUpper = new(new TableTag("S", "T"), new ColumnName("C"));
-
-        Assert.True(dict.ContainsKey(keyUpper));
-        Assert.Equal("value", dict[keyUpper]);
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
     }
 
+    [Fact]
+    public void Equals_UsesStructuralIdentity_NotFormattedText()
+    {
+        ColumnTag left = new(new TableTag("A.B", "C"), new ColumnName("D"));
+        ColumnTag right = new(new TableTag("A", "B.C"), new ColumnName("D"));
+
+        Assert.Equal(left.ToString(), right.ToString());
+        Assert.False(left.Equals(right));
+        Assert.False(left == right);
+        Assert.True(left != right);
+    }
+
+    [Fact]
+    public void Equals_Null()
+    {
+        ColumnTag columnTag = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag? other = null;
+
+        Assert.False(columnTag.Equals(other));
+        Assert.False(columnTag.Equals((object?)null));
+    }
+
+    [Fact]
+    public void Equals_ObjectEquivalent()
+    {
+        ColumnTag columnTag = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        object other = new ColumnTag(new TableTag("schema", "table"), new ColumnName("column"));
+
+        Assert.True(columnTag.Equals(other));
+    }
+
+    [Fact]
+    public void Equals_ObjectDifferentType()
+    {
+        ColumnTag columnTag = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+
+        Assert.False(columnTag.Equals("Schema.Table.Column"));
+    }
+
+    [Fact]
+    public void EqualityOperators_EquivalentAndDifferentInstances()
+    {
+        ColumnTag left = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag equivalent = new(new TableTag("schema", "table"), new ColumnName("column"));
+        ColumnTag different = new(new TableTag("Schema", "Table"), new ColumnName("Different"));
+
+        Assert.True(left == equivalent);
+        Assert.False(left != equivalent);
+        Assert.False(left == different);
+        Assert.True(left != different);
+    }
+
+    [Fact]
+    public void EqualityOperators_NullHandling()
+    {
+        ColumnTag? left = null;
+        ColumnTag? right = null;
+        ColumnTag value = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+
+        Assert.True(left == right);
+        Assert.False(left != right);
+        Assert.False(left == value);
+        Assert.False(value == right);
+        Assert.True(left != value);
+        Assert.True(value != right);
+    }
+
+    [Fact]
+    public void GetHashCode_EquivalentInstances_HaveSameHash()
+    {
+        ColumnTag left = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag right = new(new TableTag("schema", "table"), new ColumnName("column"));
+
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+    }
+
+    [Fact]
+    public void DictionaryKey_RetrievalByEquivalentColumnTag_Works()
+    {
+        Dictionary<ColumnTag, string> dictionary = [];
+        ColumnTag key = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag equivalentKey = new(new TableTag("schema", "table"), new ColumnName("column"));
+
+        dictionary[key] = "value";
+
+        Assert.True(dictionary.ContainsKey(equivalentKey));
+        Assert.Equal("value", dictionary[equivalentKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_EquivalentKey_ReplacesExistingValue()
+    {
+        Dictionary<ColumnTag, string> dictionary = [];
+        ColumnTag first = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag second = new(new TableTag("schema", "table"), new ColumnName("column"));
+
+        dictionary[first] = "first";
+        dictionary[second] = "second";
+
+        Assert.Single(dictionary);
+        Assert.Equal("second", dictionary[first]);
+    }
+
+    [Fact]
+    public void DictionaryKey_DifferentColumn_IsNotFound()
+    {
+        Dictionary<ColumnTag, string> dictionary = [];
+        ColumnTag key = new(new TableTag("Schema", "Table"), new ColumnName("Column"));
+        ColumnTag different = new(new TableTag("Schema", "Table"), new ColumnName("Other"));
+
+        dictionary[key] = "value";
+
+        Assert.False(dictionary.ContainsKey(different));
+    }
+
+    [Fact]
+    public void HashSet_EquivalentColumnTag_IsRecognized()
+    {
+        HashSet<ColumnTag> tags =
+        [
+            new(new TableTag("Schema", "Table"), new ColumnName("Column"))
+        ];
+
+        Assert.Contains(new ColumnTag(new TableTag("schema", "table"), new ColumnName("column")), tags);
+        Assert.DoesNotContain(new ColumnTag(new TableTag("Schema", "Table"), new ColumnName("Other")), tags);
+    }
+
+    [Theory]
+    [InlineData("", true, true)]
+    [InlineData(" ", true, false)]
+    [InlineData("Column", false, false)]
+    public void WhiteSpaceAndEmptyContracts(string columnName, bool isWhiteSpace, bool isEmpty)
+    {
+        ColumnTag columnTag = new(new TableTag("Schema", "Table"), new ColumnName(columnName));
+
+        Assert.Equal(isWhiteSpace, columnTag.IsWhiteSpace());
+        Assert.Equal(isWhiteSpace == false, columnTag.IsNotWhiteSpace());
+        Assert.Equal(isEmpty, columnTag.IsEmpty());
+        Assert.Equal(isEmpty == false, columnTag.IsNotEmpty());
+    }
 }

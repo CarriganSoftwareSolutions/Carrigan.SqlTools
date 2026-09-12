@@ -38,8 +38,8 @@ public class PostgreSqlDialect : ISqlDialects
     /// <returns>A string containing the rendered representation of the specified procedure.</returns>
     public string RenderProcedureTag(ProcedureTag procedure) =>
         procedure.SchemaName.IsNotNullOrEmpty()
-            ? $"{QuoteIdentifier(procedure.SchemaName)}.{QuoteIdentifier(procedure.ProcedureName)}"
-            : QuoteIdentifier(procedure.ProcedureName);
+            ? $"{QuoteIdentifier(procedure.SchemaName.ToString())}.{QuoteIdentifier(procedure.ProcedureName.ToString())}"
+            : QuoteIdentifier(procedure.ProcedureName.ToString());
 
     /// <summary>
     /// Generates a string representation of the specified PostgreSQL table,
@@ -49,8 +49,8 @@ public class PostgreSqlDialect : ISqlDialects
     /// <param name="tableName">The SQL table name to apply.</param>
     public string RenderTable(SchemaName? schemaName, TableName tableName) =>
         schemaName.IsNotNullOrEmpty()
-            ? $"{QuoteIdentifier(schemaName)}.{QuoteIdentifier(tableName)}"
-            : QuoteIdentifier(tableName);
+            ? $"{QuoteIdentifier(schemaName.ToString())}.{QuoteIdentifier(tableName.ToString())}"
+            : QuoteIdentifier(tableName.ToString());
 
     /// <summary>
     /// Renders the fully qualified PostgreSQL column name.
@@ -60,8 +60,8 @@ public class PostgreSqlDialect : ISqlDialects
     /// <param name="includeTable">The includeTable value.</param>
     public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
-            ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName)}"
-            : QuoteIdentifier(columnName);
+            ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName.ToString())}"
+            : QuoteIdentifier(columnName.ToString());
 
     /// <summary>
     /// Generates SQL fragments for an INSERT statement that returns inserted values
@@ -116,10 +116,10 @@ public class PostgreSqlDialect : ISqlDialects
     /// <returns>The quoted column name, including an alias when the result column name differs.</returns>
     private string ReturningColumn<T>(ColumnInfo columnInfo)
     {
-        string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo);
-        string columnName = QuoteIdentifier(columnInfo.ColumnName);
+        string resultColumnName = InvocationReflectorCache<T>.GetResultColumnName(columnInfo.PropertyInfo).ToString();
+        string columnName = QuoteIdentifier(columnInfo.ColumnName.ToString());
 
-        if (resultColumnName != columnInfo.ColumnName)
+        if (resultColumnName != columnInfo.ColumnName.ToString())
         {
             return $"{columnName} AS {QuoteIdentifier(resultColumnName)}";
         }

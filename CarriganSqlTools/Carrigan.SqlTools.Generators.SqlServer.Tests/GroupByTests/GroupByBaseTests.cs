@@ -37,6 +37,11 @@ public class GroupByBaseTests
         Assert.Empty(new GroupBy<Address>("Street").GetSqlFragmentParameters(Dialect));
 
     [Fact]
+    public void ToString_ReturnsQualifiedColumnName() =>
+        Assert.Equal("Address.City", new GroupBy<Address>("City").ToString());
+
+    [Fact]
     public void ToSql_UsesColumnTag() =>
         Assert.Equal("[Address].[City]", new GroupBy<Address>("City").ToSql(Dialect));
+
 }

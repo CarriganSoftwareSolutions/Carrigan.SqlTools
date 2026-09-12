@@ -7,40 +7,39 @@ public class ParameterTagTests
 {
 
     [Fact]
-    public void ImplicitString_CreatesExpectedTag_AllPartsPresent()
+    public void ToString_CreatesExpectedTag_AllPartsPresent()
     {
         ParameterTag parameterTag = new("ParameterName");
-        string actual = (string)parameterTag;
+        string actual = parameterTag.ToString();
 
         Assert.Equal("ParameterName", actual);
     }
 
     [Fact]
-    public void ImplicitString_SkipsNullOrWhitespaceParts_OnIndex()
+    public void ToString_SkipsNullOrWhitespaceParts_OnIndex()
     {
         ParameterTag parameterTag = new("ParameterName");
-        string actual = (string)parameterTag;
+        string actual = parameterTag.ToString();
 
         Assert.Equal("ParameterName", actual);
     }
 
     [Fact]
-    public void ImplicitString_SkipsNullOrWhitespaceParts_OnPrefix()
+    public void ToString_SkipsNullOrWhitespaceParts_OnPrefix()
     {
         ParameterTag parameterTag = new("ParameterName");
-        string actual = (string)parameterTag;
+        string actual = parameterTag.ToString();
 
         Assert.Equal("ParameterName", actual);
     }
 
     [Fact]
-    public void ToString_ReturnsSameAsImplicitString()
+    public void ToString_ReturnsExpectedString()
     {
         ParameterTag parameterTag = new("ParameterName");
-        string viaCast = (string)parameterTag;
         string viaToString = parameterTag.ToString();
 
-        Assert.Equal(viaCast, viaToString);
+        Assert.Equal("ParameterName", viaToString);
     }
 
     [Fact]
@@ -223,7 +222,7 @@ public class ParameterTagTests
     public void Constructor_NullPrefix_AndIndex_OnlyName()
     {
         ParameterTag tag = new("OnlyName");
-        string actual = (string)tag;
+        string actual = tag.ToString();
 
         Assert.Equal("OnlyName", actual);
     }
@@ -232,7 +231,7 @@ public class ParameterTagTests
     public void Constructor_AllPartsPresent()
     {
         ParameterTag tag = new("Name");
-        string actual = (string)tag;
+        string actual = tag.ToString();
 
         Assert.Equal("Name", actual);
     }

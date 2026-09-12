@@ -185,7 +185,7 @@ public class NumericParameter : NumericExpression, IParameter
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
         ValidateType(value);
-        Name = new(parameterTag);
+        Name = parameterTag;
         Value = value;
         FieldProperties = fieldProperties;
     }
@@ -243,7 +243,7 @@ public class NumericParameter : NumericExpression, IParameter
     {
         ArgumentNullException.ThrowIfNull(columInfo, nameof(columInfo));
         ValidateType(value);
-        Name = new(columInfo.ParameterTag);
+        Name = columInfo.ParameterTag;
         Value = value;
         FieldProperties = columInfo.FieldProperties;
     }
@@ -253,12 +253,6 @@ public class NumericParameter : NumericExpression, IParameter
     /// </summary>
     /// <returns>The SQL parameter name without dialect-specific formatting.</returns>
     internal string ToSql() =>
-        Name.ToString();
-
-    /// <summary>
-    /// Returns the unrendered parameter name.
-    /// </summary>
-    public override string ToString() =>
         Name.ToString();
 
     /// <summary>

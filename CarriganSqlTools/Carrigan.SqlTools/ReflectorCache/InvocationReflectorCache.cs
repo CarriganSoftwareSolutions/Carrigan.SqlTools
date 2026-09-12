@@ -85,7 +85,7 @@ internal static class InvocationReflectorCache<T>
                 string.Join("; ", duplicates.Select(static grouping =>$"{grouping.Key}: {string.Join(", ", grouping.Select(static tuple => tuple.Item2.Name))}"));
 
             throw new ArgumentException(
-                $"Duplicate result column names were detected while building {nameof(InvocationReflectorCache<T>)} for {Type.Name}. Duplicates: {details}.");
+                $"Duplicate result column names were detected while building InvocationReflectorCache for {Type.Name}. Duplicates: {details}.");
         }
 
         PropertyInfoCache = new(mappings);
@@ -110,9 +110,9 @@ internal static class InvocationReflectorCache<T>
 
         return new
         (
-            propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name?.ToString().GetValueOrNull()
-                ?? propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name?.ToString().GetValueOrNull()
-                ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name?.GetValueOrNull()
+            propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name?.ToString()
+                ?? propertyInfo.GetCustomAttribute<IdentifierAttribute>()?.Name
+                ?? propertyInfo.GetCustomAttribute<ColumnAttribute>()?.Name
                 ?? propertyInfo.Name
         );
     }

@@ -125,7 +125,7 @@ public class NumericParameterTests
         T? value = (T?)GetValue<T>();
         Parameter parameter = createParameter(value, parameterTag, null);
 
-        parameterTest(parameter, value, NumericParameterTests.ToExpectedParameterName(parameterTag, 1));
+        parameterTest(parameter, value, NumericParameterTests.ToExpectedParameterName(parameterTag.ToString(), 1));
     }
 
     private static void RunParameterTests(string parameterName)
@@ -232,27 +232,27 @@ public class NumericParameterTests
         int actualInt;
         int expectedInt;
 
-        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "@Test_1").Value!;
+        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "@Test_1").Value!;
         expectedInt = 0;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "@Test_2").Value!;
+        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "@Test_2").Value!;
         expectedInt = 1;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "@Test_3").Value!;
+        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "@Test_3").Value!;
         expectedInt = 2;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "@Test_4").Value!;
+        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "@Test_4").Value!;
         expectedInt = 3;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "@NotTest_5").Value!;
+        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "@NotTest_5").Value!;
         expectedInt = 4;
         Assert.Equal(expectedInt, actualInt);
 
-        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag == "@Test_6").Value!;
+        actualInt = (int)predicate.ToSqlFragments(NumericParameterTests.Dialect).GetSqlFragmentParameters(NumericParameterTests.Dialect).Single(parameter => parameter.ParameterTag.ToString() == "@Test_6").Value!;
         expectedInt = 10;
         Assert.Equal(expectedInt, actualInt);
     }

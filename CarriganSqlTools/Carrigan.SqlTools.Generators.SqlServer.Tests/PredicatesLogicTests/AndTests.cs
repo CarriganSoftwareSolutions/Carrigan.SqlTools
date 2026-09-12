@@ -70,21 +70,21 @@ public class AndTests
     {
         And and = CreateAnd(3);
 
-        Parameter parameter = and.DescendantParameters.Where(parameter => parameter.Name == "P1").Single();
+        Parameter parameter = and.DescendantParameters.Where(parameter => parameter.Name.ToString() == "P1").Single();
         Assert.NotNull(parameter.Value);
         int actual = (int)parameter.Value;
         int expected = 1;
 
         Assert.Equal(expected, actual);
 
-        parameter = and.DescendantParameters.Where(parameter => parameter.Name == "P2").Single();
+        parameter = and.DescendantParameters.Where(parameter => parameter.Name.ToString() == "P2").Single();
         Assert.NotNull(parameter.Value);
         actual = (int)parameter.Value;
         expected = 2;
 
         Assert.Equal(expected, actual);
 
-        parameter = and.DescendantParameters.Where(parameter => parameter.Name == "PA").Single();
+        parameter = and.DescendantParameters.Where(parameter => parameter.Name.ToString() == "PA").Single();
         Assert.NotNull(parameter.Value);
         actual = (int)parameter.Value;
         expected = 3;
@@ -101,8 +101,8 @@ public class AndTests
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsEnabled]").Single();
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsVisible]").Single();
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsArchived]").Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag == "LogicalPredicateTable.IsArchived").Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsArchived").Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToString() == "LogicalPredicateTable.IsArchived").Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
     [Fact]

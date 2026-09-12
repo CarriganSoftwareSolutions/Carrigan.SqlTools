@@ -19,7 +19,7 @@ namespace Carrigan.SqlTools.Tags;
 /// </para>
 /// <para>
 /// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
-/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
+/// if this instance is compared against a different <see cref="TextWrapper"/> that uses a different
 /// <see cref="StringComparison"/> mode.
 /// </para>
 /// </remarks>
@@ -53,7 +53,7 @@ namespace Carrigan.SqlTools.Tags;
 /// "[schema].[UpdateThing]"
 /// ]]></code>
 /// </example>
-public class ParameterTag : StringWrapper
+public class ParameterTag : TextWrapper
 {
     internal ParameterTag(string baseName) :
         base(baseName, StringComparison.OrdinalIgnoreCase)

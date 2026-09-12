@@ -76,7 +76,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(name);
         AliasName nameWrapper2 = new(name);
         Assert.Equal(nameWrapper1, nameWrapper2);
-        Assert.Equal(string.Empty, nameWrapper2);
+        Assert.Equal(string.Empty, nameWrapper2.ToString());
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(name);
         AliasName nameWrapper2 = new(name);
         Assert.Equal(nameWrapper1, nameWrapper2);
-        Assert.Equal(string.Empty, nameWrapper2);
+        Assert.Equal(string.Empty, nameWrapper2.ToString());
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(eStr);
         AliasName nameWrapper2 = new(eStrAlt);
         Assert.Equal(nameWrapper1, nameWrapper2);
-        Assert.Equal(eStr, nameWrapper2);
+        Assert.Equal(eStr, nameWrapper2.ToString());
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(nul);
         AliasName nameWrapper2 = new(nul);
         Assert.True(nameWrapper1 == nameWrapper2);
-        Assert.True(string.Empty == nameWrapper2);
+        Assert.True(string.Empty == nameWrapper2.ToString());
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(empty);
         AliasName nameWrapper2 = new(empty);
         Assert.True(nameWrapper1 == nameWrapper2);
-        Assert.True(string.Empty == nameWrapper2);
+        Assert.True(string.Empty == nameWrapper2.ToString());
     }
 
     [Fact]
@@ -122,8 +122,8 @@ public class AliasNameTests
     {
         AliasName nameWrapper1 = new(eStr);
         AliasName nameWrapper2 = new(eStrAlt);
-        bool test = eStr == nameWrapper2;
-        bool test2 = eStr != nameWrapper2;
+        bool test = eStr == nameWrapper2.ToString();
+        bool test2 = eStr != nameWrapper2.ToString();
         Assert.True(nameWrapper1 == nameWrapper2);
         Assert.True(test);
         Assert.False(nameWrapper1 != nameWrapper2);
@@ -225,7 +225,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(nul);
         AliasName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
-        Assert.NotEqual(empty, nameWrapper2);
+        Assert.NotEqual(empty, nameWrapper2.ToString());
     }
 
     [Fact]
@@ -234,7 +234,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(empty);
         AliasName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
-        Assert.NotEqual(empty, nameWrapper2);
+        Assert.NotEqual(empty, nameWrapper2.ToString());
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(eStr);
         AliasName nameWrapper2 = new(goldenString);
         Assert.NotEqual(nameWrapper1, nameWrapper2);
-        Assert.NotEqual(eStr, nameWrapper2);
+        Assert.NotEqual(eStr, nameWrapper2.ToString());
     }
 
     [Fact]
@@ -252,7 +252,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(nul);
         AliasName nameWrapper2 = new(eStr);
         Assert.True(nameWrapper1 != nameWrapper2);
-        Assert.True(empty != nameWrapper2);
+        Assert.True(empty != nameWrapper2.ToString());
     }
 
     [Fact]
@@ -261,7 +261,7 @@ public class AliasNameTests
         AliasName nameWrapper1 = new(empty);
         AliasName nameWrapper2 = new(eStr);
         Assert.True(nameWrapper1 != nameWrapper2);
-        Assert.True(empty != nameWrapper2);
+        Assert.True(empty != nameWrapper2.ToString());
     }
 
     [Fact]
@@ -459,10 +459,10 @@ public class AliasNameTests
     }
 
     [Fact]
-    public void ImplicitConversion_ToString_AssignmentAndInterpolation()
+    public void ToString_AssignmentAndInterpolation()
     {
         AliasName a = new(eStr);
-        string assigned = a;
+        string assigned = a.ToString();
         string interpolated = $"{a}";
 
         Assert.Equal(eStr, assigned);
@@ -493,7 +493,7 @@ public class AliasNameTests
     {
         AliasName nameWrapper1 = new(eStr);
         object nameWrapper2 = new AliasName(eStr);
-        Assert.True(nameWrapper1.Equals((StringWrapper)nameWrapper2));
+        Assert.True(nameWrapper1.Equals((TextWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
 

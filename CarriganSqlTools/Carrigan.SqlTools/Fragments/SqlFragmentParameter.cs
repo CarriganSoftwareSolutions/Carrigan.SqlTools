@@ -151,7 +151,7 @@ public class SqlFragmentParameter : ISqlFragment
         //When unit testing, you need to convert to final SqlQuery, then get the command text.
         //The command text should then have @'s added if needed, and index numbers added on.
         //Before that, it will just be the parameter name.
-        ParameterTag;
+        ParameterTag.ToString();
 
 
     /// <summary>

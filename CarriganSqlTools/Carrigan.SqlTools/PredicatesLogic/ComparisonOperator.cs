@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -53,11 +54,17 @@ public abstract class ComparisonOperator : Predicates
         _operator = op;
     }
 
-    /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the comparison expression.
-    /// </summary>
-    public override string ToString() =>
-        $"({_left} {_operator} {_right})";
+    protected override object EqualityContract =>
+        typeof(ComparisonOperator);
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is ComparisonOperator comparisonOperator && string.Equals(_operator, comparisonOperator._operator, StringComparison.Ordinal) && base.EqualsCore(other);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(_operator, StringComparer.Ordinal);
+        base.AddToHashCode(ref hashCode);
+    }
 
     /// <summary>
     /// Produces the SQL fragment represented by this comparison operator and its operands.

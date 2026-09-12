@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
@@ -137,11 +138,11 @@ public class XorThanTests
         SqlExpression predicate = new Xor(left, right);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.DescendantParameters.First(p => p.Name == "HelloWorld").Value ?? string.Empty;
+        string actualValueString = (string?)predicate.DescendantParameters.First(p => p.Name == new ParameterTag("HelloWorld")).Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -189,11 +190,11 @@ public class XorThanTests
         SqlExpression predicate = new Xor(left, right);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == "Elite").First().Value;
+        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == "HelloWorld").First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == new ParameterTag("HelloWorld")).First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -226,8 +227,8 @@ public class XorThanTests
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Pizza").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Pizza").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
     }
 
     [Fact]
@@ -256,7 +257,7 @@ public class XorThanTests
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 
     [Fact]
@@ -300,7 +301,7 @@ public class XorThanTests
 
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
         _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.D000destruct0").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo == "ColumnTable.Express").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
+        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 }

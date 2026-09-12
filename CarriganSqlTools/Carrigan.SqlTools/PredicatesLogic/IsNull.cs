@@ -72,12 +72,6 @@ public class IsNull : Predicates
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the predicate.
-    /// </summary>
-    public override string ToString() =>
-        $"({_anExpression} IS NULL)";
-
-    /// <summary>
     /// Produces the SQL fragment represented by this predicate.
     /// </summary>
     /// <returns>

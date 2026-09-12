@@ -2,406 +2,277 @@
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
+
 public class AliasTagTests
 {
-    private readonly string white = " ";
-    private readonly string? nul = null;
-    private readonly string empty = string.Empty;
-    private readonly decimal pi = 3.14159m;
-    private readonly decimal t = 6.28318m;
-    private readonly decimal e = 2.71828m;
-    private readonly decimal golden = 1.618m;
-    private readonly decimal zero = 0m;
-    private readonly string eStr = "E is 2.71828";
-    private readonly string eStrAlt = "E is 2.71828";
-    private readonly string goldenString = "Golden Ratio is 1.618";
-    private readonly string tString = "t is 6.28318m";
-    private readonly string piString = "Pi is 3.14159m";
+    [Fact]
+    public void Constructor()
+    {
+        AliasName aliasName = new("Alias");
+        AliasTag aliasTag = new(aliasName);
+
+        Assert.NotNull(aliasTag);
+        Assert.Equal("Alias", aliasTag.ToString());
+    }
 
     [Fact]
-    public void Constructor_Null()
-    {
-        AliasName nameWrapper = new(nul);
-        Assert.NotNull(nameWrapper);
-        AliasTag tag = new(nameWrapper);
-        Assert.NotNull(tag);
-    }
+    public void Constructor_Null_Exception() =>
+        Assert.Throws<ArgumentNullException>(() => new AliasTag(null!));
 
     [Fact]
     public void New_Null()
     {
-        AliasName? nameWrapper = AliasName.New(nul);
-        Assert.Null(nameWrapper);
-        AliasTag? tag = AliasTag.New(nameWrapper);
-        Assert.Null(tag);
+        AliasTag? aliasTag = AliasTag.New(null);
+
+        Assert.Null(aliasTag);
     }
 
     [Fact]
-    public void New_White()
+    public void New_Empty()
     {
-        AliasName? nameWrapper = AliasName.New(white);
-        Assert.NotNull(nameWrapper);
-        AliasTag? tag = AliasTag.New(nameWrapper);
-        Assert.NotNull(tag);
-    }
+        AliasTag? aliasTag = AliasTag.New(new AliasName(string.Empty));
 
-
-    [Fact]
-    public void ToString_Null()
-    {
-        AliasName nameWrapper = new(nul);
-        AliasTag tag = new(nameWrapper);
-        Assert.Equal(string.Empty, tag.ToString());
+        Assert.Null(aliasTag);
     }
 
     [Fact]
-    public void ToString_Empty()
+    public void New_Whitespace()
     {
-        AliasName nameWrapper = new(empty);
-        AliasTag tag = new(nameWrapper);
-        Assert.Equal(string.Empty, tag.ToString());
-    }
+        AliasTag? aliasTag = AliasTag.New(new AliasName(" "));
 
-    [Fact]
-    public void ToString_Text()
-    {
-        AliasName nameWrapper = new(eStr);
-        AliasTag tag = new(nameWrapper);
-        Assert.Equal(eStr, tag.ToString());
-    }
-
-    [Fact]
-    public void Equal_Null()
-    {
-        string? name = null;
-
-        AliasName nameWrapper1 = new(name);
-        AliasName nameWrapper2 = new(name);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.Equal(tag1, tag2);
-        Assert.Equal(tag2, tag1);
-        Assert.Equal(string.Empty, tag1);
-        Assert.Equal(string.Empty, tag2);
-    }
-
-    [Fact]
-    public void Equal_Empty()
-    {
-        string? name = string.Empty;
-
-        AliasName nameWrapper1 = new(name);
-        AliasName nameWrapper2 = new(name);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.Equal(tag1, tag2);
-        Assert.Equal(tag2, tag1);
-        Assert.Equal(string.Empty, tag1);
-        Assert.Equal(string.Empty, tag2);
-    }
-
-    [Fact]
-    public void Equal_Default_Text()
-    {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.Equal(tag1, tag2);
-        Assert.Equal(tag2, tag1);
-        Assert.Equal(eStr, tag1);
-        Assert.Equal(eStr, tag2);
-    }
-
-    [Fact]
-    public void EqualEqual_Null()
-    {
-        AliasName nameWrapper1 = new(nul);
-        AliasName nameWrapper2 = new(nul);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.True(tag1 == tag2);
-        Assert.True(tag2 == tag1);
-        Assert.True(string.Empty == tag1);
-        Assert.True(string.Empty == tag2);
-    }
-
-    [Fact]
-    public void EqualEqual_Empty()
-    {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(empty);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.True(tag1 == tag2);
-        Assert.True(tag2 == tag1);
-        Assert.True(string.Empty == tag1);
-        Assert.True(string.Empty == tag2);
-    }
-
-    [Fact]
-    public void EqualEqual_Text()
-    {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.True(tag1 == tag2);
-        Assert.True(tag2 == tag1);
-
-        bool test = eStr == tag1;
-        bool test2 = eStr != tag1;
-        bool test3 = eStr == tag1;
-        bool test4 = eStr != tag2;
-
-        Assert.True(tag1 == tag2);
-        Assert.True(tag2 == tag1);
-        Assert.True(test);
-        Assert.True(test3);
-        Assert.False(tag1 != nameWrapper2);
-        Assert.False(nameWrapper2 != tag1);
-        Assert.False(test2);
-        Assert.False(test4);
-    }
-
-    [Fact]
-    public void EqualEqual_NullComparisons()
-    {
-        AliasName nonNull = new(string.Empty);
-        AliasTag tag1 = new(nonNull);
-        AliasTag? tag2 = null;
-
-        Assert.False(tag1 == tag2);
-        Assert.False(tag2 == tag1);
-    }
-
-    [Fact]
-    public void NotEqualEqual_NullComparisons()
-    {
-        AliasName nonNull = new(string.Empty);
-
-        AliasTag tag1 = new(nonNull);
-        AliasTag? tag2 = null;
-
-        Assert.True(tag1 != tag2);
-        Assert.True(tag2 != tag1);
-    }
-
-    [Fact]
-    public void DictionaryKey_Null()
-    {
-        string? name = null;
-        Dictionary<AliasTag, decimal> dictionary= [];
-
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(name);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        dictionary[tag1] = pi;
-        Assert.True(dictionary.ContainsKey(tag2));
-        Assert.True(dictionary[tag1] == pi);
-        Assert.True(dictionary[tag1] == pi);
-    }
-
-    [Fact]
-    public void DictionaryKey_Empty()
-    {
-        Dictionary<AliasTag, decimal> dictionary = [];
-
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(empty);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        dictionary[tag1] = pi;
-        Assert.True(dictionary.ContainsKey(tag2));
-        Assert.True(dictionary[tag1] == pi);
-        Assert.True(dictionary[tag1] == pi);
-    }
-
-    [Fact]
-    public void DictionaryKey_Text()
-    {
-        string? name = eStr;
-        Dictionary<AliasTag, decimal> dictionary = [];
-
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        dictionary[tag1] = pi;
-        Assert.True(dictionary.ContainsKey(tag2));
-        Assert.True(dictionary[tag1] == pi);
-        Assert.True(dictionary[tag2] == pi);
-    }
-
-    [Fact]
-    public void DictionaryKey_Multi()
-    {
-        string? name = eStr;
-        Dictionary<AliasTag, decimal> dictionary = [];
-
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStrAlt);
-        AliasName nameWrapper3 = new(tString);
-        AliasName nameWrapper4 = new(goldenString);
-        AliasName nameWrapper5 = new(piString);
-        AliasName nameWrapper6 = new(empty);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        AliasTag tag3 = new(nameWrapper3);
-        AliasTag tag4 = new(nameWrapper4);
-        AliasTag tag5 = new(nameWrapper5);
-        AliasTag tag6 = new(nameWrapper6);
-        dictionary[tag1] = e;
-        dictionary[tag3] = t;
-        dictionary[tag4] = pi;
-        dictionary[tag5] = golden;
-        dictionary[tag6] = zero;
-        Assert.True(dictionary.ContainsKey(tag2));
-        Assert.True(dictionary[tag1] == e);
-        Assert.True(dictionary[tag2] == e);
-        Assert.True(dictionary[tag3] == t);
-        Assert.True(dictionary[tag4] == pi);
-        Assert.True(dictionary[tag5] == golden);
-        Assert.True(dictionary[tag6] == zero);
-        Assert.Equal(5, dictionary.Count);
-    }
-
-
-
-    [Fact]
-    public void NotEqual_Null()
-    {
-        AliasName nameWrapper1 = new(nul);
-        AliasName nameWrapper2 = new(goldenString);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.NotEqual(tag1, tag2);
-        Assert.NotEqual(empty, tag2);
-    }
-
-    [Fact]
-    public void NotEqual_Empty()
-    {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(goldenString);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.NotEqual(tag1, tag2);
-        Assert.NotEqual(empty, tag2);
-    }
-
-    [Fact]
-    public void NotEqual_Text()
-    {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(goldenString);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.NotEqual(tag1, tag2);
-        Assert.NotEqual(eStr, tag2);
-    }
-
-    [Fact]
-    public void NotEqualEqual_Null()
-    {
-        AliasName nameWrapper1 = new(nul);
-        AliasName nameWrapper2 = new(eStr);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.True(tag1 != tag2);
-        Assert.True(empty != tag2);
-    }
-
-    [Fact]
-    public void NotEqualEqual_Empty()
-    {
-        AliasName nameWrapper1 = new(empty);
-        AliasName nameWrapper2 = new(eStr);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.True(tag1 != tag2);
-        Assert.True(empty != tag2);
-    }
-
-    [Fact]
-    public void NotEqualEqual_Text()
-    {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(goldenString);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.True(tag1 != tag2);
-        Assert.True(tag1 != tag2);
-    }
-
-    [Fact]
-    public void ImplicitConversion_ToString_AssignmentAndInterpolation()
-    {
-        AliasName a = new(eStr);
-        AliasTag aTag = new(a);
-        string assigned = aTag;
-        string interpolated = $"{aTag}";
-
-        Assert.Equal(eStr, assigned);
-        Assert.Equal(eStr, interpolated);
-    }
-
-    [Fact]
-    public void GetHashCode_EqualObjects_SameHash()
-    {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new(eStr);
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.Equal(tag1, tag2);
-        Assert.Equal(tag1.GetHashCode(), tag2.GetHashCode());
-    }
-
-    [Fact]
-    public void Equality_PreservesWhitespace()
-    {
-        AliasName nameWrapper1 = new(eStr);
-        AliasName nameWrapper2 = new($" {eStr} ");
-        AliasTag tag1 = new(nameWrapper1);
-        AliasTag tag2 = new(nameWrapper2);
-        Assert.NotEqual(tag1, tag2);
-        Assert.True(tag1 != tag2);
+        Assert.NotNull(aliasTag);
+        Assert.Equal(" ", aliasTag.ToString());
     }
 
     [Theory]
-    [InlineData("a", "b", -1)]
-    [InlineData("b", "a", 1)]
-    [InlineData("a", "a", 0)]
-    public void CompareTo_OrdinalOrdering(string left, string right, int expectedSign)
+    [InlineData(null, "")]
+    [InlineData("", "")]
+    [InlineData("Alias", "Alias")]
+    [InlineData(" Alias ", " Alias ")]
+    public void ToString_Value(string? value, string expected)
     {
-        AliasTag leftTag = new(new AliasName(left));
-        AliasTag rightTag = new(new AliasName(right));
+        AliasTag aliasTag = new(new AliasName(value));
 
-        int compare = leftTag.CompareTo(rightTag);
-        int sign = Math.Sign(compare);
-
-        Assert.Equal(expectedSign, sign);
+        Assert.Equal(expected, aliasTag.ToString());
+        Assert.Equal(expected, $"{aliasTag}");
     }
 
     [Fact]
-    public void CompareTo_Null()
+    public void Equals_SameReference()
     {
-        AliasTag tag = new(new AliasName("a"));
-        Assert.Equal(1, tag.CompareTo(null));
+        AliasTag aliasTag = new(new AliasName("Alias"));
+
+        Assert.True(aliasTag.Equals(aliasTag));
+#pragma warning disable CS1718 // Comparison made to same variable
+        Assert.True(aliasTag == aliasTag);
+        Assert.False(aliasTag != aliasTag);
+#pragma warning restore CS1718 // Comparison made to same variable
     }
 
     [Fact]
-    public void EqualityComparer_Equals_NullNull()
+    public void Equals_EquivalentInstances()
     {
-        AliasTag comparer = new(new AliasName("x"));
-        Assert.True(comparer.Equals(null, null));
+        AliasTag left = new(new AliasName("Alias"));
+        AliasTag right = new(new AliasName("Alias"));
+
+        Assert.True(left.Equals(right));
+        Assert.True(right.Equals(left));
+        Assert.Equal(left, right);
+        Assert.Equal(right, left);
     }
 
     [Fact]
-    public void EqualityComparer_GetHashCode_Null_Exception()
+    public void Equals_Transitive()
     {
-        AliasTag comparer = new(new AliasName("x"));
-        Assert.Throws<ArgumentNullException>(() => comparer.GetHashCode(null!));
+        AliasTag first = new(new AliasName("Alias"));
+        AliasTag second = new(new AliasName("Alias"));
+        AliasTag third = new(new AliasName("Alias"));
+
+        Assert.True(first.Equals(second));
+        Assert.True(second.Equals(third));
+        Assert.True(first.Equals(third));
+    }
+
+    [Fact]
+    public void Equals_NullAndEmptyAliasName()
+    {
+        AliasTag left = new(new AliasName(null));
+        AliasTag right = new(new AliasName(string.Empty));
+
+        Assert.True(left.Equals(right));
+        Assert.True(left == right);
+        Assert.False(left != right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_DifferentValue()
+    {
+        AliasTag left = new(new AliasName("AliasOne"));
+        AliasTag right = new(new AliasName("AliasTwo"));
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_CaseSensitive()
+    {
+        AliasTag left = new(new AliasName("Alias"));
+        AliasTag right = new(new AliasName("alias"));
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_PreservesWhitespace()
+    {
+        AliasTag left = new(new AliasName("Alias"));
+        AliasTag right = new(new AliasName(" Alias "));
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_Null()
+    {
+        AliasTag aliasTag = new(new AliasName("Alias"));
+        AliasTag? other = null;
+
+        Assert.False(aliasTag.Equals(other));
+        Assert.False(aliasTag.Equals((object?)null));
+    }
+
+    [Fact]
+    public void Equals_ObjectEquivalent()
+    {
+        AliasTag aliasTag = new(new AliasName("Alias"));
+        object other = new AliasTag(new AliasName("Alias"));
+
+        Assert.True(aliasTag.Equals(other));
+    }
+
+    [Fact]
+    public void Equals_ObjectWrongType()
+    {
+        AliasTag aliasTag = new(new AliasName("Alias"));
+        object other = new AliasName("Alias");
+
+        Assert.False(aliasTag.Equals(other));
+    }
+
+    [Fact]
+    public void EqualOperator_EquivalentInstances()
+    {
+        AliasTag left = new(new AliasName("Alias"));
+        AliasTag right = new(new AliasName("Alias"));
+
+        Assert.True(left == right);
+        Assert.True(right == left);
+        Assert.False(left != right);
+        Assert.False(right != left);
+    }
+
+    [Fact]
+    public void EqualOperator_DifferentInstances()
+    {
+        AliasTag left = new(new AliasName("AliasOne"));
+        AliasTag right = new(new AliasName("AliasTwo"));
+
+        Assert.False(left == right);
+        Assert.False(right == left);
+        Assert.True(left != right);
+        Assert.True(right != left);
+    }
+
+    [Fact]
+    public void EqualOperator_Null()
+    {
+        AliasTag aliasTag = new(new AliasName("Alias"));
+        AliasTag? nullAliasTag = null;
+        bool nullIsNull;
+        bool nullIsNotNull;
+
+        Assert.False(aliasTag == nullAliasTag);
+        Assert.False(nullAliasTag == aliasTag);
+        Assert.True(aliasTag != nullAliasTag);
+        Assert.True(nullAliasTag != aliasTag);
+        nullIsNull = nullAliasTag == null;
+        nullIsNotNull = nullAliasTag != null;
+        Assert.True(nullIsNull);
+        Assert.False(nullIsNotNull);
+    }
+
+    [Fact]
+    public void GetHashCode_EquivalentInstances()
+    {
+        AliasTag left = new(new AliasName("Alias"));
+        AliasTag right = new(new AliasName("Alias"));
+
+        Assert.Equal(left, right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+    }
+
+    [Fact]
+    public void DictionaryKey_EquivalentInstance()
+    {
+        AliasTag storedKey = new(new AliasName("Alias"));
+        AliasTag lookupKey = new(new AliasName("Alias"));
+        Dictionary<AliasTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.True(dictionary.ContainsKey(lookupKey));
+        Assert.Equal(3.14159m, dictionary[lookupKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_NullAndEmptyAliasName()
+    {
+        AliasTag storedKey = new(new AliasName(null));
+        AliasTag lookupKey = new(new AliasName(string.Empty));
+        Dictionary<AliasTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.True(dictionary.ContainsKey(lookupKey));
+        Assert.Equal(3.14159m, dictionary[lookupKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_DifferentInstance()
+    {
+        AliasTag storedKey = new(new AliasName("AliasOne"));
+        AliasTag lookupKey = new(new AliasName("AliasTwo"));
+        Dictionary<AliasTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
+    }
+
+    [Fact]
+    public void DictionaryKey_EquivalentAssignmentReplacesValue()
+    {
+        AliasTag firstKey = new(new AliasName("Alias"));
+        AliasTag secondKey = new(new AliasName("Alias"));
+        Dictionary<AliasTag, decimal> dictionary = [];
+        dictionary[firstKey] = 3.14159m;
+        dictionary[secondKey] = 2.71828m;
+
+        Assert.Single(dictionary);
+        Assert.Equal(2.71828m, dictionary[firstKey]);
+        Assert.Equal(2.71828m, dictionary[secondKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_CaseSensitive()
+    {
+        AliasTag storedKey = new(new AliasName("Alias"));
+        AliasTag lookupKey = new(new AliasName("alias"));
+        Dictionary<AliasTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
     }
 }

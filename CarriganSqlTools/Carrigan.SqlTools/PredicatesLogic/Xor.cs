@@ -22,12 +22,6 @@ public class Xor : DialectOperator
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the XOR predicate.
-    /// </summary>
-    public override string ToString() =>
-        $"({_left} XOR {_right})";
-
-    /// <summary>
     /// Produces the SQL fragment represented by this Dialect operator and its operands.
     /// </summary>
     /// <returns>

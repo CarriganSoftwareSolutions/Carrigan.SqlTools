@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -341,5 +341,14 @@ public class GroupBysTests
         GroupBys actual = groupBy.AsGroupBy();
 
         Assert.Same(groupBy, actual);
+    }
+
+    [Fact]
+    public void Contains_ReturnsTrue_ForEquivalentItem()
+    {
+        GroupBys groupBy = new(new GroupBy<Address>("Street"));
+        GroupByBase equivalentItem = new GroupBy<Address>("Street");
+
+        Assert.True(groupBy.Contains(equivalentItem));
     }
 }

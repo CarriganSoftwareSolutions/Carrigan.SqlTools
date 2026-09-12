@@ -75,12 +75,6 @@ public class Not : Predicates
     }
 
     /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the predicate.
-    /// </summary>
-    public override string ToString() =>
-        $"(NOT {_aPredicate})";
-
-    /// <summary>
     /// Generates the SQL fragment represented by this <c>NOT</c> predicate.
     /// </summary>
     /// <returns>

@@ -1,16 +1,17 @@
-﻿using Carrigan.Core.Enums;
+using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.Tags;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents a node in a SQL expression tree that can be rendered for a specific dialect.
 /// </summary>
-public abstract class SqlExpression
+public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperators<SqlExpression, SqlExpression, bool>
 {
     /// <summary>
     /// Represents the direct children of the current expression.
@@ -101,15 +102,114 @@ public abstract class SqlExpression
         expression.ContainsAggregate();
 
     /// <summary>
-    /// Generates the SQL fragments for this expression tree.
+    /// Gets the equality contract shared by expressions that represent the same semantic SQL construct.
     /// </summary>
     /// <remarks>
-    /// Before rendering, this method computes duplicate user-supplied parameter names and
-    /// passes that set to the recursive <see cref="ToSqlFragments"/> overload,
-    /// which may add disambiguating prefixes to produce unique parameter names.
+    /// Most expression types use their runtime type. Expression families that have aliases or multiple strongly typed
+    /// representations override this value so equivalent SQL constructs can compare structurally.
     /// </remarks>
-    /// <returns>The SQL fragments represented by this expression tree.</returns>
+    protected virtual object EqualityContract =>
+        this is IColumnExpressionIdentity ? typeof(IColumnExpressionIdentity) :
+        this is IParameter ? typeof(IParameter) :
+        GetType();
 
+    /// <summary>
+    /// Compares the state specific to this expression after the equality contract has been matched.
+    /// </summary>
+    protected virtual bool EqualsCore(SqlExpression other)
+    {
+        if (this is IColumnExpressionIdentity leftColumn && other is IColumnExpressionIdentity rightColumn)
+            return leftColumn.EqualityColumnTag.Equals(rightColumn.EqualityColumnTag);
+
+        if (this is IParameter leftParameter && other is IParameter rightParameter)
+            return leftParameter.Name.Equals(rightParameter.Name);
+
+        return ChildNodes.SequenceEqual(other.ChildNodes);
+    }
+
+    /// <summary>
+    /// Adds the state used by <see cref="EqualsCore(SqlExpression)"/> to the supplied hash code.
+    /// </summary>
+    protected virtual void AddToHashCode(ref HashCode hashCode)
+    {
+        if (this is IColumnExpressionIdentity column)
+        {
+            hashCode.Add(column.EqualityColumnTag);
+            return;
+        }
+
+        if (this is IParameter parameter)
+        {
+            hashCode.Add(parameter.Name);
+            return;
+        }
+
+        foreach (SqlExpression childNode in ChildNodes)
+            hashCode.Add(childNode);
+    }
+
+    /// <summary>
+    /// Determines whether this expression is structurally equivalent to another SQL expression.
+    /// </summary>
+    public bool Equals(SqlExpression? other)
+    {
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (other is null || EqualityContract.Equals(other.EqualityContract) == false)
+            return false;
+
+        return EqualsCore(other);
+    }
+
+    /// <summary>
+    /// Determines whether the specified object is a structurally equivalent SQL expression.
+    /// </summary>
+    public override bool Equals(object? obj) =>
+        Equals(obj as SqlExpression);
+
+    /// <summary>
+    /// Returns a hash code based on the expression's semantic equality contract and structural state.
+    /// </summary>
+    public override int GetHashCode()
+    {
+        HashCode hashCode = new();
+        hashCode.Add(EqualityContract);
+        AddToHashCode(ref hashCode);
+        return hashCode.ToHashCode();
+    }
+
+    /// <summary>
+    /// Determines whether two SQL expressions are structurally equivalent.
+    /// </summary>
+    public static bool operator ==(SqlExpression? left, SqlExpression? right)
+    {
+        if (ReferenceEquals(left, right))
+            return true;
+
+        if (left is null || right is null)
+            return false;
+
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two SQL expressions are structurally different.
+    /// </summary>
+    public static bool operator !=(SqlExpression? left, SqlExpression? right) =>
+        (left == right) == false;
+
+    /// <summary>
+    /// Returns a dialect-neutral SQL representation of this expression by rendering its SQL fragments through the neutral diagnostic dialect.
+    /// </summary>
+    public override string ToString() =>
+        ToSqlFragments(NeutralDialect.Instance).ToSql(NeutralDialect.Instance);
+
+    /// <summary>
+    /// Generates the SQL fragments for this expression tree using the supplied SQL dialect.
+    /// </summary>
+    /// <param name="dialect">The SQL dialect used to render dialect-dependent fragments.</param>
+    /// <returns>The SQL fragments represented by this expression tree.</returns>
     public abstract IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect);
 
     /// <summary>

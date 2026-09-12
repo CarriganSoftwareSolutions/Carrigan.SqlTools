@@ -1,6 +1,7 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -60,11 +61,17 @@ public abstract class ArithmeticExpression : NumericExpression
         return numericExpressions;
     }
 
-    /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the arithmetic expression.
-    /// </summary>
-    public override string ToString() =>
-        (ChildNodes.Count() == 1 ? ChildNodes.Single().ToString() : $"({string.Join($" {_operator} ", ChildNodes)})") ?? string.Empty;
+    protected override object EqualityContract =>
+        typeof(ArithmeticExpression);
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is ArithmeticExpression arithmeticExpression && string.Equals(_operator, arithmeticExpression._operator, StringComparison.Ordinal) && base.EqualsCore(other);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(_operator, StringComparer.Ordinal);
+        base.AddToHashCode(ref hashCode);
+    }
 
     /// <summary>
     /// Converts the arithmetic expression to SQL fragments for the supplied dialect.

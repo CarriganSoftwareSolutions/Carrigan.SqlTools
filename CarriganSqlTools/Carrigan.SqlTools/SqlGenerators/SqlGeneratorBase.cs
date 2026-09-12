@@ -78,16 +78,16 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
         if (unsupportedKeyTypes.Any())
             exceptions.Add(new UnsupportedKeyColumnClrTypeException(unsupportedKeyTypes));
 
-        if (SqlIdentifierPattern.Fails(TableName))
+        if (SqlIdentifierPattern.Fails(TableName.ToString()))
             exceptions.Add(new InvalidSqlIdentifierException(Type, TableName));
-        if (SchemaName is not null && SqlIdentifierPattern.Fails(SchemaName))
+        if (SchemaName is not null && SqlIdentifierPattern.Fails(SchemaName.ToString()))
             exceptions.Add(new InvalidSqlIdentifierException(Type, SchemaName));
-        if (SqlIdentifierPattern.Fails(ProcedureName))
+        if (SqlIdentifierPattern.Fails(ProcedureName.ToString()))
             exceptions.Add(new InvalidSqlIdentifierException(Type, ProcedureName));
 
         invalidColumns =
             GetColumnInfo(SupportedTypes)
-                .Where(static column => SqlIdentifierPattern.Fails(column.ColumnName))
+                .Where(static column => SqlIdentifierPattern.Fails(column.ColumnName.ToString()))
                 .Select(static column => new Tuple<PropertyInfo, ColumnName>(column.PropertyInfo, column.ColumnName))
                 .Materialize(NullOptionsEnum.Exception);
 
@@ -96,7 +96,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
 
        invalidAliases =
             GetColumnInfo(SupportedTypes)
-                .Where(static column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName))
+                .Where(static column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName.ToString()))
                 .Select(static column =>
                     column.AliasName is not null
                         ? new Tuple<PropertyInfo, AliasName>(column.PropertyInfo, column.AliasName)
@@ -109,7 +109,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
 
         invalidParameters =
             GetColumnInfo(SupportedTypes)
-                .Where(static column => SqlIdentifierPattern.Fails(column.ParameterTag))
+                .Where(static column => SqlIdentifierPattern.Fails(column.ParameterTag.ToString()))
                 .Select(static column => new Tuple<PropertyInfo, ParameterTag>(column.PropertyInfo, column.ParameterTag))
                 .Materialize(NullOptionsEnum.Exception);
 

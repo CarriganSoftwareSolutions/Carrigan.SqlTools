@@ -266,21 +266,21 @@ public class SqlToolsReflectorCache<T>
         TableAttribute? tableAttribute = Type.GetCustomAttribute<TableAttribute>();
 
         string? schemaName =
-            identifierAttribute?.Schema?.ToString().GetValueOrNull()
-                ?? tableAttribute?.Schema?.GetValueOrNull();
+            identifierAttribute?.Schema
+                ?? tableAttribute?.Schema;
 
         SchemaName = SchemaName.New(schemaName);
 
         TableName = new
         (
-            identifierAttribute?.Name?.ToString().GetValueOrNull()
-                ?? tableAttribute?.Name?.GetValueOrNull()
+            identifierAttribute?.Name
+                ?? tableAttribute?.Name
                 ?? Type.Name
         );
 
         ProcedureName = new
         (
-            identifierAttribute?.Name?.ToString().GetValueOrNull()
+            identifierAttribute?.Name
                 ?? Type.Name
         );
 
@@ -421,7 +421,7 @@ public class SqlToolsReflectorCache<T>
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));
 
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName))
+        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName.ToString()))
             throw new InvalidSqlIdentifierException(aliasName);
 
         SqlExpression sqlExpression = columnInfo.SelectTag.SqlExpression;

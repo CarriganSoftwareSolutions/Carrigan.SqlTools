@@ -61,7 +61,7 @@ internal static class SqlQueryExtensions
             SqlParameter sqlParameter = new()
             {
                 Value = valueToUse,
-                ParameterName = parameter.ParameterTag,
+                ParameterName = parameter.ParameterTag.ToString(),
                 SqlDbType = FieldPropertiesToSqlDbType(fieldProperties),
                 IsNullable = fieldProperties.IsNullable,
 

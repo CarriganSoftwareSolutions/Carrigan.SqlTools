@@ -89,7 +89,7 @@ public class Parameter : SqlExpression, IParameter
     public Parameter(object? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) : base([])
     {
         ArgumentNullException.ThrowIfNull(parameterTag, nameof(parameterTag));
-        Name = new(parameterTag);
+        Name = parameterTag;
         Value = value;
         FieldProperties = fieldProperties;
     }
@@ -103,7 +103,7 @@ public class Parameter : SqlExpression, IParameter
     internal Parameter(object? value, ColumnInfo columInfo) : base([])
     {
         ArgumentNullException.ThrowIfNull(columInfo, nameof(columInfo));
-        Name = new(columInfo.ParameterTag);
+        Name = columInfo.ParameterTag;
         Value = value;
         FieldProperties = columInfo.FieldProperties;
     }
@@ -145,12 +145,6 @@ public class Parameter : SqlExpression, IParameter
     /// </summary>
     /// <returns>The SQL parameter name without dialect-specific formatting.</returns>
     internal string ToSql() =>
-        Name.ToString();
-
-    /// <summary>
-    /// Returns the unrendered parameter name.
-    /// </summary>
-    public override string ToString() =>
         Name.ToString();
 
     /// <summary>

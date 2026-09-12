@@ -44,11 +44,11 @@ public class ColumnValueTests
 
         Parameter parameter;
 
-        parameter = byColumnValues.DescendantParameters.Where(param => param.Name == "Col1").First();
+        parameter = byColumnValues.DescendantParameters.Where(param => param.Name.ToString() == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
         actualValue = parameter.Value ?? string.Empty;
-        actualString = parameter.Name;
+        actualString = parameter.Name.ToString();
         Assert.Equal(expectedValue, actualValue);
         Assert.Equal(expectedString, actualString);
     }

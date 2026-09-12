@@ -1,10 +1,9 @@
-using Carrigan.Core.DataTypes;
-using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IdentifierTypes;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -12,7 +11,10 @@ namespace Carrigan.SqlTools.Tags;
 /// Represents a SELECT projection tag for a single SQL expression, consisting of the expression
 /// and an optional alias.
 /// </summary>
-public abstract class SelectTagBase : StringWrapper, ISqlFragment
+public abstract class SelectTagBase :
+    IEquatable<SelectTagBase>,
+    IEqualityOperators<SelectTagBase, SelectTagBase, bool>,
+    ISqlFragment
 {
     /// <summary>
     /// The SQL expression projected by this select item.
@@ -56,7 +58,6 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
     protected SelectTagBase(SqlExpression sqlExpression, AliasTag? aliasTag = null)
-        : base(CreateBaseValue(sqlExpression, aliasTag))
     {
         ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
 
@@ -64,19 +65,6 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
         AliasTag = aliasTag;
     }
 
-
-    /// <summary>
-    /// Creates the string-wrapper value for an expression select item.
-    /// </summary>
-    private static string CreateBaseValue(SqlExpression sqlExpression, AliasTag? aliasTag)
-    {
-        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
-
-        if (aliasTag.IsNotNullOrWhiteSpace())
-            return $"{sqlExpression} AS {aliasTag}";
-        else
-            return sqlExpression.ToString() ?? string.Empty;
-    }
 
     /// <summary>
     /// Creates a column tag from a model property name when no reflected table context is available.
@@ -90,7 +78,7 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
-        return new(new ColumnName(propertyName));
+        return new(new ColumnName(propertyName.ToString()));
     }
 
     /// <summary>
@@ -156,6 +144,60 @@ public abstract class SelectTagBase : StringWrapper, ISqlFragment
     /// <returns>The rendered SELECT-list fragment.</returns>
     public string ToSql(ISqlDialects dialect) =>
         Flatten(dialect).ToSql(dialect);
+
+    /// <summary>
+    /// Returns the dialect-neutral diagnostic representation of this select item.
+    /// </summary>
+    public override string ToString() =>
+        ToSql(NeutralDialect.Instance);
+
+    /// <summary>
+    /// Determines whether this select item projects the same expression with the same alias as another select item.
+    /// </summary>
+    /// <param name="other">The other select item to compare.</param>
+    /// <returns><c>true</c> when both the expression and alias are equal; otherwise, <c>false</c>.</returns>
+    public bool Equals(SelectTagBase? other)
+    {
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (other is null)
+            return false;
+
+        return SqlExpression.Equals(other.SqlExpression) && EqualityComparer<AliasTag?>.Default.Equals(AliasTag, other.AliasTag);
+    }
+
+    /// <summary>
+    /// Determines whether the specified object represents an equivalent select item.
+    /// </summary>
+    public override bool Equals(object? obj) =>
+        Equals(obj as SelectTagBase);
+
+    /// <summary>
+    /// Returns a hash code based on the projected expression and alias.
+    /// </summary>
+    public override int GetHashCode() =>
+        HashCode.Combine(SqlExpression, AliasTag);
+
+    /// <summary>
+    /// Determines whether two select items project equivalent expressions with equivalent aliases.
+    /// </summary>
+    public static bool operator ==(SelectTagBase? left, SelectTagBase? right)
+    {
+        if (ReferenceEquals(left, right))
+            return true;
+
+        if (left is null || right is null)
+            return false;
+
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two select items differ by expression or alias.
+    /// </summary>
+    public static bool operator !=(SelectTagBase? left, SelectTagBase? right) =>
+        (left == right) == false;
 
     /// <summary>
     /// Creates an equivalent select tag without an alias.

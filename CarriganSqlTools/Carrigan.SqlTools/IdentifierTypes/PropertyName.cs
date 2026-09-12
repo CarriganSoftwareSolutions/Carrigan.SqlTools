@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// different SQL name (for example via attributes), SQL naming rules are handled by the SQL generator.
 /// </para>
 /// </remarks>
-public class PropertyName : StringWrapper
+public class PropertyName : TextWrapper
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="PropertyName"/> class.

@@ -47,7 +47,7 @@ public class SqlFragmentGroupTests
         IEnumerable<SqlFragmentParameter> parameters = [.. outerGroup.GetSqlFragmentParameters(Dialect)];
 
         //These are pre-final rendered, so they lack the @ and the _#
-        int count = parameters.Where(p => p.ParameterTag == "Name" || p.ParameterTag == "Status").Count();
+        int count = parameters.Where(p => p.ParameterTag.ToString() == "Name" || p.ParameterTag.ToString() == "Status").Count();
 
         Assert.Equal(2, count);
     }

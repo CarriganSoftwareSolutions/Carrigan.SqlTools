@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
@@ -71,7 +72,7 @@ public class NotTests
         Predicates predicate = new Not(ColumnIsActive);
 
         _ = predicate.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsActiveSql).Single();
-        _ = predicate.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsActive").Single();
+        _ = predicate.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
     }
 
     [Fact]
@@ -152,11 +153,11 @@ public class NotTests
         Predicates and = CreateNestedPredicate();
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = and.DescendantParameters.Where(parameter => parameter.Name == "Elite").First().Value;
+        object? nullableActualValueInt = and.DescendantParameters.Where(parameter => parameter.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)and.DescendantParameters.First(parameter => parameter.Name == "HelloWorld").Value ?? string.Empty;
+        string actualValueString = (string?)and.DescendantParameters.First(parameter => parameter.Name == new ParameterTag("HelloWorld")).Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -180,8 +181,8 @@ public class NotTests
 
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsVisibleSql).Single();
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsArchivedSql).Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsVisible").Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo == "LogicalPredicateTable.IsArchived").Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
+        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
     [Fact]

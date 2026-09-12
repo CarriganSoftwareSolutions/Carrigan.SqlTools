@@ -11,21 +11,13 @@ internal static class SqlQueryTestHelper
         ArgumentNullException.ThrowIfNull(sqlQuery);
         ArgumentNullException.ThrowIfNull(parameterName);
 
-        SqlFragmentParameter enumerableParameter = Assert.Single
+        SqlFragmentParameter parameter = Assert.Single
         (
             sqlQuery.Parameters,
-            parameter => parameter.ParameterTag == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
 
-        Assert.Equal(expectedValue, enumerableParameter.Value);
-
-        KeyValuePair<ParameterTag, object?> dictionaryParameter = Assert.Single
-        (
-            sqlQuery.ParametersAsDictionary,
-            parameter => parameter.Key == parameterName
-        );
-
-        Assert.Equal(expectedValue, dictionaryParameter.Value);
+        Assert.Equal(expectedValue, parameter.Value);
     }
 
     internal static void AssertParameterCount(SqlQuery sqlQuery, int expectedCount)
@@ -33,6 +25,15 @@ internal static class SqlQueryTestHelper
         ArgumentNullException.ThrowIfNull(sqlQuery);
 
         Assert.Equal(expectedCount, sqlQuery.Parameters.Count());
+    }
+
+    /// <summary>
+    /// Returns the number of rendered parameters for unit tests.
+    /// </summary>
+    internal static int GetParameterCount(this SqlQuery sqlQuery)
+    {
+        ArgumentNullException.ThrowIfNull(sqlQuery);
+        return sqlQuery.Parameters.Count();
     }
 
     internal static void AssertParameterDoesNotExist(SqlQuery sqlQuery, string parameterName)
@@ -43,19 +44,12 @@ internal static class SqlQueryTestHelper
         Assert.DoesNotContain
         (
             sqlQuery.Parameters,
-            parameter => parameter.ParameterTag == parameterName
-        );
-
-        Assert.DoesNotContain
-        (
-            sqlQuery.ParametersAsDictionary,
-            parameter => parameter.Key == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
 
         if (parameterName.StartsWith('@') is false)
             AssertParameterDoesNotExist(sqlQuery, $"@{parameterName}");
     }
-
 
     internal static void AssertParameterExists(SqlQuery sqlQuery, string parameterName)
     {
@@ -65,13 +59,7 @@ internal static class SqlQueryTestHelper
         Assert.Single
         (
             sqlQuery.Parameters,
-            parameter => parameter.ParameterTag == parameterName
-        );
-
-        Assert.Single
-        (
-            sqlQuery.ParametersAsDictionary,
-            parameter => parameter.Key == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
     }
 
@@ -79,10 +67,8 @@ internal static class SqlQueryTestHelper
     {
         ArgumentNullException.ThrowIfNull(sqlQuery);
 
-        Assert.Single(sqlQuery.Parameters);
-        Assert.Single(sqlQuery.ParametersAsDictionary);
-        Assert.Equal(expectedValue, sqlQuery.Parameters.Single().Value);
-        Assert.Equal(expectedValue, sqlQuery.ParametersAsDictionary.Single().Value);
+        SqlFragmentParameter parameter = Assert.Single(sqlQuery.Parameters);
+        Assert.Equal(expectedValue, parameter.Value);
     }
 
     internal static void AssertSingleParameterName(SqlQuery sqlQuery, string expectedParameterName)
@@ -90,27 +76,30 @@ internal static class SqlQueryTestHelper
         ArgumentNullException.ThrowIfNull(sqlQuery);
         ArgumentNullException.ThrowIfNull(expectedParameterName);
 
-        Assert.Single(sqlQuery.Parameters);
-        Assert.Single(sqlQuery.ParametersAsDictionary);
-        Assert.Equal(expectedParameterName, sqlQuery.Parameters.Single().ParameterTag.ToString());
-        Assert.Equal(expectedParameterName, sqlQuery.ParametersAsDictionary.Single().Key.ToString());
+        SqlFragmentParameter parameter = Assert.Single(sqlQuery.Parameters);
+        Assert.Equal(expectedParameterName, parameter.ParameterTag.ToString());
     }
 
     internal static object? GetParameterValue(SqlQuery sqlQuery, string parameterName)
     {
-        ParameterTag tag = new(parameterName);
+        ArgumentNullException.ThrowIfNull(sqlQuery);
+        ArgumentNullException.ThrowIfNull(parameterName);
 
-        if (sqlQuery.ParametersAsDictionary.ContainsKey(new ParameterTag(tag)))
-            return sqlQuery.ParametersAsDictionary[tag];
-        else
+        ParameterTag tag = new(parameterName);
+        SqlFragmentParameter? parameter = sqlQuery.Parameters.SingleOrDefault(parameter => parameter.ParameterTag == tag);
+
+        if (parameter is null)
             throw new KeyNotFoundException($"Parameter '{parameterName}' was not found.");
+
+        return parameter.Value;
     }
+
     internal static void AssertParameterValue(IEnumerable<SqlFragmentParameter> parameters, string parameterName, object? expectedValue)
     {
         SqlFragmentParameter parameter = Assert.Single
         (
             parameters,
-            parameter => parameter.ParameterTag == parameterName
+            parameter => parameter.ParameterTag.ToString() == parameterName
         );
 
         Assert.Equal(expectedValue, parameter.Value);

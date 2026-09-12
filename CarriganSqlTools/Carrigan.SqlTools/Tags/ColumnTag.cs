@@ -1,8 +1,9 @@
-using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -11,13 +12,8 @@ namespace Carrigan.SqlTools.Tags;
 /// <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>.
 /// </summary>
 /// <remarks>
-/// This type uses <see cref="StringWrapper"/> to provide consistent equality, ordering,
-/// and hashing semantics (case-insensitive via <see cref="StringComparison.OrdinalIgnoreCase"/>).
-/// <para>
-/// Note: Inherited equality and ordering operations can throw <see cref="InvalidOperationException"/>
-/// if this instance is compared against a different <see cref="StringWrapper"/> that uses a different
-/// <see cref="StringComparison"/> mode.
-/// </para>
+/// Equality and hashing are based on the schema, table-name, and column-name components using
+/// case-insensitive identifier semantics. An empty schema is treated the same as no schema.
 /// </remarks>
 /// <example>
 /// <para>
@@ -106,7 +102,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
-internal class ColumnTag : StringWrapper, ISqlFragment
+internal class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, ColumnTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
     /// <summary>
     /// The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.
@@ -124,7 +120,6 @@ internal class ColumnTag : StringWrapper, ISqlFragment
     /// <param name="tableTag">The <see cref="Tags.TableTag"/> representing the table containing the column.</param>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
     internal ColumnTag(TableTag tableTag, ColumnName columnName)
-        : base($"{tableTag}.{columnName}", StringComparison.OrdinalIgnoreCase)
     {
         ColumnName = columnName;
         TableTag = tableTag;
@@ -135,20 +130,100 @@ internal class ColumnTag : StringWrapper, ISqlFragment
     /// </summary>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
     internal ColumnTag(ColumnName columnName)
-        : base(columnName, StringComparison.OrdinalIgnoreCase)
     {
         ColumnName = columnName;
         TableTag = new(SchemaName.New(null), new TableName(null));
     }
 
     /// <summary>
-    /// Determines whether this <see cref="ColumnTag"/> represents an empty or whitespace column name.
+    /// Returns the qualified column name represented by this tag.
     /// </summary>
-    /// <returns>
-    /// <c>true</c> if the underlying <see cref="ColumnName"/> is empty or whitespace; otherwise, <c>false</c>.
-    /// </returns>
-    public new bool IsEmpty() =>
-        ColumnName.IsNullOrWhiteSpace();
+    public override string ToString() =>
+        TableTag.IsNotEmpty() ? $"{TableTag}.{ColumnName}" : ColumnName.ToString();
+
+    /// <summary>
+    /// Determines whether this instance identifies the same column as another <see cref="ColumnTag"/>.
+    /// </summary>
+    public bool Equals(ColumnTag? other)
+    {
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (other is null)
+            return false;
+
+        if (TableTag.SchemaName.IsNotNullOrEmpty() != other.TableTag.SchemaName.IsNotNullOrEmpty())
+            return false;
+
+        if (TableTag.SchemaName.IsNotNullOrEmpty() &&
+            string.Equals(TableTag.SchemaName!.ToString(), other.TableTag.SchemaName!.ToString(), StringComparison.OrdinalIgnoreCase) == false)
+            return false;
+
+        return string.Equals(TableTag.TableName.ToString(), other.TableTag.TableName.ToString(), StringComparison.OrdinalIgnoreCase) &&
+               string.Equals(ColumnName.ToString(), other.ColumnName.ToString(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Determines whether the specified object identifies the same column as this instance.
+    /// </summary>
+    public override bool Equals(object? obj) =>
+        Equals(obj as ColumnTag);
+
+    /// <summary>
+    /// Returns a hash code for this column tag.
+    /// </summary>
+    public override int GetHashCode()
+    {
+        HashCode hashCode = new();
+        hashCode.Add(TableTag.SchemaName.IsNotNullOrEmpty() ? TableTag.SchemaName!.ToString() : string.Empty, StringComparer.OrdinalIgnoreCase);
+        hashCode.Add(TableTag.TableName.ToString(), StringComparer.OrdinalIgnoreCase);
+        hashCode.Add(ColumnName.ToString(), StringComparer.OrdinalIgnoreCase);
+        return hashCode.ToHashCode();
+    }
+
+    /// <summary>
+    /// Determines whether two column tags identify the same column.
+    /// </summary>
+    public static bool operator ==(ColumnTag? left, ColumnTag? right)
+    {
+        if (ReferenceEquals(left, right))
+            return true;
+
+        if (left is null || right is null)
+            return false;
+
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two column tags identify different columns.
+    /// </summary>
+    public static bool operator !=(ColumnTag? left, ColumnTag? right) =>
+        !(left == right);
+
+    /// <summary>
+    /// Indicates whether the column name is empty or consists only of whitespace characters.
+    /// </summary>
+    public bool IsWhiteSpace() =>
+        ColumnName.IsWhiteSpace();
+
+    /// <summary>
+    /// Indicates whether the column name contains at least one non-whitespace character.
+    /// </summary>
+    public bool IsNotWhiteSpace() =>
+        IsWhiteSpace() == false;
+
+    /// <summary>
+    /// Indicates whether the column name is empty.
+    /// </summary>
+    public bool IsEmpty() =>
+        ColumnName.IsEmpty();
+
+    /// <summary>
+    /// Indicates whether the column name is not empty.
+    /// </summary>
+    public bool IsNotEmpty() =>
+        IsEmpty() == false;
 
 
     /// <summary>

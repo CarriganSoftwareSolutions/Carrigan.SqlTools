@@ -2,6 +2,7 @@ using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -80,11 +81,17 @@ public abstract class LogicalOperator : Predicates
         return predicates;
     }
 
-    /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the logical expression.
-    /// </summary>
-    public override string ToString() =>
-        (ChildNodes.Count() == 1 ? ChildNodes.Single().ToString() : $"({string.Join($" {_operator} ", ChildNodes)})") ?? string.Empty;
+    protected override object EqualityContract =>
+        typeof(LogicalOperator);
+
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is LogicalOperator logicalOperator && string.Equals(_operator, logicalOperator._operator, StringComparison.Ordinal) && base.EqualsCore(other);
+
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(_operator, StringComparer.Ordinal);
+        base.AddToHashCode(ref hashCode);
+    }
 
     /// <summary>
     /// Generates the SQL fragment represented by this logical operator.

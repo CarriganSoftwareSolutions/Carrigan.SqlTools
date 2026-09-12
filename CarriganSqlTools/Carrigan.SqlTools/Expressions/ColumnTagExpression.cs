@@ -12,7 +12,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// SelectTagAttribute mappings where the result model
 /// property points at a column from a different table.
 /// </remarks>
-internal sealed class ColumnTagExpression : SqlExpression
+internal sealed class ColumnTagExpression : SqlExpression, IColumnExpressionIdentity
 {
     /// <summary>
     /// The resolved column tag represented by this expression.
@@ -28,6 +28,9 @@ internal sealed class ColumnTagExpression : SqlExpression
         ArgumentNullException.ThrowIfNull(columnTag, nameof(columnTag));
         ColumnTag = columnTag;
     }
+
+    ColumnTag IColumnExpressionIdentity.EqualityColumnTag =>
+        ColumnTag;
 
     /// <summary>
     /// Gets the table represented by this column leaf expression.
@@ -45,9 +48,4 @@ internal sealed class ColumnTagExpression : SqlExpression
         yield return ColumnTag;
     }
 
-    /// <summary>
-    /// Returns the unquoted column tag representation.
-    /// </summary>
-    public override string ToString() =>
-        ColumnTag.ToString();
 }

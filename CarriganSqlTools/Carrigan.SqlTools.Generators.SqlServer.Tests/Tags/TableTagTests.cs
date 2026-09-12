@@ -1,11 +1,9 @@
-﻿using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
-
-//IGNORE SPELLING: Za ema 
 
 public class TableTagTests
 {
@@ -15,371 +13,342 @@ public class TableTagTests
     [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
     [InlineData(null, "Pizza", "[Pizza]")]
     [InlineData("", "Pizza", "[Pizza]")]
-    public void Table_Tag_Tests(string? schemaName, string tableName, string expected)
+    public void ToSql(string? schemaName, string tableName, string expected)
     {
-        string actual = new TableTag(schemaName, tableName).ToSql(Dialect);
+        TableTag tableTag = new(schemaName, tableName);
 
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("Franks", "")]
-    [InlineData(null, "")]
-    [InlineData("", "")]
-    [InlineData("Franks", null)]
-    [InlineData(null, null)]
-    [InlineData("", null)]
-    //These unit tests originally enforced exceptions being throw when you create a table tag
-    //However, this is now checked in the SqlGenerator's constructor.
-    //I kept the tests, in case I forget I moved them on purpose.
-    public void Table_Tag_Tests_Argument_Exception(string? schemaName, string? tableName) => 
-        _ = new TableTag(schemaName, tableName!);
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void TableTag_Comparisons(string? schema1, string? table1, string? schema2, string? table2)
-    {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
-
-        string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
-        string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
-
-
-        int expectedValue = string.Compare(tagString1, tagString2, StringComparison.Ordinal);
-        int actualValue = tag1!.CompareTo(tag2);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void TableTag_Equals(string? schema1, string? table1, string? schema2, string? table2)
-    {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
-
-        string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
-        string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
-
-
-        bool expectedValue = tagString1!.Equals(tagString2);
-        bool actualValue = tag1!.Equals(tag2);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void TableTag_EqualsObject(string? schema1, string? table1, string? schema2, string? table2)
-    {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
-
-        string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
-        string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
-
-
-        bool expectedValue = tagString1!.Equals(tagString2);
-        bool actualValue = tag1!.Equals((object?)tag2);
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void TableTag_EqualsEquals(string? schema1, string? table1, string? schema2, string? table2)
-    {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
-
-        string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
-        string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
-
-        bool expectedValue = tagString1 == tagString2;
-        bool actualValue = tag1 == tag2;
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-
-
-    [Theory]
-    [InlineData("Franks", "Pizza", "Franks", "Pizza")]
-    [InlineData("Planet", "Express", "Franks", "Pizza")]
-    [InlineData("Franks", "Pizza", "Planet", "Express")]
-    [InlineData("Planet", "Express", "Planet", "Express")]
-    [InlineData("Franks", "Pizza", null, null)]
-    public void TableTag_NotEquals(string? schema1, string? table1, string? schema2, string? table2)
-    {
-        TableTag? tag1 = table1.IsNotNullOrEmpty() ? new TableTag(schema1, table1) : null;
-        TableTag? tag2 = table2.IsNotNullOrEmpty() ? new TableTag(schema2, table2) : null;
-
-        string? tagString1 = table1.IsNotNullOrEmpty() ? $"[{schema1}].[{table1}]" : null;
-        string? tagString2 = table2.IsNotNullOrEmpty() ? $"[{schema2}].[{table2}]" : null;
-
-        bool expectedValue = tagString1 != tagString2;
-        bool actualValue = tag1 != tag2;
-
-        Assert.Equal(expectedValue, actualValue);
-    }
-    [Fact]
-    public void TableTag_Equals_BothNull_ReturnsTrue()
-    {
-        // Since the comparison methods are on TableTag itself, we just need an instance.
-        TableTag comparer = new("Schema", "Table");
-
-        bool result = comparer.Equals(null, null);
-
-        Assert.True(result, "Both null references should be considered equal.");
-    }
-
-    [Fact]
-    public void TableTag__Equals_OneNullOneNonNull_ReturnsFalse()
-    {
-        TableTag comparer = new("Schema", "Table");
-        TableTag nonNullTag = new("Schema", "Table");
-
-        bool result = comparer.Equals(null, nonNullTag);
-
-        Assert.False(result, "Null and non-null should not be equal.");
-    }
-
-    [Fact]
-    public void TableTag_Equals_SameValues_ReturnsTrue()
-    {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("Schema", "Table");
-        TableTag tag2 = new("Schema", "Table");
-
-        bool result = comparer.Equals(tag1, tag2);
-
-        Assert.True(result, "Tags with the same schema/table strings should be equal.");
-    }
-
-    [Fact]
-    public void TableTag_Equals_DifferentValues_ReturnsFalse()
-    {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("SchemaA", "TableA");
-        TableTag tag2 = new("SchemaB", "TableB");
-
-        bool result = comparer.Equals(tag1, tag2);
-
-        Assert.False(result, "Tags with different schema/table strings should not be equal.");
-    }
-
-    [Fact]
-    public void TableTag_GetHashCode_SameValues_ReturnsSameHash()
-    {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("MySchema", "MyTable");
-        TableTag tag2 = new("MySchema", "MyTable");
-
-        int hash1 = comparer.GetHashCode(tag1);
-        int hash2 = comparer.GetHashCode(tag2);
-
-        Assert.Equal(hash1, hash2);
-    }
-
-    [Fact]
-    public void TableTag_GetHashCode_DifferentValues_ReturnsDifferentHash()
-    {
-        TableTag comparer = new("Schema", "Table");
-        TableTag tag1 = new("Schema1", "Table1");
-        TableTag tag2 = new("Schema2", "Table2");
-
-        int hash1 = comparer.GetHashCode(tag1);
-        int hash2 = comparer.GetHashCode(tag2);
-
-        Assert.NotEqual(hash1, hash2);
-    }
-
-    [Fact]
-    public void Constructor_ValidWithoutSchema_ShouldReturnFormattedTag()
-    {
-        // Arrange
-        string tableName = "ValidTable"; // passes pattern e.g. "^[A-Za-z_@#][A-Za-z0-9_@$#]*$"
-        string expected = "[ValidTable]";
-
-        // Act
-        TableTag tableTag = new(null, tableName);
-
-        // Assert
         Assert.Equal(expected, tableTag.ToSql(Dialect));
     }
 
-    [Fact]
-    public void Constructor_ValidWithoutSchema_String()
+    [Theory]
+    [InlineData("Franks", "Pizza", "Franks.Pizza")]
+    [InlineData(null, "Pizza", "Pizza")]
+    [InlineData("", "Pizza", "Pizza")]
+    [InlineData(null, "", "")]
+    [InlineData(null, " ", " ")]
+    public void ToString_Value(string? schemaName, string tableName, string expected)
     {
-        // Arrange
-        string tableName = "ValidTable"; // passes pattern e.g. "^[A-Za-z_@#][A-Za-z0-9_@$#]*$"
-        string expected = "ValidTable";
-
-        // Act
-        TableTag tableTag = new(null, tableName);
-
-        // Assert
-        Assert.Equal(expected, tableTag.ToString());
-        // Test implicit conversion to string.
-        string implicitString = tableTag;
-        Assert.Equal(expected, implicitString);
-    }
-
-    [Fact]
-    public void Constructor_ValidWithSchema_ShouldReturnFormattedTag()
-    {
-        // Arrange
-        string schemaName = "dbo";
-        string tableName = "ValidTable";
-        string expected = "[dbo].[ValidTable]";
-
-        // Act
         TableTag tableTag = new(schemaName, tableName);
 
-        // Assert
-        Assert.Equal(expected, tableTag.ToSql(Dialect));
+        Assert.Equal(expected, tableTag.ToString());
+        Assert.Equal(expected, $"{tableTag}");
     }
 
     [Fact]
-    public void Constructor_ValidWithSchema_String()
+    public void Equals_SameReference()
     {
-        // Arrange
-        string schemaName = "dbo";
-        string tableName = "ValidTable";
-        string expected = "dbo.ValidTable";
+        TableTag tableTag = new("Schema", "Table");
 
-        // Act
-        TableTag tableTag = new(schemaName, tableName);
-
-        // Assert
-        Assert.Equal(expected, tableTag.ToString());
-        string implicitString = tableTag;
-        Assert.Equal(expected, implicitString);
+        Assert.True(tableTag.Equals(tableTag));
+#pragma warning disable CS1718 // Comparison made to same variable
+        Assert.True(tableTag == tableTag);
+        Assert.False(tableTag != tableTag);
+#pragma warning restore CS1718 // Comparison made to same variable
     }
 
+    [Fact]
+    public void Equals_EquivalentInstances()
+    {
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "Table");
+
+        Assert.True(left.Equals(right));
+        Assert.True(right.Equals(left));
+        Assert.Equal(left, right);
+        Assert.Equal(right, left);
+    }
+
+    [Fact]
+    public void Equals_Transitive()
+    {
+        TableTag first = new("Schema", "Table");
+        TableTag second = new("Schema", "Table");
+        TableTag third = new("Schema", "Table");
+
+        Assert.True(first.Equals(second));
+        Assert.True(second.Equals(third));
+        Assert.True(first.Equals(third));
+    }
+
+    [Fact]
+    public void Equals_NullAndEmptySchema()
+    {
+        TableTag noSchema = new((SchemaName?)null, new TableName("Table"));
+        TableTag emptySchema = new(new SchemaName(string.Empty), new TableName("Table"));
+
+        Assert.True(noSchema.Equals(emptySchema));
+        Assert.True(emptySchema.Equals(noSchema));
+        Assert.True(noSchema == emptySchema);
+        Assert.False(noSchema != emptySchema);
+        Assert.Equal(noSchema.GetHashCode(), emptySchema.GetHashCode());
+    }
+
+    [Fact]
+    public void Equals_DifferentSchema()
+    {
+        TableTag left = new("SchemaOne", "Table");
+        TableTag right = new("SchemaTwo", "Table");
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_DifferentTable()
+    {
+        TableTag left = new("Schema", "TableOne");
+        TableTag right = new("Schema", "TableTwo");
+
+        Assert.False(left.Equals(right));
+        Assert.False(right.Equals(left));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_SchemaPresenceMatters()
+    {
+        TableTag left = new(null, "Table");
+        TableTag right = new("Schema", "Table");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_SchemaIsCaseSensitive()
+    {
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("schema", "Table");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_TableIsCaseSensitive()
+    {
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "table");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_PreservesWhitespace()
+    {
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", " Table ");
+
+        Assert.False(left.Equals(right));
+        Assert.NotEqual(left, right);
+    }
+
+    [Fact]
+    public void Equals_UsesStructuralIdentity_NotFormattedText()
+    {
+        TableTag left = new("A.B", "C");
+        TableTag right = new("A", "B.C");
+
+        Assert.Equal(left.ToString(), right.ToString());
+        Assert.False(left.Equals(right));
+        Assert.False(left == right);
+        Assert.True(left != right);
+    }
+
+    [Fact]
+    public void Equals_Null()
+    {
+        TableTag tableTag = new("Schema", "Table");
+        TableTag? other = null;
+
+        Assert.False(tableTag.Equals(other));
+        Assert.False(tableTag.Equals((object?)null));
+    }
+
+    [Fact]
+    public void Equals_ObjectEquivalent()
+    {
+        TableTag tableTag = new("Schema", "Table");
+        object other = new TableTag("Schema", "Table");
+
+        Assert.True(tableTag.Equals(other));
+    }
+
+    [Fact]
+    public void Equals_ObjectWrongType()
+    {
+        TableTag tableTag = new("Schema", "Table");
+        object other = new TableName("Table");
+
+        Assert.False(tableTag.Equals(other));
+    }
+
+    [Fact]
+    public void EqualOperator_EquivalentInstances()
+    {
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "Table");
+
+        Assert.True(left == right);
+        Assert.True(right == left);
+        Assert.False(left != right);
+        Assert.False(right != left);
+    }
+
+    [Fact]
+    public void EqualOperator_DifferentInstances()
+    {
+        TableTag left = new("SchemaOne", "Table");
+        TableTag right = new("SchemaTwo", "Table");
+
+        Assert.False(left == right);
+        Assert.False(right == left);
+        Assert.True(left != right);
+        Assert.True(right != left);
+    }
+
+    [Fact]
+    public void EqualOperator_Null()
+    {
+        TableTag tableTag = new("Schema", "Table");
+        TableTag? nullTableTag = null;
+        bool flag;
+        Assert.False(tableTag == nullTableTag);
+        Assert.False(nullTableTag == tableTag);
+        Assert.True(tableTag != nullTableTag);
+        Assert.True(nullTableTag != tableTag);
+        flag = nullTableTag == null;
+        Assert.True(flag);
+        flag = nullTableTag != null;
+        Assert.False(flag);
+    }
+
+    [Fact]
+    public void GetHashCode_EquivalentInstances()
+    {
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "Table");
+
+        Assert.Equal(left, right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+    }
+
+    [Fact]
+    public void DictionaryKey_EquivalentInstance()
+    {
+        TableTag storedKey = new("Schema", "Table");
+        TableTag lookupKey = new("Schema", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.True(dictionary.ContainsKey(lookupKey));
+        Assert.Equal(3.14159m, dictionary[lookupKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_NullAndEmptySchema()
+    {
+        TableTag storedKey = new((SchemaName?)null, new TableName("Table"));
+        TableTag lookupKey = new(new SchemaName(string.Empty), new TableName("Table"));
+        Dictionary<TableTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.True(dictionary.ContainsKey(lookupKey));
+        Assert.Equal(3.14159m, dictionary[lookupKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_DifferentSchema()
+    {
+        TableTag storedKey = new("SchemaOne", "Table");
+        TableTag lookupKey = new("SchemaTwo", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
+    }
+
+    [Fact]
+    public void DictionaryKey_DifferentTable()
+    {
+        TableTag storedKey = new("Schema", "TableOne");
+        TableTag lookupKey = new("Schema", "TableTwo");
+        Dictionary<TableTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
+    }
+
+    [Fact]
+    public void DictionaryKey_EquivalentAssignmentReplacesValue()
+    {
+        TableTag firstKey = new("Schema", "Table");
+        TableTag secondKey = new("Schema", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
+        dictionary[firstKey] = 3.14159m;
+        dictionary[secondKey] = 2.71828m;
+
+        Assert.Single(dictionary);
+        Assert.Equal(2.71828m, dictionary[firstKey]);
+        Assert.Equal(2.71828m, dictionary[secondKey]);
+    }
+
+    [Fact]
+    public void DictionaryKey_IsCaseSensitive()
+    {
+        TableTag storedKey = new("Schema", "Table");
+        TableTag lookupKey = new("schema", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
+        dictionary[storedKey] = 3.14159m;
+
+        Assert.False(dictionary.ContainsKey(lookupKey));
+    }
+
+    [Fact]
+    public void HashSet_EquivalentInstance()
+    {
+        TableTag storedValue = new("Schema", "Table");
+        TableTag lookupValue = new("Schema", "Table");
+        HashSet<TableTag> set = [storedValue];
+
+        Assert.Contains(lookupValue, set);
+    }
 
     [Theory]
-    [InlineData("Invalid Table")]    // Contains space.
-    [InlineData("123Invalid")]       // Starts with digit.
-    [InlineData("Role;DROP")]        // Contains a semicolon.
-    //These unit tests originally enforced exceptions being throw when you create a table tag
-    //However, this is now checked in the SqlGenerator's constructor.
-    //I kept the tests, in case I forget I moved them on purpose.
-    public void Constructor_InvalidTableName_ShouldThrowSqlNamePatternException(string invalidTable)
+    [InlineData(null, "", true, true)]
+    [InlineData(null, " ", false, true)]
+    [InlineData(null, "Table", false, false)]
+    [InlineData("Schema", "", false, false)]
+    public void EmptyAndWhiteSpaceContracts(string? schemaName, string tableName, bool expectedEmpty, bool expectedWhiteSpace)
     {
-        // Arrange
-        string schemaName = "dbo";
-
-        // Act & Assert
-        _ = new TableTag(schemaName, invalidTable);
-    }
-
-    [Theory]
-    [InlineData("Invalid Schema")]   // Contains space.
-    [InlineData("123Schema")]        // Starts with digit.
-    [InlineData("Sch;ema")]          // Contains special characters.
-    //These unit tests originally enforced exceptions being throw when you create a table tag
-    //However, this is now checked in the SqlGenerator's constructor.
-    //I kept the tests, in case I forget I moved them on purpose.
-    public void Constructor_InvalidSchemaName_ShouldThrowSqlNamePatternException(string invalidSchema)
-    {
-        // Arrange
-        string tableName = "ValidTable";
-
-        // Act & Assert
-        _ = new TableTag(invalidSchema, tableName);
-    }
-
-    [Fact]
-    public void ToString_ReturnsFormattedTag()
-    {
-        // Arrange
-        string schemaName = "dbo";
-        string tableName = "ValidTable";
         TableTag tableTag = new(schemaName, tableName);
-        string expected = "dbo.ValidTable";
 
-        // Act
-        string result = tableTag.ToString();
-
-        // Assert
-        Assert.Equal(expected, result);
-    }
-
-    [Fact]
-    public void ReturnsFormattedTag()
-    {
-        // Arrange
-        string schemaName = "dbo";
-        string tableName = "ValidTable";
-        TableTag tableTag = new(schemaName, tableName);
-        string expected = "[dbo].[ValidTable]";
-
-        // Act
-        string result = tableTag.ToSql(Dialect);  
-
-        // Assert
-        Assert.Equal(expected, result);
-    }
-
-    [Fact]
-    public void ImplicitConversionToString_String()
-    {
-        // Arrange
-        string schemaName = "dbo";
-        string tableName = "ValidTable";
-        TableTag tableTag = new(schemaName, tableName);
-        string expected = "dbo.ValidTable";
-
-        // Act
-        string result = tableTag;  // Implicit conversion to string
-
-        // Assert
-        Assert.Equal(expected, result);
+        Assert.Equal(expectedEmpty, tableTag.IsEmpty());
+        Assert.Equal(!expectedEmpty, tableTag.IsNotEmpty());
+        Assert.Equal(expectedWhiteSpace, tableTag.IsWhiteSpace());
+        Assert.Equal(!expectedWhiteSpace, tableTag.IsNotWhiteSpace());
     }
 
     [Fact]
     public void Get_ShouldReturnExpectedTableTag_ForEntityWithSchema()
     {
-        // Arrange
-        Type entityType = typeof(EntityWithSchema);
-        TableTag expectedTag = new("myschema", "EntityWithSchema");
+        TableTag expected = new("myschema", "EntityWithSchema");
+#pragma warning disable CA2263 // Prefer generic overload when type is known
+        TableTag actual = TableTag.Get(typeof(EntityWithSchema));
+#pragma warning restore CA2263 // Prefer generic overload when type is known
 
-        // Act
-        TableTag actualTag = TableTag.Get(entityType);
-
-        // Assert: compare string representations (implicit conversion and ToString())
-        Assert.Equal(expectedTag.ToString(), actualTag.ToString());
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
     }
 
     [Fact]
-    public void ImplicitConversion_ShouldReturnSameString_AsToString()
+    public void GetGeneric_ShouldReturnExpectedTableTag_ForEntityWithSchema()
     {
-        // Arrange
-        Type entityType = typeof(EntityWithSchema);
-        TableTag tagFromGet = TableTag.Get(entityType);
-        string tagAsStringFromToString = tagFromGet.ToString();
-        string tagAsStringFromImplicit = tagFromGet;
+        TableTag expected = new("myschema", "EntityWithSchema");
+        TableTag actual = TableTag.Get<EntityWithSchema>();
 
-        // Assert: both conversion methods yield the same result
-        Assert.Equal(tagAsStringFromToString, tagAsStringFromImplicit);
+        Assert.Equal(expected, actual);
     }
 }

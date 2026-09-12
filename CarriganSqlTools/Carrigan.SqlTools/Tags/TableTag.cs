@@ -1,10 +1,11 @@
-using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using System.Numerics;
 using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
@@ -14,8 +15,8 @@ namespace Carrigan.SqlTools.Tags;
 /// The <c>[Schema]</c> segment is included only when explicitly provided.
 /// </summary>
 /// <remarks>
-/// This type uses <see cref="StringWrapper"/> to provide consistent equality, ordering,
-/// and hashing semantics (case-sensitive via <see cref="StringComparison.Ordinal"/>).
+/// Equality and hashing are based on the schema and table-name components using their
+/// case-sensitive identifier semantics. An empty schema is treated the same as no schema.
 /// </remarks>
 /// <example>
 /// <para>
@@ -101,7 +102,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
-public class TableTag : StringWrapper, ISqlFragment
+public class TableTag : IEquatable<TableTag>, IEqualityOperators<TableTag, TableTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
     /// <summary>
     /// Gets the reflected table tag for the specified model type.
@@ -132,8 +133,9 @@ public class TableTag : StringWrapper, ISqlFragment
     /// </exception>
     ///
     internal TableTag(SchemaName? schemaName, TableName tableName)
-        : base(schemaName.IsNotNullOrEmpty() ? $"{ schemaName}.{tableName}" : tableName, StringComparison.Ordinal)
     {
+        ArgumentNullException.ThrowIfNull(tableName);
+
         TableName = tableName;
         SchemaName = schemaName;
     }
@@ -181,6 +183,98 @@ public class TableTag : StringWrapper, ISqlFragment
         return (TableTag?)tableTagProperty.GetValue(null)
             ?? throw new InvalidOperationException($"The property 'Table' on type '{cacheType.FullName}' returned null.");
     }
+
+    /// <summary>
+    /// Returns the schema-qualified table name represented by this tag.
+    /// </summary>
+    /// <returns>The table name, optionally qualified by its schema.</returns>
+    public override string ToString() =>
+        SchemaName.IsNotNullOrEmpty() ? $"{SchemaName}.{TableName}" : TableName.ToString();
+
+    /// <summary>
+    /// Determines whether this instance identifies the same table as another <see cref="TableTag"/>.
+    /// </summary>
+    /// <param name="other">The other table tag to compare.</param>
+    /// <returns><c>true</c> when the effective schema and table name are equal; otherwise, <c>false</c>.</returns>
+    public bool Equals(TableTag? other)
+    {
+        if (ReferenceEquals(this, other))
+            return true;
+
+        if (other is null)
+            return false;
+
+        if (SchemaName.IsNotNullOrEmpty() != other.SchemaName.IsNotNullOrEmpty())
+            return false;
+
+        if (SchemaName.IsNotNullOrEmpty() && !SchemaName.Equals(other.SchemaName))
+            return false;
+
+        return TableName.Equals(other.TableName);
+    }
+
+    /// <summary>
+    /// Determines whether the specified object identifies the same table as this instance.
+    /// </summary>
+    /// <param name="obj">The object to compare.</param>
+    /// <returns><c>true</c> when <paramref name="obj"/> is an equivalent <see cref="TableTag"/>; otherwise, <c>false</c>.</returns>
+    public override bool Equals(object? obj) =>
+        Equals(obj as TableTag);
+
+    /// <summary>
+    /// Returns a hash code for this table tag.
+    /// </summary>
+    /// <returns>A hash code consistent with <see cref="Equals(TableTag?)"/>.</returns>
+    public override int GetHashCode()
+    {
+        SchemaName? schemaName = SchemaName.IsNotNullOrEmpty() ? SchemaName : null;
+        return HashCode.Combine(schemaName, TableName);
+    }
+
+    /// <summary>
+    /// Determines whether two table tags identify the same table.
+    /// </summary>
+    public static bool operator ==(TableTag? left, TableTag? right)
+    {
+        if (ReferenceEquals(left, right))
+            return true;
+
+        if (left is null || right is null)
+            return false;
+
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two table tags identify different tables.
+    /// </summary>
+    public static bool operator !=(TableTag? left, TableTag? right) =>
+        !(left == right);
+
+    /// <summary>
+    /// Indicates whether the rendered table tag is empty or consists only of whitespace characters.
+    /// </summary>
+    public bool IsWhiteSpace() =>
+        SchemaName.IsNullOrWhiteSpace() && TableName.IsWhiteSpace();
+
+    /// <summary>
+    /// Indicates whether the rendered table tag contains at least one non-whitespace character.
+    /// </summary>
+    public bool IsNotWhiteSpace() =>
+        IsWhiteSpace() == false;
+
+    /// <summary>
+    /// Indicates whether the rendered table tag is empty.
+    /// </summary>
+    public bool IsEmpty() =>
+        SchemaName.IsNullOrEmpty() && TableName.IsEmpty();
+
+    /// <summary>
+    /// Indicates whether the rendered table tag is not empty.
+    /// </summary>
+    public bool IsNotEmpty() =>
+        IsEmpty() == false;
+
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>

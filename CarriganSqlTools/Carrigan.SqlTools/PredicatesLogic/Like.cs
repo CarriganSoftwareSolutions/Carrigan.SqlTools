@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using System.Numerics;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -71,19 +72,14 @@ public class Like : DialectOperator
         : base(left, right) =>
         IsCaseSensitive = isCaseSensitive;
 
-    /// <summary>
-    /// Returns a dialect-neutral diagnostic representation of the LIKE predicate.
-    /// </summary>
-    public override string ToString() =>
-        $"({_left} {GetDiagnosticOperator()} {_right})";
+    protected override bool EqualsCore(SqlExpression other) =>
+        other is Like like &&  IsCaseSensitive == like.IsCaseSensitive && base.EqualsCore(other);
 
-    private string GetDiagnosticOperator() =>
-        IsCaseSensitive switch
-        {
-            null => "LIKE",
-            true => "CASE SENSITIVE LIKE",
-            false => "CASE INSENSITIVE LIKE"
-        };
+    protected override void AddToHashCode(ref HashCode hashCode)
+    {
+        hashCode.Add(IsCaseSensitive);
+        base.AddToHashCode(ref hashCode);
+    }
 
     /// <summary>
     /// Produces the SQL fragment represented by this Dialect operator and its operands.
