@@ -94,7 +94,7 @@ public class Multiply : ArithmeticExpression
     /// the SQL <c>*</c> arithmetic operator.
     /// </summary>
     /// <param name="sqlExpressions">
-    /// One or more numeric expressions to combine using <c>*</c>.
+    /// One or more SQL expressions to treat as numeric expressions and combine using <c>*</c>. No numeric-type validation is performed.
     /// </param>
     /// <remarks>
     /// <list type="bullet">

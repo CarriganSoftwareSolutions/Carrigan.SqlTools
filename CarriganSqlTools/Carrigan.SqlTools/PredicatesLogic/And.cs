@@ -1,4 +1,4 @@
-using Carrigan.Core.Attributes;
+﻿using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
@@ -107,7 +107,7 @@ public class And : LogicalOperator
     /// the SQL logical <c>AND</c> operator.
     /// </summary>
     /// <param name="predicates">
-    /// One or more boolean predicates to combine using <c>AND</c>.
+    /// One or more SQL expressions to treat as predicates and combine using <c>AND</c>. No predicate-type validation is performed.
     /// </param>
     /// <remarks>
     /// <list type="bullet">

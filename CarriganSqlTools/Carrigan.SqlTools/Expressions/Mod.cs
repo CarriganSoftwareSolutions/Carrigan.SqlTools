@@ -80,7 +80,7 @@ public class Mod : Modulo
     /// Initializes a new instance of the <see cref="Mod"/> class.
     /// </summary>
     /// <param name="sqlExpressions">
-    /// One or more numeric expressions on which to apply modulo using <c>%</c>.
+    /// One or more SQL expressions to treat as numeric expressions and apply modulo using <c>%</c>. No numeric-type validation is performed.
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="sqlExpressions"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="sqlExpressions"/> contains no elements.</exception>

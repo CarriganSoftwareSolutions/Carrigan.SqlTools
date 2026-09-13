@@ -1,4 +1,4 @@
-using Carrigan.Core.Attributes;
+﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
@@ -86,7 +86,7 @@ public abstract class LogicalOperator : Predicates
     /// </list>
     /// </remarks>
     /// <param name="op">The SQL operator token to use (e.g., <c>"AND"</c>, <c>"OR"</c>).</param>
-    /// <param name="sqlExpressions">One or more boolean predicate expressions to combine.</param>
+    /// <param name="sqlExpressions">One or more SQL expressions to treat as predicates and combine. No predicate-type validation is performed.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="op"/> or <paramref name="sqlExpressions"/> is <c>null</c>.
     /// </exception>

@@ -1,4 +1,4 @@
-using Carrigan.Core.Attributes;
+﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
@@ -35,6 +35,11 @@ public abstract class ArithmeticExpression : NumericExpression
     {
     }
 
+    /// <summary>
+    /// Base constructor for arithmetic expressions that intentionally treat arbitrary SQL expressions as numeric expressions.
+    /// </summary>
+    /// <param name="operation">The arithmetic operator.</param>
+    /// <param name="sqlExpressions">The expressions to treat as numeric without numeric-type validation.</param>
     [TypeSafetyLoss]
     protected ArithmeticExpression(string operation, IEnumerable<SqlExpression> sqlExpressions)
         : this(ValidateSqlExpressions(sqlExpressions), ValidateOperation(operation))

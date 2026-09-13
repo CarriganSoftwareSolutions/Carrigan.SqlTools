@@ -80,7 +80,7 @@ public class Minus : Subtract
     /// Initializes a new instance of the <see cref="Minus"/> class.
     /// </summary>
     /// <param name="sqlExpressions">
-    /// One or more numeric expressions to subtract using <c>-</c>.
+    /// One or more SQL expressions to treat as numeric expressions and subtract using <c>-</c>. No numeric-type validation is performed.
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="sqlExpressions"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="sqlExpressions"/> contains no elements.</exception>

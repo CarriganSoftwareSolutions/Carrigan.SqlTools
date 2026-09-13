@@ -1,4 +1,4 @@
-//IGNORE SPELLING: equal
+﻿//IGNORE SPELLING: equal
 using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
@@ -51,8 +51,7 @@ public class Not : Predicates
     /// representing the SQL <c>NOT</c> operator.
     /// </summary>
     /// <param name="predicateExpression">
-    /// The boolean expression to negate. Typically another <see cref="Predicates"/> instance
-    /// such as <see cref="Equal"/>, <see cref="GreaterThan"/>, or <see cref="And"/>.
+    /// The SQL expression to treat as a predicate and negate. No predicate-type validation is performed.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicateExpression"/> is <c>null</c>.

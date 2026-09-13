@@ -78,7 +78,7 @@ public class Negate : NumericExpression
     /// <summary>
     /// Initializes a new instance of the <see cref="Negate"/> class for the supplied numeric expression.
     /// </summary>
-    /// <param name="sqlExpression">Represents the child numeric expression.</param>
+    /// <param name="sqlExpression">The SQL expression to treat as numeric and negate. No numeric-type validation is performed.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>

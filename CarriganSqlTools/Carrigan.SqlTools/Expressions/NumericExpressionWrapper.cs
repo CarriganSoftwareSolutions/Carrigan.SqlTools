@@ -6,81 +6,39 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Represents a wrapper for a <see cref="SqlExpression"/> that is treated as a <see cref="NumericExpression"/>.
+/// Represents a transparent adapter that allows a <see cref="SqlExpression"/> to be used where a <see cref="NumericExpression"/> is required.
 /// </summary>
 internal sealed class NumericExpressionWrapper : NumericExpression
 {
     /// <summary>
-    /// The underlying <see cref="SqlExpression"/> that is wrapped and treated as a <see cref="NumericExpression"/>.
+    /// The underlying expression being treated as numeric without numeric-type validation.
     /// </summary>
     private readonly SqlExpression _sqlExpression;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="NumericExpressionWrapper"/> class that wraps the specified <see cref="SqlExpression"/>.
+    /// Initializes a new instance of the <see cref="NumericExpressionWrapper"/> class.
     /// </summary>
-    /// <param name="sqlExpression">
-    /// The <see cref="SqlExpression"/> to wrap and treat as a <see cref="NumericExpression"/>.
-    /// </param>
+    /// <param name="sqlExpression">The expression to treat as numeric without numeric-type validation.</param>
     [TypeSafetyLoss]
     internal NumericExpressionWrapper(SqlExpression sqlExpression)
-        : base([])
-    {
-        ArgumentNullException.ThrowIfNull(sqlExpression);
-
+        : base(sqlExpression is not null ? [sqlExpression] : throw new ArgumentNullException(nameof(sqlExpression))) => 
         _sqlExpression = sqlExpression;
-    }
 
     /// <summary>
-    /// Gets the leaf tables represented by the underlying <see cref="SqlExpression"/>.
+    /// Uses the wrapped expression as the semantic identity of this transparent adapter.
+    /// </summary>
+    protected override SqlExpression EqualityExpression =>
+        _sqlExpression;
+
+    /// <summary>
+    /// Gets the leaf tables represented by the underlying expression.
     /// </summary>
     public override IEnumerable<TableTag> LeafTables =>
         _sqlExpression.LeafTables;
 
     /// <summary>
-    /// Determines whether the specified object is equal to the current <see cref="NumericExpressionWrapper"/> instance.
+    /// Converts the underlying expression to SQL fragments for the specified dialect.
     /// </summary>
-    /// <param name="obj">
-    /// The object to compare with the current instance. This can be another <see cref="NumericExpressionWrapper"/> or a <see cref="SqlExpression"/>.
-    /// </param>
-    /// <returns></returns>
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        if (obj is NumericExpressionWrapper numericExpressionWrapper)
-            return _sqlExpression.Equals(numericExpressionWrapper._sqlExpression);
-
-        return _sqlExpression.Equals(obj);
-    }
-
-    /// <summary>
-    /// Returns a hash code for the current <see cref="NumericExpressionWrapper"/> instance based on the underlying <see cref="SqlExpression"/>.
-    /// </summary>
-    /// <returns>
-    /// A hash code for the current instance.
-    /// </returns>
-    public override int GetHashCode() =>
-        _sqlExpression.GetHashCode();
-
-    /// <summary>
-    /// Converts the underlying <see cref="SqlExpression"/> to SQL fragments for the specified SQL dialect.
-    /// </summary>
-    /// <param name="dialect">
-    /// The SQL dialect to use for generating the SQL fragments.
-    /// </param>
-    /// <returns>
-    /// An enumerable collection of <see cref="ISqlFragment"/> representing the SQL fragments for the underlying <see cref="SqlExpression"/>.
-    /// </returns>
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) =>
         _sqlExpression.ToSqlFragments(dialect);
-
-    /// <summary>
-    /// Adds the underlying <see cref="SqlExpression"/> to the hash code computation for the current <see cref="NumericExpressionWrapper"/> instance.
-    /// </summary>
-    /// <param name="hashCode">
-    /// The <see cref="HashCode"/> instance to which the underlying <see cref="SqlExpression"/> will be added for hash code computation.
-    /// </param>
-    protected override void AddToHashCode(ref HashCode hashCode) =>
-        hashCode.Add(_sqlExpression);
 }
