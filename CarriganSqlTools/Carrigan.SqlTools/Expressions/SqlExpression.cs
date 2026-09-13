@@ -1,8 +1,10 @@
+﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Numerics;
 
@@ -102,6 +104,15 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         expression.ContainsAggregate();
 
     /// <summary>
+    /// Gets the canonical expression used for equality and hashing.
+    /// </summary>
+    /// <remarks>
+    /// Transparent adapter expressions override this member to return the expression they wrap so the adapter does not create a new semantic identity.
+    /// </remarks>
+    protected virtual SqlExpression EqualityExpression =>
+        this;
+
+    /// <summary>
     /// Gets the equality contract shared by expressions that represent the same semantic SQL construct.
     /// </summary>
     /// <remarks>
@@ -156,10 +167,19 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         if (ReferenceEquals(this, other))
             return true;
 
-        if (other is null || EqualityContract.Equals(other.EqualityContract) == false)
+        if (other is null)
             return false;
 
-        return EqualsCore(other);
+        SqlExpression leftExpression = GetEqualityExpression();
+        SqlExpression rightExpression = other.GetEqualityExpression();
+
+        if (ReferenceEquals(leftExpression, rightExpression))
+            return true;
+
+        if (leftExpression.EqualityContract.Equals(rightExpression.EqualityContract) == false)
+            return false;
+
+        return leftExpression.EqualsCore(rightExpression);
     }
 
     /// <summary>
@@ -173,6 +193,11 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// </summary>
     public override int GetHashCode()
     {
+        SqlExpression equalityExpression = GetEqualityExpression();
+
+        if (ReferenceEquals(this, equalityExpression) == false)
+            return equalityExpression.GetHashCode();
+
         HashCode hashCode = new();
         hashCode.Add(EqualityContract);
         AddToHashCode(ref hashCode);
@@ -220,6 +245,22 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     internal IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         ToSqlFragments(dialect).SelectMany(sqlFragment => sqlFragment.GetSqlFragmentParameters(dialect));
 
+    /// <summary>
+    /// Resolves transparent equality adapters to the underlying expression that defines their semantic identity.
+    /// </summary>
+    private SqlExpression GetEqualityExpression()
+    {
+        SqlExpression expression = this;
+        SqlExpression equalityExpression = expression.EqualityExpression;
+
+        while (ReferenceEquals(expression, equalityExpression) == false)
+        {
+            expression = equalityExpression;
+            equalityExpression = expression.EqualityExpression;
+        }
+
+        return expression;
+    }
 
     /// <summary>
     /// Recursively enumerates every child expression below the supplied expression collection.
@@ -236,4 +277,21 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
                 yield return childExpression;
         }
     }
+
+    /// <summary>
+    /// Wraps this expression in a <see cref="NumericExpression"/> adapter without validating that the expression is numeric.
+    /// </summary>
+    /// <returns>A transparent <see cref="NumericExpression"/> adapter over this expression.</returns>
+    [TypeSafetyLoss]
+    public NumericExpression AsNumericExpression() =>
+        new NumericExpressionWrapper(this);
+
+
+    /// <summary>
+    /// Wraps this expression in a <see cref="Predicates"/> adapter without validating that the expression represents a predicate.
+    /// </summary>
+    /// <returns>A transparent <see cref="Predicates"/> adapter over this expression.</returns>
+    [TypeSafetyLoss]
+    public Predicates AsPredicate() =>
+        new PredicateWrapper(this);
 }

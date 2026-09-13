@@ -1,3 +1,6 @@
+﻿using Carrigan.Core.Attributes;
+using Carrigan.SqlTools.Expressions;
+
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
@@ -96,6 +99,30 @@ public class And : LogicalOperator
     /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
     /// </exception>
     public And(params IEnumerable<Predicates> predicates) : base("AND", predicates)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="And"/> class, representing
+    /// the SQL logical <c>AND</c> operator.
+    /// </summary>
+    /// <param name="predicates">
+    /// One or more SQL expressions to treat as predicates and combine using <c>AND</c>. No predicate-type validation is performed.
+    /// </param>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><description>Throws an <see cref="ArgumentNullException"/> if no predicates are provided.</description></item>
+    /// <item><description>If only one predicate is provided, that predicate is used directly.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicates"/> is <c>null</c> or contains no elements.
+    /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
+    /// </exception>
+    [TypeSafetyLoss]
+    public And(params IEnumerable<SqlExpression> predicates) : base("AND", predicates)
     {
     }
 }
