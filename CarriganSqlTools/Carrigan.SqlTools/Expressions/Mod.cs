@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Expressions;
+﻿using Carrigan.Core.Attributes;
+
+namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents SQL modulo using the <c>%</c> arithmetic operator. This class is an alias for <see cref="Modulo"/>.
@@ -71,6 +73,20 @@ public class Mod : Modulo
     /// <exception cref="ArgumentException">Thrown when <paramref name="numericExpressions"/> contains no elements.</exception>
     /// <exception cref="NullReferenceException">Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.</exception>
     public Mod(params IEnumerable<NumericExpression> numericExpressions) : base(numericExpressions)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Mod"/> class.
+    /// </summary>
+    /// <param name="sqlExpressions">
+    /// One or more numeric expressions on which to apply modulo using <c>%</c>.
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="sqlExpressions"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="sqlExpressions"/> contains no elements.</exception>
+    /// <exception cref="NullReferenceException">Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.</exception>
+    [TypeSafetyLoss]
+    public Mod(params IEnumerable<SqlExpression> sqlExpressions) : base(sqlExpressions)
     {
     }
 }

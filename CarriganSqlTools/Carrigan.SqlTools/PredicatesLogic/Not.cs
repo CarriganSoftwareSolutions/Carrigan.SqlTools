@@ -1,4 +1,5 @@
 //IGNORE SPELLING: equal
+using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -43,36 +44,36 @@ public class Not : Predicates
     /// <summary>
     /// The predicate expression wrapped by this Not predicate.
     /// </summary>
-    private readonly Predicates _aPredicate;
+    private readonly SqlExpression _aPredicate;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Not"/> class,
     /// representing the SQL <c>NOT</c> operator.
     /// </summary>
-    /// <param name="aPredicate">
+    /// <param name="predicateExpression">
     /// The boolean expression to negate. Typically another <see cref="Predicates"/> instance
     /// such as <see cref="Equal"/>, <see cref="GreaterThan"/>, or <see cref="And"/>.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="aPredicate"/> is <c>null</c>.
+    /// Thrown when <paramref name="predicateExpression"/> is <c>null</c>.
     /// </exception>
-    public Not(Predicates aPredicate) 
-        : base([ValidateSomeValue(aPredicate)]) =>
-        _aPredicate = aPredicate;
+    public Not(Predicates predicateExpression) : base([predicateExpression ?? throw new ArgumentNullException(nameof(predicateExpression))]) =>
+        _aPredicate = predicateExpression;
 
     /// <summary>
-    /// Validates that the predicate being wrapped is present.
+    /// Initializes a new instance of the <see cref="Not"/> class,
+    /// representing the SQL <c>NOT</c> operator.
     /// </summary>
-    /// <param name="someValue">The predicate expression to wrap.</param>
-    /// <returns><paramref name="someValue"/> after validation.</returns>
+    /// <param name="sqlExpression">
+    /// The boolean expression to negate. Typically another <see cref="Predicates"/> instance
+    /// such as <see cref="Equal"/>, <see cref="GreaterThan"/>, or <see cref="And"/>.
+    /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="someValue"/> is <see langword="null"/>.
+    /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
-    private static Predicates ValidateSomeValue(Predicates someValue)
-    {
-        ArgumentNullException.ThrowIfNull(someValue, nameof(someValue));
-        return someValue;
-    }
+    [TypeSafetyLoss]
+    public Not(SqlExpression sqlExpression) : base([sqlExpression ?? throw new ArgumentNullException(nameof(sqlExpression))]) =>
+        _aPredicate = sqlExpression;
 
     /// <summary>
     /// Generates the SQL fragment represented by this <c>NOT</c> predicate.

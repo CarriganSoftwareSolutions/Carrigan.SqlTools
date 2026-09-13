@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Expressions;
+﻿using Carrigan.Core.Attributes;
+using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

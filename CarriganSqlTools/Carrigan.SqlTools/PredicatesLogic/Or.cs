@@ -1,3 +1,6 @@
+using Carrigan.Core.Attributes;
+using Carrigan.SqlTools.Expressions;
+
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
@@ -96,6 +99,30 @@ public class Or : LogicalOperator
     /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
     /// </exception>
     public Or(params IEnumerable<Predicates> predicates) : base("OR", predicates)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Or"/> class, representing
+    /// the SQL logical <c>OR</c> operator.
+    /// </summary>
+    /// <param name="sqlExpression">
+    /// One or more boolean predicates to combine using <c>OR</c>.
+    /// </param>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><description>Throws an <see cref="ArgumentNullException"/> if no predicates are provided.</description></item>
+    /// <item><description>If only one predicate is provided, that predicate is used directly.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="sqlExpression"/> is <c>null</c> or contains no elements.
+    /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="sqlExpression"/> contains disallowed <c>null</c> values.
+    /// </exception>
+    [TypeSafetyLoss]
+    public Or(params IEnumerable<SqlExpression> sqlExpression) : base("OR", sqlExpression)
     {
     }
 }

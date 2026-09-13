@@ -1,3 +1,4 @@
+using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
@@ -34,7 +35,13 @@ public abstract class ArithmeticExpression : NumericExpression
     {
     }
 
-    private ArithmeticExpression(IEnumerable<NumericExpression> numericExpressions, string operation)
+    [TypeSafetyLoss]
+    protected ArithmeticExpression(string operation, IEnumerable<SqlExpression> sqlExpressions)
+        : this(ValidateSqlExpressions(sqlExpressions), ValidateOperation(operation))
+    {
+    }
+
+    private ArithmeticExpression(IEnumerable<SqlExpression> numericExpressions, string operation)
         : base(numericExpressions) =>
         _operator = operation;
 
@@ -50,15 +57,21 @@ public abstract class ArithmeticExpression : NumericExpression
 
     private static IEnumerable<NumericExpression> ValidateNumericExpressions(IEnumerable<NumericExpression> numericExpressions)
     {
-        ArgumentNullException.ThrowIfNull(numericExpressions, nameof(numericExpressions));
-
-        NumericExpression[] expressions = [.. numericExpressions];
-        if (numericExpressions.None())
-            throw new ArgumentException($"{nameof(numericExpressions)} must contain at least one value.", nameof(numericExpressions));
-        if (numericExpressions.Any(static expression => expression is null))
-            throw new NullReferenceException($"{nameof(numericExpressions)} cannot contain null values.");
+        ValidateSqlExpressions(numericExpressions);
 
         return numericExpressions;
+    }
+
+    private static IEnumerable<SqlExpression> ValidateSqlExpressions(IEnumerable<SqlExpression> sqlExpressions)
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpressions, nameof(sqlExpressions));
+
+        if (sqlExpressions.None())
+            throw new ArgumentException($"{nameof(sqlExpressions)} must contain at least one value.", nameof(sqlExpressions));
+        if (sqlExpressions.Any(static expression => expression is null))
+            throw new NullReferenceException($"{nameof(sqlExpressions)} cannot contain null values.");
+
+        return sqlExpressions;
     }
 
     protected override object EqualityContract =>

@@ -1,3 +1,4 @@
+using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
@@ -59,6 +60,49 @@ public abstract class LogicalOperator : Predicates
         _operator = op;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LogicalOperator"/> class for the specified
+    /// SQL logical operator (e.g., <c>AND</c>, <c>OR</c>) and predicates.
+    /// </summary>
+    /// <remarks>
+    /// Behavior:
+    /// <list type="bullet">
+    ///   <item>
+    ///     <description>
+    ///     If no predicates are provided, an <see cref="ArgumentException"/> is thrown.
+    ///     </description>
+    ///   </item>
+    ///   <item>
+    ///     <description>
+    ///     If exactly one predicate is provided, that predicate is emitted directly without
+    ///     adding the operator.
+    ///     </description>
+    ///   </item>
+    ///   <item>
+    ///     <description>
+    ///     If two or more predicates are provided, they are combined with the specified operator.
+    ///     </description>
+    ///   </item>
+    /// </list>
+    /// </remarks>
+    /// <param name="op">The SQL operator token to use (e.g., <c>"AND"</c>, <c>"OR"</c>).</param>
+    /// <param name="sqlExpressions">One or more boolean predicate expressions to combine.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="op"/> or <paramref name="sqlExpressions"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="op"/> is empty or whitespace, or when <paramref name="sqlExpressions"/> contains no elements.
+    /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.
+    /// </exception>
+    [TypeSafetyLoss]
+    public LogicalOperator(string op, params IEnumerable<SqlExpression> sqlExpressions) : base(ValidateSqlExpression(sqlExpressions))
+    {
+        ValidateOperator(op);
+        _operator = op;
+    }
+
     private static string ValidateOperator(string op)
     {
         ArgumentNullException.ThrowIfNull(op, nameof(op));
@@ -71,14 +115,21 @@ public abstract class LogicalOperator : Predicates
 
     private static IEnumerable<Predicates> ValidatePredicates(IEnumerable<Predicates> predicates)
     {
-        ArgumentNullException.ThrowIfNull(predicates, nameof(predicates));
-
-        if (predicates.None())
-            throw new ArgumentException($"{nameof(predicates)} must contain at least one value.", nameof(predicates));
-        if (predicates.Any(static predicate => predicate is null))
-            throw new NullReferenceException($"{nameof(predicates)} cannot contain null values.");
+        ValidateSqlExpression(predicates);
 
         return predicates;
+    }
+
+    private static IEnumerable<SqlExpression> ValidateSqlExpression(IEnumerable<SqlExpression> sqlExpressions)
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpressions, nameof(sqlExpressions));
+
+        if (sqlExpressions.None())
+            throw new ArgumentException($"{nameof(sqlExpressions)} must contain at least one value.", nameof(sqlExpressions));
+        if (sqlExpressions.Any(static predicate => predicate is null))
+            throw new NullReferenceException($"{nameof(sqlExpressions)} cannot contain null values.");
+
+        return sqlExpressions;
     }
 
     protected override object EqualityContract =>

@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Expressions;
+﻿using Carrigan.Core.Attributes;
+
+namespace Carrigan.SqlTools.Expressions;
 
 
 /// <summary>
@@ -85,6 +87,33 @@ public class Modulo : ArithmeticExpression
     /// Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
     public Modulo(params IEnumerable<NumericExpression> numericExpressions) : base("%", numericExpressions)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Modulo"/> class, representing
+    /// the SQL <c>%</c> arithmetic operator.
+    /// </summary>
+    /// <param name="sqlExpressions">
+    /// One or more numeric expressions to combine using <c>%</c>.
+    /// </param>
+    /// <remarks>
+    /// <list type="bullet">
+    /// <item><description>Throws an <see cref="ArgumentException"/> if no numeric expressions are provided.</description></item>
+    /// <item><description>If only one numeric expression is provided, that expression is used directly.</description></item>
+    /// </list>
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="sqlExpressions"/> is <c>null</c>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="sqlExpressions"/> contains no elements.
+    /// </exception>
+    /// <exception cref="NullReferenceException">
+    /// Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.
+    /// </exception>
+    [TypeSafetyLoss]
+    public Modulo(params IEnumerable<SqlExpression> sqlExpressions) : base("%", sqlExpressions)
     {
     }
 }

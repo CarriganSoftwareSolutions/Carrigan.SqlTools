@@ -1,8 +1,10 @@
+using Carrigan.Core.Attributes;
 using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Numerics;
 
@@ -220,7 +222,6 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     internal IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         ToSqlFragments(dialect).SelectMany(sqlFragment => sqlFragment.GetSqlFragmentParameters(dialect));
 
-
     /// <summary>
     /// Recursively enumerates every child expression below the supplied expression collection.
     /// </summary>
@@ -236,4 +237,25 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
                 yield return childExpression;
         }
     }
+
+    /// <summary>
+    /// Wraps this <see cref="SqlExpression"/> in a <see cref="NumericExpression"/> wrapper, allowing it to be treated as a numeric expression.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="NumericExpression"/> that wraps this expression, enabling it to be used in contexts that require numeric expressions.
+    /// </returns>
+    [TypeSafetyLoss]
+    public NumericExpression AsNumericExpression() =>
+        new NumericExpressionWrapper(this);
+
+
+    /// <summary>
+    /// Wraps this <see cref="SqlExpression"/> in a <see cref="Predicates"/> wrapper, allowing it to be treated as a predicate expression.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Predicates"/> that wraps this expression, enabling it to be used in contexts that require predicate expressions.
+    /// </returns>
+    [TypeSafetyLoss]
+    public Predicates AsPredicate() =>
+        new PredicateWrapper(this);
 }

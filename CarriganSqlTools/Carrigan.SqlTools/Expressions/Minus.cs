@@ -1,4 +1,6 @@
-﻿namespace Carrigan.SqlTools.Expressions;
+﻿using Carrigan.Core.Attributes;
+
+namespace Carrigan.SqlTools.Expressions;
 
 
 /// <summary>
@@ -72,6 +74,19 @@ public class Minus : Subtract
     /// <exception cref="ArgumentException">Thrown when <paramref name="numericExpressions"/> contains no elements.</exception>
     /// <exception cref="NullReferenceException">Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.</exception>
     public Minus(params IEnumerable<NumericExpression> numericExpressions) : base(numericExpressions)
+    {
+    }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Minus"/> class.
+    /// </summary>
+    /// <param name="sqlExpressions">
+    /// One or more numeric expressions to subtract using <c>-</c>.
+    /// </param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="sqlExpressions"/> is <c>null</c>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="sqlExpressions"/> contains no elements.</exception>
+    /// <exception cref="NullReferenceException">Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.</exception>
+    [TypeSafetyLoss]
+    public Minus(params IEnumerable<SqlExpression> sqlExpressions) : base(sqlExpressions)
     {
     }
 }

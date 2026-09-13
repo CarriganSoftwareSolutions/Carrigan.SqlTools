@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.Core.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.Expressions;
@@ -69,14 +70,21 @@ public class Negate : NumericExpression
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="numericExpression"/> is <c>null</c>.
     /// </exception>
-    public Negate(NumericExpression numericExpression) : base([ValidateNumericExpression(numericExpression)])
+    public Negate(NumericExpression numericExpression) 
+        : base(numericExpression is not null ? [numericExpression] : throw new ArgumentNullException(nameof(numericExpression)))
     {
     }
 
-    private static NumericExpression ValidateNumericExpression(NumericExpression numericExpression)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Negate"/> class for the supplied numeric expression.
+    /// </summary>
+    /// <param name="sqlExpression">Represents the child numeric expression.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
+    /// </exception>
+    [TypeSafetyLoss]
+    public Negate(SqlExpression sqlExpression) : base(sqlExpression is not null ? [sqlExpression] : throw new ArgumentNullException(nameof(sqlExpression)))
     {
-        ArgumentNullException.ThrowIfNull(numericExpression, nameof(numericExpression));
-        return numericExpression;
     }
 
     /// <summary>
