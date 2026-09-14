@@ -23,16 +23,16 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// {
 ///     Where = not
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT "Customer".* 
+/// SELECT "Customer".*
 /// FROM "Customer"
 /// WHERE (NOT ("Customer"."Name" = $1))
-/// 
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
@@ -70,6 +70,7 @@ public class Not : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
+    [TypeSafetyLoss]
     public Not(SqlExpression sqlExpression) : base([sqlExpression ?? throw new ArgumentNullException(nameof(sqlExpression))]) =>
         _aPredicate = sqlExpression;
 

@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public class UnsafeExpressionAdapterTests
+public class ExpressionCompositionTests
 
 {
     private sealed class TestSqlExpression : SqlExpression
@@ -103,7 +103,7 @@ public class UnsafeExpressionAdapterTests
     }
 
     [Fact]
-    public void UnsafeArithmeticOverload_AcceptsSqlExpressions()
+    public void ArithmeticExpression_AcceptsSqlExpressions()
     {
         IEnumerable<SqlExpression> expressions =
         [
@@ -117,7 +117,7 @@ public class UnsafeExpressionAdapterTests
     }
 
     [Fact]
-    public void UnsafeLogicalOverload_AcceptsSqlExpressions()
+    public void LogicalOperator_LooseOverload_AcceptsSqlExpressions()
     {
         IEnumerable<SqlExpression> expressions =
         [
@@ -134,4 +134,3 @@ public class UnsafeExpressionAdapterTests
     public void PredicateWrapper_NullExpression_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new PredicateWrapper(null!));
 }
-

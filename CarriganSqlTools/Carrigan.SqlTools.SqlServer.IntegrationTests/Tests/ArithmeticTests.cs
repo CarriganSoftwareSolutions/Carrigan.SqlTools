@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Clients.SqlServer;
+﻿using Carrigan.SqlTools.Clients.SqlServer;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.Models;
@@ -263,7 +263,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         AssertPrices(records, expectedValues);
     }
 
-    private async Task<IEnumerable<BookIdAndPrice>> ExecuteAsync(NumericExpression expression)
+    private async Task<IEnumerable<BookIdAndPrice>> ExecuteAsync(SqlExpression expression)
     {
         SelectBuilder<Book> selectBuilder = new()
         {

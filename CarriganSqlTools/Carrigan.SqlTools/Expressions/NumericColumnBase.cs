@@ -1,4 +1,4 @@
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
@@ -18,7 +18,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// Note: Note numeric type is being used in a broader sense (i.e. short, int, long, float, double, decimal)
 /// as opposed to a literal programming language type (ex: numeric is a type postgre sql)
 /// </remarks>
-[Obsolete("No longer Supported, use regular column instead")]
+[Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
 public abstract class NumericColumnBase<T> : NumericExpression, IColumnExpressionIdentity where T : class
 {
     /// <summary>

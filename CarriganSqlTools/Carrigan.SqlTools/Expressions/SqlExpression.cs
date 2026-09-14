@@ -94,7 +94,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         IsAggregate() || ChildNodes.Any(ContainsAggregate);
 
     /// <summary>
-    /// Indicates whether the specified expression tree contains any aggregate expressions. 
+    /// Indicates whether the specified expression tree contains any aggregate expressions.
     /// </summary>
     /// <param name="expression">
     /// The expression tree to check for aggregate expressions.
@@ -282,6 +282,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Wraps this expression in a <see cref="Predicates"/> adapter without validating that the expression represents a predicate.
     /// </summary>
     /// <returns>A transparent <see cref="Predicates"/> adapter over this expression.</returns>
+    [TypeSafetyLoss]
     public Predicates AsPredicate() =>
         new PredicateWrapper(this);
 }

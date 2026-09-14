@@ -1,4 +1,4 @@
-
+﻿
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -48,7 +48,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// <param name="parameterValue">
     /// The constant value to compare against the column in the generated SQL.
     /// </param>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
     public ColumnValueBase(NumericColumnBase<T> left, object? parameterValue) : this(CreateValue(left, parameterValue))
     {
     }
@@ -103,7 +103,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// The constant value to compare against the column in the generated SQL.
     /// </param>
     /// <returns>An equality predicate comparing the column to the generated parameter.</returns>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
     protected static Equal CreateValue(NumericColumnBase<T> left, object? parameterValue)
     {
         Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);

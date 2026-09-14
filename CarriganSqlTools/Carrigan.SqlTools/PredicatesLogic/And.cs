@@ -29,24 +29,24 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// {
 ///     Where = and
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 ///
 /// <para>Resulting SQL:</para>
 ///
 /// <code><![CDATA[
-/// --PostgreSql 
-/// SELECT "Customer".* 
-/// FROM "Customer" 
-/// WHERE (("Customer"."Name" = $1) 
-///   AND ("Customer"."Email" = $2) 
+/// --PostgreSql
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// WHERE (("Customer"."Name" = $1)
+///   AND ("Customer"."Email" = $2)
 ///   AND ("Customer"."Phone" = $3))
-///   
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
-/// WHERE (([Customer].[Name] = @Name_1) 
+/// WHERE (([Customer].[Name] = @Name_1)
 ///   AND ([Customer].[Email] = @Email_2)
 ///   AND ([Customer].[Phone] = @Phone_3))
 /// ]]></code>
@@ -61,16 +61,16 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// {
 ///     Where = and
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT "Customer".* 
+/// SELECT "Customer".*
 /// FROM "Customer"
 /// WHERE ("Customer"."Name" = $1)
-/// 
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
@@ -121,6 +121,7 @@ public class And : LogicalOperator
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
     /// </exception>
+    [TypeSafetyLoss]
     public And(params IEnumerable<SqlExpression> predicates) : base("AND", predicates)
     {
     }

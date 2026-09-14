@@ -1,14 +1,13 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
-using System.Numerics;
 
 namespace Carrigan.SqlTools.AggregateLogic;
 
 /// <summary>
 /// Base class for SQL aggregate expressions.
 /// </summary>
-public abstract class Aggregates : NumericExpression
+public abstract class Aggregates : SqlExpression
 {
     /// <summary>
     /// The aggregate function name to render.

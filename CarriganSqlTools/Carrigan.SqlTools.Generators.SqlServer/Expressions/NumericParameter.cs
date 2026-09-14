@@ -1,4 +1,4 @@
-using Carrigan.Core.Attributes;
+﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
@@ -26,7 +26,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// <typeparam name="T">
 /// The numeric type of the parameter value, constrained to types implementing <see cref="INumber{T}"/>.
 /// </typeparam>
-[Obsolete("Numeric Parameters are no longer supported, use regular parameters instead.")]
+[Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
 public class NumericParameter<modelT, T> : NumericParameter<T>
     where modelT : class
     where T : INumber<T>

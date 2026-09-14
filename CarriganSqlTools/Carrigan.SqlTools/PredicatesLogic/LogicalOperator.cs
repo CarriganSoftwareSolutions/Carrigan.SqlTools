@@ -1,9 +1,7 @@
-﻿using Carrigan.Core.Attributes;
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
-using System.Numerics;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 

@@ -1,4 +1,4 @@
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// <remarks>
 /// Note: the term numeric is being used more generally to describe types that numeric in nature, not a specific numeric type.
 /// </remarks>
-[Obsolete("No longer Supported, use regular column instead")]
+[Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
 public class NumericColumn<modelT> : NumericColumnBase<modelT>
     where modelT : class
 {

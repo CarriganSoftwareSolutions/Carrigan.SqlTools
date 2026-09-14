@@ -1,6 +1,4 @@
-﻿using Carrigan.Core.Attributes;
-
-namespace Carrigan.SqlTools.Expressions;
+﻿namespace Carrigan.SqlTools.Expressions;
 
 
 /// <summary>
@@ -22,14 +20,14 @@ namespace Carrigan.SqlTools.Expressions;
 ///         )
 ///     )
 /// };
-/// 
+///
 /// SqlQuery query = gradesGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --SqlServer
 /// SELECT ([Grades].[CreditHours] - @Parameter_1) FROM [Grades]
-/// 
+///
 /// --PostgreSql
 /// SELECT ("Grades"."CreditHours" - $1) FROM "Grades"
 /// ]]></code>
@@ -40,7 +38,7 @@ public class Minus : Subtract
     /// Initializes a new instance of the <see cref="Minus"/> class.
     /// </summary>
     /// <param name="sqlExpressions">
-    /// One or more SQL expressions to treat as numeric expressions and subtract using <c>-</c>. No numeric-type validation is performed.
+    /// One or more SQL expressions to combine using <c>-</c>. Operand type compatibility is delegated to the SQL database server.
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="sqlExpressions"/> is <c>null</c>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="sqlExpressions"/> contains no elements.</exception>

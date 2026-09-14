@@ -6,7 +6,7 @@ public class ArithmeticExpressionTests
 {
     private sealed class TestArithmeticExpression : ArithmeticExpression
     {
-        public TestArithmeticExpression(string operation, IEnumerable<SqlExpression> numericExpressions) : base(operation, numericExpressions)
+        public TestArithmeticExpression(string operation, IEnumerable<SqlExpression> sqlExpressions) : base(operation, sqlExpressions)
         {
         }
     }

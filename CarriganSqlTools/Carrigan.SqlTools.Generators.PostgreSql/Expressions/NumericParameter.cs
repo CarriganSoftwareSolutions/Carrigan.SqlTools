@@ -1,4 +1,4 @@
-using Carrigan.Core.Attributes;
+﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
@@ -26,7 +26,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// <typeparam name="T">
 /// The numeric type of the parameter value, constrained to types implementing <see cref="INumber{T}"/>.
 /// </typeparam>
-[Obsolete("No longer supported, use the non numeric versions instead.")]
+[Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
 public class NumericParameter<modelT, T> : NumericParameter<T>
     where modelT : class
     where T : INumber<T>
@@ -109,7 +109,7 @@ public class NumericParameter<modelT, T> : NumericParameter<T>
     /// <param name="parameter">
     /// The <see cref="Parameter"/> instance to convert.
     /// </param>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
     public static implicit operator NumericParameter<modelT, T>(Parameter parameter) =>
         new (parameter);
 
@@ -119,7 +119,7 @@ public class NumericParameter<modelT, T> : NumericParameter<T>
     /// <param name="parameter">
     /// The <see cref="Parameter{modelT}"/> instance to convert.
     /// </param>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
     public static implicit operator NumericParameter<modelT, T>(Parameter<modelT> parameter) =>
         new (parameter);
 

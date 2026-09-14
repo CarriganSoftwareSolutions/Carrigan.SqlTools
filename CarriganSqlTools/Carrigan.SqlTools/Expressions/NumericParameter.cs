@@ -1,4 +1,4 @@
-using Carrigan.Core.Attributes;
+﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
@@ -15,7 +15,7 @@ using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
 
-[Obsolete("No longer Supported, use regular column instead")]
+[Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
 public class NumericParameter<T> : NumericParameter
     where T : INumber<T>
 {
@@ -103,6 +103,7 @@ public class NumericParameter<T> : NumericParameter
         new(parameter.Value, parameter.Name, parameter.FieldProperties);
 }
 
+[Obsolete("Numeric parameters are obsolete. Use Parameter instead.")]
 public class NumericParameter : NumericExpression, IParameter
 {
     /// <summary>
@@ -123,7 +124,7 @@ public class NumericParameter : NumericExpression, IParameter
 
 
     /// <summary>
-    /// Initializes a new instance of <see cref="NumericParameter"/> from an existing <see cref="Parameter"/> instance. 
+    /// Initializes a new instance of <see cref="NumericParameter"/> from an existing <see cref="Parameter"/> instance.
     /// </summary>
     /// <param name="parameter">
     /// The existing <see cref="Parameter"/> instance from which to create the new <see cref="NumericParameter"/>.
@@ -144,7 +145,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="fieldProperties">
     /// Optional field properties that can be used to validate the parameter value before SQL generation and/or to inform SQL type inference.
     /// </param>
-    
+
     internal NumericParameter(object? value, FieldProperties? fieldProperties = null) : this(value, new ParameterTag("Parameter"), fieldProperties)
     {
     }
@@ -164,7 +165,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value and field properties.
     /// </returns>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
     public static NumericParameter<T> New<T>(T? value, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new(value, fieldProperties);
 
@@ -211,7 +212,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
     public static NumericParameter<T> New<T>(T? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new (value, parameterTag, fieldProperties);
 
@@ -234,7 +235,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
     [ExternalOnly]
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
     public static NumericParameter<T> New<T>(T? value, string parameterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new(value, new ParameterTag(parameterTag), fieldProperties);
 

@@ -1,4 +1,4 @@
-using Carrigan.Core.Attributes;
+﻿using Carrigan.Core.Attributes;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
@@ -20,7 +20,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// {
 ///     Where = equalName
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
@@ -71,7 +71,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
 #pragma warning disable CS0618 // Type or member is obsolete
     public static implicit operator NumericColumn<T>(Column<T> column) =>
         new(column);
@@ -83,7 +83,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
 #pragma warning disable CS0618 // Type or member is obsolete
     public static implicit operator NumericColumnBase<T>(Column<T> column) =>
         new NumericColumn<T>(column);
@@ -95,9 +95,11 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="column">
     /// The <see cref="Column{T}"/> instance to convert.
     /// </param>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
+#pragma warning disable CS0618 // Type or member is obsolete
     public static implicit operator NumericExpression(Column<T> column) =>
         new NumericColumn<T>(column);
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// Implicitly converts a <see cref="Column{T}"/> to a <see cref="BooleanColumn{T}"/>.
@@ -135,7 +137,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// <param name="numericColumnBase">
     /// The <see cref="NumericColumn{T}"/> instance to convert.
     /// </param>
-    [Obsolete("No longer Supported, use regular column instead")]
+    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
 #pragma warning disable CS0618 // Type or member is obsolete
     public static implicit operator Column<T>(NumericColumnBase<T> numericColumnBase) =>
         new(numericColumnBase.PropertyName);

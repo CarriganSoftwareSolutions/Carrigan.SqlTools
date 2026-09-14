@@ -24,12 +24,12 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
 /// ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
 /// Or or = new(equalName, equalEmail, equalPhone);
-/// 
+///
 /// SelectBuilder<Customer> selectBuilder = new()
 /// {
 ///     Where = or
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 ///
@@ -37,12 +37,12 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 ///
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT "Customer".* 
-/// FROM "Customer" 
-/// WHERE (("Customer"."Name" = $1) 
-///    OR ("Customer"."Email" = $2) 
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// WHERE (("Customer"."Name" = $1)
+///    OR ("Customer"."Email" = $2)
 ///    OR ("Customer"."Phone" = $3))
-/// 
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
@@ -61,16 +61,16 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// {
 ///     Where = or
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT "Customer".* 
+/// SELECT "Customer".*
 /// FROM "Customer"
 /// WHERE ("Customer"."Name" = $1)
-/// 
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]
@@ -121,6 +121,7 @@ public class Or : LogicalOperator
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="sqlExpression"/> contains disallowed <c>null</c> values.
     /// </exception>
+    [TypeSafetyLoss]
     public Or(params IEnumerable<SqlExpression> sqlExpression) : base("OR", sqlExpression)
     {
     }

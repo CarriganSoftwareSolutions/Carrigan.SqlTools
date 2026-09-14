@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -19,7 +19,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// {
 ///     Where = equalName
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
@@ -29,7 +29,6 @@ namespace Carrigan.SqlTools.Expressions;
 /// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
-//TODO: unit tests
 public class Parameter<modelT> : Parameter where modelT : class
 {
     /// <summary>
@@ -75,7 +74,8 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// <remarks>
     /// Only use for implicit operator.
     /// </remarks>
-    internal Parameter(NumericParameter numericParameter) : base (numericParameter.Value, numericParameter.Name, numericParameter.FieldProperties) 
+    [Obsolete]
+    internal Parameter(NumericParameter numericParameter) : base (numericParameter.Value, numericParameter.Name, numericParameter.FieldProperties)
     { }
 
     /// <summary>
