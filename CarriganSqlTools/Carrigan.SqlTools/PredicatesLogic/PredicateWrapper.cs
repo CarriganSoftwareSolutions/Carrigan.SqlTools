@@ -20,12 +20,9 @@ internal sealed class PredicateWrapper : Predicates
     /// Initializes a new instance of the <see cref="PredicateWrapper"/> class.
     /// </summary>
     /// <param name="sqlExpression">The expression to treat as a predicate without predicate-type validation.</param>
-    [TypeSafetyLoss]
     internal PredicateWrapper(SqlExpression sqlExpression)
-        : base(sqlExpression is not null ? [sqlExpression] : throw new ArgumentNullException(nameof(sqlExpression)))
-    {
+        : base(sqlExpression is not null ? [sqlExpression] : throw new ArgumentNullException(nameof(sqlExpression))) =>
         _sqlExpression = sqlExpression;
-    }
 
     /// <summary>
     /// Uses the wrapped expression as the semantic identity of this transparent adapter.

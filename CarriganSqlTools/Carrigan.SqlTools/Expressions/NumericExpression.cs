@@ -27,8 +27,7 @@ public abstract class NumericExpression : SqlExpression
     /// <param name="parameter">
     /// The <see cref="Parameter"/> to convert to a <see cref="NumericExpression"/>.
     /// </param>
-    //TODO: unite tests
-    [TypeSafetyLoss]
+    [Obsolete("No longer Supported, use regular column instead")]
     public static implicit operator NumericExpression(Parameter parameter) =>
         new NumericParameter(parameter);
 }

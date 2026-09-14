@@ -14,6 +14,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// <remarks>
 /// Note: the term numeric is being used more generally to describe types that numeric in nature, not a specific numeric type.
 /// </remarks>
+[Obsolete("No longer Supported, use regular column instead")]
 public class NumericColumn<modelT> : NumericColumnBase<modelT>
     where modelT : class
 {

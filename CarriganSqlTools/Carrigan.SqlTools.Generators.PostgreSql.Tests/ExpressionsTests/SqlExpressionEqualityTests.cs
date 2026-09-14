@@ -81,14 +81,6 @@ public class SqlExpressionEqualityTests
             () => new Column<Grades>(nameof(Grades.AcademicYear)));
 
     [Fact]
-    public void NumericColumn_EqualityContract() =>
-        AssertEqualityContract(
-            () => new NumericColumn<Grades>(nameof(Grades.CreditHours)),
-            () => new NumericColumn<Grades>(nameof(Grades.CreditHours)),
-            () => new NumericColumn<Grades>(nameof(Grades.CreditHours)),
-            () => new NumericColumn<Grades>(nameof(Grades.AcademicYear)));
-
-    [Fact]
     public void BooleanColumn_EqualityContract() =>
         AssertEqualityContract(
             () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
@@ -113,17 +105,12 @@ public class SqlExpressionEqualityTests
     public void EquivalentColumnRepresentations_AreEqual()
     {
         Column<Grades> column = new(nameof(Grades.CreditHours));
-        NumericColumn<Grades> numericColumn = new(nameof(Grades.CreditHours));
         ColumnTagExpression columnTagExpression = new(column.ColumnInfo.ColumnTag);
 
         SqlExpression columnExpression = column;
-        SqlExpression numericExpression = numericColumn;
         SqlExpression tagExpression = columnTagExpression;
 
-        Assert.True(columnExpression == numericExpression);
-        Assert.True(numericExpression == tagExpression);
         Assert.True(columnExpression == tagExpression);
-        Assert.Equal(columnExpression.GetHashCode(), numericExpression.GetHashCode());
         Assert.Equal(columnExpression.GetHashCode(), tagExpression.GetHashCode());
     }
 
@@ -149,14 +136,6 @@ public class SqlExpressionEqualityTests
             () => new Parameter(1, "OtherValue"));
 
     [Fact]
-    public void NumericParameter_EqualityContract_UsesParameterName() =>
-        AssertEqualityContract(
-            () => new NumericParameter<int>(1, "Value"),
-            () => new NumericParameter<int>(999, "Value"),
-            () => new NumericParameter<int>(0, "Value"),
-            () => new NumericParameter<int>(1, "OtherValue"));
-
-    [Fact]
     public void BooleanParameter_EqualityContract_UsesParameterName() =>
         AssertEqualityContract(
             () => new BooleanParameter(true, new ParameterTag("Value")),
@@ -168,13 +147,9 @@ public class SqlExpressionEqualityTests
     public void EquivalentParameterRepresentations_AreEqual()
     {
         SqlExpression parameter = new Parameter(1, "Value");
-        SqlExpression numericParameter = new NumericParameter<int>(999, "Value");
         SqlExpression booleanParameter = new BooleanParameter(true, new ParameterTag("Value"));
 
-        Assert.True(parameter == numericParameter);
-        Assert.True(numericParameter == booleanParameter);
         Assert.True(parameter == booleanParameter);
-        Assert.Equal(parameter.GetHashCode(), numericParameter.GetHashCode());
         Assert.Equal(parameter.GetHashCode(), booleanParameter.GetHashCode());
     }
 
@@ -189,93 +164,6 @@ public class SqlExpressionEqualityTests
     }
 
     [Fact]
-    public void Add_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Add(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right")),
-            () => new Add(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right")),
-            () => new Add(new NumericParameter<int>(100, "Left"), new NumericParameter<int>(200, "Right")),
-            () => new Add(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Different")));
-
-    [Fact]
-    public void Subtract_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Subtract(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right")),
-            () => new Subtract(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right")),
-            () => new Subtract(new NumericParameter<int>(100, "Left"), new NumericParameter<int>(200, "Right")),
-            () => new Subtract(new NumericParameter<int>(1, "Right"), new NumericParameter<int>(2, "Left")));
-
-    [Fact]
-    public void Minus_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Minus(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right")),
-            () => new Minus(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right")),
-            () => new Minus(new NumericParameter<int>(100, "Left"), new NumericParameter<int>(200, "Right")),
-            () => new Minus(new NumericParameter<int>(1, "Right"), new NumericParameter<int>(2, "Left")));
-
-    [Fact]
-    public void Multiply_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Multiply(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right")),
-            () => new Multiply(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right")),
-            () => new Multiply(new NumericParameter<int>(100, "Left"), new NumericParameter<int>(200, "Right")),
-            () => new Multiply(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Different")));
-
-    [Fact]
-    public void Divide_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Divide(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right")),
-            () => new Divide(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right")),
-            () => new Divide(new NumericParameter<int>(100, "Left"), new NumericParameter<int>(200, "Right")),
-            () => new Divide(new NumericParameter<int>(1, "Right"), new NumericParameter<int>(2, "Left")));
-
-    [Fact]
-    public void Modulo_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Modulo(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right")),
-            () => new Modulo(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right")),
-            () => new Modulo(new NumericParameter<int>(100, "Left"), new NumericParameter<int>(200, "Right")),
-            () => new Modulo(new NumericParameter<int>(1, "Right"), new NumericParameter<int>(2, "Left")));
-
-    [Fact]
-    public void Mod_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Mod(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right")),
-            () => new Mod(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right")),
-            () => new Mod(new NumericParameter<int>(100, "Left"), new NumericParameter<int>(200, "Right")),
-            () => new Mod(new NumericParameter<int>(1, "Right"), new NumericParameter<int>(2, "Left")));
-
-    [Fact]
-    public void ArithmeticAliases_AreEqual()
-    {
-        SqlExpression subtract = new Subtract(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right"));
-        SqlExpression minus = new Minus(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right"));
-        SqlExpression modulo = new Modulo(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right"));
-        SqlExpression mod = new Mod(new NumericParameter<int>(10, "Left"), new NumericParameter<int>(20, "Right"));
-
-        Assert.True(subtract == minus);
-        Assert.Equal(subtract.GetHashCode(), minus.GetHashCode());
-        Assert.True(modulo == mod);
-        Assert.Equal(modulo.GetHashCode(), mod.GetHashCode());
-    }
-
-    [Fact]
-    public void DifferentArithmeticOperators_AreNotEqual()
-    {
-        SqlExpression add = new Add(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right"));
-        SqlExpression multiply = new Multiply(new NumericParameter<int>(1, "Left"), new NumericParameter<int>(2, "Right"));
-
-        Assert.True(add != multiply);
-    }
-
-    [Fact]
-    public void Negate_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Negate(new NumericParameter<int>(1, "Value")),
-            () => new Negate(new NumericParameter<int>(2, "Value")),
-            () => new Negate(new NumericParameter<int>(3, "Value")),
-            () => new Negate(new NumericParameter<int>(1, "OtherValue")));
-
-    [Fact]
     public void Cast_EqualityContract() =>
         AssertEqualityContract(
             () => new Cast(new Parameter(1, "Value"), CreateFieldProperties("INT")),
@@ -283,53 +171,17 @@ public class SqlExpressionEqualityTests
             () => new Cast(new Parameter(3, "Value"), CreateFieldProperties("INT")),
             () => new Cast(new Parameter(1, "Value"), CreateFieldProperties("BIGINT")));
 
-    [Fact]
-    public void Avg_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Avg(new NumericParameter<int>(1, "Value")),
-            () => new Avg(new NumericParameter<int>(2, "Value")),
-            () => new Avg(new NumericParameter<int>(3, "Value")),
-            () => new Avg(new NumericParameter<int>(1, "OtherValue")));
-
-    [Fact]
-    public void Average_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Average(new NumericParameter<int>(1, "Value")),
-            () => new Average(new NumericParameter<int>(2, "Value")),
-            () => new Average(new NumericParameter<int>(3, "Value")),
-            () => new Average(new NumericParameter<int>(1, "OtherValue")));
-
-    [Fact]
-    public void AverageAlias_EqualsAvg()
-    {
-        SqlExpression avg = new Avg(new NumericParameter<int>(1, "Value"));
-        SqlExpression average = new Average(new NumericParameter<int>(2, "Value"));
-
-        Assert.True(avg == average);
-        Assert.Equal(avg.GetHashCode(), average.GetHashCode());
-    }
-
-    [Fact]
-    public void Count_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Count(new NumericParameter<int>(1, "Value")),
-            () => new Count(new NumericParameter<int>(2, "Value")),
-            () => new Count(new NumericParameter<int>(3, "Value")),
-            () => new Count(new NumericParameter<int>(1, "OtherValue")));
 
     [Fact]
     public void CountStar_EqualityContract()
     {
         Count first = new();
         Count second = new();
-        Count different = new(new NumericParameter<int>(1, "Value"));
         SqlExpression firstExpression = first;
         SqlExpression secondExpression = second;
-        SqlExpression differentExpression = different;
 
         Assert.True(first.Equals(second));
         Assert.True(firstExpression == secondExpression);
-        Assert.True(firstExpression != differentExpression);
         Assert.Equal(first.GetHashCode(), second.GetHashCode());
 
         Dictionary<Count, string> dictionary = new()
@@ -338,40 +190,6 @@ public class SqlExpressionEqualityTests
         };
 
         Assert.True(dictionary.ContainsKey(second));
-        Assert.False(dictionary.ContainsKey(different));
-    }
-
-    [Fact]
-    public void Sum_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Sum(new NumericParameter<int>(1, "Value")),
-            () => new Sum(new NumericParameter<int>(2, "Value")),
-            () => new Sum(new NumericParameter<int>(3, "Value")),
-            () => new Sum(new NumericParameter<int>(1, "OtherValue")));
-
-    [Fact]
-    public void Min_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Min(new NumericParameter<int>(1, "Value")),
-            () => new Min(new NumericParameter<int>(2, "Value")),
-            () => new Min(new NumericParameter<int>(3, "Value")),
-            () => new Min(new NumericParameter<int>(1, "OtherValue")));
-
-    [Fact]
-    public void Max_EqualityContract() =>
-        AssertEqualityContract(
-            () => new Max(new NumericParameter<int>(1, "Value")),
-            () => new Max(new NumericParameter<int>(2, "Value")),
-            () => new Max(new NumericParameter<int>(3, "Value")),
-            () => new Max(new NumericParameter<int>(1, "OtherValue")));
-
-    [Fact]
-    public void DifferentAggregateFunctions_AreNotEqual()
-    {
-        SqlExpression sum = new Sum(new NumericParameter<int>(1, "Value"));
-        SqlExpression max = new Max(new NumericParameter<int>(2, "Value"));
-
-        Assert.True(sum != max);
     }
 
     [Fact]

@@ -21,7 +21,7 @@ public class NegateTests
                 (
                     new Negate
                     (
-                        new NumericColumn<Grades>(nameof(Grades.CreditHours))
+                        new Column<Grades>(nameof(Grades.CreditHours))
                     ),
                     "ArthemicResult"
                 )
@@ -41,9 +41,5 @@ public class NegateTests
 
         Assert.Equal(expectedText, actualText);
     }
-
-    [Fact]
-    public void TestNumericNegate_NonNumeric_Exception() =>
-        Assert.Throws<NonNumericValueException>(() => new Negate(new Column<Grades>(nameof(Grades.CourseCode))));
 
 }

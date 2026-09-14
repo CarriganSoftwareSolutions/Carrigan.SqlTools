@@ -121,7 +121,6 @@ public class Or : LogicalOperator
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="sqlExpression"/> contains disallowed <c>null</c> values.
     /// </exception>
-    [TypeSafetyLoss]
     public Or(params IEnumerable<SqlExpression> sqlExpression) : base("OR", sqlExpression)
     {
     }

@@ -1,6 +1,4 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
-using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests.ColumnBaseTests;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests.BooleanColumnBaseTests;

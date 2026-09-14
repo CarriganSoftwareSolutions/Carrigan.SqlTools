@@ -70,7 +70,6 @@ public class Not : Predicates
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
-    [TypeSafetyLoss]
     public Not(SqlExpression sqlExpression) : base([sqlExpression ?? throw new ArgumentNullException(nameof(sqlExpression))]) =>
         _aPredicate = sqlExpression;
 

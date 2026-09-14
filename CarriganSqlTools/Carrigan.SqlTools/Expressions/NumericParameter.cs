@@ -15,6 +15,7 @@ using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
 
+[Obsolete("No longer Supported, use regular column instead")]
 public class NumericParameter<T> : NumericParameter
     where T : INumber<T>
 {
@@ -143,6 +144,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="fieldProperties">
     /// Optional field properties that can be used to validate the parameter value before SQL generation and/or to inform SQL type inference.
     /// </param>
+    
     internal NumericParameter(object? value, FieldProperties? fieldProperties = null) : this(value, new ParameterTag("Parameter"), fieldProperties)
     {
     }
@@ -162,6 +164,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value and field properties.
     /// </returns>
+    [Obsolete("No longer Supported, use regular column instead")]
     public static NumericParameter<T> New<T>(T? value, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new(value, fieldProperties);
 
@@ -208,6 +211,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// <returns>
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
+    [Obsolete("No longer Supported, use regular column instead")]
     public static NumericParameter<T> New<T>(T? value, ParameterTag parameterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new (value, parameterTag, fieldProperties);
 
@@ -230,6 +234,7 @@ public class NumericParameter : NumericExpression, IParameter
     /// A new instance of <see cref="NumericParameter{T}"/> containing the specified value, parameter tag, and optional field properties.
     /// </returns>
     [ExternalOnly]
+    [Obsolete("No longer Supported, use regular column instead")]
     public static NumericParameter<T> New<T>(T? value, string parameterTag, FieldProperties? fieldProperties = null) where T : INumber<T> =>
         new(value, new ParameterTag(parameterTag), fieldProperties);
 
@@ -284,8 +289,6 @@ public class NumericParameter : NumericExpression, IParameter
     /// <param name="parameter">
     /// The <see cref="Parameter"/> instance to convert.
     /// </param>
-    //TODO: unite tests
-    [TypeSafetyLoss]
     public static implicit operator NumericParameter(Parameter parameter) =>
         new(parameter);
 

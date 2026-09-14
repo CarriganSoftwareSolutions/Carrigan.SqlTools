@@ -96,7 +96,6 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    [TypeSafetyLoss]
     public LogicalOperator(string op, params IEnumerable<SqlExpression> sqlExpressions) : base(ValidateSqlExpression(sqlExpressions))
     {
         ValidateOperator(op);

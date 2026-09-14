@@ -1,7 +1,4 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
-using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests.BooleanColumnBaseTests;
-using Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests.ColumnBaseTests;
 using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests.BooleanColumnBaseTests;

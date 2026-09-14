@@ -26,6 +26,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// <typeparam name="T">
 /// The numeric type of the parameter value, constrained to types implementing <see cref="INumber{T}"/>.
 /// </typeparam>
+[Obsolete("Numeric Parameters are no longer supported, use regular parameters instead.")]
 public class NumericParameter<modelT, T> : NumericParameter<T>
     where modelT : class
     where T : INumber<T>

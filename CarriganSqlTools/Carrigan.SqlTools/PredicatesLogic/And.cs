@@ -121,7 +121,6 @@ public class And : LogicalOperator
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
     /// </exception>
-    [TypeSafetyLoss]
     public And(params IEnumerable<SqlExpression> predicates) : base("AND", predicates)
     {
     }

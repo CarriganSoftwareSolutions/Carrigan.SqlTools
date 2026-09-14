@@ -34,47 +34,8 @@ namespace Carrigan.SqlTools.Expressions;
 /// SELECT (-"Grades"."CreditHours") FROM "Grades"
 /// ]]></code>
 /// </example>
-/// <example>
-/// <code language="csharp"><![CDATA[
-/// SelectBuilder<Grades> selectBuilder = new()
-/// {
-///     Selects = new SelectTags
-///     (
-///         new SelectTag
-///         (
-///             new Negate
-///             (
-///                 new NumericColumn<Grades>(nameof(Grades.CreditHours))
-///             )
-///         )
-///     )
-/// };
-/// 
-/// SqlQuery query = gradesGenerator.Select(selectBuilder);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// --SqlServer
-/// SELECT (-[Grades].[CreditHours]) FROM [Grades]
-/// 
-/// --PostgreSql
-/// SELECT (-"Grades"."CreditHours") FROM "Grades"
-/// ]]></code>
-/// </example>
 public class Negate : NumericExpression
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Negate"/> class for the supplied numeric expression.
-    /// </summary>
-    /// <param name="numericExpression">Represents the child numeric expression.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="numericExpression"/> is <c>null</c>.
-    /// </exception>
-    public Negate(NumericExpression numericExpression) 
-        : base(numericExpression is not null ? [numericExpression] : throw new ArgumentNullException(nameof(numericExpression)))
-    {
-    }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Negate"/> class for the supplied numeric expression.
     /// </summary>
@@ -82,7 +43,6 @@ public class Negate : NumericExpression
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
-    [TypeSafetyLoss]
     public Negate(SqlExpression sqlExpression) : base(sqlExpression is not null ? [sqlExpression] : throw new ArgumentNullException(nameof(sqlExpression)))
     {
     }

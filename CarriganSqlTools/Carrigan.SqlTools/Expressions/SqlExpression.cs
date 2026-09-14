@@ -279,19 +279,9 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     }
 
     /// <summary>
-    /// Wraps this expression in a <see cref="NumericExpression"/> adapter without validating that the expression is numeric.
-    /// </summary>
-    /// <returns>A transparent <see cref="NumericExpression"/> adapter over this expression.</returns>
-    [TypeSafetyLoss]
-    public NumericExpression AsNumericExpression() =>
-        new NumericExpressionWrapper(this);
-
-
-    /// <summary>
     /// Wraps this expression in a <see cref="Predicates"/> adapter without validating that the expression represents a predicate.
     /// </summary>
     /// <returns>A transparent <see cref="Predicates"/> adapter over this expression.</returns>
-    [TypeSafetyLoss]
     public Predicates AsPredicate() =>
         new PredicateWrapper(this);
 }

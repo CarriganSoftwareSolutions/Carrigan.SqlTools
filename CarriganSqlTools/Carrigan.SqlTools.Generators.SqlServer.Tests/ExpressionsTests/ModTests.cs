@@ -50,9 +50,9 @@ public class ModTests
                 (
                     new Mod
                     (
-                        new NumericColumn<Grades>(nameof(Grades.CreditHours)),
-                        new NumericParameter<int>(1),
-                        new NumericParameter<int>(2)
+                        new Column<Grades>(nameof(Grades.CreditHours)),
+                        new Parameter(1),
+                        new  Parameter(2)
                     ),
                     "ArthemicResult"
                 )
