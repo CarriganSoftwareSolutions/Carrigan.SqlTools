@@ -1,9 +1,9 @@
 ﻿
 
-using Carrigan.Core.Attributes;
 
 namespace Carrigan.SqlTools.Expressions;
 
+[Obsolete("NumericExpression is obsolete. Use SqlExpression instead.")]
 public abstract class NumericExpression : SqlExpression
 {
     /// <summary>
@@ -27,8 +27,7 @@ public abstract class NumericExpression : SqlExpression
     /// <param name="parameter">
     /// The <see cref="Parameter"/> to convert to a <see cref="NumericExpression"/>.
     /// </param>
-    //TODO: unite tests
-    [TypeSafetyLoss]
+    [Obsolete("NumericExpression is obsolete. Use SqlExpression and Parameter directly instead.")]
     public static implicit operator NumericExpression(Parameter parameter) =>
         new NumericParameter(parameter);
 }

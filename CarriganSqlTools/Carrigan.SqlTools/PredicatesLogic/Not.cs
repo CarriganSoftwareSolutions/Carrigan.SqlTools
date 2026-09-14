@@ -23,16 +23,16 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// {
 ///     Where = not
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT "Customer".* 
+/// SELECT "Customer".*
 /// FROM "Customer"
 /// WHERE (NOT ("Customer"."Name" = $1))
-/// 
+///
 /// --SqlServer
 /// SELECT [Customer].*
 /// FROM [Customer]

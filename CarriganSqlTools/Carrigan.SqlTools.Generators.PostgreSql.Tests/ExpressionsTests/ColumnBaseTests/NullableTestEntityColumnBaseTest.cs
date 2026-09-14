@@ -12,16 +12,6 @@ public class NullableTestEntityColumnBaseTest : PostgreSqlColumnBaseTest<Nullabl
     protected override string TableName =>
         "NullableTestEntity";
 
-    protected override IEnumerable<string> NumericProperties =>
-        [
-            nameof(NullableTestEntity.IntValue),
-            nameof(NullableTestEntity.LongValue),
-            nameof(NullableTestEntity.ShortValue),
-            nameof(NullableTestEntity.ByteValue),
-            nameof(NullableTestEntity.DecimalValue),
-            nameof(NullableTestEntity.FloatValue),
-            nameof(NullableTestEntity.DoubleValue)
-        ];
 
     protected override IEnumerable<string> BooleanProperties =>
         [nameof(NullableTestEntity.BoolValue)];

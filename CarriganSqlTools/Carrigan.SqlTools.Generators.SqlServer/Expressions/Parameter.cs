@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Attributes;
+﻿using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -19,7 +19,7 @@ namespace Carrigan.SqlTools.Expressions;
 /// {
 ///     Where = equalName
 /// };
-/// 
+///
 /// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
@@ -75,7 +75,8 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// <remarks>
     /// Only use for implicit operator.
     /// </remarks>
-    internal Parameter(NumericParameter numericParameter) : base (numericParameter.Value, numericParameter.Name, numericParameter.FieldProperties) 
+    [Obsolete]
+    internal Parameter(NumericParameter numericParameter) : base (numericParameter.Value, numericParameter.Name, numericParameter.FieldProperties)
     { }
 
     /// <summary>
@@ -93,8 +94,11 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// <param name="parameter">
     /// The <see cref="Parameter{modelT}"/> instance to convert.
     /// </param>
+    [Obsolete("Numeric parameters are obsolete. Use regular parameters instead.")]
+#pragma warning disable CS0618 // Type or member is obsolete
     public static implicit operator NumericParameter(Parameter<modelT> parameter) =>
         new(parameter);
+#pragma warning restore CS0618 // Type or member is obsolete
 
     /// <summary>
     /// Defines an implicit conversion from a <see cref="Parameter{modelT}"/> to a <see cref="NumericExpression"/>.
@@ -102,6 +106,9 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// <param name="parameter">
     /// The <see cref="Parameter{modelT}"/> instance to convert.
     /// </param>
+    [Obsolete("NumericExpression is obsolete. Use SqlExpression and regular parameters instead.")]
+#pragma warning disable CS0618 // Type or member is obsolete
     public static implicit operator NumericExpression(Parameter<modelT> parameter) =>
         new NumericParameter(parameter);
+#pragma warning restore CS0618 // Type or member is obsolete
 }

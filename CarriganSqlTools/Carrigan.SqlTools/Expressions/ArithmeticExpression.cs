@@ -1,15 +1,14 @@
-﻿using Carrigan.Core.Attributes;
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
-using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Base class for SQL arithmetic expressions that combine one or more numeric expressions with an arithmetic operator.
+/// Base class for SQL expressions that combine one or more expressions with an arithmetic operator.
+/// Operand type compatibility is intentionally delegated to the SQL database server.
 /// </summary>
-public abstract class ArithmeticExpression : NumericExpression
+public abstract class ArithmeticExpression : SqlExpression
 {
     /// <summary>
     /// The SQL arithmetic operator text placed between rendered child expressions.
@@ -17,54 +16,22 @@ public abstract class ArithmeticExpression : NumericExpression
     private readonly string _operator;
 
     /// <summary>
-    /// Base constructor for all arithmetic expression classes.
-    /// </summary>
-    /// <param name="operation">The operator for the arithmetic operation.</param>
-    /// <param name="numericExpressions">The child numeric expressions.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="numericExpressions"/> or <paramref name="operation"/> is <c>null</c>.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="operation"/> is empty or whitespace, or when <paramref name="numericExpressions"/> contains no elements.
-    /// </exception>
-    /// <exception cref="NullReferenceException">
-    /// Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.
-    /// </exception>
-    protected ArithmeticExpression(string operation, IEnumerable<NumericExpression> numericExpressions)
-        : this(ValidateNumericExpressions(numericExpressions), ValidateOperation(operation))
-    {
-    }
-
-    /// <summary>
-    /// Base constructor for arithmetic expressions that intentionally treat arbitrary SQL expressions as numeric expressions.
+    /// Base constructor for arithmetic expressions.
     /// </summary>
     /// <param name="operation">The arithmetic operator.</param>
-    /// <param name="sqlExpressions">The expressions to treat as numeric without numeric-type validation.</param>
-    [TypeSafetyLoss]
+    /// <param name="sqlExpressions">The expressions to combine. No SQL data-type validation is performed.</param>
     protected ArithmeticExpression(string operation, IEnumerable<SqlExpression> sqlExpressions)
-        : this(ValidateSqlExpressions(sqlExpressions), ValidateOperation(operation))
-    {
-    }
-
-    private ArithmeticExpression(IEnumerable<SqlExpression> numericExpressions, string operation)
-        : base(numericExpressions) =>
-        _operator = operation;
+        : base(ValidateSqlExpressions(sqlExpressions)) =>
+        _operator = ValidateOperation(operation);
 
     private static string ValidateOperation(string operation)
     {
         ArgumentNullException.ThrowIfNull(operation, nameof(operation));
 
         if (operation.IsNullOrWhiteSpace())
-            throw new ArgumentException("Numeric operator text cannot be empty or whitespace.", nameof(operation));
+            throw new ArgumentException("Arithmetic operator text cannot be empty or whitespace.", nameof(operation));
 
         return operation;
-    }
-
-    private static IEnumerable<NumericExpression> ValidateNumericExpressions(IEnumerable<NumericExpression> numericExpressions)
-    {
-        ValidateSqlExpressions(numericExpressions);
-
-        return numericExpressions;
     }
 
     private static IEnumerable<SqlExpression> ValidateSqlExpressions(IEnumerable<SqlExpression> sqlExpressions)

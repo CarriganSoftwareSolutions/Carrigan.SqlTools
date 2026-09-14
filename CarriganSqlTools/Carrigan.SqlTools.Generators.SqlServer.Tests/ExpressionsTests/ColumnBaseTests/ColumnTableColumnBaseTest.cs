@@ -12,8 +12,6 @@ public class ColumnTableColumnBaseTest : SqlServerColumnBaseTest<ColumnTable>
     protected override string TableName =>
         "ColumnTable";
 
-    protected override IEnumerable<string> NumericProperties =>
-        [];
 
     protected override IEnumerable<string> BooleanProperties =>
         [];

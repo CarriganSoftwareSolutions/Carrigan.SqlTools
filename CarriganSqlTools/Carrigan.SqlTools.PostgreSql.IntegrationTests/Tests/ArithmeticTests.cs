@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Clients.PostgreSql;
+﻿using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.Models;
@@ -24,7 +24,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Add
             (
-                new NumericColumn<Book>(nameof(Book.Price)),
+                new Column<Book>(nameof(Book.Price)),
                 new Parameter(1.1),
                 new Parameter(2.2)
             )
@@ -55,7 +55,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Subtract
             (
-                new NumericColumn<Book>(nameof(Book.Price)),
+                new Column<Book>(nameof(Book.Price)),
                 new Parameter(1.1),
                 new Parameter(2.2)
             )
@@ -86,7 +86,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Minus
             (
-                new NumericColumn<Book>(nameof(Book.Price)),
+                new Column<Book>(nameof(Book.Price)),
                 new Parameter(1.1),
                 new Parameter(2.2)
             )
@@ -117,7 +117,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Multiply
             (
-                new NumericColumn<Book>(nameof(Book.Price)),
+                new Column<Book>(nameof(Book.Price)),
                 new Parameter(2.0),
                 new Parameter(3.0)
             )
@@ -148,7 +148,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Divide
             (
-                new NumericColumn<Book>(nameof(Book.Price)),
+                new Column<Book>(nameof(Book.Price)),
                 new Parameter(2.0),
                 new Parameter(3.0)
             )
@@ -179,7 +179,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Mod
             (
-                new NumericColumn<Book>(nameof(Book.Price)),
+                new Column<Book>(nameof(Book.Price)),
                 new Parameter(8),
                 new Parameter(5)
             )
@@ -210,7 +210,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Modulo
             (
-                new NumericColumn<Book>(nameof(Book.Price)),
+                new Column<Book>(nameof(Book.Price)),
                 new Parameter(8),
                 new Parameter(5)
             )
@@ -241,7 +241,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         (
             new Negate
             (
-                new NumericColumn<Book>(nameof(Book.Price))
+                new Column<Book>(nameof(Book.Price))
             )
         );
 
@@ -263,7 +263,7 @@ public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
         AssertPrices(records, expectedValues);
     }
 
-    private async Task<IEnumerable<BookIdAndPrice>> ExecuteAsync(NumericExpression expression)
+    private async Task<IEnumerable<BookIdAndPrice>> ExecuteAsync(SqlExpression expression)
     {
         SelectBuilder<Book> selectBuilder = new()
         {

@@ -1,9 +1,7 @@
-﻿using Carrigan.Core.Attributes;
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
-using System.Numerics;
 
 namespace Carrigan.SqlTools.PredicatesLogic;
 
@@ -96,7 +94,6 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    [TypeSafetyLoss]
     public LogicalOperator(string op, params IEnumerable<SqlExpression> sqlExpressions) : base(ValidateSqlExpression(sqlExpressions))
     {
         ValidateOperator(op);

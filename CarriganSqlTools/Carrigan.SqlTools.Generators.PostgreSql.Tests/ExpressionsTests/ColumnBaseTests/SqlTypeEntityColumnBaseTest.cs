@@ -12,16 +12,6 @@ public class SqlTypeEntityColumnBaseTest : PostgreSqlColumnBaseTest<SqlTypeEntit
     protected override string TableName =>
         "TestSqlTypes";
 
-    protected override IEnumerable<string> NumericProperties =>
-        [
-            nameof(SqlTypeEntity.IntValue),
-            nameof(SqlTypeEntity.LongValue),
-            nameof(SqlTypeEntity.ShortValue),
-            nameof(SqlTypeEntity.ByteValue),
-            nameof(SqlTypeEntity.DecimalValue),
-            nameof(SqlTypeEntity.FloatValue),
-            nameof(SqlTypeEntity.DoubleValue)
-        ];
 
     protected override IEnumerable<string> BooleanProperties =>
         [nameof(NullableTestEntity.BoolValue)];

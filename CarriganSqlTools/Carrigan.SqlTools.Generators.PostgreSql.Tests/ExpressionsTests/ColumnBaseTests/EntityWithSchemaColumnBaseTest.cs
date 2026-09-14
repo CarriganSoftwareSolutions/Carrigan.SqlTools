@@ -12,8 +12,6 @@ public class EntityWithSchemaColumnBaseTest : PostgreSqlColumnBaseTest<EntityWit
     protected override string TableName =>
         "EntityWithSchema";
 
-    protected override IEnumerable<string> NumericProperties =>
-        ["Id"];
 
     protected override IEnumerable<string> BooleanProperties =>
         [];

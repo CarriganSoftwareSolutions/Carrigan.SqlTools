@@ -12,8 +12,6 @@ public class EntityWithTableAttributeColumnBaseTest : PostgreSqlColumnBaseTest<E
     protected override string TableName =>
         "Test";
 
-    protected override IEnumerable<string> NumericProperties =>
-        [];
 
     protected override IEnumerable<string> BooleanProperties =>
         [];

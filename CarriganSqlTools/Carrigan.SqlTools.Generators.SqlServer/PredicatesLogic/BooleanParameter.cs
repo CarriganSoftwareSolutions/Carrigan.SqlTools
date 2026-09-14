@@ -103,8 +103,6 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// <param name="parameter">
     /// The <see cref="Parameter"/> instance to convert.
     /// </param>
-    //TODO: unite tests
-    [TypeSafetyLoss]
     public static implicit operator BooleanParameter<modelT>(Parameter parameter) =>
         new (parameter);
 
@@ -114,8 +112,6 @@ public class BooleanParameter<modelT> : BooleanParameter
     /// <param name="parameter">
     /// The <see cref="Parameter{modelT}"/> instance to convert.
     /// </param>
-    //TODO: unite tests
-    [TypeSafetyLoss]
     public static implicit operator BooleanParameter<modelT>(Parameter<modelT> parameter) =>
         new (parameter);
 

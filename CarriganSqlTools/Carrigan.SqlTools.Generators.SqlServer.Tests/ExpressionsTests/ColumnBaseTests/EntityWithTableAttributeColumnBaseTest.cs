@@ -12,8 +12,6 @@ public class EntityWithTableAttributeColumnBaseTest : SqlServerColumnBaseTest<En
     protected override string TableName =>
         "Test";
 
-    protected override IEnumerable<string> NumericProperties =>
-        [];
 
     protected override IEnumerable<string> BooleanProperties =>
         [];

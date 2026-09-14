@@ -12,8 +12,6 @@ public class ColumnIdentifierColumnBaseTest : PostgreSqlColumnBaseTest<ColumnIde
     protected override string TableName =>
         "ColumnIdentifiers";
 
-    protected override IEnumerable<string> NumericProperties =>
-        ["Id", "Property", "ColumnName", "IdentifierName", "IdentifierOverrideName"];
 
     protected override IEnumerable<string> BooleanProperties =>
         [];
@@ -22,10 +20,10 @@ public class ColumnIdentifierColumnBaseTest : PostgreSqlColumnBaseTest<ColumnIde
     new
     (
         [
-            NewKvp("Id"), 
-            NewKvp("Property"), 
-            NewKvp("ColumnName", "Column"), 
-            NewKvp("IdentifierName", "Identifier"), 
+            NewKvp("Id"),
+            NewKvp("Property"),
+            NewKvp("ColumnName", "Column"),
+            NewKvp("IdentifierName", "Identifier"),
             NewKvp("IdentifierOverrideName", "IdentifierOverride")
         ]
     );

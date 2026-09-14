@@ -1,6 +1,4 @@
-﻿using Carrigan.Core.Attributes;
-
-namespace Carrigan.SqlTools.Expressions;
+﻿namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents SQL multiplication using the <c>*</c> arithmetic operator.
@@ -21,42 +19,14 @@ namespace Carrigan.SqlTools.Expressions;
 ///         )
 ///     )
 /// };
-/// 
+///
 /// SqlQuery query = gradesGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --SqlServer
 /// SELECT ([Grades].[CreditHours] * @Parameter_1) FROM [Grades]
-/// 
-/// --PostgreSql
-/// SELECT ("Grades"."CreditHours" * $1) FROM "Grades"
-/// ]]></code>
-/// </example>
-/// <example>
-/// <code language="csharp"><![CDATA[
-/// SelectBuilder<Grades> selectBuilder = new()
-/// {
-///     Selects = new SelectTags
-///     (
-///         new SelectTag
-///         (
-///             new Multiply
-///             (
-///                 new NumericColumn<Grades>(nameof(Grades.CreditHours)),
-///                 new NumericParameter<int>(1)
-///             )
-///         )
-///     )
-/// };
-/// 
-/// SqlQuery query = gradesGenerator.Select(selectBuilder);
-/// ]]></code>
-/// <para>Resulting SQL:</para>
-/// <code><![CDATA[
-/// --SqlServer
-/// SELECT ([Grades].[CreditHours] * @Parameter_1) FROM [Grades]
-/// 
+///
 /// --PostgreSql
 /// SELECT ("Grades"."CreditHours" * $1) FROM "Grades"
 /// ]]></code>
@@ -67,39 +37,13 @@ public class Multiply : ArithmeticExpression
     /// Initializes a new instance of the <see cref="Multiply"/> class, representing
     /// the SQL <c>*</c> arithmetic operator.
     /// </summary>
-    /// <param name="numericExpressions">
-    /// One or more numeric expressions to combine using <c>*</c>.
-    /// </param>
-    /// <remarks>
-    /// <list type="bullet">
-    /// <item><description>Throws an <see cref="ArgumentException"/> if no numeric expressions are provided.</description></item>
-    /// <item><description>If only one numeric expression is provided, that expression is used directly.</description></item>
-    /// </list>
-    /// </remarks>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="numericExpressions"/> is <c>null</c>.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="numericExpressions"/> contains no elements.
-    /// </exception>
-    /// <exception cref="NullReferenceException">
-    /// Thrown when <paramref name="numericExpressions"/> contains disallowed <c>null</c> values.
-    /// </exception>
-    public Multiply(params IEnumerable<NumericExpression> numericExpressions) : base("*", numericExpressions)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Multiply"/> class, representing
-    /// the SQL <c>*</c> arithmetic operator.
-    /// </summary>
     /// <param name="sqlExpressions">
-    /// One or more SQL expressions to treat as numeric expressions and combine using <c>*</c>. No numeric-type validation is performed.
+    /// One or more SQL expressions to combine using <c>*</c>. Operand type compatibility is delegated to the SQL database server.
     /// </param>
     /// <remarks>
     /// <list type="bullet">
-    /// <item><description>Throws an <see cref="ArgumentException"/> if no numeric expressions are provided.</description></item>
-    /// <item><description>If only one numeric expression is provided, that expression is used directly.</description></item>
+    /// <item><description>Throws an <see cref="ArgumentException"/> if no expressions are provided.</description></item>
+    /// <item><description>If only one expression is provided, that expression is used directly.</description></item>
     /// </list>
     /// </remarks>
     /// <exception cref="ArgumentNullException">
@@ -111,7 +55,6 @@ public class Multiply : ArithmeticExpression
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    [TypeSafetyLoss]
     public Multiply(params IEnumerable<SqlExpression> sqlExpressions) : base("*", sqlExpressions)
     {
     }

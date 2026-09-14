@@ -12,8 +12,6 @@ public class EntityWithSchemaColumnBaseTest : SqlServerColumnBaseTest<EntityWith
     protected override string TableName =>
         "EntityWithSchema";
 
-    protected override IEnumerable<string> NumericProperties =>
-        ["Id"];
 
     protected override IEnumerable<string> BooleanProperties =>
         [];

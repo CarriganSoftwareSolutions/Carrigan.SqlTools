@@ -19,19 +19,6 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     protected SqlExpression NewColumnAsExpression(PropertyName propertyName) =>
         NewColumn(propertyName);
 
-    protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(string propertyName);
-    protected abstract ColumnBase NewNumericColumnModelTypeToColumnModelType(PropertyName propertyName);
-
-    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBaseModelType(string propertyName);
-    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBaseModelType(PropertyName propertyName);
-
-    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBase(string propertyName);
-    protected abstract ColumnBase NewNumericColumnModelTypeToColumnBase(PropertyName propertyName);
-
-    protected abstract ColumnBase NewNumericColumnBaseModelTypeToColumnModelType(string propertyName);
-    protected abstract ColumnBase NewNumericColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
-
-
     protected abstract ColumnBase NewBooleanColumnModelTypeToColumnModelType(string propertyName);
     protected abstract ColumnBase NewBooleanColumnModelTypeToColumnModelType(PropertyName propertyName);
 
@@ -45,8 +32,6 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     protected abstract ColumnBase NewBooleanColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
 
 
-    protected abstract IEnumerable<string> NumericProperties { get; }
-
     protected abstract IEnumerable<string> BooleanProperties { get; }
 
     protected ColumnBaseTests()
@@ -57,34 +42,6 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         test(NewColumn(propertyName));
         test(NewColumn(new PropertyName(propertyName)));
-        if (NumericProperties.Contains(propertyName))
-        {
-            test(NewNumericColumnModelTypeToColumnModelType(propertyName));
-            test(NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
-
-            test(NewNumericColumnModelTypeToColumnBaseModelType(propertyName));
-            test(NewNumericColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
-
-            test(NewNumericColumnModelTypeToColumnBase(propertyName));
-            test(NewNumericColumnModelTypeToColumnBase(new PropertyName(propertyName)));
-
-            test(NewNumericColumnBaseModelTypeToColumnModelType(propertyName));
-            test(NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
-        }
-        else
-        {
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnModelType(propertyName));
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
-
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBaseModelType(propertyName));
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
-
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBase(propertyName));
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnModelTypeToColumnBase(new PropertyName(propertyName)));
-
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnBaseModelTypeToColumnModelType(propertyName));
-            Assert.Throws<NonNumericValueException>(() => NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
-        }
         if (BooleanProperties.Contains(propertyName))
         {
             test(NewBooleanColumnModelTypeToColumnModelType(propertyName));
@@ -118,19 +75,6 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         exceptionTest(() => NewColumn(propertyName!));
         exceptionTest(() => NewColumn(new PropertyName(propertyName)));
-
-
-        exceptionTest(() => NewNumericColumnModelTypeToColumnModelType(propertyName!));
-        exceptionTest(() => NewNumericColumnModelTypeToColumnModelType(new PropertyName(propertyName)));
-
-        exceptionTest(() => NewNumericColumnModelTypeToColumnBaseModelType(propertyName!));
-        exceptionTest(() => NewNumericColumnModelTypeToColumnBaseModelType(new PropertyName(propertyName)));
-
-        exceptionTest(() => NewNumericColumnModelTypeToColumnBase(propertyName!));
-        exceptionTest(() => NewNumericColumnModelTypeToColumnBase(new PropertyName(propertyName)));
-
-        exceptionTest(() => NewNumericColumnBaseModelTypeToColumnModelType(propertyName!));
-        exceptionTest(() => NewNumericColumnBaseModelTypeToColumnModelType(new PropertyName(propertyName)));
 
 
         exceptionTest(() => NewBooleanColumnModelTypeToColumnModelType(propertyName!));

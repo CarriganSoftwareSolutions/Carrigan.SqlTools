@@ -147,8 +147,6 @@ public class BooleanParameter : Predicates, IParameter
     /// <param name="parameter">
     /// The <see cref="Parameter"/> instance to convert.
     /// </param>
-    //TODO: unite tests
-    [TypeSafetyLoss]
     public static implicit operator BooleanParameter(Parameter parameter) =>
         new(parameter);
 
