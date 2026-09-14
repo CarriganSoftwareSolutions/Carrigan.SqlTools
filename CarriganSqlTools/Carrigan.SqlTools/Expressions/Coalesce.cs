@@ -2,12 +2,33 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents a SQL <c>COALESCE</c> expression that returns the first non-null value from a sequence of expressions.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+/// SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = selects
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// --SqlServer
+/// SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+/// --PostgreSql
+/// SELECT COALESCE(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Coalescence\" FROM \"Customer\"
+/// ]]></code>
+/// </example>
 public class Coalesce : SqlExpression
 {
     /// <summary>

@@ -48,6 +48,8 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Mod Examples](#mod-examples)
     - [Multiply Examples](#multiply-examples)
     - [Negate Examples](#negate-examples)
+- [SqlExpression Examples] (#sqlexpression-examples)
+    - [Coalesce Example](coalesce-example)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -708,6 +710,28 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 //  SELECT (-[Grades].[CreditHours]) AS [ArthemicResult] FROM [Grades]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+## SqlExpression Examples
+
+### Coalesce Example
+
+```csharp
+Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
