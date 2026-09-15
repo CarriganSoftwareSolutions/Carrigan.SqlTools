@@ -48,7 +48,8 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Multiply Examples](#multiply-examples)
     - [Negate Examples](#negate-examples)
 - [SqlExpression Examples](#sqlExpression-examples)
-    - [Coalesce Example](coalesce-example)
+    - [Coalesce Example](#coalesce-example)
+    - [NullIf Example](#nullif-example)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -758,6 +759,27 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 [Table of Contents](#table-of-contents)
 
 ---
+
+### NullIf Example
+
+```csharp
+NullIf nullIf = new(new Column<Customer>(nameof(Customer.Phone)), new Parameter(string.Empty));
+SelectTags selects = new(new SelectTag(nullIf, "NullIf"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT NULLIF(\"Customer\".\"Phone\", $1) AS \"NullIf\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
 
 ## Attribute Examples
 

@@ -11,13 +11,13 @@ using Microsoft.Data.SqlClient;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 
-public sealed class CoalesceTests : IClassFixture<CoalesceFixture>
+public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
 {
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
-    private readonly CoalesceFixture _fixture;
+    private readonly LeftRightFixture _fixture;
     private readonly SqlGenerator<Left> LeftSqlGenerator = new();
 
-    public CoalesceTests(CoalesceFixture fixture) =>
+    public CoalesceTests(LeftRightFixture fixture) =>
         _fixture = fixture;
 
     private async Task<IEnumerable<Words>> ExecuteAsync(Coalesce coalesce)

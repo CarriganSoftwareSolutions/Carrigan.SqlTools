@@ -28,4 +28,23 @@ public class FromReadMeSqlExpressionsExamples
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void NullIf_Example()
+    {
+        NullIf nullIf = new(new Column<Customer>(nameof(Customer.Phone)), new Parameter(string.Empty));
+        SelectTags selects = new(new SelectTag(nullIf, "NullIf"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT NULLIF(\"Customer\".\"Phone\", $1) AS \"NullIf\" FROM \"Customer\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
 }

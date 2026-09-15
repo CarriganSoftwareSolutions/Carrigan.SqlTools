@@ -3,9 +3,9 @@ using Carrigan.SqlTools.PostgreSql.IntegrationTests.Inserts;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 
-public sealed class CoalesceFixture : PostgreSqlFixtureBase
+public sealed class LeftRightFixture : PostgreSqlFixtureBase
 {
-    public CoalesceFixture()
+    public LeftRightFixture()
         : base
         (
             [

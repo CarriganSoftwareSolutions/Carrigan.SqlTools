@@ -3,9 +3,9 @@ using Carrigan.SqlTools.SqlServer.IntegrationTests.Inserts;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 
-public sealed class CoalesceFixture : SqlFixtureBase
+public sealed class LeftRightFixture : SqlFixtureBase
 {
-    public CoalesceFixture()
+    public LeftRightFixture()
         : base
         (
             [
