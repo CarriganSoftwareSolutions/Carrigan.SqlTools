@@ -33,6 +33,11 @@ public interface ISqlFragment
     /// <summary>
     /// Represents an opening parenthesis in SQL syntax.
     /// </summary>
+    internal static readonly ISqlFragment OpenParentheses = new SqlFragmentText("(");
+
+    /// <summary>
+    /// Represents an opening parenthesis in SQL syntax.
+    /// </summary>
     internal static readonly ISqlFragment CloseParentheses = new SqlFragmentText(")");
 
     /// <summary>

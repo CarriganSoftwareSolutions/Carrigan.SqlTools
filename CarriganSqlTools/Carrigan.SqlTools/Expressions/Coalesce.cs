@@ -29,8 +29,11 @@ namespace Carrigan.SqlTools.Expressions;
 /// SELECT COALESCE(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Coalescence\" FROM \"Customer\"
 /// ]]></code>
 /// </example>
-public class Coalesce : SqlExpression
+public class Coalesce : FunctionalExpression
 {
+    protected override string FunctionName =>
+        "COALESCE";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Coalesce"/> class with the specified values.
     /// </summary>
@@ -63,43 +66,5 @@ public class Coalesce : SqlExpression
             throw new ArgumentException("Coalesce requires two or more values.", nameof(values));
 
         return values;
-    }
-
-    /// <summary>
-    /// Converts the <c>COALESCE</c> expression into SQL fragments for the specified dialect.
-    /// </summary>
-    /// <param name="dialect">The SQL dialect used to render each child expression.</param>
-    /// <returns>The SQL fragments representing the <c>COALESCE</c> expression.</returns>
-    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
-    {
-        IEnumerable<ISqlFragment> childFragments =
-            ChildNodes.Select(value => new SqlFragmentGroup(value.ToSqlFragments(dialect))).JoinFragments(ISqlFragment.CommaSpace).Flatten(dialect);
-        yield return new SqlFragmentText("COALESCE(");
-        foreach (ISqlFragment sqlFragment in childFragments)
-        {
-            yield return sqlFragment;
-        }
-        yield return ISqlFragment.CloseParentheses;
-    }
-
-    /// <summary>
-    /// Determines whether the <c>COALESCE</c> expression is aggregate based on the aggregate status of its values.
-    /// </summary>
-    /// <returns>
-    /// <c>true</c> when all values are aggregate expressions; <c>false</c> when all values are non-aggregate expressions.
-    /// </returns>
-    /// <exception cref="AggregateInconsistencyException">
-    /// Thrown when aggregate and non-aggregate values are mixed within the expression.
-    /// </exception>
-    public override bool IsAggregate()
-    {
-        if (ChildNodes.Select(value => value.IsAggregate()).AllEqual() ?? false)
-        {
-            return ChildNodes.First().IsAggregate();
-        }
-        else
-        {
-            throw new AggregateInconsistencyException();
-        }
     }
 }
