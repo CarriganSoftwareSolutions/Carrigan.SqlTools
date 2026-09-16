@@ -51,6 +51,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - [SqlExpression Examples] (#sqlexpression-examples)
     - [Abs Example](#abs-example)  
     - [Coalesce Example](#coalesce-example)
+    - [Sign Example](#sign-example)
     - [NullIf Example](#nullif-example)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
@@ -754,6 +755,26 @@ SelectBuilder<Customer> selectBuilder = new()
 SqlQuery query = customerGenerator.Select(selectBuilder);
 
 //SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Sign Example
+
+```csharp
+Sign expression = new(new Column<Order>(nameof(Order.Total)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+
+//SELECT SIGN([Order].[Total]) AS [Value] FROM [Order]
 ```
 
 [Table of Contents](#table-of-contents)
