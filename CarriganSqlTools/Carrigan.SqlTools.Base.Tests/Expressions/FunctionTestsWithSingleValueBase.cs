@@ -37,7 +37,7 @@ public abstract class FunctionTestsWithSingleValueBase
     public void ToString_RendersNestedExpression() =>
         Assert.Equal
         (
-            $"{ExpectedFunctionName}(Left + Right)",
+            $"{ExpectedFunctionName}((Left + Right))",
             New(LeftRight).ToString()
         );
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// 
+/// Represents the SQL ABS function, which returns the absolute value of a number.
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[

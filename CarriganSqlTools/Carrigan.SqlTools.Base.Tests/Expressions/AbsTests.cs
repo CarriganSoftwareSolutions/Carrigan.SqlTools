@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-internal class AbsTests : FunctionTestsWithSingleValueBase
+public class AbsTests : FunctionTestsWithSingleValueBase
 {
     protected override string ExpectedFunctionName => "ABS";
 
