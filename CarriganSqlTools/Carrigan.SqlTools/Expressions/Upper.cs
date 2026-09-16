@@ -10,37 +10,38 @@ using System.Threading.Tasks;
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Represents the SQL SIGN function, which returns the sign of a number.
+/// Represents the SQL UPPER function, which converts a string to uppercase.
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// Sign expression = new(new Column<Order>(nameof(Order.Total)));
+/// Upper expression = new(new Column<Customer>(nameof(Customer.Name)));
 /// SelectTags selects = new(new SelectTag(expression, "Value"));
 /// 
-/// SelectBuilder<Order> selectBuilder = new()
+/// SelectBuilder<Customer> selectBuilder = new()
 /// {
 ///     Selects = selects
 /// };
 /// 
-/// SqlQuery query = orderGenerator.Select(selectBuilder);
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --SqlServer
-/// SELECT SIGN([Order].[Total]) AS [Value] FROM [Order]
+/// SELECT UPPER([Customer].[Name]) AS [Value] FROM [Customer]
 /// --PostgreSql
-/// SELECT SIGN(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+/// SELECT UPPER(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
 /// ]]></code>
 /// </example>
-public class Sign : FunctionalExpression
+public class Upper : FunctionalExpression
 {
     /// <summary>
     /// Gets the name of the SQL function represented by this expression.
     /// </summary>
     protected override string FunctionName =>
-        "SIGN";
+        "UPPER";
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="Sign"/> class with the specified SQL expression.
+    /// Initializes a new instance of the <see cref="Upper"/> class with the specified SQL expression.
     /// </summary>
     /// <param name="sqlExpression">
     /// The expression to evaluate.
@@ -48,6 +49,6 @@ public class Sign : FunctionalExpression
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is null.
     /// </exception>
-    public Sign(SqlExpression sqlExpression) : base([sqlExpression ?? throw new ArgumentNullException(nameof(sqlExpression))])
+    public Upper(SqlExpression sqlExpression) : base([sqlExpression ?? throw new ArgumentNullException(nameof(sqlExpression))])
     { }
 }

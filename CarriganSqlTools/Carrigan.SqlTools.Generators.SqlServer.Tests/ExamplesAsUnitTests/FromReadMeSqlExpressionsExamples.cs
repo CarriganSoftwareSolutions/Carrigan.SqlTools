@@ -50,6 +50,25 @@ public class FromReadMeSqlExpressionsExamples
     }
 
     [Fact]
+    public void Lower_Example()
+    {
+        Lower expression = new(new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT LOWER([Customer].[Name]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Sign_Example()
     {
         Sign expression = new(new Column<Order>(nameof(Order.Total)));
@@ -82,6 +101,25 @@ public class FromReadMeSqlExpressionsExamples
         SqlQuery query = customerGenerator.Select(selectBuilder);
 
         string expected = "SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Upper_Example()
+    {
+        Upper expression = new (new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT UPPER([Customer].[Name]) AS [Value] FROM [Customer]";
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);

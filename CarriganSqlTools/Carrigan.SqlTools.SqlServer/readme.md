@@ -48,8 +48,10 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - [SqlExpression Examples] (#sqlexpression-examples)
     - [Abs Example](#abs-example)  
     - [Coalesce Example](#coalesce-example)
+    - [Lower Example](#lower-example)
     - [Sign Example](#sign-example)
     - [NullIf Example](#nullif-example)
+    - [Upper Example](#upper-example)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -761,6 +763,26 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ---
 
+### Lower Example
+
+```csharp
+Lower expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LOWER([Customer].[Name]) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
 ### Sign Example
 
 ```csharp
@@ -795,6 +817,26 @@ SelectBuilder<Customer> selectBuilder = new()
 SqlQuery query = customerGenerator.Select(selectBuilder);
 
 //SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Upper Example
+
+```csharp
+Upper expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT UPPER([Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
