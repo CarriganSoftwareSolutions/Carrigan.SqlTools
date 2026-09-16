@@ -789,6 +789,26 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ---
 
+### Concat Example
+
+```csharp
+Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CONCAT(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
 ### Lower Example
 
 ```csharp
