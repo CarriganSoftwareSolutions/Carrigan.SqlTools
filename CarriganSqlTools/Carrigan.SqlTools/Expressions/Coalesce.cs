@@ -49,22 +49,7 @@ public class Coalesce : FunctionalExpression
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="values"/> contains a <c>null</c> expression.
     /// </exception>
-    public Coalesce(params IEnumerable<SqlExpression> values) : base(ValidateValues(values))
+    public Coalesce(params IEnumerable<SqlExpression> values) : base(ValidateValues(2, values))
     {
-    }
-
-    /// <summary>
-    /// Validates and materializes the values supplied to the <c>COALESCE</c> expression.
-    /// </summary>
-    /// <param name="values">The expressions to validate.</param>
-    /// <returns>A materialized sequence containing the validated expressions.</returns>
-    private static IEnumerable<SqlExpression> ValidateValues(IEnumerable<SqlExpression> values)
-    {
-        ArgumentNullException.ThrowIfNull(values, nameof(values));
-
-        if (values.Count() < 2)
-            throw new ArgumentException("Coalesce requires two or more values.", nameof(values));
-
-        return values;
     }
 }
