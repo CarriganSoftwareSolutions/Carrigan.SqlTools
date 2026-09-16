@@ -70,7 +70,7 @@ public abstract class FunctionTestsWithMultipleValuesBase
     public void ToString_RendersNestedExpression() =>
         Assert.Equal
         (
-            $"{ExpectedFunctionName}, Fallback)",
+            $"{ExpectedFunctionName}((Left + Right), Fallback)",
             New
             (
                 new Add(new Parameter(1, "Left"), new Parameter(2, "Right")),
