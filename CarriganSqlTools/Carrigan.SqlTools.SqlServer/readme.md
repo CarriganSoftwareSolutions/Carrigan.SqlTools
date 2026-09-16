@@ -46,6 +46,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Multiply Examples](#multiply-examples)
     - [Negate Examples](#negate-examples)
 - [SqlExpression Examples] (#sqlexpression-examples)
+    - [Abs Example](#abs-example)  
     - [Coalesce Example](#coalesce-example)
     - [NullIf Example](#nullif-example)
 - [Attribute Examples](#attribute-examples)
@@ -718,6 +719,26 @@ SelectBuilder<Grades> selectBuilder = new()
 ---
 
 ## SqlExpression Examples
+
+### Abs Example
+
+```csharp
+Abs abs = new(new Column<Order>(nameof(Order.Total)));
+SelectTags selects = new(new SelectTag(abs, "AbsValue"));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+
+//SELECT ABS([Order].[Total]) AS [AbsValue] FROM [Order]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
 
 ### Coalesce Example
 

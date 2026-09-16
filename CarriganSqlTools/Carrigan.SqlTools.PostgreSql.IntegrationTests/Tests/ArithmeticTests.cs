@@ -9,12 +9,12 @@ using Npgsql;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 
-public sealed class ArithmeticTests : IClassFixture<ArithmeticFixture>
+public sealed class ArithmeticTests : IClassFixture<BooksFixture>
 {
-    private readonly ArithmeticFixture _fixture;
+    private readonly BooksFixture _fixture;
     private readonly SqlGenerator<Book> BookSqlGenerator = new();
 
-    public ArithmeticTests(ArithmeticFixture fixture) =>
+    public ArithmeticTests(BooksFixture fixture) =>
         _fixture = fixture;
 
     [Fact]

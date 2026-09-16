@@ -3,9 +3,9 @@ using Carrigan.SqlTools.SqlServer.IntegrationTests.Inserts;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
 
-public sealed class ArithmeticFixture : SqlFixtureBase
+public sealed class BooksFixture : SqlFixtureBase
 {
-    public ArithmeticFixture()
+    public BooksFixture()
         : base
         (
             [

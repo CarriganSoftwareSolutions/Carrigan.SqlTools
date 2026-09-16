@@ -3,9 +3,9 @@ using Carrigan.SqlTools.PostgreSql.IntegrationTests.Inserts;
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 
-public sealed class ArithmeticFixture : PostgreSqlFixtureBase
+public sealed class BooksFixture : PostgreSqlFixtureBase
 {
-    public ArithmeticFixture()
+    public BooksFixture()
         : base
         (
             [

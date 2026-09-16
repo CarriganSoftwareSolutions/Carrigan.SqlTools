@@ -9,6 +9,26 @@ namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
 public class FromReadMeSqlExpressionsExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Order> orderGenerator = new();
+
+    [Fact]
+    public void Abs_Example()
+    {
+        Abs abs = new(new Column<Order>(nameof(Order.Total)));
+        SelectTags selects = new(new SelectTag(abs, "AbsValue"));
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT ABS(\"Order\".\"Total\") AS \"AbsValue\" FROM \"Order\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
 
     [Fact]
     public void Coalesce_Example()
