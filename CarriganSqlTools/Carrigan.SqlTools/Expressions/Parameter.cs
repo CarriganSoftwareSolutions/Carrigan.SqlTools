@@ -132,11 +132,19 @@ public class Parameter : SqlExpression, IParameter
     /// Initializes a new Parameter instance with the specified value and a default ParameterTag named "Parameter".
     /// </summary>
     /// <param name="value">The value to associate with the parameter; may be null.</param>
-    /// <param name="parameterName"> 
-    /// Optional parameter name to use for the ParameterTag; if null, a default name "Parameter" will be used.
-    /// </param>
+    /// <param name="parameterName">The base name for the parameter; if null or empty, "Parameter" will be used.</param>
+    //NOTE: do not try to do a string parameter? = null to merge this with the below, as that will cause issues do to the ExternalOnlyAttribue
     [ExternalOnly]
-    public Parameter(object? value, string? parameterName = null) : this(value, new ParameterTag(parameterName.IsNotNullOrEmpty() ? parameterName : "Parameter"))
+    public Parameter(object? value, string parameterName) : this(value, new ParameterTag(parameterName.IsNotNullOrEmpty() ? parameterName : "Parameter"))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new Parameter instance with the specified value and a default ParameterTag named "Parameter".
+    /// </summary>
+    /// <param name="value">The value to associate with the parameter; may be null.</param>
+    //NOTE: do not try to do a string parameter? = null to merge this with the above, as that will cause issues do to the ExternalOnlyAttribue
+    public Parameter(object? value) : this(value, new ParameterTag("Parameter"))
     {
     }
 

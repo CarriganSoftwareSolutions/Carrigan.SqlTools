@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
@@ -120,6 +120,142 @@ public class FromReadMeSqlExpressionsExamples
         SqlQuery query = customerGenerator.Select(selectBuilder);
 
         string expected = "SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void LTrim_Example()
+    {
+        LTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT LTRIM([Customer].[Name]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void LTrim_WithCharacters_Example()
+    {
+        LTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT LTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(" x", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void RTrim_Example()
+    {
+        RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT RTRIM([Customer].[Name]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void RTrim_WithCharacters_Example()
+    {
+        RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT RTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(" x", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void Trim_Example()
+    {
+        Trim expression = new(new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT TRIM([Customer].[Name]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Trim_WithCharacters_Example()
+    {
+        Trim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT TRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(" x", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void LRTrim_Example()
+    {
+        LRTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT LTRIM(RTRIM([Customer].[Name])) AS [Value] FROM [Customer]";
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);
