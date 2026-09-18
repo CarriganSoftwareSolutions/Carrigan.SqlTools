@@ -3,7 +3,7 @@
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 
-public class LTrimWithCharactersTests : FunctionTestsWithTwoValuesBase
+public class LTrimWithCharactersTests : FunctionTestsWithOneExpressionOneStringBase
 {
     protected override string ExpectedFunctionName => "LTRIM";
 

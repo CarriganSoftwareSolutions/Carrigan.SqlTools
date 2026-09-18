@@ -2,7 +2,7 @@
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public class TrimWithCharactersTests : FunctionTestsWithTwoValuesBase
+public class TrimWithCharactersTests : FunctionTestsWithOneExpressionOneStringBase
 {
     protected override string ExpectedFunctionName => "TRIM";
 
