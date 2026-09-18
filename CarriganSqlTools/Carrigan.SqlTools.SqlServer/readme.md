@@ -48,6 +48,10 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 - [SqlExpression Examples] (#sqlexpression-examples)
     - [Abs Example](#abs-example)  
     - [Coalesce Example](#coalesce-example)
+    - [Concat Example](#concat-example)
+    - [CurrentDate Example](#currentdate-example)
+    - [CurrentTimeStamp Example](#currenttimestamp-example)
+    - [GetDate Example](#getdate-example)
     - [Lower Example](#lower-example)
     - [LRTrim Examples](#lrtrim-example)
     - [LTrim Examples](#ltrim-examples)
@@ -781,6 +785,63 @@ SelectBuilder<Customer> selectBuilder = new()
 SqlQuery query = customerGenerator.Select(selectBuilder);
 
 //SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### CurrentDate Example
+
+```csharp
+CurrentDate currentDate = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(currentDate, "Date"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CURRENT_DATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### CurrentTimeStamp Example
+
+```csharp
+CurrentTimeStamp currentTimeStamp = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(currentTimeStamp, "TimeStamp"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CURRENT_TIMESTAMP() AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### GetDate Example
+
+```csharp
+GetDate getDate = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(getDate, "Date"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT GETDATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)

@@ -69,6 +69,42 @@ public class FromReadMeSqlExpressionsExamples
     }
 
     [Fact]
+    public void CurrentDate_Example()
+    {
+        CurrentDate currentDate = new();
+        ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = new SelectTags(new SelectTag(currentDate, "Date"), new SelectTag(columnBase, "Name"))
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT CURRENT_DATE() AS \"Date\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void CurrentTimeStamp_Example()
+    {
+        CurrentTimeStamp currentTimeStamp = new();
+        ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = new SelectTags(new SelectTag(currentTimeStamp, "TimeStamp"), new SelectTag(columnBase, "Name"))
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT CURRENT_TIMESTAMP() AS \"TimeStamp\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Lower_Example()
     {
         Lower expression = new(new Column<Customer>(nameof(Customer.Name)));

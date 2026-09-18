@@ -63,9 +63,7 @@ public abstract class FunctionalExpression : SqlExpression
             .Select(expression => (Expression: expression, IsAggregate: expression.IsAggregate()))
             .Where(candidate => candidate.IsAggregate || candidate.Expression.HasColumns());
 
-        bool[] aggregateStates = aggregateCandidates
-            .Select(static candidate => candidate.IsAggregate)
-            .ToArray();
+        bool[] aggregateStates = [.. aggregateCandidates.Select(static candidate => candidate.IsAggregate)];
 
         if (aggregateStates.AllEqual() is false)
             throw new AggregateInconsistencyException();
