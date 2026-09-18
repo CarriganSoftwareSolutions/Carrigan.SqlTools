@@ -3,6 +3,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,14 +14,22 @@ namespace Carrigan.SqlTools.Expressions;
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[
-///  
+/// Concat expression = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+/// SelectTags selects = new(new SelectTag(expression, "Value"));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = selects
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --SqlServer
-/// 
+/// SELECT CONCAT([Customer].[Phone], [Customer].[Email]) AS [Value] FROM [Customer]
 /// --PostgreSql
-/// 
+/// SELECT CONCAT(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Value\" FROM \"Customer\"
 /// ]]></code>
 /// </example>
 public class Concat : FunctionalExpression
