@@ -118,6 +118,36 @@ public static class SqlServerTypesProvider
     }
 
     /// <summary>
+    /// Creates a SQL Server field definition for a string value, using the value length when it fits in a bounded
+    /// <c>NVARCHAR</c> and <c>NVARCHAR(MAX)</c> otherwise.
+    /// </summary>
+    /// <param name="value">The non-null string value to analyze.</param>
+    /// <returns>A <see cref="FieldProperties"/> instance representing the inferred SQL Server string type.</returns>
+    private static FieldProperties CreateFromString(string value)
+    {
+        int length = Math.Max(value.Length, 1);
+
+        return length <= LIMIT_FOR_UNICODE
+            ? AsNVarChar(length)
+            : AsNVarCharMax();
+    }
+
+    /// <summary>
+    /// Creates a SQL Server field definition for a byte array value, using the value length when it fits in a bounded
+    /// <c>VARBINARY</c> and <c>VARBINARY(MAX)</c> otherwise.
+    /// </summary>
+    /// <param name="value">The non-null byte array value to analyze.</param>
+    /// <returns>A <see cref="FieldProperties"/> instance representing the inferred SQL Server binary type.</returns>
+    private static FieldProperties CreateFromByteArray(byte[] value)
+    {
+        int length = Math.Max(value.Length, 1);
+
+        return length <= LIMIT_FOR_BYTE_ARRAY
+            ? AsVarBinary(length)
+            : AsVarBinaryMax();
+    }
+
+    /// <summary>
     /// Creates a SQL Server field definition using the default mapping for a CLR type.
     /// </summary>
     private static FieldProperties Create(Type clrType, bool? nullable = null)
@@ -298,14 +328,23 @@ public static class SqlServerTypesProvider
     public static FieldProperties FromNullableClrType<T>() => FromNullableClrType(typeof(T));
 
     /// <summary>
-    /// Creates a SQL Server field definition using the default mapping for a CLR value's runtime type, treating <c>null</c> and <c>DBNull.Value</c> as nullable <c>sql_variant</c>.
+    /// Creates a SQL Server field definition using the default mapping for a CLR value's runtime type, treating <c>null</c>
+    /// and <c>DBNull.Value</c> as nullable <c>sql_variant</c>.
     /// </summary>
+    /// <remarks>
+    /// String and byte-array values use their current value length when it fits in SQL Server's bounded type limit. Empty
+    /// values use a minimum length of one, while values above the bounded limit use the corresponding <c>MAX</c> type.
+    /// </remarks>
     /// <param name="value">The CLR value whose runtime type should be mapped to SQL Server field metadata.</param>
     /// <returns>The SQL Server field properties for the supplied CLR value.</returns>
     public static FieldProperties FromClrValue(object? value)
     {
         if (value is null || value == DBNull.Value)
             return AsSqlVariant(nullable: true);
+        else if (value is string stringValue)
+            return CreateFromString(stringValue);
+        else if (value is byte[] byteArrayValue)
+            return CreateFromByteArray(byteArrayValue);
         else
             return Create(value.GetType());
     }
