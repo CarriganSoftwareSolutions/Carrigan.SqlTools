@@ -113,6 +113,15 @@ public abstract class SelectTagBase :
         SqlExpression.IsAggregate();
 
     /// <summary>
+    /// Indicates whether this select item projects one or more columns.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if this select item projects one or more columns; otherwise, <c>false</c>.
+    /// </returns>
+    public bool HasColumns() =>
+        SqlExpression.HasColumns();
+
+    /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
     /// </summary>
     /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>

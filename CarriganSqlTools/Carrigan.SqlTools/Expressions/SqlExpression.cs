@@ -78,6 +78,24 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         false;
 
     /// <summary>
+    /// Indicates whether this expression tree contains any column expressions.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> when this expression or any child expression represents a column; otherwise, <c>false</c>.
+    /// </returns>
+    public bool HasColumns() =>
+        IsColumn() || ChildNodes.Any(static child => child.HasColumns());
+
+    /// <summary>
+    /// Indicates whether this expression is a column expression.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if the expression is a column expression; otherwise, <c>false</c>.
+    /// </returns>
+    protected virtual bool IsColumn() =>
+        this is IColumnBase || this is IColumnExpressionIdentity;
+
+    /// <summary>
     /// Aggregate functions are valid aggregate SELECT expressions.
     /// </summary>
     /// <param name="groupBys">The optional <c>GROUP BY</c> clause.</param>

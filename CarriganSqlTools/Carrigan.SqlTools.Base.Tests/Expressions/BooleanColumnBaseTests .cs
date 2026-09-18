@@ -196,6 +196,22 @@ public abstract class BooleanColumnBaseTests<modelT> : ColumnTestsBase<modelT> w
             RunExceptionalTests(Assert.Throws<InvalidPropertyException<modelT>>, "C#");
 
     [Fact]
+    public void HasColumns_ReturnsTrue() =>
+        RunValidationMethod(propertyName => RunSubMethod(column => Assert.True(column.HasColumns()), propertyName));
+
+    [Fact]
+    public void LeafTables_ContainsWrappedColumnTable()
+    {
+        void Test(BooleanColumnBase<modelT> column)
+        {
+            Assert.Equal(ExpectedTableTag, Assert.Single(column.LeafTables));
+            Assert.Equal(ExpectedTableTag, Assert.Single(column.DescendantLeafTables));
+        }
+
+        RunValidationMethod(propertyName => RunSubMethod(Test, propertyName));
+    }
+
+    [Fact]
     public void Run_ValidateNoDescendantParameters() =>
         RunValidationMethod(ValidateNoDescendantParameters);
 

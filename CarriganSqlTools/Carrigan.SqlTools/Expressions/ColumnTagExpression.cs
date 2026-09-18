@@ -29,6 +29,9 @@ internal sealed class ColumnTagExpression : SqlExpression, IColumnExpressionIden
         ColumnTag = columnTag;
     }
 
+    protected override bool IsColumn() =>
+        true;
+
     ColumnTag IColumnExpressionIdentity.EqualityColumnTag =>
         ColumnTag;
 

@@ -138,7 +138,14 @@ public abstract partial class SqlGeneratorBase<T>
 
         if (selects is not null && selects.Any())
         {
-            IEnumerable<bool> aggregateStates = selects.All().Select(select => select.IsAggregate() || (groupBys?.Contains(select) ?? false));
+
+            IEnumerable<(SelectTagBase Select, bool IsAggregate)> aggregateCandidates = selects
+                .Select(select => (Select: select, IsAggregate: select.IsAggregate()))
+                .Where(candidate => candidate.IsAggregate || candidate.Select.HasColumns());
+
+            IEnumerable<bool> aggregateStates = aggregateCandidates
+                .Select(candidate => candidate.IsAggregate || (groupBys?.Contains(candidate.Select) ?? false));
+
             if (aggregateStates.Distinct().Count() > 1)
                 throw new MixedAggregateSelectException();
         }
