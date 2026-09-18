@@ -127,25 +127,6 @@ public class FromReadMeSqlExpressionsExamples
     }
 
     [Fact]
-    public void Sign_Example()
-    {
-        Sign expression = new(new Column<Order>(nameof(Order.Total)));
-        SelectTags selects = new(new SelectTag(expression, "Value"));
-
-        SelectBuilder<Order> selectBuilder = new()
-        {
-            Selects = selects
-        };
-
-        SqlQuery query = orderGenerator.Select(selectBuilder);
-
-        string expected = "SELECT SIGN(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"";
-        string actual = query.QueryText;
-
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
     public void NullIf_Example()
     {
         NullIf nullIf = new(new Column<Customer>(nameof(Customer.Phone)), new Parameter(string.Empty));
@@ -201,6 +182,25 @@ public class FromReadMeSqlExpressionsExamples
 
         Assert.Equal(expected, actual);
         Assert.Equal(" x", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void Sign_Example()
+    {
+        Sign expression = new(new Column<Order>(nameof(Order.Total)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT SIGN(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
     }
 
     [Fact]

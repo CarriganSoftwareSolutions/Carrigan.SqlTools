@@ -51,10 +51,12 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Abs Example](#abs-example)  
     - [Coalesce Example](#coalesce-example)
     - [Lower Example](#lower-example)
-    - [Sign Example](#sign-example)
+    - [LTrim Examples](#ltrim-examples)
     - [NullIf Example](#nullif-example)
+    - [RTrim Examples](#rtrim-examples)
+    - [Sign Example](#sign-example)
     - [Upper Example](#upper-example)
-- [Attribute Examples](#attribute-examples)
+    - [TRIM Examples](#trim-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
   - [Procedure and Parameter](#procedure-and-parameter)
@@ -824,20 +826,34 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ---
 
-### Sign Example
+### LTrim Examples
 
 ```csharp
-Sign expression = new(new Column<Order>(nameof(Order.Total)));
+LTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
 SelectTags selects = new(new SelectTag(expression, "Value"));
 
-SelectBuilder<Order> selectBuilder = new()
+SelectBuilder<Customer> selectBuilder = new()
 {
     Selects = selects
 };
 
-SqlQuery query = orderGenerator.Select(selectBuilder);
+SqlQuery query = customerGenerator.Select(selectBuilder);
 
-//SELECT SIGN(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+//SELECT LTRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+```csharp
+LTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LTRIM(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -858,6 +874,94 @@ SelectBuilder<Customer> selectBuilder = new()
 SqlQuery query = customerGenerator.Select(selectBuilder);
 
 //SELECT NULLIF(\"Customer\".\"Phone\", $1) AS \"NullIf\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### RTrim Examples
+
+```csharp
+RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT RTRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+```csharp
+RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT RTRIM(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Sign Example
+
+```csharp
+Sign expression = new(new Column<Order>(nameof(Order.Total)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+
+//SELECT SIGN(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Trim Examples
+
+```csharp
+Trim expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT TRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+```csharp
+Trim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT TRIM(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
 ```
 
 [Table of Contents](#table-of-contents)
