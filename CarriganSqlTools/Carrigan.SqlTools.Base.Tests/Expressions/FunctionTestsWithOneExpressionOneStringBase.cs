@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public abstract class FunctionTestsWithTwoValuesBase
+public abstract class FunctionTestsWithOneExpressionOneStringBase
 {
     protected abstract string ExpectedFunctionName { get; }
 
