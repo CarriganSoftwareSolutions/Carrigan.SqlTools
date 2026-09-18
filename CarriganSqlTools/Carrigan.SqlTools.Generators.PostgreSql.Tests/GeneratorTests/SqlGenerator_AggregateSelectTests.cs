@@ -7,6 +7,7 @@ using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.GeneratorTests;
 
@@ -143,6 +144,44 @@ public sealed class SqlGenerator_AggregateSelectTests
         SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, having, null, null);
 
         Assert.Equal("SELECT COUNT(*) AS \"TotalCount\" FROM \"Customer\" HAVING (COUNT(*) > $1)", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithCountStarAndParameter_AllowsAggregateSelectList()
+    {
+        SelectTags selects = new
+        (
+            new SelectTag(new Count(), "TotalCount"),
+            new SelectTag(new Parameter(1), "ParameterValue")
+        );
+
+        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+
+        Assert.Equal("SELECT COUNT(*) AS \"TotalCount\", $1 AS \"ParameterValue\" FROM \"Customer\"", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithUngroupedColumnAndCountStar_Throws()
+    {
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Customer>(nameof(Customer.Name)),
+            new SelectTag(new Count(), "TotalCount")
+        );
+
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+    }
+
+    [Fact]
+    public void Select_WithNestedCastedUngroupedColumnAndCountStar_Throws()
+    {
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Customer>(nameof(Customer.Name), "NameValue", new FieldProperties()),
+            new SelectTag(new Count(), "TotalCount")
+        );
+
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
     }
 
 }

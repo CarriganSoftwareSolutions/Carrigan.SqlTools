@@ -118,13 +118,24 @@ public abstract class FunctionTestsWithMultipleValuesBase
         );
 
     [Fact]
-    public void IsAggregate_MixedValues_Exception() =>
+    public void IsAggregate_AggregateAndRowIndependentValue_ReturnsTrue() =>
+        Assert.True
+        (
+            New
+            (
+                new Count(new Parameter(1, "Aggregate")),
+                new Parameter(2, "RowIndependent")
+            ).IsAggregate()
+        );
+
+    [Fact]
+    public void IsAggregate_AggregateAndColumnValue_Exception() =>
         Assert.Throws<AggregateInconsistencyException>
         (
             () => New
             (
                 new Count(new Parameter(1, "Aggregate")),
-                new Parameter(2, "NonAggregate")
+                new TestColumnExpression()
             ).IsAggregate()
         );
 }

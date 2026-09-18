@@ -8,6 +8,7 @@ using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
+using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 
@@ -241,6 +242,65 @@ public class SqlGenerator_AggregateSelectTests
         SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, having, null, null);
 
         Assert.Equal("SELECT COUNT(*) AS [TotalCount] FROM [Customer] HAVING (COUNT(*) > @MinimumCount_1)", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_Parameter_With_Aggregates()
+    {
+        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber));
+        Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
+
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+            SelectTagGenerator.Get<Grades>(nameof(Grades.AcademicYear)),
+            SelectTagGenerator.Get<Grades>(nameof(Grades.SemesterNumber)),
+            new SelectTag(semesterGpa, "SemesterGPA"),
+            new SelectTag(new Parameter(1), "ParamterValue")
+        );
+
+        Predicates having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"));
+
+        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
+        Assert.Equal("SELECT [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber], AVG([Grades].[GradePoint]) AS [SemesterGPA], @Parameter_1 AS [ParamterValue] FROM [Grades] GROUP BY [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber] HAVING (AVG([Grades].[GradePoint]) > @HonorRollGpa_2)", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithCountStarAndParameter_AllowsAggregateSelectList()
+    {
+        SelectTags selects = new
+        (
+            new SelectTag(new Count(), "TotalCount"),
+            new SelectTag(new Parameter(1), "ParameterValue")
+        );
+
+        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+
+        Assert.Equal("SELECT COUNT(*) AS [TotalCount], @Parameter_1 AS [ParameterValue] FROM [Customer]", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithUngroupedColumnAndCountStar_Throws()
+    {
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Customer>(nameof(Customer.Name)),
+            new SelectTag(new Count(), "TotalCount")
+        );
+
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+    }
+
+    [Fact]
+    public void Select_WithNestedCastedUngroupedColumnAndCountStar_Throws()
+    {
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Customer>(nameof(Customer.Name), "NameValue", new FieldProperties()),
+            new SelectTag(new Count(), "TotalCount")
+        );
+
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
     }
 
 }

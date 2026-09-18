@@ -45,24 +45,32 @@ public abstract class FunctionalExpression : SqlExpression
     }
 
     /// <summary>
-    /// Determines whether the Funcational expression is aggregate based on the aggregate status of its values.
+    /// Determines whether the functional expression is aggregate based on its row-dependent values.
     /// </summary>
+    /// <remarks>
+    /// Row-independent values, such as parameters, do not change aggregate status. This allows valid expressions such as
+    /// <c>COALESCE(AVG(Value), @Fallback)</c> while still rejecting a mix of aggregate and non-aggregate column values.
+    /// </remarks>
     /// <returns>
-    /// <c>true</c> when all values are aggregate expressions; <c>false</c> when all values are non-aggregate expressions.
+    /// <c>true</c> when the row-dependent values are aggregate expressions; otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="AggregateInconsistencyException">
-    /// Thrown when aggregate and non-aggregate values are mixed within the expression.
+    /// Thrown when aggregate and non-aggregate row-dependent values are mixed within the expression.
     /// </exception>
     public override bool IsAggregate()
     {
-        if (ChildNodes.Select(value => value.IsAggregate()).AllEqual() ?? false)
-        {
-            return ChildNodes.First().IsAggregate();
-        }
-        else
-        {
+        IEnumerable<(SqlExpression Expression, bool IsAggregate)> aggregateCandidates = ChildNodes
+            .Select(expression => (Expression: expression, IsAggregate: expression.IsAggregate()))
+            .Where(candidate => candidate.IsAggregate || candidate.Expression.HasColumns());
+
+        bool[] aggregateStates = aggregateCandidates
+            .Select(static candidate => candidate.IsAggregate)
+            .ToArray();
+
+        if (aggregateStates.AllEqual() is false)
             throw new AggregateInconsistencyException();
-        }
+
+        return aggregateStates.FirstOrDefault();
     }
 
 

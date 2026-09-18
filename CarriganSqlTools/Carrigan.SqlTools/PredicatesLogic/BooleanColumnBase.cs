@@ -55,6 +55,12 @@ public abstract class BooleanColumnBase<T> : Predicates, IColumnBase, IColumnExp
         ColumnInfo.ColumnTag;
 
     /// <summary>
+    /// Gets the table tag represented by the wrapped column expression.
+    /// </summary>
+    public override IEnumerable<TableTag> LeafTables =>
+        _column.LeafTables;
+
+    /// <summary>
     /// Produces the SQL fragment represented by the underlying boolean column.
     /// </summary>
     /// <param name="dialect">The SQL dialect for which to generate the fragment.</param>

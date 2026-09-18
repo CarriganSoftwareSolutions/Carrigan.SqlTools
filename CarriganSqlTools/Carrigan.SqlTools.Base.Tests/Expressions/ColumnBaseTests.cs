@@ -221,6 +221,10 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
             RunExceptionalTests(Assert.Throws<InvalidPropertyException<modelT>>, "C#");
 
     [Fact]
+    public void HasColumns_ReturnsTrue() =>
+        RunValidationMethod(propertyName => RunSubMethod(column => Assert.True(column.HasColumns()), propertyName));
+
+    [Fact]
     public void Run_ValidateNoDescendantParameters() =>
         RunValidationMethod(ValidateNoDescendantParameters);
 
