@@ -802,7 +802,7 @@ SelectBuilder<Customer> selectBuilder = new()
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
 
-//SELECT CURRENT_DATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
+//SELECT CURRENT_DATE AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -821,7 +821,7 @@ SelectBuilder<Customer> selectBuilder = new()
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
 
-//SELECT CURRENT_TIMESTAMP() AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
+//SELECT CURRENT_TIMESTAMP AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)

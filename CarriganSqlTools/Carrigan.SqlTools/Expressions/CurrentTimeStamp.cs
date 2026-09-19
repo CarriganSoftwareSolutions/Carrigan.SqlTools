@@ -25,9 +25,9 @@ namespace Carrigan.SqlTools.Expressions;
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --SqlServer
-/// SELECT CURRENT_TIMESTAMP() AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
+/// SELECT CURRENT_TIMESTAMP AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
 /// --PostgreSql
-/// SELECT CURRENT_TIMESTAMP() AS \"TimeStamp\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
+/// SELECT CURRENT_TIMESTAMP AS \"TimeStamp\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
 /// ]]></code>
 /// </example>
 public class CurrentTimeStamp : FunctionalExpression
@@ -44,4 +44,10 @@ public class CurrentTimeStamp : FunctionalExpression
     /// </summary>
     protected override string FunctionName =>
         "CURRENT_TIMESTAMP";
+
+    /// <summary>
+    /// Gets a value indicating whether parentheses are rendered after CURRENT_TIMESTAMP.
+    /// </summary>
+    protected override bool RenderParentheses =>
+        false;
 }

@@ -12,10 +12,12 @@ public abstract class FunctionTestsNoArgumentBase
 
     protected abstract FunctionalExpression New();
 
+    protected virtual bool RenderParentheses =>
+        true;
 
     [Fact]
     public void ToString_RendersValues() =>
-        Assert.Equal($"{ExpectedFunctionName}()", New().ToString());
+        Assert.Equal($"{ExpectedFunctionName}{(RenderParentheses ? "()" : string.Empty)}", New().ToString());
 
     [Fact]
     public void NewEqualsNew() =>

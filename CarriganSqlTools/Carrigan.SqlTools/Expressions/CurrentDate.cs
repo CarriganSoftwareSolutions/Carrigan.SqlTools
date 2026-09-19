@@ -25,9 +25,9 @@ namespace Carrigan.SqlTools.Expressions;
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --SqlServer
-/// SELECT CURRENT_DATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
+/// SELECT CURRENT_DATE AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
 /// --PostgreSql
-/// SELECT CURRENT_DATE() AS \"Date\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
+/// SELECT CURRENT_DATE AS \"Date\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
 /// ]]></code>
 /// </example>
 public class CurrentDate : FunctionalExpression
@@ -43,4 +43,10 @@ public class CurrentDate : FunctionalExpression
     /// </summary>
     protected override string FunctionName => 
         "CURRENT_DATE";
+
+    /// <summary>
+    /// Gets a value indicating whether parentheses are rendered after CURRENT_DATE.
+    /// </summary>
+    protected override bool RenderParentheses =>
+        false;
 }

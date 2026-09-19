@@ -7,6 +7,9 @@ public class CurrentDateTests : FunctionTestsNoArgumentBase
     protected override string ExpectedFunctionName =>
         "CURRENT_DATE";
 
+    protected override bool RenderParentheses =>
+        false;
+
     protected override FunctionalExpression New() =>
         new CurrentDate();
 }

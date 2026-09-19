@@ -80,7 +80,7 @@ public class FromReadMeSqlExpressionsExamples
 
         SqlQuery query = customerGenerator.Select(selectBuilder);
 
-        string expected = "SELECT CURRENT_DATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]";
+        string expected = "SELECT CURRENT_DATE AS [Date], [Customer].[Name] AS [Name] FROM [Customer]";
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);
@@ -98,7 +98,7 @@ public class FromReadMeSqlExpressionsExamples
 
         SqlQuery query = customerGenerator.Select(selectBuilder);
 
-        string expected = "SELECT CURRENT_TIMESTAMP() AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]";
+        string expected = "SELECT CURRENT_TIMESTAMP AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]";
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);

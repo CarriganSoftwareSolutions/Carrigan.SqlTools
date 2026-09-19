@@ -17,6 +17,12 @@ public abstract class FunctionalExpression : SqlExpression
     protected abstract string FunctionName { get; }
 
     /// <summary>
+    /// Gets a value indicating whether parentheses are rendered after the function name.
+    /// </summary>
+    protected virtual bool RenderParentheses =>
+        true;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="FunctionalExpression"/> class with the specified values.
     /// </summary>
     /// <param name="values">
@@ -36,6 +42,10 @@ public abstract class FunctionalExpression : SqlExpression
         IEnumerable<ISqlFragment> childFragments =
             ChildNodes.Select(value => new SqlFragmentGroup(value.ToSqlFragments(dialect))).JoinFragments(ISqlFragment.CommaSpace).Flatten(dialect);
         yield return new SqlFragmentText(FunctionName);
+
+        if (!RenderParentheses)
+            yield break;
+
         yield return ISqlFragment.OpenParentheses;
         foreach (ISqlFragment sqlFragment in childFragments)
         {
