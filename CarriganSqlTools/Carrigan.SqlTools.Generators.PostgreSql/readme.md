@@ -56,6 +56,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Lower Example](#lower-example)
     - [LTrim Examples](#ltrim-examples)
     - [NullIf Example](#nullif-example)
+    - [Round Examples](#round-examples)
     - [RTrim Examples](#rtrim-examples)
     - [Sign Example](#sign-example)
     - [Upper Example](#upper-example)
@@ -915,6 +916,40 @@ SelectBuilder<Customer> selectBuilder = new()
 SqlQuery query = customerGenerator.Select(selectBuilder);
 
 //SELECT NULLIF(\"Customer\".\"Phone\", $1) AS \"NullIf\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Round Examples
+
+```csharp
+Round expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT ROUND(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+Note: When a precision value is specified, it is encapsulated in a parameter to help prevent SQL injection.
+```csharp
+ROUND expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT ROUND(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
 ```
 
 [Table of Contents](#table-of-contents)

@@ -59,6 +59,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [LRTrim Examples](#lrtrim-example)
     - [LTrim Examples](#ltrim-examples)
     - [NullIf Example](#nullif-example)
+    - [Round Example](#round-example)
     - [RTrim Examples](#rtrim-examples)
     - [Sign Example](#sign-example)
     - [Upper Example](#upper-example)
@@ -935,6 +936,27 @@ SelectBuilder<Order> selectBuilder = new()
 SqlQuery query = orderGenerator.Select(selectBuilder);
 
 //SELECT SIGN([Order].[Total]) AS [Value] FROM [Order]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Round Example
+
+Note: The precision value is encapsulated in a parameter to help prevent SQL injection.
+```csharp
+Round expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)

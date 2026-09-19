@@ -182,6 +182,45 @@ public class FromReadMeSqlExpressionsExamples
     }
 
     [Fact]
+    public void Round_Example()
+    {
+        Round expression = new(new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT ROUND(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void RoundWithPrecision_Example()
+    {
+        Round expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT ROUND(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(2, Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
     public void RTrim_Example()
     {
         RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
