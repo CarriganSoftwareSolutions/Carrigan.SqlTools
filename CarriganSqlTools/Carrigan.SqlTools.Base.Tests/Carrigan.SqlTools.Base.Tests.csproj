@@ -23,6 +23,10 @@
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql.Tests" />
     <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer.Tests" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="Expressions\ReplaceWithTwoStringsTests.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <Using Include="Xunit" />

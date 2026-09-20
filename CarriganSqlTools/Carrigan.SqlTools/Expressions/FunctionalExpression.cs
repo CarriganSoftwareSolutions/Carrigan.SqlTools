@@ -31,6 +31,15 @@ public abstract class FunctionalExpression : SqlExpression
     public FunctionalExpression(params IEnumerable<SqlExpression> values) : base(values)
     {
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FunctionalExpression"/> class with the specified values.
+    /// </summary>
+    /// <param name="expectedValues">The expected number of values.</param>
+    /// <param name="values">
+    /// The expressions to evaluate in order. The sequence must contain at least one value.
+    /// </param>
+    public FunctionalExpression(int expectedValues, params IEnumerable<SqlExpression> values) : base(values) => 
+        ValidateValues(expectedValues, values);
 
     /// <summary>
     /// Converts the Funcational expression into SQL fragments for the specified dialect.
@@ -96,5 +105,16 @@ public abstract class FunctionalExpression : SqlExpression
             throw new ArgumentException($"Scalar function requires {minArguments} or more expressions.", nameof(values));
 
         return values;
+    }
+
+    protected static SqlExpression ValidateValue(SqlExpression sqlExpression)
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
+        return sqlExpression;
+    }
+    protected static Parameter ValidateParameterValue(object value)
+    {
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
+        return new Parameter(value);
     }
 }

@@ -48,7 +48,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Mod Examples](#mod-examples)
     - [Multiply Examples](#multiply-examples)
     - [Negate Examples](#negate-examples)
-- [SqlExpression Examples] (#sqlexpression-examples)
+- [SqlExpression Examples](#sqlexpression-examples)
     - [Abs Example](#abs-example)  
     - [Coalesce Example](#coalesce-example)
     - [Concat Example](#concat-example)
@@ -59,6 +59,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [LRTrim Examples](#lrtrim-example)
     - [LTrim Examples](#ltrim-examples)
     - [NullIf Example](#nullif-example)
+    - [Replace Examples](#replace-examples)
     - [Round Example](#round-example)
     - [RTrim Examples](#rtrim-examples)
     - [Sign Example](#sign-example)
@@ -922,20 +923,34 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ---
 
-### Sign Example
+### Replace Examples
 
 ```csharp
-Sign expression = new(new Column<Order>(nameof(Order.Total)));
+Replace expression = new(new Column<Customer>(nameof(Customer.Name)), new Parameter("'"), new Parameter(" "));
 SelectTags selects = new(new SelectTag(expression, "Value"));
 
-SelectBuilder<Order> selectBuilder = new()
+SelectBuilder<Customer> selectBuilder = new()
 {
     Selects = selects
 };
 
-SqlQuery query = orderGenerator.Select(selectBuilder);
+SqlQuery query = customerGenerator.Select(selectBuilder);
 
-//SELECT SIGN([Order].[Total]) AS [Value] FROM [Order]
+//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+```
+Note: When a relace string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+```csharp
+Replace expression = new(new Column<Customer>(nameof(Customer.Name)), "'", " ");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)

@@ -219,6 +219,48 @@ public class FromReadMeSqlExpressionsExamples
     }
 
     [Fact]
+    public void Replace_Example()
+    {
+        Replace expression = new(new Column<Customer>(nameof(Customer.Name)), new Parameter("'"), new Parameter(" "));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal("'", query.Parameters.First().Value);
+        Assert.Equal(" ", query.Parameters.ElementAt(1).Value);
+    }
+
+    [Fact]
+    public void ReplaceWithStrings_Example()
+    {
+        Replace expression = new(new Column<Customer>(nameof(Customer.Name)), "'", " ");
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal("'", query.Parameters.First().Value);
+        Assert.Equal(" ", query.Parameters.ElementAt(1).Value);
+    }
+
+    [Fact]
     public void Round_Example()
     {
         Round expression = new(new Column<Customer>(nameof(Customer.Name)));
