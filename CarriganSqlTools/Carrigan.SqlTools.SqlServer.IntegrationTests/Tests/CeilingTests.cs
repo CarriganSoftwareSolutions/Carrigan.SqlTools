@@ -10,13 +10,13 @@ using Microsoft.Data.SqlClient;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 
-public sealed class AbsTests : IClassFixture<BooksFixture>
+public sealed class CeilingTests : IClassFixture<BooksFixture>
 {
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
     private readonly BooksFixture _fixture;
     private readonly SqlGenerator<Book> BookSqlGenerator = new();
 
-    public AbsTests(BooksFixture fixture) =>
+    public CeilingTests(BooksFixture fixture) =>
         _fixture = fixture;
 
     private async Task<IEnumerable<BookIdAndPrice>> ExecuteAsync(SqlExpression expression)
@@ -26,7 +26,7 @@ public sealed class AbsTests : IClassFixture<BooksFixture>
             Selects = new SelectTags
             (
                 new SelectTag<Book>(nameof(Book.Id)),
-                new SelectTag(expression, nameof(BookIdAndPrice.Price))
+                expression.AsSelectTag(nameof(BookIdAndPrice.Price))
             )
         };
 
@@ -58,32 +58,28 @@ public sealed class AbsTests : IClassFixture<BooksFixture>
     }
 
     [Fact]
-    public async Task Abs_Test()
+    public async Task Ceiling()
     {
         IEnumerable<BookIdAndPrice> records = await ExecuteAsync
         (
-            new Abs(new Column<Book>(nameof(Book.Price)))
+            new Ceiling(new Column<Book>(nameof(Book.Price)))
         );
 
         Dictionary<int, double?> expectedValues = new()
         {
-            { 1, 14.99 },
-            { 2, 18.99 },
-            { 3, 12.99 },
-            { 4, 9.99 },
-            { 5, 11.99 },
-            { 6, 10.99 },
-            { 7, 13.99 },
-            { 8, 8.99 },
-            { 9, 10.99 },
-            { 10, 19.99 },
+            { 1, 15 },
+            { 2, 19 },
+            { 3, 13 },
+            { 4, 10 },
+            { 5, 12 },
+            { 6, 11 },
+            { 7, 14 },
+            { 8, 9 },
+            { 9, 11 },
+            { 10, 20 },
             { 11, null }
         };
 
         AssertPrices(records, expectedValues);
     }
 }
-
-
-
-

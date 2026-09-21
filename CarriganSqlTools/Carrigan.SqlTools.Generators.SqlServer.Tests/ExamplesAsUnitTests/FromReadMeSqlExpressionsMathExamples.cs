@@ -56,6 +56,24 @@ public class FromReadMeSqlExpressionsMathExamples
     }
 
     [Fact]
+    public void Ceiling_Example()
+    {
+        Ceiling expression = new (new Column<Order>(nameof(Order.Total)));
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT CEILING([Order].[Total]) AS [Value] FROM [Order]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void DivideColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
@@ -78,6 +96,24 @@ public class FromReadMeSqlExpressionsMathExamples
         string expectedSql = "SELECT ([Grades].[CreditHours] / @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
+    }
+
+    [Fact]
+    public void Floor_Example()
+    {
+        Floor expression = new(new Column<Order>(nameof(Order.Total)));
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT FLOOR([Order].[Total]) AS [Value] FROM [Order]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -180,6 +216,24 @@ public class FromReadMeSqlExpressionsMathExamples
     }
 
     [Fact]
+    public void Power_Example()
+    {
+        Power expression = new(new Column<Order>(nameof(Order.Total)), 2);
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT POWER([Order].[Total], @Parameter_1) AS [Value] FROM [Order]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void Round_Example()
     {
         Round expression = new(new Column<Customer>(nameof(Customer.Name)));
@@ -239,6 +293,24 @@ public class FromReadMeSqlExpressionsMathExamples
     }
 
     [Fact]
+    public void SquareRoot_Example()
+    {
+        SquareRoot expression = new(new Column<Order>(nameof(Order.Total)));
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT SQRT([Order].[Total]) AS [Value] FROM [Order]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void SubtractColumnAndParameter()
     {
         SelectBuilder<Grades> selectBuilder = new()
@@ -258,7 +330,7 @@ public class FromReadMeSqlExpressionsMathExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT ([Grades].[CreditHours] - $1) AS [ArthemicResult] FROM [Grades]";
+        string expectedSql = "SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }

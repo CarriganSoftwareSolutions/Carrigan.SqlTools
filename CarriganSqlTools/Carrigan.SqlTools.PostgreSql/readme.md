@@ -44,14 +44,18 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [CurrentDate Example](#currentdate-example)
     - [CurrentTimeStamp Example](#currenttimestamp-example)
   - [Math Operations](#math-operations)
-    - [Abs Example](#abs-example)  
+    - [Abs Example](#abs-example)
     - [Add Examples](#add-examples)
+    - [Ceiling Example](#ceiling-example)
     - [Divide Examples](#divide-examples)
+    - [Floor Example](#floor-example)
     - [Minus Examples](#minus-examples)
     - [Mod Examples](#mod-examples)
     - [Multiply Examples](#multiply-examples)
+    - [Power Example](#power-example)
     - [Negate Examples](#negate-examples)
     - [Sign Example](#sign-example)
+    - [SquareRoot Example](#squareroot-example)
     - [Subtract Example](#subtract-example)
   - [Null Operations](#null-operations)
     - [Coalesce Example](#coalesce-example)
@@ -678,7 +682,28 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
-//  SELECT (\"Grades\".\"CreditHours\" + @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+//  SELECT (\"Grades\".\"CreditHours\" + $1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Ceiling Example
+
+```csharp
+Ceiling expression = new(new Column<Order>(nameof(Order.Total)));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT CEILING(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -708,6 +733,27 @@ SelectBuilder<Grades> selectBuilder = new()
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 //  SELECT (\"Grades\".\"CreditHours\" / @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Floor Example
+
+```csharp
+Floor expression = new(new Column<Order>(nameof(Order.Total)));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT FLOOR(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -827,6 +873,27 @@ SelectBuilder<Grades> selectBuilder = new()
 
 ---
 
+#### Power Example
+
+```csharp
+Power expression = new(new Column<Order>(nameof(Order.Total)), 2);
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT POWER(\"Order\".\"Total\", @Parameter_1) AS \"Value\" FROM \"Order\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
 #### Sign Example
 
 ```csharp
@@ -841,6 +908,27 @@ SelectBuilder<Order> selectBuilder = new()
 SqlQuery query = orderGenerator.Select(selectBuilder);
 
 //SELECT SIGN(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### SquareRoot Example
+
+```csharp
+SquareRoot expression = new(new Column<Order>(nameof(Order.Total)));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT SQRT(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
 ```
 
 [Table of Contents](#table-of-contents)

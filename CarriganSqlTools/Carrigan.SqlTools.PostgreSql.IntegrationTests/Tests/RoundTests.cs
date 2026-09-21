@@ -1,18 +1,18 @@
-﻿using Carrigan.SqlTools.Clients.SqlServer;
+﻿using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.Models;
-using Carrigan.SqlTools.SqlServer.IntegrationTests.Fixtures;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 
-namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests;
 
 public sealed class RoundTests : IClassFixture<BooksFixture>
 {
-    private static readonly ISqlDialects Dialect = new SqlServerDialect();
+    private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
     private readonly BooksFixture _fixture;
     private readonly SqlGenerator<Book> BookSqlGenerator = new();
 
@@ -32,7 +32,7 @@ public sealed class RoundTests : IClassFixture<BooksFixture>
 
         SqlQuery query = BookSqlGenerator.Select(selectBuilder);
 
-        await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
         return await CommandsAsync.ExecuteReaderAsync<BookIdAndPrice>(query, null, connection);
     }
     private static void AssertPrices(IEnumerable<BookIdAndPrice> records, Dictionary<int, double?> expectedValues)

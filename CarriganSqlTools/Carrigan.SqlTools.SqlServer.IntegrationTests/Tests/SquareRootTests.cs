@@ -10,13 +10,13 @@ using Microsoft.Data.SqlClient;
 
 namespace Carrigan.SqlTools.SqlServer.IntegrationTests.Tests;
 
-public sealed class AbsTests : IClassFixture<BooksFixture>
+public sealed class SquareRootTests : IClassFixture<BooksFixture>
 {
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
     private readonly BooksFixture _fixture;
     private readonly SqlGenerator<Book> BookSqlGenerator = new();
 
-    public AbsTests(BooksFixture fixture) =>
+    public SquareRootTests(BooksFixture fixture) =>
         _fixture = fixture;
 
     private async Task<IEnumerable<BookIdAndPrice>> ExecuteAsync(SqlExpression expression)
@@ -26,7 +26,7 @@ public sealed class AbsTests : IClassFixture<BooksFixture>
             Selects = new SelectTags
             (
                 new SelectTag<Book>(nameof(Book.Id)),
-                new SelectTag(expression, nameof(BookIdAndPrice.Price))
+                expression.AsSelectTag(nameof(BookIdAndPrice.Price))
             )
         };
 
@@ -52,17 +52,17 @@ public sealed class AbsTests : IClassFixture<BooksFixture>
             else
             {
                 Assert.NotNull(actual.Price);
-                Assert.Equal(expected.Value, actual.Price.Value, 2, MidpointRounding.AwayFromZero);
+                Assert.Equal(Math.Sqrt(expected.Value), actual.Price.Value, 2, MidpointRounding.AwayFromZero);
             }
         }
     }
 
     [Fact]
-    public async Task Abs_Test()
+    public async Task Power_Test()
     {
         IEnumerable<BookIdAndPrice> records = await ExecuteAsync
         (
-            new Abs(new Column<Book>(nameof(Book.Price)))
+            new SquareRoot(new Column<Book>(nameof(Book.Price)))
         );
 
         Dictionary<int, double?> expectedValues = new()
@@ -83,7 +83,3 @@ public sealed class AbsTests : IClassFixture<BooksFixture>
         AssertPrices(records, expectedValues);
     }
 }
-
-
-
-
