@@ -19,6 +19,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 ---
 
 ## Table of Contents
+
 - [Features](#features)
 - [Installation](#installation)
 - [Getting Started Examples](#getting-started-examples)
@@ -38,28 +39,32 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Update with From and Where](#update-with-from-and-where)
   - [Aggregate Expression Examples](#aggregate-expression-examples)
   - [Having Examples](#having-examples)
-- [Arithmetic Examples](#arithmetic-examples)
+- [SqlExpression Examples](#sqlexpression-examples)
+  - [Date Time Operations](#date-time-operations)
+    - [CurrentDate Example](#currentdate-example)
+    - [CurrentTimeStamp Example](#currenttimestamp-example)
+  - [Math Operations](#math-operations)
+    - [Abs Example](#abs-example)  
     - [Add Examples](#add-examples)
     - [Divide Examples](#divide-examples)
     - [Minus Examples](#minus-examples)
     - [Mod Examples](#mod-examples)
     - [Multiply Examples](#multiply-examples)
     - [Negate Examples](#negate-examples)
-- [SqlExpression Examples](#sqlexpression-examples)
-    - [Abs Example](#abs-example)  
+    - [Sign Example](#sign-example)
+    - [Subtract Example](#subtract-example)
+  - [Null Operations](#null-operations)
     - [Coalesce Example](#coalesce-example)
+    - [NullIf Example](#nullif-example)
+  - [String Operations](#string-operations)
     - [Concat Example](#concat-example)
-    - [CurrentDate Example](#currentdate-example)
-    - [CurrentTimeStamp Example](#currenttimestamp-example)
     - [Lower Example](#lower-example)
     - [LTrim Examples](#ltrim-examples)
-    - [NullIf Example](#nullif-example)
     - [Replace Examples](#replace-examples)
     - [Round Examples](#round-examples)
     - [RTrim Examples](#rtrim-examples)
-    - [Sign Example](#sign-example)
     - [Upper Example](#upper-example)
-    - [TRIM Examples](#trim-examples)
+    - [Trim Examples](#trim-examples)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -589,9 +594,72 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 
 ---
 
-## Arithmetic Examples
+## SqlExpression Examples
 
-### Add Examples
+### Date Time Operations
+
+#### CurrentDate Example
+
+```csharp
+CurrentDate currentDate = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(currentDate, "Date"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CURRENT_DATE AS \"Date\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### CurrentTimeStamp Example
+
+```csharp
+CurrentTimeStamp currentTimeStamp = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(currentTimeStamp, "TimeStamp"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CURRENT_TIMESTAMP AS \"TimeStamp\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Math Operations
+
+#### Abs Example
+
+```csharp
+Abs abs = new(new Column<Order>(nameof(Order.Total)));
+SelectTags selects = new(new SelectTag(abs, "AbsValue"));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+
+//SELECT ABS(\"Order\".\"Total\") AS \"AbsValue\" FROM \"Order\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Add Examples
+
 ```csharp
 SelectBuilder<Grades> selectBuilder = new()
 {
@@ -617,7 +685,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Divide Examples
+#### Divide Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -645,7 +714,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Minus Examples
+#### Minus Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -673,7 +743,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Mod Examples
+#### Mod Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -701,7 +772,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Multiply Examples
+#### Multiply Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -729,7 +801,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Negate Examples
+#### Negate Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -754,284 +827,7 @@ SelectBuilder<Grades> selectBuilder = new()
 
 ---
 
-## SqlExpression Examples
-
-### Abs Example
-
-```csharp
-Abs abs = new(new Column<Order>(nameof(Order.Total)));
-SelectTags selects = new(new SelectTag(abs, "AbsValue"));
-
-SelectBuilder<Order> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = orderGenerator.Select(selectBuilder);
-
-//SELECT ABS(\"Order\".\"Total\") AS \"AbsValue\" FROM \"Order\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-
-### Coalesce Example
-
-```csharp
-Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
-SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT COALESCE(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Coalescence\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Concat Example
-
-```csharp
-Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
-SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT CONCAT(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Value\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### CurrentDate Example
-
-```csharp
-CurrentDate currentDate = new();
-ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = new SelectTags(new SelectTag(currentDate, "Date"), new SelectTag(columnBase, "Name"))
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT CURRENT_DATE AS \"Date\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### CurrentTimeStamp Example
-
-```csharp
-CurrentTimeStamp currentTimeStamp = new();
-ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = new SelectTags(new SelectTag(currentTimeStamp, "TimeStamp"), new SelectTag(columnBase, "Name"))
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT CURRENT_TIMESTAMP AS \"TimeStamp\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Lower Example
-
-```csharp
-Lower expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT LOWER(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### LTrim Examples
-
-```csharp
-LTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT LTRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
-```
-Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-LTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT LTRIM(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### NullIf Example
-
-```csharp
-NullIf nullIf = new(new Column<Customer>(nameof(Customer.Phone)), new Parameter(string.Empty));
-SelectTags selects = new(new SelectTag(nullIf, "NullIf"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT NULLIF(\"Customer\".\"Phone\", $1) AS \"NullIf\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Replace Examples
-
-```csharp
-Replace expression = new(new Column<Customer>(nameof(Customer.Name)), new Parameter("'"), new Parameter(" "));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT REPLACE(\"Customer\".\"Name\", $1, $2) AS \"Value\" FROM \"Customer\"
-```
-Note: When a relace string is specified, it is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-Replace expression = new(new Column<Customer>(nameof(Customer.Name)), "'", " ");
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT REPLACE(\"Customer\".\"Name\", $1, $2) AS \"Value\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Round Examples
-
-```csharp
-Round expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT ROUND(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
-```
-Note: When a precision value is specified, it is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-ROUND expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT ROUND(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### RTrim Examples
-
-```csharp
-RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT RTRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
-```
-Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT RTRIM(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Sign Example
+#### Sign Example
 
 ```csharp
 Sign expression = new(new Column<Order>(nameof(Order.Total)));
@@ -1051,7 +847,264 @@ SqlQuery query = orderGenerator.Select(selectBuilder);
 
 ---
 
-### Trim Examples
+#### Subtract Example
+
+```csharp
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Subtract
+            (
+                new Column<Grades>(nameof(Grades.CreditHours)),
+                new Parameter(1)
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+
+SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+
+//  SELECT (\"Grades\".\"CreditHours\" - $1) AS \"ArthemicResult\" FROM \"Grades\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Null Operations
+
+#### Coalesce Example
+
+```csharp
+Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT COALESCE(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Coalescence\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### NullIf Example
+
+```csharp
+NullIf nullIf = new(new Column<Customer>(nameof(Customer.Phone)), new Parameter(string.Empty));
+SelectTags selects = new(new SelectTag(nullIf, "NullIf"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT NULLIF(\"Customer\".\"Phone\", $1) AS \"NullIf\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### String Operations
+
+#### Concat Example
+
+```csharp
+Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CONCAT(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Lower Example
+
+```csharp
+Lower expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LOWER(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### LTrim Examples
+
+```csharp
+LTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LTRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+
+Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+LTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LTRIM(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Replace Examples
+
+```csharp
+Replace expression = new(new Column<Customer>(nameof(Customer.Name)), new Parameter("'"), new Parameter(" "));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT REPLACE(\"Customer\".\"Name\", $1, $2) AS \"Value\" FROM \"Customer\"
+```
+
+Note: When a relace string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+Replace expression = new(new Column<Customer>(nameof(Customer.Name)), "'", " ");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT REPLACE(\"Customer\".\"Name\", $1, $2) AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Round Examples
+
+```csharp
+Round expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT ROUND(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+
+Note: When a precision value is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+ROUND expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT ROUND(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### RTrim Examples
+
+```csharp
+RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT RTRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```
+
+Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT RTRIM(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Trim Examples
 
 ```csharp
 Trim expression = new(new Column<Customer>(nameof(Customer.Name)));
@@ -1066,7 +1119,9 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 //SELECT TRIM(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
 ```
+
 Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
 ```csharp
 Trim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
 SelectTags selects = new(new SelectTag(expression, "Value"));
@@ -1085,7 +1140,7 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ---
 
-### Upper Example
+#### Upper Example
 
 ```csharp
 Upper expression = new(new Column<Customer>(nameof(Customer.Name)));
@@ -1544,7 +1599,7 @@ Plug `MyDecrypters` into `ExecuteReaderAsync<T>` or `ExecuteReader<T>` to transp
 Carrigan.SqlTools.PostgreSql
 Copyright © 2025-2026 Carrigan Software Solutions LLC
 
-Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the Apache License, Version 2.0: <http://www.apache.org/licenses/LICENSE-2.0>
 
 [Table of Contents](#table-of-contents)
 

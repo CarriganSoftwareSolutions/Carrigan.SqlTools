@@ -4,7 +4,7 @@
 
 Carrigan.SqlTools.SqlServer is a convenience package that installs SQL Server SQL generation and SQL Server client execution support for Carrigan.SqlTools.  
 
-It references **Carrigan.SqlTools.Generators.SqlServer** for SQL Server `SELECT`, `INSERT`, `UPDATE`, and `DELETE` generation, and **Carrigan.SqlTools.Clients.SqlServer** for executing generated queries, mapping rows to objects, and handling decryption of encrypted properties. 
+It references **Carrigan.SqlTools.Generators.SqlServer** for SQL Server `SELECT`, `INSERT`, `UPDATE`, and `DELETE` generation, and **Carrigan.SqlTools.Clients.SqlServer** for executing generated queries, mapping rows to objects, and handling decryption of encrypted properties.
 
 The transitive dependency **Carrigan.Core** provides interfaces, property attributes for custom property-level encryption, and shared helper functionality.
 
@@ -19,6 +19,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 ---
 
 ## Table of Contents
+
 - [Features](#features)
 - [Installation](#installation)
 - [Getting Started Examples](#getting-started-examples)
@@ -30,7 +31,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Update by Id (selected columns)](#update-by-id-selected-columns)
   - [Delete](#delete)
   - [Delete by Id (multiple keys)](#delete-by-id-multiple-keys)
-- [More Complex Examples](#more-complex-examples) 
+- [More Complex Examples](#more-complex-examples)
   - [Select with Joins and Order By](#select-with-joins-and-order-by)
   - [Select with Two Part Order By](#select-with-two-part-order-by)
   - [Delete with Join and Where](#delete-with-join-and-where)
@@ -38,30 +39,34 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Update with Joins and Where](#update-with-joins-and-where)
   - [Aggregate Expression Examples](#aggregate-expression-examples)
   - [Having Examples](#having-examples)
-- [Arithmetic Examples](#arithmetic-examples)
+- [SqlExpression Examples](#sqlexpression-examples)
+  - [Date Time Operations](#date-time-operations)
+    - [CurrentDate Example](#currentdate-example)
+    - [CurrentTimeStamp Example](#currenttimestamp-example)
+    - [GetDate Example](#getdate-example)
+  - [Math Operations](#math-operations)
+    - [Abs Example](#abs-example)
     - [Add Examples](#add-examples)
     - [Divide Examples](#divide-examples)
     - [Minus Examples](#minus-examples)
     - [Mod Examples](#mod-examples)
     - [Multiply Examples](#multiply-examples)
     - [Negate Examples](#negate-examples)
-- [SqlExpression Examples](#sqlexpression-examples)
-    - [Abs Example](#abs-example)  
-    - [Coalesce Example](#coalesce-example)
-    - [Concat Example](#concat-example)
-    - [CurrentDate Example](#currentdate-example)
-    - [CurrentTimeStamp Example](#currenttimestamp-example)
-    - [GetDate Example](#getdate-example)
-    - [Lower Example](#lower-example)
-    - [LRTrim Examples](#lrtrim-example)
-    - [LTrim Examples](#ltrim-examples)
-    - [NullIf Example](#nullif-example)
-    - [Replace Examples](#replace-examples)
     - [Round Example](#round-example)
-    - [RTrim Examples](#rtrim-examples)
     - [Sign Example](#sign-example)
+    - [Subtract Example](#subtract-example)
+  - [Null Operations](#null-operations)
+    - [Coalesce Example](#coalesce-example)
+    - [NullIf Example](#nullif-example)
+  - [String Operations](#string-operations)
+    - [Concat Example](#concat-example)
+    - [Lower Example](#lower-example)
+    - [LRTrim Example](#lrtrim-example)
+    - [LTrim Examples](#ltrim-examples)
+    - [Replace Examples](#replace-examples)
+    - [RTrim Examples](#rtrim-examples)
     - [Upper Example](#upper-example)
-    - [TRIM Examples](#trim-examples)
+    - [Trim Examples](#trim-examples)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -103,7 +108,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 
 ---
 
-## Installation  
+## Installation
 
 Install the SQL Server convenience package when you want both SQL Server SQL generation and SQL Server execution helpers:
 
@@ -124,8 +129,7 @@ dotnet add package Carrigan.SqlTools.Clients.SqlServer
 
 ## Getting Started Examples
 
-We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`). 
- 
+We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`).
 
 All examples use the following `using` statements to keep the code examples focused on SQL generation.
 
@@ -176,7 +180,9 @@ SqlQuery query = customerGenerator.SelectAll();
 
 
 ### Select by Id
+
 A key attribute is required. Composite keys are supported by marking multiple key properties.
+
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.SelectById(entity);
@@ -212,7 +218,9 @@ SqlQuery query = customerGenerator.Insert(insertBuilder);
 
 
 ### Insert with Auto Id
+
 A key attribute is required, and identity columns must be generated by the database.
+
 ```csharp
 Customer entity = new() 
 { 
@@ -233,7 +241,9 @@ SqlQuery query = customerGenerator.InsertAutoId(entity);
 
 
 ### Update by Id
+
 A key attribute is required. Composite keys are supported by marking multiple key properties.
+
 ```csharp
 Customer entity = new() 
 { 
@@ -254,9 +264,11 @@ SqlQuery query = customerGenerator.UpdateById(entity);
 <a id="update-by-id-selected-columns"></a>
 
 ### Update by Id (selected columns)
-A key attribute is required. Composite keys are supported by marking multiple key properties. 
+
+A key attribute is required. Composite keys are supported by marking multiple key properties.
 
 `ColumnCollection<T>` validates property names and throws an error when a property name is not valid.
+
 ```csharp
 ColumnCollection<Customer> columns = new(nameof(Customer.Email));
 Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
@@ -270,7 +282,9 @@ SqlQuery query = customerGenerator.UpdateById(entity, columns);
 
 
 ### Delete
+
 A key attribute is required. Composite keys are supported by marking multiple key properties.
+
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.Delete(entity);
@@ -283,7 +297,9 @@ SqlQuery query = customerGenerator.Delete(entity);
 <a id="delete-by-id-multiple-keys"></a>
 
 ### Delete by Id (multiple keys)
+
 A key attribute is required. Composite keys are supported by marking multiple key properties.
+
 ```csharp
 Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
@@ -298,7 +314,7 @@ SqlQuery query = customerGenerator.DeleteById(entities);
 
 ## More Complex Examples
 
-We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`). 
+We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`).
 
 All examples use the following `using` statements to keep the code examples focused on SQL generation.
 
@@ -340,9 +356,11 @@ public SqlGenerator<Order> orderGenerator = new();
 ```
 
 ### Select with Joins and Order By
+
 `ColumnEqualsColumn<LeftT, RightT>` validates property names and throws an error when a property name is not valid.
 
 `OrderBy<Order>` validates property names and throws an error when a property name is not valid.
+
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 InnerJoin<Order> join = new(predicate);
@@ -368,9 +386,11 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 
 ### Select with Two Part Order By
+
 `ColumnEqualsColumn<LeftT, RightT>` validates property names and throws an error when a property name is not valid.
 
 `OrderBy<Order>` validates property names and throws an error when a property name is not valid.
+
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
@@ -400,9 +420,11 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 
 ### Delete with Join and Where
+
 `ColumnEqualsColumn<LeftT, RightT>` validates property names and throws an error when a property name is not valid.
 
 `ColumnValue<T>` validates property names and throws an error when a property name is not valid.
+
 ```csharp
 ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
@@ -448,6 +470,7 @@ SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
 
 
 ### Update with Joins and Where
+
 `ColumnCollection<T>` validates property names and throws an error when a property name is not valid.
 
 `ColumnEqualsColumn<LeftT, RightT>` validates property names and throws an error when a property name is not valid.
@@ -529,6 +552,7 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 ---
 
 ### Having Examples
+
 ```csharp
 Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
 
@@ -566,9 +590,91 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 
 ---
 
-## Arithmetic Examples
+## SqlExpression Examples
 
-### Add Examples
+### Date Time Operations
+
+#### CurrentDate Example
+
+```csharp
+CurrentDate currentDate = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(currentDate, "Date"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CURRENT_DATE AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### CurrentTimeStamp Example
+
+```csharp
+CurrentTimeStamp currentTimeStamp = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(currentTimeStamp, "TimeStamp"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT CURRENT_TIMESTAMP AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### GetDate Example
+
+```csharp
+GetDate getDate = new();
+ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = new SelectTags(new SelectTag(getDate, "Date"), new SelectTag(columnBase, "Name"))
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT GETDATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Math Operations
+
+#### Abs Example
+
+```csharp
+Abs abs = new(new Column<Order>(nameof(Order.Total)));
+SelectTags selects = new(new SelectTag(abs, "AbsValue"));
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+
+//SELECT ABS([Order].[Total]) AS [AbsValue] FROM [Order]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Add Examples
+
 ```csharp
 SelectBuilder<Grades> selectBuilder = new()
 {
@@ -594,7 +700,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Divide Examples
+#### Divide Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -622,7 +729,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Minus Examples
+#### Minus Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -650,7 +758,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Mod Examples
+#### Mod Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -678,7 +787,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Multiply Examples
+#### Multiply Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -706,7 +816,8 @@ SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 ---
 
-### Negate Examples
+#### Negate Examples
+
 ```csharp
 
 SelectBuilder<Grades> selectBuilder = new()
@@ -731,309 +842,7 @@ SelectBuilder<Grades> selectBuilder = new()
 
 ---
 
-## SqlExpression Examples
-
-### Abs Example
-
-```csharp
-Abs abs = new(new Column<Order>(nameof(Order.Total)));
-SelectTags selects = new(new SelectTag(abs, "AbsValue"));
-
-SelectBuilder<Order> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = orderGenerator.Select(selectBuilder);
-
-//SELECT ABS([Order].[Total]) AS [AbsValue] FROM [Order]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Coalesce Example
-
-```csharp
-Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
-SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Concat Example
-
-```csharp
-Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
-SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### CurrentDate Example
-
-```csharp
-CurrentDate currentDate = new();
-ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = new SelectTags(new SelectTag(currentDate, "Date"), new SelectTag(columnBase, "Name"))
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT CURRENT_DATE AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### CurrentTimeStamp Example
-
-```csharp
-CurrentTimeStamp currentTimeStamp = new();
-ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = new SelectTags(new SelectTag(currentTimeStamp, "TimeStamp"), new SelectTag(columnBase, "Name"))
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT CURRENT_TIMESTAMP AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### GetDate Example
-
-```csharp
-GetDate getDate = new();
-ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = new SelectTags(new SelectTag(getDate, "Date"), new SelectTag(columnBase, "Name"))
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT GETDATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Lower Example
-
-```csharp
-Lower expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT LOWER([Customer].[Name]) AS [Value] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### LRTrim Example
-
-```csharp
-LRTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT LTRIM(RTRIM([Customer].[Name])) AS [Value] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Lrim Examples
-
-```csharp
-LTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT LTRIM([Customer].[Name]) AS [Value] FROM [Customer]
-```
-Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-LTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT LTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### NullIf Example
-
-```csharp
-NullIf nullIf = new(new Column<Customer>(nameof(Customer.Phone)), new Parameter(string.Empty));
-SelectTags selects = new(new SelectTag(nullIf, "NullIf"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Replace Examples
-
-```csharp
-Replace expression = new(new Column<Customer>(nameof(Customer.Name)), new Parameter("'"), new Parameter(" "));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
-```
-Note: When a relace string is specified, it is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-Replace expression = new(new Column<Customer>(nameof(Customer.Name)), "'", " ");
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Round Example
-
-Note: The precision value is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-Round expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### RTrim Examples
-
-```csharp
-RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT RTRIM([Customer].[Name]) AS [Value] FROM [Customer]
-```
-Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
-```csharp
-RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
-SelectTags selects = new(new SelectTag(expression, "Value"));
-
-SelectBuilder<Customer> selectBuilder = new()
-{
-    Selects = selects
-};
-
-SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT RTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
-### Sign Example
+#### Sign Example
 
 ```csharp
 Sign expression = new(new Column<Order>(nameof(Order.Total)));
@@ -1053,7 +862,269 @@ SqlQuery query = orderGenerator.Select(selectBuilder);
 
 ---
 
-### Trim Examples
+#### Subtract Example
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Subtract
+            (
+                new Column<Grades>(nameof(Grades.CreditHours)),
+                new Parameter(1)
+            ),
+            "ArthemicResult"
+        )
+    )
+};
+
+SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+
+//SELECT ([Grades].[CreditHours] - $1) AS [ArthemicResult] FROM [Grades]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Null Operations
+
+#### Coalesce Example
+
+```csharp
+Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### NullIf Example
+
+```csharp
+NullIf nullIf = new(new Column<Customer>(nameof(Customer.Phone)), new Parameter(string.Empty));
+SelectTags selects = new(new SelectTag(nullIf, "NullIf"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### String Operations
+
+#### Concat Example
+
+```csharp
+Coalesce coalesce = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));
+SelectTags selects = new(new SelectTag(coalesce, "Coalescence"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Lower Example
+
+```csharp
+Lower expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LOWER([Customer].[Name]) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### LRTrim Example
+
+```csharp
+LRTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LTRIM(RTRIM([Customer].[Name])) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### LTrim Examples
+
+```csharp
+LTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LTRIM([Customer].[Name]) AS [Value] FROM [Customer]
+```
+
+Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+LTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT LTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Replace Examples
+
+```csharp
+Replace expression = new(new Column<Customer>(nameof(Customer.Name)), new Parameter("'"), new Parameter(" "));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+```
+
+Note: When a relace string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+Replace expression = new(new Column<Customer>(nameof(Customer.Name)), "'", " ");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Round Example
+
+Note: The precision value is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+Round expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### RTrim Examples
+
+```csharp
+RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT RTRIM([Customer].[Name]) AS [Value] FROM [Customer]
+```
+
+Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
+```csharp
+RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+SelectTags selects = new(new SelectTag(expression, "Value"));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = selects
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+
+//SELECT RTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Trim Examples
 
 ```csharp
 Trim expression = new(new Column<Customer>(nameof(Customer.Name)));
@@ -1068,7 +1139,9 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 //SELECT TRIM([Customer].[Name]) AS [Value] FROM [Customer]
 ```
+
 Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+
 ```csharp
 Trim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
 SelectTags selects = new(new SelectTag(expression, "Value"));
@@ -1087,7 +1160,7 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ---
 
-### Upper Example
+#### Upper Example
 
 ```csharp
 Upper expression = new(new Column<Customer>(nameof(Customer.Name)));
@@ -1109,7 +1182,7 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ## Attribute Examples
 
-We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`). 
+We use `SqlGenerator<T>` to produce a **`SqlQuery`** (with `QueryText`, `CommandType`, and `Parameters`).
 
 You can use the `[Table]` attribute from `System.ComponentModel.DataAnnotations.Schema` to override the table name, otherwise the table name is assumed to be the same as the class. You can also specify the schema name or not.
 
@@ -1129,6 +1202,7 @@ public SqlGenerator<PhoneModel> phoneGenerator = new();
 public SqlGenerator<EmailModel> emailGenerator = new();
 public SqlGenerator<ProcedureExec> procedureExecGenerator = new();
 ```
+
 <a id="table-column-and-key"></a>
 
 ### Table, Column and Key
@@ -1253,6 +1327,7 @@ int affected =
 object result =
     await CommandsAsync.ExecuteScalarAsync(query, transaction, connection);
 ```
+
 [Example Encryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 
 [Table of Contents](#table-of-contents)
@@ -1326,6 +1401,7 @@ connection.Close();
 
 
 ---
+
 ## Data Type Mappings
 
 <a id="default-parameter-return-types"></a>
@@ -1357,6 +1433,7 @@ connection.Close();
 [Table of Contents](#table-of-contents)
 
 ### Allowed Override Types
+
 | C# CLR Type     | Allowed `SqlTypeAttribute`-derived attributes | `SqlDbType` values allowed by those attributes |
 |-----------------|---------------------------------------------------------------------|---------------------------------------------|
 | byte[]          | SqlBinaryAttribute<br>SqlVarBinaryMaxAttribute                       | SqlDbType.Binary<br>SqlDbType.VarBinary      |
@@ -1373,6 +1450,7 @@ connection.Close();
 [Table of Contents](#table-of-contents)
 
 ### Allowed Override Types With Warnings
+
 | C# CLR Type     | Allowed `SqlTypeAttribute`-derived attributes | `SqlDbType` values allowed by those attributes |
 |-----------------|-----------------------------------------------------------|---------------------------------------------|
 | byte[]          | SqlImageAttribute | SqlDbType.Image |
@@ -1517,7 +1595,7 @@ public sealed class MyDecrypters : IDecrypters
 Carrigan.SqlTools.SqlServer  
 Copyright © 2025-2026 Carrigan Software Solutions LLC
 
-Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the Apache License, Version 2.0]: <http://www.apache.org/licenses/LICENSE-2.0>
 
 [Table of Contents](#table-of-contents)
 

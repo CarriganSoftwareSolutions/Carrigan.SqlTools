@@ -1,13 +1,35 @@
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
-using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;
 
-public class ArithmeticExamples
+public class FromReadMeSqlExpressionsMathExamples
 {
+    private static readonly SqlGenerator<Customer> customerGenerator = new();
+    private static readonly SqlGenerator<Order> orderGenerator = new();
+
+    [Fact]
+    public void Abs_Example()
+    {
+        Abs abs = new(new Column<Order>(nameof(Order.Total)));
+        SelectTags selects = new(new SelectTag(abs, "AbsValue"));
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT ABS([Order].[Total]) AS [AbsValue] FROM [Order]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
     [Fact]
     public void AddColumnAndParameter()
     {
@@ -28,7 +50,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" + $1) AS \"ArthemicResult\" FROM \"Grades\"";
+        string expectedSql = "SELECT ([Grades].[CreditHours] + @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -53,7 +75,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" / $1) AS \"ArthemicResult\" FROM \"Grades\"";
+        string expectedSql = "SELECT ([Grades].[CreditHours] / @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -78,7 +100,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" - $1) AS \"ArthemicResult\" FROM \"Grades\"";
+        string expectedSql = "SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -103,32 +125,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" % $1) AS \"ArthemicResult\" FROM \"Grades\"";
-
-        Assert.Equal(expectedSql, sqlQuery.QueryText);
-    }
-
-    [Fact]
-    public void ModuloColumnAndParameter()
-    {
-        SelectBuilder<Grades> selectBuilder = new()
-        {
-            Selects = new SelectTags
-            (
-                new SelectTag
-                (
-                    new Modulo
-                    (
-                        new Column<Grades>(nameof(Grades.CreditHours)),
-                        new Parameter(2)
-                    ),
-                    "ArthemicResult"
-                )
-            )
-        };
-
-        SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" % $1) AS \"ArthemicResult\" FROM \"Grades\"";
+        string expectedSql = "SELECT ([Grades].[CreditHours] % @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -153,7 +150,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" * $1) AS \"ArthemicResult\" FROM \"Grades\"";
+        string expectedSql = "SELECT ([Grades].[CreditHours] * @Parameter_1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
@@ -177,9 +174,68 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (-\"Grades\".\"CreditHours\") AS \"ArthemicResult\" FROM \"Grades\"";
+        string expectedSql = "SELECT (-[Grades].[CreditHours]) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
+    }
+
+    [Fact]
+    public void Round_Example()
+    {
+        Round expression = new(new Column<Customer>(nameof(Customer.Name)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(0, Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void RoundWithPrecision_Example()
+    {
+        Round expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(2, Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void Sign_Example()
+    {
+        Sign expression = new(new Column<Order>(nameof(Order.Total)));
+        SelectTags selects = new(new SelectTag(expression, "Value"));
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = selects
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT SIGN([Order].[Total]) AS [Value] FROM [Order]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -202,7 +258,7 @@ public class ArithmeticExamples
         };
 
         SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
-        string expectedSql = "SELECT (\"Grades\".\"CreditHours\" - $1) AS \"ArthemicResult\" FROM \"Grades\"";
+        string expectedSql = "SELECT ([Grades].[CreditHours] - $1) AS [ArthemicResult] FROM [Grades]";
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
