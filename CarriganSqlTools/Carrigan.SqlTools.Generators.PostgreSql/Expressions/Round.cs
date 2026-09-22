@@ -1,8 +1,47 @@
+using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
+using System.Linq.Expressions;
+
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents the SQL <c>ROUND</c> function, which rounds a numeric expression to a specified precision.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Round expression = new(new Column<Customer>(nameof(Customer.Name)));
+/// SelectTags selects = new(new SelectTag(expression, "Value"));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = selects
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Round expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+/// SelectTags selects = new(new SelectTag(expression, "Value"));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = selects
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
 public class Round : FunctionalExpression
 {
     /// <summary>

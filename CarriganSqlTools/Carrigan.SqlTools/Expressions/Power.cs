@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Carrigan.Core.Interfaces.IModels;
+using Carrigan.SqlTools.SqlGenerators;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,14 +14,21 @@ namespace Carrigan.SqlTools.Expressions;
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[
-///
+/// Power expression = new(new Column<Order>(nameof(Order.Total)), 2);
+/// 
+/// SelectBuilder<Order> selectBuilder = new()
+/// {
+///     Selects = expression.AsSelectTag("Value")
+/// };
+/// 
+/// SqlQuery query = orderGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --SqlServer
-/// 
+/// SELECT POWER([Order].[Total], @Parameter_1) AS [Value] FROM [Order]
 /// --PostgreSql
-/// 
+/// SELECT POWER(\"Order\".\"Total\", $1) AS \"Value\" FROM \"Order\"
 /// ]]></code>
 /// </example>
 public class Power : FunctionalExpression
