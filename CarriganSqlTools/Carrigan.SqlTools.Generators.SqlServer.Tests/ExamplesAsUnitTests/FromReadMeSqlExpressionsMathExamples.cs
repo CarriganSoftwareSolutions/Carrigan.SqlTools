@@ -334,4 +334,22 @@ public class FromReadMeSqlExpressionsMathExamples
 
         Assert.Equal(expectedSql, sqlQuery.QueryText);
     }
+
+    [Fact]
+    public void TruncateWithPrecision()
+    {
+        Truncate expression = new(new Column<Order>(nameof(Order.Total)), 2);
+
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expected = "SELECT ROUND([Order].[Total], @Parameter_1, 1) AS [Value] FROM [Order]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
 }

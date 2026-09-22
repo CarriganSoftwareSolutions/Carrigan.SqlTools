@@ -62,6 +62,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Sign Example](#sign-example)
     - [SquareRoot Example](#squareroot-example)
     - [Subtract Example](#subtract-example)
+    - [Truncate Example](#truncate-example)
   - [Null Operations](#null-operations)
     - [Coalesce Example](#coalesce-example)
     - [NullIf Example](#nullif-example)
@@ -970,6 +971,27 @@ SelectBuilder<Grades> selectBuilder = new()
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
 
 //SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Truncate Example
+
+```csharp
+Truncate expression = new(new Column<Order>(nameof(Order.Total)), 2);
+
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT ROUND([Order].[Total], @Parameter_1, 1) AS [Value] FROM [Order]
 ```
 
 [Table of Contents](#table-of-contents)

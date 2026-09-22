@@ -303,4 +303,52 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     [TypeSafetyLoss]
     public Predicates AsPredicate() =>
         new PredicateWrapper(this);
+
+
+
+    /// <summary>
+    /// Validates the provided values for the specified function, ensuring that the number of arguments meets the minimum requirement.
+    /// </summary>
+    /// <param name="minArguments">The expressions to validate.</param>
+    /// <param name="values">The expressions to validate.</param>
+    /// <returns>A materialized sequence containing the validated expressions.</returns>
+    protected static IEnumerable<SqlExpression> ValidateValues(int minArguments, IEnumerable<SqlExpression> values)
+    {
+        ArgumentNullException.ThrowIfNull(values, nameof(values));
+
+        if (values.Count() < minArguments)
+            throw new ArgumentException($"Scalar function requires {minArguments} or more expressions.", nameof(values));
+
+        return values;
+    }
+
+    /// <summary>
+    /// Validates that the provided SQL expression is not null.
+    /// </summary>
+    /// <param name="sqlExpression">
+    /// The SQL expression to validate.
+    /// </param>
+    /// <returns>
+    /// The validated SQL expression.
+    /// </returns>
+    protected static SqlExpression ValidateValue(SqlExpression sqlExpression)
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
+        return sqlExpression;
+    }
+
+    /// <summary>
+    /// Validates that the provided value is not null and wraps it in a <see cref="Parameter"/> expression.
+    /// </summary>
+    /// <param name="value">
+    /// The value to validate and wrap in a <see cref="Parameter"/> expression.
+    /// </param>
+    /// <returns>
+    /// A <see cref="Parameter"/> expression containing the validated value.
+    /// </returns>
+    protected static Parameter ValidateParameterValue(object value)
+    {
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
+        return new Parameter(value);
+    }
 }
