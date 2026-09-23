@@ -11,4 +11,9 @@ public class DateFromParts : FunctionalExpression
         : base([ValidateValue(year), ValidateValue(month), ValidateValue(day)])
     {
     }
+
+    public DateFromParts(int year, int month, int day)
+        : base([ValidateParameterValue(year), ValidateParameterValue(month), ValidateParameterValue(day)])
+    {
+    }
 }

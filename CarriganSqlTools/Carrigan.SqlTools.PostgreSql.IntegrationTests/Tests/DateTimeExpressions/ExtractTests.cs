@@ -1,0 +1,56 @@
+using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.IntegrationTests.CompositeModels;
+using Carrigan.SqlTools.IntegrationTests.Models;
+using Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
+using Npgsql;
+
+namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests.DateTimeExpressions;
+
+public sealed class ExtractTests : IClassFixture<BooksFixture>
+{
+    private readonly BooksFixture _fixture;
+    private readonly SqlGenerator<Book> _generator = new();
+
+    public ExtractTests(BooksFixture fixture) => _fixture = fixture;
+
+    public static IEnumerable<object[]> FunctionSpecificDateParts =>
+        Enum.GetValues<ExtractDateTimePartEnum>().Select(static value => new object[] { value });
+
+    private async Task<IEnumerable<DecimalValue>> ExecuteAsync(SqlExpression expression)
+    {
+        SelectBuilder<Book> builder = new()
+        {
+            Selects = new SelectTags(new SelectTag(expression, "Value"))
+        };
+        SqlQuery query = _generator.Select(builder);
+        await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
+        return await CommandsAsync.ExecuteReaderAsync<DecimalValue>(query, null, connection);
+    }
+
+    [Fact]
+    public async Task SharedAndFunctionSpecificConstructors_Test()
+    {
+        DateTime value = new(2026, 9, 23, 12, 30, 15, DateTimeKind.Utc);
+        IEnumerable<DecimalValue> shared = await ExecuteAsync(new Extract(SharedDateTimePartEnum.Day, new Parameter(value)));
+        IEnumerable<DecimalValue> specific = await ExecuteAsync(new Extract(ExtractDateTimePartEnum.Month, new Parameter(value)));
+
+        Assert.All(shared, record => Assert.Equal(23m, record.Value));
+        Assert.All(specific, record => Assert.Equal(9m, record.Value));
+    }
+
+    [Theory]
+    [MemberData(nameof(FunctionSpecificDateParts))]
+    public async Task FunctionSpecificEnumValue_Test(ExtractDateTimePartEnum datePart)
+    {
+        object value = datePart is ExtractDateTimePartEnum.Timezone or ExtractDateTimePartEnum.TimezoneHour or ExtractDateTimePartEnum.TimezoneMinute
+            ? new DateTimeOffset(2026, 9, 23, 12, 30, 15, 123, TimeSpan.Zero).AddTicks(4567)
+            : new DateTime(2026, 9, 23, 12, 30, 15, 123).AddTicks(4567);
+
+        DecimalValue[] records = [.. await ExecuteAsync(new Extract(datePart, new Parameter(value)))];
+
+        Assert.NotEmpty(records);
+    }
+}
