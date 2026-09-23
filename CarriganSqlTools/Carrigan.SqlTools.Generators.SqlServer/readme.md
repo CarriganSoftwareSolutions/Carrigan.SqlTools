@@ -1,5 +1,7 @@
 ﻿<a id="carrigan.sqltools.generators.sqlserver"></a>
 
+<!--IGNORE SPELLING: Substring -->
+
 # Carrigan.SqlTools.Generators.SqlServer
 
 Carrigan.SqlTools.Generators.SqlServer is a .NET library that simplifies SQL generation for **Microsoft SQL Server** while still giving you control when you need it.  
@@ -68,13 +70,19 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [NullIf Example](#nullif-example)
   - [String Operations](#string-operations)
     - [Concat Example](#concat-example)
+    - [IndexOf Example](#indexof-example)
+    - [Left Example](#left-example)
+    - [Length Example](#length-example)
     - [Lower Example](#lower-example)
     - [LRTrim Example](#lrtrim-example)
     - [LTrim Examples](#ltrim-examples)
+    - [Repeat Example](#repeat-example)
     - [Replace Examples](#replace-examples)
+    - [Right Example](#right-example)
     - [RTrim Examples](#rtrim-examples)
-    - [Upper Example](#upper-example)
+    - [Substring Example](#substring-example)
     - [Trim Examples](#trim-examples)
+    - [Upper Example](#upper-example)
 - [Attribute Examples](#attribute-examples)
   - [Table, Column and Key](#table-column-and-key)
   - [Identifier and Primary Key](#identifier-and-primary-key)
@@ -1054,8 +1062,73 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+```SQL
+SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### IndexOf Example
+
+```csharp
+IndexOf expression = new(new Column<Customer>(nameof(Customer.Name)), "a");
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT CHARINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Left Example
+
+```csharp
+Length expression = new(new Column<Customer>(nameof(Customer.Name)));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT LEFT([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Length Example
+
+```csharp
+        Length expression = new(new Column<Customer>(nameof(Customer.Name)));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT LEN([Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1114,8 +1187,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT LTRIM([Customer].[Name]) AS [Value] FROM [Customer]
+```SQL
+SELECT LTRIM([Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
@@ -1130,8 +1205,31 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT LTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```SQL
+SELECT LTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Repeat Example
+
+```csharp
+Repeat expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT REPLICATE([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1150,11 +1248,13 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
-
-//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
 ```
 
-Note: When a relace string is specified, it is encapsulated in a parameter to help prevent SQL injection.
+```SQL
+SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+```
+
+Note: When a replace string is specified, it is encapsulated in a parameter to help prevent SQL injection.
 
 ```csharp
 Replace expression = new(new Column<Customer>(nameof(Customer.Name)), "'", " ");
@@ -1166,8 +1266,31 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+```SQL
+SELECT REPLACE([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Right Example
+
+```csharp
+Right expression = new(new Column<Customer>(nameof(Customer.Name)), 3);
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT RIGHT([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1188,8 +1311,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```SQL
+SELECT ROUND([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1208,8 +1333,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT RTRIM([Customer].[Name]) AS [Value] FROM [Customer]
+```SQL
+SELECT RTRIM([Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
@@ -1224,8 +1351,31 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT RTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```SQL
+SELECT RTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Substring Example
+
+```csharp
+Substring expression = new(new Column<Customer>(nameof(Customer.Name)), 2, 3);
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT SUBSTRING([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1244,24 +1394,27 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT TRIM([Customer].[Name]) AS [Value] FROM [Customer]
+```SQL
+SELECT TRIM([Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 Note: When a trim string is specified, it is encapsulated in a parameter to help prevent SQL injection.
 
 ```csharp
-Trim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
-SelectTags selects = new(new SelectTag(expression, "Value"));
+RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
 
 SelectBuilder<Customer> selectBuilder = new()
 {
-    Selects = selects
+    Selects = expression.AsSelectTag("Value")
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT TRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```SQL
+SELECT TRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1280,8 +1433,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT UPPER([Customer].[Name]) AS [Value] FROM [Customer]
+```SQL
+SELECT UPPER([Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)

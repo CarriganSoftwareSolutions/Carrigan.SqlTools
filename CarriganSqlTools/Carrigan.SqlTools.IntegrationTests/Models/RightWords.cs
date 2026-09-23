@@ -1,6 +1,9 @@
-﻿namespace Carrigan.SqlTools.IntegrationTests.Models;
+﻿using Carrigan.SqlTools.Attributes;
 
-public sealed class Right
+namespace Carrigan.SqlTools.IntegrationTests.Models;
+
+[Identifier("Right")]
+public sealed class RightWords
 {
     public int Id { get; set; }
     public string RightWord { get; set; } = string.Empty;

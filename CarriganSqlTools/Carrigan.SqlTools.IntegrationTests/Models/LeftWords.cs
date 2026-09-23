@@ -1,6 +1,9 @@
-﻿namespace Carrigan.SqlTools.IntegrationTests.Models;
+﻿using Carrigan.SqlTools.Attributes;
 
-public sealed class Left
+namespace Carrigan.SqlTools.IntegrationTests.Models;
+
+[Identifier("Left")]
+public sealed class LeftWords
 {
     public int Id { get; set; }
     public string LeftWord { get; set; } = string.Empty;

@@ -9,7 +9,7 @@ public sealed class LeftFixture : PostgreSqlFixtureBase
         : base
         (
             [
-                Left.CreateTablePostgreSql
+                LeftWords.CreateTablePostgreSql
             ],
 
             Insert.LeftInsertStatement

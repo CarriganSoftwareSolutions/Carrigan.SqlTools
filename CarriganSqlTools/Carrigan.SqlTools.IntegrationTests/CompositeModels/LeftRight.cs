@@ -5,15 +5,15 @@ namespace Carrigan.SqlTools.IntegrationTests.CompositeModels;
 
 public sealed class LeftRight
 {
-    [SelectTag<Left>(nameof(Left.Id), nameof(LeftId))]
+    [SelectTag<LeftWords>(nameof(LeftWords.Id), nameof(LeftId))]
     public int? LeftId { get; set; }
 
-    [SelectTag<Left>(nameof(Left.LeftWord))]
+    [SelectTag<LeftWords>(nameof(LeftWords.LeftWord))]
     public string? LeftWord { get; set; } = string.Empty;
 
-    [SelectTag<Right>(nameof(Right.Id), nameof(RightId))]
+    [SelectTag<RightWords>(nameof(RightWords.Id), nameof(RightId))]
     public int? RightId { get; set; }
 
-    [SelectTag<Right>(nameof(Right.RightWord))]
+    [SelectTag<RightWords>(nameof(RightWords.RightWord))]
     public string? RightWord { get; set; } = string.Empty;
 }

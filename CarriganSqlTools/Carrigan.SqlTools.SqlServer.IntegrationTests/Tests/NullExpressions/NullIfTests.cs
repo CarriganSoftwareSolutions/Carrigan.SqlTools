@@ -14,18 +14,18 @@ public sealed class NullIfTests : IClassFixture<LeftRightFixture>
 {
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
     private readonly LeftRightFixture _fixture;
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
+    private readonly SqlGenerator<LeftWords> LeftSqlGenerator = new();
 
     public NullIfTests(LeftRightFixture fixture) =>
         _fixture = fixture;
 
     private async Task<IEnumerable<Words>> ExecuteAsync(NullIf nullIf)
     {
-        SelectBuilder<Left> selectBuilder = new()
+        SelectBuilder<LeftWords> selectBuilder = new()
         {
             Selects = new SelectTags
             (
-                new SelectTag<Left>("Id"),
+                new SelectTag<LeftWords>("Id"),
                 new SelectTag(nullIf, "Word")
             )
         };
@@ -65,7 +65,7 @@ public sealed class NullIfTests : IClassFixture<LeftRightFixture>
         (
             new NullIf
             (
-                new Column<Left>(nameof(Left.LeftWord)),
+                new Column<LeftWords>(nameof(LeftWords.LeftWord)),
                 new Parameter("Apple")
             )
         );
@@ -89,7 +89,7 @@ public sealed class NullIfTests : IClassFixture<LeftRightFixture>
         (
             new NullIf
             (
-                new Column<Left>(nameof(Left.LeftWord)),
+                new Column<LeftWords>(nameof(LeftWords.LeftWord)),
                 new Parameter("Cloud")
             )
         );

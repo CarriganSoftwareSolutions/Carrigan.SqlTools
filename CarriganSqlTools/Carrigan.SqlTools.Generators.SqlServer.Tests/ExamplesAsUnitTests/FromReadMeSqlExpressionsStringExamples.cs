@@ -5,7 +5,7 @@ using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;
-
+//IGNORE SPELLING: Substring
 public class FromReadMeSqlExpressionsNullExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
@@ -24,6 +24,62 @@ public class FromReadMeSqlExpressionsNullExamples
         SqlQuery query = customerGenerator.Select(selectBuilder);
 
         string expected = "SELECT CONCAT([Customer].[Phone], [Customer].[Email]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void IndexOf_Example()
+    {
+        IndexOf expression = new(new Column<Customer>(nameof(Customer.Name)), "a");
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT CHARINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal("a", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void Left_Example()
+    {
+        Left expression = new(new Column<Customer>(nameof(Customer.Name)), 3);
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT LEFT([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(3, Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void Length_Example()
+    {
+        Length expression = new(new Column<Customer>(nameof(Customer.Name)));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT LEN([Customer].[Name]) AS [Value] FROM [Customer]";
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);
@@ -107,6 +163,25 @@ public class FromReadMeSqlExpressionsNullExamples
     }
 
     [Fact]
+    public void Repeat_Example()
+    {
+        Repeat expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT REPLICATE([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(2, Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
     public void Replace_Example()
     {
         Replace expression = new(new Column<Customer>(nameof(Customer.Name)), new Parameter("'"), new Parameter(" "));
@@ -149,6 +224,25 @@ public class FromReadMeSqlExpressionsNullExamples
     }
 
     [Fact]
+    public void Right_Example()
+    {
+        Right expression = new(new Column<Customer>(nameof(Customer.Name)), 3);
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT RIGHT([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(3, Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
     public void RTrim_Example()
     {
         RTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
@@ -171,11 +265,10 @@ public class FromReadMeSqlExpressionsNullExamples
     public void RTrim_WithCharacters_Example()
     {
         RTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
-        SelectTags selects = new(new SelectTag(expression, "Value"));
 
         SelectBuilder<Customer> selectBuilder = new()
         {
-            Selects = selects
+            Selects = expression.AsSelectTag("Value")
         };
 
         SqlQuery query = customerGenerator.Select(selectBuilder);
@@ -185,6 +278,26 @@ public class FromReadMeSqlExpressionsNullExamples
 
         Assert.Equal(expected, actual);
         Assert.Equal(" x", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void Substring_Example()
+    {
+        Substring expression = new(new Column<Customer>(nameof(Customer.Name)), 2, 3);
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT SUBSTRING([Customer].[Name], @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(2, query.Parameters.First().Value);
+        Assert.Equal(3, query.Parameters.ElementAt(1).Value);
     }
 
     [Fact]

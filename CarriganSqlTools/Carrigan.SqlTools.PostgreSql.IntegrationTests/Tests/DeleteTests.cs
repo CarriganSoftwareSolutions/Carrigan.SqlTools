@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.IntegrationTests.CompositeModels;
 using Carrigan.SqlTools.IntegrationTests.DataSets;
 using Carrigan.SqlTools.IntegrationTests.Models;
 using Carrigan.SqlTools.JoinTypes;
@@ -19,7 +20,7 @@ public class DeleteTests : IClassFixture<DeleteFixture>
     private readonly SqlGenerator<Customer> CustomerSqlGenerator = new();
     private readonly SqlGenerator<Order> OrderSqlGenerator = new();
     private readonly SqlGenerator<OrderedItem> OrderedItemSqlGenerator = new();
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
+    private readonly SqlGenerator<LeftWords> LeftSqlGenerator = new();
 
     public DeleteTests(DeleteFixture fixture) =>
         _fixture = fixture;

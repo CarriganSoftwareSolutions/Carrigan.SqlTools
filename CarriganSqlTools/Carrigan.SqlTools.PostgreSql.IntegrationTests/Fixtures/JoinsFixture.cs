@@ -17,8 +17,8 @@ public sealed class JoinsFixture : PostgreSqlFixtureBase
                 BookStats.CreateTablePostgreSql,
                 Order.CreateTablePostgreSql,
                 OrderedItem.CreateTablePostgreSql,
-                Left.CreateTablePostgreSql,
-                Right.CreateTablePostgreSql
+                LeftWords.CreateTablePostgreSql,
+                RightWords.CreateTablePostgreSql
             ],
 
             Insert.AddressInsertStatement

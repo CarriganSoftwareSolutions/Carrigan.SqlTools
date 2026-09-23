@@ -13,7 +13,7 @@ namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests.StringExpressions;
 public sealed class TrimTests : IClassFixture<LeftRightFixture>
 {
     private readonly LeftRightFixture _fixture;
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
+    private readonly SqlGenerator<LeftWords> LeftSqlGenerator = new();
 
     public TrimTests(LeftRightFixture fixture) =>
         _fixture = fixture;
@@ -23,20 +23,20 @@ public sealed class TrimTests : IClassFixture<LeftRightFixture>
         new 
         (
             new Parameter(prefix),
-            new Column<Left>(nameof(Left.LeftWord)),
-            new Column<Right>(nameof(Right.RightWord)),
+            new Column<LeftWords>(nameof(LeftWords.LeftWord)),
+            new Column<RightWords>(nameof(RightWords.RightWord)),
             new Parameter(suffix)
         );
 
     private async Task<IEnumerable<Words>> ExecuteAsync(SqlExpression expression)
     {
-        ColumnEqualsColumn<Left, Right> ids = new(nameof(Left.Id), nameof(Right.Id));
-        SelectBuilder<Left> selectBuilder = new()
+        ColumnEqualsColumn<LeftWords, RightWords> ids = new(nameof(LeftWords.Id), nameof(RightWords.Id));
+        SelectBuilder<LeftWords> selectBuilder = new()
         {
-            Joins = new JoinTypes.FullJoin<Right>(ids),
+            Joins = new JoinTypes.FullJoin<RightWords>(ids),
             Selects = new SelectTags
             (
-                new SelectTag(new Coalesce(new Column<Left>(nameof(Left.Id)), new Column<Right>(nameof(Right.Id))), "Id"),
+                new SelectTag(new Coalesce(new Column<LeftWords>(nameof(LeftWords.Id)), new Column<RightWords>(nameof(RightWords.Id))), "Id"),
                 new SelectTag(expression, "Word")
             )
         };

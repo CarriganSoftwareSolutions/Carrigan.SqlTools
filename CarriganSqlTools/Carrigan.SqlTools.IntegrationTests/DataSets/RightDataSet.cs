@@ -4,21 +4,21 @@ namespace Carrigan.SqlTools.IntegrationTests.DataSets;
 
 public static class RightDataSet
 {
-    public static void Validate(IEnumerable<Right> actualRights, int expectedId)
+    public static void Validate(IEnumerable<RightWords> actualRights, int expectedId)
     {
-        Right actual = actualRights.Where(right => right.Id == expectedId).Single();
+        RightWords actual = actualRights.Where(right => right.Id == expectedId).Single();
         Validate(actual, expectedId);
     }
 
-    public static void Validate(Right actual, int expectedId)
+    public static void Validate(RightWords actual, int expectedId)
     {
-        Right expected = Data.Where(right => right.Id == expectedId).Single();
+        RightWords expected = Data.Where(right => right.Id == expectedId).Single();
 
         Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.RightWord, actual.RightWord);
     }
 
-    public static IEnumerable<Right> Data =>
+    public static IEnumerable<RightWords> Data =>
     [
         new()
         {

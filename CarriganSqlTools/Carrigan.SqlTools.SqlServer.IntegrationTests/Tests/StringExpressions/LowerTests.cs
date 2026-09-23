@@ -14,18 +14,18 @@ public sealed class LowerTests : IClassFixture<LeftRightFixture>
 {
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
     private readonly LeftRightFixture _fixture;
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
+    private readonly SqlGenerator<LeftWords> LeftSqlGenerator = new();
 
     public LowerTests(LeftRightFixture fixture) =>
         _fixture = fixture;
 
     private async Task<IEnumerable<Words>> ExecuteAsync(SqlExpression expression)
     {
-        SelectBuilder<Left> selectBuilder = new()
+        SelectBuilder<LeftWords> selectBuilder = new()
         {
             Selects = new SelectTags
             (
-                new SelectTag<Left>("Id"),
+                new SelectTag<LeftWords>("Id"),
                 new SelectTag(expression, "Word")
             )
         };
@@ -63,7 +63,7 @@ public sealed class LowerTests : IClassFixture<LeftRightFixture>
     {
         IEnumerable<Words> records = await ExecuteAsync
         (
-            new Lower(new Column<Left>(nameof(Left.LeftWord)))
+            new Lower(new Column<LeftWords>(nameof(LeftWords.LeftWord)))
         );
 
         Dictionary<int, string?> expectedValues = new()

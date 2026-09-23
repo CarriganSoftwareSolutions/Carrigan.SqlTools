@@ -9,8 +9,8 @@ public sealed class LeftRightFixture : PostgreSqlFixtureBase
         : base
         (
             [
-                Left.CreateTablePostgreSql,
-                Right.CreateTablePostgreSql
+                LeftWords.CreateTablePostgreSql,
+                RightWords.CreateTablePostgreSql
             ],
 
             Insert.LeftInsertStatement

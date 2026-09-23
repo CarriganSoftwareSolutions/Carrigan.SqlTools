@@ -18,7 +18,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
 
     private readonly SqlGenerator<Customer> CustomerSqlGenerator = new();
     private readonly SqlGenerator<Order> OrderSqlGenerator = new();
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
+    private readonly SqlGenerator<LeftWords> LeftSqlGenerator = new();
 
     public JoinsTests(JoinsFixture fixture) =>
         _fixture = fixture;
@@ -263,11 +263,11 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     [Fact]
     public async Task FullJoin()
     {
-        ColumnEqualsColumn<Left, Right> joinPredicate = new(nameof(Left.Id), nameof(Right.Id));
-        JoinBase join = new FullJoin<Right>(joinPredicate);
+        ColumnEqualsColumn<LeftWords, RightWords> joinPredicate = new(nameof(LeftWords.Id), nameof(RightWords.Id));
+        JoinBase join = new FullJoin<RightWords>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<LeftRight>();
 
-        SelectBuilder<Left> selectBuilder = new()
+        SelectBuilder<LeftWords> selectBuilder = new()
         {
             Selects = selectTags,
             Joins = join
@@ -291,10 +291,10 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     [Fact]
     public async Task CrossJoin()
     {
-        JoinBase join = new CrossJoin<Right>();
+        JoinBase join = new CrossJoin<RightWords>();
         SelectTags selectTags = SelectTagGenerator.GetAll<LeftRight>();
 
-        SelectBuilder<Left> selectBuilder = new()
+        SelectBuilder<LeftWords> selectBuilder = new()
         {
             Selects = selectTags,
             Joins = join
@@ -483,8 +483,8 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Where(record => record.LeftId == expectedLeftId && record.RightId == expectedRightId)
             .Single();
 
-        Left? expectedLeft = null;
-        Right? expectedRight = null;
+        LeftWords? expectedLeft = null;
+        RightWords? expectedRight = null;
 
         if (expectedLeftId is not null)
         {
@@ -505,7 +505,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ValidateLeft(actual, expectedLeft);
         ValidateRight(actual, expectedRight);
     }
-    private static void ValidateLeft(LeftRight actual, Left? expected)
+    private static void ValidateLeft(LeftRight actual, LeftWords? expected)
     {
         if (expected is null)
         {
@@ -518,7 +518,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             Assert.Equal(expected.LeftWord, actual.LeftWord);
         }
     }
-    private static void ValidateRight(LeftRight actual, Right? expected)
+    private static void ValidateRight(LeftRight actual, RightWords? expected)
     {
         if (expected is null)
         {

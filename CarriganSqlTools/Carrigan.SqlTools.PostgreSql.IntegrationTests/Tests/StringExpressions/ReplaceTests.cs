@@ -15,19 +15,19 @@ public sealed class ReplaceTests : IClassFixture<LeftFixture>
 {
     private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
     private readonly LeftFixture _fixture;
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
+    private readonly SqlGenerator<LeftWords> LeftSqlGenerator = new();
 
     public ReplaceTests(LeftFixture fixture) =>
         _fixture = fixture;
 
     private async Task<IEnumerable<Words>> ExecuteAsync(SqlExpression expression)
     {
-        ColumnEqualsColumn<Left, Right> ids = new (nameof(Left.Id), nameof(Right.Id));
-        SelectBuilder<Left> selectBuilder = new()
+        ColumnEqualsColumn<LeftWords, RightWords> ids = new (nameof(LeftWords.Id), nameof(RightWords.Id));
+        SelectBuilder<LeftWords> selectBuilder = new()
         {
             Selects = new SelectTags
             (
-                new Column<Left>(nameof(Left.Id)).AsSelectTag("Id"),
+                new Column<LeftWords>(nameof(LeftWords.Id)).AsSelectTag("Id"),
                 new SelectTag(expression, "Word")
             )
         };
@@ -65,7 +65,7 @@ public sealed class ReplaceTests : IClassFixture<LeftFixture>
     {
         IEnumerable<Words> records = await ExecuteAsync
         (
-            new Replace(new Column<Left>(nameof(Left.LeftWord)), "r", "l")
+            new Replace(new Column<LeftWords>(nameof(LeftWords.LeftWord)), "r", "l")
 
         );
 

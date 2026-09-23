@@ -9,7 +9,7 @@ public sealed class LeftFixture : SqlFixtureBase
         : base
         (
             [
-                Left.CreateTableSqlServer
+                LeftWords.CreateTableSqlServer
             ],
 
             Insert.LeftInsertStatement

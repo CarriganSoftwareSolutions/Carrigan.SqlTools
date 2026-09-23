@@ -17,8 +17,8 @@ public sealed class JoinsFixture : SqlFixtureBase
                 BookStats.CreateTableSqlServer,
                 Order.CreateTableSqlServer,
                 OrderedItem.CreateTableSqlServer,
-                Left.CreateTableSqlServer,
-                Right.CreateTableSqlServer
+                LeftWords.CreateTableSqlServer,
+                RightWords.CreateTableSqlServer
             ],
 
             Insert.AddressInsertStatement

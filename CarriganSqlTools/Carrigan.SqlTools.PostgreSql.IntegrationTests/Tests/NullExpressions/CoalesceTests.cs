@@ -15,20 +15,20 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
 {
     private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
     private readonly LeftRightFixture _fixture;
-    private readonly SqlGenerator<Left> LeftSqlGenerator = new();
+    private readonly SqlGenerator<LeftWords> LeftSqlGenerator = new();
 
     public CoalesceTests(LeftRightFixture fixture) =>
         _fixture = fixture;
 
     private async Task<IEnumerable<Words>> ExecuteAsync(Coalesce coalesce)
     {
-        ColumnEqualsColumn<Left, Right> ids = new (nameof(Left.Id), nameof(Right.Id));
-        SelectBuilder<Left> selectBuilder = new()
+        ColumnEqualsColumn<LeftWords, RightWords> ids = new (nameof(LeftWords.Id), nameof(RightWords.Id));
+        SelectBuilder<LeftWords> selectBuilder = new()
         {
-            Joins = new JoinTypes.FullJoin<Right>(ids),
+            Joins = new JoinTypes.FullJoin<RightWords>(ids),
             Selects = new SelectTags
             (
-                new SelectTag(new Coalesce(new Column<Left>(nameof(Left.Id)), new Column<Right>(nameof(Right.Id))), "Id"),
+                new SelectTag(new Coalesce(new Column<LeftWords>(nameof(LeftWords.Id)), new Column<RightWords>(nameof(RightWords.Id))), "Id"),
                 new SelectTag(coalesce, "Word")
             )
         };
@@ -68,8 +68,8 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
         (
             new Coalesce
             (
-                new Column<Left>(nameof(Left.LeftWord)),
-                new Column<Right>(nameof(Right.RightWord))
+                new Column<LeftWords>(nameof(LeftWords.LeftWord)),
+                new Column<RightWords>(nameof(RightWords.RightWord))
             )
         );
 
@@ -95,8 +95,8 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
         (
             new Coalesce
             (
-                new Column<Right>(nameof(Right.RightWord)),
-                new Column<Left>(nameof(Left.LeftWord))
+                new Column<RightWords>(nameof(RightWords.RightWord)),
+                new Column<LeftWords>(nameof(LeftWords.LeftWord))
             )
         );
 
@@ -123,8 +123,8 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
             new Coalesce
             (
                 new NullParameter<string>(Dialect),
-                new Column<Right>(nameof(Right.RightWord)),
-                new Column<Left>(nameof(Left.LeftWord))
+                new Column<RightWords>(nameof(RightWords.RightWord)),
+                new Column<LeftWords>(nameof(LeftWords.LeftWord))
             )
         );
 
@@ -150,9 +150,9 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
         (
             new Coalesce
             (
-                new Column<Right>(nameof(Right.RightWord)),
+                new Column<RightWords>(nameof(RightWords.RightWord)),
                 new NullParameter<string>(Dialect),
-                new Column<Left>(nameof(Left.LeftWord))
+                new Column<LeftWords>(nameof(LeftWords.LeftWord))
             )
         );
 
@@ -181,8 +181,8 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
             (
                 new NullParameter<string>(Dialect, "NullParameter"),
                 new Parameter("Hello"),
-                new Column<Right>(nameof(Right.RightWord)),
-                new Column<Left>(nameof(Left.LeftWord))
+                new Column<RightWords>(nameof(RightWords.RightWord)),
+                new Column<LeftWords>(nameof(LeftWords.LeftWord))
             )
         );
 
@@ -211,8 +211,8 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
             (
                 new Parameter("Hello"),
                 new NullParameter<string>(Dialect, "NullParameter"),
-                new Column<Right>(nameof(Right.RightWord)),
-                new Column<Left>(nameof(Left.LeftWord))
+                new Column<RightWords>(nameof(RightWords.RightWord)),
+                new Column<LeftWords>(nameof(LeftWords.LeftWord))
             )
         );
 
@@ -239,9 +239,9 @@ public sealed class CoalesceTests : IClassFixture<LeftRightFixture>
             new Coalesce
             (
                 new NullParameter<string>(Dialect, "NullParameter"),
-                new Column<Right>(nameof(Right.RightWord)),
+                new Column<RightWords>(nameof(RightWords.RightWord)),
                 new Parameter("Hello"),
-                new Column<Left>(nameof(Left.LeftWord))
+                new Column<LeftWords>(nameof(LeftWords.LeftWord))
             )
         );
 
