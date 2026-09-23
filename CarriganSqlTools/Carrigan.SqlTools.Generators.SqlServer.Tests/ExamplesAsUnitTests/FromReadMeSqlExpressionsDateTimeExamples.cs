@@ -4,12 +4,13 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 
+//IGNORE SPELLING: TRUNC
+
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;
 
 public class FromReadMeSqlExpressionsDateTimeExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
-
 
     [Fact]
     public void CurrentDate_Example()
@@ -45,6 +46,51 @@ public class FromReadMeSqlExpressionsDateTimeExamples
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void DateAdd_Example()
+    {
+        DateAdd expression = new(DateAddDateTimePartEnum.Day, new Parameter(2), new Parameter(new DateTime(2026, 9, 23)));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT DATEADD(day, @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]", query.QueryText);
+    }
+
+    [Fact]
+    public void DateFromParts_Example()
+    {
+        DateFromParts expression = new(new Parameter(2026), new Parameter(9), new Parameter(23));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT DATEFROMPARTS(@Parameter_1, @Parameter_2, @Parameter_3) AS [Value] FROM [Customer]", query.QueryText);
+    }
+
+    [Fact]
+    public void DatePart_Example()
+    {
+        DatePart expression = new(DatePartDateTimePartEnum.Year, new Parameter(new DateTime(2026, 9, 23)));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT DATEPART(year, @Parameter_1) AS [Value] FROM [Customer]", query.QueryText);
+    }
+
+    [Fact]
+    public void DateTrunc_Example()
+    {
+        DateTrunc expression = new(DateTruncDateTimePartEnum.Month, new Parameter(new DateTime(2026, 9, 23)));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT DATETRUNC(month, @Parameter_1) AS [Value] FROM [Customer]", query.QueryText);
+    }
+
+    [Fact]
+    public void EOMonth_Example()
+    {
+        EOMonth expression = new(new Parameter(new DateTime(2026, 9, 23)));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT EOMONTH(@Parameter_1) AS [Value] FROM [Customer]", query.QueryText);
     }
 
     [Fact]

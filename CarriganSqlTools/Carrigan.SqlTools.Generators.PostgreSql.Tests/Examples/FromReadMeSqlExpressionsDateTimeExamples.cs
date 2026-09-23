@@ -4,6 +4,8 @@ using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
+//IGNORE SPELLING: TRUNC
+
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
 
 public class FromReadMeSqlExpressionsDateTimeExamples
@@ -44,5 +46,41 @@ public class FromReadMeSqlExpressionsDateTimeExamples
         string actual = query.QueryText;
 
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void DateTrunc_Example()
+    {
+        DateTrunc expression = new(DateTruncDateTimePartEnum.Month, new Parameter(new DateTime(2026, 9, 23)));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT DATE_TRUNC('month', $1) AS \"Value\" FROM \"Customer\"", query.QueryText);
+    }
+
+    [Fact]
+    public void Extract_Example()
+    {
+        Extract expression = new(ExtractDateTimePartEnum.Year, new Parameter(new DateTime(2026, 9, 23)));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT EXTRACT(year FROM $1) AS \"Value\" FROM \"Customer\"", query.QueryText);
+    }
+
+    [Fact]
+    public void MakeDate_Example()
+    {
+        MakeDate expression = new(new Parameter(2026), new Parameter(9), new Parameter(23));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT MAKE_DATE($1, $2, $3) AS \"Value\" FROM \"Customer\"", query.QueryText);
+    }
+
+    [Fact]
+    public void MakeInterval_Example()
+    {
+        MakeInterval expression = new(MakeIntervalDateTimePartEnum.Day, new Parameter(2));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+        Assert.Equal("SELECT MAKE_INTERVAL(days => $1) AS \"Value\" FROM \"Customer\"", query.QueryText);
     }
 }
