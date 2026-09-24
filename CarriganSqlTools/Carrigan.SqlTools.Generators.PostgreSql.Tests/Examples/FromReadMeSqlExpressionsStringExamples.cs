@@ -146,6 +146,19 @@ public class FromReadMeSqlExpressionsStringExamples
     }
 
     [Fact]
+    public void SplitPart_Example()
+    {
+        SplitPart expression = new(new Column<Customer>(nameof(Customer.Name)), " ", 2);
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT SPLIT_PART(\"Customer\".\"Name\", $1, $2) AS \"Value\" FROM \"Customer\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void StrPos_Example()
     {
         StrPos expression = new(new Column<Customer>(nameof(Customer.Name)), "a");

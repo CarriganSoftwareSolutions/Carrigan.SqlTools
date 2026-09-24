@@ -81,6 +81,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Right Example](#right-example)
     - [Round Examples](#round-examples)
     - [RTrim Examples](#rtrim-examples)
+    - [SplitPart Example](#splitpart-example)
     - [StrPos Example](#strpos-example)
     - [Substring Example](#substring-example)
     - [Trim Examples](#trim-examples)
@@ -1420,6 +1421,22 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ```SQL
 SELECT RTRIM("Customer"."Name", $1) AS "Value" FROM "Customer"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### SplitPart Example
+
+```csharp
+SplitPart expression = new(new Column<Customer>(nameof(Customer.Name)), " ", 2);
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT SPLIT_PART("Customer"."Name", $1, $2) AS "Value" FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)

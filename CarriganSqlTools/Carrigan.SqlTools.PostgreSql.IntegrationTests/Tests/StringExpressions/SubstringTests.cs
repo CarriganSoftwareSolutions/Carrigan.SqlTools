@@ -7,6 +7,8 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Npgsql;
 
+//IGNORE SPELLING: Substring, ppl, ive, ard lou
+
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests.StringExpressions;
 
 public sealed class SubstringTests : IClassFixture<LeftFixture>
