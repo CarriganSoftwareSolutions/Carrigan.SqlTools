@@ -7,6 +7,8 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Npgsql;
 
+//IGNORE SPELLING: Kolkata untyped
+
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests.DateTimeExpressions;
 
 public sealed class ExtractTests : IClassFixture<BooksFixture>
@@ -16,8 +18,14 @@ public sealed class ExtractTests : IClassFixture<BooksFixture>
 
     public ExtractTests(BooksFixture fixture) => _fixture = fixture;
 
+    public static IEnumerable<object[]> SharedDateParts =>
+        Enum.GetValues<SharedDateTimePartEnum>().Select(static value => new object[] { value });
+
     public static IEnumerable<object[]> FunctionSpecificDateParts =>
         Enum.GetValues<ExtractDateTimePartEnum>().Select(static value => new object[] { value });
+
+    private static DateTime Value =>
+        new DateTime(2026, 9, 23, 12, 30, 15, DateTimeKind.Unspecified).AddTicks(1_234_560);
 
     private async Task<IEnumerable<DecimalValue>> ExecuteAsync(SqlExpression expression)
     {
@@ -27,30 +35,80 @@ public sealed class ExtractTests : IClassFixture<BooksFixture>
         };
         SqlQuery query = _generator.Select(builder);
         await using NpgsqlConnection connection = new(_fixture.UnitTestConnectionString);
+        await connection.OpenAsync();
+        await using NpgsqlCommand setup = new("SET TIME ZONE 'Asia/Kolkata';", connection);
+        await setup.ExecuteNonQueryAsync();
         return await CommandsAsync.ExecuteReaderAsync<DecimalValue>(query, null, connection);
     }
 
-    [Fact]
-    public async Task SharedAndFunctionSpecificConstructors_Test()
+    [Theory]
+    [MemberData(nameof(SharedDateParts))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "<Pending>")]
+    public async Task SharedEnumValue_Test(SharedDateTimePartEnum datePart)
     {
-        DateTime value = new(2026, 9, 23, 12, 30, 15, DateTimeKind.Utc);
-        IEnumerable<DecimalValue> shared = await ExecuteAsync(new Extract(SharedDateTimePartEnum.Day, new Parameter(value)));
-        IEnumerable<DecimalValue> specific = await ExecuteAsync(new Extract(ExtractDateTimePartEnum.Month, new Parameter(value)));
+        decimal expected = datePart switch
+        {
+            SharedDateTimePartEnum.Year => 2026m,
+            SharedDateTimePartEnum.Month => 9m,
+            SharedDateTimePartEnum.Week => 39m,
+            SharedDateTimePartEnum.Day => 23m,
+            SharedDateTimePartEnum.Hour => 12m,
+            SharedDateTimePartEnum.Minute => 30m,
+            SharedDateTimePartEnum.Second => 15.123456m,
+            _ => throw new ArgumentOutOfRangeException(nameof(datePart), datePart, null)
+        };
 
-        Assert.All(shared, record => Assert.Equal(23m, record.Value));
-        Assert.All(specific, record => Assert.Equal(9m, record.Value));
+        DecimalValue[] records = [.. await ExecuteAsync(new Extract(datePart, new Parameter(Value)))];
+
+        Assert.NotEmpty(records);
+        Assert.All(records, record => Assert.Equal(expected, record.Value));
     }
 
     [Theory]
     [MemberData(nameof(FunctionSpecificDateParts))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "<Pending>")]
     public async Task FunctionSpecificEnumValue_Test(ExtractDateTimePartEnum datePart)
     {
-        object value = datePart is ExtractDateTimePartEnum.Timezone or ExtractDateTimePartEnum.TimezoneHour or ExtractDateTimePartEnum.TimezoneMinute
-            ? new DateTimeOffset(2026, 9, 23, 12, 30, 15, 123, TimeSpan.Zero).AddTicks(4567)
-            : new DateTime(2026, 9, 23, 12, 30, 15, 123).AddTicks(4567);
+        object value = GetValue(datePart);
+        decimal expected = datePart switch
+        {
+            ExtractDateTimePartEnum.Century => 21m,
+            ExtractDateTimePartEnum.Day => 23m,
+            ExtractDateTimePartEnum.Decade => 202m,
+            ExtractDateTimePartEnum.DayOfWeek => 3m,
+            ExtractDateTimePartEnum.DayOfYear => 266m,
+            ExtractDateTimePartEnum.Epoch => 1790166615.123456m,
+            ExtractDateTimePartEnum.Hour => 12m,
+            ExtractDateTimePartEnum.IsoDayOfWeek => 3m,
+            ExtractDateTimePartEnum.IsoYear => 2026m,
+            ExtractDateTimePartEnum.Julian => 2451545m,
+            ExtractDateTimePartEnum.Microseconds => 15123456m,
+            ExtractDateTimePartEnum.Millennium => 3m,
+            ExtractDateTimePartEnum.Milliseconds => 15123.456m,
+            ExtractDateTimePartEnum.Minute => 30m,
+            ExtractDateTimePartEnum.Month => 9m,
+            ExtractDateTimePartEnum.Quarter => 3m,
+            ExtractDateTimePartEnum.Second => 15.123456m,
+            ExtractDateTimePartEnum.Timezone => 19800m,
+            ExtractDateTimePartEnum.TimezoneHour => 5m,
+            ExtractDateTimePartEnum.TimezoneMinute => 30m,
+            ExtractDateTimePartEnum.Week => 39m,
+            ExtractDateTimePartEnum.Year => 2026m,
+            _ => throw new ArgumentOutOfRangeException(nameof(datePart), datePart, null)
+        };
 
         DecimalValue[] records = [.. await ExecuteAsync(new Extract(datePart, new Parameter(value)))];
 
         Assert.NotEmpty(records);
+        Assert.All(records, record => Assert.Equal(expected, record.Value));
     }
+
+    private static DateTime GetValue(ExtractDateTimePartEnum datePart) => datePart switch
+    {
+        ExtractDateTimePartEnum.Julian => new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Unspecified),
+        ExtractDateTimePartEnum.Timezone or
+        ExtractDateTimePartEnum.TimezoneHour or
+        ExtractDateTimePartEnum.TimezoneMinute => new DateTime(2026, 9, 23, 7, 0, 15, DateTimeKind.Utc).AddTicks(1_234_560),
+        _ => Value
+    };
 }

@@ -7,7 +7,7 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Npgsql;
 
-//IGNORE SPELLING: Trunc
+//IGNORE SPELLING: TRUNC untyped
 
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests.DateTimeExpressions;
 
@@ -18,8 +18,14 @@ public sealed class DateTruncTests : IClassFixture<BooksFixture>
 
     public DateTruncTests(BooksFixture fixture) => _fixture = fixture;
 
+    public static IEnumerable<object[]> SharedDateParts =>
+        Enum.GetValues<SharedDateTimePartEnum>().Select(static value => new object[] { value });
+
     public static IEnumerable<object[]> FunctionSpecificDateParts =>
         Enum.GetValues<DateTruncDateTimePartEnum>().Select(static value => new object[] { value });
+
+    private static DateTime Value =>
+        new DateTime(2026, 9, 23, 6, 30, 15, DateTimeKind.Unspecified).AddTicks(1_234_560);
 
     private async Task<IEnumerable<DateTimeValue>> ExecuteAsync(SqlExpression expression)
     {
@@ -32,24 +38,55 @@ public sealed class DateTruncTests : IClassFixture<BooksFixture>
         return await CommandsAsync.ExecuteReaderAsync<DateTimeValue>(query, null, connection);
     }
 
-    [Fact]
-    public async Task SharedAndFunctionSpecificConstructors_Test()
+    [Theory]
+    [MemberData(nameof(SharedDateParts))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "<Pending>")]
+    public async Task SharedEnumValue_Test(SharedDateTimePartEnum datePart)
     {
-        DateTime value = new(2026, 9, 23, 6, 30, 15);
-        IEnumerable<DateTimeValue> shared = await ExecuteAsync(new DateTrunc(SharedDateTimePartEnum.Day, new Parameter(value)));
-        IEnumerable<DateTimeValue> specific = await ExecuteAsync(new DateTrunc(DateTruncDateTimePartEnum.Month, new Parameter(value)));
+        DateTime expected = datePart switch
+        {
+            SharedDateTimePartEnum.Year => new DateTime(2026, 1, 1),
+            SharedDateTimePartEnum.Month => new DateTime(2026, 9, 1),
+            SharedDateTimePartEnum.Week => new DateTime(2026, 9, 21),
+            SharedDateTimePartEnum.Day => new DateTime(2026, 9, 23),
+            SharedDateTimePartEnum.Hour => new DateTime(2026, 9, 23, 6, 0, 0),
+            SharedDateTimePartEnum.Minute => new DateTime(2026, 9, 23, 6, 30, 0),
+            SharedDateTimePartEnum.Second => new DateTime(2026, 9, 23, 6, 30, 15),
+            _ => throw new ArgumentOutOfRangeException(nameof(datePart), datePart, null)
+        };
 
-        Assert.All(shared, record => Assert.Equal(new DateTime(2026, 9, 23), record.Value));
-        Assert.All(specific, record => Assert.Equal(new DateTime(2026, 9, 1), record.Value));
+        DateTimeValue[] records = [.. await ExecuteAsync(new DateTrunc(datePart, new Parameter(Value)))];
+
+        Assert.NotEmpty(records);
+        Assert.All(records, record => Assert.Equal(expected, record.Value));
     }
 
     [Theory]
     [MemberData(nameof(FunctionSpecificDateParts))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "<Pending>")]
     public async Task FunctionSpecificEnumValue_Test(DateTruncDateTimePartEnum datePart)
     {
-        DateTime value = new DateTime(2026, 9, 23, 6, 30, 15, 123).AddTicks(4567);
-        DateTimeValue[] records = [.. await ExecuteAsync(new DateTrunc(datePart, new Parameter(value)))];
+        DateTime expected = datePart switch
+        {
+            DateTruncDateTimePartEnum.Microseconds => Value,
+            DateTruncDateTimePartEnum.Milliseconds => new DateTime(2026, 9, 23, 6, 30, 15).AddTicks(1_230_000),
+            DateTruncDateTimePartEnum.Second => new DateTime(2026, 9, 23, 6, 30, 15),
+            DateTruncDateTimePartEnum.Minute => new DateTime(2026, 9, 23, 6, 30, 0),
+            DateTruncDateTimePartEnum.Hour => new DateTime(2026, 9, 23, 6, 0, 0),
+            DateTruncDateTimePartEnum.Day => new DateTime(2026, 9, 23),
+            DateTruncDateTimePartEnum.Week => new DateTime(2026, 9, 21),
+            DateTruncDateTimePartEnum.Month => new DateTime(2026, 9, 1),
+            DateTruncDateTimePartEnum.Quarter => new DateTime(2026, 7, 1),
+            DateTruncDateTimePartEnum.Year => new DateTime(2026, 1, 1),
+            DateTruncDateTimePartEnum.Decade => new DateTime(2020, 1, 1),
+            DateTruncDateTimePartEnum.Century => new DateTime(2001, 1, 1),
+            DateTruncDateTimePartEnum.Millennium => new DateTime(2001, 1, 1),
+            _ => throw new ArgumentOutOfRangeException(nameof(datePart), datePart, null)
+        };
+
+        DateTimeValue[] records = [.. await ExecuteAsync(new DateTrunc(datePart, new Parameter(Value)))];
 
         Assert.NotEmpty(records);
+        Assert.All(records, record => Assert.Equal(expected, record.Value));
     }
 }

@@ -7,6 +7,8 @@ using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 using Npgsql;
 
+//IGNORE SPELLING: Kolkata untyped
+
 namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Tests.DateTimeExpressions;
 
 public sealed class MakeIntervalTests : IClassFixture<BooksFixture>
@@ -16,8 +18,13 @@ public sealed class MakeIntervalTests : IClassFixture<BooksFixture>
 
     public MakeIntervalTests(BooksFixture fixture) => _fixture = fixture;
 
+    public static IEnumerable<object[]> SharedDateParts =>
+        Enum.GetValues<SharedDateTimePartEnum>().Select(static value => new object[] { value });
+
     public static IEnumerable<object[]> FunctionSpecificDateParts =>
         Enum.GetValues<MakeIntervalDateTimePartEnum>().Select(static value => new object[] { value });
+
+    private static DateTime Value => new(2026, 1, 15, 6, 30, 15);
 
     private async Task<IEnumerable<DateTimeValue>> ExecuteAsync(SqlExpression expression)
     {
@@ -30,31 +37,51 @@ public sealed class MakeIntervalTests : IClassFixture<BooksFixture>
         return await CommandsAsync.ExecuteReaderAsync<DateTimeValue>(query, null, connection);
     }
 
-    [Fact]
-    public async Task SharedAndFunctionSpecificConstructors_Test()
+    [Theory]
+    [MemberData(nameof(SharedDateParts))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "<Pending>")]
+    public async Task SharedEnumValue_Test(SharedDateTimePartEnum datePart)
     {
-        DateTime value = new(2026, 9, 23, 6, 30, 15);
-        IEnumerable<DateTimeValue> shared = await ExecuteAsync
-        (
-            new Add(new Parameter(value), new MakeInterval(SharedDateTimePartEnum.Day, new Parameter(2)))
-        );
-        IEnumerable<DateTimeValue> specific = await ExecuteAsync
-        (
-            new Add(new Parameter(value), new MakeInterval(MakeIntervalDateTimePartEnum.Month, new Parameter(1)))
-        );
+        DateTime expected = datePart switch
+        {
+            SharedDateTimePartEnum.Year => Value.AddYears(1),
+            SharedDateTimePartEnum.Month => Value.AddMonths(1),
+            SharedDateTimePartEnum.Week => Value.AddDays(7),
+            SharedDateTimePartEnum.Day => Value.AddDays(1),
+            SharedDateTimePartEnum.Hour => Value.AddHours(1),
+            SharedDateTimePartEnum.Minute => Value.AddMinutes(1),
+            SharedDateTimePartEnum.Second => Value.AddSeconds(1),
+            _ => throw new ArgumentOutOfRangeException(nameof(datePart), datePart, null)
+        };
 
-        Assert.All(shared, record => Assert.Equal(value.AddDays(2), record.Value));
-        Assert.All(specific, record => Assert.Equal(value.AddMonths(1), record.Value));
+        Add expression = new(new Parameter(Value), new MakeInterval(datePart, new Parameter(1)));
+        DateTimeValue[] records = [.. await ExecuteAsync(expression)];
+
+        Assert.NotEmpty(records);
+        Assert.All(records, record => Assert.Equal(expected, record.Value));
     }
 
     [Theory]
     [MemberData(nameof(FunctionSpecificDateParts))]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "xUnit1042:The member referenced by the MemberData attribute returns untyped data rows", Justification = "<Pending>")]
     public async Task FunctionSpecificEnumValue_Test(MakeIntervalDateTimePartEnum datePart)
     {
-        DateTime value = new(2026, 9, 23, 6, 30, 15);
-        Add expression = new(new Parameter(value), new MakeInterval(datePart, new Parameter(1)));
+        DateTime expected = datePart switch
+        {
+            MakeIntervalDateTimePartEnum.Year => Value.AddYears(1),
+            MakeIntervalDateTimePartEnum.Month => Value.AddMonths(1),
+            MakeIntervalDateTimePartEnum.Week => Value.AddDays(7),
+            MakeIntervalDateTimePartEnum.Day => Value.AddDays(1),
+            MakeIntervalDateTimePartEnum.Hour => Value.AddHours(1),
+            MakeIntervalDateTimePartEnum.Minute => Value.AddMinutes(1),
+            MakeIntervalDateTimePartEnum.Second => Value.AddSeconds(1),
+            _ => throw new ArgumentOutOfRangeException(nameof(datePart), datePart, null)
+        };
+
+        Add expression = new(new Parameter(Value), new MakeInterval(datePart, new Parameter(1)));
         DateTimeValue[] records = [.. await ExecuteAsync(expression)];
 
         Assert.NotEmpty(records);
+        Assert.All(records, record => Assert.Equal(expected, record.Value));
     }
 }
