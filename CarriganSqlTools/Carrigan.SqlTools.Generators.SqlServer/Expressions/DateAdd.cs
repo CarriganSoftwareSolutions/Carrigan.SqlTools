@@ -2,6 +2,9 @@ using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using System.Linq.Expressions;
 
 //IGNORE SPELLING: dayofyear
 
@@ -10,6 +13,17 @@ namespace Carrigan.SqlTools.Expressions;
 /// <summary>
 /// Represents the SQL Server DATEADD function.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// DateAdd expression = new(DateAddDateTimePartEnum.Day, new Parameter(2), new Parameter(new DateTime(2026, 9, 23)));
+/// SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT DATEADD(day, @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
 public class DateAdd : SqlExpression
 {
     private readonly string _datePart;

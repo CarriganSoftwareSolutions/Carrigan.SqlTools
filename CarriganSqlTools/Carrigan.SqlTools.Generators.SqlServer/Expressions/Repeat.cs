@@ -1,13 +1,30 @@
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using System.Linq.Expressions;
+
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents the SQL Server <c>REPLICATE</c> function.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Repeat expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = expression.AsSelectTag("Value")
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT REPLICATE([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
 public class Repeat : FunctionalExpression
 {
-    /// <summary>
-    /// Gets the SQL Server function name.
-    /// </summary>
     protected override string FunctionName =>
         "REPLICATE";
 

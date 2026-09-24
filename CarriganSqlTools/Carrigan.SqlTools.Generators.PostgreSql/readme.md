@@ -47,6 +47,10 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Date Time Operations](#date-time-operations)
     - [CurrentDate Example](#currentdate-example)
     - [CurrentTimeStamp Example](#currenttimestamp-example)
+    - [DateTrunc Example](#datetrunc-example)
+    - [Extract Example](#extract-example)
+    - [MakeDate Example](#makedate-example)
+    - [MakeInterval Example](#makeinterval-example)
   - [Math Operations](#math-operations)
     - [Abs Example](#abs-example)
     - [Add Examples](#add-examples)
@@ -77,6 +81,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Right Example](#right-example)
     - [Round Examples](#round-examples)
     - [RTrim Examples](#rtrim-examples)
+    - [StrPos Example](#strpos-example)
     - [Substring Example](#substring-example)
     - [Trim Examples](#trim-examples)
     - [Upper Example](#upper-example)
@@ -624,8 +629,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT CURRENT_DATE AS \"Date\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
+```sql
+SELECT CURRENT_DATE AS "Date", "Customer"."Name" AS "Name" FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -643,13 +650,78 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT CURRENT_TIMESTAMP AS \"TimeStamp\", \"Customer\".\"Name\" AS \"Name\" FROM \"Customer\"
+```sql
+SELECT CURRENT_TIMESTAMP AS "TimeStamp", "Customer"."Name" AS "Name" FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)
 
 ---
+
+#### DateTrunc Example
+
+```csharp
+DateTrunc expression = new(DateTruncDateTimePartEnum.Month, new Parameter(new DateTime(2026, 9, 23)));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT DATE_TRUNC('month', $1) AS "Value" FROM "Customer"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Extract Example
+
+```csharp
+Extract expression = new(ExtractDateTimePartEnum.Year, new Parameter(new DateTime(2026, 9, 23)));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT EXTRACT(year FROM $1) AS "Value" FROM "Customer"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### MakeDate Example
+
+```csharp
+MakeDate expression = new(new Parameter(2026), new Parameter(9), new Parameter(23));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT MAKE_DATE($1, $2, $3) AS "Value" FROM "Customer"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### MakeInterval Example
+
+```csharp
+MakeInterval expression = new(MakeIntervalDateTimePartEnum.Day, new Parameter(2));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT MAKE_INTERVAL(days => $1) AS "Value" FROM "Customer"
+```
+
+[Table of Contents](#table-of-contents)
+
 
 ### Math Operations
 
@@ -665,8 +737,10 @@ SelectBuilder<Order> selectBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Select(selectBuilder);
+```
 
-//SELECT ABS(\"Order\".\"Total\") AS \"AbsValue\" FROM \"Order\"
+```sql
+SELECT ABS("Order"."Total") AS "AbsValue" FROM "Order"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -692,8 +766,10 @@ SelectBuilder<Grades> selectBuilder = new()
     )
 };
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT (\"Grades\".\"CreditHours\" + $1) AS \"ArthemicResult\" FROM \"Grades\"
+```sql
+SELECT ("Grades"."CreditHours" + $1) AS "ArthemicResult" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -714,7 +790,7 @@ SqlQuery query = orderGenerator.Select(selectBuilder);
 ```
 
 ```sql
-SELECT CEILING(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+SELECT CEILING("Order"."Total") AS "Value" FROM "Order"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -742,8 +818,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT (\"Grades\".\"CreditHours\" / @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```sql
+SELECT ("Grades"."CreditHours" / @Parameter_1) AS "ArthemicResult" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -764,7 +842,7 @@ SqlQuery query = orderGenerator.Select(selectBuilder);
 ```
 
 ```sql
-SELECT FLOOR(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+SELECT FLOOR("Order"."Total") AS "Value" FROM "Order"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1342,6 +1420,27 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ```SQL
 SELECT RTRIM("Customer"."Name", $1) AS "Value" FROM "Customer"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### StrPos Example
+
+```csharp
+StrPos expression = new(new Column<Customer>(nameof(Customer.Name)), "a");
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT STRPOS("Customer"."Name", $1) AS "Value" FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)

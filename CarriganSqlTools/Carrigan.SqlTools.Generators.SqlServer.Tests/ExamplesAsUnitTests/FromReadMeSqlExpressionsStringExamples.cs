@@ -11,6 +11,25 @@ public class FromReadMeSqlExpressionsNullExamples
     private static readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
+    public void CharIndex_Example()
+    {
+        CharIndex expression = new("a", new Column<Customer>(nameof(Customer.Name)));
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT CHARINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal("a", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
     public void Concat_Example()
     {
         Concat expression = new(new Column<Customer>(nameof(Customer.Phone)), new Column<Customer>(nameof(Customer.Email)));

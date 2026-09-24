@@ -1,8 +1,28 @@
+using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.SqlGenerators;
+using System.Linq.Expressions;
+
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents the PostgreSQL <c>REPEAT</c> function.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// Repeat expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = expression.AsSelectTag("Value")
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT REPEAT("Customer"."Name", $1) AS "Value" FROM "Customer"
+/// ]]></code>
+/// </example>
 public class Repeat : FunctionalExpression
 {
     /// <summary>

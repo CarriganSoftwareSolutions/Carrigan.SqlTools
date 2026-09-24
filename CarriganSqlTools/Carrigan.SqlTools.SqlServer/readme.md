@@ -46,6 +46,11 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [CurrentDate Example](#currentdate-example)
     - [CurrentTimeStamp Example](#currenttimestamp-example)
     - [GetDate Example](#getdate-example)
+    - [DateAdd Example](#dateadd-example)
+    - [DateFromParts Example](#datefromparts-example)
+    - [DatePart Example](#datepart-example)
+    - [DateTrunc Example](#datetrunc-example)
+    - [EoMonth Example](#eomonth-example)
   - [Math Operations](#math-operations)
     - [Abs Example](#abs-example)
     - [Add Examples](#add-examples)
@@ -66,6 +71,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Coalesce Example](#coalesce-example)
     - [NullIf Example](#nullif-example)
   - [String Operations](#string-operations)
+    - [CharIndexOf Example](#charindexof-example)
     - [Concat Example](#concat-example)
     - [IndexOf Example](#indexof-example)
     - [Left Example](#left-example)
@@ -618,8 +624,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT CURRENT_DATE AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
+```sql
+SELECT CURRENT_DATE AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -637,8 +645,90 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT CURRENT_TIMESTAMP AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
+```sql
+SELECT CURRENT_TIMESTAMP AS [TimeStamp], [Customer].[Name] AS [Name] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### DateAdd Example
+
+```csharp
+DateAdd expression = new(DateAddDateTimePartEnum.Day, new Parameter(2), new Parameter(new DateTime(2026, 9, 23)));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT DATEADD(day, @Parameter_1, @Parameter_2) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### DateFromParts Example
+
+```csharp
+DateFromParts expression = new(new Parameter(2026), new Parameter(9), new Parameter(23));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT DATEFROMPARTS(@Parameter_1, @Parameter_2, @Parameter_3) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### DatePart Example
+
+```csharp
+DatePart expression = new(DatePartDateTimePartEnum.Year, new Parameter(new DateTime(2026, 9, 23)));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT DATEPART(year, @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### DateTrunc Example
+
+```csharp
+DateTrunc expression = new(DateTruncDateTimePartEnum.Month, new Parameter(new DateTime(2026, 9, 23)));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT DATETRUNC(month, @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### EOMonth Example
+
+```csharp
+EOMonth expression = new(new Parameter(new DateTime(2026, 9, 23)));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT EOMONTH(@Parameter_1) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -656,8 +746,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT GETDATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
+```sql
+SELECT GETDATE() AS [Date], [Customer].[Name] AS [Name] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -678,8 +770,10 @@ SelectBuilder<Order> selectBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Select(selectBuilder);
+```
 
-//SELECT ABS([Order].[Total]) AS [AbsValue] FROM [Order]
+```sql
+SELECT ABS([Order].[Total]) AS [AbsValue] FROM [Order]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -705,8 +799,10 @@ SelectBuilder<Grades> selectBuilder = new()
     )
 };
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT ([Grades].[CreditHours] + @Parameter_1) AS [ArthemicResult] FROM [Grades]
+```sql
+SELECT ([Grades].[CreditHours] + @Parameter_1) AS [ArthemicResult] FROM [Grades]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -724,8 +820,10 @@ SelectBuilder<Order> selectBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Select(selectBuilder);
+```
 
-// SELECT CEILING([Order].[Total]) AS [Value] FROM [Order]
+```sql
+SELECT CEILING([Order].[Total]) AS [Value] FROM [Order]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -753,8 +851,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT ([Grades].[CreditHours] / @Parameter_1) AS [ArthemicResult] FROM [Grades]
+```sql
+SELECT ([Grades].[CreditHours] / @Parameter_1) AS [ArthemicResult] FROM [Grades]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -772,8 +872,10 @@ SelectBuilder<Order> selectBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Select(selectBuilder);
+```
 
-// SELECT FLOOR([Order].[Total]) AS [Value] FROM [Order]
+```sql
+SELECT FLOOR([Order].[Total]) AS [Value] FROM [Order]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -801,8 +903,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]
+```sql
+SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -830,8 +934,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT ([Grades].[CreditHours] % @Parameter_1) AS [ArthemicResult] FROM [Grades]
+```sql
+SELECT ([Grades].[CreditHours] % @Parameter_1) AS [ArthemicResult] FROM [Grades]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -859,8 +965,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT ([Grades].[CreditHours] * @Parameter_1) AS [ArthemicResult] FROM [Grades]
+```sql
+SELECT ([Grades].[CreditHours] * @Parameter_1) AS [ArthemicResult] FROM [Grades]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -885,8 +993,10 @@ SelectBuilder<Grades> selectBuilder = new()
         )
     )
 };
+```
 
-//  SELECT (-[Grades].[CreditHours]) AS [ArthemicResult] FROM [Grades]
+```sql
+SELECT (-[Grades].[CreditHours]) AS [ArthemicResult] FROM [Grades]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -904,8 +1014,10 @@ SelectBuilder<Order> selectBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Select(selectBuilder);
+```
 
-//  SELECT POWER([Order].[Total], @Parameter_1) AS [Value] FROM [Order]
+```sql
+SELECT POWER([Order].[Total], @Parameter_1) AS [Value] FROM [Order]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -924,8 +1036,10 @@ SelectBuilder<Order> selectBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Select(selectBuilder);
+```
 
-//SELECT SIGN([Order].[Total]) AS [Value] FROM [Order]
+```sql
+SELECT SIGN([Order].[Total]) AS [Value] FROM [Order]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1037,8 +1151,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]
+```SQL
+SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1046,6 +1162,27 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 ---
 
 ### String Operations
+
+#### CharIndexOf Example
+
+```csharp
+CharIndex expression = new("a", new Column<Customer>(nameof(Customer.Name)));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT CHARINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
 
 #### Concat Example
 

@@ -1,5 +1,8 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using System.Linq.Expressions;
 
 //IGNORE SPELLING: TRUNC, dayofyear
 
@@ -8,6 +11,17 @@ namespace Carrigan.SqlTools.Expressions;
 /// <summary>
 /// Represents the SQL Server DATETRUNC function. DATETRUNC requires SQL Server 2022 (16.x) or later.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// DateTrunc expression = new(DateTruncDateTimePartEnum.Month, new Parameter(new DateTime(2026, 9, 23)));
+/// SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT DATETRUNC(month, @Parameter_1) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
 public class DateTrunc : SqlExpression
 {
     private readonly string _datePart;

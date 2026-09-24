@@ -1,11 +1,30 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using System.Linq.Expressions;
 
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Alias class for the SQL Server <c>CHARINDEX</c> function while exposing the same value-first API as the PostgreSQL <c>STRPOS</c> expression.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// IndexOf expression = new(new Column<Customer>(nameof(Customer.Name)), "a");
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = expression.AsSelectTag("Value")
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT CHARINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
 public class IndexOf : CharIndex
 {
     /// <summary>

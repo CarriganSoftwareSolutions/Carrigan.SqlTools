@@ -1,3 +1,8 @@
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using Carrigan.SqlTools.Tags;
+using System.Linq.Expressions;
+
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
@@ -10,7 +15,36 @@ namespace Carrigan.SqlTools.Expressions;
 /// </remarks>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// LRTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+/// LTrim expression = new(new Column<Customer>(nameof(Customer.Name)));
+/// SelectTags selects = new(new SelectTag(expression, "Value"));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = selects
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT LTRIM([Customer].[Name]) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// LTrim expression = new(new Column<Customer>(nameof(Customer.Name)), " x");
+/// SelectTags selects = new(new SelectTag(expression, "Value"));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = selects
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT LTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
 /// ]]></code>
 /// </example>
 public class LRTrim : LTrim

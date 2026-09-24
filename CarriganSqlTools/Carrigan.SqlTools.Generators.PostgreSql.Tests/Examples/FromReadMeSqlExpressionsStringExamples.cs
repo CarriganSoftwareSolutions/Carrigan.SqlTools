@@ -146,6 +146,25 @@ public class FromReadMeSqlExpressionsStringExamples
     }
 
     [Fact]
+    public void StrPos_Example()
+    {
+        StrPos expression = new(new Column<Customer>(nameof(Customer.Name)), "a");
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT STRPOS(\"Customer\".\"Name\", $1) AS \"Value\" FROM \"Customer\"";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal("a", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
     public void Repeat_Example()
     {
         Repeat expression = new(new Column<Customer>(nameof(Customer.Name)), 2);

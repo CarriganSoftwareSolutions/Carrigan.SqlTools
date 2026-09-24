@@ -1,5 +1,8 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using System.Linq.Expressions;
 
 //IGNORE SPELLING: dayofyear, tzoffset
 
@@ -8,6 +11,17 @@ namespace Carrigan.SqlTools.Expressions;
 /// <summary>
 /// Represents the SQL Server DATEPART function.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// DatePart expression = new(DatePartDateTimePartEnum.Year, new Parameter(new DateTime(2026, 9, 23)));
+/// SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT DATEPART(year, @Parameter_1) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
 public class DatePart : SqlExpression
 {
     private readonly string _datePart;

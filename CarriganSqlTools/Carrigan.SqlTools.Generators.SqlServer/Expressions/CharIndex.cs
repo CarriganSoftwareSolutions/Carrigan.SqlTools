@@ -1,11 +1,30 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
+using System.Linq.Expressions;
 
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
 /// Represents the SQL Server <c>CHARINDEX</c> function.
 /// </summary>
+/// <example>
+/// <code language="csharp"><![CDATA[
+/// CharIndex expression = new("a", new Column<Customer>(nameof(Customer.Name)));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = expression.AsSelectTag("Value")
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// SELECT CHARINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
 public class CharIndex : FunctionalExpression
 {
     /// <summary>
