@@ -21,10 +21,11 @@ namespace Carrigan.SqlTools.Invocation;
 public static class Invoker<T> where T : class, new()
 {
     /// <summary>
-    /// Caches nullability for reflected properties. A separate
-    /// <see cref="NullabilityInfoContext"/> is used when a cache entry is created because
-    /// <see cref="NullabilityInfoContext"/> is not thread safe.
+    /// Caches the nullable-reference-type result for each reflected property.
     /// </summary>
+    /// <remarks>
+    /// <see cref="NullabilityInfoContext"/> is not thread-safe, so each cache miss uses a separate context instance.
+    /// </remarks>
     private static readonly ConcurrentDictionary<PropertyInfo, bool> NullabilityCache = new();
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.FragmentTests;
@@ -231,4 +231,34 @@ public class SqlFragmentExtensionsTests
 
         Assert.Equal([fragment1, fragment2, fragment3], fragments);
     }
+    [Fact]
+    public void ToSql_EnumeratesSourceOnce()
+    {
+        int enumerationCount = 0;
+
+        IEnumerable<ISqlFragment> GetFragments()
+        {
+            enumerationCount++;
+            yield return new SqlFragmentText("SELECT ");
+            yield return new SqlFragmentText("1");
+            yield return new SqlFragmentText(";");
+        }
+
+        string sql = GetFragments().ToSql(Dialect);
+
+        Assert.Equal("SELECT 1;", sql);
+        Assert.Equal(1, enumerationCount);
+    }
+
+    [Fact]
+    public void SqlFragmentGroup_MaterializesSource()
+    {
+        List<ISqlFragment> source = [new SqlFragmentText("A")];
+        SqlFragmentGroup group = new(source);
+
+        source.Add(new SqlFragmentText("B"));
+
+        Assert.Equal("A", group.ToSql(Dialect));
+    }
+
 }

@@ -11,10 +11,23 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// </summary>
 public class SqlQuery
 {
+    private IReadOnlyList<ISqlFragment> _sqlFragments = Array.Empty<ISqlFragment>();
+
     /// <summary>
-    /// Gets the SQL fragments used to render the command text and collect parameters.
+    /// Gets or sets the SQL fragments used to render the command text and collect parameters.
     /// </summary>
-    public IEnumerable<ISqlFragment> SqlFragments { get; set; }
+    /// <remarks>
+    /// Assigned fragment sequences are materialized immediately so later changes to a deferred or mutable source sequence do not change this query.
+    /// </remarks>
+    public IEnumerable<ISqlFragment> SqlFragments
+    {
+        get => _sqlFragments;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value);
+            _sqlFragments = Array.AsReadOnly(value.ToArray());
+        }
+    }
     /// <summary>
     /// Gets the SQL dialect used to render fragments and parameter placeholders.
     /// </summary>
