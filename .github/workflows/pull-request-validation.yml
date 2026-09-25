@@ -32,21 +32,60 @@ jobs:
       - name: Build
         run: dotnet build CarriganSqlTools/CarriganSqlTools.sln --configuration Release --no-restore
 
-      - name: SqlToolsTests
+      - name: BaseTests
         run: >-
-          dotnet test CarriganSqlTools/Carrigan.SqlTools.Tests/Carrigan.SqlTools.Tests.csproj
+          dotnet test --project CarriganSqlTools/Carrigan.SqlTools.Base.Tests/Carrigan.SqlTools.Base.Tests.csproj
           --configuration Release
           --no-build
-          --collect:"XPlat Code Coverage"
-          --logger "trx;LogFileName=test-results.trx"
-          
-      - name: SqlToolsSqlServerTests
+          --coverlet
+          --coverlet-output-format cobertura
+          --report-xunit-trx
+          --report-xunit-trx-filename test-results.trx
+      - name: ClientsCoreTests
         run: >-
-          dotnet test CarriganSqlTools/Carrigan.SqlTools.SqlServer.Tests/Carrigan.SqlTools.SqlServer.Tests.csproj
+          dotnet test --project CarriganSqlTools/Carrigan.SqlTools.Clients.Core.Tests/Carrigan.SqlTools.Clients.Core.Tests.csproj
           --configuration Release
           --no-build
-          --collect:"XPlat Code Coverage"
-          --logger "trx;LogFileName=test-results.trx"
+          --coverlet
+          --coverlet-output-format cobertura
+          --report-xunit-trx
+          --report-xunit-trx-filename test-results.trx
+      - name: ClientsPostgreSqlTests
+        run: >-
+          dotnet test --project CarriganSqlTools/Carrigan.SqlTools.Clients.PostgreSql.Tests/Carrigan.SqlTools.Clients.PostgreSql.Tests.csproj
+          --configuration Release
+          --no-build
+          --coverlet
+          --coverlet-output-format cobertura
+          --report-xunit-trx
+          --report-xunit-trx-filename test-results.trx
+      - name: ClientsSqlServerTests
+        run: >-
+          dotnet test --project CarriganSqlTools/Carrigan.SqlTools.Clients.SqlServer.Tests/Carrigan.SqlTools.Clients.SqlServer.Tests.csproj
+          --configuration Release
+          --no-build
+          --coverlet
+          --coverlet-output-format cobertura
+          --report-xunit-trx
+          --report-xunit-trx-filename test-results.trx
+      - name: GeneratorsPostgreSqlTests
+        run: >-
+          dotnet test --project CarriganSqlTools/Carrigan.SqlTools.Generators.PostgreSql.Tests/Carrigan.SqlTools.Generators.PostgreSql.Tests.csproj
+          --configuration Release
+          --no-build
+          --coverlet
+          --coverlet-output-format cobertura
+          --report-xunit-trx
+          --report-xunit-trx-filename test-results.trx
+      - name: GeneratorsSqlServerTests
+        run: >-
+          dotnet test --project CarriganSqlTools/Carrigan.SqlTools.Generators.SqlServer.Tests/Carrigan.SqlTools.Generators.SqlServer.Tests.csproj
+          --configuration Release
+          --no-build
+          --coverlet
+          --coverlet-output-format cobertura
+          --report-xunit-trx
+          --report-xunit-trx-filename test-results.trx
 
       - name: Upload test results
         if: always()
@@ -55,5 +94,5 @@ jobs:
           name: test-results
           path: |
             **/TestResults/**/*.trx
-            **/TestResults/**/coverage.cobertura.xml
+            **/TestResults/**/coverage.cobertura.*.xml
           if-no-files-found: warn

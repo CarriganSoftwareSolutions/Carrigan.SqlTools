@@ -30,20 +30,14 @@ internal static class SqlFragmentExtensions
     /// <returns>The flattened fragments with finalized parameter names.</returns>
     private static IEnumerable<ISqlFragment> RenderFinalFragmentEnumeration(this IEnumerable<ISqlFragment> sqlFragments, ISqlDialects dialect)
     {
-        List<ISqlFragment> sqlFragmentsFinalForm = [];
+        int parameterIndex = 1; // PostgreSQL and SQLite use 1-based parameter indexing.
 
-        IEnumerable<ISqlFragment> flattenedSqlFragments = sqlFragments.Flatten(dialect);
-        int j = 1; // start at 1 because PostgreSQL and SQLite use 1-based parameter indexing.
-        for (int i = 0; i < flattenedSqlFragments.Count(); i++)
+        foreach (ISqlFragment fragment in sqlFragments.Flatten(dialect))
         {
-            if (flattenedSqlFragments.ElementAt(i) is SqlFragmentParameter parameterFragment)
-            {
-                sqlFragmentsFinalForm.Add(RenderFinalParameter(dialect, parameterFragment, j++));
-            }
-            else
-                sqlFragmentsFinalForm.Add(flattenedSqlFragments.ElementAt(i));
+            yield return fragment is SqlFragmentParameter parameterFragment
+                ? RenderFinalParameter(dialect, parameterFragment, parameterIndex++)
+                : fragment;
         }
-        return sqlFragmentsFinalForm.AsEnumerable<ISqlFragment>();
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
@@ -104,4 +104,15 @@ public class SqlGenerator_SubqueryTests
         Assert.Throws<InvalidTableException>(() =>
             customerGenerator.Subquery(null, selects, null, null, null, null, null));
     }
+    [Fact]
+    public void SubqueryBase_MaterializesSourceFragments()
+    {
+        List<ISqlFragment> source = [new SqlFragmentText("SELECT 1")];
+        SubqueryBase subQuery = new(source, Dialect);
+
+        source[0] = new SqlFragmentText("SELECT 2");
+
+        Assert.Equal("(SELECT 1)", subQuery.ToSql(Dialect));
+    }
+
 }

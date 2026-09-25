@@ -20,7 +20,7 @@ public class SubqueryBase : ISqlFragment
     /// together to form the complete SQL text of the subquery  when it is consumed by a predicate
     /// or included in a larger query.
     /// </summary>
-    private readonly IEnumerable<ISqlFragment> SqlFragments;
+    private readonly IReadOnlyList<ISqlFragment> SqlFragments;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SubqueryBase"/> class with the specified SQL fragments and dialect.
@@ -36,6 +36,9 @@ public class SubqueryBase : ISqlFragment
     /// </param>
     public SubqueryBase(IEnumerable<ISqlFragment> sqlFragments, ISqlDialects dialect)
     {
+        ArgumentNullException.ThrowIfNull(sqlFragments);
+        ArgumentNullException.ThrowIfNull(dialect);
+
         IEnumerable<ISqlFragment> GetFragments()
         {
             yield return new SqlFragmentText("(");
@@ -43,7 +46,8 @@ public class SubqueryBase : ISqlFragment
                 yield return fragment;
             yield return new SqlFragmentText(")");
         }
-        SqlFragments = GetFragments();
+
+        SqlFragments = Array.AsReadOnly(GetFragments().ToArray());
         Dialect = dialect;
     }
 

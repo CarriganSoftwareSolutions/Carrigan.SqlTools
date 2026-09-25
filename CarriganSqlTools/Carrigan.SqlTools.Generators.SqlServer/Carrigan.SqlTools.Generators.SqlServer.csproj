@@ -27,7 +27,7 @@
 
       The package integrates with Carrigan.Core through shared interfaces and property-level metadata used by the Carrigan.SqlTools model.
 
-      In addition to automated generation, the SQL Server generator supports a manual, object-oriented approach for building SQL Server statements with ORDER BY, JOIN, WHERE clauses, and paginated queries.
+      In addition to automated generation, the SQL Server generator supports a manual, object-oriented approach for building SQL Server statements with JOIN, WHERE, GROUP BY, HAVING, ORDER BY, and paginated queries.
 
       The generated SQL can be used with the dialect client packages, which use shared invocation infrastructure to map result rows to model instances.
 
@@ -37,14 +37,15 @@
     </Description>
     <PackageTags>
       sql;sqlserver;ado.net;reflection;orm;database;crud;select;insert;update;delete;
-      query-builder;object-mapper;encryption;attributes;pagination;joins;where;order-by
+      query-builder;object-mapper;encryption;attributes;pagination;joins;where;group-by;having;order-by
     </PackageTags>
     <AnalysisLevel>latest</AnalysisLevel>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301" PrivateAssets="All" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.7" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,6 +63,11 @@
   <ItemGroup>
     <None Include="readme.md" Pack="true" PackagePath="\" />
     <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer.Tests" />
   </ItemGroup>
 
 </Project>

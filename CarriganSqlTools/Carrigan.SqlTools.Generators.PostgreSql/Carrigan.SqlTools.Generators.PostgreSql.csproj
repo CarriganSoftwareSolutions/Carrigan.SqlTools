@@ -23,7 +23,7 @@
     <Description>
       Carrigan.SqlTools.Generators.PostgreSql provides PostgreSQL-specific SQL generation support for Carrigan.SqlTools.
 
-      The package extends the core Carrigan.SqlTools query-building model with PostgreSQL dialect rules, including PostgreSQL identifier formatting, parameter formatting, data type generation, LIMIT/OFFSET paging syntax, joins, WHERE clauses, ORDER BY clauses, and CRUD statement generation.
+      The package extends the core Carrigan.SqlTools query-building model with PostgreSQL dialect rules, including PostgreSQL identifier formatting, parameter formatting, data type generation, LIMIT/OFFSET paging syntax, joins, WHERE clauses, GROUP BY clauses, HAVING predicates, ORDER BY clauses, and CRUD statement generation.
 
       It supports reflection-based generation of SELECT, INSERT, UPDATE, and DELETE statements while preserving the flexibility to build queries manually through a strongly typed, object-oriented SQL construction model.
 
@@ -34,7 +34,7 @@
 
     <PackageTags>
       sql;postgresql;postgres;pgsql;database;query-builder;sql-generator;
-      crud;select;insert;update;delete;joins;where;order-by;pagination;
+      crud;select;insert;update;delete;joins;where;group-by;having;order-by;pagination;
       limit;offset;reflection;attributes;object-mapping;strongly-typed;
       orm-alternative;carrigan-sqltools
     </PackageTags>
@@ -43,7 +43,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301" PrivateAssets="All" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.7" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +62,11 @@
   <ItemGroup>
     <None Include="readme.md" Pack="true" PackagePath="\" />
     <None Include="Acknowledgements.txt" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.SqlServer.Tests" />
+    <InternalsVisibleTo Include="Carrigan.SqlTools.Generators.PostgreSql.Tests" />
   </ItemGroup>
 
 </Project>

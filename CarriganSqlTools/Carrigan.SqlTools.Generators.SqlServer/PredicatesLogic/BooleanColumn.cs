@@ -17,7 +17,7 @@ public class BooleanColumn<T> : BooleanColumnBase<T> where T : class
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="propertyName"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when the referenced property is not declared as <see cref="bool"/> or nullable <see cref="bool"/>.</exception>
     [ExternalOnly]
-    public BooleanColumn(string propertyName) : this(new Column<T>(propertyName))
+    public BooleanColumn(string propertyName) : this(new Column<T>(new PropertyName(propertyName)))
     {
     }
 
