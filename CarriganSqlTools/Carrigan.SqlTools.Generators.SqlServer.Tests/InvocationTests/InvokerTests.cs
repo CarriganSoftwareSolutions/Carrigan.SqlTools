@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Invocation;
 
@@ -7,7 +7,7 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.InvocationTests;
 public class InvokerTests
 {
     private readonly static Guid guid = new("bf08ee23-82af-4640-8e21-3de23bbc2a51");
-    private static Dictionary<string, object?> StandardInvocation => new        
+    private static Dictionary<string, object?> StandardInvocation => new
     (
         [
             new("IntValue", int.MaxValue),
@@ -27,7 +27,7 @@ public class InvokerTests
             new("DateOnlyValue", new DateOnly(1985, 3, 10))
         ]
     );
-    private static Dictionary<string, object?> NullInvocation => new       
+    private static Dictionary<string, object?> NullInvocation => new
     (
         [
             new("Key", guid),
@@ -47,7 +47,7 @@ public class InvokerTests
             new("ByteArrayValue", null)
         ]
     );
-    private static Dictionary<string, object?> DbNullInvocation => new        
+    private static Dictionary<string, object?> DbNullInvocation => new
     (
         [
             new("Key", guid),
@@ -67,7 +67,7 @@ public class InvokerTests
             new("ByteArrayValue", DBNull.Value)
         ]
     );
-    private static Dictionary<string, object?> StandardNullableInvocation => new        
+    private static Dictionary<string, object?> StandardNullableInvocation => new
     (
         [
             new("Key", guid),
@@ -206,4 +206,48 @@ public class InvokerTests
         Assert.Equal(expectedValues["Alias"], entity.AliasName);
         Assert.Equal(expectedValues["AliasOverride"], entity.AliasOverrideName);
     }
+    [Fact]
+    public async Task Invoke_Concurrent_NullabilityMetadata()
+    {
+        using ManualResetEventSlim start = new(false);
+        int workerCount = Math.Max(Environment.ProcessorCount * 4, 16);
+
+        Task[] tasks = Enumerable.Range(0, workerCount)
+            .Select
+            (
+                _ => Task.Run
+                (
+                    () =>
+                    {
+                        Dictionary<string, object?> invocation = new
+                        (
+                            [
+                                new("Required", "required"),
+                                new("Optional", null)
+                            ]
+                        );
+
+                        start.Wait();
+
+                        for (int i = 0; i < 100; i++)
+                        {
+                            ConcurrentNullableEntity entity = Invoker<ConcurrentNullableEntity>.Invoke(invocation);
+                            Assert.Equal("required", entity.Required);
+                            Assert.Null(entity.Optional);
+                        }
+                    }
+                )
+            )
+            .ToArray();
+
+        start.Set();
+        await Task.WhenAll(tasks);
+    }
+
+    public sealed class ConcurrentNullableEntity
+    {
+        public string Required { get; set; } = string.Empty;
+        public string? Optional { get; set; }
+    }
+
 }
