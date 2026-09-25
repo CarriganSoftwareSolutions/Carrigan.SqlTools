@@ -71,6 +71,26 @@ public sealed class FieldProperties
     /// <summary>
     /// Gets a value indicating whether the field is an array type.
     /// </summary>
-    public bool? IsArray { get; set; }
+    public bool? IsArray { get; init; }
 
+    /// <summary>
+    /// Creates an immutable copy of this metadata with the specified SQL-array state.
+    /// </summary>
+    /// <param name="isArray">Whether the mapped CLR property is represented as a SQL array.</param>
+    /// <returns>A copy of this instance with <see cref="IsArray"/> set to <paramref name="isArray"/>.</returns>
+    internal FieldProperties WithIsArray(bool isArray) =>
+        new()
+        {
+            Length = Length,
+            IsMax = IsMax,
+            IsUnicode = IsUnicode,
+            IsFixedLength = IsFixedLength,
+            Precision = Precision,
+            Scale = Scale,
+            FractionalSecondsPrecision = FractionalSecondsPrecision,
+            IsNullable = IsNullable,
+            ProviderTypeName = ProviderTypeName,
+            BaseType = BaseType,
+            IsArray = isArray
+        };
 }

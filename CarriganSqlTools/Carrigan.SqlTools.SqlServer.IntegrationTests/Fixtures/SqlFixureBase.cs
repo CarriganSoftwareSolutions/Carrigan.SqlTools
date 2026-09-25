@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Clients.SqlServer;
+using Carrigan.SqlTools.Clients.SqlServer;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlGenerators;
 using Microsoft.Data.SqlClient;
@@ -20,6 +20,7 @@ public abstract class SqlFixtureBase : IAsyncLifetime
     private readonly IEnumerable<SqlQuery> DatabaseSetups;
 
     private Respawner? _respawner;
+    private bool _databaseCreated;
 
     protected SqlFixtureBase(IEnumerable<string> tableDefinition)
     {
@@ -56,33 +57,55 @@ public abstract class SqlFixtureBase : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
-
-        await using SqlConnection maintenanceConnection = new(MaintenanceConnectionString);
-        await maintenanceConnection.OpenAsync();
-
-        await using SqlCommand createDb = maintenanceConnection.CreateCommand();
-        createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
-        await createDb.ExecuteNonQueryAsync();
-
-        await using SqlConnection unitTestConnection = new(UnitTestConnectionString);
-        await unitTestConnection.OpenAsync();
-
-        foreach (string tableDefinition in TableDefinitions)
+        try
         {
-            await using SqlCommand createTable = unitTestConnection.CreateCommand();
-            createTable.CommandText = tableDefinition;
-            await createTable.ExecuteNonQueryAsync();
+            string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
+
+            await using SqlConnection maintenanceConnection = new(MaintenanceConnectionString);
+            await maintenanceConnection.OpenAsync();
+
+            await using SqlCommand createDb = maintenanceConnection.CreateCommand();
+            createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
+            await createDb.ExecuteNonQueryAsync();
+            _databaseCreated = true;
+
+            await using SqlConnection unitTestConnection = new(UnitTestConnectionString);
+            await unitTestConnection.OpenAsync();
+
+            foreach (string tableDefinition in TableDefinitions)
+            {
+                await using SqlCommand createTable = unitTestConnection.CreateCommand();
+                createTable.CommandText = tableDefinition;
+                await createTable.ExecuteNonQueryAsync();
+            }
+
+            _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
+            {
+                DbAdapter = DbAdapter.SqlServer,
+                SchemasToInclude = [SchemaName],
+                WithReseed = true
+            });
+
+            ExecuteDatabaseSetups(unitTestConnection);
         }
-
-        _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
+        catch (Exception initializationException)
         {
-            DbAdapter = DbAdapter.SqlServer,
-            SchemasToInclude = [SchemaName],
-            WithReseed = true
-        });
+            try
+            {
+                await DropDatabaseAsync();
+            }
+            catch (Exception cleanupException)
+            {
+                throw new AggregateException
+                (
+                    $"Failed to initialize {DatabaseName}, and cleanup also failed.",
+                    initializationException,
+                    cleanupException
+                );
+            }
 
-        ExecuteDatabaseSetups(unitTestConnection);
+            throw;
+        }
     }
 
     public async Task ResetAsync()
@@ -100,6 +123,18 @@ public abstract class SqlFixtureBase : IAsyncLifetime
 
     public async ValueTask DisposeAsync()
     {
+        await DropDatabaseAsync();
+        GC.SuppressFinalize(this);
+    }
+
+    private async Task DropDatabaseAsync()
+    {
+        if (!_databaseCreated)
+            return;
+
+        using (SqlConnection poolConnection = new(UnitTestConnectionString))
+            SqlConnection.ClearPool(poolConnection);
+
         string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
         string dbNameLiteral = DatabaseName.Replace("'", "''");
 
@@ -116,7 +151,6 @@ public abstract class SqlFixtureBase : IAsyncLifetime
             """;
 
         await dropDb.ExecuteNonQueryAsync();
-
-        GC.SuppressFinalize(this);
+        _databaseCreated = false;
     }
 }

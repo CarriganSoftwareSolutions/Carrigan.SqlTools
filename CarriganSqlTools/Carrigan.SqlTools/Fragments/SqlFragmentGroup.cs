@@ -12,14 +12,17 @@ public class SqlFragmentGroup : ISqlFragment
     /// </summary>
     /// <remarks>This collection is intended to be used by derived classes to build or manipulate SQL
     /// statements. The contents of the collection may affect the resulting SQL output or query behavior.</remarks>
-    protected readonly IEnumerable<ISqlFragment> sqlFragments;
+    protected readonly IReadOnlyList<ISqlFragment> sqlFragments;
 
     /// <summary>
     /// Initializes a new instance of the SqlFragmentGroup class with the specified collection of SQL fragments.
     /// </summary>
     /// <param name="sqlFragments">The collection of SQL fragments to include in the group. Cannot be null.</param>
-    internal SqlFragmentGroup(params IEnumerable<ISqlFragment> sqlFragments) =>
-        this.sqlFragments = sqlFragments;
+    internal SqlFragmentGroup(params IEnumerable<ISqlFragment> sqlFragments)
+    {
+        ArgumentNullException.ThrowIfNull(sqlFragments);
+        this.sqlFragments = Array.AsReadOnly(sqlFragments.ToArray());
+    }
 
     /// <summary>
     /// Generates the SQL representation of the current object by concatenating the SQL fragments.
@@ -34,16 +37,20 @@ public class SqlFragmentGroup : ISqlFragment
     /// Retrieves the SQL parameters from all fragments contained in the group.
     /// </summary>
     /// <returns>The SQL fragment parameters exposed by the grouped fragments.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters() =>
-        sqlFragments.SelectMany(f => f.GetSqlFragmentParameters());
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        sqlFragments.SelectMany(sqlFragment => sqlFragment.GetSqlFragmentParameters(dialect));
 
     /// <summary>
     /// Returns a flattened sequence of all SQL fragments contained within this fragment and its descendants.
     /// </summary>
+    /// <param name="dialect">
+    /// The SQL dialect used to render identifiers, literals, and final parameter names.
+    /// This parameter ensures that the flattened fragments are compatible with the target database system.
+    /// </param>
     /// <remarks>Use this method to enumerate all SQL fragments in a hierarchical structure as a flat list,
     /// which can simplify processing or analysis of complex fragment trees.</remarks>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects representing all nested fragments in a single,
     /// flat sequence.</returns>
-    public IEnumerable<ISqlFragment> Flatten() =>
-        sqlFragments.SelectMany(element => element.Flatten());
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) =>
+        sqlFragments.SelectMany(element => element.Flatten(dialect));
 }

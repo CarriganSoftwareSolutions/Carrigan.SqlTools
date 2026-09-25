@@ -67,4 +67,28 @@ public sealed class SqlQueryTests
 
         Assert.Throws<KeyNotFoundException>(() => (int?)query.GetParameterValue("@missing"));
     }
+    [Fact]
+    public void Constructor_MaterializesFragments()
+    {
+        List<ISqlFragment> source = [new SqlFragmentText("SELECT 1;")];
+        SqlQuery query = new(Dialect, CommandType.Text, source);
+
+        source[0] = new SqlFragmentText("SELECT 2;");
+        source.Add(new SqlFragmentText(" SELECT 3;"));
+
+        Assert.Equal("SELECT 1;", query.QueryText);
+    }
+
+    [Fact]
+    public void SqlFragments_Setter_MaterializesFragments()
+    {
+        SqlQuery query = new(Dialect, CommandType.Text, [new SqlFragmentText("SELECT 1;")]);
+        List<ISqlFragment> source = [new SqlFragmentText("SELECT 2;")];
+
+        query.SqlFragments = source;
+        source[0] = new SqlFragmentText("SELECT 3;");
+
+        Assert.Equal("SELECT 2;", query.QueryText);
+    }
+
 }
