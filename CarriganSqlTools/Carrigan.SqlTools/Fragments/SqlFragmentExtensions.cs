@@ -32,7 +32,7 @@ internal static class SqlFragmentExtensions
     {
         int parameterIndex = 1; // PostgreSQL and SQLite use 1-based parameter indexing.
 
-        foreach (ISqlFragment fragment in sqlFragments.Flatten(dialect))
+        foreach (ISqlFragment fragment in sqlFragments.Flatten())
         {
             yield return fragment is SqlFragmentParameter parameterFragment
                 ? RenderFinalParameter(dialect, parameterFragment, parameterIndex++)
@@ -60,7 +60,7 @@ internal static class SqlFragmentExtensions
 
         return sqlFragments
             .RenderFinalFragmentEnumeration(dialect)
-            .SelectMany(fragment => fragment.GetSqlFragmentParameters(dialect));
+            .SelectMany(fragment => fragment.GetSqlFragmentParameters());
     }
 
     /// <summary>
@@ -118,12 +118,9 @@ internal static class SqlFragmentExtensions
     /// Flattens a sequence of SQL fragments by recursively expanding any nested sequences of fragments into a single, flat sequence.
     /// </summary>
     /// <param name="fragments">The sequence of fragments to flatten.</param>
-    /// <param name="dialect">
-    /// The SQL dialect used to render identifiers, literals, and final parameter names.
-    /// </param>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects representing the flattened structure of the input sequence.</returns>
-    internal static IEnumerable<ISqlFragment> Flatten(this IEnumerable<ISqlFragment> fragments, ISqlDialects dialect) =>
-        fragments.SelectMany(element => element.Flatten(dialect));
+    internal static IEnumerable<ISqlFragment> Flatten(this IEnumerable<ISqlFragment> fragments) =>
+        fragments.SelectMany(element => element.Flatten());
 
 
     /// <summary>
