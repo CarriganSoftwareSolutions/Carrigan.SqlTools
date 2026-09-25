@@ -45,6 +45,9 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Aggregate Expression Examples](#aggregate-expression-examples)
   - [Having Examples](#having-examples)
 - [SqlExpression Examples](#sqlexpression-examples)
+  - [Conversion Operations](#conversion-operations)
+    - [Cast Example](#cast-example)
+    - [TryCase Example](#trycast-example)
   - [Date Time Operations](#date-time-operations)
     - [CurrentDate Example](#currentdate-example)
     - [CurrentTimeStamp Example](#currenttimestamp-example)
@@ -82,10 +85,12 @@ Use caution with schema, migration, and data-modifying operations. The authors a
     - [Lower Example](#lower-example)
     - [LRTrim Example](#lrtrim-example)
     - [LTrim Examples](#ltrim-examples)
+    - [PatIndex Example](#patindex-example)
     - [Repeat Example](#repeat-example)
     - [Replace Examples](#replace-examples)
     - [Right Example](#right-example)
     - [RTrim Examples](#rtrim-examples)
+    - [Stuff Example](#stuff-example)
     - [Substring Example](#substring-example)
     - [Trim Examples](#trim-examples)
     - [Upper Example](#upper-example)
@@ -195,7 +200,10 @@ public SqlGenerator<Customer> customerGenerator = new();
 
 ```csharp
 SqlQuery query = customerGenerator.SelectAll();
-// SELECT [Customer].* FROM [Customer]
+```
+
+```sql
+SELECT [Customer].* FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -208,9 +216,12 @@ A key attribute is required. Composite keys are supported by marking multiple ke
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.SelectById(entity);
-// SELECT [Customer].* 
-// FROM [Customer] 
-// WHERE ([Customer].[Id] = @Id_1)
+```
+
+```sql
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Id] = @Id_1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -231,9 +242,11 @@ InsertBuilder<Customer> insertBuilder = new()
     Records = [entity]
 };
 SqlQuery query = customerGenerator.Insert(insertBuilder);
+```
 
-// INSERT INTO [Customer] ([Id], [Name], [Email], [Phone])
-// VALUES (@Id_1, @Name_2, @Email_3, @Phone_4);
+```sql
+INSERT INTO [Customer] ([Id], [Name], [Email], [Phone])
+VALUES (@Id_1, @Name_2, @Email_3, @Phone_4);
 ```
 
 [Table of Contents](#table-of-contents)
@@ -251,12 +264,14 @@ Customer entity = new()
     Phone = "+1(555)555-5555" 
 };
 SqlQuery query = customerGenerator.InsertAutoId(entity);
+```
 
-// DECLARE @OutputTable TABLE (InsertedId INT NOT NULL);
-// INSERT INTO [Customer] ([Name], [Email], [Phone])
-// OUTPUT INSERTED.[Id] INTO @OutputTable
-// VALUES (@Name_1, @Email_2, @Phone_3);
-// SELECT [InsertedId] FROM @OutputTable;
+```sql
+DECLARE @OutputTable TABLE (InsertedId INT NOT NULL);
+INSERT INTO [Customer] ([Name], [Email], [Phone])
+OUTPUT INSERTED.[Id] INTO @OutputTable
+VALUES (@Name_1, @Email_2, @Phone_3);
+SELECT [InsertedId] FROM @OutputTable;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -275,9 +290,11 @@ Customer entity = new()
     Phone = "+1(555)555-5555"
 };
 SqlQuery query = customerGenerator.UpdateById(entity);
+```
 
-// UPDATE [Customer] SET [Name] = @Name_1, [Email] = @Email_2, [Phone] = @Phone_3
-// WHERE [Id] = @Id_4;
+```sql
+UPDATE [Customer] SET [Name] = @Name_1, [Email] = @Email_2, [Phone] = @Phone_3
+WHERE [Id] = @Id_4;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -295,9 +312,12 @@ A key attribute is required. Composite keys are supported by marking multiple ke
 ColumnCollection<Customer> columns = new(nameof(Customer.Email));
 Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
 SqlQuery query = customerGenerator.UpdateById(entity, columns);
-// UPDATE [Customer] 
-// SET [Email] = @Email_1 
-// WHERE [Id] = @Id_2;
+```
+
+```sql
+UPDATE [Customer] 
+SET [Email] = @Email_1 
+WHERE [Id] = @Id_2;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -310,7 +330,10 @@ A key attribute is required. Composite keys are supported by marking multiple ke
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.Delete(entity);
-// DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)
+```
+
+```sql
+DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -325,9 +348,12 @@ A key attribute is required. Composite keys are supported by marking multiple ke
 ```csharp
 Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
-// DELETE FROM [Customer] 
-// WHERE (([Customer].[Id] = @Id_1) 
-//    OR ([Customer].[Id] = @Id_2))
+```
+
+```sql
+DELETE FROM [Customer] 
+WHERE (([Customer].[Id] = @Id_1) 
+   OR ([Customer].[Id] = @Id_2))
 ```
 
 [Table of Contents](#table-of-contents)
@@ -396,12 +422,14 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-// SELECT [Customer].* 
-// FROM [Customer] 
-// INNER JOIN [Order] 
-//    ON ([Customer].[Id] = [Order].[CustomerId]) 
-// ORDER BY [Order].[OrderDate] ASC
+```sql
+SELECT [Customer].* 
+FROM [Customer] 
+INNER JOIN [Order] 
+   ON ([Customer].[Id] = [Order].[CustomerId]) 
+ORDER BY [Order].[OrderDate] ASC
 ```
 
 [Table of Contents](#table-of-contents)
@@ -429,13 +457,15 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-// SELECT [Customer].* 
-// FROM [Customer] 
-// INNER JOIN [Order] 
-//    ON ([Customer].[Id] = [Order].[CustomerId])
-// ORDER BY [Customer].[Id] DESC,
-//          [Order].[OrderDate] ASC
+```sql
+SELECT [Customer].* 
+FROM [Customer] 
+INNER JOIN [Order] 
+   ON ([Customer].[Id] = [Order].[CustomerId])
+ORDER BY [Customer].[Id] DESC,
+         [Order].[OrderDate] ASC
 ```
 
 [Table of Contents](#table-of-contents)
@@ -461,12 +491,14 @@ DeleteBuilder<Order> deleteBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Delete(deleteBuilder);
+```
 
-// DELETE [Order] 
-// FROM [Order] 
-// INNER JOIN [Customer] 
-//    ON ([Customer].[Id] = [Order].[CustomerId]) 
-// WHERE ([Customer].[Email] = @Email_1)
+```sql
+DELETE [Order] 
+FROM [Order] 
+INNER JOIN [Customer] 
+   ON ([Customer].[Id] = [Order].[CustomerId]) 
+WHERE ([Customer].[Email] = @Email_1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -482,10 +514,12 @@ Parameter minTotal = new(500m, "Total");
 GreaterThan greaterThan = new(totalCol, minTotal);
 
 SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
+```
 
-// SELECT COUNT([Order].[Id]) 
-// FROM [Order] 
-// WHERE ([Order].[Total] > @Total_1)
+```sql
+SELECT COUNT([Order].[Id]) 
+FROM [Order] 
+WHERE ([Order].[Total] > @Total_1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -519,13 +553,15 @@ UpdateBuilder<Order> updateBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Update(updateBuilder);
+```
 
-// UPDATE [Order] 
-// SET [Order].[Total] = @Total_1 
-// FROM [Order] 
-// INNER JOIN [Customer] 
-//    ON ([Order].[CustomerId] = [Customer].[Id]) 
-// WHERE ([Customer].[Email] = @Email_2)
+```sql
+UPDATE [Order] 
+SET [Order].[Total] = @Total_1 
+FROM [Order] 
+INNER JOIN [Customer] 
+   ON ([Order].[CustomerId] = [Customer].[Id]) 
+WHERE ([Customer].[Email] = @Email_2)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -554,19 +590,21 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery query = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT 
-//      [Grades].[StudentId], 
-//      [Grades].[CourseCode], 
-//      AVG([Grades].[GradePoint]) AS [AverageGradePoint], 
-//      SUM([Grades].[GradePoint]) AS [TotalGradePoints],
-//      MIN([Grades].[GradePoint]) AS [MinimumGradePoint], 
-//      MAX([Grades].[GradePoint]) AS [MaximumGradePoint], 
-//      COUNT([Grades].[GradePoint]) AS [GradePointCount] 
-//  FROM [Grades] 
-//  GROUP BY 
-//      [Grades].[StudentId],
-//      [Grades].[CourseCode]
+```sql
+SELECT 
+    [Grades].[StudentId], 
+    [Grades].[CourseCode], 
+    AVG([Grades].[GradePoint]) AS [AverageGradePoint], 
+    SUM([Grades].[GradePoint]) AS [TotalGradePoints],
+    MIN([Grades].[GradePoint]) AS [MinimumGradePoint], 
+    MAX([Grades].[GradePoint]) AS [MaximumGradePoint], 
+    COUNT([Grades].[GradePoint]) AS [GradePointCount] 
+FROM [Grades] 
+GROUP BY 
+    [Grades].[StudentId],
+    [Grades].[CourseCode]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -592,20 +630,22 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery query = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT 
-//      [Grades].[StudentId], 
-//      [Grades].[AcademicYear], 
-//      [Grades].[SemesterNumber], 
-//      AVG([Grades].[GradePoint]) AS [SemesterGPA] 
-//  FROM 
-//      [Grades] 
-//  GROUP BY 
-//      [Grades].[StudentId], 
-//      [Grades].[AcademicYear], 
-//      [Grades].[SemesterNumber] 
-//  HAVING 
-//      (AVG([Grades].[GradePoint]) > @HonorRollGpa_1)
+```sql
+SELECT 
+    [Grades].[StudentId], 
+    [Grades].[AcademicYear], 
+    [Grades].[SemesterNumber], 
+    AVG([Grades].[GradePoint]) AS [SemesterGPA] 
+FROM 
+    [Grades] 
+GROUP BY 
+    [Grades].[StudentId], 
+    [Grades].[AcademicYear], 
+    [Grades].[SemesterNumber] 
+HAVING 
+    (AVG([Grades].[GradePoint]) > @HonorRollGpa_1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -613,6 +653,50 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 ---
 
 ## SqlExpression Examples
+
+### Conversion Operations
+
+#### Cast Example
+
+```csharp
+Cast expression = new(new Parameter("123"), SqlServerTypesProvider.AsInt(true));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT CAST(@Parameter_1 AS INT) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### TryCast Example
+
+```csharp
+TryCast expression = new(new Parameter("123"), SqlServerTypesProvider.AsInt(true));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT TRY_CAST(@Parameter_1 AS INT) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
 
 ### Date Time Operations
 
@@ -1091,8 +1175,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]
+```sql
+SELECT ([Grades].[CreditHours] - @Parameter_1) AS [ArthemicResult] FROM [Grades]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1134,8 +1220,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
+```sql
+SELECT COALESCE([Customer].[Phone], [Customer].[Email]) AS [Coalescence] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1284,8 +1372,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT LOWER([Customer].[Name]) AS [Value] FROM [Customer]
+```sql
+SELECT LOWER([Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1304,8 +1394,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT LTRIM(RTRIM([Customer].[Name])) AS [Value] FROM [Customer]
+```sql
+SELECT LTRIM(RTRIM([Customer].[Name])) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1346,6 +1438,22 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ```SQL
 SELECT LTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### PatIndex Example
+
+```csharp
+PatIndex expression = new("%[0-9]%", new Column<Customer>(nameof(Customer.Name)));
+SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT PATINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1498,6 +1606,27 @@ SELECT RTRIM([Customer].[Name], @Parameter_1) AS [Value] FROM [Customer]
 
 ---
 
+#### Stuff Example
+
+```csharp
+Stuff expression = new(new Column<Customer>(nameof(Customer.Name)), 2, 3, "X");
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT STUFF([Customer].[Name], @Parameter_1, @Parameter_2, @Parameter_3) AS [Value] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
 #### Substring Example
 
 ```csharp
@@ -1625,10 +1754,12 @@ PhoneModel phone = new()
     PhoneNumber = "07700 900461"
 };
 SqlQuery query = phoneGenerator.UpdateById(phone);
+```
 
-// UPDATE [schema].[Phone] 
-// SET [CustomerId] = @CustomerId_1, [Phone] = @Phone_2
-// WHERE [Id] = @Id_3;
+```sql
+UPDATE [schema].[Phone] 
+SET [CustomerId] = @CustomerId_1, [Phone] = @Phone_2
+WHERE [Id] = @Id_3;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1653,10 +1784,12 @@ EmailModel email = new()
     EmailAddress = "Exterminate@GenericTinCanLand.gov"
 };
 SqlQuery query = emailGenerator.UpdateById(email);
+```
 
-// UPDATE [schema].[Email] 
-// SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 
-// WHERE [Id] = @Id_3;
+```sql
+UPDATE [schema].[Email] 
+SET [CustomerId] = @CustomerId_1, [Email] = @Email_2 
+WHERE [Id] = @Id_3;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1676,8 +1809,10 @@ ProcedureExec procedureExec = new()
     ValueColumn = "DangIt"
 };
 SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
+```
 
-// [schema].[UpdateThing]
+```sql
+[schema].[UpdateThing]
 ```
 
 [Table of Contents](#table-of-contents)

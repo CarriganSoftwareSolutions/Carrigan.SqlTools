@@ -44,6 +44,8 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Aggregate Expression Examples](#aggregate-expression-examples)
   - [Having Examples](#having-examples)
 - [SqlExpression Examples](#sqlexpression-examples)
+  - [Conversion Operations](#conversion-operations)
+    - [Cast Example](#cast-example)
   - [Date Time Operations](#date-time-operations)
     - [CurrentDate Example](#currentdate-example)
     - [CurrentTimeStamp Example](#currenttimestamp-example)
@@ -216,10 +218,12 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.SelectById(entity);
+```
 
-// SELECT "Customer".*
-// FROM "Customer"
-// WHERE ("Customer"."Id" = $1)
+```sql
+SELECT "Customer".*
+FROM "Customer"
+WHERE ("Customer"."Id" = $1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -241,9 +245,11 @@ InsertBuilder<Customer> insertBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Insert(insertBuilder);
+```
 
-// INSERT INTO "Customer" ("Id", "Name", "Email", "Phone")
-// VALUES ($1, $2, $3, $4);
+```sql
+INSERT INTO "Customer" ("Id", "Name", "Email", "Phone")
+VALUES ($1, $2, $3, $4);
 ```
 
 [Table of Contents](#table-of-contents)
@@ -261,10 +267,12 @@ Customer entity = new()
 };
 
 SqlQuery query = customerGenerator.InsertAutoId(entity);
+```
 
-// INSERT INTO "Customer" ("Name", "Email", "Phone")
-// VALUES ($1, $2, $3)
-// RETURNING "Id";
+```sql
+INSERT INTO "Customer" ("Name", "Email", "Phone")
+VALUES ($1, $2, $3)
+RETURNING "Id";
 ```
 
 [Table of Contents](#table-of-contents)
@@ -283,10 +291,12 @@ Customer entity = new()
 };
 
 SqlQuery query = customerGenerator.UpdateById(entity);
+```
 
-// UPDATE "Customer"
-// SET "Name" = $1, "Email" = $2, "Phone" = $3
-// WHERE "Id" = $4;
+```sql
+UPDATE "Customer"
+SET "Name" = $1, "Email" = $2, "Phone" = $3
+WHERE "Id" = $4;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -303,10 +313,12 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ColumnCollection<Customer> columns = new(nameof(Customer.Email));
 Customer entity = new() { Id = 42, Name = "Hank", Email = "Hank@example.gov" };
 SqlQuery query = customerGenerator.UpdateById(entity, columns);
+```
 
-// UPDATE "Customer"
-// SET "Email" = $1
-// WHERE "Id" = $2;
+```sql
+UPDATE "Customer"
+SET "Email" = $1
+WHERE "Id" = $2;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -318,9 +330,11 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ```csharp
 Customer entity = new() { Id = 42 };
 SqlQuery query = customerGenerator.Delete(entity);
+```
 
-// DELETE FROM "Customer"
-// WHERE ("Customer"."Id" = $1)
+```sql
+DELETE FROM "Customer"
+WHERE ("Customer"."Id" = $1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -334,10 +348,12 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ```csharp
 Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
+```
 
-// DELETE FROM "Customer"
-// WHERE (("Customer"."Id" = $1)
-//    OR ("Customer"."Id" = $2))
+```sql
+DELETE FROM "Customer"
+WHERE (("Customer"."Id" = $1)
+   OR ("Customer"."Id" = $2))
 ```
 
 [Table of Contents](#table-of-contents)
@@ -406,12 +422,14 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-// SELECT "Customer".*
-// FROM "Customer"
-// INNER JOIN "Order"
-//    ON ("Customer"."Id" = "Order"."CustomerId")
-// ORDER BY "Order"."OrderDate" ASC
+```sql
+SELECT "Customer".*
+FROM "Customer"
+INNER JOIN "Order"
+   ON ("Customer"."Id" = "Order"."CustomerId")
+ORDER BY "Order"."OrderDate" ASC
 ```
 
 [Table of Contents](#table-of-contents)
@@ -438,13 +456,15 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-// SELECT "Customer".*
-// FROM "Customer"
-// INNER JOIN "Order"
-//    ON ("Customer"."Id" = "Order"."CustomerId")
-// ORDER BY "Customer"."Id" DESC,
-//          "Order"."OrderDate" ASC
+```sql
+SELECT "Customer".*
+FROM "Customer"
+INNER JOIN "Order"
+   ON ("Customer"."Id" = "Order"."CustomerId")
+ORDER BY "Customer"."Id" DESC,
+         "Order"."OrderDate" ASC
 ```
 
 [Table of Contents](#table-of-contents)
@@ -468,10 +488,12 @@ DeleteBuilder<Order> deleteBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Delete(deleteBuilder);
+```
 
-// DELETE FROM "Order" USING "Customer"
-// WHERE (("Customer"."Id" = "Order"."CustomerId")
-//   AND ("Customer"."Email" = $1))
+```sql
+DELETE FROM "Order" USING "Customer"
+WHERE (("Customer"."Id" = "Order"."CustomerId")
+  AND ("Customer"."Email" = $1))
 ```
 
 [Table of Contents](#table-of-contents)
@@ -486,10 +508,12 @@ Parameter minTotal = new(500m, "Total");
 GreaterThan greaterThan = new(totalCol, minTotal);
 
 SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
+```
 
-// SELECT COUNT("Order"."Id")
-// FROM "Order"
-// WHERE ("Order"."Total" > $1)
+```sql
+SELECT COUNT("Order"."Id")
+FROM "Order"
+WHERE ("Order"."Total" > $1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -521,12 +545,14 @@ UpdateBuilder<Order> updateBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Update(updateBuilder);
+```
 
-// UPDATE "Order"
-// SET "Total" = $1
-// FROM "Customer"
-// WHERE (("Order"."CustomerId" = "Customer"."Id")
-//   AND ("Customer"."Email" = $2))
+```sql
+UPDATE "Order"
+SET "Total" = $1
+FROM "Customer"
+WHERE (("Order"."CustomerId" = "Customer"."Id")
+  AND ("Customer"."Email" = $2))
 ```
 
 [Table of Contents](#table-of-contents)
@@ -554,19 +580,21 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery query = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT 
-//      "Grades"."StudentId", 
-//      "Grades"."CourseCode", 
-//      AVG("Grades"."GradePoint") AS "AverageGradePoint", 
-//      SUM("Grades"."GradePoint") AS "TotalGradePoints",
-//      MIN("Grades"."GradePoint") AS "MinimumGradePoint", 
-//      MAX("Grades"."GradePoint") AS "MaximumGradePoint", 
-//      COUNT("Grades"."GradePoint") AS "GradePointCount" 
-//  FROM "Grades" 
-//  GROUP BY 
-//      "Grades"."StudentId",
-//      "Grades"."CourseCode"
+```sql
+SELECT 
+    "Grades"."StudentId", 
+    "Grades"."CourseCode", 
+    AVG("Grades"."GradePoint") AS "AverageGradePoint", 
+    SUM("Grades"."GradePoint") AS "TotalGradePoints",
+    MIN("Grades"."GradePoint") AS "MinimumGradePoint", 
+    MAX("Grades"."GradePoint") AS "MaximumGradePoint", 
+    COUNT("Grades"."GradePoint") AS "GradePointCount" 
+FROM "Grades" 
+GROUP BY 
+    "Grades"."StudentId",
+    "Grades"."CourseCode"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -597,18 +625,20 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery query = selectBuilder.AsSqlQuery();
+```
 
-// SELECT
-//     "Grades"."StudentId",
-//     "Grades"."AcademicYear",
-//     "Grades"."SemesterNumber",
-//     AVG("Grades"."GradePoint") AS "SemesterGPA"
-// FROM "Grades"
-// GROUP BY
-//     "Grades"."StudentId",
-//     "Grades"."AcademicYear",
-//     "Grades"."SemesterNumber"
-// HAVING (AVG("Grades"."GradePoint") > $1)
+```sql
+SELECT
+    "Grades"."StudentId",
+    "Grades"."AcademicYear",
+    "Grades"."SemesterNumber",
+    AVG("Grades"."GradePoint") AS "SemesterGPA"
+FROM "Grades"
+GROUP BY
+    "Grades"."StudentId",
+    "Grades"."AcademicYear",
+    "Grades"."SemesterNumber"
+HAVING (AVG("Grades"."GradePoint") > $1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -616,6 +646,29 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 ---
 
 ## SqlExpression Examples
+
+### Conversion Operations
+
+#### Cast Example
+
+```csharp
+Cast expression = new(new Parameter("123"), PostgreSqlTypesProvider.AsNumeric(false, true));
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Selects = expression.AsSelectTag("Value")
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT CAST($1 AS NUMERIC) AS "Value" FROM "Customer"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
 
 ### Date Time Operations
 
@@ -871,8 +924,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT (\"Grades\".\"CreditHours\" - @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```sql
+SELECT ("Grades"."CreditHours" - @Parameter_1) AS "ArthemicResult" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -900,8 +955,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT (\"Grades\".\"CreditHours\" % @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```sql
+SELECT ("Grades"."CreditHours" % @Parameter_1) AS "ArthemicResult" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -929,8 +986,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT (\"Grades\".\"CreditHours\" * @Parameter_1) AS \"ArthemicResult\" FROM \"Grades\"
+```sql
+SELECT ("Grades"."CreditHours" * @Parameter_1) AS "ArthemicResult" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -955,8 +1014,10 @@ SelectBuilder<Grades> selectBuilder = new()
         )
     )
 };
+```
 
-//  SELECT (-\"Grades\".\"CreditHours\") AS \"ArthemicResult\" FROM \"Grades\"
+```sql
+SELECT (-"Grades"."CreditHours") AS "ArthemicResult" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -996,8 +1057,10 @@ SelectBuilder<Order> selectBuilder = new()
 };
 
 SqlQuery query = orderGenerator.Select(selectBuilder);
+```
 
-//SELECT SIGN(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+```sql
+SELECT SIGN("Order"."Total") AS "Value" FROM "Order"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1018,7 +1081,7 @@ SqlQuery query = orderGenerator.Select(selectBuilder);
 ```
 
 ```sql
-SELECT SQRT(\"Order\".\"Total\") AS \"Value\" FROM \"Order\"
+SELECT SQRT("Order"."Total") AS "Value" FROM "Order"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1046,8 +1109,10 @@ SelectBuilder<Grades> selectBuilder = new()
 };
 
 SqlQuery sqlQuery = selectBuilder.AsSqlQuery();
+```
 
-//  SELECT (\"Grades\".\"CreditHours\" - $1) AS \"ArthemicResult\" FROM \"Grades\"
+```sql
+SELECT ("Grades"."CreditHours" - $1) AS "ArthemicResult" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1089,8 +1154,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT COALESCE(\"Customer\".\"Phone\", \"Customer\".\"Email\") AS \"Coalescence\" FROM \"Customer\"
+```sql
+SELECT COALESCE("Customer"."Phone", "Customer"."Email") AS "Coalescence" FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1109,8 +1176,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT NULLIF(\"Customer\".\"Phone\", $1) AS \"NullIf\" FROM \"Customer\"
+```sql
+SELECT NULLIF("Customer"."Phone", $1) AS "NullIf" FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1217,8 +1286,10 @@ SelectBuilder<Customer> selectBuilder = new()
 };
 
 SqlQuery query = customerGenerator.Select(selectBuilder);
+```
 
-//SELECT LOWER(\"Customer\".\"Name\") AS \"Value\" FROM \"Customer\"
+```sql
+SELECT LOWER("Customer"."Name") AS "Value" FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1591,10 +1662,12 @@ PhoneModel phone = new()
 };
 
 SqlQuery query = phoneGenerator.UpdateById(phone);
+```
 
-// UPDATE "schema"."Phone"
-// SET "CustomerId" = $1, "Phone" = $2
-// WHERE "Id" = $3;
+```sql
+UPDATE "schema"."Phone"
+SET "CustomerId" = $1, "Phone" = $2
+WHERE "Id" = $3;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1620,10 +1693,12 @@ EmailModel email = new()
 };
 
 SqlQuery query = emailGenerator.UpdateById(email);
+```
 
-// UPDATE "schema"."Email"
-// SET "CustomerId" = $1, "Email" = $2
-// WHERE "Id" = $3;
+```sql
+UPDATE "schema"."Email"
+SET "CustomerId" = $1, "Email" = $2
+WHERE "Id" = $3;
 ```
 
 [Table of Contents](#table-of-contents)
@@ -1644,8 +1719,10 @@ ProcedureExec procedureExec = new()
 };
 
 SqlQuery query = procedureExecGenerator.Procedure(procedureExec);
+```
 
-// "schema"."UpdateThing"
+```sql
+"schema"."UpdateThing"
 ```
 
 [Table of Contents](#table-of-contents)

@@ -1,6 +1,8 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Types;
+using System.Linq.Expressions;
 using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
@@ -8,7 +10,43 @@ namespace Carrigan.SqlTools.Expressions;
 /// <summary>
 /// Represents SQL's <c>CAST</c> expression, which converts an expression from one data type to another.
 /// </summary>
-//TODO: Examples
+/// <example>
+/// <para>C# Code for SQLServer:</para>
+/// <code language="csharp"><![CDATA[
+/// Cast expression = new(new Parameter("123"), SqlServerTypesProvider.AsInt(true));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = expression.AsSelectTag("Value")
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// ]]></code>
+/// <para>Resulting SQL for SqlServer:</para>
+/// <code><![CDATA[
+/// --SqlServer
+/// SELECT CAST(@Parameter_1 AS INT) AS [Value] FROM [Customer]
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>C# Code for PostgreSQL:</para>
+/// <code language="csharp"><![CDATA[
+/// Cast expression = new(new Parameter("123"), PostgreSqlTypesProvider.AsNumeric(false, true));
+/// 
+/// SelectBuilder<Customer> selectBuilder = new()
+/// {
+///     Selects = expression.AsSelectTag("Value")
+/// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
+/// 
+/// ]]></code>
+/// <para>Resulting PostgreSQL:</para>
+/// <code><![CDATA[
+/// --PostgreSql
+/// SELECT CAST($1 AS NUMERIC) AS \"Value\" FROM \"Customer\"
+/// ]]></code>
+/// </example>
 public class Cast : SqlExpression
 {
     /// <summary>

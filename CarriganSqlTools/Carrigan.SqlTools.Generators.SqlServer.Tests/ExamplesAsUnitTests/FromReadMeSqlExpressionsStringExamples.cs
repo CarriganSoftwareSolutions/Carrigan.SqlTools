@@ -182,6 +182,20 @@ public class FromReadMeSqlExpressionsNullExamples
     }
 
     [Fact]
+    public void PatIndex_Example()
+    {
+        PatIndex expression = new("%[0-9]%", new Column<Customer>(nameof(Customer.Name)));
+        SelectBuilder<Customer> selectBuilder = new() { Selects = expression.AsSelectTag("Value") };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT PATINDEX(@Parameter_1, [Customer].[Name]) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal("%[0-9]%", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
     public void Repeat_Example()
     {
         Repeat expression = new(new Column<Customer>(nameof(Customer.Name)), 2);
@@ -297,6 +311,27 @@ public class FromReadMeSqlExpressionsNullExamples
 
         Assert.Equal(expected, actual);
         Assert.Equal(" x", Assert.Single(query.Parameters).Value);
+    }
+
+    [Fact]
+    public void Stuff_Example()
+    {
+        Stuff expression = new(new Column<Customer>(nameof(Customer.Name)), 2, 3, "X");
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Selects = expression.AsSelectTag("Value")
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        string expected = "SELECT STUFF([Customer].[Name], @Parameter_1, @Parameter_2, @Parameter_3) AS [Value] FROM [Customer]";
+        string actual = query.QueryText;
+
+        Assert.Equal(expected, actual);
+        Assert.Equal(2, query.Parameters.ElementAt(0).Value);
+        Assert.Equal(3, query.Parameters.ElementAt(1).Value);
+        Assert.Equal("X", query.Parameters.ElementAt(2).Value);
     }
 
     [Fact]
