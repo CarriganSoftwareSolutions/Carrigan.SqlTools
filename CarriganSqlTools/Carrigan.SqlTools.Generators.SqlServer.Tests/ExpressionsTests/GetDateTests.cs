@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Expressions;
+namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
 /// <summary>
 /// Tests for the GetDate function in SQL Server, which returns the current database system timestamp as a datetime value.
