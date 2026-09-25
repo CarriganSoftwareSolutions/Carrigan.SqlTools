@@ -27,15 +27,15 @@
 
     <!-- PreReleaseStatus / Base version: x.y.z For Base Projects -->
     <SqlToolsBaseProjectsBaseVersion>0.6.4</SqlToolsBaseProjectsBaseVersion>
-    <SqlToolsBaseProjectsPreReleaseLabel></SqlToolsBaseProjectsPreReleaseLabel>
+    <SqlToolsBaseProjectsPreReleaseLabel>alpha</SqlToolsBaseProjectsPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For SqlServer Dialect -->
     <SqlToolsSqlServerBaseVersion>0.6.4</SqlToolsSqlServerBaseVersion>
-    <SqlToolsSqlServerPreReleaseLabel></SqlToolsSqlServerPreReleaseLabel>
+    <SqlToolsSqlServerPreReleaseLabel>alpha</SqlToolsSqlServerPreReleaseLabel>
     
     <!-- PreReleaseStatus / Base version: x.y.z For PostgreSql Dialect -->
     <SqlToolsPostgreSqlBaseVersion>0.6.4</SqlToolsPostgreSqlBaseVersion>
-    <SqlToolsPostgreSqlPreReleaseLabel></SqlToolsPostgreSqlPreReleaseLabel>
+    <SqlToolsPostgreSqlPreReleaseLabel>alpha</SqlToolsPostgreSqlPreReleaseLabel>
     
     <!-- Time Stamp -->
     <BuildTimeStamp>$([System.DateTime]::UtcNow.ToString('yyyyMMddHHmm'))</BuildTimeStamp>
