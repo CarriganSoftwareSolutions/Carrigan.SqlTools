@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Clients.SqlServer;
+using Carrigan.SqlTools.Clients.SqlServer;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlGenerators;
 using Microsoft.Data.SqlClient;
@@ -121,13 +121,19 @@ public abstract class SqlFixtureBase : IAsyncLifetime
         ExecuteDatabaseSetups(unitTestConnection);
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        await DropDatabaseAsync();
+        GC.SuppressFinalize(this);
+    }
+
     private async Task DropDatabaseAsync()
     {
         if (!_databaseCreated)
             return;
 
-        await using SqlConnection poolConnection = new(UnitTestConnectionString);
-        SqlConnection.ClearPool(poolConnection);
+        using (SqlConnection poolConnection = new(UnitTestConnectionString))
+            SqlConnection.ClearPool(poolConnection);
 
         string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
         string dbNameLiteral = DatabaseName.Replace("'", "''");
@@ -146,11 +152,5 @@ public abstract class SqlFixtureBase : IAsyncLifetime
 
         await dropDb.ExecuteNonQueryAsync();
         _databaseCreated = false;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await DropDatabaseAsync();
-        GC.SuppressFinalize(this);
     }
 }

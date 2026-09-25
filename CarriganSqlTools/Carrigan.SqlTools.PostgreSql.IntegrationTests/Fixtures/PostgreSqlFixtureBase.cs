@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.SqlGenerators;
 using Npgsql;
@@ -126,13 +126,19 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
         ExecuteDatabaseSetups(unitTestConnection);
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        await DropDatabaseAsync();
+        GC.SuppressFinalize(this);
+    }
+
     private async Task DropDatabaseAsync()
     {
         if (!_databaseCreated)
             return;
 
-        await using NpgsqlConnection poolConnection = new(UnitTestConnectionString);
-        NpgsqlConnection.ClearPool(poolConnection);
+        await using (NpgsqlConnection poolConnection = new(UnitTestConnectionString))
+            NpgsqlConnection.ClearPool(poolConnection);
 
         await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
         await maintenanceConnection.OpenAsync();
@@ -147,11 +153,5 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
 
         await dropDb.ExecuteNonQueryAsync();
         _databaseCreated = false;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await DropDatabaseAsync();
-        GC.SuppressFinalize(this);
     }
 }
