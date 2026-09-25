@@ -1,83 +1,111 @@
 ﻿//Ignore Spelling: Localdb, Respawn, Respawner, Reseed, Carrigan, SqlTools, dbo
 
+using Carrigan.SqlTools.IntegrationTests.Models;
 using Microsoft.Data.SqlClient;
 using Respawn;
-using Carrigan.SqlTools.IntegrationTests.Models;
 
 namespace Carrigan.SqlTools.IntegrationTests.Fixtures;
 
 public sealed class FieldsFixture : IAsyncLifetime
 {
-    public string ConnectionString { get; private set; } =
+    private const string MaintenanceConnectionString =
         "Server=(localdb)\\MSSQLLocalDB;Integrated Security=true;TrustServerCertificate=true;";
 
     private readonly string _dbName = "CarriganSqlToolsTestDb_" + Guid.CreateVersion7().ToString("N");
     private Respawner? _respawner;
+    private bool _databaseCreated;
 
-    public async Task InitializeAsync()
-    {
-        // Create database
-        SqlConnection masterConnection = new(ConnectionString);
-        await masterConnection.OpenAsync();
-
-        SqlCommand createDb = masterConnection.CreateCommand();
-        createDb.CommandText = $"CREATE DATABASE [{_dbName}]";
-        await createDb.ExecuteNonQueryAsync();
-        createDb.Dispose();
-
-        // Point to new DB and create schema from model
-        ConnectionString += $";Initial Catalog={_dbName}";
-        masterConnection.ChangeDatabase(_dbName);
-
-        SqlCommand createTable = masterConnection.CreateCommand();
-        createTable.CommandText = FieldsModel.CreateTableSql;
-        await createTable.ExecuteNonQueryAsync();
-        createTable.Dispose();
-
-        masterConnection.Dispose();
-
-        // Prepare Respawner for fast resets
-        SqlConnection openForRespawn = new(ConnectionString);
-        await openForRespawn.OpenAsync();
-
-        RespawnerOptions options = new()
+    public string ConnectionString =>
+        new SqlConnectionStringBuilder(MaintenanceConnectionString)
         {
-            DbAdapter = DbAdapter.SqlServer,
-            SchemasToInclude = ["dbo"],
-            WithReseed = true
-        };
+            InitialCatalog = _dbName
+        }.ConnectionString;
 
-        _respawner = await Respawner.CreateAsync(openForRespawn, options);
-        openForRespawn.Dispose();
+    public async ValueTask InitializeAsync()
+    {
+        try
+        {
+            await using SqlConnection masterConnection = new(MaintenanceConnectionString);
+            await masterConnection.OpenAsync();
+
+            await using SqlCommand createDb = masterConnection.CreateCommand();
+            createDb.CommandText = $"CREATE DATABASE [{_dbName}]";
+            await createDb.ExecuteNonQueryAsync();
+            _databaseCreated = true;
+
+            await using SqlConnection unitTestConnection = new(ConnectionString);
+            await unitTestConnection.OpenAsync();
+
+            await using SqlCommand createTable = unitTestConnection.CreateCommand();
+            createTable.CommandText = FieldsModel.CreateTableSql;
+            await createTable.ExecuteNonQueryAsync();
+
+            _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
+            {
+                DbAdapter = DbAdapter.SqlServer,
+                SchemasToInclude = ["dbo"],
+                WithReseed = true
+            });
+        }
+        catch (Exception initializationException)
+        {
+            try
+            {
+                await DropDatabaseAsync();
+            }
+            catch (Exception cleanupException)
+            {
+                throw new AggregateException
+                (
+                    $"Failed to initialize {_dbName}, and cleanup also failed.",
+                    initializationException,
+                    cleanupException
+                );
+            }
+
+            throw;
+        }
     }
 
     /// <summary>Reset table rows to a pristine state between tests.</summary>
     public async Task ResetAsync()
     {
-        if (_respawner == null)
+        if (_respawner is null)
             throw new InvalidOperationException("Respawner has not been initialized.");
 
-        SqlConnection connection = new(ConnectionString);
+        await using SqlConnection connection = new(ConnectionString);
         await connection.OpenAsync();
         await _respawner.ResetAsync(connection);
-        connection.Dispose();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        // Drop the test database after all tests in this class complete
-        string masterCs = ConnectionString.Replace($";Initial Catalog={_dbName}", string.Empty);
-        SqlConnection connection = new(masterCs);
+        await DropDatabaseAsync();
+        GC.SuppressFinalize(this);
+    }
+
+    private async Task DropDatabaseAsync()
+    {
+        if (!_databaseCreated)
+            return;
+
+        using (SqlConnection poolConnection = new(ConnectionString))
+            SqlConnection.ClearPool(poolConnection);
+
+        string dbNameLiteral = _dbName.Replace("'", "''");
+
+        await using SqlConnection connection = new(MaintenanceConnectionString);
         await connection.OpenAsync();
 
-        SqlCommand drop = connection.CreateCommand();
+        await using SqlCommand drop = connection.CreateCommand();
         drop.CommandText = $"""
-            ALTER DATABASE [{_dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-            DROP DATABASE [{_dbName}];
+            IF DB_ID(N'{dbNameLiteral}') IS NOT NULL
+            BEGIN
+                ALTER DATABASE [{_dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                DROP DATABASE [{_dbName}];
+            END
             """;
         await drop.ExecuteNonQueryAsync();
-
-        drop.Dispose();
-        connection.Dispose();
+        _databaseCreated = false;
     }
 }

@@ -14,14 +14,17 @@ namespace Carrigan.SqlTools.Tags;
 public class SelectTags : SelectTagsBase
 {
 
-    private readonly IEnumerable<SelectTag> _selectTags;
+    private readonly IReadOnlyList<SelectTag> _selectTags;
 
     /// <summary>
     /// Represents a collection of <see cref="SelectTag"/> items, providing utilities to
     /// append, concatenate, and render them for a SELECT list.
     /// </summary>
-    public SelectTags(params IEnumerable<SelectTag> selectTags) =>
-        _selectTags = selectTags;
+    public SelectTags(params IEnumerable<SelectTag> selectTags)
+    {
+        ArgumentNullException.ThrowIfNull(selectTags);
+        _selectTags = Array.AsReadOnly(selectTags.ToArray());
+    }
 
     /// <summary>
     /// Indicates whether this instance contains any select tags.

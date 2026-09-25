@@ -206,4 +206,48 @@ public class InvokerTests
         Assert.Equal(expectedValues["Alias"], entity.AliasName);
         Assert.Equal(expectedValues["AliasOverride"], entity.AliasOverrideName);
     }
+
+    [Fact]
+    public async Task Invoke_Concurrent_NullabilityMetadata()
+    {
+        using ManualResetEventSlim start = new(false);
+        int workerCount = Math.Max(Environment.ProcessorCount * 4, 16);
+
+        Task[] tasks = Enumerable.Range(0, workerCount)
+            .Select
+            (
+                _ => Task.Run
+                (
+                    () =>
+                    {
+                        Dictionary<string, object?> invocation = new
+                        (
+                            [
+                                new("Required", "required"),
+                                new("Optional", null)
+                            ]
+                        );
+
+                        start.Wait();
+
+                        for (int i = 0; i < 100; i++)
+                        {
+                            ConcurrentNullableEntity entity = Invoker<ConcurrentNullableEntity>.Invoke(invocation);
+                            Assert.Equal("required", entity.Required);
+                            Assert.Null(entity.Optional);
+                        }
+                    }
+                )
+            )
+            .ToArray();
+
+        start.Set();
+        await Task.WhenAll(tasks);
+    }
+
+    public sealed class ConcurrentNullableEntity
+    {
+        public string Required { get; set; } = string.Empty;
+        public string? Optional { get; set; }
+    }
 }

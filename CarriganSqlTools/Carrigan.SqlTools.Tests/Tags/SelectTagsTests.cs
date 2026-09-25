@@ -50,6 +50,39 @@ public class SelectTagsTests
         Assert.False(selectTags.Any());
     }
 
+
+    [Fact]
+    public void Constructor_Materializes_SourceCollection()
+    {
+        List<SelectTag> source = [a];
+        SelectTags selectTags = new(source);
+
+        source.Add(b);
+
+        Assert.Single(selectTags.All());
+        Assert.Equal(aExpectedString, selectTags.ToSql());
+    }
+
+    [Fact]
+    public void Constructor_Enumerates_DeferredSource_Once()
+    {
+        int enumerations = 0;
+
+        IEnumerable<SelectTag> Source()
+        {
+            enumerations++;
+            yield return a;
+            yield return b;
+        }
+
+        SelectTags selectTags = new(Source());
+
+        Assert.Equal(1, enumerations);
+        Assert.Equal(2, selectTags.All().Count());
+        Assert.Equal(2, selectTags.All().Count());
+        Assert.Equal(1, enumerations);
+    }
+
     [Fact]
     public void NotEmptyNew()
     {
