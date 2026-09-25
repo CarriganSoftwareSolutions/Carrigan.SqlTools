@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
+using System.Collections.Concurrent;
 using System.Data.SqlTypes;
 using System.Globalization;
 using System.Reflection;
@@ -20,9 +21,11 @@ namespace Carrigan.SqlTools.Invocation;
 public static class Invoker<T> where T : class, new()
 {
     /// <summary>
-    /// Provides nullable reference type metadata for reflected members.
+    /// Caches nullability for reflected properties. A separate
+    /// <see cref="NullabilityInfoContext"/> is used when a cache entry is created because
+    /// <see cref="NullabilityInfoContext"/> is not thread safe.
     /// </summary>
-    private static readonly NullabilityInfoContext NullabilityContext = new();
+    private static readonly ConcurrentDictionary<PropertyInfo, bool> NullabilityCache = new();
 
     /// <summary>
     /// Creates a new instance of <typeparamref name="T"/> and assigns property values from
@@ -247,7 +250,10 @@ public static class Invoker<T> where T : class, new()
         if (type.IsValueType)
             return Nullable.GetUnderlyingType(type) != null;
 
-        NullabilityInfo nullable = NullabilityContext.Create(propertyInfo);
-        return nullable.WriteState == NullabilityState.Nullable;
+        return NullabilityCache.GetOrAdd
+        (
+            propertyInfo,
+            static property => new NullabilityInfoContext().Create(property).WriteState == NullabilityState.Nullable
+        );
     }
 }
