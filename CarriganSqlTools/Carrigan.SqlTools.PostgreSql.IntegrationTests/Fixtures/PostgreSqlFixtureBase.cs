@@ -20,6 +20,7 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
     private readonly IEnumerable<SqlQuery> DatabaseSetups;
 
     private Respawner? _respawner;
+    private bool _databaseCreated;
 
     internal string UnitTestConnectionString
     {
@@ -57,37 +58,59 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
-        await maintenanceConnection.OpenAsync();
-
-        string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
-
-        await using NpgsqlCommand createDb = maintenanceConnection.CreateCommand();
-        createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
-        await createDb.ExecuteNonQueryAsync();
-
-        await using NpgsqlConnection unitTestConnection = new(UnitTestConnectionString);
-        await unitTestConnection.OpenAsync();
-
-        await using NpgsqlCommand createExtension = unitTestConnection.CreateCommand();
-        createExtension.CommandText = "CREATE EXTENSION IF NOT EXISTS pgcrypto;";
-        await createExtension.ExecuteNonQueryAsync();
-
-        foreach (string tableDefinition in TableDefinitions)
+        try
         {
-            await using NpgsqlCommand createTable = unitTestConnection.CreateCommand();
-            createTable.CommandText = tableDefinition;
-            await createTable.ExecuteNonQueryAsync();
+            await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
+            await maintenanceConnection.OpenAsync();
+
+            string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
+
+            await using NpgsqlCommand createDb = maintenanceConnection.CreateCommand();
+            createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
+            await createDb.ExecuteNonQueryAsync();
+            _databaseCreated = true;
+
+            await using NpgsqlConnection unitTestConnection = new(UnitTestConnectionString);
+            await unitTestConnection.OpenAsync();
+
+            await using NpgsqlCommand createExtension = unitTestConnection.CreateCommand();
+            createExtension.CommandText = "CREATE EXTENSION IF NOT EXISTS pgcrypto;";
+            await createExtension.ExecuteNonQueryAsync();
+
+            foreach (string tableDefinition in TableDefinitions)
+            {
+                await using NpgsqlCommand createTable = unitTestConnection.CreateCommand();
+                createTable.CommandText = tableDefinition;
+                await createTable.ExecuteNonQueryAsync();
+            }
+
+            _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
+            {
+                DbAdapter = DbAdapter.Postgres,
+                SchemasToInclude = [SchemaName],
+                WithReseed = true
+            });
+
+            ExecuteDatabaseSetups(unitTestConnection);
         }
-
-        _respawner = await Respawner.CreateAsync(unitTestConnection, new RespawnerOptions
+        catch (Exception initializationException)
         {
-            DbAdapter = DbAdapter.Postgres,
-            SchemasToInclude = [SchemaName],
-            WithReseed = true
-        });
+            try
+            {
+                await DropDatabaseAsync();
+            }
+            catch (Exception cleanupException)
+            {
+                throw new AggregateException
+                (
+                    $"Failed to initialize {DatabaseName}, and cleanup also failed.",
+                    initializationException,
+                    cleanupException
+                );
+            }
 
-        ExecuteDatabaseSetups(unitTestConnection);
+            throw;
+        }
     }
 
     public async Task ResetAsync()
@@ -103,8 +126,14 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
         ExecuteDatabaseSetups(unitTestConnection);
     }
 
-    public async ValueTask DisposeAsync()
+    private async Task DropDatabaseAsync()
     {
+        if (!_databaseCreated)
+            return;
+
+        await using NpgsqlConnection poolConnection = new(UnitTestConnectionString);
+        NpgsqlConnection.ClearPool(poolConnection);
+
         await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
         await maintenanceConnection.OpenAsync();
 
@@ -117,7 +146,12 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
             """;
 
         await dropDb.ExecuteNonQueryAsync();
+        _databaseCreated = false;
+    }
 
+    public async ValueTask DisposeAsync()
+    {
+        await DropDatabaseAsync();
         GC.SuppressFinalize(this);
     }
 }
