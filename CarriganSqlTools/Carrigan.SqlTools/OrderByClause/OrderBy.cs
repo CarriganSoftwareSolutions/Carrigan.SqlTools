@@ -20,7 +20,7 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     /// Gets the <see cref="IEnumerable{TableTag}"/> associated with this itemn.
     /// </summary>
     internal IEnumerable<TableTag> TableTags =>
-        SqlExpression.LeafTables;
+        SqlExpression.DescendantLeafTables;
 
     /// <summary>
     /// Gets the sort direction for this item.

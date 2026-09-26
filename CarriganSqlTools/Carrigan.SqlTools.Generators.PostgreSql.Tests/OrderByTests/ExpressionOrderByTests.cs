@@ -1,6 +1,7 @@
 ﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.OrderByClause;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.OrderByTests;
@@ -33,8 +34,9 @@ public class ExpressionOrderByTests
         Add expression = new(new Column<Address>(nameof(Address.PostalCode)), parameter);
         OrderBy orderBy = new(expression);
 
-        Assert.Single(orderBy.GetSqlFragmentParameters(Dialect));
-        Assert.Contains("Offset", orderBy.ToSql(Dialect));
+        SqlFragmentParameter sqlFragmentParameter = Assert.Single(orderBy.GetSqlFragmentParameters(Dialect));
+        
+        Assert.Contains("Offset", sqlFragmentParameter.ParameterTag.ToString());
     }
 
     [Fact]
