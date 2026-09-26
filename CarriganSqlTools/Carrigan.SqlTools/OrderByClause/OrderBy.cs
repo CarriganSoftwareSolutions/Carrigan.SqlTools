@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.ReflectorCache;
@@ -14,7 +14,7 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     /// <summary>
     /// Gets the <see cref="SqlExpression"/> associated with this item.
     /// </summary>
-    public SqlExpression SqlExpression { get; init; }
+    public SqlExpression SqlExpression { get; }
 
     /// <summary>
     /// Gets the <see cref="IEnumerable{TableTag}"/> associated with this itemn.
@@ -34,6 +34,8 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     /// <param name="sortDirection">The sort direction to apply (defaults to <see cref="SortDirectionEnum.Ascending"/>).</param>
     public OrderBy(SqlExpression sqlExpression, SortDirectionEnum sortDirection = SortDirectionEnum.Ascending)
     {
+        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
+
         SqlExpression = sqlExpression;
         SortDirection = sortDirection;
     }
@@ -109,5 +111,5 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     /// A string that represents the SQL fragment in the specified dialect.
     /// </returns>
     public string ToSql(ISqlDialects dialect) =>
-        Flatten(NeutralDialect.Instance).ToSql(dialect);
+        Flatten(dialect).ToSql(dialect);
 }

@@ -587,4 +587,21 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         Assert.Equal(4.6m, book.AverageReview);
         Assert.Equal(string.Empty, book.Description);
     }
+    [Fact]
+    public async Task SelectOrderByExpression()
+    {
+        Lower lowerTitle = new(new Column<Book>(nameof(Book.Title)));
+        OrderBy orderBy = new(lowerTitle);
+        SelectBuilder<Book> selectBuilder = new()
+        {
+            OrderBys = orderBy
+        };
+
+        SqlQuery query = BookSqlGenerator.Select(selectBuilder);
+        await using NpgsqlConnection unitTestConnection = new(_fixture.UnitTestConnectionString);
+        IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
+
+        int?[] expectedIds = [3, 4, 7, 6, 2, 1, 5, 10, 9, 11, 8];
+        Assert.Equal(expectedIds, books.Select(static book => book.Id));
+    }
 }
