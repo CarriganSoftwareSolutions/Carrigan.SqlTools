@@ -10,6 +10,7 @@ namespace Carrigan.SqlTools.PostgreSql.IntegrationTests.Fixtures;
 
 public abstract class PostgreSqlFixtureBase : IAsyncLifetime
 {
+    private const long DatabaseLifecycleLockKey = 0x434152524947414E; // "CARRIGAN"
     private const string SchemaName = "public";
 
     private static readonly PostgreSqlDialect Dialect = new();
@@ -42,6 +43,33 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
         }
     }
 
+    private async Task<NpgsqlConnection> OpenDatabaseLifecycleConnectionAsync()
+    {
+        NpgsqlConnectionStringBuilder builder = new(MaintenanceConnectionString)
+        {
+            Pooling = false
+        };
+
+        NpgsqlConnection connection = new(builder.ConnectionString);
+
+        try
+        {
+            await connection.OpenAsync();
+
+            await using NpgsqlCommand lockCommand = connection.CreateCommand();
+            lockCommand.CommandText = "SELECT pg_advisory_lock(@lockKey);";
+            lockCommand.Parameters.AddWithValue("lockKey", DatabaseLifecycleLockKey);
+            await lockCommand.ExecuteScalarAsync();
+
+            return connection;
+        }
+        catch
+        {
+            await connection.DisposeAsync();
+            throw;
+        }
+    }
+
     protected PostgreSqlFixtureBase(IEnumerable<string> tableDefinition)
     {
         MaintenanceConnectionString = Configurations.MaintenanceDbConnectionString;
@@ -58,17 +86,20 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
+        bool databaseCreationAttempted = false;
+
         try
         {
-            await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
-            await maintenanceConnection.OpenAsync();
+            await using (NpgsqlConnection maintenanceConnection = await OpenDatabaseLifecycleConnectionAsync())
+            {
+                string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
 
-            string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
-
-            await using NpgsqlCommand createDb = maintenanceConnection.CreateCommand();
-            createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
-            await createDb.ExecuteNonQueryAsync();
-            _databaseCreated = true;
+                await using NpgsqlCommand createDb = maintenanceConnection.CreateCommand();
+                createDb.CommandText = $"CREATE DATABASE {dbIdentifier};";
+                databaseCreationAttempted = true;
+                await createDb.ExecuteNonQueryAsync();
+                _databaseCreated = true;
+            }
 
             await using NpgsqlConnection unitTestConnection = new(UnitTestConnectionString);
             await unitTestConnection.OpenAsync();
@@ -97,7 +128,7 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
         {
             try
             {
-                await DropDatabaseAsync();
+                await DropDatabaseAsync(databaseCreationAttempted);
             }
             catch (Exception cleanupException)
             {
@@ -132,16 +163,15 @@ public abstract class PostgreSqlFixtureBase : IAsyncLifetime
         GC.SuppressFinalize(this);
     }
 
-    private async Task DropDatabaseAsync()
+    private async Task DropDatabaseAsync(bool attemptIfCreationFailed = false)
     {
-        if (!_databaseCreated)
+        if (!_databaseCreated && !attemptIfCreationFailed)
             return;
 
         await using (NpgsqlConnection poolConnection = new(UnitTestConnectionString))
             NpgsqlConnection.ClearPool(poolConnection);
 
-        await using NpgsqlConnection maintenanceConnection = new(MaintenanceConnectionString);
-        await maintenanceConnection.OpenAsync();
+        await using NpgsqlConnection maintenanceConnection = await OpenDatabaseLifecycleConnectionAsync();
 
         string dbIdentifier = Dialect.QuoteIdentifier(DatabaseName);
 
