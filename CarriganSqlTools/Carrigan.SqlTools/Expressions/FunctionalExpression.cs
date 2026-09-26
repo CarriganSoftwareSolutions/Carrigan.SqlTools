@@ -42,10 +42,10 @@ public abstract class FunctionalExpression : SqlExpression
         ValidateValues(expectedValues, values);
 
     /// <summary>
-    /// Converts the Funcational expression into SQL fragments for the specified dialect.
+    /// Converts the Functional expression into SQL fragments for the specified dialect.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to render each child expression.</param>
-    /// <returns>The SQL fragments representing the Funcational expression.</returns>
+    /// <returns>The SQL fragments representing the Functional expression.</returns>
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         IEnumerable<ISqlFragment> childFragments =
@@ -88,33 +88,5 @@ public abstract class FunctionalExpression : SqlExpression
             throw new AggregateInconsistencyException();
 
         return aggregateStates.FirstOrDefault();
-    }
-
-
-    /// <summary>
-    /// Validates the provided values for the specified function, ensuring that the number of arguments meets the minimum requirement.
-    /// </summary>
-    /// <param name="minArguments">The expressions to validate.</param>
-    /// <param name="values">The expressions to validate.</param>
-    /// <returns>A materialized sequence containing the validated expressions.</returns>
-    protected static IEnumerable<SqlExpression> ValidateValues(int minArguments, IEnumerable<SqlExpression> values)
-    {
-        ArgumentNullException.ThrowIfNull(values, nameof(values));
-
-        if (values.Count() < minArguments)
-            throw new ArgumentException($"Scalar function requires {minArguments} or more expressions.", nameof(values));
-
-        return values;
-    }
-
-    protected static SqlExpression ValidateValue(SqlExpression sqlExpression)
-    {
-        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
-        return sqlExpression;
-    }
-    protected static Parameter ValidateParameterValue(object value)
-    {
-        ArgumentNullException.ThrowIfNull(value, nameof(value));
-        return new Parameter(value);
     }
 }

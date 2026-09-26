@@ -201,7 +201,7 @@ public abstract partial class SqlGeneratorBase<T>
             }
 
             if (orderBy.IsNotNullOrEmpty())
-                yield return new SqlFragmentText($" {orderBy.AsOrderBy().ToSql(Dialect)}");
+                yield return new SqlFragmentText($" {orderBy.ToSql(Dialect)}");
 
 
             if (paging is not null)
@@ -220,7 +220,7 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> invalidPredicateTableTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidgroupByTableTags = groupByTableTags.Except(selectableTableTags);
+        IEnumerable<TableTag> invalidGroupByTableTags = groupByTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> havingTableTags = [.. having?.DescendantLeafTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidHavingTableTags = havingTableTags.Except(selectableTableTags);
@@ -230,7 +230,7 @@ public abstract partial class SqlGeneratorBase<T>
 
         IEnumerable<TableTag> invalidTags = invalidSelectedTags
             .Concat(invalidPredicateTableTags)
-            .Concat(invalidgroupByTableTags)
+            .Concat(invalidGroupByTableTags)
             .Concat(invalidHavingTableTags)
             .Concat(invalidOrderByTags)
             .Distinct();

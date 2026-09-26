@@ -105,7 +105,7 @@ public class OrderByTests
 
         // Should have one items now
         List<OrderBy> oldItems = [.. order.AsEnumerable()];
-        Assert.Single(oldItems);
+        _ = Assert.Single(oldItems);
 
         // Should have three items now
         List<OrderBy> newItems = [.. newOrder.AsEnumerable()];
