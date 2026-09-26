@@ -269,7 +269,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// Creates an empty dialect-specific <c>ORDER BY</c> collection.
     /// </summary>
     /// <returns>An empty order-by collection for the concrete dialect package.</returns>
-    protected abstract OrderBysBase NewOrderBys();
+    protected abstract OrderBys NewOrderBys();
 
     /// <summary>
     /// Creates a dialect-specific <c>ORDER BY</c> item for a key property.
@@ -277,7 +277,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// <param name="propertyName">The C# property name representing the key column.</param>
     /// <param name="sortDirection">The SQL sort direction.</param>
     /// <returns>An order-by item for the requested key property.</returns>
-    protected abstract OrderByBase NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection);
+    protected abstract OrderBy NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection);
 
     /// <summary>
     /// Creates the dialect-specific select-tag collection for all supported mapped columns.

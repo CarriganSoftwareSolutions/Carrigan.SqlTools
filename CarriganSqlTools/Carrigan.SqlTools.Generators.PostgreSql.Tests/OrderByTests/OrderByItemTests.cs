@@ -4,15 +4,15 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.OrderByTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.OrderByTests;
 
 public class OrderByItemTests
 {
-    private static readonly ISqlDialects Dialect = new SqlServerDialect();
+    private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
 
     [Theory]
-    [InlineData("Street", SortDirectionEnum.Ascending, "[Address].[Street] ASC")]
-    [InlineData("City", SortDirectionEnum.Descending, "[Address].[City] DESC")]
+    [InlineData("Street", SortDirectionEnum.Ascending, "\"Address\".\"Street\" ASC")]
+    [InlineData("City", SortDirectionEnum.Descending, "\"Address\".\"City\" DESC")]
     public void Constructor_WithStringPropertyName_CreatesExpectedSql(string propertyName, SortDirectionEnum sortDirection, string expectedSql)
     {
         OrderBy<Address> orderByItem = new(propertyName, sortDirection);
@@ -27,12 +27,12 @@ public class OrderByItemTests
 
         OrderBy<Address> orderByItem = new(propertyName, SortDirectionEnum.Descending);
 
-        Assert.Equal("[Address].[City] DESC", orderByItem.ToSql(Dialect));
+        Assert.Equal("\"Address\".\"City\" DESC", orderByItem.ToSql(Dialect));
     }
 
     [Fact]
     public void Constructor_WithDefaultSortDirection_UsesAscending() =>
-        Assert.Equal("[Address].[City] ASC", new OrderBy<Address>("City").ToSql(Dialect));
+        Assert.Equal("\"Address\".\"City\" ASC", new OrderBy<Address>("City").ToSql(Dialect));
 
     [Fact]
     public void Constructor_WithInvalidPropertyName_ThrowsInvalidPropertyException() =>

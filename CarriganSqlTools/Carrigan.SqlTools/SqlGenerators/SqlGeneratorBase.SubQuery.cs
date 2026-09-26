@@ -23,7 +23,7 @@ public abstract partial class SqlGeneratorBase<T>
         Predicates? where,
         GroupBysBase? groupBys,
         Predicates? having,
-        OrderBysBase? orderBy, PagingBase? paging
+        OrderBys? orderBy, PagingBase? paging
     ) =>
         new(BaseSelectFragments(distinct, null, selects, joins, where, groupBys, having, orderBy, paging), Dialect);
 

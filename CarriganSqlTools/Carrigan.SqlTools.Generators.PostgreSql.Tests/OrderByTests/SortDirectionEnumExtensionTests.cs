@@ -2,11 +2,11 @@
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.OrderByClause;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.OrderByTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.OrderByTests;
 
 public class SortDirectionEnumExtensionTests
 {
-    private readonly static ISqlDialects Dialect = new SqlServerDialect();
+    private readonly static ISqlDialects Dialect = new PostgreSqlDialect();
     [Theory]
     [InlineData(SortDirectionEnum.Ascending, "ASC")]
     [InlineData(SortDirectionEnum.Descending, "DESC")]

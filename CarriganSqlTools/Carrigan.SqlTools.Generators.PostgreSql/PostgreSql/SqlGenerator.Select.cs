@@ -55,7 +55,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ORDER BY "Customer"."Email" ASC
     /// ]]></code>
     /// </example>
-    public SqlQuery SelectAll(OrderBysBase? orderBy = null) =>
+    public SqlQuery SelectAll(OrderBys? orderBy = null) =>
         base.BaseSelectAll(orderBy);
 
     /// <summary>
@@ -191,7 +191,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Predicates? predicates,
         GroupBysBase? groupBys,
         Predicates? having,
-        OrderBysBase? orderBys,
+        OrderBys? orderBys,
         PagingBase? paging
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
@@ -205,7 +205,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Joins<T>? joins,
         Predicates? predicates,
         GroupBysBase? groupBys,
-        OrderBysBase? orderBys, 
+        OrderBys? orderBys, 
         PagingBase? paging
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, null, orderBys, paging);
@@ -218,7 +218,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        OrderBysBase? orderBys,
+        OrderBys? orderBys,
         PagingBase? paging
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, null, orderBys, paging);
@@ -232,7 +232,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Predicates? predicates,
         GroupBysBase? groupBys,
         Predicates? having,
-        OrderBysBase? orderBys, 
+        OrderBys? orderBys, 
         PagingBase? paging
 ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);

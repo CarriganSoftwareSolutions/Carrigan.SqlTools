@@ -4,7 +4,7 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// Specifies the sort direction for an <c>ORDER BY</c> clause.
 /// </summary>
 /// <remarks>
-/// This enum maps to SQL keywords via <see cref="SortDirectionEnumExtension.ToSql(SortDirectionEnum)"/>:
+/// This enum maps to SQL keywords via <see cref="SortDirectionEnumExtension.ToSqlFragment(SortDirectionEnum)"/>:
 /// <c>ASC</c> and <c>DESC</c>.
 /// </remarks>
 public enum SortDirectionEnum

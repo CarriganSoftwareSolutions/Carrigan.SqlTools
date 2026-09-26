@@ -54,7 +54,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the ORDER BY clause for the query.
     /// </summary>
-    public OrderBysBase? OrderBys { get; set; }
+    public OrderBys? OrderBys { get; set; }
 
     /// <summary>
     /// Gets or sets the paging options for the query.
@@ -142,7 +142,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="orderBy">The ORDER BY clause to apply to the query.</param>
     /// <returns>A new query instance with the specified ORDER BY clause.</returns>
-    public SelectBuilderBase<T> WithOrderBy(OrderBysBase? orderBy) =>
+    public SelectBuilderBase<T> WithOrderBy(OrderBys? orderBy) =>
         this with { OrderBys = orderBy };
 
     /// <summary>

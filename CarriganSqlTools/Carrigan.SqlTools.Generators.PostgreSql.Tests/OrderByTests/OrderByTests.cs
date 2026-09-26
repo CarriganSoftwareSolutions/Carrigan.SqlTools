@@ -2,11 +2,11 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.OrderByClause;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.OrderByTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.OrderByTests;
 
 public class OrderByTests
 {
-    private readonly static ISqlDialects Dialect = new SqlServerDialect();
+    private readonly static ISqlDialects Dialect = new PostgreSqlDialect();
     [Fact]
     public void OrderByTests_Constructor()
     {
@@ -15,7 +15,7 @@ public class OrderByTests
 
 
         Assert.Single(orderBy.TableTags);
-        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public class OrderByTests
 
 
         Assert.Single(orderBy.TableTags);
-        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public class OrderByTests
 
 
         Assert.Equal(2, orderBy.TableTags.Count());
-        Assert.Equal("ORDER BY [Address].[City] ASC, [Address].[Street] DESC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC, \"Address\".\"Street\" DESC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class OrderByTests
 
 
         Assert.Equal(3, orderBy.TableTags.Count());
-        Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000destruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC, \"ColumnTable\".\"D000destruct0\" DESC, \"BooleanColumnTable\".\"Id\" ASC", orderBy.ToSql(Dialect));
     }
     [Fact]
     public void Append()
@@ -89,7 +89,7 @@ public class OrderByTests
         Assert.Single(returned.TableTags);
 
         // ToSql should produce ORDER BY clause
-        Assert.Equal("ORDER BY [Address].[Street] ASC", returned.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"Street\" ASC", returned.ToSql(Dialect));
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class OrderByTests
 
         // Should have one items now
         List<OrderBy> oldItems = [.. order.AsEnumerable()];
-        Assert.Single(oldItems);
+        _ = Assert.Single(oldItems);
 
         // Should have three items now
         List<OrderBy> newItems = [.. newOrder.AsEnumerable()];

@@ -35,7 +35,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown if any table referenced by <paramref name="orderBy"/> does not participate
     /// in the query (i.e., is not the base table and not included by joins).
     /// </exception>
-    protected virtual SqlQuery BaseSelectAll(OrderBysBase? orderBy = null) =>
+    protected virtual SqlQuery BaseSelectAll(OrderBys? orderBy = null) =>
         BaseSelect(null, null, null, null, null, null, null, orderBy, null);
 
     /// <summary>
@@ -98,7 +98,7 @@ public abstract partial class SqlGeneratorBase<T>
         Predicates? where,
         GroupBysBase? groupBys,
         Predicates? having, 
-        OrderBysBase? orderBy, 
+        OrderBys? orderBy, 
         PagingBase? paging
 ) =>
         new(Dialect, CommandType.Text, BaseSelectFragments(distinct, subQuery, selects, joins, where, groupBys, having, orderBy, paging));
@@ -127,7 +127,7 @@ public abstract partial class SqlGeneratorBase<T>
         Predicates? where,
         GroupBysBase? groupBys,
         Predicates? having, 
-        OrderBysBase? orderBy, 
+        OrderBys? orderBy, 
         PagingBase? paging
     )
     {
@@ -247,7 +247,7 @@ public abstract partial class SqlGeneratorBase<T>
             // add the key to orderby when using an offset next, this is to overcome a limitation in SQL Server
             // that has unexpected behavior if the order by values are not unique
             orderBy ??= NewOrderBys();
-            IEnumerable<OrderByBase> orderByKeyItems =
+            IEnumerable<OrderBy> orderByKeyItems =
             [
                 .. KeyColumnInfo
                     .Select(key => NewOrderByKey(key.PropertyName, SortDirectionEnum.Ascending))

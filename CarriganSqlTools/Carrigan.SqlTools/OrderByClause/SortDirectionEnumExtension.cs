@@ -1,3 +1,5 @@
+using Carrigan.SqlTools.Fragments;
+
 namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>
@@ -6,6 +8,8 @@ namespace Carrigan.SqlTools.OrderByClause;
 /// </summary>
 internal static class SortDirectionEnumExtension
 {
+    private static readonly ISqlFragment Ascending = new SqlFragmentText("ASC");
+    private static readonly ISqlFragment Descending = new SqlFragmentText("DESC");
     /// <summary>
     /// Converts a <see cref="SortDirectionEnum"/> value into its corresponding SQL keyword.
     /// </summary>
@@ -19,11 +23,11 @@ internal static class SortDirectionEnumExtension
     /// Thrown when <paramref name="value"/> is not a valid <see cref="SortDirectionEnum"/> value.
     /// </exception>
     ///
-    internal static string ToSql(this SortDirectionEnum value) =>
+    internal static ISqlFragment ToSqlFragment(this SortDirectionEnum value) =>
         value switch
         {
-            SortDirectionEnum.Ascending => "ASC",
-            SortDirectionEnum.Descending => "DESC",
+            SortDirectionEnum.Ascending => Ascending,
+            SortDirectionEnum.Descending => Descending,
             _ => throw CreateInvalidValueException(value),
         };
 

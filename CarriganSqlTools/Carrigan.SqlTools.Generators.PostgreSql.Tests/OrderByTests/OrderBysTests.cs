@@ -4,11 +4,11 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.OrderByTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.OrderByTests;
 
 public class OrderBysTests
 {
-    private static readonly ISqlDialects Dialect = new SqlServerDialect();
+    private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
 
     [Fact]
     public void Empty_ReturnsEmptyOrderBy()
@@ -59,7 +59,7 @@ public class OrderBysTests
 
         Assert.False(orderBy.IsEmpty());
         Assert.Single(orderBy.TableTags);
-        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class OrderBysTests
         OrderBys orderBy = new(city, street);
 
         Assert.Equal(2, orderBy.TableTags.Count());
-        Assert.Equal("ORDER BY [Address].[City] ASC, [Address].[Street] DESC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC, \"Address\".\"Street\" DESC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class OrderBysTests
         OrderBys orderBy = new(address, columnTable, booleanColumnTable);
 
         Assert.Equal(3, orderBy.TableTags.Count());
-        Assert.Equal("ORDER BY [Address].[City] ASC, [ColumnTable].[D000destruct0] DESC, [BooleanColumnTable].[Id] ASC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC, \"ColumnTable\".\"D000destruct0\" DESC, \"BooleanColumnTable\".\"Id\" ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -166,7 +166,7 @@ public class OrderBysTests
         Assert.Empty(original.TableTags);
         Assert.False(appended.IsEmpty());
         Assert.Single(appended.TableTags);
-        Assert.Equal("ORDER BY [Address].[Street] ASC", appended.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"Street\" ASC", appended.ToSql(Dialect));
     }
 
     [Fact]
@@ -186,8 +186,8 @@ public class OrderBysTests
 
         OrderBys appended = original.Append<Address>(propertyName, SortDirectionEnum.Descending);
 
-        Assert.Equal("ORDER BY [Address].[City] ASC", original.ToSql(Dialect));
-        Assert.Equal("ORDER BY [Address].[City] ASC, [Address].[Street] DESC", appended.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC", original.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC, \"Address\".\"Street\" DESC", appended.ToSql(Dialect));
     }
 
     [Fact]
@@ -197,8 +197,8 @@ public class OrderBysTests
 
         OrderBys appended = original.Append<Address>("Street", SortDirectionEnum.Descending);
 
-        Assert.Equal("ORDER BY [Address].[City] ASC", original.ToSql(Dialect));
-        Assert.Equal("ORDER BY [Address].[City] ASC, [Address].[Street] DESC", appended.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC", original.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC, \"Address\".\"Street\" DESC", appended.ToSql(Dialect));
     }
 
     [Fact]
@@ -226,8 +226,8 @@ public class OrderBysTests
         List<OrderBy> expectedAppendedItems = [initial, street, columnTable];
         Assert.Equal(expectedOriginalItems, originalItems);
         Assert.Equal(expectedAppendedItems, appendedItems);
-        Assert.Equal("ORDER BY [Address].[City] ASC", original.ToSql(Dialect));
-        Assert.Equal("ORDER BY [Address].[City] ASC, [Address].[Street] DESC, [ColumnTable].[D000destruct0] ASC", appended.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC", original.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC, \"Address\".\"Street\" DESC, \"ColumnTable\".\"D000destruct0\" ASC", appended.ToSql(Dialect));
     }
 
     [Fact]

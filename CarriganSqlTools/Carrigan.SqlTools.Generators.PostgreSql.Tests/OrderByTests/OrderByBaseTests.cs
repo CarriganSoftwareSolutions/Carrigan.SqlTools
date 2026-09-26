@@ -3,11 +3,11 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.OrderByClause;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.OrderByTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.OrderByTests;
 
 public class OrderByBaseTests
 {
-    private static readonly ISqlDialects Dialect = new SqlServerDialect();
+    private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
 
     [Fact]
     public void ImplicitConversion_ReturnsOrderBysWithSingleItem()
@@ -18,7 +18,7 @@ public class OrderByBaseTests
 
         OrderBy actual = Assert.Single(orderBy.AsEnumerable());
         Assert.Same(item, actual);
-        Assert.Equal("ORDER BY [Address].[City] ASC", orderBy.ToSql(Dialect));
+        Assert.Equal("ORDER BY \"Address\".\"City\" ASC", orderBy.ToSql(Dialect));
     }
 
     [Fact]
@@ -27,5 +27,5 @@ public class OrderByBaseTests
 
     [Fact]
     public void ToSql_UsesColumnTagAndSortDirection() =>
-        Assert.Equal("[Address].[City] DESC", new OrderBy<Address>("City", SortDirectionEnum.Descending).ToSql(Dialect));
+        Assert.Equal("\"Address\".\"City\" DESC", new OrderBy<Address>("City", SortDirectionEnum.Descending).ToSql(Dialect));
 }

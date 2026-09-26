@@ -71,7 +71,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Creates an empty dialect-specific ORDER BY collection.
     /// </summary>
     /// <returns>An empty dialect-specific ORDER BY collection.</returns>
-    protected override OrderBysBase NewOrderBys() =>
+    protected override OrderBys NewOrderBys() =>
         new OrderBys();
     /// <summary>
     /// Creates a dialect-specific ORDER BY item for a model property.
@@ -79,7 +79,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
     /// <param name="sortDirection">The SQL sort direction.</param>
     /// <returns>A dialect-specific ORDER BY item for the requested property and sort direction.</returns>
-    protected override OrderByBase NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection) =>
+    protected override OrderBy NewOrderByKey(PropertyName propertyName, SortDirectionEnum sortDirection) =>
         new OrderBy<T>(propertyName, sortDirection);
 
     /// <summary>
