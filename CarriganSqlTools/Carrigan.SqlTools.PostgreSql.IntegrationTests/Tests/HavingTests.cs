@@ -144,7 +144,7 @@ public sealed class HavingTests : IClassFixture<HavingFixture>
             new SelectTag(count, nameof(GradeResults.Count))
         );
 
-        GroupBys groupBys = GroupBys.New<Grades>
+        GroupBys groupBys = new GroupBys<Grades>
         (
             nameof(Grades.StudentId),
             nameof(Grades.AcademicYear),

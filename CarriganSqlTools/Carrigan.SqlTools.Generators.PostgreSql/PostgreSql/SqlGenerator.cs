@@ -34,13 +34,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         SelectTagGenerator.GetAll<T>();
 
     /// <summary>
-    /// Gets selectable tags for the supplied GROUP BY columns.
-    /// </summary>
-    /// <param name="groupBys">The group-by columns to project.</param>
-    /// <returns>The select tags resolved from the group-by columns.</returns>
-    protected override SelectTagsBase GetSelectTags(GroupBysBase groupBys) =>
-        SelectTagGenerator.GetMany(groupBys);
-    /// <summary>
     /// Creates a dialect-specific column expression for a model property.
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
@@ -67,7 +60,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     /// <returns>An empty dialect-specific ORDER BY collection.</returns>
     protected override OrderBys NewOrderBys() =>
-        new OrderBys();
+        new ();
     /// <summary>
     /// Creates a dialect-specific ORDER BY item for a model property.
     /// </summary>

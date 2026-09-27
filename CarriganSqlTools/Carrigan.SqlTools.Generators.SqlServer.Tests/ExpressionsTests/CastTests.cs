@@ -34,7 +34,7 @@ public sealed class CastTests
     {
         string expected = "SELECT [Customer].[Name], AVG(CAST([Customer].[Id] AS DECIMAL(18, 2))) AS [AverageId] FROM [Customer] GROUP BY [Customer].[Name]";
         SqlGenerator<Customer> generator = new();
-        GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
+        GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
 
         Column<Customer> customerIdColumn = new (nameof(Customer.Id));
         Cast customerId = new(customerIdColumn, SqlServerTypesProvider.AsDecimal(18, 2, true));

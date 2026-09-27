@@ -22,7 +22,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        GroupBysBase? groupBys,
+        GroupBys? groupBys,
         Predicates? having,
         OrderBys? orderBy, PagingBase? paging
 ) =>
@@ -38,7 +38,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        GroupBysBase? groupBys,
+        GroupBys? groupBys,
         Predicates? having,
         OrderBys? orderBy, PagingBase? paging
 ) =>
@@ -54,7 +54,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? predicates,
-        GroupBysBase? groupBys,
+        GroupBys? groupBys,
         OrderBys? orderBy, 
         PagingBase? paging
 ) =>

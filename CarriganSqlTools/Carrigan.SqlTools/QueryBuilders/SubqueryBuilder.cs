@@ -37,7 +37,7 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the <c>GROUP BY</c> clause for the subquery.
     /// </summary>
-    public GroupBysBase? GroupBys { get; set; }
+    public GroupBys? GroupBys { get; set; }
 
     /// <summary>
     /// Gets or sets the <c>HAVING</c> predicates for the subquery.
@@ -105,7 +105,7 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// </summary>
     /// <param name="groupBy">The GROUP BY clause to apply to the subquery.</param>
     /// <returns>A new subquery instance with the specified GROUP BY clause.</returns>
-    public SubqueryBuilderBase<T> WithGroupBy(GroupBysBase? groupBy) =>
+    public SubqueryBuilderBase<T> WithGroupBy(GroupBys? groupBy) =>
         this with { GroupBys = groupBy };
 
     /// <summary>

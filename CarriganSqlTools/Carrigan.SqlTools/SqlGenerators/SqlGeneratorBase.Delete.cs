@@ -1,4 +1,4 @@
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
@@ -168,7 +168,7 @@ public abstract partial class SqlGeneratorBase<T>
         else
         {
             IEnumerable<TableTag> selectTableTags = (usings ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
-            IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantLeafTables?.Distinct() ?? []];
+            IEnumerable<TableTag> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
             if (invalidTags.Any())
                 throw new InvalidTableException(invalidTags);

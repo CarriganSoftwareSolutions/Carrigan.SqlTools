@@ -1,4 +1,4 @@
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
@@ -93,7 +93,7 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> selectedTableTags = select?.TableTags ?? [Table];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.DescendantLeafTables?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];

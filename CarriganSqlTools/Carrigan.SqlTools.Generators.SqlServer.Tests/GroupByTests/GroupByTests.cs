@@ -93,11 +93,11 @@ public class GroupByTests
         GroupBys newGroup = group.Concat(more1, more2);
 
         // Should have one items now
-        List<GroupByBase> oldItems = [.. group.AsEnumerable()];
+        List<GroupBy> oldItems = [.. group.AsEnumerable()];
         Assert.Single(oldItems);
 
         // Should have three items now
-        List<GroupByBase> newItems = [.. newGroup.AsEnumerable()];
+        List<GroupBy> newItems = [.. newGroup.AsEnumerable()];
         Assert.Equal(3, newItems.Count);
 
         // Insertion group must be preserved

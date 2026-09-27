@@ -1,4 +1,4 @@
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
@@ -96,7 +96,7 @@ public abstract partial class SqlGeneratorBase<T>
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? where,
-        GroupBysBase? groupBys,
+        GroupBys? groupBys,
         Predicates? having, 
         OrderBys? orderBy, 
         PagingBase? paging
@@ -125,7 +125,7 @@ public abstract partial class SqlGeneratorBase<T>
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? where,
-        GroupBysBase? groupBys,
+        GroupBys? groupBys,
         Predicates? having, 
         OrderBys? orderBy, 
         PagingBase? paging
@@ -134,7 +134,7 @@ public abstract partial class SqlGeneratorBase<T>
         ValidateWherePredicates(where);
 
         if ((selects is null || selects.Empty()) && groupBys.IsNotNullOrEmpty())
-            selects = GetSelectTags(groupBys!.AsGroupBy());
+            throw new GroupByRequiresSelectException();
 
         if (selects is not null && selects.Any())
         {
@@ -144,7 +144,7 @@ public abstract partial class SqlGeneratorBase<T>
                 .Where(candidate => candidate.IsAggregate || candidate.Select.HasColumns());
 
             IEnumerable<bool> aggregateStates = aggregateCandidates
-                .Select(candidate => candidate.IsAggregate || (groupBys?.Contains(candidate.Select) ?? false));
+                .Select(candidate => candidate.IsAggregate || (groupBys?.ContainsEquivalent(candidate.Select) ?? false));
 
             if (aggregateStates.Distinct().Count() > 1)
                 throw new MixedAggregateSelectException();
@@ -190,7 +190,7 @@ public abstract partial class SqlGeneratorBase<T>
             }
 
             if(groupBys.IsNotNullOrEmpty())
-                yield return new SqlFragmentText($" {groupBys.AsGroupBy().ToSql(Dialect)}");
+                yield return new SqlFragmentText($" {groupBys.ToSql(Dialect)}");
 
             if (having is not null)
             {
@@ -216,13 +216,13 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> predicateTableTags = [.. where?.DescendantLeafTables?.Distinct() ?? []];
+        IEnumerable<TableTag> predicateTableTags = [.. where?.AllParticipatingTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidPredicateTableTags = predicateTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
         IEnumerable<TableTag> invalidGroupByTableTags = groupByTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> havingTableTags = [.. having?.DescendantLeafTables?.Distinct() ?? []];
+        IEnumerable<TableTag> havingTableTags = [.. having?.AllParticipatingTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidHavingTableTags = havingTableTags.Except(selectableTableTags);
 
         IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];

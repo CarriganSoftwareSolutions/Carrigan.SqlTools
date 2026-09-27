@@ -283,11 +283,4 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// Creates the dialect-specific select-tag collection for all supported mapped columns.
     /// </summary>
     protected abstract SelectTagsBase GetAllSelectTags();
-
-    /// <summary>
-    /// Creates the dialect-specific select-tag collection for the supplied group-by columns.
-    /// </summary>
-    /// <param name="groupBys">The group-by columns to project.</param>
-    protected abstract SelectTagsBase GetSelectTags(GroupBysBase groupBys);
-
 }

@@ -7,7 +7,7 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.OrderByClause;
 
 /// <summary>
-/// Represents a expression within a SQL <c>ORDER BY</c> clause.
+/// Represents an expression within a SQL <c>ORDER BY</c> clause.
 /// </summary>
 public class OrderBy : ISqlFragment, IEquatable<OrderBy>
 {
@@ -17,10 +17,10 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     public SqlExpression SqlExpression { get; }
 
     /// <summary>
-    /// Gets the <see cref="IEnumerable{TableTag}"/> associated with this itemn.
+    /// Gets the <see cref="IEnumerable{TableTag}"/> associated with this item.
     /// </summary>
     internal IEnumerable<TableTag> TableTags =>
-        SqlExpression.DescendantLeafTables;
+        SqlExpression.AllParticipatingTables;
 
     /// <summary>
     /// Gets the sort direction for this item.
@@ -47,7 +47,7 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     /// Equality compares only the underlying <see cref="SqlExpression"/> and intentionally ignores <see cref="SortDirection"/>.
     /// </remarks>
     /// <param name="other">The <see cref="OrderBy"/> to compare with this instance.</param>
-    /// <returns><c>true</c> if both items refer to the same table and column; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if both items contain structurally equivalent SQL expressions; otherwise, <c>false</c>.</returns>
     public bool Equals(OrderBy? other)
     {
         if (ReferenceEquals(this, other)) return true;
@@ -77,7 +77,7 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     /// <returns>A sequence of <see cref="ISqlFragment"/> containing the instance.</returns>
     public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
     {
-        foreach (ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect))
+        foreach (ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect).Flatten(dialect))
             yield return sqlFragment;
         yield return ISqlFragment.Space;
         yield return SortDirection.ToSqlFragment();

@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -12,16 +12,6 @@ public class GroupBysTests
 {
     private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
 
-    [Fact]
-    public void Empty_ReturnsEmptyGroupBy()
-    {
-        GroupBys groupBy = GroupBys.Empty;
-
-        Assert.True(groupBy.IsEmpty());
-        Assert.Empty(groupBy.TableTags);
-        Assert.Empty(groupBy.AsEnumerable());
-        Assert.Equal(string.Empty, groupBy.ToSql(Dialect));
-    }
 
     [Fact]
     public void Constructor_WithNoItems_CreatesEmptyGroupBy()
@@ -35,7 +25,7 @@ public class GroupBysTests
     [Fact]
     public void Constructor_WithEmptyCollection_CreatesEmptyGroupBy()
     {
-        GroupByBase[] groupByItems = [];
+        GroupBy[] groupByItems = [];
 
         GroupBys groupBy = new(groupByItems);
 
@@ -46,7 +36,7 @@ public class GroupBysTests
     [Fact]
     public void Constructor_WithNullCollection_ThrowsArgumentNullException()
     {
-        IEnumerable<GroupByBase>? groupByItems = null;
+        IEnumerable<GroupBy>? groupByItems = null;
 
         ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => new GroupBys(groupByItems!));
         Assert.Equal("groupByItems", exception.ParamName);
@@ -63,61 +53,6 @@ public class GroupBysTests
         Assert.Single(groupBy.TableTags);
         Assert.Equal("GROUP BY \"Address\".\"City\"", groupBy.ToSql(Dialect));
     }
-
-    [Fact]
-    public void New_WithPropertyName_CreatesExpectedSql()
-    {
-        PropertyName propertyName = new("City");
-
-        GroupBys groupBy = GroupBys.New<Address>(propertyName);
-
-        List<GroupByBase> groupByItems = [.. groupBy.AsEnumerable()];
-
-        Assert.False(groupBy.IsEmpty());
-        Assert.Single(groupByItems);
-        Assert.Single(groupBy.TableTags);
-        Assert.Equal("GROUP BY \"Address\".\"City\"", groupBy.ToSql(Dialect));
-    }
-
-    [Fact]
-    public void New_WithStringPropertyName_CreatesExpectedSql()
-    {
-        GroupBys groupBy = GroupBys.New<Address>("City");
-
-        List<GroupByBase> groupByItems = [.. groupBy.AsEnumerable()];
-
-        Assert.False(groupBy.IsEmpty());
-        Assert.Single(groupByItems);
-        Assert.Single(groupBy.TableTags);
-        Assert.Equal("GROUP BY \"Address\".\"City\"", groupBy.ToSql(Dialect));
-    }
-
-    [Fact]
-    public void New_WithPropertyName_ReturnsEquivalentResultToConstructor()
-    {
-        PropertyName propertyName = new("Street");
-
-        GroupBys expected = new(new GroupBy<Address>(propertyName));
-        GroupBys actual = GroupBys.New<Address>(propertyName);
-
-        Assert.Equal(expected.ToSql(Dialect), actual.ToSql(Dialect));
-    }
-
-    [Fact]
-    public void New_WithStringPropertyName_ReturnsEquivalentResultToPropertyNameOverload()
-    {
-        PropertyName propertyName = new("Street");
-
-        GroupBys expected = GroupBys.New<Address>(propertyName);
-        GroupBys actual = GroupBys.New<Address>("Street");
-
-        Assert.Equal(expected.ToSql(Dialect), actual.ToSql(Dialect));
-    }
-
-    [Fact]
-    public void New_WithInvalidPropertyName_ThrowsInvalidPropertyException() =>
-        Assert.Throws<InvalidPropertyException<Address>>(() =>
-            GroupBys.New<Address>("LiveLongAndProsper"));
 
     [Fact]
     public void Constructor_WithMultipleItems_CreatesExpectedSql()
@@ -151,8 +86,8 @@ public class GroupBysTests
         GroupBy<Address> street = new("Street");
         GroupBys groupBy = new(city, street);
 
-        List<GroupByBase> groupByItems = [.. groupBy.AsEnumerable()];
-        List<GroupByBase> expectedGroupByItems = [city, street];
+        List<GroupBy> groupByItems = [.. groupBy.AsEnumerable()];
+        List<GroupBy> expectedGroupByItems = [city, street];
 
         Assert.Equal(expectedGroupByItems, groupByItems);
     }
@@ -164,8 +99,8 @@ public class GroupBysTests
         GroupBy<Address> street = new("Street");
         GroupBys groupBy = new(city, street);
 
-        List<GroupByBase> groupByItems = [.. groupBy.AsEnumerable()];
-        List<GroupByBase> expectedGroupByItems = [city, street];
+        List<GroupBy> groupByItems = [.. groupBy.AsEnumerable()];
+        List<GroupBy> expectedGroupByItems = [city, street];
 
         Assert.Equal(expectedGroupByItems, groupByItems);
     }
@@ -201,8 +136,8 @@ public class GroupBysTests
         SelectTag streetSelectTag = SelectTagGenerator.Get<Address>("Street");
         SelectTag citySelectTag = SelectTagGenerator.Get<Address>("City");
 
-        Assert.True(groupBy.Contains(streetSelectTag));
-        Assert.False(groupBy.Contains(citySelectTag));
+        Assert.True(groupBy.ContainsEquivalent(streetSelectTag));
+        Assert.False(groupBy.ContainsEquivalent(citySelectTag));
     }
 
     [Fact]
@@ -212,8 +147,8 @@ public class GroupBysTests
         SelectTag<Address> streetSelectTag = new(nameof(Address.Street));
         SelectTag<Address> citySelectTag = new(nameof(Address.City));
 
-        Assert.True(groupBy.Contains(streetSelectTag));
-        Assert.False(groupBy.Contains(citySelectTag));
+        Assert.True(groupBy.ContainsEquivalent(streetSelectTag));
+        Assert.False(groupBy.ContainsEquivalent(citySelectTag));
     }
 
     [Fact]
@@ -230,7 +165,7 @@ public class GroupBysTests
     {
         GroupBys groupBy = new(new GroupBy<Address>("Street"));
 
-        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Contains((GroupByBase)(null!)));
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Contains((GroupBy)(null!)));
         Assert.Equal("groupByItem", exception.ParamName);
     }
 
@@ -297,14 +232,14 @@ public class GroupBysTests
         GroupBy<Address> street = new("Street");
         GroupBy<ColumnTable> columnTable = new("D000destruct0");
         GroupBys original = new(initial);
-        GroupByBase[] additionalItems = [street, columnTable];
+        GroupBy[] additionalItems = [street, columnTable];
 
         GroupBys appended = original.Concat(additionalItems);
 
-        List<GroupByBase> originalItems = [.. original.AsEnumerable()];
-        List<GroupByBase> appendedItems = [.. appended.AsEnumerable()];
-        List<GroupByBase> expectedOriginalItems = [initial];
-        List<GroupByBase> expectedAppendedItems = [initial, street, columnTable];
+        List<GroupBy> originalItems = [.. original.AsEnumerable()];
+        List<GroupBy> appendedItems = [.. appended.AsEnumerable()];
+        List<GroupBy> expectedOriginalItems = [initial];
+        List<GroupBy> expectedAppendedItems = [initial, street, columnTable];
         Assert.Equal(expectedOriginalItems, originalItems);
         Assert.Equal(expectedAppendedItems, appendedItems);
         Assert.Equal("GROUP BY \"Address\".\"City\"", original.ToSql(Dialect));
@@ -315,7 +250,7 @@ public class GroupBysTests
     public void Concat_WithEmptyCollection_ReturnsEquivalentGroupBy()
     {
         GroupBys original = new(new GroupBy<Address>("City"));
-        GroupByBase[] additionalItems = [];
+        GroupBy[] additionalItems = [];
 
         GroupBys appended = original.Concat(additionalItems);
 
@@ -327,28 +262,72 @@ public class GroupBysTests
     public void Concat_WithNullCollection_ThrowsArgumentNullException()
     {
         GroupBys groupBy = GroupBys.Empty;
-        IEnumerable<GroupByBase>? groupByItems = null;
+        IEnumerable<GroupBy>? groupByItems = null;
 
         ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Concat(groupByItems!));
         Assert.Equal("groupByItems", exception.ParamName);
     }
 
     [Fact]
-    public void AsGroupBy_ReturnsSameInstance()
-    {
-        GroupBys groupBy = new(new GroupBy<Address>("City"));
-
-        GroupBys actual = groupBy.AsGroupBy();
-
-        Assert.Same(groupBy, actual);
-    }
-
-    [Fact]
     public void Contains_ReturnsTrue_ForEquivalentItem()
     {
         GroupBys groupBy = new(new GroupBy<Address>("Street"));
-        GroupByBase equivalentItem = new GroupBy<Address>("Street");
+        GroupBy equivalentItem = new GroupBy<Address>("Street");
 
         Assert.True(groupBy.Contains(equivalentItem));
     }
+
+    [Fact]
+    public void ContainsEquivalent_ExactExpressionGroup_ReturnsTrue()
+    {
+        Add selectedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
+        GroupBys groupBys = new(new GroupBy(selectedExpression));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+
+        Assert.True(groupBys.ContainsEquivalent(selectTag));
+    }
+
+    [Fact]
+    public void ContainsEquivalent_IndependentlyGroupedColumns_ReturnsTrue()
+    {
+        Add selectedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
+        GroupBys groupBys = new(new GroupBy<ColumnTable>(nameof(ColumnTable.ColA)), new GroupBy<ColumnTable>(nameof(ColumnTable.ColB)));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+
+        Assert.True(groupBys.ContainsEquivalent(selectTag));
+    }
+
+    [Fact]
+    public void ContainsEquivalent_ColumnsOnlyParticipateInsideOtherGroupExpressions_ReturnsFalse()
+    {
+        Column<ColumnTable> a = new(nameof(ColumnTable.ColA));
+        Column<ColumnTable> b = new(nameof(ColumnTable.ColB));
+        Column<ColumnTable> c = new(nameof(ColumnTable.Col1));
+        Add selectedExpression = new(a, b);
+        GroupBys groupBys = new(new GroupBy(new Add(a, c)), new GroupBy(new Add(b, c)));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+
+        Assert.False(groupBys.ContainsEquivalent(selectTag));
+    }
+
+    [Fact]
+    public void ContainsEquivalent_SelectedExpressionNestedInsideLargerGroupExpression_ReturnsFalse()
+    {
+        Add selectedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
+        Add groupedExpression = new(selectedExpression, new Column<ColumnTable>(nameof(ColumnTable.Col1)));
+        GroupBys groupBys = new(new GroupBy(groupedExpression));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+
+        Assert.False(groupBys.ContainsEquivalent(selectTag));
+    }
+
+
+    [Fact]
+    public void Append_StringPropertyName_AppendsWithoutRecursion()
+    {
+        GroupBys groupBys = GroupBys.Empty.Append<ColumnTable>(nameof(ColumnTable.ColA));
+
+        Assert.Single(groupBys.AsEnumerable());
+    }
+
 }

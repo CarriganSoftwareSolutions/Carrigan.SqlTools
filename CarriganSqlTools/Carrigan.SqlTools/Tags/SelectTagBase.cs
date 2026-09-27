@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
@@ -96,7 +96,7 @@ public abstract class SelectTagBase :
     /// Gets the table tags that participate in this select expression.
     /// </summary>
     internal IEnumerable<TableTag> TableTags =>
-        SqlExpression.DescendantLeafTables;
+        SqlExpression.AllParticipatingTables;
 
     /// <summary>
     /// Gets the expected result set column name for this projection, choosing the alias
@@ -128,7 +128,7 @@ public abstract class SelectTagBase :
     public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
     {
 
-        foreach(ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect))
+        foreach(ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect).Flatten(dialect))
         {
             yield return sqlFragment;
         }
@@ -142,7 +142,7 @@ public abstract class SelectTagBase :
     /// <summary>
     /// Gets the SQL parameters contained by this fragment.
     /// </summary>
-    /// <returns>An empty sequence because SELECT projection fragments do not contain SQL parameters.</returns>
+    /// <returns>The SQL parameters referenced by the projected expression.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         SqlExpression.GetSqlFragmentParameters(dialect);
 
@@ -223,15 +223,7 @@ public abstract class SelectTagBase :
     /// <returns>
     /// <c>true</c> if this select item matches the supplied <c>GROUP BY</c> clause; otherwise, <c>false</c>.
     /// </returns>
-    public bool MatchesGroupBy(GroupByBase groupByBase)
-    {
-        ColumnTag? columnTag = SqlExpression switch
-        {
-            IColumnBase column => column.ColumnInfo.ColumnTag,
-            ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
-            _ => null
-        };
-
-        return columnTag is not null && columnTag == groupByBase.ColumnInfo.ColumnTag;
-    }
+    [Obsolete("No longer needed, useful or recommended.")]
+    public bool MatchesGroupBy(GroupBy groupByBase) =>
+        groupByBase.SqlExpression.Equals(SqlExpression);
 }

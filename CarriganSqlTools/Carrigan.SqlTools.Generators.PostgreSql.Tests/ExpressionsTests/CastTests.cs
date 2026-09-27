@@ -34,7 +34,7 @@ public sealed class CastTests
     {
         string expected = "SELECT \"Customer\".\"Name\", AVG(CAST(\"Customer\".\"Id\" AS NUMERIC)) AS \"AverageId\" FROM \"Customer\" GROUP BY \"Customer\".\"Name\"";
         SqlGenerator<Customer> generator = new();
-        GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
+        GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
 
         Column<Customer> customerIdColumn = new(nameof(Customer.Id));
         Cast customerId = new (customerIdColumn, PostgreSqlTypesProvider.AsNumeric(18, 2, false, true));

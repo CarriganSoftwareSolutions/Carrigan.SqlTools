@@ -44,7 +44,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the GROUP BY clause for the query.
     /// </summary>
-    public GroupBysBase? GroupBys { get; set; }
+    public GroupBys? GroupBys { get; set; }
 
     /// <summary>
     /// Gets or sets the <c>HAVING</c> predicates for the query.
@@ -120,13 +120,13 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="groupsBy">
     /// The GROUP BY clause to apply to the query. This can be <see langword="null"/> to omit the GROUP BY clause, 
-    /// or an instance of <see cref="GroupBysBase"/> containing one or more group by items.
+    /// or an instance of <see cref="GroupByClause.GroupBys"/> containing one or more group by items.
     /// </param>
     /// <returns>
     /// A new query instance with the specified GROUP BY clause. If <paramref name="groupsBy"/> is <see langword="null"/>,
     /// the returned query will not include a GROUP BY clause. Otherwise, the returned query will include the specified GROUP BY clause.
     /// </returns>
-    public SelectBuilderBase<T> WithGroupBy(GroupBysBase? groupsBy) =>
+    public SelectBuilderBase<T> WithGroupBy(GroupBys? groupsBy) =>
         this with { GroupBys = groupsBy };
 
     /// <summary>

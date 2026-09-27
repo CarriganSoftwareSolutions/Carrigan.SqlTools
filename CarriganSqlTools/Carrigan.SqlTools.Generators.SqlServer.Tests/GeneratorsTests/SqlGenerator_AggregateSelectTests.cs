@@ -10,6 +10,8 @@ using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 
+//IGNORE SPELLING: Ungrouped
+
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.GeneratorsTests;
 
 public class SqlGenerator_AggregateSelectTests
@@ -116,8 +118,7 @@ public class SqlGenerator_AggregateSelectTests
     [Fact]
     public void SelectTagGenerator_GetManyFromGroupBys_ReturnsSelectsForEachGroupBy()
     {
-        GroupBys groupBys = GroupBys
-            .New<Customer>(nameof(Customer.Name))
+        GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name))
             .Append<Customer>(nameof(Customer.Email));
 
         IEnumerable<string> actual = SelectTagGenerator.GetMany(groupBys).Select(select => select.ToSql(Dialect));
@@ -138,17 +139,14 @@ public class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_WithGroupBysAndNoSelects_UsesGroupByColumnsAsSelects()
     {
-        GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
-
-        SqlQuery query = customerGenerator.InternalSelect(null, null, null, null, null, groupBys, null, null, null);
-
-        Assert.Equal("SELECT [Customer].[Name] FROM [Customer] GROUP BY [Customer].[Name]", query.QueryText);
+        GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
+        Assert.Throws<GroupByRequiresSelectException>(() => customerGenerator.InternalSelect(null, null, null, null, null, groupBys, null, null, null));
     }
 
     [Fact]
     public void Select_WithGroupedColumnAndAggregate_AllowsAggregateSelectList()
     {
-        GroupBys groupBys = GroupBys.New<Customer>(nameof(Customer.Name));
+        GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
         SelectTags selects = new
         (
             SelectTagGenerator.Get<Customer>(nameof(Customer.Name)),
@@ -176,7 +174,7 @@ public class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_WithGroupedColumnAndAggregateAndHaving_AllowsAggregateSelectList()
     {
-        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber));
+        GroupBys groupBys = new GroupBys<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber));
         Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
 
         SelectTags selects = new
@@ -208,7 +206,7 @@ public class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_WithWhereAndHaving_PreservesParameterOrder()
     {
-        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId));
+        GroupBys groupBys = new GroupBys<Grades>(nameof(Grades.StudentId));
         Average averageGradePoint = new(new Column<Grades>(nameof(Grades.GradePoint)));
         SelectTags selects = new
         (
@@ -247,7 +245,7 @@ public class SqlGenerator_AggregateSelectTests
     [Fact]
     public void Select_Parameter_With_Aggregates()
     {
-        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber));
+        GroupBys groupBys = new GroupBys<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber));
         Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
 
         SelectTags selects = new
@@ -292,7 +290,7 @@ public class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
-    public void Select_WithNestedCastedUngroupedColumnAndCountStar_Throws()
+    public void Select_WithNestedCastsUngroupedColumnAndCountStar_Throws()
     {
         SelectTags selects = new
         (

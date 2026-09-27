@@ -21,7 +21,7 @@ public abstract partial class SqlGeneratorBase<T>
         SelectTagsBase? selects,
         Joins<T>? joins,
         Predicates? where,
-        GroupBysBase? groupBys,
+        GroupBys? groupBys,
         Predicates? having,
         OrderBys? orderBy, PagingBase? paging
     ) =>

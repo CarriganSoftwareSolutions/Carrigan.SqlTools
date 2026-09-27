@@ -25,18 +25,26 @@ public static class SelectTagGenerator
     /// Creates a select tag for the specified group-by item.
     /// </summary>
     /// <param name="groupBy">The group-by item to select.</param>
-    public static SelectTag Get(GroupByBase groupBy)
+    [Obsolete("No longer needed, useful or stable. Use at your own risk. GroupBys are no longer guaranteed to have an alias, this method will throw an exception if no alias is provided.")]
+    public static SelectTag Get(GroupBy groupBy)
     {
         ArgumentNullException.ThrowIfNull(groupBy, nameof(groupBy));
-
-        return new(groupBy.ColumnInfo.ColumnTag);
+        if (groupBy.SqlExpression is ColumnBase column)
+        {
+            return new(column.ColumnInfo.ColumnTag);
+        }
+        else
+        {
+            throw new Exception("GroupBy has no associated alias.");
+        }
     }
 
     /// <summary>
     /// Creates select tags for the specified group-by items.
     /// </summary>
     /// <param name="groupBys">The group-by items to select.</param>
-    public static SelectTags GetMany(GroupBysBase groupBys)
+    [Obsolete("No longer needed, useful or stable. Use at your own risk. GroupBys are no longer guaranteed to have an alias, this method will throw an exception if no alias is provided.")]
+    public static SelectTags GetMany(GroupBys groupBys)
     {
         ArgumentNullException.ThrowIfNull(groupBys, nameof(groupBys));
 

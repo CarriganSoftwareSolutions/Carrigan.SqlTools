@@ -162,8 +162,7 @@ public class FromReadMeMoreComplexExamples
                 new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
                 new SelectTag(new Count(gradePoint), "GradePointCount")
             ),
-            GroupBys = GroupBys
-                .New<Grades>(nameof(Grades.StudentId))
+            GroupBys = new GroupBys<Grades>(nameof(Grades.StudentId))
                 .Append<Grades>(nameof(Grades.CourseCode))
         };
 
@@ -192,7 +191,7 @@ public class FromReadMeMoreComplexExamples
                 SelectTagGenerator.Get<Grades>(nameof(Grades.SemesterNumber)),
                 new SelectTag(semesterGpa, "SemesterGPA")
             ),
-            GroupBys = GroupBys.New<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber)),
+            GroupBys = new GroupBys<Grades>(nameof(Grades.StudentId), nameof(Grades.AcademicYear), nameof(Grades.SemesterNumber)),
             Having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"))
         };
 

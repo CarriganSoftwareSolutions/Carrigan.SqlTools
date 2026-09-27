@@ -54,7 +54,7 @@ public class SubqueryBuilderTests
                 SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
                 new SelectTag(averageGradePoint, "AverageGradePoint")
             ),
-            GroupBys = GroupBys.New<Grades>(nameof(Grades.StudentId)),
+            GroupBys = new GroupBys<Grades>(nameof(Grades.StudentId)),
             Having = new GreaterThan(averageGradePoint, new Parameter(3.5m, "MinimumGpa"))
         };
 
@@ -70,7 +70,7 @@ public class SubqueryBuilderTests
     public void SubqueryBuilder_WithGroupByAndHavingFluentMethods_ReturnsUpdatedCopy()
     {
         SubqueryBuilder<Grades> original = new();
-        GroupBys groupBys = GroupBys.New<Grades>(nameof(Grades.StudentId));
+        GroupBys groupBys = new GroupBys<Grades>(nameof(Grades.StudentId));
         Average averageGradePoint = new(new Column<Grades>(nameof(Grades.GradePoint)));
         Predicates having = new GreaterThan(averageGradePoint, new Parameter(3.5m, "MinimumGpa"));
 
@@ -78,7 +78,7 @@ public class SubqueryBuilderTests
 
         Assert.Null(original.GroupBys);
         Assert.Null(original.Having);
-        Assert.Same(groupBys, updated.GroupBys);
+        Assert.Same((object)groupBys, updated.GroupBys);
         Assert.Same(having, updated.Having);
     }
 

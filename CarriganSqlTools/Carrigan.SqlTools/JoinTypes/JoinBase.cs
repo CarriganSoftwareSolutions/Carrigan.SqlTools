@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
@@ -52,7 +52,7 @@ public abstract class JoinBase
     /// </remarks>
     internal IEnumerable<TableTag> JoinsOn =>
         _predicates
-            .DescendantLeafTables
+            .AllParticipatingTables
             .Distinct();
 
     /// <summary>

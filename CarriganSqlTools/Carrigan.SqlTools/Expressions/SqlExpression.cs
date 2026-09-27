@@ -38,24 +38,29 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     }
 
     /// <summary>
-    /// Gets all parameter expressions reachable below the current expression node.
-    /// </summary>
-    // TODO: still need?
-    internal IEnumerable<Parameter> DescendantParameters =>
-        DescendantNodes.OfType<Parameter>();
-
-    /// <summary>
     /// Retrieves all descendant expressions regardless of type.
     /// </summary>
     internal IEnumerable<SqlExpression> DescendantNodes =>
         GetAllDescendantExpressions(ChildNodes);
 
     /// <summary>
-    /// Retrieves all descendants of type <see cref="IColumnBase"/>.
+    /// Gets every parameter expression participating in this expression tree, including the current node and all descendants.
     /// </summary>
-    // TODO: Still need?
-    internal IEnumerable<IColumnBase> DescendantColumns =>
-        DescendantNodes.OfType<IColumnBase>();
+    /// <remarks>
+    /// Enumeration is deferred and preserves expression-tree traversal order.
+    /// </remarks>
+    public IEnumerable<IParameter> AllParticipatingParameters =>
+        EnumerateSelfAndDescendants().OfType<IParameter>();
+
+    /// <summary>
+    /// Gets every column-shaped SQL expression participating in this expression tree, including the current node and all descendants.
+    /// </summary>
+    /// <remarks>
+    /// The returned expressions are the actual participating nodes. This includes reflected columns and other column-shaped
+    /// expression nodes, such as <see cref="ColumnTagExpression"/>. Enumeration is deferred and preserves expression-tree traversal order.
+    /// </remarks>
+    public IEnumerable<SqlExpression> AllParticipatingColumns =>
+        EnumerateSelfAndDescendants().Where(static expression => expression.IsColumn());
 
     /// <summary>
     /// Gets the table tags represented by leaf expressions directly attached to this expression.
@@ -63,12 +68,33 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     public virtual IEnumerable<TableTag> LeafTables => [];
 
     /// <summary>
-    /// Gets all table tags represented by leaf expressions anywhere underneath this expression.
+    /// Gets every table participating in this expression tree, including tables represented by the current node and all descendants.
+    /// </summary>
+    /// <remarks>
+    /// Duplicate table tags are removed while preserving the order in which the tables are first encountered.
+    /// </remarks>
+    public IEnumerable<TableTag> AllParticipatingTables =>
+        EnumerateSelfAndDescendants()
+            .SelectMany(static expression => expression.LeafTables)
+            .Distinct();
+
+    /// <summary>
+    /// Gets all parameter expressions below the current node.
+    /// </summary>
+    internal IEnumerable<Parameter> DescendantParameters =>
+        DescendantNodes.OfType<Parameter>();
+
+    /// <summary>
+    /// Gets all reflected column expressions below the current node.
+    /// </summary>
+    internal IEnumerable<IColumnBase> DescendantColumns =>
+        DescendantNodes.OfType<IColumnBase>();
+
+    /// <summary>
+    /// Gets all table tags represented by this expression and its descendants.
     /// </summary>
     public IEnumerable<TableTag> DescendantLeafTables =>
-        LeafTables
-            .Concat(DescendantNodes.SelectMany(static expression => expression.LeafTables))
-            .Distinct();
+        AllParticipatingTables;
 
     /// <summary>
     /// Indicates whether this expression is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
@@ -101,7 +127,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// <param name="groupBys">The optional <c>GROUP BY</c> clause.</param>
     /// <returns>Always <c>true</c>.</returns>
     [Obsolete("Use the overload with no parameters instead.")]
-    public bool IsAggregate(GroupBysBase? groupBys) =>
+    public bool IsAggregate(GroupBys? groupBys) =>
         IsAggregate();
 
     /// <summary>
@@ -278,6 +304,18 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         }
 
         return expression;
+    }
+
+
+    /// <summary>
+    /// Enumerates this expression followed by every descendant expression in depth-first order.
+    /// </summary>
+    private IEnumerable<SqlExpression> EnumerateSelfAndDescendants()
+    {
+        yield return this;
+
+        foreach (SqlExpression descendant in DescendantNodes)
+            yield return descendant;
     }
 
     /// <summary>
