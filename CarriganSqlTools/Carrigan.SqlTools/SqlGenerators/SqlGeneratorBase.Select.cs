@@ -1,4 +1,4 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
@@ -69,7 +69,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="paging">The paging fragment to include in the query.</param>
     /// <returns>
     /// An <see cref="SqlQuery"/> whose <c>QueryText</c> is the generated SQL and whose
-    /// <c>Parameters</c> contain values from joins, <paramref name="where"/>, and <paramref name="having"/>.
+    /// <c>Parameters</c> contain values participating anywhere in the rendered query, including projections, joins,
+    /// <paramref name="where"/>, <paramref name="groupBys"/>, <paramref name="having"/>, and <paramref name="orderBy"/>.
     /// </returns>
     /// <remarks>
     /// When providing <paramref name="selects"/>, you will almost certainly need a different model
@@ -189,8 +190,12 @@ public abstract partial class SqlGeneratorBase<T>
                     yield return fragment;
             }
 
-            if(groupBys.IsNotNullOrEmpty())
-                yield return new SqlFragmentText($" {groupBys.ToSql(Dialect)}");
+            if (groupBys.IsNotNullOrEmpty())
+            {
+                yield return ISqlFragment.Space;
+                foreach (ISqlFragment fragment in groupBys.ToSqlFragments())
+                    yield return fragment;
+            }
 
             if (having is not null)
             {
@@ -201,7 +206,11 @@ public abstract partial class SqlGeneratorBase<T>
             }
 
             if (orderBy.IsNotNullOrEmpty())
-                yield return new SqlFragmentText($" {orderBy.ToSql(Dialect)}");
+            {
+                yield return ISqlFragment.Space;
+                foreach (ISqlFragment fragment in orderBy.ToSqlFragments())
+                    yield return fragment;
+            }
 
 
             if (paging is not null)

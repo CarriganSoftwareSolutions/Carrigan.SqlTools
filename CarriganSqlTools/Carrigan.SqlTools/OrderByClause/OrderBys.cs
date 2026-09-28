@@ -2,6 +2,7 @@ using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Tags;
@@ -154,16 +155,36 @@ public class OrderBys
         _orderByItems;
 
     /// <summary>
+    /// Returns the SQL fragments that make up this <c>ORDER BY</c> clause.
+    /// </summary>
+    /// <remarks>
+    /// The clause is kept as fragments until final query rendering so parameters embedded in ordering expressions
+    /// remain discoverable by <see cref="SqlGenerators.SqlQuery.Parameters"/> and receive query-wide parameter ordering.
+    /// </remarks>
+    /// <returns>
+    /// The fragments for the complete <c>ORDER BY</c> clause, or an empty sequence when no ordering is defined.
+    /// </returns>
+    internal IEnumerable<ISqlFragment> ToSqlFragments()
+    {
+        if (IsEmpty())
+            yield break;
+
+        yield return new SqlFragmentText("ORDER BY ");
+
+        foreach (ISqlFragment fragment in _orderByItems.JoinFragments(ISqlFragment.CommaSpace))
+            yield return fragment;
+    }
+
+    /// <summary>
     /// Generates the SQL <c>ORDER BY</c> clause represented by this instance.
     /// </summary>
+    /// <param name="dialect">The SQL dialect used to render the clause.</param>
     /// <returns>
     /// A SQL string for the <c>ORDER BY</c> clause, or <see cref="string.Empty"/>
     /// if no ordering is defined.
     /// </returns>
     internal string ToSql(ISqlDialects dialect) =>
-        IsEmpty()
-            ? string.Empty
-            : $"ORDER BY {string.Join(", ", _orderByItems.Select(item => item.ToSql(dialect)))}";
+        ToSqlFragments().ToSql(dialect);
 
     /// <summary>
     /// Defines an implicit conversion from <see cref="OrderBy"/> to <see cref="OrderBys"/>,

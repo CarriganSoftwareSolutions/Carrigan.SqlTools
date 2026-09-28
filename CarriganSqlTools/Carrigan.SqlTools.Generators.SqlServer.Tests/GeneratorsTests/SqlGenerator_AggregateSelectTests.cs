@@ -116,6 +116,7 @@ public class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
+    [Obsolete("Tests obsolete code.")]
     public void SelectTagGenerator_GetManyFromGroupBys_ReturnsSelectsForEachGroupBy()
     {
         GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name))
