@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.Tags;
 /// Internal neutral select tag used by reflection metadata and attributes when no dialect-specific
 /// concrete select tag is required.
 /// </summary>
-internal sealed class ReflectedSelectTag : SelectTagBase
+internal sealed class ReflectedSelectTag : SelectTag
 {
     private readonly ReflectedSelectTag? WithNoAliasProperty;
 
@@ -41,6 +41,6 @@ internal sealed class ReflectedSelectTag : SelectTagBase
     /// <summary>
     /// Initializes a new instance of the <see cref="WithNoAlias"/> class.
     /// </summary>
-    public override SelectTagBase WithNoAlias() =>
+    public override SelectTag WithNoAlias() =>
         WithNoAliasProperty is null ? this : WithNoAliasProperty;
 }

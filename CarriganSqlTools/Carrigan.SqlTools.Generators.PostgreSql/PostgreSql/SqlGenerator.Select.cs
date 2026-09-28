@@ -186,7 +186,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     (
         bool? distinct,
         Subquery<T>? subQuery,
-        SelectTagsBase? selects,
+        SelectTags? selects,
         Joins<T>? joins,
         Predicates? predicates,
         GroupBys? groupBys,
@@ -201,7 +201,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     (
         bool? distinct,
         Subquery<T>? subQuery,
-        SelectTagsBase? selects,
+        SelectTags? selects,
         Joins<T>? joins,
         Predicates? predicates,
         GroupBys? groupBys,
@@ -215,7 +215,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     (
         bool? distinct,
         Subquery<T>? subQuery,
-        SelectTagsBase? selects,
+        SelectTags? selects,
         Joins<T>? joins,
         Predicates? predicates,
         OrderBys? orderBys,
@@ -227,7 +227,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     (
         bool? distinct,
         Subquery<T>? subQuery,
-        SelectTagsBase? selects,
+        SelectTags? selects,
         Joins<T>? joins,
         Predicates? predicates,
         GroupBys? groupBys,

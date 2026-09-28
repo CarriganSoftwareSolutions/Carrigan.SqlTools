@@ -13,7 +13,7 @@ public class SelectTagsExtensionsTests
         SelectTag[] selectTags = [first, second];
 
         SelectTags result = selectTags.AsSelectTags();
-        SelectTagBase[] actual = [.. result.All()];
+        SelectTag[] actual = [.. result.All()];
 
         Assert.Equal(2, actual.Length);
         Assert.Same(first, actual[0]);

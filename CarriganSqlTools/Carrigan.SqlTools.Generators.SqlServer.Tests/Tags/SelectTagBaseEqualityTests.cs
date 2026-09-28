@@ -20,7 +20,7 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_SameReference()
     {
-        SelectTagBase selectTag = New("SomeColumn", "SomeAlias");
+        SelectTag selectTag = New("SomeColumn", "SomeAlias");
 
         Assert.True(selectTag.Equals(selectTag));
 #pragma warning disable CS1718 // Comparison made to same variable
@@ -32,8 +32,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_EquivalentInstances()
     {
-        SelectTagBase left = New("SomeColumn", "SomeAlias");
-        SelectTagBase right = New("SomeColumn", "SomeAlias");
+        SelectTag left = New("SomeColumn", "SomeAlias");
+        SelectTag right = New("SomeColumn", "SomeAlias");
 
         Assert.True(left.Equals(right));
         Assert.True(right.Equals(left));
@@ -44,9 +44,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_Transitive()
     {
-        SelectTagBase first = New("SomeColumn", "SomeAlias");
-        SelectTagBase second = New("SomeColumn", "SomeAlias");
-        SelectTagBase third = New("SomeColumn", "SomeAlias");
+        SelectTag first = New("SomeColumn", "SomeAlias");
+        SelectTag second = New("SomeColumn", "SomeAlias");
+        SelectTag third = New("SomeColumn", "SomeAlias");
 
         Assert.True(first.Equals(second));
         Assert.True(second.Equals(third));
@@ -56,8 +56,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_DifferentExpression()
     {
-        SelectTagBase left = New("SomeColumn", "SomeAlias");
-        SelectTagBase right = New("OtherColumn", "SomeAlias");
+        SelectTag left = New("SomeColumn", "SomeAlias");
+        SelectTag right = New("OtherColumn", "SomeAlias");
 
         Assert.False(left.Equals(right));
         Assert.False(right.Equals(left));
@@ -67,8 +67,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_DifferentAlias()
     {
-        SelectTagBase left = New("SomeColumn", "SomeAlias");
-        SelectTagBase right = New("SomeColumn", "OtherAlias");
+        SelectTag left = New("SomeColumn", "SomeAlias");
+        SelectTag right = New("SomeColumn", "OtherAlias");
 
         Assert.False(left.Equals(right));
         Assert.False(right.Equals(left));
@@ -78,8 +78,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_AliasPresenceMatters()
     {
-        SelectTagBase left = New("SomeColumn");
-        SelectTagBase right = New("SomeColumn", "SomeAlias");
+        SelectTag left = New("SomeColumn");
+        SelectTag right = New("SomeColumn", "SomeAlias");
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
@@ -88,8 +88,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_ExpressionUsesColumnTagCaseInsensitiveIdentity()
     {
-        SelectTagBase left = NewExpression("SomeColumn", "SomeAlias");
-        SelectTagBase right = NewExpression("somecolumn", "SomeAlias");
+        SelectTag left = NewExpression("SomeColumn", "SomeAlias");
+        SelectTag right = NewExpression("somecolumn", "SomeAlias");
 
         Assert.True(left.Equals(right));
         Assert.True(left == right);
@@ -99,8 +99,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_AliasIsCaseSensitive()
     {
-        SelectTagBase left = New("SomeColumn", "SomeAlias");
-        SelectTagBase right = New("SomeColumn", "somealias");
+        SelectTag left = New("SomeColumn", "SomeAlias");
+        SelectTag right = New("SomeColumn", "somealias");
 
         Assert.False(left.Equals(right));
         Assert.False(left == right);
@@ -110,8 +110,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_StructurallyEquivalentExpressionAcrossConcreteSelectTagTypes()
     {
-        SelectTagBase reflected = New("SomeColumn", "SomeAlias");
-        SelectTagBase expression = NewExpression("SomeColumn", "SomeAlias");
+        SelectTag reflected = New("SomeColumn", "SomeAlias");
+        SelectTag expression = NewExpression("SomeColumn", "SomeAlias");
 
         Assert.NotEqual(reflected.GetType(), expression.GetType());
         Assert.True(reflected.Equals(expression));
@@ -123,8 +123,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_Null()
     {
-        SelectTagBase selectTag = New("SomeColumn", "SomeAlias");
-        SelectTagBase? other = null;
+        SelectTag selectTag = New("SomeColumn", "SomeAlias");
+        SelectTag? other = null;
 
         Assert.False(selectTag.Equals(other));
         Assert.False(selectTag.Equals((object?)null));
@@ -133,7 +133,7 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_ObjectEquivalent()
     {
-        SelectTagBase selectTag = New("SomeColumn", "SomeAlias");
+        SelectTag selectTag = New("SomeColumn", "SomeAlias");
         object other = New("SomeColumn", "SomeAlias");
 
         Assert.True(selectTag.Equals(other));
@@ -142,7 +142,7 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void Equals_ObjectWrongType()
     {
-        SelectTagBase selectTag = New("SomeColumn", "SomeAlias");
+        SelectTag selectTag = New("SomeColumn", "SomeAlias");
         object other = new AliasName("SomeAlias");
 
         Assert.False(selectTag.Equals(other));
@@ -151,8 +151,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void EqualOperator_EquivalentInstances()
     {
-        SelectTagBase left = New("SomeColumn", "SomeAlias");
-        SelectTagBase right = New("SomeColumn", "SomeAlias");
+        SelectTag left = New("SomeColumn", "SomeAlias");
+        SelectTag right = New("SomeColumn", "SomeAlias");
 
         Assert.True(left == right);
         Assert.True(right == left);
@@ -163,8 +163,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void EqualOperator_DifferentInstances()
     {
-        SelectTagBase left = New("SomeColumn", "SomeAlias");
-        SelectTagBase right = New("OtherColumn", "SomeAlias");
+        SelectTag left = New("SomeColumn", "SomeAlias");
+        SelectTag right = New("OtherColumn", "SomeAlias");
 
         Assert.False(left == right);
         Assert.False(right == left);
@@ -175,9 +175,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void EqualOperator_Null()
     {
-        SelectTagBase selectTag = New("SomeColumn", "SomeAlias");
-        SelectTagBase? nullSelectTag = null;
-        SelectTagBase? secondNullSelectTag = null;
+        SelectTag selectTag = New("SomeColumn", "SomeAlias");
+        SelectTag? nullSelectTag = null;
+        SelectTag? secondNullSelectTag = null;
 
         Assert.False(selectTag == nullSelectTag);
         Assert.False(nullSelectTag == selectTag);
@@ -190,8 +190,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void GetHashCode_EquivalentInstances()
     {
-        SelectTagBase left = New("SomeColumn", "SomeAlias");
-        SelectTagBase right = New("SomeColumn", "SomeAlias");
+        SelectTag left = New("SomeColumn", "SomeAlias");
+        SelectTag right = New("SomeColumn", "SomeAlias");
 
         Assert.Equal(left, right);
         Assert.Equal(left.GetHashCode(), right.GetHashCode());
@@ -200,9 +200,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void DictionaryKey_EquivalentInstance()
     {
-        SelectTagBase storedKey = New("SomeColumn", "SomeAlias");
-        SelectTagBase lookupKey = New("SomeColumn", "SomeAlias");
-        Dictionary<SelectTagBase, decimal> dictionary = [];
+        SelectTag storedKey = New("SomeColumn", "SomeAlias");
+        SelectTag lookupKey = New("SomeColumn", "SomeAlias");
+        Dictionary<SelectTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.True(dictionary.ContainsKey(lookupKey));
@@ -212,9 +212,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void DictionaryKey_DifferentExpression()
     {
-        SelectTagBase storedKey = New("SomeColumn", "SomeAlias");
-        SelectTagBase lookupKey = New("OtherColumn", "SomeAlias");
-        Dictionary<SelectTagBase, decimal> dictionary = [];
+        SelectTag storedKey = New("SomeColumn", "SomeAlias");
+        SelectTag lookupKey = New("OtherColumn", "SomeAlias");
+        Dictionary<SelectTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.False(dictionary.ContainsKey(lookupKey));
@@ -223,9 +223,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void DictionaryKey_DifferentAlias()
     {
-        SelectTagBase storedKey = New("SomeColumn", "SomeAlias");
-        SelectTagBase lookupKey = New("SomeColumn", "OtherAlias");
-        Dictionary<SelectTagBase, decimal> dictionary = [];
+        SelectTag storedKey = New("SomeColumn", "SomeAlias");
+        SelectTag lookupKey = New("SomeColumn", "OtherAlias");
+        Dictionary<SelectTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.False(dictionary.ContainsKey(lookupKey));
@@ -234,9 +234,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void DictionaryKey_EquivalentAssignmentReplacesValue()
     {
-        SelectTagBase firstKey = New("SomeColumn", "SomeAlias");
-        SelectTagBase secondKey = New("SomeColumn", "SomeAlias");
-        Dictionary<SelectTagBase, decimal> dictionary = [];
+        SelectTag firstKey = New("SomeColumn", "SomeAlias");
+        SelectTag secondKey = New("SomeColumn", "SomeAlias");
+        Dictionary<SelectTag, decimal> dictionary = [];
         dictionary[firstKey] = 3.14159m;
         dictionary[secondKey] = 2.71828m;
 
@@ -248,9 +248,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void DictionaryKey_StructurallyEquivalentCrossConcreteType()
     {
-        SelectTagBase storedKey = New("SomeColumn", "SomeAlias");
-        SelectTagBase lookupKey = NewExpression("SomeColumn", "SomeAlias");
-        Dictionary<SelectTagBase, decimal> dictionary = [];
+        SelectTag storedKey = New("SomeColumn", "SomeAlias");
+        SelectTag lookupKey = NewExpression("SomeColumn", "SomeAlias");
+        Dictionary<SelectTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.True(dictionary.ContainsKey(lookupKey));
@@ -260,9 +260,9 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void HashSet_EquivalentInstance()
     {
-        SelectTagBase storedValue = New("SomeColumn", "SomeAlias");
-        SelectTagBase lookupValue = New("SomeColumn", "SomeAlias");
-        HashSet<SelectTagBase> set = [storedValue];
+        SelectTag storedValue = New("SomeColumn", "SomeAlias");
+        SelectTag lookupValue = New("SomeColumn", "SomeAlias");
+        HashSet<SelectTag> set = [storedValue];
 
         Assert.Contains(lookupValue, set);
     }
@@ -270,8 +270,8 @@ public class SelectTagBaseEqualityTests
     [Fact]
     public void WithNoAlias_EqualsEquivalentUnaliasedTag()
     {
-        SelectTagBase withAlias = New("SomeColumn", "SomeAlias");
-        SelectTagBase expected = New("SomeColumn");
+        SelectTag withAlias = New("SomeColumn", "SomeAlias");
+        SelectTag expected = New("SomeColumn");
 
         Assert.Equal(expected, withAlias.WithNoAlias());
     }

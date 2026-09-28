@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Attributes;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
@@ -11,10 +12,7 @@ namespace Carrigan.SqlTools.Tags;
 /// Represents a SELECT projection tag for a single SQL expression, consisting of the expression
 /// and an optional alias.
 /// </summary>
-public abstract class SelectTagBase :
-    IEquatable<SelectTagBase>,
-    IEqualityOperators<SelectTagBase, SelectTagBase, bool>,
-    ISqlFragment
+public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, SelectTag, bool>,  ISqlFragment
 {
     /// <summary>
     /// The SQL expression projected by this select item.
@@ -27,37 +25,44 @@ public abstract class SelectTagBase :
     internal readonly AliasTag? AliasTag;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTagBase"/> class from a property name.
-    /// </summary>
-    /// <param name="propertyName">The model property/column name to select.</param>
-    /// <param name="aliasName">The optional alias to apply to the selected column.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when a required argument is <c>null</c>.
-    /// </exception>
-    protected SelectTagBase(PropertyName propertyName, AliasName? aliasName = null)
-        : this(new ColumnTagExpression(CreateColumnTag(propertyName)), AliasTag.New(aliasName))
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTagBase"/> class.
+    /// Initializes a new instance of the <see cref="SelectTag"/> class.
     /// </summary>
     /// <param name="columnTag">The column identifier to select.</param>
     /// <param name="aliasTag">The optional alias to apply to the selected column.</param>
-    internal SelectTagBase(ColumnTag columnTag, AliasTag? aliasTag = null)
+    internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null)
         : this(new ColumnTagExpression(columnTag), aliasTag)
     {
     }
 
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTagBase"/> class.
+    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
+    /// </summary>
+    /// <param name="sqlExpression">The SQL expression to project.</param>
+    /// <param name="aliasName">An optional alias to use for this projection.</param>
+    public SelectTag(SqlExpression sqlExpression, AliasName aliasName) : this(sqlExpression, AliasTag.New(aliasName))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
+    /// </summary>
+    /// <param name="sqlExpression">The SQL expression to project.</param>
+    /// <param name="aliasName">An optional alias to use for this projection.</param>
+    [ExternalOnly]
+    public SelectTag(SqlExpression sqlExpression, string aliasName) : this(sqlExpression, new AliasName(aliasName))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTag"/> class.
     /// </summary>
     /// <param name="sqlExpression">The SQL expression to select.</param>
     /// <param name="aliasTag">The optional alias to apply to the selected expression.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
-    protected SelectTagBase(SqlExpression sqlExpression, AliasTag? aliasTag = null)
+    public SelectTag(SqlExpression sqlExpression, AliasTag? aliasTag = null)
     {
         ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
 
@@ -65,6 +70,27 @@ public abstract class SelectTagBase :
         AliasTag = aliasTag;
     }
 
+    /// <summary>
+    /// Creates a <see cref="SelectTags"/> collection containing this tag and the specified tag.
+    /// </summary>
+    /// <param name="selectTag2">The select tag to append.</param>
+    /// <returns>A new <see cref="SelectTags"/> collection containing both tags.</returns>
+    public SelectTags Append(SelectTag selectTag2) =>
+        new(this, selectTag2);
+
+    /// <summary>
+    /// Creates a <see cref="SelectTags"/> collection containing this tag and the supplied tags.
+    /// </summary>
+    /// <param name="selectTags">The select tags to append.</param>
+    public SelectTags Concat(SelectTags selectTags) =>
+        new SelectTags(this).Concat(selectTags._selectTags);
+
+    /// <summary>
+    /// Creates a <see cref="SelectTags"/> collection containing this tag and the supplied tags.
+    /// </summary>
+    /// <param name="selectTags">The select tags to append.</param>
+    public SelectTags Concat(params IEnumerable<SelectTag> selectTags) =>
+        new SelectTags(this).Concat(selectTags);
 
     /// <summary>
     /// Creates a column tag from a model property name when no reflected table context is available.
@@ -165,7 +191,7 @@ public abstract class SelectTagBase :
     /// </summary>
     /// <param name="other">The other select item to compare.</param>
     /// <returns><c>true</c> when both the expression and alias are equal; otherwise, <c>false</c>.</returns>
-    public bool Equals(SelectTagBase? other)
+    public bool Equals(SelectTag? other)
     {
         if (ReferenceEquals(this, other))
             return true;
@@ -180,7 +206,7 @@ public abstract class SelectTagBase :
     /// Determines whether the specified object represents an equivalent select item.
     /// </summary>
     public override bool Equals(object? obj) =>
-        Equals(obj as SelectTagBase);
+        Equals(obj as SelectTag);
 
     /// <summary>
     /// Returns a hash code based on the projected expression and alias.
@@ -191,7 +217,7 @@ public abstract class SelectTagBase :
     /// <summary>
     /// Determines whether two select items project equivalent expressions with equivalent aliases.
     /// </summary>
-    public static bool operator ==(SelectTagBase? left, SelectTagBase? right)
+    public static bool operator ==(SelectTag? left, SelectTag? right)
     {
         if (ReferenceEquals(left, right))
             return true;
@@ -205,14 +231,8 @@ public abstract class SelectTagBase :
     /// <summary>
     /// Determines whether two select items differ by expression or alias.
     /// </summary>
-    public static bool operator !=(SelectTagBase? left, SelectTagBase? right) =>
+    public static bool operator !=(SelectTag? left, SelectTag? right) =>
         (left == right) == false;
-
-    /// <summary>
-    /// Creates an equivalent select tag without an alias.
-    /// </summary>
-    /// <returns>A copy of this tag without an alias.</returns>
-    public abstract SelectTagBase WithNoAlias();
 
     /// <summary>
     /// Indicates whether this select item matches the supplied <c>GROUP BY</c> clause.
@@ -226,4 +246,10 @@ public abstract class SelectTagBase :
     [Obsolete("No longer needed, useful or recommended.")]
     public bool MatchesGroupBy(GroupBy groupByBase) =>
         groupByBase.SqlExpression.Equals(SqlExpression);
+
+    /// <summary>
+    /// Creates a new <see cref="SelectTag"/> instance with the same column as the current instance but without any alias.
+    /// </summary>
+    public virtual SelectTag WithNoAlias() =>
+        new(SqlExpression);
 }

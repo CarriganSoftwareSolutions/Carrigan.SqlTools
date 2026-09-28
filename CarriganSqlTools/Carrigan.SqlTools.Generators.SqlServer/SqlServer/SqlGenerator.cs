@@ -34,7 +34,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Gets all selectable tags for the model type.
     /// </summary>
     /// <returns>The selectable tags resolved from the model type.</returns>
-    protected override SelectTagsBase GetAllSelectTags() =>
+    protected override SelectTags GetAllSelectTags() =>
         SelectTagGenerator.GetAll<T>();
     
     /// <summary>

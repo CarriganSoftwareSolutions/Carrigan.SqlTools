@@ -52,7 +52,7 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual SqlQuery BaseSelectCount
     (
         bool? distinct,
-        SelectTagBase? select, 
+        SelectTag? select, 
         Joins<T>? joins, 
         Predicates? predicates
     )

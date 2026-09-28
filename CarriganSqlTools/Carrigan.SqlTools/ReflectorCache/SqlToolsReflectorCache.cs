@@ -151,7 +151,7 @@ public class SqlToolsReflectorCache<T>
         HashSet<Type> supportedTypes,
         Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory
     )
-        where selectTagT : SelectTagBase =>
+        where selectTagT : SelectTag =>
             GetColumnInfo(supportedTypes)
                 .Select(column => CreateSelectTag(column, null, selectTagFactory));
 
@@ -361,7 +361,7 @@ public class SqlToolsReflectorCache<T>
         Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory,
         AliasName? aliasName = null
     )
-        where selectTagT : SelectTagBase
+        where selectTagT : SelectTag
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
         ArgumentNullException.ThrowIfNull(supportedTypes, nameof(supportedTypes));
@@ -385,7 +385,7 @@ public class SqlToolsReflectorCache<T>
         Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory,
         params IEnumerable<PropertyName> propertyNames
     )
-        where selectTagT : SelectTagBase
+        where selectTagT : SelectTag
     {
         ArgumentNullException.ThrowIfNull(supportedTypes, nameof(supportedTypes));
         ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));
@@ -402,7 +402,7 @@ public class SqlToolsReflectorCache<T>
     /// This overload exists for attributes that are attached directly to a property and therefore need to
     /// describe projection metadata before a dialect-specific generator is involved.
     /// </remarks>
-    internal static SelectTagBase GetSelectTag(PropertyName propertyName, AliasName? aliasName = null)
+    internal static SelectTag GetSelectTag(PropertyName propertyName, AliasName? aliasName = null)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
@@ -416,7 +416,7 @@ public class SqlToolsReflectorCache<T>
         AliasName? aliasName,
         Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory
     )
-        where selectTagT : SelectTagBase
+        where selectTagT : SelectTag
     {
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));

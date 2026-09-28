@@ -105,10 +105,10 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
     internal readonly AliasTag? SelectAliasTag;
 
     /// <summary>
-    /// The <see cref="Tags.SelectTagBase"/> used to represent this column
+    /// The <see cref="Tags.SelectTag"/> used to represent this column
     /// in SELECT clauses, including alias handling.
     /// </summary>
-    internal readonly SelectTagBase SelectTag;
+    internal readonly SelectTag SelectTag;
 
     /// <summary>
     /// Indicates whether this property is part of the data model’s key definition.

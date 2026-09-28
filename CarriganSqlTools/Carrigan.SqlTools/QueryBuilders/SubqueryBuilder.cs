@@ -22,7 +22,7 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the selected columns or expressions for the subquery.
     /// </summary>
-    public SelectTagsBase? Selects { get; set; }
+    public SelectTags? Selects { get; set; }
 
     /// <summary>
     /// Gets or sets the joins to include in the subquery.
@@ -81,7 +81,7 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// </summary>
     /// <param name="selectTags">The select tags to include in the subquery.</param>
     /// <returns>A new subquery instance with the specified select tags.</returns>
-    public SubqueryBuilderBase<T> WithSelectTags(SelectTagsBase? selectTags) =>
+    public SubqueryBuilderBase<T> WithSelectTags(SelectTags? selectTags) =>
         this with { Selects = selectTags };
 
     /// <summary>

@@ -83,7 +83,7 @@ public class SqlGeneratorSelectCountExamples
     public void SelectCountWithSelectsOnTheJoin()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
-        SelectTagBase selectTag = SelectTagGenerator.Get<Customer>("Id", "CustomerId");
+        SelectTag selectTag = SelectTagGenerator.Get<Customer>("Id", "CustomerId");
 
         ColumnEqualsColumn<Customer, Order> customerIdEquals = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join1 = new(customerIdEquals);

@@ -14,17 +14,17 @@ public class SelectTagTests
     private static SelectTag<SomeTable> New(string columnName, string? aliasName) =>
         new (new PropertyName(columnName), AliasName.New(aliasName));
 
-    private static readonly SelectTagBase a = New("SomeColumn", null);
-    private static readonly SelectTagBase b = New("OtherColumn", null);
-    private static readonly SelectTagBase c = New("SomeColumn", "SomeAlias");
-    private static readonly SelectTagBase d = New("OtherColumn", "SomeAlias");
+    private static readonly SelectTag a = New("SomeColumn", null);
+    private static readonly SelectTag b = New("OtherColumn", null);
+    private static readonly SelectTag c = New("SomeColumn", "SomeAlias");
+    private static readonly SelectTag d = New("OtherColumn", "SomeAlias");
 
     [Theory]
     [InlineData("SomeColumn", null, "[SomeTable].[SomeColumn]", null, "[SomeTable].[SomeColumn]")]
     [InlineData("SomeColumn", "SomeAlias", "[SomeTable].[SomeColumn]", "SomeAlias", "[SomeTable].[SomeColumn] AS [SomeAlias]")]
     public void Constructor(string columnName, string? aliasName, string expectedColumn, string? expectedAlias, string expectedSelect)
     {
-        SelectTagBase selectTag  = New(columnName, aliasName);
+        SelectTag selectTag  = New(columnName, aliasName);
         Assert.Equal(expectedColumn, selectTag.WithNoAlias().ToSql(Dialect));
         if (expectedAlias is null)
             Assert.Null(selectTag.AliasTag);
@@ -39,7 +39,7 @@ public class SelectTagTests
     [InlineData("Name", null, "[TableWithAliases].[Name]")]
     public void GetFromTableWithAliases(string property, string? alias, string expected)
     {
-        SelectTagBase select = SelectTagGenerator.Get<TableWithAliases>(property, alias);
+        SelectTag select = SelectTagGenerator.Get<TableWithAliases>(property, alias);
         Assert.Equal(expected, select.ToSql(Dialect));
     }
 
@@ -56,7 +56,7 @@ public class SelectTagTests
     [InlineData("IdentifierOverrideName", null, "[ColumnIdentifiers].[IdentifierOverride]")]
     public void GetFromColumnIdentifiers(string property, string? alias, string expected)
     {
-        SelectTagBase select = SelectTagGenerator.Get<ColumnIdentifiers>(property, alias);
+        SelectTag select = SelectTagGenerator.Get<ColumnIdentifiers>(property, alias);
         Assert.Equal(expected, select.ToSql(Dialect));
     }
 
@@ -65,7 +65,7 @@ public class SelectTagTests
     [InlineData("Id", null, "[Table].[TableNameSchemaTable].[Id]")]
     public void GetFromTableNameSchema(string property, string? alias, string expected)
     {
-        SelectTagBase select = SelectTagGenerator.Get<TableNameSchema>(property, alias);
+        SelectTag select = SelectTagGenerator.Get<TableNameSchema>(property, alias);
         Assert.Equal(expected, select.ToSql(Dialect));
     }
 
@@ -74,7 +74,7 @@ public class SelectTagTests
     [InlineData("Id", null, "Table.TableNameSchemaTable.Id")]
     public void GetFromTableNameSchema_String(string property, string? alias, string expected)
     {
-        SelectTagBase select = SelectTagGenerator.Get<TableNameSchema>(property, alias);
+        SelectTag select = SelectTagGenerator.Get<TableNameSchema>(property, alias);
         Assert.Equal(expected, select.ToString());
         Assert.Equal(expected, select.ToString());
     }
@@ -84,7 +84,7 @@ public class SelectTagTests
     [InlineData("Id", null, "[Identifier].[IdentifierNameSchemaTable].[Id]")]
     public void GetFromIdentifierNameSchema(string property, string? alias, string expected)
     {
-        SelectTagBase select = SelectTagGenerator.Get<IdentifierNameSchema>(property, alias);
+        SelectTag select = SelectTagGenerator.Get<IdentifierNameSchema>(property, alias);
         Assert.Equal(expected, select.ToSql(Dialect));
     }
 
@@ -93,7 +93,7 @@ public class SelectTagTests
     [InlineData("Id", null, "Identifier.IdentifierNameSchemaTable.Id")]
     public void GetFromIdentifierNameSchema_String(string property, string? alias, string expected)
     {
-        SelectTagBase select = SelectTagGenerator.Get<IdentifierNameSchema>(property, alias);
+        SelectTag select = SelectTagGenerator.Get<IdentifierNameSchema>(property, alias);
         Assert.Equal(expected, select.ToString());
         Assert.Equal(expected, select.ToString());
     }
@@ -289,8 +289,8 @@ public class SelectTagTests
     [InlineData("SomeColumn", "SomeAlias", "[SomeTable].[SomeColumn] AS [SomeAlias]")]
     public void Equality(string columnName, string? aliasName, string expectedSelect)
     {
-        SelectTagBase select = New(columnName, aliasName);
-        SelectTagBase selectAlt = New(columnName, aliasName);
+        SelectTag select = New(columnName, aliasName);
+        SelectTag selectAlt = New(columnName, aliasName);
 
         Assert.Equal(expectedSelect, select.ToSql(Dialect));
         Assert.Equal(expectedSelect, selectAlt.ToSql(Dialect));
@@ -325,11 +325,11 @@ public class SelectTagTests
     [Fact]
     public void Dictionary()
     {
-        SelectTagBase aAlt = New("SomeColumn", null);
-        SelectTagBase bAlt = New("OtherColumn", null);
-        SelectTagBase cAlt = New("SomeColumn", "SomeAlias");
-        SelectTagBase dAlt = New("OtherColumn", "SomeAlias");
-        Dictionary<SelectTagBase, int> dictionary = [];
+        SelectTag aAlt = New("SomeColumn", null);
+        SelectTag bAlt = New("OtherColumn", null);
+        SelectTag cAlt = New("SomeColumn", "SomeAlias");
+        SelectTag dAlt = New("OtherColumn", "SomeAlias");
+        Dictionary<SelectTag, int> dictionary = [];
 
         dictionary[a] = 1;
         dictionary[b] = 2;

@@ -23,7 +23,7 @@ public abstract class SelectTagAttribute : Attribute
     /// <summary>
     /// Gets or initializes the reflected SELECT projection metadata created by the concrete attribute.
     /// </summary>
-    internal SelectTagBase? SelectTag { get; init; }
+    internal SelectTag? SelectTag { get; init; }
 
     /// <summary>
     /// Indicates whether the decorated property's result-column name should be used as the default alias

@@ -18,7 +18,7 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual Subquery<T> BaseSubquery
     (
         bool? distinct,
-        SelectTagsBase? selects,
+        SelectTags? selects,
         Joins<T>? joins,
         Predicates? where,
         GroupBys? groupBys,

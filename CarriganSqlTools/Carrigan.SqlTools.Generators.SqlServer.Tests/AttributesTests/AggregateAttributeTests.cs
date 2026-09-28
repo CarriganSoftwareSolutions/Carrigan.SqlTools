@@ -59,7 +59,7 @@ public sealed class AggregateAttributeTests
     [Fact]
     public void AggregateAttribute_DefaultAlias_UsesDecoratedPropertyMapping()
     {
-        SelectTagBase select = Assert.Single(SelectTagGenerator.GetAll<MappedProjection>());
+        SelectTag select = Assert.Single(SelectTagGenerator.GetAll<MappedProjection>());
 
         Assert.Equal("SUM([AggregateSource].[Amount]) AS [MappedTotal]", select.ToSql(new SqlServerDialect()));
     }

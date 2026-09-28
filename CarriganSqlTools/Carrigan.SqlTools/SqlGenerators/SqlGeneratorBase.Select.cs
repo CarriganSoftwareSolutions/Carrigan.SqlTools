@@ -94,7 +94,7 @@ public abstract partial class SqlGeneratorBase<T>
     (
         bool? distinct,
         Subquery<T>? subQuery,
-        SelectTagsBase? selects,
+        SelectTags? selects,
         Joins<T>? joins,
         Predicates? where,
         GroupBys? groupBys,
@@ -123,7 +123,7 @@ public abstract partial class SqlGeneratorBase<T>
     (
         bool? distinct,
         Subquery<T>? subQuery,
-        SelectTagsBase? selects,
+        SelectTags? selects,
         Joins<T>? joins,
         Predicates? where,
         GroupBys? groupBys,
@@ -140,7 +140,7 @@ public abstract partial class SqlGeneratorBase<T>
         if (selects is not null && selects.Any())
         {
 
-            IEnumerable<(SelectTagBase Select, bool IsAggregate)> aggregateCandidates = selects
+            IEnumerable<(SelectTag Select, bool IsAggregate)> aggregateCandidates = selects
                 .Select(select => (Select: select, IsAggregate: select.IsAggregate()))
                 .Where(candidate => candidate.IsAggregate || candidate.Select.HasColumns());
 

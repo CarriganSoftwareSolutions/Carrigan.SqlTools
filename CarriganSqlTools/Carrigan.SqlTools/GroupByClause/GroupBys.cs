@@ -80,7 +80,7 @@ public class GroupBys
     /// </remarks>
     /// <param name="selectTagBase">The selected expression to validate against the grouping keys.</param>
     /// <returns><c>true</c> when the selected expression is represented by the grouping keys; otherwise, <c>false</c>.</returns>
-    public bool ContainsEquivalent(SelectTagBase selectTagBase)
+    public bool ContainsEquivalent(SelectTag selectTagBase)
     {
         ArgumentNullException.ThrowIfNull(selectTagBase, nameof(selectTagBase));
 

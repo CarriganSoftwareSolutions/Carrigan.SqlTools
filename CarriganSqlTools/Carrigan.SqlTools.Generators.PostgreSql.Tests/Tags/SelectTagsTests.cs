@@ -16,10 +16,10 @@ public class SelectTagsTests
     private static SelectTag<SomeTable> New(string columnName, string? aliasName) =>
         new (new PropertyName(columnName), AliasName.New(aliasName));
 
-    private static readonly SelectTagBase a = New("SomeColumn", null);
-    private static readonly SelectTagBase b = New("OtherColumn", null);
-    private static readonly SelectTagBase c = New("SomeColumn", "SomeAlias");
-    private static readonly SelectTagBase d = New("OtherColumn", "SomeAlias");
+    private static readonly SelectTag a = New("SomeColumn", null);
+    private static readonly SelectTag b = New("OtherColumn", null);
+    private static readonly SelectTag c = New("SomeColumn", "SomeAlias");
+    private static readonly SelectTag d = New("OtherColumn", "SomeAlias");
 
     private static readonly string aExpectedString = "\"SomeTable\".\"SomeColumn\"";
     private static readonly string bExpectedString = "\"SomeTable\".\"OtherColumn\"";
