@@ -1,16 +1,10 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
-/// Provides extension methods for working with collections of SelectTag objects.
+/// Provides dialect-specific convenience methods for extending a single <see cref="SelectTag"/> into a <see cref="SelectTags"/> collection.
 /// </summary>
 public static class SelectTagExtensions
 {

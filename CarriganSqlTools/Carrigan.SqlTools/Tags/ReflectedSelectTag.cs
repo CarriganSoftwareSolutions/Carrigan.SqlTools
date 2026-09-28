@@ -39,7 +39,7 @@ internal sealed class ReflectedSelectTag : SelectTag
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WithNoAlias"/> class.
+    /// Returns this projection without an alias, reusing the current instance when it is already unaliased.
     /// </summary>
     public override SelectTag WithNoAlias() =>
         WithNoAliasProperty is null ? this : WithNoAliasProperty;

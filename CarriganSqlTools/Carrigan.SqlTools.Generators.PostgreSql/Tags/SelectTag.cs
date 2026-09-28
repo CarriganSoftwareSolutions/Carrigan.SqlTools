@@ -1,8 +1,4 @@
-using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Dialects;
-using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -23,8 +19,10 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="aliasName">
     /// An optional alias to use for this projection.
     /// </param>
-    public SelectTag(PropertyName propertyName, AliasName? aliasName = null) : base(GetColumnInfo(propertyName), GetAliasTag(propertyName, aliasName))
-    { }
+    public SelectTag(PropertyName propertyName, AliasName? aliasName = null)
+        : this(SelectTagGenerator.Get<modelT>(propertyName, aliasName))
+    {
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag{modelT}"/> class using the provided property name and optional alias name.
@@ -64,43 +62,13 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     }
 
     /// <summary>
-    /// Retrieves the <see cref="ColumnTag"/> for the specified property name from the reflector cache.
+    /// Initializes a strongly typed select tag from the canonical reflected projection resolved by
+    /// <see cref="SelectTagGenerator"/>.
     /// </summary>
-    /// <param name="propertyName">
-    /// The property/column name to retrieve the <see cref="ColumnTag"/> for, strongly typed to the model class <typeparamref name="modelT"/>.
-    /// </param>
-    /// <returns>
-    ///  The <see cref="ColumnTag"/> corresponding to the specified property name.
-    /// </returns>
-    private static ColumnTag GetColumnInfo(PropertyName propertyName) =>
-        SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName).ColumnTag;
+    /// <param name="selectTag">The resolved projection and alias metadata.</param>
+    private SelectTag(SelectTag selectTag)
+        : base(selectTag.SqlExpression, selectTag.AliasTag)
+    {
+    }
 
-    /// <summary>
-    /// Retrieves the <see cref="AliasTag"/> for the specified property name and optional alias name from the reflector cache.
-    /// </summary>
-    /// <param name="propertyName">
-    /// The property/column name to retrieve the <see cref="AliasTag"/> for, strongly typed to the model class <typeparamref name="modelT"/>.
-    /// </param>
-    /// <param name="aliasName">
-    /// An optional alias name for the projection.
-    /// </param>
-    /// <returns>
-    /// The <see cref="AliasTag"/> corresponding to the specified property name and alias name.
-    /// </returns>
-    private static AliasTag? GetAliasTag(PropertyName propertyName, AliasName? aliasName) =>
-        aliasName is null
-            ? SelectTag<modelT>.GetAliasTagFromColumnInfo(SqlToolsReflectorCache<modelT>.GetColumnsFromProperty(DialectStatics.SupportedTypes, propertyName))
-            : AliasTag.New(aliasName);
-
-    /// <summary>
-    /// Retrieves the <see cref="AliasTag"/> from the provided <see cref="ColumnInfo"/> instance.
-    /// </summary>
-    /// <param name="columnInfo">
-    ///     The <see cref="ColumnInfo"/> instance from which to retrieve the <see cref="AliasTag"/>.
-    /// </param>
-    /// <returns>
-    /// The <see cref="AliasTag"/> corresponding to the specified property name and alias name.
-    /// </returns>
-    private static AliasTag? GetAliasTagFromColumnInfo(ColumnInfo columnInfo) =>
-        columnInfo.SelectTag?.AliasTag ?? AliasTag.New(columnInfo.AliasName);
 }

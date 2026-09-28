@@ -1,16 +1,10 @@
 ﻿using Carrigan.SqlTools.Attributes;
-using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tags;
 
 /// <summary>
-/// Provides extension methods for working with collections of SelectTag objects.
+/// Provides dialect-specific convenience methods for adding model-property projections to <see cref="SelectTags"/> collections.
 /// </summary>
 public static class SelectTagsExtensions
 {
@@ -51,7 +45,7 @@ public static class SelectTagsExtensions
     /// </param>
     /// <param name="propertyNames">The C# property names representing SQL columns or parameters.</param>
     public static SelectTags Concat<T>(this SelectTags selectTags, params IEnumerable<PropertyName> propertyNames) where T : class =>
-        selectTags.Concat(propertyNames.Select(propertyName => new SelectTag<T>(propertyName)));
+        selectTags.Concat(SelectTagGenerator.GetMany<T>(propertyNames));
 
     /// <summary>
     /// Returns a new <see cref="SelectTags"/> containing the current items plus select tags for the specified properties.
