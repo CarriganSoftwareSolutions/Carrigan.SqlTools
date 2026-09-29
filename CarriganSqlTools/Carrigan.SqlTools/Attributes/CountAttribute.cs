@@ -52,7 +52,19 @@ public sealed class CountAttribute<T> : SelectTagAttribute<T>
     /// </param>
     [ExternalOnly]
     public CountAttribute(string propertyName, string? aliasName = null)
-        : this(new PropertyName(propertyName), AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), false, AliasName.New(aliasName))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CountAttribute{T}"/> class.
+    /// </summary>
+    /// <param name="propertyName">The C# property name representing the source column.</param>
+    /// <param name="distinct">Whether duplicate input values are removed before counting.</param>
+    /// <param name="aliasName">The optional SQL result-column alias.</param>
+    [ExternalOnly]
+    public CountAttribute(string propertyName, bool distinct, string? aliasName = null)
+        : this(new PropertyName(propertyName), distinct, AliasName.New(aliasName))
     {
     }
 
@@ -60,10 +72,18 @@ public sealed class CountAttribute<T> : SelectTagAttribute<T>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
     internal CountAttribute(PropertyName propertyName, AliasName? aliasName = null)
+        : this(propertyName, false, aliasName)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance from strongly typed identifier values.
+    /// </summary>
+    internal CountAttribute(PropertyName propertyName, bool distinct, AliasName? aliasName = null)
         : base(propertyName, aliasName)
     {
         AliasTag = AliasTag.New(aliasName);
-        SelectTag = new ReflectedSelectTag(new Count(new ColumnTagExpression(ColumnTag!)), AliasTag);
+        SelectTag = new ReflectedSelectTag(new Count(new ColumnTagExpression(ColumnTag!), distinct), AliasTag);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }
 }

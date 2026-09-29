@@ -29,6 +29,16 @@ public sealed class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
+    public void Select_WithDistinctCount_RendersExpectedSql()
+    {
+        SelectTags selects = new(new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id)), true), "TotalCount"));
+
+        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+
+        Assert.Equal("SELECT COUNT(DISTINCT \"Customer\".\"Id\") AS \"TotalCount\" FROM \"Customer\"", query.QueryText);
+    }
+
+    [Fact]
     public void Select_WithCountStar_AllowsAggregateSelectListWithoutSelectedTableTag()
     {
         SelectTags selects = new(new SelectTag(new Count(), "TotalCount"));

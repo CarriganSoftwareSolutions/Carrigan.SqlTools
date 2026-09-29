@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 
@@ -16,18 +17,32 @@ public abstract class Aggregates : SqlExpression
     private readonly bool Distinct;
 
     /// <summary>
+    /// Initializes a new aggregate expression without <c>DISTINCT</c>.
+    /// </summary>
+    /// <param name="functionName">The aggregate function name.</param>
+    /// <param name="expressions">The expressions supplied to the aggregate function.</param>
+    protected Aggregates(string functionName, params IEnumerable<SqlExpression> expressions)
+        : this(functionName, false, expressions)
+    {
+    }
+
+    /// <summary>
     /// Initializes a new aggregate expression.
     /// </summary>
     /// <param name="functionName">The aggregate function name.</param>
-    /// <param name="distinct"></param>
+    /// <param name="distinct">Whether duplicate input values are removed before aggregation.</param>
+    /// <param name="expressions">The expressions supplied to the aggregate function.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="functionName"/> or <paramref name="expressions"/> is <c>null</c>.
     /// </exception>
-    /// <param name="expressions">The expressions supplied to the aggregate function.</param>
     protected Aggregates(string functionName, bool distinct, params IEnumerable<SqlExpression> expressions)
         : base(expressions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(functionName, nameof(functionName));
+
+        if (distinct && ChildNodes.None())
+            throw new ArgumentException("DISTINCT aggregate expressions require at least one input expression.", nameof(distinct));
+
         FunctionName = functionName;
         Distinct = distinct;
     }
@@ -38,11 +53,13 @@ public abstract class Aggregates : SqlExpression
     protected override bool EqualsCore(SqlExpression other) =>
         other is Aggregates aggregate &&
         string.Equals(FunctionName, aggregate.FunctionName, StringComparison.OrdinalIgnoreCase) &&
+        Distinct == aggregate.Distinct &&
         base.EqualsCore(other);
 
     protected override void AddToHashCode(ref HashCode hashCode)
     {
         hashCode.Add(FunctionName, StringComparer.OrdinalIgnoreCase);
+        hashCode.Add(Distinct);
         base.AddToHashCode(ref hashCode);
     }
 

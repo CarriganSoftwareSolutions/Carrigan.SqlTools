@@ -37,7 +37,7 @@ namespace Carrigan.SqlTools.AggregateLogic;
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT AVG("Grades"."GradePoint") AS "OverallAvgGradePoint" FROM "Grades"
+/// SELECT AVG("Grades"."GradePoint") AS "OverallAverageGradePoint" FROM "Grades"
 /// 
 /// --SqlServer
 /// SELECT AVG([Grades].[GradePoint]) AS [OverallAverageGradePoint] FROM [Grades] 
@@ -75,7 +75,7 @@ namespace Carrigan.SqlTools.AggregateLogic;
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
-/// SELECT AVG(DISTINCT "Grades"."GradePoint") AS "OverallAvgGradePoint" FROM "Grades"
+/// SELECT AVG(DISTINCT "Grades"."GradePoint") AS "OverallAverageGradePoint" FROM "Grades"
 /// 
 /// --SqlServer
 /// SELECT AVG(DISTINCT [Grades].[GradePoint]) AS [OverallAverageGradePoint] FROM [Grades] 

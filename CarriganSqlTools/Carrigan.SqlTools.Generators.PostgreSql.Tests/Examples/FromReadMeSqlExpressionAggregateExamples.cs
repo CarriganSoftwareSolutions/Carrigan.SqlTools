@@ -175,6 +175,32 @@ public class FromReadMeSqlExpressionAggregateExamples
     }
 
     [Fact]
+    public void SelectDistinctGradePointCount()
+    {
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Count(new Column<Grades>(nameof(Grades.GradePoint)), true),
+                    "GradePointCount"
+                )
+            )
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+
+        Assert.Equal
+        (
+            "SELECT COUNT(DISTINCT \"Grades\".\"GradePoint\") AS \"GradePointCount\" FROM \"Grades\"",
+            query.QueryText
+        );
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
+    }
+
+    [Fact]
     public void SelectAllGradeCount()
     {
         SelectBuilder<Grades> selectBuilder = new()

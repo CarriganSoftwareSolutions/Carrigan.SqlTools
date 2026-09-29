@@ -22,7 +22,19 @@ public sealed class MaxAttribute<T> : SelectTagAttribute<T>
     /// </param>
     [ExternalOnly]
     public MaxAttribute(string propertyName, string? aliasName = null)
-        : this(new PropertyName(propertyName), AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), false, AliasName.New(aliasName))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MaxAttribute{T}"/> class.
+    /// </summary>
+    /// <param name="propertyName">The C# property name representing the source column.</param>
+    /// <param name="distinct">Whether duplicate input values are removed before evaluating the maximum.</param>
+    /// <param name="aliasName">The optional SQL result-column alias.</param>
+    [ExternalOnly]
+    public MaxAttribute(string propertyName, bool distinct, string? aliasName = null)
+        : this(new PropertyName(propertyName), distinct, AliasName.New(aliasName))
     {
     }
 
@@ -30,10 +42,18 @@ public sealed class MaxAttribute<T> : SelectTagAttribute<T>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
     internal MaxAttribute(PropertyName propertyName, AliasName? aliasName = null)
+        : this(propertyName, false, aliasName)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance from strongly typed identifier values.
+    /// </summary>
+    internal MaxAttribute(PropertyName propertyName, bool distinct, AliasName? aliasName = null)
         : base(propertyName, aliasName)
     {
         AliasTag = AliasTag.New(aliasName);
-        SelectTag = new ReflectedSelectTag(new Max(new ColumnTagExpression(ColumnTag!)), AliasTag);
+        SelectTag = new ReflectedSelectTag(new Max(new ColumnTagExpression(ColumnTag!), distinct), AliasTag);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }
 }

@@ -648,7 +648,7 @@ GROUP BY
 
 ---
 
-#### Avergae Examples
+#### Average Examples
 
 ```csharp
 SelectBuilder<Grades> selectBuilder = new()
@@ -723,8 +723,8 @@ SelectBuilder<Grades> selectBuilder = new()
     (
         new SelectTag
         (
-            new Average(new Column<Grades>(nameof(Grades.GradePoint)), true),
-            "OverallAverageGradePoint"
+            new Avg(new Column<Grades>(nameof(Grades.GradePoint)), true),
+            "OverallAvgGradePoint"
         )
     )
 };
@@ -733,7 +733,7 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 ```
 
 ```sql
-SELECT AVG(DISTINCT "Grades"."GradePoint") AS "OverallAverageGradePoint" FROM "Grades"
+SELECT AVG(DISTINCT "Grades"."GradePoint") AS "OverallAvgGradePoint" FROM "Grades"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -760,6 +760,26 @@ SqlQuery query = selectBuilder.AsSqlQuery();
 
 ```sql
 SELECT COUNT("Grades"."GradePoint") AS "GradePointCount" FROM "Grades"
+```
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Count(new Column<Grades>(nameof(Grades.GradePoint)), true),
+            "GradePointCount"
+        )
+    )
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT COUNT(DISTINCT "Grades"."GradePoint") AS "GradePointCount" FROM "Grades"
 ```
 
 ```csharp
@@ -805,7 +825,7 @@ SELECT COUNT(*) AS "GradeRecordCount" FROM "Grades"
 ```
 
 ```sql
-SELECT MAX([Grades].[GradePoint]) AS [MaximumGradePoint] FROM [Grades]
+SELECT MAX("Grades"."GradePoint") AS "MaximumGradePoint" FROM "Grades"
 ```
 
 ```csharp
@@ -897,7 +917,7 @@ SELECT MIN(DISTINCT "Grades"."GradePoint") AS "MinimumGradePoint" FROM "Grades"
 ```
 
 ```sql
-SELECT SUM([Grades].[GradePoint]) AS [TotalGradePoints] FROM [Grades]
+SELECT SUM("Grades"."GradePoint") AS "TotalGradePoints" FROM "Grades"
 ```
 
 ```csharp

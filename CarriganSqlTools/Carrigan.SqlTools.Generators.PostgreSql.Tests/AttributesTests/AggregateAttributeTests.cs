@@ -37,6 +37,24 @@ public sealed class AggregateAttributeTests
         Assert.Empty(selects.GetTableTags());
     }
 
+    [Fact]
+    public void Select_RendersDistinctAggregateAttributes()
+    {
+        SqlGenerator<AggregateSource> generator = new();
+        SelectTags selects = SelectTagGenerator.GetAll<DistinctAggregateProjection>();
+
+        SqlQuery query = generator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+
+        Assert.Equal(
+            "SELECT AVG(DISTINCT \"AggregateSource\".\"Amount\") AS \"AverageAmount\", " +
+            "COUNT(DISTINCT \"AggregateSource\".\"Id\") AS \"CountedIds\", " +
+            "MAX(DISTINCT \"AggregateSource\".\"Amount\") AS \"MaximumAmount\", " +
+            "MIN(DISTINCT \"AggregateSource\".\"Amount\") AS \"MinimumAmount\", " +
+            "SUM(DISTINCT \"AggregateSource\".\"Amount\") AS \"TotalAmount\" " +
+            "FROM \"AggregateSource\"",
+            query.QueryText);
+    }
+
     private sealed class AggregateSource
     {
         public int Id { get; set; }
@@ -67,5 +85,23 @@ public sealed class AggregateAttributeTests
     {
         [Count]
         public long TotalCount { get; set; }
+    }
+
+    private sealed class DistinctAggregateProjection
+    {
+        [Average<AggregateSource>(nameof(AggregateSource.Amount), true)]
+        public decimal AverageAmount { get; set; }
+
+        [Count<AggregateSource>(nameof(AggregateSource.Id), true)]
+        public long CountedIds { get; set; }
+
+        [Max<AggregateSource>(nameof(AggregateSource.Amount), true)]
+        public decimal MaximumAmount { get; set; }
+
+        [Min<AggregateSource>(nameof(AggregateSource.Amount), true)]
+        public decimal MinimumAmount { get; set; }
+
+        [Sum<AggregateSource>(nameof(AggregateSource.Amount), true)]
+        public decimal TotalAmount { get; set; }
     }
 }

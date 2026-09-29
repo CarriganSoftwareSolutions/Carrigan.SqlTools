@@ -18,7 +18,7 @@ namespace Carrigan.SqlTools.AggregateLogic;
 /// using Carrigan.SqlTools.PostgreSql;
 /// using Carrigan.SqlTools.SqlGenerators;
 /// using Carrigan.SqlTools.Tags;
-/// 
+///
 /// SelectBuilder<Grades> selectBuilder = new()
 /// {
 ///     Selects = new SelectTags
@@ -26,21 +26,21 @@ namespace Carrigan.SqlTools.AggregateLogic;
 ///         new SelectTag
 ///         (
 ///             new Avg(new Column<Grades>(nameof(Grades.GradePoint))),
-///             "OverallAverageGradePoint"
+///             "OverallAvgGradePoint"
 ///         )
 ///     )
 /// };
-/// 
+///
 /// SqlQuery query = selectBuilder.AsSqlQuery();
-/// 
+///
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
 /// SELECT AVG("Grades"."GradePoint") AS "OverallAvgGradePoint" FROM "Grades"
-/// 
+///
 /// --SqlServer
-/// SELECT AVG([Grades].[GradePoint]) AS [OverallAverageGradePoint] FROM [Grades] 
+/// SELECT AVG([Grades].[GradePoint]) AS [OverallAvgGradePoint] FROM [Grades]
 /// ]]></code>
 /// </example>
 /// <example>
@@ -56,7 +56,7 @@ namespace Carrigan.SqlTools.AggregateLogic;
 /// using Carrigan.SqlTools.PostgreSql;
 /// using Carrigan.SqlTools.SqlGenerators;
 /// using Carrigan.SqlTools.Tags;
-/// 
+///
 /// SelectBuilder<Grades> selectBuilder = new()
 /// {
 ///     Selects = new SelectTags
@@ -64,21 +64,21 @@ namespace Carrigan.SqlTools.AggregateLogic;
 ///         new SelectTag
 ///         (
 ///             new Avg(new Column<Grades>(nameof(Grades.GradePoint)), true),
-///             "OverallAverageGradePoint"
+///             "OverallAvgGradePoint"
 ///         )
 ///     )
 /// };
-/// 
+///
 /// SqlQuery query = selectBuilder.AsSqlQuery();
-/// 
+///
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
 /// SELECT AVG(DISTINCT "Grades"."GradePoint") AS "OverallAvgGradePoint" FROM "Grades"
-/// 
+///
 /// --SqlServer
-/// SELECT AVG(DISTINCT [Grades].[GradePoint]) AS [OverallAverageGradePoint] FROM [Grades] 
+/// SELECT AVG(DISTINCT [Grades].[GradePoint]) AS [OverallAvgGradePoint] FROM [Grades]
 /// ]]></code>
 /// </example>
 public class Avg : Aggregates

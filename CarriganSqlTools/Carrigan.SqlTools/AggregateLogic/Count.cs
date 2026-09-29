@@ -45,6 +45,34 @@ namespace Carrigan.SqlTools.AggregateLogic;
 /// </example>
 /// <example>
 /// <para>
+/// Using DISTINCT values
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// SelectBuilder<Grades> selectBuilder = new()
+/// {
+///     Selects = new SelectTags
+///     (
+///         new SelectTag
+///         (
+///             new Count(new Column<Grades>(nameof(Grades.GradePoint)), true),
+///             "GradePointCount"
+///         )
+///     )
+/// };
+///
+/// SqlQuery query = selectBuilder.AsSqlQuery();
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// --PostgreSql
+/// SELECT COUNT(DISTINCT "Grades"."GradePoint") AS "GradePointCount" FROM "Grades"
+///
+/// --SqlServer
+/// SELECT COUNT(DISTINCT [Grades].[GradePoint]) AS [GradePointCount] FROM [Grades]
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>
 /// Using Column Attribute
 /// </para>
 /// <code language="csharp"><![CDATA[
@@ -93,7 +121,8 @@ public sealed class Count : Aggregates
     /// Initializes a <c>COUNT(expression)</c> expression.
     /// </summary>
     /// <param name="expression">The expression to count.</param>
-    public Count(SqlExpression expression) : base("COUNT", false, expression)
+    /// <param name="distinct">Indicates whether to count distinct values.</param>
+    public Count(SqlExpression expression, bool distinct = false) : base("COUNT", distinct, expression)
     {
     }
 }
