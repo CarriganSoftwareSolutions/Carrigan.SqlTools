@@ -341,10 +341,10 @@ public class LikeTests
 
     [Fact]
     public void Like_LeftNull_Throws() =>
-    Assert.Throws<NullReferenceException>(() => new Like(null!, new Parameter(1, "P1")));
+    Assert.Throws<ArgumentNullException>(() => new Like(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void Like_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new Like(new Parameter(1, "P1"), null!));
+        Assert.Throws<ArgumentNullException>(() => new Like(new Parameter(1, "P1"), null!));
 
 }

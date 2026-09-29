@@ -296,10 +296,10 @@ public class EqualsTests
 
     [Fact]
     public void Equal_LeftNull_Throws() =>
-    Assert.Throws<NullReferenceException>(() => new Equal(null!, new Parameter(1, "P1")));
+    Assert.Throws<ArgumentNullException>(() => new Equal(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void Equal_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new Equal(new Parameter(1, "P1"), null!));
+        Assert.Throws<ArgumentNullException>(() => new Equal(new Parameter(1, "P1"), null!));
 
 }

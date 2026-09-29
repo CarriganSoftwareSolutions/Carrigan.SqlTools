@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.7" />
-    <PackageReference Include="coverlet.MTP" Version="10.0.1" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.8-alpha.202609290922" />
+    <PackageReference Include="coverlet.MTP" Version="10.1.0" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
     <PackageReference Include="Respawn" Version="7.0.0" />
     <PackageReference Include="xunit.v3" Version="4.0.1" />

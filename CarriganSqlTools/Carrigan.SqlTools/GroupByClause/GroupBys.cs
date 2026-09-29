@@ -46,7 +46,7 @@ public class GroupBys
     {
         ArgumentNullException.ThrowIfNull(groupByItems, nameof(groupByItems));
 
-        GroupByItems = groupByItems.Materialize(NullOptionsEnum.Exception);
+        GroupByItems = groupByItems.Materialize(NullOptionsEnum.ArgumentNullException);
     }
 
     /// <summary>

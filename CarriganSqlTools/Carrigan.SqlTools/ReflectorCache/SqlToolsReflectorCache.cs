@@ -179,7 +179,7 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<ColumnInfo> GetColumnsFromProperties(HashSet<Type> supportedTypes, params IEnumerable<PropertyName> propertyNames)
     {
         ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
-        IEnumerable<PropertyName> keys = propertyNames.Materialize(NullOptionsEnum.Exception);
+        IEnumerable<PropertyName> keys = propertyNames.Materialize(NullOptionsEnum.ArgumentNullException);
 
         InvalidPropertyException<T>? invalidPropertyException = _ColumnInfoCache.GetExceptionForInvalidProperties(supportedTypes, keys);
         if (invalidPropertyException is not null)
@@ -287,7 +287,7 @@ public class SqlToolsReflectorCache<T>
         IEnumerable<PropertyInfo> readableProperties =
             ReflectorCache<T>
                 .ReadablePublicInstanceProperties
-                .Materialize(NullOptionsEnum.Exception)
+                .Materialize(NullOptionsEnum.NullReferenceException)
                 .Where(propertyInfo => DialectBaseStatics.SupportedTypes.Contains(propertyInfo.PropertyType));
 
         IEnumerable<PropertyInfo> properties =
@@ -295,12 +295,12 @@ public class SqlToolsReflectorCache<T>
                 .Where(property =>
                     property.GetCustomAttribute<NotMappedAttribute>() is null
                     && property.PropertyType != typeof(object)) // filters out SqlDbType.Variant
-                .Materialize(NullOptionsEnum.Exception);
+                .Materialize(NullOptionsEnum.NullReferenceException);
 
         IEnumerable<PropertyInfo> primaryKeys =
             readableProperties
                 .Where(property => property.GetCustomAttribute<PrimaryKeyAttribute>() is not null)
-                .Materialize(NullOptionsEnum.Exception);
+                .Materialize(NullOptionsEnum.NullReferenceException);
 
         IEnumerable<PropertyInfo> keys;
 
@@ -308,7 +308,7 @@ public class SqlToolsReflectorCache<T>
             keys =
                 readableProperties
                     .Where(property => property.GetCustomAttribute<KeyAttribute>() is not null)
-                    .Materialize(NullOptionsEnum.Exception);
+                    .Materialize(NullOptionsEnum.NullReferenceException);
         else
             keys = primaryKeys;
 
@@ -326,7 +326,7 @@ public class SqlToolsReflectorCache<T>
             _ColumnInfoCache
                 .Values
                 .Where(column => column.IsKeyPart)
-                .Materialize(NullOptionsEnum.Exception);
+                .Materialize(NullOptionsEnum.NullReferenceException);
 
         HasKeyProperty = KeyColumnInfo.Any();
 
@@ -334,7 +334,7 @@ public class SqlToolsReflectorCache<T>
             _ColumnInfoCache
                 .Values
                 .Where(column => column.IsKeyVersionProperty)
-                .Materialize(NullOptionsEnum.Exception);
+                .Materialize(NullOptionsEnum.NullReferenceException);
 
         _EncryptedColumnInfoHashSet =
         [

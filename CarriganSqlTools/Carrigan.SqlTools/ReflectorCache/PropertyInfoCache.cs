@@ -48,7 +48,7 @@ internal class PropertyInfoCache<typeT>
     {
         ArgumentNullException.ThrowIfNull(data, nameof(data));
 
-        IEnumerable<Tuple<ResultColumnName, PropertyInfo>> materialized = data.Materialize(NullOptionsEnum.Exception);
+        IEnumerable<Tuple<ResultColumnName, PropertyInfo>> materialized = data.Materialize(NullOptionsEnum.NullReferenceException);
 
         Dictionary<ResultColumnName, PropertyInfo> cache = [];
         foreach (Tuple<ResultColumnName, PropertyInfo> tuple in materialized)
@@ -111,7 +111,7 @@ internal class PropertyInfoCache<typeT>
     internal IEnumerable<PropertyInfo> GetMany(params IEnumerable<ResultColumnName> resultColumnNameKeys)
     {
         ArgumentNullException.ThrowIfNull(resultColumnNameKeys, nameof(resultColumnNameKeys));
-        IEnumerable<ResultColumnName> keys = resultColumnNameKeys.Materialize(NullOptionsEnum.Exception);
+        IEnumerable<ResultColumnName> keys = resultColumnNameKeys.Materialize(NullOptionsEnum.ArgumentNullException);
 
         IEnumerable<ResultColumnName> invalids = keys.Where(key => _cache.ContainsKey(key) is false);
 
@@ -144,7 +144,7 @@ internal class PropertyInfoCache<typeT>
     internal InvalidResultColumnNameException<typeT>? GetExceptionForInvalidProperties(params IEnumerable<ResultColumnName> resultColumnNames)
     {
         ArgumentNullException.ThrowIfNull(resultColumnNames, nameof(resultColumnNames));
-        IEnumerable<ResultColumnName> keys = resultColumnNames.Materialize(NullOptionsEnum.Exception);
+        IEnumerable<ResultColumnName> keys = resultColumnNames.Materialize(NullOptionsEnum.ArgumentNullException);
 
         IEnumerable<ResultColumnName> invalidResultColumnNames =
             keys.Where(key => _cache.ContainsKey(key) is false);

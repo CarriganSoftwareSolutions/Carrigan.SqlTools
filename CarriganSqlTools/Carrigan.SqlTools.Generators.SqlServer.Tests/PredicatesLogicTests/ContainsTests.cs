@@ -28,7 +28,7 @@ public class ContainsTests
 
     [Fact]
     public void Contains_NullParameter_ThrowsNullReferenceException() =>
-        Assert.Throws<NullReferenceException>(() =>
+        Assert.Throws<ArgumentNullException>(() =>
             new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), null!));
 
 }

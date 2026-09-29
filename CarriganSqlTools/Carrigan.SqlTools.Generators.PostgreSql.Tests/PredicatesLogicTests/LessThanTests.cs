@@ -304,10 +304,10 @@ public class LessThanTests
 
     [Fact]
     public void LessThan_LeftNull_Throws() =>
-    Assert.Throws<NullReferenceException>(() => new LessThan(null!, new Parameter(1, "P1")));
+    Assert.Throws<ArgumentNullException>(() => new LessThan(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void LessThan_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new LessThan(new Parameter(1, "P1"), null!));
+        Assert.Throws<ArgumentNullException>(() => new LessThan(new Parameter(1, "P1"), null!));
 
 }

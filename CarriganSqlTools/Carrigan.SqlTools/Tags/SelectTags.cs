@@ -24,7 +24,7 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// </summary>
     /// <param name="selectTags">The select tags to include in this instance.</param>
     public SelectTags(params IEnumerable<SelectTag> selectTags) =>
-        _selectTags = selectTags.Materialize(NullOptionsEnum.Exception);
+        _selectTags = selectTags.Materialize(NullOptionsEnum.ArgumentNullException);
 
     /// <summary>
     /// Indicates whether this instance contains any select tags.

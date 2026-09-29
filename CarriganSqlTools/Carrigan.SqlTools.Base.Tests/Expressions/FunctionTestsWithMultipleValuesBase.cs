@@ -50,7 +50,7 @@ public abstract class FunctionTestsWithMultipleValuesBase
             null!
         ];
 
-        Assert.Throws<NullReferenceException>(() => New(values));
+        Assert.Throws<ArgumentNullException>(() => New(values));
     }
 
     [Fact]

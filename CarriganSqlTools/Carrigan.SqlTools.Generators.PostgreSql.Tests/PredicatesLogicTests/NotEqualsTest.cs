@@ -303,10 +303,10 @@ public class NotEqualsTests
 
     [Fact]
     public void NotEqual_LeftNull_Throws() =>
-    Assert.Throws<NullReferenceException>(() => new NotEqual(null!, new Parameter(1, "P1")));
+    Assert.Throws<ArgumentNullException>(() => new NotEqual(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void NotEqual_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new NotEqual(new Parameter(1, "P1"), null!));
+        Assert.Throws<ArgumentNullException>(() => new NotEqual(new Parameter(1, "P1"), null!));
 
 }

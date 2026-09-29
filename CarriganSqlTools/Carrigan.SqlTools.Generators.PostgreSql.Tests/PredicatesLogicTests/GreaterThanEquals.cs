@@ -305,10 +305,10 @@ public class GreaterThanEqualsTests
 
     [Fact]
     public void GreaterThanEqual_LeftNull_Throws() =>
-    Assert.Throws<NullReferenceException>(() => new GreaterThanEqual(null!, new Parameter(1, "P1")));
+    Assert.Throws<ArgumentNullException>(() => new GreaterThanEqual(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void GreaterThanEqual_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new GreaterThanEqual(new Parameter(1, "P1"), null!));
+        Assert.Throws<ArgumentNullException>(() => new GreaterThanEqual(new Parameter(1, "P1"), null!));
 
 }

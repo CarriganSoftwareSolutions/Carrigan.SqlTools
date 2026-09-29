@@ -34,7 +34,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     {
         ArgumentNullException.ThrowIfNull(childExpressions, nameof(childExpressions));
 
-        ChildNodes = childExpressions.Materialize(NullOptionsEnum.Exception);
+        ChildNodes = childExpressions.Materialize(NullOptionsEnum.ArgumentNullException);
     }
 
     /// <summary>
@@ -373,6 +373,30 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     {
         ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
         return sqlExpression;
+    }
+
+    /// <summary>
+    /// Validates that the provided SQL expressions are not null and not empty.
+    /// </summary>
+    /// <param name="sqlExpressions">
+    /// The SQL expressions to validate.
+    /// </param>
+    /// <returns>
+    /// A materialized sequence containing the validated expressions.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="sqlExpressions"/> is empty.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="sqlExpressions"/> is empty.
+    /// </exception>
+    protected static IEnumerable<SqlExpression> ValidateValues(params IEnumerable<SqlExpression> sqlExpressions)
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpressions, nameof(sqlExpressions));
+        if (sqlExpressions.IsNullOrEmpty())
+            throw new ArgumentException($"The argument {nameof(sqlExpressions)} is empty.");
+
+        return sqlExpressions.Materialize(NullOptionsEnum.ArgumentNullException);
     }
 
     /// <summary>

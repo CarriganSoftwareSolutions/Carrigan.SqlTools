@@ -303,9 +303,9 @@ public class GreaterThanTests
 
     [Fact]
     public void GreaterThan_LeftNull_Throws() =>
-    Assert.Throws<NullReferenceException>(() => new GreaterThan(null!, new Parameter(1, "P1")));
+    Assert.Throws<ArgumentNullException>(() => new GreaterThan(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void GreaterThan_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new GreaterThan(new Parameter(1, "P1"), null!));
+        Assert.Throws<ArgumentNullException>(() => new GreaterThan(new Parameter(1, "P1"), null!));
 }

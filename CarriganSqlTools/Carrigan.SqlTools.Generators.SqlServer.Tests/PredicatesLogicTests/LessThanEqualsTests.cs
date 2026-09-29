@@ -306,10 +306,10 @@ public class LessThanEqualsTests
 
     [Fact]
     public void LessThanEqual_LeftNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new LessThanEqual(null!, new Parameter(1, "P1")));
+        Assert.Throws<ArgumentNullException>(() => new LessThanEqual(null!, new Parameter(1, "P1")));
 
     [Fact]
     public void LessThanEqual_RightNull_Throws() =>
-        Assert.Throws<NullReferenceException>(() => new LessThanEqual(new Parameter(1, "P1"), null!));
+        Assert.Throws<ArgumentNullException>(() => new LessThanEqual(new Parameter(1, "P1"), null!));
 
 }
