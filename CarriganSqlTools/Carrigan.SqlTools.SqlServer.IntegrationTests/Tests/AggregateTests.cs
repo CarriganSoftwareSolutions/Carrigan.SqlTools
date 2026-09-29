@@ -34,8 +34,6 @@ public class AggregateTests : IClassFixture<AggregateFixture>
             SelectTagGenerator.Get<Customer>(nameof(Customer.Gender)),
             SelectTagGenerator.Get<Book>(nameof(Book.Title)),
 
-            //TODO: SelectTags for Aggregate expressions will throw an exception if no alias is provided, this needs bullet proofing.
-
             new SelectTag(new Avg(new Cast(new Column<Customer>(nameof(Customer.Age)), SqlServerTypesProvider.AsDecimal())), "Average"),
 
             new SelectTag(new Max(new Column<Customer>(nameof(Customer.Age))), "Max"),

@@ -43,13 +43,52 @@ namespace Carrigan.SqlTools.AggregateLogic;
 /// 
 /// ]]></code>
 /// </example>
+/// <example>
+/// <para>
+/// Using Column Attribute
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.AggregateLogic;
+/// using Carrigan.SqlTools.Base.Tests.Helpers;
+/// using Carrigan.SqlTools.Base.Tests.TestEntities;
+/// using Carrigan.SqlTools.Expressions;
+/// using Carrigan.SqlTools.GroupByClause;
+/// using Carrigan.SqlTools.PostgreSql;
+/// using Carrigan.SqlTools.SqlGenerators;
+/// using Carrigan.SqlTools.Tags;
+///
+/// SelectBuilder<Grades> selectBuilder = new()
+/// {
+///     Selects = new SelectTags
+///     (
+///         new SelectTag
+///         (
+///             new Sum(new Column<Grades>(nameof(Grades.GradePoint)), true),
+///             "TotalGradePoints"
+///         )
+///     )
+/// };
+/// 
+/// SqlQuery query = selectBuilder.AsSqlQuery();
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// --PostgreSql
+/// SELECT SUM(DISTINCT "Grades"."GradePoint") AS "TotalGradePoints" FROM "Grades"
+/// 
+/// --SqlServer
+/// SELECT SUM(DISTINCT [Grades].[GradePoint]) AS [TotalGradePoints] FROM [Grades]
+/// 
+/// ]]></code>
+/// </example>
 public sealed class Sum : Aggregates
 {
     /// <summary>
     /// Initializes a <c>SUM(expression)</c> expression.
     /// </summary>
     /// <param name="expression">The expression to sum.</param>
-    public Sum(SqlExpression expression) : base("SUM", expression)
+    /// <param name="distinct">Indicates whether to count distinct values.</param>
+    public Sum(SqlExpression expression, bool distinct = false) : base("SUM", distinct, expression)
     {
     }
 }

@@ -39,9 +39,15 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Delete with Using and Where](#delete-with-using-and-where)
   - [Select Count With Where](#select-count-with-where)
   - [Update with From and Where](#update-with-from-and-where)
-  - [Aggregate Expression Examples](#aggregate-expression-examples)
   - [Having Examples](#having-examples)
 - [SqlExpression Examples](#sqlexpression-examples)
+  - [Aggregate Expression Examples](#aggregate-expression-examples)
+    - [Average Examples](#avergae-examples)
+    - [Avg Examples](#avg-examples)
+    - [Count Examples](#count-examples)
+    - [Max Examples](#max-examples)
+    - [Min Examples](#min-examples)
+    - [Sum Examples](#sum-examples)
   - [Conversion Operations](#conversion-operations)
     - [Cast Example](#cast-example)
   - [Date Time Operations](#date-time-operations)
@@ -555,50 +561,6 @@ WHERE (("Order"."CustomerId" = "Customer"."Id")
 
 [Table of Contents](#table-of-contents)
 
-### Aggregate Expression Examples
-
-```csharp
-Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
-
-SelectBuilder<Grades> selectBuilder = new()
-{
-    Selects = new SelectTags
-    (
-        SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
-        SelectTagGenerator.Get<Grades>(nameof(Grades.CourseCode)),
-        new SelectTag(new Average(gradePoint), "AverageGradePoint"),
-        new SelectTag(new Sum(gradePoint), "TotalGradePoints"),
-        new SelectTag(new Min(gradePoint), "MinimumGradePoint"),
-        new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
-        new SelectTag(new Count(gradePoint), "GradePointCount")
-    ),
-    GroupBys = GroupBys
-        .New<Grades>(nameof(Grades.StudentId))
-        .Append<Grades>(nameof(Grades.CourseCode))
-};
-
-SqlQuery query = selectBuilder.AsSqlQuery();
-```
-
-```sql
-SELECT 
-    "Grades"."StudentId", 
-    "Grades"."CourseCode", 
-    AVG("Grades"."GradePoint") AS "AverageGradePoint", 
-    SUM("Grades"."GradePoint") AS "TotalGradePoints",
-    MIN("Grades"."GradePoint") AS "MinimumGradePoint", 
-    MAX("Grades"."GradePoint") AS "MaximumGradePoint", 
-    COUNT("Grades"."GradePoint") AS "GradePointCount" 
-FROM "Grades" 
-GROUP BY 
-    "Grades"."StudentId",
-    "Grades"."CourseCode"
-```
-
-[Table of Contents](#table-of-contents)
-
----
-
 ## Having Examples
 
 ```csharp
@@ -644,6 +606,323 @@ HAVING (AVG("Grades"."GradePoint") > $1)
 ---
 
 ## SqlExpression Examples
+
+### Aggregate Expression Examples
+
+```csharp
+Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+        SelectTagGenerator.Get<Grades>(nameof(Grades.CourseCode)),
+        new SelectTag(new Average(gradePoint), "AverageGradePoint"),
+        new SelectTag(new Sum(gradePoint), "TotalGradePoints"),
+        new SelectTag(new Min(gradePoint), "MinimumGradePoint"),
+        new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
+        new SelectTag(new Count(gradePoint), "GradePointCount")
+    ),
+    GroupBys = new GroupBys<Grades>(nameof(Grades.StudentId))
+        .Append<Grades>(nameof(Grades.CourseCode))
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT 
+    "Grades"."StudentId", 
+    "Grades"."CourseCode", 
+    AVG("Grades"."GradePoint") AS "AverageGradePoint", 
+    SUM("Grades"."GradePoint") AS "TotalGradePoints",
+    MIN("Grades"."GradePoint") AS "MinimumGradePoint", 
+    MAX("Grades"."GradePoint") AS "MaximumGradePoint", 
+    COUNT("Grades"."GradePoint") AS "GradePointCount" 
+FROM "Grades" 
+GROUP BY 
+    "Grades"."StudentId",
+    "Grades"."CourseCode"
+```
+
+---
+
+#### Avergae Examples
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Average(new Column<Grades>(nameof(Grades.GradePoint))),
+            "OverallAverageGradePoint"
+        )
+    )
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT AVG("Grades"."GradePoint") AS "OverallAverageGradePoint" FROM "Grades"
+```
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Average(new Column<Grades>(nameof(Grades.GradePoint)), true),
+            "OverallAverageGradePoint"
+        )
+    )
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT AVG(DISTINCT "Grades"."GradePoint") AS "OverallAverageGradePoint" FROM "Grades"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Avg Examples
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Avg(new Column<Grades>(nameof(Grades.GradePoint))),
+            "OverallAvgGradePoint"
+        )
+    )
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT AVG("Grades"."GradePoint") AS "OverallAvgGradePoint" FROM "Grades"
+```
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Average(new Column<Grades>(nameof(Grades.GradePoint)), true),
+            "OverallAverageGradePoint"
+        )
+    )
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT AVG(DISTINCT "Grades"."GradePoint") AS "OverallAverageGradePoint" FROM "Grades"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Count Examples
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Count(new Column<Grades>(nameof(Grades.GradePoint))),
+            "GradePointCount"
+        )
+    )
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT COUNT("Grades"."GradePoint") AS "GradePointCount" FROM "Grades"
+```
+
+```csharp
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        new SelectTag
+        (
+            new Count(),
+            "GradeRecordCount"
+        )
+    )
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT COUNT(*) AS "GradeRecordCount" FROM "Grades"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Max Examples
+
+```csharp
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Max(new Column<Grades>(nameof(Grades.GradePoint))),
+                    "MaximumGradePoint"
+                )
+            )
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT MAX([Grades].[GradePoint]) AS [MaximumGradePoint] FROM [Grades]
+```
+
+```csharp
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Max(new Column<Grades>(nameof(Grades.GradePoint)), true),
+                    "MaximumGradePoint"
+                )
+            )
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT MAX(DISTINCT "Grades"."GradePoint") AS "MaximumGradePoint" FROM "Grades"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Min Examples
+
+```csharp
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Min(new Column<Grades>(nameof(Grades.GradePoint))),
+                    "MinimumGradePoint"
+                )
+            )
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT MIN("Grades"."GradePoint") AS "MinimumGradePoint" FROM "Grades"
+```
+
+```csharp
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Min(new Column<Grades>(nameof(Grades.GradePoint)), true),
+                    "MinimumGradePoint"
+                )
+            )
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT MIN(DISTINCT "Grades"."GradePoint") AS "MinimumGradePoint" FROM "Grades"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Sum Examples
+
+```csharp
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Sum(new Column<Grades>(nameof(Grades.GradePoint))),
+                    "TotalGradePoints"
+                )
+            )
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT SUM([Grades].[GradePoint]) AS [TotalGradePoints] FROM [Grades]
+```
+
+```csharp
+        SelectBuilder<Grades> selectBuilder = new()
+        {
+            Selects = new SelectTags
+            (
+                new SelectTag
+                (
+                    new Sum(new Column<Grades>(nameof(Grades.GradePoint)), true),
+                    "TotalGradePoints"
+                )
+            )
+        };
+
+        SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT SUM(DISTINCT "Grades"."GradePoint") AS "TotalGradePoints" FROM "Grades"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
 
 ### Conversion Operations
 

@@ -85,7 +85,7 @@ public sealed class Count : Aggregates
     /// <summary>
     /// Initializes a <c>COUNT(*)</c> expression.
     /// </summary>
-    public Count() : base("COUNT")
+    public Count() : base("COUNT", false)
     {
     }
 
@@ -93,7 +93,7 @@ public sealed class Count : Aggregates
     /// Initializes a <c>COUNT(expression)</c> expression.
     /// </summary>
     /// <param name="expression">The expression to count.</param>
-    public Count(SqlExpression expression) : base("COUNT", expression)
+    public Count(SqlExpression expression) : base("COUNT", false, expression)
     {
     }
 }

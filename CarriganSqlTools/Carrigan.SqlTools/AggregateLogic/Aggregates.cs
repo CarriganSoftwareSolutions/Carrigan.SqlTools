@@ -13,20 +13,23 @@ public abstract class Aggregates : SqlExpression
     /// The aggregate function name to render.
     /// </summary>
     protected readonly string FunctionName;
+    private readonly bool Distinct;
 
     /// <summary>
     /// Initializes a new aggregate expression.
     /// </summary>
     /// <param name="functionName">The aggregate function name.</param>
-    /// <param name="expressions">The expressions supplied to the aggregate function.</param>
+    /// <param name="distinct"></param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="functionName"/> or <paramref name="expressions"/> is <c>null</c>.
     /// </exception>
-    protected Aggregates(string functionName, params IEnumerable<SqlExpression> expressions)
+    /// <param name="expressions">The expressions supplied to the aggregate function.</param>
+    protected Aggregates(string functionName, bool distinct, params IEnumerable<SqlExpression> expressions)
         : base(expressions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(functionName, nameof(functionName));
         FunctionName = functionName;
+        Distinct = distinct;
     }
 
     protected override object EqualityContract =>
@@ -59,6 +62,8 @@ public abstract class Aggregates : SqlExpression
 
         if (ChildNodes.Any())
         {
+            if (Distinct)
+                yield return new SqlFragmentText("DISTINCT ");
             bool isFirstExpression = true;
 
             foreach (SqlExpression expression in ChildNodes)
