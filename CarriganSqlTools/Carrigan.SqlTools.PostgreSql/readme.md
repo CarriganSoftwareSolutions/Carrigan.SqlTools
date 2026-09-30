@@ -1073,7 +1073,6 @@ SELECT MAKE_INTERVAL(days => $1) AS "Value" FROM "Customer"
 
 [Table of Contents](#table-of-contents)
 
-
 ### Math Operations
 
 #### Abs Example
@@ -1527,7 +1526,6 @@ SELECT STRPOS("Customer"."Name", $1) AS "Value" FROM "Customer"
 [Table of Contents](#table-of-contents)
 
 ---
-
 
 #### Left Example
 
