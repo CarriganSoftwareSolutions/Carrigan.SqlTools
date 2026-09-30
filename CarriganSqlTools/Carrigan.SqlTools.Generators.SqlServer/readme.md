@@ -44,7 +44,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Having Examples](#having-examples)
 - [SqlExpression Examples](#sqlexpression-examples)
   - [Aggregate Expression Examples](#aggregate-expression-examples)
-    - [Average Examples](#avergae-examples)
+    - [Average Examples](#average-examples)
     - [Avg Examples](#avg-examples)
     - [Count Examples](#count-examples)
     - [Max Examples](#max-examples)
