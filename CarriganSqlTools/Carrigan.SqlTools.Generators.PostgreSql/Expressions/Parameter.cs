@@ -64,26 +64,4 @@ public class Parameter<modelT> : Parameter where modelT : class
     public Parameter(string propertyName, object? value) : this(new PropertyName(propertyName), value)
     {
     }
-
-    /// <summary>
-    /// Initializes a new instance of <see cref="Parameter"/> from an existing <see cref="NumericParameter"/> instance.
-    /// </summary>
-    /// <param name="numericParameter">
-    /// The <see cref="NumericParameter"/> instance from which to initialize the new <see cref="Parameter"/> instance.
-    /// </param>
-    /// <remarks>
-    /// Only use for implicit operator.
-    /// </remarks>
-    [Obsolete]
-    internal Parameter(NumericParameter numericParameter) : base (numericParameter.Value, numericParameter.Name, numericParameter.FieldProperties)
-    { }
-
-    /// <summary>
-    /// Initializes a new instance of <see cref="Parameter"/> from an existing <see cref="BooleanParameter"/> instance.
-    /// </summary>
-    /// <param name="booleanParameter">
-    /// The <see cref="BooleanParameter"/> instance from which to initialize the new <see cref="Parameter"/> instance.
-    /// </param>
-    internal Parameter(BooleanParameter booleanParameter) : base (booleanParameter.Value, booleanParameter.Name, booleanParameter.FieldProperties)
-    { }
 }

@@ -81,14 +81,6 @@ public class SqlExpressionEqualityTests
             () => new Column<Grades>(nameof(Grades.AcademicYear)));
 
     [Fact]
-    public void BooleanColumn_EqualityContract() =>
-        AssertEqualityContract(
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.Second)));
-
-    [Fact]
     public void ColumnTagExpression_EqualityContract()
     {
         Column<Grades> creditHours = new(nameof(Grades.CreditHours));
@@ -115,43 +107,12 @@ public class SqlExpressionEqualityTests
     }
 
     [Fact]
-    public void EquivalentBooleanColumnRepresentations_AreEqual()
-    {
-        Column<BooleanEqualityEntity> column = new(nameof(BooleanEqualityEntity.First));
-        BooleanColumn<BooleanEqualityEntity> booleanColumn = new(nameof(BooleanEqualityEntity.First));
-
-        SqlExpression columnExpression = column;
-        SqlExpression booleanExpression = booleanColumn;
-
-        Assert.True(columnExpression == booleanExpression);
-        Assert.Equal(columnExpression.GetHashCode(), booleanExpression.GetHashCode());
-    }
-
-    [Fact]
     public void Parameter_EqualityContract_UsesParameterName() =>
         AssertEqualityContract(
             () => new Parameter(1, "Value"),
             () => new Parameter(999, "Value"),
             () => new Parameter(null, "Value"),
             () => new Parameter(1, "OtherValue"));
-
-    [Fact]
-    public void BooleanParameter_EqualityContract_UsesParameterName() =>
-        AssertEqualityContract(
-            () => new BooleanParameter(true, new ParameterTag("Value")),
-            () => new BooleanParameter(false, new ParameterTag("Value")),
-            () => new BooleanParameter(null, new ParameterTag("Value")),
-            () => new BooleanParameter(true, new ParameterTag("OtherValue")));
-
-    [Fact]
-    public void EquivalentParameterRepresentations_AreEqual()
-    {
-        SqlExpression parameter = new Parameter(1, "Value");
-        SqlExpression booleanParameter = new BooleanParameter(true, new ParameterTag("Value"));
-
-        Assert.True(parameter == booleanParameter);
-        Assert.Equal(parameter.GetHashCode(), booleanParameter.GetHashCode());
-    }
 
     [Fact]
     public void ParameterIdentity_IsCaseInsensitive()

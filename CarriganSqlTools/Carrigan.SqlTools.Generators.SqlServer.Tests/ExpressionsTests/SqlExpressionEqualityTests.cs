@@ -1,11 +1,13 @@
 using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.SqlServer;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
-using Carrigan.SqlTools.SqlServer;
+using System.Data.Common;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
@@ -83,10 +85,10 @@ public class SqlExpressionEqualityTests
     [Fact]
     public void BooleanColumn_EqualityContract() =>
         AssertEqualityContract(
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
-            () => new BooleanColumn<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.Second)));
+            () => new Column<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
+            () => new Column<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
+            () => new Column<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.First)),
+            () => new Column<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.Second)));
 
     [Fact]
     public void ColumnTagExpression_EqualityContract()
@@ -118,7 +120,7 @@ public class SqlExpressionEqualityTests
     public void EquivalentBooleanColumnRepresentations_AreEqual()
     {
         Column<BooleanEqualityEntity> column = new(nameof(BooleanEqualityEntity.First));
-        BooleanColumn<BooleanEqualityEntity> booleanColumn = new(nameof(BooleanEqualityEntity.First));
+        Column<BooleanEqualityEntity> booleanColumn = new(nameof(BooleanEqualityEntity.First));
 
         SqlExpression columnExpression = column;
         SqlExpression booleanExpression = booleanColumn;
@@ -134,24 +136,6 @@ public class SqlExpressionEqualityTests
             () => new Parameter(999, "Value"),
             () => new Parameter(null, "Value"),
             () => new Parameter(1, "OtherValue"));
-
-    [Fact]
-    public void BooleanParameter_EqualityContract_UsesParameterName() =>
-        AssertEqualityContract(
-            () => new BooleanParameter(true, new ParameterTag("Value")),
-            () => new BooleanParameter(false, new ParameterTag("Value")),
-            () => new BooleanParameter(null, new ParameterTag("Value")),
-            () => new BooleanParameter(true, new ParameterTag("OtherValue")));
-
-    [Fact]
-    public void EquivalentParameterRepresentations_AreEqual()
-    {
-        SqlExpression parameter = new Parameter(1, "Value");
-        SqlExpression booleanParameter = new BooleanParameter(true, new ParameterTag("Value"));
-
-        Assert.True(parameter == booleanParameter);
-        Assert.Equal(parameter.GetHashCode(), booleanParameter.GetHashCode());
-    }
 
     [Fact]
     public void ParameterIdentity_IsCaseInsensitive()

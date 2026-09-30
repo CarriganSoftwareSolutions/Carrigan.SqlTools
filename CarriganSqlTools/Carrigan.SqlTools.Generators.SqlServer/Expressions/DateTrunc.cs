@@ -32,8 +32,6 @@ public class DateTrunc : SqlExpression
     public DateTrunc(DateTruncDateTimePartEnum datePart, SqlExpression expression) : base([ValidateValue(expression)]) =>
         _datePart = GetDatePart(datePart);
 
-    public override bool IsAggregate() => ChildNodes.Single().IsAggregate();
-
     protected override bool EqualsCore(SqlExpression other) =>
         other is DateTrunc dateTrunc && string.Equals(_datePart, dateTrunc._datePart, StringComparison.Ordinal) && base.EqualsCore(other);
 

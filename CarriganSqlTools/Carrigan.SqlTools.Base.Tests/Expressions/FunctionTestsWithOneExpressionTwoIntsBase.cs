@@ -3,16 +3,13 @@ using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public abstract class FunctionTestsWithOneExpressionTwoIntsBase
+//IGNORE SPELLING: Ints
+
+public abstract class FunctionTestsWithOneExpressionTwoIntsBase : SqlExpressionsBaseTests
 {
     protected abstract string ExpectedFunctionName { get; }
 
     protected abstract FunctionalExpression New(SqlExpression? expression, int first, int second);
-
-    private static Parameter Value => new(1, "Value");
-    private static Add LeftRight => new(LeftValue, RightValue);
-    private static Parameter LeftValue => new(1, "Left");
-    private static Parameter RightValue => new(2, "Right");
 
     [Fact]
     public void Constructor_NullValue_Exception() =>

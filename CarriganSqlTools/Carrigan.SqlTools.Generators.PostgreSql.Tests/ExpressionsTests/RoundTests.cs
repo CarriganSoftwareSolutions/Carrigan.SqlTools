@@ -5,6 +5,11 @@ namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
 public class RoundTests : FunctionTestsWithSingleValueBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Round(null!)),
+    ];
+
     protected override string ExpectedFunctionName => "ROUND";
 
     protected override FunctionalExpression New(SqlExpression? sqlExpression) =>

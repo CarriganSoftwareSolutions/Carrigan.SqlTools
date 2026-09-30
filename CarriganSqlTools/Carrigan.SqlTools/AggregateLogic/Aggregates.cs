@@ -64,13 +64,6 @@ public abstract class Aggregates : SqlExpression
     }
 
     /// <summary>
-    /// Aggregate functions are valid aggregate SELECT expressions.
-    /// </summary>
-    /// <returns>Always <c>true</c>.</returns>
-    public override bool IsAggregate() =>
-        true;
-
-    /// <summary>
     /// Produces the SQL fragment represented by this aggregate expression.
     /// </summary>
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)

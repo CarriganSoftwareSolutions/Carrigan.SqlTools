@@ -26,9 +26,6 @@ public class ExpressionCompositionTests
         public override IEnumerable<TableTag> LeafTables =>
             [_tableTag];
 
-        public override bool IsAggregate() =>
-            _isAggregate;
-
         protected override bool EqualsCore(SqlExpression other) =>
             other is TestSqlExpression testSqlExpression &&
             string.Equals(_text, testSqlExpression._text, StringComparison.Ordinal) &&
@@ -47,22 +44,6 @@ public class ExpressionCompositionTests
             yield return new SqlFragmentText(_text);
         }
     }
-
-    [Fact]
-    public void AsPredicate_PreservesExpressionBehavior()
-    {
-        TableTag tableTag = new("dbo", "Flags");
-        TestSqlExpression expression = new("IsEnabled", tableTag);
-        Predicates wrapper = expression.AsPredicate();
-
-        Assert.IsType<PredicateWrapper>(wrapper);
-        Assert.Equal("IsEnabled", wrapper.ToString());
-        Assert.Equal("IsEnabled", wrapper.ToSqlFragments(NeutralDialect.Instance).ToSql(NeutralDialect.Instance));
-        _ = Assert.Single(wrapper.LeafTables);
-        Assert.Equal(tableTag, wrapper.LeafTables.Single());
-        Assert.Contains(expression, wrapper.DescendantNodes);
-    }
-
     [Fact]
     public void PredicateWrapper_EqualityIsTransparent()
     {
@@ -129,8 +110,4 @@ public class ExpressionCompositionTests
 
         Assert.Equal("(Left AND Right)", and.ToString());
     }
-
-    [Fact]
-    public void PredicateWrapper_NullExpression_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new PredicateWrapper(null!));
 }

@@ -1,9 +1,18 @@
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class DateFromPartsTests
+public class DateFromPartsTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new DateFromParts(null!, Second, Third)),
+        (() => new DateFromParts(First, null!, Third)),
+        (() => new DateFromParts(First, Second, null!)),
+    ];
+
+
     [Fact]
     public void ExpressionConstructor_Test()
     {

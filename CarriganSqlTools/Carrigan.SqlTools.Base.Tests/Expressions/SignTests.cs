@@ -9,6 +9,11 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class SignTests : FunctionTestsWithSingleValueBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Sign(null!)),
+    ];
+
     protected override string ExpectedFunctionName =>
         "SIGN";
 

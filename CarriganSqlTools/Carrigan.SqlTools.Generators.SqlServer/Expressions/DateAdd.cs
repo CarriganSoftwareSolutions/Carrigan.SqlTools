@@ -34,19 +34,6 @@ public class DateAdd : SqlExpression
     public DateAdd(DateAddDateTimePartEnum datePart, SqlExpression number, SqlExpression date)
         : base([ValidateValue(number), ValidateValue(date)]) => _datePart = GetDatePart(datePart);
 
-    public override bool IsAggregate()
-    {
-        bool[] aggregateStates = [.. ChildNodes
-            .Select(expression => (Expression: expression, IsAggregate: expression.IsAggregate()))
-            .Where(candidate => candidate.IsAggregate || candidate.Expression.HasColumns())
-            .Select(static candidate => candidate.IsAggregate)];
-
-        if (aggregateStates.AllEqual() is false)
-            throw new AggregateInconsistencyException();
-
-        return aggregateStates.FirstOrDefault();
-    }
-
     protected override bool EqualsCore(SqlExpression other) =>
         other is DateAdd dateAdd && string.Equals(_datePart, dateAdd._datePart, StringComparison.Ordinal) && base.EqualsCore(other);
 

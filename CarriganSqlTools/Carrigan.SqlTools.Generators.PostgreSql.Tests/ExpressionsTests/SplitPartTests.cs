@@ -11,6 +11,16 @@ namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
 public class SplitPartTests : FunctionTestsWithThreeExpressionsBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new SplitPart(null!, Second, Third)),
+        (() => new SplitPart(First, null!, Third)),
+        (() => new SplitPart(First, Second, null!)),
+        (() => new SplitPart(null!, "test", 3)),
+        (() => new SplitPart(First, (string)null!, 3)),
+    ];
+
+
     protected override string ExpectedFunctionName => "SPLIT_PART";
 
     protected override FunctionalExpression New(SqlExpression? first, SqlExpression? second, SqlExpression? third) =>

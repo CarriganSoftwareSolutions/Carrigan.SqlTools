@@ -9,7 +9,12 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class AbsTests : FunctionTestsWithSingleValueBase
 {
-    protected override string ExpectedFunctionName => "ABS";
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Abs(null!))
+    ];
 
-    protected override FunctionalExpression New(SqlExpression? sqlExpression) => new Abs(sqlExpression!);
+    protected override FunctionalExpression New(SqlExpression? sqlExpression) => 
+        new Abs(sqlExpression!);
+    protected override string ExpectedFunctionName => "ABS";
 }

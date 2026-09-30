@@ -5,6 +5,13 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
 public class RepeatTests : FunctionTestsWithTwoExpressionsBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Repeat(null!, Second)),
+        (() => new Repeat(First, null!)),
+    ];
+
+
     protected override string ExpectedFunctionName =>
         "REPLICATE";
 

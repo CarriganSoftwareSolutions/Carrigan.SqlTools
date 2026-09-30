@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -6,8 +7,13 @@ using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
-public class ContainsTests
+public class ContainsTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), null!)),
+    ];
+
     private static readonly SqlServerDialect Dialect = new();
 
     [Fact]

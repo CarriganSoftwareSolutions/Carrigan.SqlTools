@@ -1,16 +1,23 @@
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class DateTruncTests
+//IGNORE SPELLING: Trunc
+
+public class DateTruncTests : SqlExpressionsBaseTests
 {
-    private static Parameter Value => new(new DateTime(2026, 9, 23, 6, 30, 15), "Value");
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new DateTrunc(SharedDateTimePartEnum.Day, null!)),
+        (() => new DateTrunc(DateTruncDateTimePartEnum.IsoWeek, null!)),
+    ];
 
     [Fact]
     public void SharedEnumConstructor_Test() =>
-        Assert.Equal("DATETRUNC(day, Value)", new DateTrunc(SharedDateTimePartEnum.Day, Value).ToString());
+        Assert.Equal("DATETRUNC(day, Value)", new DateTrunc(SharedDateTimePartEnum.Day, DateValue).ToString());
 
     [Fact]
     public void FunctionEnumConstructor_Test() =>
-        Assert.Equal("DATETRUNC(iso_week, Value)", new DateTrunc(DateTruncDateTimePartEnum.IsoWeek, Value).ToString());
+        Assert.Equal("DATETRUNC(iso_week, Value)", new DateTrunc(DateTruncDateTimePartEnum.IsoWeek, DateValue).ToString());
 }

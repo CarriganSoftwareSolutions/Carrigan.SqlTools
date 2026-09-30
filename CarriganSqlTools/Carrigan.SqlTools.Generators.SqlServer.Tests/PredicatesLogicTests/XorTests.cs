@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -7,8 +8,14 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
-public class XorThanTests
+public class XorThanTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Xor(null!, Right)),
+        (() => new Xor(Left, null!)),
+    ];
+
     private static readonly SqlServerDialect Dialect = new();
 
     private static readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");

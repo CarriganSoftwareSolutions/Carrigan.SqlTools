@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -9,8 +10,13 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
-public class NegateTests
+public class NegateTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Negate(null!)),
+    ];
+
     private readonly SqlGenerator<Grades> gradesGenerator = new();
     [Fact]
     public void TestNumericNegate()

@@ -6,19 +6,11 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public abstract class FunctionTestsWithSingleValueBase
+public abstract class FunctionTestsWithSingleValueBase : SqlExpressionsBaseTests
 {
     protected abstract string ExpectedFunctionName { get; }
 
     protected abstract FunctionalExpression New(SqlExpression? sqlExpression);
-
-    private static Parameter ParameterValue => new (1);
-    private static Parameter ParameterDifferentValue => new(10);
-    private static Parameter DifferentParameter => new(20, "Different");
-    private static Count Aggregate => new (ParameterValue);
-    private static Add LeftRight => new (Left, Right);
-    private static Parameter Left => new (1, "Left");
-    private static Parameter Right => new (2, "Right");
 
     [Fact]
     public void Constructor_NullValue_Exception() =>
@@ -71,9 +63,20 @@ public abstract class FunctionTestsWithSingleValueBase
         Assert.False(New(ParameterValue).IsAggregate());
 
     [Fact]
+    public void HasAggregate_NonAggregateValues() =>
+        Assert.False(New(ParameterValue).HasAggregates);
+
+    [Fact]
     public void IsAggregate_AggregateValues() =>
-        Assert.True
+        Assert.False
         (
             New(Aggregate).IsAggregate()
+        );
+
+    [Fact]
+    public void HasAggregate_AggregateValues() =>
+        Assert.True
+        (
+            New(Aggregate).HasAggregates
         );
 }

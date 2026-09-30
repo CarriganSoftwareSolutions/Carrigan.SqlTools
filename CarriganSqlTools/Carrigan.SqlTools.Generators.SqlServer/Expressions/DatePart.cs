@@ -32,8 +32,6 @@ public class DatePart : SqlExpression
     public DatePart(DatePartDateTimePartEnum datePart, SqlExpression expression) : base([ValidateValue(expression)]) =>
         _datePart = GetDatePart(datePart);
 
-    public override bool IsAggregate() => ChildNodes.Single().IsAggregate();
-
     protected override bool EqualsCore(SqlExpression other) =>
         other is DatePart datePart && string.Equals(_datePart, datePart._datePart, StringComparison.Ordinal) && base.EqualsCore(other);
 

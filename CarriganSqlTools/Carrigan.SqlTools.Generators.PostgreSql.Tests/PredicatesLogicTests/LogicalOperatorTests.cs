@@ -20,12 +20,12 @@ public class LogicalOperatorTests
     [Fact]
     public void LogicalOperator_OperatorNull_ThrowsArgumentNullException() =>
         _ = Assert.Throws<ArgumentNullException>(() =>
-            new TestLogicalOperator(null!, [new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive))]));
+            new TestLogicalOperator(null!, [new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)).AsPredicate()]));
 
     [Fact]
     public void LogicalOperator_OperatorWhitespace_ThrowsArgumentException() =>
         _ = Assert.Throws<ArgumentException>(() =>
-            new TestLogicalOperator(" ", [new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive))]));
+            new TestLogicalOperator(" ", [new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)).AsPredicate()]));
 
     [Fact]
     public void LogicalOperator_EmptyPredicates_ThrowsArgumentNullException() =>
@@ -37,7 +37,7 @@ public class LogicalOperatorTests
     {
         TestLogicalOperator op = new("AND",
         [
-            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)).AsPredicate(),
         ]);
 
         string expected = "\"LogicalPredicateTable\".\"IsActive\"";
@@ -51,7 +51,7 @@ public class LogicalOperatorTests
     {
         TestLogicalOperator op = new("AND",
         [
-            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)).AsPredicate(),
             new IsNotNull(new Parameter(1, "P1")),
         ]);
 

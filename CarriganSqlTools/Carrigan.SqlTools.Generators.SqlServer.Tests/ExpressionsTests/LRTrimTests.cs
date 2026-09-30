@@ -1,10 +1,17 @@
 using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class LRTrimTests
+public class LRTrimTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new LRTrim(null!)),
+    ];
+
+
     [Fact]
     public void Constructor_NullValue_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new LRTrim(null!));

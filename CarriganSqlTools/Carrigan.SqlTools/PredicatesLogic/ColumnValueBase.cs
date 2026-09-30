@@ -38,37 +38,6 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ColumnValueBase{T}"/> class,
-    /// representing a predicate that compares a column to a constant value using
-    /// the SQL equality operator (<c>=</c>).
-    /// </summary>
-    /// <param name="left">
-    /// The left-hand side of the predicate, representing the column to compare. This is used to construct
-    /// </param>
-    /// <param name="parameterValue">
-    /// The constant value to compare against the column in the generated SQL.
-    /// </param>
-    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
-    public ColumnValueBase(NumericColumnBase<T> left, object? parameterValue) : this(CreateValue(left, parameterValue))
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ColumnValueBase{T}"/> class,
-    /// representing a predicate that compares a column to a constant value using
-    /// the SQL equality operator (<c>=</c>).
-    /// </summary>
-    /// <param name="left">
-    /// The left-hand side of the predicate, representing the column to compare. This is used to construct
-    /// </param>
-    /// <param name="parameterValue">
-    /// The constant value to compare against the column in the generated SQL.
-    /// </param>
-    public ColumnValueBase(BooleanColumnBase<T> left, object? parameterValue) : this(CreateValue(left, parameterValue))
-    {
-    }
-
-    /// <summary>
     /// Private constructor used to ensure the base <see cref="Predicates"/> type is constructed
     /// with the composed predicate as a child node.
     /// </summary>
@@ -87,41 +56,6 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// </param>
     /// <returns>An equality predicate comparing the column to the generated parameter.</returns>
     protected static Equal CreateValue(ColumnBase<T> left, object? parameterValue)
-    {
-        Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
-
-        return new Equal(left, right);
-    }
-
-    /// <summary>
-    /// Factory method that creates the <see cref="Equal"/> predicate comparing the column to the parameter value.
-    /// </summary>
-    /// <param name="left">
-    /// The left-hand side of the predicate, representing the column to compare. This is used to construct
-    /// </param>
-    /// <param name="parameterValue">
-    /// The constant value to compare against the column in the generated SQL.
-    /// </param>
-    /// <returns>An equality predicate comparing the column to the generated parameter.</returns>
-    [Obsolete("Numeric columns are obsolete. Use regular columns instead.")]
-    protected static Equal CreateValue(NumericColumnBase<T> left, object? parameterValue)
-    {
-        Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
-
-        return new Equal(left, right);
-    }
-
-    /// <summary>
-    /// Factory method that creates the <see cref="Equal"/> predicate comparing the column to the parameter value.
-    /// </summary>
-    /// <param name="left">
-    /// The left-hand side of the predicate, representing the column to compare. This is used to construct
-    /// </param>
-    /// <param name="parameterValue">
-    /// The constant value to compare against the column in the generated SQL.
-    /// </param>
-    /// <returns>An equality predicate comparing the column to the generated parameter.</returns>
-    protected static Equal CreateValue(BooleanColumnBase<T> left, object? parameterValue)
     {
         Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
 

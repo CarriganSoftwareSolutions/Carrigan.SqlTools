@@ -9,6 +9,13 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class PowerWithNumericTests : FunctionTestsWithOneExpressionOneNumericBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Power(null!, 2)),
+        (() => new Power(null!, 2f)),
+        (() => new Power(null!, 2d)),
+        (() => new Power(null!, 2m)),
+    ];
     protected override string ExpectedFunctionName =>
         "POWER";
 

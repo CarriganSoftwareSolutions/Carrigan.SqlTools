@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.PostgreSql;
@@ -9,8 +10,14 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
 
-public class ModTests
+public class ModTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Mod(null!)),
+    ];
+
+
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
 

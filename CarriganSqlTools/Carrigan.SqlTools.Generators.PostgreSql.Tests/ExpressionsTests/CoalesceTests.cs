@@ -1,11 +1,22 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Tags;
 
-namespace Carrigan.SqlTools.Base.Tests.Expressions;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
-public class CoalesceTests
+public class CoalesceTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Coalesce(null!, Value)),
+        (() => new Coalesce(Value, null!)),
+        (() => new Coalesce(null!, Value, First)),
+        (() => new Coalesce(Value, null!, First)),
+        (() => new Coalesce(Value, First, null!)),
+    ];
+
+
     [Fact]
     public void DescendantLeafTables_ContainsNestedColumnTable()
     {

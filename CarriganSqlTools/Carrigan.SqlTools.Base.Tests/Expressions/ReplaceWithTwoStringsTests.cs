@@ -9,6 +9,12 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class ReplaceWithTwoStringsTests : FunctionTestsWithOneExpressionTwoStringsBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Replace(null!, "Search", "Replacement")),
+        (() => new Replace(First, null!, "Replacement")),
+        (() => new Replace(First, "Search", null!)),
+    ];
     protected override string ExpectedFunctionName =>
         "REPLACE";
 

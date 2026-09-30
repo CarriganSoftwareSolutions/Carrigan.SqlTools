@@ -1,20 +1,26 @@
-﻿using Carrigan.SqlTools.Expressions;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class TruncateTests
+public class TruncateTests : SqlExpressionsBaseTests
 {
-    private static Parameter Value => new(123.456m, "Value");
-    private static Parameter Precision => new(2, "Precision");
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Truncate(null!)),
+        (() => new Truncate(null!, 2)),
+        (() => new Truncate(null!, Precision)),
+        (() => new Truncate(PiValue, (SqlExpression)null!)),
+    ];
 
     [Fact]
     public void Constructor_WithSingleExpression_GeneratesExpectedSql()
     {
-        SqlExpression expression = new Truncate(Value);
+        SqlExpression expression = new Truncate(PiValue);
 
         Assert.Equal
         (
-            "ROUND(Value, Parameter, 1)",
+            "ROUND(PiValue, Parameter, 1)",
             expression.ToString()
         );
     }
@@ -22,11 +28,11 @@ public class TruncateTests
     [Fact]
     public void Constructor_WithIntegerPrecision_GeneratesExpectedSql()
     {
-        SqlExpression expression = new Truncate(Value, 2);
+        SqlExpression expression = new Truncate(PiValue, 2);
 
         Assert.Equal
         (
-            "ROUND(Value, Parameter, 1)",
+            "ROUND(PiValue, Parameter, 1)",
             expression.ToString()
         );
     }
@@ -34,11 +40,11 @@ public class TruncateTests
     [Fact]
     public void Constructor_WithExpressionPrecision_GeneratesExpectedSql()
     {
-        SqlExpression expression = new Truncate(Value, Precision);
+        SqlExpression expression = new Truncate(PiValue, Precision);
 
         Assert.Equal
         (
-            "ROUND(Value, Precision, 1)",
+            "ROUND(PiValue, Precision, 1)",
             expression.ToString()
         );
     }
@@ -46,7 +52,7 @@ public class TruncateTests
     [Fact]
     public void Constructor_WithSingleExpression_UsesZeroPrecision()
     {
-        Truncate expression = new(Value);
+        Truncate expression = new(PiValue);
 
         Parameter precision = Assert.IsType<Parameter>(expression.ChildNodes.ElementAt(1));
 
@@ -56,7 +62,7 @@ public class TruncateTests
     [Fact]
     public void Constructor_WithIntegerPrecision_EncapsulatesPrecisionInParameter()
     {
-        Truncate expression = new(Value, 2);
+        Truncate expression = new(PiValue, 2);
 
         Parameter precision = Assert.IsType<Parameter>(expression.ChildNodes.ElementAt(1));
 
@@ -66,39 +72,35 @@ public class TruncateTests
     [Fact]
     public void Constructor_WithExpressionPrecision_UsesProvidedExpression()
     {
-        Truncate expression = new(Value, Precision);
+        Truncate expression = new(PiValue, Precision);
 
-        Assert.Equal(Value, expression.ChildNodes.ElementAt(0));
+        Assert.Equal(PiValue, expression.ChildNodes.ElementAt(0));
         Assert.Equal(Precision, expression.ChildNodes.ElementAt(1));
     }
 
     [Fact]
-    public void Constructor_WithNullExpression_Throws()
-    {
+    public void Constructor_WithNullExpression_Throws() =>
         Assert.Throws<ArgumentNullException>
         (
             () => new Truncate(null!)
         );
-    }
 
     [Fact]
-    public void Constructor_WithNullPrecisionExpression_Throws()
-    {
+    public void Constructor_WithNullPrecisionExpression_Throws() => 
         Assert.Throws<ArgumentNullException>
         (
-            () => new Truncate(Value, (SqlExpression)null!)
+            () => new Truncate(PiValue, (SqlExpression)null!)
         );
-    }
 
     [Fact]
     public void ChildNodes_ContainsValueAndPrecision()
     {
-        Truncate expression = new(Value, Precision);
+        Truncate expression = new(PiValue, Precision);
 
         SqlExpression[] children = [.. expression.ChildNodes];
 
         Assert.Equal(2, children.Length);
-        Assert.Equal(Value, children[0]);
+        Assert.Equal(PiValue, children[0]);
         Assert.Equal(Precision, children[1]);
     }
 }

@@ -1,10 +1,18 @@
-﻿using Carrigan.SqlTools.Expressions;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.PredicatesLogicTests;
 
-public class ComparisonOperatorTests
+public class ComparisonOperatorTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new TestComparisonOperator(null!, Right, "=")),
+        (() => new TestComparisonOperator(Left, null!, "=")),
+    ];
+
     private sealed class TestComparisonOperator : ComparisonOperator
     {
         public TestComparisonOperator(SqlExpression left, SqlExpression right, string op) : base(left, right, op)

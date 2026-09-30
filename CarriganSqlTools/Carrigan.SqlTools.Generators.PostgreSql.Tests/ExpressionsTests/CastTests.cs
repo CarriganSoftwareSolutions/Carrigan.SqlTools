@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
@@ -9,8 +10,14 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
-public sealed class CastTests
+public sealed class CastTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Cast(null!, PostgreSqlTypesProvider.AsVarChar(100, false, true))),
+    ];
+
+
     private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
 
     [Fact]

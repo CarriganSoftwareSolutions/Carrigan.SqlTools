@@ -1,4 +1,6 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -7,8 +9,11 @@ using Carrigan.SqlTools.IdentifierTypes;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.PredicatesLogicTests;
 
-public  class ColumnsTests
+public  class ColumnsTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+        [];
+
     private static readonly PostgreSqlDialect Dialect = new();
 
     [Fact]

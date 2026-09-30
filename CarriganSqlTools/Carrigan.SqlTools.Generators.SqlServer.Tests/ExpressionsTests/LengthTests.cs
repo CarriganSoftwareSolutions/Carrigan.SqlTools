@@ -5,6 +5,11 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
 public class LengthTests : FunctionTestsWithSingleValueBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Length(null!)),
+    ];
+
     protected override string ExpectedFunctionName =>
         "LEN";
 

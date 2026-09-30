@@ -1,12 +1,20 @@
 using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class IndexOfTests
+public class IndexOfTests : SqlExpressionsBaseTests
 {
-    private static Parameter Value => new("Apple", "Value");
-    private static Parameter Find => new("p", "Find");
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new IndexOf(null!, Find)),
+        (() => new IndexOf(Value, (SqlExpression)null!)),
+        (() => new IndexOf(null!, "p")),
+        (() => new IndexOf(Value, (string)null!)),
+    ];
+
+
 
     [Fact]
     public void Constructor_WithExpression_RendersSqlServerArgumentOrder() =>

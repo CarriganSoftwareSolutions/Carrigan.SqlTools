@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -7,8 +8,14 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
-public class NotEqualsTests
+public class NotEqualsTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new NotEqual(null!, Right)),
+        (() => new NotEqual(Left, null!)),
+    ];
+
     private static readonly SqlServerDialect Dialect = new();
 
     private readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");

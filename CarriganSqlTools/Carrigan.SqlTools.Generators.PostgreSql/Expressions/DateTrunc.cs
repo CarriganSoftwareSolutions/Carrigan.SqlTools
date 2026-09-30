@@ -54,14 +54,6 @@ public class DateTrunc : SqlExpression
         _datePart = GetDatePart(datePart);
 
     /// <summary>
-    /// Determines whether the expression is an aggregate function.
-    /// </summary>
-    /// <returns>
-    /// <see langword="true"/> if the expression is an aggregate function; otherwise, <see langword="false"/>.
-    /// </returns>
-    public override bool IsAggregate() => ChildNodes.Single().IsAggregate();
-
-    /// <summary>
     /// Determines whether the current expression is equal to another expression.
     /// </summary>
     /// <param name="other">

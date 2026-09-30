@@ -6,8 +6,14 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public class NullIfTests
+public class NullIfTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new NullIf(null!, null!)),
+        (() => new NullIf(First, null!)),
+        (() => new NullIf(null!, Second)),
+    ];
     [Fact]
     public void Constructor_NullValueLeft_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new NullIf(null!, new Parameter(1)));

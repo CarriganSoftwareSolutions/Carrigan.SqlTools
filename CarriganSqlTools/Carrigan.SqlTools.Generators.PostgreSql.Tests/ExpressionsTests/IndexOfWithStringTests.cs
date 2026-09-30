@@ -1,11 +1,16 @@
 using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
-public class IndexOfWithStringTests
+public class IndexOfWithStringTests : SqlExpressionsBaseTests
 {
-    private static Parameter Value => new("Apple", "Value");
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new IndexOf(null!, "p")),
+        (() => new IndexOf(Value, (string)null!)),
+    ];
 
     [Fact]
     public void Constructor_NullValue_Exception() =>

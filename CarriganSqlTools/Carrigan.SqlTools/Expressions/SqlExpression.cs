@@ -1,11 +1,13 @@
 ﻿using Carrigan.Core.Attributes;
 using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
+using System.Linq.Expressions;
 using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
@@ -18,7 +20,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// <summary>
     /// Represents the direct children of the current expression.
     /// </summary>
-    internal IEnumerable<SqlExpression> ChildNodes { get; }
+    internal readonly IEnumerable<SqlExpression> ChildNodes;
 
     /// <summary>
     /// Base constructor for all expression classes.
@@ -43,65 +45,47 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     internal IEnumerable<SqlExpression> DescendantNodes =>
         GetAllDescendantExpressions(ChildNodes);
 
+    #region parameters
     /// <summary>
     /// Gets every parameter expression participating in this expression tree, including the current node and all descendants.
     /// </summary>
     /// <remarks>
-    /// Enumeration is deferred and preserves expression-tree traversal order.
+    /// Root + Descendants 
+    /// Preserves expression-tree traversal order.
     /// </remarks>
     public IEnumerable<IParameter> AllParticipatingParameters =>
         EnumerateSelfAndDescendants().OfType<IParameter>();
 
     /// <summary>
+    /// Gets all parameter expressions below the current node.
+    /// </summary>
+    [Obsolete("This is likely not doing what we need it to do anymore.")]
+    //TODO: REMOVE and update all unit tests, currently using this property to use AllParticipatingParameters instead. 
+    internal IEnumerable<Parameter> DescendantParameters =>
+        DescendantNodes.OfType<Parameter>();
+    #endregion
+
+
+    #region columns
+    /// <summary>
     /// Gets every column-shaped SQL expression participating in this expression tree, including the current node and all descendants.
     /// </summary>
     /// <remarks>
+    /// Root + Descendants
     /// The returned expressions are the actual participating nodes. This includes reflected columns and other column-shaped
     /// expression nodes, such as <see cref="ColumnTagExpression"/>. Enumeration is deferred and preserves expression-tree traversal order.
     /// </remarks>
     public IEnumerable<SqlExpression> AllParticipatingColumns =>
-        EnumerateSelfAndDescendants().Where(static expression => expression.IsColumn());
-
-    /// <summary>
-    /// Gets the table tags represented by leaf expressions directly attached to this expression.
-    /// </summary>
-    public virtual IEnumerable<TableTag> LeafTables => [];
-
-    /// <summary>
-    /// Gets every table participating in this expression tree, including tables represented by the current node and all descendants.
-    /// </summary>
-    /// <remarks>
-    /// Duplicate table tags are removed while preserving the order in which the tables are first encountered.
-    /// </remarks>
-    public IEnumerable<TableTag> AllParticipatingTables =>
         EnumerateSelfAndDescendants()
-            .SelectMany(static expression => expression.LeafTables)
-            .Distinct();
-
-    /// <summary>
-    /// Gets all parameter expressions below the current node.
-    /// </summary>
-    internal IEnumerable<Parameter> DescendantParameters =>
-        DescendantNodes.OfType<Parameter>();
+        .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
 
     /// <summary>
     /// Gets all reflected column expressions below the current node.
     /// </summary>
+    [Obsolete("This is likely not doing what we need it to do anymore.")]
+    //TODO: REMOVE and update all unit tests, currently using this property to use AllParticipatingColumns instead. 
     internal IEnumerable<IColumnBase> DescendantColumns =>
         DescendantNodes.OfType<IColumnBase>();
-
-    /// <summary>
-    /// Gets all table tags represented by this expression and its descendants.
-    /// </summary>
-    public IEnumerable<TableTag> DescendantLeafTables =>
-        AllParticipatingTables;
-
-    /// <summary>
-    /// Indicates whether this expression is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
-    /// </summary>
-    /// <returns><c>false</c> unless an expression type overrides this method.</returns>
-    public virtual bool IsAggregate() =>
-        false;
 
     /// <summary>
     /// Indicates whether this expression tree contains any column expressions.
@@ -110,32 +94,67 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// <c>true</c> when this expression or any child expression represents a column; otherwise, <c>false</c>.
     /// </returns>
     public bool HasColumns() =>
-        IsColumn() || ChildNodes.Any(static child => child.HasColumns());
+        AllParticipatingColumns.Any();
+    #endregion
+
+    #region tables
 
     /// <summary>
-    /// Indicates whether this expression is a column expression.
+    /// Gets the table tags represented by leaf expressions directly attached to this expression.
     /// </summary>
-    /// <returns>
-    /// <c>true</c> if the expression is a column expression; otherwise, <c>false</c>.
-    /// </returns>
-    protected virtual bool IsColumn() =>
-        this is IColumnBase || this is IColumnExpressionIdentity;
+    /// <remarks>
+    /// Tables are not expressions, and are not actually in the tree.
+    /// This is why they are treated as Leafs
+    /// </remarks>
+    public virtual IEnumerable<TableTag> LeafTables => [];
+
+    /// <summary>
+    /// Gets every table participating in this expression tree, including tables represented by the current node and all descendants.
+    /// </summary>
+    /// <remarks>
+    /// Root + Descendants
+    /// Duplicate table tags are removed while preserving the order in which the tables are first encountered.
+    /// </remarks>
+    public IEnumerable<TableTag> AllParticipatingTables =>
+        EnumerateSelfAndDescendants()
+            .SelectMany(static expression => expression.LeafTables)
+            .Distinct();
+
+    /// <summary>
+    /// Gets all table tags represented by this expression and its descendants.
+    /// </summary>
+    public IEnumerable<TableTag> DescendantLeafTables =>
+        AllParticipatingTables;
+    #endregion
+
+
+    #region aggregates
+    /// <summary>
+    /// Indicates whether this expression is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
+    /// </summary>
+    /// <returns><c>false</c> unless an expression type overrides this method.</returns>
+    public bool IsAggregate() =>
+        this is Aggregates;
 
     /// <summary>
     /// Aggregate functions are valid aggregate SELECT expressions.
     /// </summary>
     /// <param name="groupBys">The optional <c>GROUP BY</c> clause.</param>
     /// <returns>Always <c>true</c>.</returns>
-    [Obsolete("Use the overload with no parameters instead.")]
+    [Obsolete("Use IsAggregate() instead.")]
     public bool IsAggregate(GroupBys? groupBys) =>
         IsAggregate();
+
+    public bool HasAggregates =>
+        IsAggregate() || DescendantNodes.Any(child => child.IsAggregate());
 
     /// <summary>
     /// Indicates whether this expression tree contains any aggregate expressions.
     /// </summary>
     /// <returns><c>true</c> if the expression tree contains any aggregate expressions; otherwise, <c>false</c>.</returns>
+    [Obsolete("Use ContainsAggregate() instead.")]
     public bool ContainsAggregate() =>
-        IsAggregate() || ChildNodes.Any(ContainsAggregate);
+        IsAggregate() || DescendantNodes.Any(child => child.IsAggregate());
 
     /// <summary>
     /// Indicates whether the specified expression tree contains any aggregate expressions.
@@ -144,8 +163,14 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// The expression tree to check for aggregate expressions.
     /// </param>
     /// <returns><c>true</c> if the expression tree contains any aggregate expressions; otherwise, <c>false</c>.</returns>
+    [Obsolete("Use the instance method ContainsAggregate() instead.")]
     public static bool ContainsAggregate(SqlExpression expression) =>
         expression.ContainsAggregate();
+    #endregion
+
+
+
+
 
     /// <summary>
     /// Gets the canonical expression used for equality and hashing.
@@ -342,22 +367,21 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     public Predicates AsPredicate() =>
         new PredicateWrapper(this);
 
-
-
+    #region child validators
     /// <summary>
     /// Validates the provided values for the specified function, ensuring that the number of arguments meets the minimum requirement.
     /// </summary>
     /// <param name="minArguments">The expressions to validate.</param>
-    /// <param name="values">The expressions to validate.</param>
+    /// <param name="sqlExpressions">The expressions to validate.</param>
     /// <returns>A materialized sequence containing the validated expressions.</returns>
-    protected static IEnumerable<SqlExpression> ValidateValues(int minArguments, IEnumerable<SqlExpression> values)
+    protected static IEnumerable<SqlExpression> ValidateValues(int minArguments, IEnumerable<SqlExpression> sqlExpressions)
     {
-        ArgumentNullException.ThrowIfNull(values, nameof(values));
+        ArgumentNullException.ThrowIfNull(sqlExpressions, nameof(sqlExpressions));
 
-        if (values.Count() < minArguments)
-            throw new ArgumentException($"Scalar function requires {minArguments} or more expressions.", nameof(values));
+        if (sqlExpressions.Count() < minArguments)
+            throw new ArgumentException($"Scalar function requires {minArguments} or more expressions.", nameof(sqlExpressions));
 
-        return values;
+        return sqlExpressions;
     }
 
     /// <summary>
@@ -390,14 +414,8 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="sqlExpressions"/> is empty.
     /// </exception>
-    protected static IEnumerable<SqlExpression> ValidateValues(params IEnumerable<SqlExpression> sqlExpressions)
-    {
-        ArgumentNullException.ThrowIfNull(sqlExpressions, nameof(sqlExpressions));
-        if (sqlExpressions.IsNullOrEmpty())
-            throw new ArgumentException($"The argument {nameof(sqlExpressions)} is empty.");
-
-        return sqlExpressions.Materialize(NullOptionsEnum.ArgumentNullException);
-    }
+    protected static IEnumerable<SqlExpression> ValidateValues(params IEnumerable<SqlExpression> sqlExpressions) => 
+        ValidateValues(0, sqlExpressions);
 
     /// <summary>
     /// Validates that the provided value is not null and wraps it in a <see cref="Parameter"/> expression.
@@ -413,4 +431,5 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         ArgumentNullException.ThrowIfNull(value, nameof(value));
         return new Parameter(value);
     }
+    #endregion
 }

@@ -54,14 +54,6 @@ public class Extract : SqlExpression
         _datePart = GetDatePart(datePart);
 
     /// <summary>
-    /// Determines whether the expression is an aggregate function.
-    /// </summary>
-    /// <returns>
-    /// <see langword="true"/> if the expression is an aggregate function; otherwise, <see langword="false"/>.
-    /// </returns>
-    public override bool IsAggregate() => ChildNodes.Single().IsAggregate();
-
-    /// <summary>
     /// Determines whether the specified <see cref="SqlExpression"/> is equal to the current <see cref="Extract"/> instance.
     /// </summary>
     /// <param name="other">

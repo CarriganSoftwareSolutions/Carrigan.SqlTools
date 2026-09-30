@@ -450,24 +450,4 @@ public class PredicateExamples
 
         SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
     }
-
-    [Fact]
-    public void PredicateParameterGeneric()
-    {
-        Parameter<Customer> parameterName = new(nameof(Customer.Name), "Hank");
-        Column<Customer> columnName = new(nameof(Customer.Name));
-        Equal equalName = new(columnName, parameterName);
-        SelectBuilder<Customer> selectBuilder = new()
-        {
-            Where = equalName
-        };
-
-        SqlQuery query = customerGenerator.Select(selectBuilder);
-
-        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
-        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
-        SqlQueryTestHelper.AssertParameterCount(query, 1);
-
-        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
-    }
 }

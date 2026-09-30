@@ -1,6 +1,10 @@
+﻿using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -8,8 +12,11 @@ using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.PredicatesLogicTests;
 
-public class ColumnEqualsColumnTests
+public class ColumnEqualsColumnTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+        [];
+
     private static readonly SqlGenerator<JoinLeftTable> leftGenerator = new();
     private static readonly SqlGenerator<JoinRightTable> rightGenerator = new();
     [Fact]

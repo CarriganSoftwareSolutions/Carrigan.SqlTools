@@ -9,6 +9,10 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class SquareRootTests : FunctionTestsWithSingleValueBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new SquareRoot(null!)),
+    ];
     protected override string ExpectedFunctionName =>
         "SQRT";
 

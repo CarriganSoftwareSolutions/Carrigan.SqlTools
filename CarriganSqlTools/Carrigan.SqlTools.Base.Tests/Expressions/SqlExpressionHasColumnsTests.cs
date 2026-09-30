@@ -12,9 +12,6 @@ internal sealed class TestColumnExpression : SqlExpression
     {
     }
 
-    protected override bool IsColumn() =>
-        true;
-
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) =>
         [];
 }

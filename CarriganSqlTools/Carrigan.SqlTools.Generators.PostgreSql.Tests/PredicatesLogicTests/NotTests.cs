@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -6,18 +7,24 @@ using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.PredicatesLogicTests;
 
-public class NotTests
+public class NotTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Not((Predicates)null!)),
+        (() => new Not((SqlExpression)null!)),
+    ];
+
     private static readonly PostgreSqlDialect Dialect = new();
 
-    private readonly BooleanColumn<LogicalPredicateTable> ColumnIsActive = new(nameof(LogicalPredicateTable.IsActive));
+    private readonly Column<LogicalPredicateTable> ColumnIsActive = new(nameof(LogicalPredicateTable.IsActive));
     private readonly string ColumnIsActiveSql = "\"LogicalPredicateTable\".\"IsActive\"";
 
 
-    private readonly BooleanColumn<LogicalPredicateTable> ColumnIsVisible = new(nameof(LogicalPredicateTable.IsVisible));
+    private readonly Column<LogicalPredicateTable> ColumnIsVisible = new(nameof(LogicalPredicateTable.IsVisible));
     private readonly string ColumnIsVisibleSql = "\"LogicalPredicateTable\".\"IsVisible\"";
 
-    private readonly BooleanColumn<LogicalPredicateTable> ColumnIsArchived = new(nameof(LogicalPredicateTable.IsArchived));
+    private readonly Column<LogicalPredicateTable> ColumnIsArchived = new(nameof(LogicalPredicateTable.IsArchived));
     private readonly string ColumnIsArchivedSql = "\"LogicalPredicateTable\".\"IsArchived\"";
 
     private readonly Parameter ParameterPi = new(3.14f, "Pi");
@@ -32,7 +39,7 @@ public class NotTests
     [Fact]
     public void Not_BooleanColumn_ToSql()
     {
-        Predicates inner = ColumnIsActive;
+        Predicates inner = ColumnIsActive.AsPredicate();
         string innerSql = ColumnIsActiveSql;
 
         Predicates predicate = new Not(inner);

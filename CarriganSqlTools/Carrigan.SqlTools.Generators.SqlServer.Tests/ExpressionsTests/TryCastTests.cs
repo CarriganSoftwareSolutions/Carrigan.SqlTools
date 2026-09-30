@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
@@ -7,8 +8,15 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public sealed class TryCastTests
+public sealed class TryCastTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new TryCast(null!, SqlServerTypesProvider.AsInt())),
+        (() => new TryCast(Value, null!)),
+    ];
+
+
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
 
     [Fact]

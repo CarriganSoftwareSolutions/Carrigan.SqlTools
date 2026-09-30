@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -6,8 +7,14 @@ using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.PredicatesLogicTests;
 
-public class LikeTests
+public class LikeTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Like(null!, Right)),
+        (() => new Like(Left, null!)),
+    ];
+
     private static readonly PostgreSqlDialect Dialect = new();
 
     private readonly Column<ColumnTable> ColumnTastyPizza = new("Pizza");

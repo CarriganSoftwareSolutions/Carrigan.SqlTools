@@ -5,7 +5,7 @@ using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public abstract class FunctionTestsWithTwoExpressionsBase
+public abstract class FunctionTestsWithTwoExpressionsBase : SqlExpressionsBaseTests
 {
     protected abstract string ExpectedFunctionName { get; }
 
@@ -14,12 +14,6 @@ public abstract class FunctionTestsWithTwoExpressionsBase
         SqlExpression? first,
         SqlExpression? second
     );
-
-    private static Parameter First => new(1, "First");
-    private static Parameter Second => new(2, "Second");
-    private static Add LeftRight => new(Left, Right);
-    private static Parameter Left => new(1, "Left");
-    private static Parameter Right => new(2, "Right");
 
     [Fact]
     public void Constructor_NullFirstValue_Exception() =>

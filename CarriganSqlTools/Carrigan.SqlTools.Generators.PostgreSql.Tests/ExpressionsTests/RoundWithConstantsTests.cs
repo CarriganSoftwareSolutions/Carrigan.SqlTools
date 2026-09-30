@@ -1,7 +1,7 @@
 ﻿using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
-namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
+namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
 
 public class RoundWithPrecisionTests : FunctionTestsWithOneExpressionOneIntBase

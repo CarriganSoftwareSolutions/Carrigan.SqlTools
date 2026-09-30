@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.SqlGenerators;
@@ -7,8 +8,17 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class AddTests
+public class AddTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Add(null!, Value)),
+        (() => new Add(Value, null!)),
+        (() => new Add(null!, Value, First)),
+        (() => new Add(Value, null!, First)),
+        (() => new Add(Value, First, null!)),
+    ];
+
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
     [Fact]

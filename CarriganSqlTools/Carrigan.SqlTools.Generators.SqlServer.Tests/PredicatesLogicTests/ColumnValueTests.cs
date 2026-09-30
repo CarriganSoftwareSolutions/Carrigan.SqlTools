@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -10,8 +11,11 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
 //IGNORE SPELLING: ilsabasbdyas
 
-public class ColumnValueTests
+public class ColumnValueTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+        [];
+
     private static readonly SqlServerDialect Dialect = new();
 
     [Fact]

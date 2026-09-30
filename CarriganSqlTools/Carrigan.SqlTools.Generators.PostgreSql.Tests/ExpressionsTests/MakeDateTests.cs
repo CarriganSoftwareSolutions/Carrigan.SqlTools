@@ -1,9 +1,18 @@
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
-public class MakeDateTests
+public class MakeDateTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new MakeDate(null!, Second, Third)),
+        (() => new MakeDate(First, null!, Third)),
+        (() => new MakeDate(First, Second, null!)),
+    ];
+
+
     [Fact]
     public void ExpressionConstructor_Test()
     {

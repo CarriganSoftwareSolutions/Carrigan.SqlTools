@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -6,8 +7,17 @@ using Carrigan.SqlTools.PredicatesLogic;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
 
-public class AndTests
+public class AndTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new And(null!, ParameterTrue)),
+        (() => new And(ParameterFalse, null!)),
+        (() => new And(null!, ParameterTrue, ParameterFalse)),
+        (() => new And(ParameterFalse, null!, First)),
+        (() => new And(ParameterFalse, ParameterTrue, null!)),
+    ];
+
     private static readonly SqlServerDialect Dialect = new();
 
     [Fact]
@@ -23,7 +33,7 @@ public class AndTests
     {
         And and = new(
         [
-            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
         ]);
 
         string expected = "[LogicalPredicateTable].[IsActive]";
@@ -109,21 +119,21 @@ public class AndTests
     public void And_ContainsNullPredicate_ThrowsNullReferenceException() =>
         Assert.Throws<NullReferenceException>(() => new And(
         [
-            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
             null!,
         ]));
 
     private static And CreateAnd(int nestedParameterValue = 2) =>
         new(
         [
-            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
+            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
             new IsNotNull(new Parameter(1, "P1")),
             new IsNotNull(new Parameter(2, "P2")),
-            new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsEnabled)),
+            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsEnabled)),
             new Or(
             [
-                new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsVisible)),
-                new BooleanColumn<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsArchived)),
+                new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsVisible)),
+                new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsArchived)),
                 new IsNotNull(new Parameter(nestedParameterValue, "PA")),
             ]),
         ]);

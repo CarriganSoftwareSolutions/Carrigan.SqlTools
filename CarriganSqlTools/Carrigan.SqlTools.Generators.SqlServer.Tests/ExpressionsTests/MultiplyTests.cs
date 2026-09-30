@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.SqlGenerators;
@@ -7,8 +8,18 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class MultiplyTests
+public class MultiplyTests : SqlExpressionsBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Multiply(null!, Value)),
+        (() => new Multiply(Value, null!)),
+        (() => new Multiply(null!, Value, First)),
+        (() => new Multiply(Value, null!, First)),
+        (() => new Multiply(Value, First, null!)),
+    ];
+
+
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
     [Fact]

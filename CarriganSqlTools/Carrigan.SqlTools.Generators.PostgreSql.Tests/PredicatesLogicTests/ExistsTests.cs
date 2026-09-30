@@ -1,4 +1,5 @@
 ﻿using Carrigan.SqlTools.Base.Tests.Helpers;
+using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.PostgreSql;
@@ -7,8 +8,11 @@ using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.PredicatesLogicTests;
 
-public class ExistsTests
+public class ExistsTests : PredicateLogicBaseTests
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+        [];
+
     private readonly SqlGenerator<Customer> customerGenerator = new();
     private readonly SqlGenerator<Order> orderGenerator = new();
 

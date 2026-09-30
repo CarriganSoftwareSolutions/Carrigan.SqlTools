@@ -5,6 +5,10 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class LTrimWithCharactersTests : FunctionTestsWithOneExpressionOneStringBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new LTrim(null!, "Test")),
+    ];
     protected override string ExpectedFunctionName => "LTRIM";
 
     protected override FunctionalExpression New(SqlExpression? sqlExpression, string? characters) =>

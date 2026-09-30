@@ -5,6 +5,15 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
 public sealed class PatIndexTests : FunctionTestsWithTwoExpressionsBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new PatIndex((SqlExpression)null!, Second)),
+        (() => new PatIndex(First, null!)),
+        (() => new PatIndex((string)null!, Second)),
+        (() => new PatIndex("%[0-9]%", null!)),
+    ];
+
+
     protected override string ExpectedFunctionName =>
         "PATINDEX";
 

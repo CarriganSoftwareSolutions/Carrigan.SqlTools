@@ -6,20 +6,28 @@ using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public sealed class StuffTests
+//IGNORE SPELLING: abcdef uvwxyz
+
+public sealed class StuffTests : SqlExpressionsBaseTests
 {
-    private static Parameter Value => new("abcdef", "Value");
-    private static Parameter Start => new(2, "Start");
-    private static Parameter Length => new(3, "Length");
-    private static Parameter Replacement => new("X", "Replacement");
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Stuff(null!, Start, Length, Replacement)),
+        (() => new Stuff(AbcValue, null!, Length, Replacement)),
+        (() => new Stuff(AbcValue, Start, null!, Replacement)),
+        (() => new Stuff(AbcValue, Start, Length, null!)),
+        (() => new Stuff(null!, 2, 3, "X")),
+        (() => new Stuff(AbcValue, 2, 3, null!)),
+    ];
+
 
     [Fact]
     public void ExpressionConstructor_RendersValues() =>
-        Assert.Equal("STUFF(Value, Start, Length, Replacement)", new Stuff(Value, Start, Length, Replacement).ToString());
+        Assert.Equal("STUFF(Value, Start, Length, Replacement)", new Stuff(AbcValue, Start, Length, Replacement).ToString());
 
     [Fact]
     public void ConstantConstructor_RendersConstantsAsParameters() =>
-        Assert.Equal("STUFF(Value, Parameter, Parameter, Parameter)", new Stuff(Value, 2, 3, "X").ToString());
+        Assert.Equal("STUFF(Value, Parameter, Parameter, Parameter)", new Stuff(AbcValue, 2, 3, "X").ToString());
 
     [Fact]
     public void ExpressionConstructor_NullValue_Exception() =>
@@ -27,15 +35,15 @@ public sealed class StuffTests
 
     [Fact]
     public void ExpressionConstructor_NullStart_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new Stuff(Value, null!, Length, Replacement));
+        Assert.Throws<ArgumentNullException>(() => new Stuff(AbcValue, null!, Length, Replacement));
 
     [Fact]
     public void ExpressionConstructor_NullLength_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new Stuff(Value, Start, null!, Replacement));
+        Assert.Throws<ArgumentNullException>(() => new Stuff(AbcValue, Start, null!, Replacement));
 
     [Fact]
     public void ExpressionConstructor_NullReplacement_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new Stuff(Value, Start, Length, null!));
+        Assert.Throws<ArgumentNullException>(() => new Stuff(AbcValue, Start, Length, null!));
 
     [Fact]
     public void ConstantConstructor_NullValue_Exception() =>
@@ -43,23 +51,23 @@ public sealed class StuffTests
 
     [Fact]
     public void ConstantConstructor_NullReplacement_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new Stuff(Value, 2, 3, null!));
+        Assert.Throws<ArgumentNullException>(() => new Stuff(AbcValue, 2, 3, null!));
 
     [Fact]
     public void ExpressionConstructor_ChildNodesContainValues()
     {
-        Stuff expression = new(Value, Start, Length, Replacement);
+        Stuff expression = new(AbcValue, Start, Length, Replacement);
 
-        Assert.Equal(new SqlExpression[] { Value, Start, Length, Replacement }, expression.ChildNodes);
+        Assert.Equal([ AbcValue, Start, Length, Replacement ], expression.ChildNodes);
     }
 
     [Fact]
     public void ConstantConstructor_WrapsConstantsInParameters()
     {
-        Stuff expression = new(Value, 2, 3, "X");
+        Stuff expression = new(AbcValue, 2, 3, "X");
         SqlExpression[] children = [.. expression.ChildNodes];
 
-        Assert.Equal(Value, children[0]);
+        Assert.Equal(AbcValue, children[0]);
         Assert.Equal(2, Assert.IsType<Parameter>(children[1]).Value);
         Assert.Equal(3, Assert.IsType<Parameter>(children[2]).Value);
         Assert.Equal("X", Assert.IsType<Parameter>(children[3]).Value);
@@ -70,7 +78,7 @@ public sealed class StuffTests
     {
         const string replacement = "'); DROP TABLE Customer;--";
 
-        string actual = new Stuff(Value, 1776, 2026, replacement).ToString();
+        string actual = new Stuff(AbcValue, 1776, 2026, replacement).ToString();
 
         Assert.Equal("STUFF(Value, Parameter, Parameter, Parameter)", actual);
         Assert.DoesNotContain("1776", actual);
@@ -92,12 +100,12 @@ public sealed class StuffTests
 
     [Fact]
     public void IsAggregate_AggregateAndRowIndependentValues_ReturnsTrue() =>
-        Assert.True(new Stuff(new Count(Value), 2, 3, "X").IsAggregate());
+        Assert.True(new Stuff(new Count(AbcValue), 2, 3, "X").IsAggregate());
 
     [Fact]
     public void IsAggregate_AggregateAndColumnValue_Exception() =>
         Assert.Throws<AggregateInconsistencyException>
         (
-            () => new Stuff(new Count(Value), Start, Length, new TestColumnExpression()).IsAggregate()
+            () => new Stuff(new Count(AbcValue), Start, Length, new TestColumnExpression()).IsAggregate()
         );
 }

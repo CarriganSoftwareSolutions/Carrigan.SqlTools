@@ -10,6 +10,12 @@ namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.ExpressionsTests;
 
 public class TruncateWithOneConstantTests : FunctionTestsWithOneExpressionOneIntBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Truncate(null!, 42)),
+    ];
+
+
     protected override string ExpectedFunctionName => "TRUNC";
 
     protected override FunctionalExpression New(SqlExpression? sqlExpression, int precision) => new Truncate(sqlExpression!, precision);

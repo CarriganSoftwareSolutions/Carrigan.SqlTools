@@ -9,6 +9,11 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class FloorTests : FunctionTestsWithSingleValueBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Floor(null!)),
+    ];
+
     protected override string ExpectedFunctionName =>
         "FLOOR";
 

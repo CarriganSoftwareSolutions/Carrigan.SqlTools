@@ -3,7 +3,7 @@ using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public abstract class FunctionTestsWithOneExpressionOneNumericBase
+public abstract class FunctionTestsWithOneExpressionOneNumericBase : SqlExpressionsBaseTests
 {
     protected abstract string ExpectedFunctionName { get; }
 
@@ -12,10 +12,6 @@ public abstract class FunctionTestsWithOneExpressionOneNumericBase
     protected abstract FunctionalExpression New(SqlExpression? sqlExpression, double number);
     protected abstract FunctionalExpression New(SqlExpression? sqlExpression, decimal number);
 
-    private static Parameter Value => new(1, "Value");
-    private static Add LeftRight => new(Left, Right);
-    private static Parameter Left => new(1, "Left");
-    private static Parameter Right => new(2, "Right");
 
     [Fact]
     public void Constructor_NullValueWithInt_Exception() =>

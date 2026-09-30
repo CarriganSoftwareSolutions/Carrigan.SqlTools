@@ -1,17 +1,24 @@
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
 
-public class DateAddTests
+public class DateAddTests : SqlExpressionsBaseTests
 {
-    private static Parameter Amount => new(2, "Amount");
-    private static Parameter Value => new(new DateTime(2026, 9, 23), "Value");
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new DateAdd(SharedDateTimePartEnum.Day, null!, Value)),
+        (() => new DateAdd(SharedDateTimePartEnum.Day, Amount, null!)),
+        (() => new DateAdd(DateAddDateTimePartEnum.Nanosecond, null!, Value)),
+        (() => new DateAdd(DateAddDateTimePartEnum.Nanosecond, Amount, null!)),
+    ];
+
 
     [Fact]
     public void SharedEnumConstructor_Test() =>
-        Assert.Equal("DATEADD(day, Amount, Value)", new DateAdd(SharedDateTimePartEnum.Day, Amount, Value).ToString());
+        Assert.Equal("DATEADD(day, Amount, Value)", new DateAdd(SharedDateTimePartEnum.Day, Amount, DateValue).ToString());
 
     [Fact]
     public void FunctionEnumConstructor_Test() =>
-        Assert.Equal("DATEADD(nanosecond, Amount, Value)", new DateAdd(DateAddDateTimePartEnum.Nanosecond, Amount, Value).ToString());
+        Assert.Equal("DATEADD(nanosecond, Amount, Value)", new DateAdd(DateAddDateTimePartEnum.Nanosecond, Amount, DateValue).ToString());
 }

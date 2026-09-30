@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;

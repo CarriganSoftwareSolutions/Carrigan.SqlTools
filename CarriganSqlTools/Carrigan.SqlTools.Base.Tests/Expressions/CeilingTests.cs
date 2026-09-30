@@ -9,6 +9,11 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class CeilingTests : FunctionTestsWithSingleValueBase
 {
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Ceiling(null!)),
+    ];
+
     protected override string ExpectedFunctionName =>
         "CEILING";
 

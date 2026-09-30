@@ -77,11 +77,4 @@ public class Trim : FunctionalExpression
         this(sqlExpression, new string(characters ?? throw new ArgumentNullException(nameof(characters))))
     {
     }
-
-    /// <summary>
-    /// Determines aggregate status from the value being trimmed. The internally generated characters parameter does not
-    /// change whether the expression is aggregate.
-    /// </summary>
-    public override bool IsAggregate() =>
-        ChildNodes.First().IsAggregate();
 }

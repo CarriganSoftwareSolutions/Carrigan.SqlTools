@@ -87,27 +87,4 @@ public class Truncate : SqlExpression
         yield return ISqlFragment.CommaSpace;
         yield return new SqlFragmentText("1)");
     }
-
-    /// <summary>
-    /// Determines whether the <see cref="Truncate"/> expression is an aggregate expression based on its child nodes.
-    /// </summary>
-    /// <returns>
-    /// A boolean value indicating whether the <see cref="Truncate"/> expression is an aggregate expression.
-    /// </returns>
-    /// <exception cref="AggregateInconsistencyException">
-    /// Thrown when there is an inconsistency in the aggregate states of the child nodes of the <see cref="Truncate"/> expression.
-    /// </exception>
-    public override bool IsAggregate()
-    {
-        IEnumerable<(SqlExpression Expression, bool IsAggregate)> aggregateCandidates = ChildNodes
-            .Select(expression => (Expression: expression, IsAggregate: expression.IsAggregate()))
-            .Where(candidate => candidate.IsAggregate || candidate.Expression.HasColumns());
-
-        bool[] aggregateStates = [.. aggregateCandidates.Select(static candidate => candidate.IsAggregate)];
-
-        if (aggregateStates.AllEqual() is false)
-            throw new AggregateInconsistencyException();
-
-        return aggregateStates.FirstOrDefault();
-    }
 }
