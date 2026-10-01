@@ -34,6 +34,34 @@ public class EqualsTests : PredicateLogicBaseTests
     private readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        BinaryAttemptMixedAggregateConstructions((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        BinaryExpressionsThatAreNotEqual((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        BinaryExpressionsThatAreEqual((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        BinaryExpressionsThatHaveAggregates((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        BinaryExpressionsThatHaveNoAggregates((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        BinaryExpressionsThatHaveColumns((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        BinaryExpressionsThatHaveNoColumns((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        BinaryExpressionsThatHaveParameters((left, right) => new Equal(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        BinaryExpressionsThatHaveNoParameters((left, right) => new Equal(left, right));
+
     [Fact]
     public void Equals_ToSql1()
     {

@@ -22,6 +22,64 @@ public class DivideTests : SqlExpressionsBaseTests
 
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Divide(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Divide(ColumnA, AggregateWithParameterNoColumn)),
+        (() => new Divide(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => new Divide(ColumnA, Second, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Divide(First, Second),
+        new Divide(First, Third),
+        new Divide(Second, Third),
+        new Divide(ColumnA, ParameterValue),
+        new Divide(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Divide(ColumnA, ParameterValue),
+        new Divide(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Divide(AggregateWithParameterNoColumn, Second),
+        new Divide(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Divide(First, Second),
+        new Divide(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Divide(ColumnA, Second),
+        new Divide(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Divide(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Divide(First, Second),
+        new Divide(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Divide(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void TestNumericDivide()
     {

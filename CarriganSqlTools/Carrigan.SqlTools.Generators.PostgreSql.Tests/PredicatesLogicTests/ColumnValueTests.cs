@@ -19,6 +19,46 @@ public class ColumnValueTests : PredicateLogicBaseTests
 
     private static readonly PostgreSqlDialect Dialect = new();
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new ColumnValue<ColumnTable>(nameof(ColumnTable.Col1), "1"),
+        new ColumnValue<ColumnTable>(nameof(ColumnTable.Col2), "1"),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new ColumnValue<ColumnTable>(nameof(ColumnTable.Col1), "1"),
+        new ColumnValue<ColumnTable>(nameof(ColumnTable.Col1), "2"),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new ColumnValue<ColumnTable>(nameof(ColumnTable.Col1), "1"),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new ColumnValue<ColumnTable>(nameof(ColumnTable.Col1), "1"),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new ColumnValue<ColumnTable>(nameof(ColumnTable.Col1), "1"),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        [];
+
     [Fact]
     public void ByColumnValue_ConstructorSimple_InValid_BadCol() =>
         Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new ColumnValue<ColumnTable>("ilsabasbdyas", "1"));

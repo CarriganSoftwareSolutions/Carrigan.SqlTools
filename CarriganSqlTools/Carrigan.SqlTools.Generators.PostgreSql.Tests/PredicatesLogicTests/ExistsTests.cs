@@ -1,6 +1,7 @@
 ﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.PostgreSql;
 using Carrigan.SqlTools.PredicatesLogic;
@@ -15,6 +16,54 @@ public class ExistsTests : PredicateLogicBaseTests
 
     private readonly SqlGenerator<Customer> customerGenerator = new();
     private readonly SqlGenerator<Order> orderGenerator = new();
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual
+    {
+        get
+        {
+            SubqueryBase subquery = new([], new PostgreSqlDialect());
+
+            return
+            [
+                new Exists(subquery),
+                new Exists(subquery),
+            ];
+        }
+    }
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+    ];
 
     [Fact]
     public void Select_WithExistsPredicate_RendersExistsSubquery()

@@ -36,6 +36,34 @@ public class GreaterThanEqualsTests : PredicateLogicBaseTests
     private readonly string ParameterHelloWorldSql = "$2";
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        BinaryAttemptMixedAggregateConstructions((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        BinaryExpressionsThatAreNotEqual((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        BinaryExpressionsThatAreEqual((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        BinaryExpressionsThatHaveAggregates((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        BinaryExpressionsThatHaveNoAggregates((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        BinaryExpressionsThatHaveColumns((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        BinaryExpressionsThatHaveNoColumns((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        BinaryExpressionsThatHaveParameters((left, right) => new GreaterThanEqual(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        BinaryExpressionsThatHaveNoParameters((left, right) => new GreaterThanEqual(left, right));
+
     [Fact]
     public void GreaterThanEquals_1_ToSql()
     {

@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
@@ -19,6 +19,58 @@ public sealed class CastTests : SqlExpressionsBaseTests
 
 
     private static readonly ISqlDialects Dialect = new PostgreSqlDialect();
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Cast(ParameterValue, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+        new Cast(DifferentParameter, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+        new Cast(ParameterValue, PostgreSqlTypesProvider.AsNumeric(18, 2, false, true)),
+        new Cast(ColumnA, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+        new Cast(ColumnB, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Cast(new Add(ColumnA, ParameterValue), PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+        new Cast(new Add(ColumnA, ParameterDifferentValue), PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Cast(AggregateWithParameterNoColumn, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Cast(ParameterValue, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+        new Cast(ColumnA, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Cast(ColumnA, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Cast(ParameterValue, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+        new Cast(AggregateWithParameterNoColumn, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Cast(ParameterValue, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+        new Cast(AggregateWithParameterNoColumn, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Cast(ColumnA, PostgreSqlTypesProvider.AsVarChar(100, false, true)),
+    ];
 
     [Fact]
     public void SelectTag_WithCast_RendersExpectedSql()

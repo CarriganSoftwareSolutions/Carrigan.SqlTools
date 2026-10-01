@@ -19,6 +19,46 @@ public class ColumnEqualsColumnTests : PredicateLogicBaseTests
 
     private static readonly SqlGenerator<JoinLeftTable> leftGenerator = new();
     private static readonly SqlGenerator<JoinRightTable> rightGenerator = new();
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id)),
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.LastId)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id)),
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new ColumnEqualsColumn<JoinLeftTable, JoinRightTable>(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id)),
+    ];
+
     [Fact]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
     public void NewLeftRight()

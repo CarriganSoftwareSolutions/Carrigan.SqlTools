@@ -20,6 +20,34 @@ public class OrTests : PredicateLogicBaseTests
 
     private static readonly PostgreSqlDialect Dialect = new();
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        MultipleAttemptMixedAggregateConstructions(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        MultipleExpressionsThatAreNotEqual(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        MultipleExpressionsThatAreEqual(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        MultipleExpressionsThatHaveAggregates(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        MultipleExpressionsThatHaveNoAggregates(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        MultipleExpressionsThatHaveColumns(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        MultipleExpressionsThatHaveNoColumns(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        MultipleExpressionsThatHaveParameters(values => new Or(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        MultipleExpressionsThatHaveNoParameters(values => new Or(values));
+
     [Fact]
     public void Or_Empty_ToSql() =>
         Assert.Throws<ArgumentException>(() => new Or([]));

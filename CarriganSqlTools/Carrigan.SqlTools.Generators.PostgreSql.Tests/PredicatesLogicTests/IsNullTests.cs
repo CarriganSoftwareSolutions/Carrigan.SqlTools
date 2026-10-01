@@ -35,6 +35,34 @@ public class IsNullTests : PredicateLogicBaseTests
     private readonly string ParameterHelloWorldSql = "$1";
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        UnaryAttemptMixedAggregateConstructions();
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        UnaryExpressionsThatAreNotEqual(value => new IsNull(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        UnaryExpressionsThatAreEqual(value => new IsNull(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        UnaryExpressionsThatHaveAggregates(value => new IsNull(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        UnaryExpressionsThatHaveNoAggregates(value => new IsNull(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        UnaryExpressionsThatHaveColumns(value => new IsNull(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        UnaryExpressionsThatHaveNoColumns(value => new IsNull(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        UnaryExpressionsThatHaveParameters(value => new IsNull(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        UnaryExpressionsThatHaveNoParameters(value => new IsNull(value));
+
     [Fact]
     public void IsNull_1_ToSql()
     {

@@ -21,6 +21,64 @@ public class ModuloTests : SqlExpressionsBaseTests
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Modulo(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Modulo(ColumnA, AggregateWithParameterNoColumn)),
+        (() => new Modulo(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => new Modulo(ColumnA, Second, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Modulo(First, Second),
+        new Modulo(First, Third),
+        new Modulo(Second, Third),
+        new Modulo(ColumnA, ParameterValue),
+        new Modulo(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Modulo(ColumnA, ParameterValue),
+        new Modulo(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Modulo(AggregateWithParameterNoColumn, Second),
+        new Modulo(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Modulo(First, Second),
+        new Modulo(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Modulo(ColumnA, Second),
+        new Modulo(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Modulo(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Modulo(First, Second),
+        new Modulo(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Modulo(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void TestNumericModulo()
     {

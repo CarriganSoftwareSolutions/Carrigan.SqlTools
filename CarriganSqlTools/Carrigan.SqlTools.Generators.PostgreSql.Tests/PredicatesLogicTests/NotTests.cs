@@ -36,6 +36,34 @@ public class NotTests : PredicateLogicBaseTests
     private readonly Parameter ParameterHelloWorld = new("Hello World!", "HelloWorld");
     private readonly string ParameterHelloWorldSql = "$2";
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        UnaryAttemptMixedAggregateConstructions();
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        UnaryExpressionsThatAreNotEqual(value => new Not(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        UnaryExpressionsThatAreEqual(value => new Not(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        UnaryExpressionsThatHaveAggregates(value => new Not(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        UnaryExpressionsThatHaveNoAggregates(value => new Not(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        UnaryExpressionsThatHaveColumns(value => new Not(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        UnaryExpressionsThatHaveNoColumns(value => new Not(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        UnaryExpressionsThatHaveParameters(value => new Not(value));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        UnaryExpressionsThatHaveNoParameters(value => new Not(value));
+
     [Fact]
     public void Not_BooleanColumn_ToSql()
     {

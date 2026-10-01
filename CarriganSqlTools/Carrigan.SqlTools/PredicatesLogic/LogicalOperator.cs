@@ -52,7 +52,7 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="predicates"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public LogicalOperator(string op, params IEnumerable<Predicates> predicates) : base(ValidatePredicates(predicates))
+    public LogicalOperator(string op, params IEnumerable<Predicates> predicates) : base(ValidateValues(1, predicates))
     {
         ValidateOperator(op);
         _operator = op;
@@ -94,7 +94,7 @@ public abstract class LogicalOperator : Predicates
     /// <exception cref="NullReferenceException">
     /// Thrown when <paramref name="sqlExpressions"/> contains disallowed <c>null</c> values.
     /// </exception>
-    public LogicalOperator(string op, params IEnumerable<SqlExpression> sqlExpressions) : base(ValidateSqlExpression(sqlExpressions))
+    public LogicalOperator(string op, params IEnumerable<SqlExpression> sqlExpressions) : base(ValidateValues(sqlExpressions))
     {
         ValidateOperator(op);
         _operator = op;
@@ -108,25 +108,6 @@ public abstract class LogicalOperator : Predicates
             throw new ArgumentException("Logical operator text cannot be empty or whitespace.", nameof(op));
 
         return op;
-    }
-
-    private static IEnumerable<Predicates> ValidatePredicates(IEnumerable<Predicates> predicates)
-    {
-        ValidateSqlExpression(predicates);
-
-        return predicates;
-    }
-
-    private static IEnumerable<SqlExpression> ValidateSqlExpression(IEnumerable<SqlExpression> sqlExpressions)
-    {
-        ArgumentNullException.ThrowIfNull(sqlExpressions, nameof(sqlExpressions));
-
-        if (sqlExpressions.None())
-            throw new ArgumentException($"{nameof(sqlExpressions)} must contain at least one value.", nameof(sqlExpressions));
-        if (sqlExpressions.Any(static predicate => predicate is null))
-            throw new NullReferenceException($"{nameof(sqlExpressions)} cannot contain null values.");
-
-        return sqlExpressions;
     }
 
     protected override object EqualityContract =>

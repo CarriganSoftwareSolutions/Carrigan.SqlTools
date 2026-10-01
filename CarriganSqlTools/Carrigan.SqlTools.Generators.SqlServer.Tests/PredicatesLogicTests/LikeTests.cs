@@ -37,6 +37,34 @@ public class LikeTests : PredicateLogicBaseTests
     private readonly string ParameterHelloWorldSql = "@HelloWorld_2";
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        BinaryAttemptMixedAggregateConstructions((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        BinaryExpressionsThatAreNotEqual((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        BinaryExpressionsThatAreEqual((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        BinaryExpressionsThatHaveAggregates((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        BinaryExpressionsThatHaveNoAggregates((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        BinaryExpressionsThatHaveColumns((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        BinaryExpressionsThatHaveNoColumns((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        BinaryExpressionsThatHaveParameters((left, right) => new Like(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        BinaryExpressionsThatHaveNoParameters((left, right) => new Like(left, right));
+
     [Fact]
     public void Like_1_ToSql()
     {

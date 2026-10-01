@@ -21,6 +21,64 @@ public class ModTests : SqlExpressionsBaseTests
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Mod(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Mod(ColumnA, AggregateWithParameterNoColumn)),
+        (() => new Mod(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => new Mod(ColumnA, Second, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Mod(First, Second),
+        new Mod(First, Third),
+        new Mod(Second, Third),
+        new Mod(ColumnA, ParameterValue),
+        new Mod(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Mod(ColumnA, ParameterValue),
+        new Mod(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Mod(AggregateWithParameterNoColumn, Second),
+        new Mod(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Mod(First, Second),
+        new Mod(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Mod(ColumnA, Second),
+        new Mod(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Mod(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Mod(First, Second),
+        new Mod(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Mod(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void TestNumericMod()
     {

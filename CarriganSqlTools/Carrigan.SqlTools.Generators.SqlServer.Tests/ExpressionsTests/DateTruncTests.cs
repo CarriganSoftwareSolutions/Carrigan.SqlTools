@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Base.Tests.Expressions;
+﻿using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExpressionsTests;
@@ -11,6 +11,57 @@ public class DateTruncTests : SqlExpressionsBaseTests
     [
         (() => new DateTrunc(SharedDateTimePartEnum.Day, null!)),
         (() => new DateTrunc(DateTruncDateTimePartEnum.IsoWeek, null!)),
+    ];
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, ParameterValue),
+        new DateTrunc(SharedDateTimePartEnum.Day, DifferentParameter),
+        new DateTrunc(SharedDateTimePartEnum.Day, ColumnA),
+        new DateTrunc(SharedDateTimePartEnum.Day, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, new Add(ColumnA, ParameterValue)),
+        new DateTrunc(SharedDateTimePartEnum.Day, new Add(ColumnA, ParameterDifferentValue)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, ParameterValue),
+        new DateTrunc(SharedDateTimePartEnum.Day, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, ParameterValue),
+        new DateTrunc(SharedDateTimePartEnum.Day, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, ParameterValue),
+        new DateTrunc(SharedDateTimePartEnum.Day, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new DateTrunc(SharedDateTimePartEnum.Day, ColumnA),
     ];
 
     [Fact]

@@ -25,6 +25,64 @@ public class MinusTests : SqlExpressionsBaseTests
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Minus(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Minus(ColumnA, AggregateWithParameterNoColumn)),
+        (() => new Minus(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => new Minus(ColumnA, Second, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Minus(First, Second),
+        new Minus(First, Third),
+        new Minus(Second, Third),
+        new Minus(ColumnA, ParameterValue),
+        new Minus(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Minus(ColumnA, ParameterValue),
+        new Minus(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Minus(AggregateWithParameterNoColumn, Second),
+        new Minus(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Minus(First, Second),
+        new Minus(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Minus(ColumnA, Second),
+        new Minus(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Minus(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Minus(First, Second),
+        new Minus(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Minus(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void TestNumericMinus()
     {

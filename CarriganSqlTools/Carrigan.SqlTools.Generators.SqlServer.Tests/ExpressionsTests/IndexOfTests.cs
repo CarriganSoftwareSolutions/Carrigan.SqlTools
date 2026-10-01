@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
@@ -15,6 +15,62 @@ public class IndexOfTests : SqlExpressionsBaseTests
     ];
 
 
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new IndexOf(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new IndexOf(ColumnA, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new IndexOf(First, Second),
+        new IndexOf(First, Third),
+        new IndexOf(Second, Third),
+        new IndexOf(ColumnA, ParameterValue),
+        new IndexOf(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new IndexOf(ColumnA, ParameterValue),
+        new IndexOf(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new IndexOf(AggregateWithParameterNoColumn, Second),
+        new IndexOf(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new IndexOf(First, Second),
+        new IndexOf(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new IndexOf(ColumnA, Second),
+        new IndexOf(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new IndexOf(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new IndexOf(First, Second),
+        new IndexOf(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new IndexOf(ColumnA, ColumnB),
+    ];
 
     [Fact]
     public void Constructor_WithExpression_RendersSqlServerArgumentOrder() =>

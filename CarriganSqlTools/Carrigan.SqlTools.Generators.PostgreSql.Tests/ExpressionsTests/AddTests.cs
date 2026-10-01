@@ -22,6 +22,64 @@ public class AddTests : SqlExpressionsBaseTests
 
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Add(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Add(ColumnA, AggregateWithParameterNoColumn)),
+        (() => new Add(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => new Add(ColumnA, Second, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Add(First, Second),
+        new Add(First, Third),
+        new Add(Second, Third),
+        new Add(ColumnA, ParameterValue),
+        new Add(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Add(ColumnA, ParameterValue),
+        new Add(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Add(AggregateWithParameterNoColumn, Second),
+        new Add(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Add(First, Second),
+        new Add(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Add(ColumnA, Second),
+        new Add(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Add(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Add(First, Second),
+        new Add(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Add(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void TestNumericAdd()
     {

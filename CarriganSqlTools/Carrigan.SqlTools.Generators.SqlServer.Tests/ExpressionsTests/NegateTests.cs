@@ -18,6 +18,57 @@ public class NegateTests : SqlExpressionsBaseTests
 
 
     private readonly SqlGenerator<Grades> gradesGenerator = new();
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Negate(ParameterValue),
+        new Negate(DifferentParameter),
+        new Negate(ColumnA),
+        new Negate(ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Negate(new Add(ColumnA, ParameterValue)),
+        new Negate(new Add(ColumnA, ParameterDifferentValue)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Negate(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Negate(ParameterValue),
+        new Negate(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Negate(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Negate(ParameterValue),
+        new Negate(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Negate(ParameterValue),
+        new Negate(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Negate(ColumnA),
+    ];
+
     [Fact]
     public void TestNumericNegate()
     {

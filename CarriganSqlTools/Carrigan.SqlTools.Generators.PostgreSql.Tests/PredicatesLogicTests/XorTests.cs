@@ -37,6 +37,34 @@ public class XorThanTests : PredicateLogicBaseTests
     private static readonly string ParameterHelloWorldSql = "$2";
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        BinaryAttemptMixedAggregateConstructions((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        BinaryExpressionsThatAreNotEqual((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        BinaryExpressionsThatAreEqual((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        BinaryExpressionsThatHaveAggregates((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        BinaryExpressionsThatHaveNoAggregates((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        BinaryExpressionsThatHaveColumns((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        BinaryExpressionsThatHaveNoColumns((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        BinaryExpressionsThatHaveParameters((left, right) => new Xor(left, right));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        BinaryExpressionsThatHaveNoParameters((left, right) => new Xor(left, right));
+
     [Fact]
     public void Xor_1_ToSql()
     {

@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
@@ -19,6 +19,58 @@ public sealed class CastTests : SqlExpressionsBaseTests
 
 
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Cast(ParameterValue, SqlServerTypesProvider.AsNVarChar(100, true)),
+        new Cast(DifferentParameter, SqlServerTypesProvider.AsNVarChar(100, true)),
+        new Cast(ParameterValue, SqlServerTypesProvider.AsDecimal(18, 2, true)),
+        new Cast(ColumnA, SqlServerTypesProvider.AsNVarChar(100, true)),
+        new Cast(ColumnB, SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Cast(new Add(ColumnA, ParameterValue), SqlServerTypesProvider.AsNVarChar(100, true)),
+        new Cast(new Add(ColumnA, ParameterDifferentValue), SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Cast(AggregateWithParameterNoColumn, SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Cast(ParameterValue, SqlServerTypesProvider.AsNVarChar(100, true)),
+        new Cast(ColumnA, SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Cast(ColumnA, SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Cast(ParameterValue, SqlServerTypesProvider.AsNVarChar(100, true)),
+        new Cast(AggregateWithParameterNoColumn, SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Cast(ParameterValue, SqlServerTypesProvider.AsNVarChar(100, true)),
+        new Cast(AggregateWithParameterNoColumn, SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Cast(ColumnA, SqlServerTypesProvider.AsNVarChar(100, true)),
+    ];
 
     [Fact]
     public void SelectTag_WithCast_RendersExpectedSql()

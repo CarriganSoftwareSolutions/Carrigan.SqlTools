@@ -24,6 +24,64 @@ public class MultiplyTests : SqlExpressionsBaseTests
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Multiply(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Multiply(ColumnA, AggregateWithParameterNoColumn)),
+        (() => new Multiply(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => new Multiply(ColumnA, Second, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Multiply(First, Second),
+        new Multiply(First, Third),
+        new Multiply(Second, Third),
+        new Multiply(ColumnA, ParameterValue),
+        new Multiply(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Multiply(ColumnA, ParameterValue),
+        new Multiply(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Multiply(AggregateWithParameterNoColumn, Second),
+        new Multiply(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Multiply(First, Second),
+        new Multiply(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Multiply(ColumnA, Second),
+        new Multiply(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Multiply(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Multiply(First, Second),
+        new Multiply(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Multiply(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void TestNumericMultiply()
     {

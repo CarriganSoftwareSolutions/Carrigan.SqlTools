@@ -16,6 +16,46 @@ public class ContainsTests : PredicateLogicBaseTests
 
     private static readonly SqlServerDialect Dialect = new();
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("test", "Col1")),
+        new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col2)), new Parameter("test", "Col2")),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("test", "Col1")),
+        new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("different", "Col1")),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("test", "Col1")),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("test", "Col1")),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Contains<ColumnTable>(new Column<ColumnTable>(nameof(ColumnTable.Col1)), new Parameter("test", "Col1")),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        [];
+
     [Fact]
     public void ContainsTest()
     {

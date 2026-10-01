@@ -13,6 +13,62 @@ public class TruncateTests : SqlExpressionsBaseTests
         (() => new Truncate(PiValue, (SqlExpression)null!)),
     ];
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Truncate(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Truncate(ColumnA, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Truncate(First, Second),
+        new Truncate(First, Third),
+        new Truncate(Second, Third),
+        new Truncate(ColumnA, ParameterValue),
+        new Truncate(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Truncate(ColumnA, ParameterValue),
+        new Truncate(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Truncate(AggregateWithParameterNoColumn, Second),
+        new Truncate(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Truncate(First, Second),
+        new Truncate(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Truncate(ColumnA, Second),
+        new Truncate(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Truncate(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Truncate(First, Second),
+        new Truncate(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Truncate(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void Constructor_WithSingleExpression_GeneratesExpectedSql()
     {

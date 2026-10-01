@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -13,6 +13,56 @@ public abstract class FunctionTestsWithOneExpressionOneDefaultIntBase : SqlExpre
     protected abstract int DefaultInt { get; }
 
     protected abstract FunctionalExpression New(SqlExpression? sqlExpression);
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        New(ParameterValue),
+        New(DifferentParameter),
+        New(ColumnA),
+        New(ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        New(ColumnA),
+        New(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        New(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        New(ParameterValue),
+        New(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        New(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        New(ParameterValue),
+        New(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        New(ParameterValue),
+        New(ColumnA),
+        New(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        [];
 
     [Fact]
     public void Constructor_NullValue_Exception() =>
@@ -67,6 +117,6 @@ public abstract class FunctionTestsWithOneExpressionOneDefaultIntBase : SqlExpre
     public void IsAggregate_AggregateValues() =>
         Assert.True
         (
-            New(Aggregate).IsAggregate()
+            New(AggregateWithParameterNoColumn).IsAggregate()
         );
 }

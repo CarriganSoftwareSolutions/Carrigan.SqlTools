@@ -1,10 +1,80 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests.AggregateLogic;
 
-public sealed class AggregateTests
+public sealed class AggregateTests : SqlExpressionsBaseTests
 {
+
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+    [
+        (() => new Avg(null!)),
+        (() => new Average(null!)),
+        (() => new Count(null!)),
+        (() => new Max(null!)),
+        (() => new Min(null!)),
+        (() => new Sum(null!)),
+    ];
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Avg(Value),
+        new Count(Value),
+        new Max(Value),
+        new Min(Value),
+        new Sum(Value),
+        new Avg(ColumnA),
+        new Avg(ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Avg(new Add(ColumnA, ParameterValue)),
+        new Average(new Add(ColumnA, ParameterDifferentValue)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Avg(Value),
+        new Average(Value),
+        new Count(Value),
+        new Max(Value),
+        new Min(Value),
+        new Sum(Value),
+        new Count(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Count(ColumnA),
+        new Sum(ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Avg(Value),
+        new Count(Value),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Avg(Value),
+        new Count(Value),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Count(),
+        new Count(ColumnA),
+    ];
+
     [Fact]
     public void DistinctAggregates_RenderDistinct()
     {

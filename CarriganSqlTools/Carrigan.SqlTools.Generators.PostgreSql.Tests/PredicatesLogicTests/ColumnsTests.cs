@@ -16,6 +16,49 @@ public  class ColumnsTests : PredicateLogicBaseTests
 
     private static readonly PostgreSqlDialect Dialect = new();
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Column<ColumnTable>(nameof(ColumnTable.Col1)),
+        new Column<ColumnTable>(nameof(ColumnTable.Col2)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Column<ColumnTable>(nameof(ColumnTable.Col1)),
+        new Column<ColumnTable>(nameof(ColumnTable.Col1)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Column<ColumnTable>(nameof(ColumnTable.Col1)),
+        new Column<ColumnTable>(nameof(ColumnTable.Col2)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Column<ColumnTable>(nameof(ColumnTable.Col1)),
+        new Column<ColumnTable>(nameof(ColumnTable.Col2)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Column<ColumnTable>(nameof(ColumnTable.Col1)),
+        new Column<ColumnTable>(nameof(ColumnTable.Col2)),
+    ];
+
     [Fact]
     public void ColumnValues_One_Constructor_NullColumnException_Null_PropertyName() =>
         Assert.Throws<ArgumentNullException>(() => new Column<ColumnTable>((PropertyName)null!));

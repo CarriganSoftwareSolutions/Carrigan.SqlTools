@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
@@ -18,6 +18,58 @@ public sealed class TryCastTests : SqlExpressionsBaseTests
 
 
     private static readonly ISqlDialects Dialect = new SqlServerDialect();
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new TryCast(ParameterValue, SqlServerTypesProvider.AsInt()),
+        new TryCast(DifferentParameter, SqlServerTypesProvider.AsInt()),
+        new TryCast(ParameterValue, SqlServerTypesProvider.AsBigInt()),
+        new TryCast(ColumnA, SqlServerTypesProvider.AsInt()),
+        new TryCast(ColumnB, SqlServerTypesProvider.AsInt()),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new TryCast(new Add(ColumnA, ParameterValue), SqlServerTypesProvider.AsInt()),
+        new TryCast(new Add(ColumnA, ParameterDifferentValue), SqlServerTypesProvider.AsInt()),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new TryCast(AggregateWithParameterNoColumn, SqlServerTypesProvider.AsInt()),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new TryCast(ParameterValue, SqlServerTypesProvider.AsInt()),
+        new TryCast(ColumnA, SqlServerTypesProvider.AsInt()),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new TryCast(ColumnA, SqlServerTypesProvider.AsInt()),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new TryCast(ParameterValue, SqlServerTypesProvider.AsInt()),
+        new TryCast(AggregateWithParameterNoColumn, SqlServerTypesProvider.AsInt()),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new TryCast(ParameterValue, SqlServerTypesProvider.AsInt()),
+        new TryCast(AggregateWithParameterNoColumn, SqlServerTypesProvider.AsInt()),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new TryCast(ColumnA, SqlServerTypesProvider.AsInt()),
+    ];
 
     [Fact]
     public void ToSql_RendersExpectedSql()

@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Expressions;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
@@ -8,6 +8,56 @@ public abstract class FunctionTestsWithOneExpressionOneIntBase : SqlExpressionsB
     protected abstract string ExpectedFunctionName { get; }
 
     protected abstract FunctionalExpression New(SqlExpression? sqlExpression, int precision);
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        New(Value, 42),
+        New(DifferentParameter, 42),
+        New(ColumnA, 42),
+        New(ColumnB, 42),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        New(ColumnA, 42),
+        New(ColumnA, 1776),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        New(AggregateWithParameterNoColumn, 42),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        New(Value, 42),
+        New(ColumnA, 42),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        New(ColumnA, 42),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        New(Value, 42),
+        New(AggregateWithParameterNoColumn, 42),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        New(Value, 42),
+        New(ColumnA, 42),
+        New(AggregateWithParameterNoColumn, 42),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        [];
 
     [Fact]
     public void Constructor_NullValueWithStringCharacters_Exception() =>

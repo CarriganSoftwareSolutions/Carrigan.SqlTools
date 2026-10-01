@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Exceptions;
@@ -20,6 +20,76 @@ public sealed class StuffTests : SqlExpressionsBaseTests
         (() => new Stuff(AbcValue, 2, 3, null!)),
     ];
 
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Stuff(AggregateWithParameterNoColumn, ColumnA, Third, Replacement)),
+        (() => new Stuff(AggregateWithParameterNoColumn, Second, ColumnA, Replacement)),
+        (() => new Stuff(AggregateWithParameterNoColumn, Second, Third, ColumnA)),
+        (() => new Stuff(ColumnA, AggregateWithParameterNoColumn, Third, Replacement)),
+        (() => new Stuff(First, AggregateWithParameterNoColumn, ColumnA, Replacement)),
+        (() => new Stuff(First, AggregateWithParameterNoColumn, Third, ColumnA)),
+        (() => new Stuff(ColumnA, Second, AggregateWithParameterNoColumn, Replacement)),
+        (() => new Stuff(First, ColumnA, AggregateWithParameterNoColumn, Replacement)),
+        (() => new Stuff(First, Second, AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Stuff(ColumnA, Second, Third, AggregateWithParameterNoColumn)),
+        (() => new Stuff(First, ColumnA, Third, AggregateWithParameterNoColumn)),
+        (() => new Stuff(First, Second, ColumnA, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Stuff(AbcValue, Start, Length, Replacement),
+        new Stuff(DifferentParameter, Start, Length, Replacement),
+        new Stuff(AbcValue, Start, Length, DifferentParameter),
+        new Stuff(ColumnA, ParameterValue, ParameterValue, ParameterValue),
+        new Stuff(ColumnB, ParameterValue, ParameterValue, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Stuff(ColumnA, ParameterValue, ParameterValue, ParameterValue),
+        new Stuff(ColumnA, ParameterDifferentValue, ParameterDifferentValue, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Stuff(AggregateWithParameterNoColumn, Start, Length, Replacement),
+        new Stuff(AbcValue, AggregateWithParameterNoColumn, Length, Replacement),
+        new Stuff(AbcValue, Start, AggregateWithParameterNoColumn, Replacement),
+        new Stuff(AbcValue, Start, Length, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Stuff(AbcValue, Start, Length, Replacement),
+        new Stuff(ColumnA, ColumnB, Column1, Column2),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Stuff(ColumnA, Start, Length, Replacement),
+        new Stuff(AbcValue, ColumnA, Length, Replacement),
+        new Stuff(AbcValue, Start, ColumnA, Replacement),
+        new Stuff(AbcValue, Start, Length, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Stuff(AbcValue, Start, Length, Replacement),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Stuff(AbcValue, Start, Length, Replacement),
+        new Stuff(ColumnA, Start, Length, Replacement),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Stuff(ColumnA, ColumnB, Column1, Column2),
+    ];
 
     [Fact]
     public void ExpressionConstructor_RendersValues() =>

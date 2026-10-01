@@ -22,6 +22,64 @@ public class SubtractTests : SqlExpressionsBaseTests
     private readonly SqlGenerator<Grades> gradesGenerator = new();
 
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new Subtract(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new Subtract(ColumnA, AggregateWithParameterNoColumn)),
+        (() => new Subtract(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => new Subtract(ColumnA, Second, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new Subtract(First, Second),
+        new Subtract(First, Third),
+        new Subtract(Second, Third),
+        new Subtract(ColumnA, ParameterValue),
+        new Subtract(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new Subtract(ColumnA, ParameterValue),
+        new Subtract(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new Subtract(AggregateWithParameterNoColumn, Second),
+        new Subtract(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new Subtract(First, Second),
+        new Subtract(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new Subtract(ColumnA, Second),
+        new Subtract(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new Subtract(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new Subtract(First, Second),
+        new Subtract(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new Subtract(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void TestNumericSubtract()
     {

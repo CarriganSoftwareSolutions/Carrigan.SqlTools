@@ -63,6 +63,9 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     //TODO: REMOVE and update all unit tests, currently using this property to use AllParticipatingParameters instead. 
     internal IEnumerable<Parameter> DescendantParameters =>
         DescendantNodes.OfType<Parameter>();
+
+    internal bool HasParameters() =>
+        AllParticipatingParameters.Any();
     #endregion
 
 
@@ -145,7 +148,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     public bool IsAggregate(GroupBys? groupBys) =>
         IsAggregate();
 
-    public bool HasAggregates =>
+    public bool HasAggregates() =>
         IsAggregate() || DescendantNodes.Any(child => child.IsAggregate());
 
     /// <summary>

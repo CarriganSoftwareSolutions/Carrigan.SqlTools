@@ -6,7 +6,7 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-public abstract class FunctionTestsNoArgumentBase
+public abstract class FunctionTestsNoArgumentBase : SqlExpressionsBaseTests
 {
     protected abstract string ExpectedFunctionName { get; }
 
@@ -14,6 +14,46 @@ public abstract class FunctionTestsNoArgumentBase
 
     protected virtual bool RenderParentheses =>
         true;
+
+
+    public override IEnumerable<Func<SqlExpression>> AttemptNullConstructions() =>
+        [];
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        New(),
+        New(),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        New(),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        New(),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        New(),
+    ];
 
     [Fact]
     public void ToString_RendersValues() =>

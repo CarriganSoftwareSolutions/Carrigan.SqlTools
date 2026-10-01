@@ -14,6 +14,62 @@ public class NullIfTests : SqlExpressionsBaseTests
         (() => new NullIf(First, null!)),
         (() => new NullIf(null!, Second)),
     ];
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+    [
+        (() => new NullIf(AggregateWithParameterNoColumn, ColumnA)),
+        (() => new NullIf(ColumnA, AggregateWithParameterNoColumn)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        new NullIf(First, Second),
+        new NullIf(First, Third),
+        new NullIf(Second, Third),
+        new NullIf(ColumnA, ParameterValue),
+        new NullIf(ColumnB, ParameterValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        new NullIf(ColumnA, ParameterValue),
+        new NullIf(ColumnA, ParameterDifferentValue),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        new NullIf(AggregateWithParameterNoColumn, Second),
+        new NullIf(First, AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        new NullIf(First, Second),
+        new NullIf(ColumnA, ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        new NullIf(ColumnA, Second),
+        new NullIf(First, ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        new NullIf(First, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        new NullIf(First, Second),
+        new NullIf(ColumnA, Second),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        new NullIf(ColumnA, ColumnB),
+    ];
+
     [Fact]
     public void Constructor_NullValueLeft_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new NullIf(null!, new Parameter(1)));

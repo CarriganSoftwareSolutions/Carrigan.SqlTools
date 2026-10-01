@@ -12,6 +12,57 @@ public abstract class FunctionTestsWithSingleValueBase : SqlExpressionsBaseTests
 
     protected abstract FunctionalExpression New(SqlExpression? sqlExpression);
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        [];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+    [
+        New(ParameterValue),
+        New(DifferentParameter),
+        New(ColumnA),
+        New(ColumnB),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+    [
+        New(new Add(ColumnA, ParameterValue)),
+        New(new Add(ColumnA, ParameterDifferentValue)),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+    [
+        New(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+    [
+        New(ParameterValue),
+        New(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+    [
+        New(ColumnA),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+    [
+        New(ParameterValue),
+        New(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+    [
+        New(ParameterValue),
+        New(AggregateWithParameterNoColumn),
+    ];
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+    [
+        New(ColumnA),
+    ];
+
     [Fact]
     public void Constructor_NullValue_Exception() =>
         Assert.Throws<ArgumentNullException>(() => New((SqlExpression)null!));
@@ -64,19 +115,19 @@ public abstract class FunctionTestsWithSingleValueBase : SqlExpressionsBaseTests
 
     [Fact]
     public void HasAggregate_NonAggregateValues() =>
-        Assert.False(New(ParameterValue).HasAggregates);
+        Assert.False(New(ParameterValue).HasAggregates());
 
     [Fact]
     public void IsAggregate_AggregateValues() =>
         Assert.False
         (
-            New(Aggregate).IsAggregate()
+            New(AggregateWithParameterNoColumn).IsAggregate()
         );
 
     [Fact]
     public void HasAggregate_AggregateValues() =>
         Assert.True
         (
-            New(Aggregate).HasAggregates
+            New(AggregateWithParameterNoColumn).HasAggregates()
         );
 }

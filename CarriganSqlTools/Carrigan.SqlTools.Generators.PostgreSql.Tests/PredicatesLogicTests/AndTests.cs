@@ -21,6 +21,34 @@ public class AndTests : PredicateLogicBaseTests
 
     private static readonly PostgreSqlDialect Dialect = new();
 
+
+    public override IEnumerable<Func<SqlExpression>> AttemptMixedAggregateConstructions() =>
+        MultipleAttemptMixedAggregateConstructions(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
+        MultipleExpressionsThatAreNotEqual(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatAreEqual =>
+        MultipleExpressionsThatAreEqual(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveAggregates =>
+        MultipleExpressionsThatHaveAggregates(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
+        MultipleExpressionsThatHaveNoAggregates(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
+        MultipleExpressionsThatHaveColumns(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
+        MultipleExpressionsThatHaveNoColumns(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
+        MultipleExpressionsThatHaveParameters(values => new And(values));
+
+    public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
+        MultipleExpressionsThatHaveNoParameters(values => new And(values));
+
     [Fact]
     public void And_Empty_ToSql() =>
         Assert.Throws<ArgumentException>(() => new And([]));
@@ -115,14 +143,6 @@ public class AndTests : PredicateLogicBaseTests
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToString() == "LogicalPredicateTable.IsArchived").Single();
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
-
-    [Fact]
-    public void And_ContainsNullPredicate_ThrowsNullReferenceException() =>
-        Assert.Throws<NullReferenceException>(() => new And(
-        [
-            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
-            null!,
-        ]));
 
     private static And CreateAnd(int nestedParameterValue = 2) =>
         new(
