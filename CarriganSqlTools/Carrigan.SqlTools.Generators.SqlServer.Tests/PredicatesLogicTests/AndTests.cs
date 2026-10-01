@@ -143,14 +143,6 @@ public class AndTests : PredicateLogicBaseTests
         _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
-    [Fact]
-    public void And_ContainsNullPredicate_ThrowsNullReferenceException() =>
-        Assert.Throws<NullReferenceException>(() => new And(
-        [
-            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
-            null!,
-        ]));
-
     private static And CreateAnd(int nestedParameterValue = 2) =>
         new(
         [

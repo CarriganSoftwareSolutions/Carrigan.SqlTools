@@ -108,8 +108,4 @@ public sealed class TryCastTests : SqlExpressionsBaseTests
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, differentType);
     }
-
-    [Fact]
-    public void IsAggregate_DelegatesToExpression() =>
-        Assert.True(new TryCast(new Average(new Parameter(1)), SqlServerTypesProvider.AsDecimal(18, 2)).IsAggregate());
 }

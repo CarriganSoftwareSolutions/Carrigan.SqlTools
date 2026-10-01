@@ -108,15 +108,4 @@ public abstract class FunctionTestsWithOneExpressionOneDefaultIntBase : SqlExpre
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, different);
     }
-
-    [Fact]
-    public void IsAggregate_NonAggregateValues() =>
-        Assert.False(New(ParameterValue).IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateValues() =>
-        Assert.True
-        (
-            New(AggregateWithParameterNoColumn).IsAggregate()
-        );
 }

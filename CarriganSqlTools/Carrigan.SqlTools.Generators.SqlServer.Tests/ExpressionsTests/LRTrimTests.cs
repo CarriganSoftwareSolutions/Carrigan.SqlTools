@@ -75,11 +75,4 @@ public class LRTrimTests : SqlExpressionsBaseTests
             new LRTrim(new Parameter("Pride and Prejudice", "Title")).ToString()
         );
 
-    [Fact]
-    public void IsAggregate_NonAggregateValue() =>
-        Assert.False(new LRTrim(new Parameter("Title")).IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateValue() =>
-        Assert.True(new LRTrim(new Count(new Parameter("Title"))).IsAggregate());
 }

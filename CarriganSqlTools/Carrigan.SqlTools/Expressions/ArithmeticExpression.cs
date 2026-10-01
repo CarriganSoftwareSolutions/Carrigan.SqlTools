@@ -21,7 +21,7 @@ public abstract class ArithmeticExpression : SqlExpression
     /// <param name="operation">The arithmetic operator.</param>
     /// <param name="sqlExpressions">The expressions to combine. No SQL data-type validation is performed.</param>
     protected ArithmeticExpression(string operation, IEnumerable<SqlExpression> sqlExpressions)
-        : base(ValidateSqlExpressions(sqlExpressions)) =>
+        : base(ValidateValues(1, sqlExpressions)) =>
         _operator = ValidateOperation(operation);
 
     private static string ValidateOperation(string operation)
@@ -32,18 +32,6 @@ public abstract class ArithmeticExpression : SqlExpression
             throw new ArgumentException("Arithmetic operator text cannot be empty or whitespace.", nameof(operation));
 
         return operation;
-    }
-
-    private static IEnumerable<SqlExpression> ValidateSqlExpressions(IEnumerable<SqlExpression> sqlExpressions)
-    {
-        ArgumentNullException.ThrowIfNull(sqlExpressions, nameof(sqlExpressions));
-
-        if (sqlExpressions.None())
-            throw new ArgumentException($"{nameof(sqlExpressions)} must contain at least one value.", nameof(sqlExpressions));
-        if (sqlExpressions.Any(static expression => expression is null))
-            throw new NullReferenceException($"{nameof(sqlExpressions)} cannot contain null values.");
-
-        return sqlExpressions;
     }
 
     protected override object EqualityContract =>

@@ -83,8 +83,4 @@ public class IndexOfWithStringTests : SqlExpressionsBaseTests
         Assert.Equal(Value, children[0]);
         Assert.Equal("p", Assert.IsType<Parameter>(children[1]).Value);
     }
-
-    [Fact]
-    public void IsAggregate_UsesSearchedExpression() =>
-        Assert.True(new IndexOf(new Count(Value), "p").IsAggregate());
 }

@@ -170,6 +170,47 @@ public class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
+    public void Select_WithGroupedColumnInExpressionContainingAggregate_AllowsAggregateSelectList()
+    {
+        GroupBys groupBys = new GroupBys<Grades>(nameof(Grades.AcademicYear));
+        SelectTags selects = new
+        (
+            new SelectTag
+            (
+                new Add
+                (
+                    new Column<Grades>(nameof(Grades.AcademicYear)),
+                    new Sum(new Column<Grades>(nameof(Grades.CreditHours)))
+                ),
+                "Value"
+            )
+        );
+
+        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+
+        Assert.Equal("SELECT ([Grades].[AcademicYear] + SUM([Grades].[CreditHours])) AS [Value] FROM [Grades] GROUP BY [Grades].[AcademicYear]", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithUngroupedColumnInExpressionContainingAggregate_Throws()
+    {
+        SelectTags selects = new
+        (
+            new SelectTag
+            (
+                new Add
+                (
+                    new Column<Grades>(nameof(Grades.AcademicYear)),
+                    new Sum(new Column<Grades>(nameof(Grades.CreditHours)))
+                ),
+                "Value"
+            )
+        );
+
+        Assert.Throws<MixedAggregateSelectException>(() => gradesGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+    }
+
+    [Fact]
     public void Select_WithMixedAggregateAndNonAggregateSelects_Throws()
     {
         SelectTags selects = new

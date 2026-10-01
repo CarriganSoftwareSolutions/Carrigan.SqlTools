@@ -1,5 +1,6 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
@@ -137,18 +138,48 @@ public abstract partial class SqlGeneratorBase<T>
         if ((selects is null || selects.Empty()) && groupBys.IsNotNullOrEmpty())
             throw new GroupByRequiresSelectException();
 
-        if (selects is not null && selects.Any())
+        if (selects is not null && selects.Any() && selects.HasAggregates())
         {
+            //static IEnumerable<SqlExpression> GetColumnsOutsideAggregates(SqlExpression sqlExpression)
+            //{
+            //    if (sqlExpression.IsAggregate())
+            //        yield break;
 
-            IEnumerable<(SelectTag Select, bool IsAggregate)> aggregateCandidates = selects
-                .Select(select => (Select: select, IsAggregate: select.IsAggregate()))
-                .Where(candidate => candidate.IsAggregate || candidate.Select.HasColumns());
+            //    if (sqlExpression is IColumnExpressionIdentity)
+            //    {
+            //        yield return sqlExpression;
+            //        yield break;
+            //    }
 
-            IEnumerable<bool> aggregateStates = aggregateCandidates
-                .Select(candidate => candidate.IsAggregate || (groupBys?.ContainsEquivalent(candidate.Select) ?? false));
+            //    foreach (SqlExpression childNode in sqlExpression.ChildNodes)
+            //    {
+            //        foreach (SqlExpression column in GetColumnsOutsideAggregates(childNode))
+            //            yield return column;
+            //    }
+            //}
 
-            if (aggregateStates.Distinct().Count() > 1)
-                throw new MixedAggregateSelectException();
+
+            if (selects is not null && selects.Any() && selects.HasAggregates())
+            {
+
+                bool allSelectedExpressionsAreValid =
+                    selects
+                        ._selectTags
+                        .All(select => (groupBys?.ContainsEquivalent(select) ?? false)
+                                        || select.NonAggregateColumnExpressions.All(column => (groupBys?.ContainsEquivalent(new SelectTag(column)) ?? false)));
+
+                if (allSelectedExpressionsAreValid is false)
+                    throw new MixedAggregateSelectException();
+            }
+
+            //bool selectsContainsDisallowedColumns =
+            //    selects
+            //        ._selectTags
+            //        .Any(select => (groupBys?.DoesNotContainsEquivalent(select) ?? true) 
+            //                            && select.NonAggregateColumnExpressions.Any(column => (groupBys?.DoesNotContainsEquivalent(new SelectTag(column)) ?? true)));
+
+            //if (selectsContainsDisallowedColumns)
+            //    throw new MixedAggregateSelectException();
         }
 
         IEnumerable<ISqlFragment> GetFragments()

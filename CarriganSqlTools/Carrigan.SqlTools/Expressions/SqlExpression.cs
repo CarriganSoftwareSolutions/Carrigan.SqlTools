@@ -68,7 +68,6 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         AllParticipatingParameters.Any();
     #endregion
 
-
     #region columns
     /// <summary>
     /// Gets every column-shaped SQL expression participating in this expression tree, including the current node and all descendants.
@@ -80,7 +79,11 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// </remarks>
     public IEnumerable<SqlExpression> AllParticipatingColumns =>
         EnumerateSelfAndDescendants()
-        .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
+            .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
+
+    internal IEnumerable<SqlExpression> AllNonAggregateColumns =>
+        EnumerateAllNonAggregates()
+            .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
 
     /// <summary>
     /// Gets all reflected column expressions below the current node.
@@ -130,7 +133,6 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         AllParticipatingTables;
     #endregion
 
-
     #region aggregates
     /// <summary>
     /// Indicates whether this expression is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
@@ -138,6 +140,9 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// <returns><c>false</c> unless an expression type overrides this method.</returns>
     public bool IsAggregate() =>
         this is Aggregates;
+
+    public bool IsNotAggregate() =>
+        IsAggregate() is false;
 
     /// <summary>
     /// Aggregate functions are valid aggregate SELECT expressions.
@@ -170,10 +175,6 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     public static bool ContainsAggregate(SqlExpression expression) =>
         expression.ContainsAggregate();
     #endregion
-
-
-
-
 
     /// <summary>
     /// Gets the canonical expression used for equality and hashing.
@@ -345,6 +346,19 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         foreach (SqlExpression descendant in DescendantNodes)
             yield return descendant;
     }
+    /// <summary>
+    /// Enumerates this expression followed by every descendant expression in depth-first order.
+    /// </summary>
+    private IEnumerable<SqlExpression> EnumerateAllNonAggregates()
+    {
+        if (IsNotAggregate())
+        {
+            yield return this;
+
+            foreach (SqlExpression descendant in GetAllDescendantNonAggregateExpressions(this.ChildNodes))
+                yield return descendant;
+        }
+    }
 
     /// <summary>
     /// Recursively enumerates every child expression below the supplied expression collection.
@@ -359,6 +373,20 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
 
             foreach (SqlExpression childExpression in GetAllDescendantExpressions(expression.ChildNodes))
                 yield return childExpression;
+        }
+    }
+
+    private static IEnumerable<SqlExpression> GetAllDescendantNonAggregateExpressions(IEnumerable<SqlExpression> expressions)
+    {
+        foreach (SqlExpression expression in expressions)
+        {
+            if (expression.IsNotAggregate())
+            {
+                yield return expression;
+
+                foreach (SqlExpression childExpression in GetAllDescendantNonAggregateExpressions(expression.ChildNodes))
+                    yield return childExpression;
+            }
         }
     }
 

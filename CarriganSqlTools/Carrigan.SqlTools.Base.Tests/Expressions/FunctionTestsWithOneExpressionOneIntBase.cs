@@ -116,12 +116,4 @@ public abstract class FunctionTestsWithOneExpressionOneIntBase : SqlExpressionsB
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, different);
     }
-
-    [Fact]
-    public void IsAggregate_NonAggregateValue() =>
-        Assert.False(New(Value, 42).IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateValue() =>
-        Assert.True(New(new Count(Value), 42).IsAggregate());
 }

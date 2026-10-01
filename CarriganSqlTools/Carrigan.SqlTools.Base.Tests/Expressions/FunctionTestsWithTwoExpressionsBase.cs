@@ -133,41 +133,4 @@ public abstract class FunctionTestsWithTwoExpressionsBase : SqlExpressionsBaseTe
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, different);
     }
-
-    [Fact]
-    public void IsAggregate_NonAggregateValues() =>
-        Assert.False(New(First, Second).IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateValues() =>
-        Assert.True
-        (
-            New
-            (
-                new Count(First),
-                new Average(Second)
-            ).IsAggregate()
-        );
-
-    [Fact]
-    public void IsAggregate_AggregateAndRowIndependentValues_ReturnsTrue() =>
-        Assert.True
-        (
-            New
-            (
-                new Count(First),
-                Second
-            ).IsAggregate()
-        );
-
-    [Fact]
-    public void IsAggregate_AggregateAndColumnValue_Exception() =>
-        Assert.Throws<AggregateInconsistencyException>
-        (
-            () => New
-            (
-                new Count(First),
-                new TestColumnExpression()
-            ).IsAggregate()
-        );
 }

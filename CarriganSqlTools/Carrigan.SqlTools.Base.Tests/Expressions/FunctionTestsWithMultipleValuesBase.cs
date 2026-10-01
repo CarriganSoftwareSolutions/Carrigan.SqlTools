@@ -153,41 +153,4 @@ public abstract class FunctionTestsWithMultipleValuesBase : SqlExpressionsBaseTe
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, different);
     }
-
-    [Fact]
-    public void IsAggregate_NonAggregateValues() =>
-        Assert.False(New(new Parameter(1, "First"), new Parameter(2, "Second")).IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateValues() =>
-        Assert.True
-        (
-            New
-            (
-                new Count(new Parameter(1, "First")),
-                new Average(new Parameter(2, "Second"))
-            ).IsAggregate()
-        );
-
-    [Fact]
-    public void IsAggregate_AggregateAndRowIndependentValue_ReturnsTrue() =>
-        Assert.True
-        (
-            New
-            (
-                new Count(new Parameter(1, "Aggregate")),
-                new Parameter(2, "RowIndependent")
-            ).IsAggregate()
-        );
-
-    [Fact]
-    public void IsAggregate_AggregateAndColumnValue_Exception() =>
-        Assert.Throws<AggregateInconsistencyException>
-        (
-            () => New
-            (
-                new Count(new Parameter(1, "Aggregate")),
-                new TestColumnExpression()
-            ).IsAggregate()
-        );
 }

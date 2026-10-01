@@ -148,14 +148,6 @@ public class OrTests : PredicateLogicBaseTests
         _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
-    [Fact]
-    public void Or_ContainsNullPredicate_ThrowsNullReferenceException() =>
-        Assert.Throws<NullReferenceException>(() => new Or(
-        [
-            new Column<LogicalPredicateTable>(nameof(LogicalPredicateTable.IsActive)),
-            null!,
-        ]));
-
     private static Or CreateOr(int nestedParameterValue = 2) =>
         new(
         [

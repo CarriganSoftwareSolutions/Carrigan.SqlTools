@@ -30,10 +30,6 @@ public class ArithmeticExpressionTests
         Assert.Throws<ArgumentException>(() => new TestArithmeticExpression("+", []));
 
     [Fact]
-    public void Constructor_NullExpression_Exception() =>
-        Assert.Throws<NullReferenceException>(() => new TestArithmeticExpression("+", [new Parameter(1, "Left"), null!]));
-
-    [Fact]
     public void ToString_SingleExpression() =>
         Assert.Equal("Left", new TestArithmeticExpression("+", [new Parameter(1, "Left")]).ToString());
 

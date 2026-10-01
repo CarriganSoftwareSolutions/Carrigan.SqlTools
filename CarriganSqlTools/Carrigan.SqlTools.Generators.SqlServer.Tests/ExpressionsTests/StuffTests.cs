@@ -167,15 +167,4 @@ public sealed class StuffTests : SqlExpressionsBaseTests
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, different);
     }
-
-    [Fact]
-    public void IsAggregate_AggregateAndRowIndependentValues_ReturnsTrue() =>
-        Assert.True(new Stuff(new Count(AbcValue), 2, 3, "X").IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateAndColumnValue_Exception() =>
-        Assert.Throws<AggregateInconsistencyException>
-        (
-            () => new Stuff(new Count(AbcValue), Start, Length, new TestColumnExpression()).IsAggregate()
-        );
 }

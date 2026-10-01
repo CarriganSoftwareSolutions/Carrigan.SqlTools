@@ -150,12 +150,4 @@ public abstract class FunctionTestsWithOneExpressionOneStringBase : SqlExpressio
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, different);
     }
-
-    [Fact]
-    public void IsAggregate_NonAggregateValue() =>
-        Assert.False(New(Value, "xy").IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateValue() =>
-        Assert.True(New(new Count(Value), "xy").IsAggregate());
 }

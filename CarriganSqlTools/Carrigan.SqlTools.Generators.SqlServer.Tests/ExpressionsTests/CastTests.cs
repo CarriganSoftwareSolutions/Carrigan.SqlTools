@@ -109,18 +109,4 @@ public sealed class CastTests : SqlExpressionsBaseTests
 
         Assert.Equal(expected, actual.QueryText);
     }
-
-    [Fact]
-    public void IsAggregate_DelegatesToGroupedColumnExpression()
-    {
-        Cast cast = new
-        (
-            new Average(new Column<Customer>(nameof(Customer.Id))),
-            SqlServerTypesProvider.AsNVarChar(100)
-        );
-
-        bool actual = cast.IsAggregate();
-
-        Assert.True(actual);
-    }
 }

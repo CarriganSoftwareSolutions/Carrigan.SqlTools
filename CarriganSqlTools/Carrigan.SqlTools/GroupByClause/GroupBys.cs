@@ -84,9 +84,10 @@ public class GroupBys
     {
         ArgumentNullException.ThrowIfNull(selectTagBase, nameof(selectTagBase));
 
-        return ContainsEquivalent(selectTagBase.SqlExpression)
-            || ContainsAll(selectTagBase.SqlExpression.AllParticipatingColumns);
+        return ContainsEquivalent(selectTagBase.SqlExpression) || ContainsAll(selectTagBase.SqlExpression.AllParticipatingColumns);
     }
+    public bool DoesNotContainsEquivalent(SelectTag selectTagBase) =>
+        !ContainsEquivalent(selectTagBase);
 
     /// <summary>
     /// Determines whether a column expression is present in the <c>GROUP BY</c> clause.

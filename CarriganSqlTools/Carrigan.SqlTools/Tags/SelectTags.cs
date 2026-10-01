@@ -2,6 +2,7 @@ using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using System.Collections;
@@ -37,6 +38,16 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// </summary>
     public bool Empty() =>
         Any() is false;
+
+    public bool HasColumns() =>
+        _selectTags.Any(select => select.HasColumns());
+
+    public bool HasAggregates() =>
+        _selectTags.Any(select => select.HasAggregates());
+
+    internal IEnumerable<SqlExpression> NonAggregateColumnExpressions =>
+        _selectTags
+            .SelectMany(selectTag => selectTag.NonAggregateColumnExpressions);
 
     /// <summary>
     /// Gets all distinct <see cref="TableTag"/> values referenced by the contained select tags.
@@ -109,7 +120,6 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <param name="dialect">The SQL dialect used to render the fragment.</param>
     public string ToSql(ISqlDialects dialect) =>
         Flatten(dialect).ToSql(dialect);
-
 
 
     /// <summary>

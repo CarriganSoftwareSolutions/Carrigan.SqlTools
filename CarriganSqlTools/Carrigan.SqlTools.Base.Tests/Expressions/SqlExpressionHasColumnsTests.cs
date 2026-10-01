@@ -6,16 +6,6 @@ using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
-internal sealed class TestColumnExpression : SqlExpression
-{
-    internal TestColumnExpression() : base([])
-    {
-    }
-
-    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) =>
-        [];
-}
-
 public class SqlExpressionHasColumnsTests
 {
     private sealed class WrapperExpression : SqlExpression
@@ -27,14 +17,6 @@ public class SqlExpressionHasColumnsTests
         public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) =>
             [];
     }
-
-    [Fact]
-    public void HasColumns_ColumnExpression_ReturnsTrue() =>
-        Assert.True(new TestColumnExpression().HasColumns());
-
-    [Fact]
-    public void HasColumns_NestedColumnExpression_ReturnsTrue() =>
-        Assert.True(new WrapperExpression(new TestColumnExpression()).HasColumns());
 
     [Fact]
     public void HasColumns_NestedColumnTagExpression_ReturnsTrue()
@@ -70,19 +52,6 @@ public class SqlExpressionHasColumnsTests
         WrapperExpression expression = new(parameter);
 
         Assert.Same(parameter, Assert.Single(expression.AllParticipatingParameters));
-    }
-
-    [Fact]
-    public void AllParticipatingColumns_IncludesCurrentNode() =>
-        Assert.Single(new TestColumnExpression().AllParticipatingColumns);
-
-    [Fact]
-    public void AllParticipatingColumns_IncludesDescendants()
-    {
-        TestColumnExpression column = new();
-        WrapperExpression expression = new(column);
-
-        Assert.Same(column, Assert.Single(expression.AllParticipatingColumns));
     }
 
     [Fact]

@@ -125,41 +125,4 @@ public class NullIfTests : SqlExpressionsBaseTests
         Assert.Equal(first.GetHashCode(), equivalent.GetHashCode());
         Assert.NotEqual(first, different);
     }
-
-    [Fact]
-    public void IsAggregate_NonAggregateValues() =>
-        Assert.False(new NullIf(new Parameter(1, "First"), new Parameter(2, "Second")).IsAggregate());
-
-    [Fact]
-    public void IsAggregate_AggregateValues() =>
-        Assert.True
-        (
-            new NullIf
-            (
-                new Count(new Parameter(1, "First")),
-                new Average(new Parameter(2, "Second"))
-            ).IsAggregate()
-        );
-
-    [Fact]
-    public void IsAggregate_AggregateAndRowIndependentValue_ReturnsTrue() =>
-        Assert.True
-        (
-            new NullIf
-            (
-                new Count(new Parameter(1, "Aggregate")),
-                new Parameter(2, "RowIndependent")
-            ).IsAggregate()
-        );
-
-    [Fact]
-    public void IsAggregate_AggregateAndColumnValue_Exception() =>
-        Assert.Throws<AggregateInconsistencyException>
-        (
-            () => new NullIf
-            (
-                new Count(new Parameter(1, "Aggregate")),
-                new TestColumnExpression()
-            ).IsAggregate()
-        );
 }

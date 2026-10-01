@@ -32,7 +32,7 @@ public class LogicalOperatorTests
 
     [Fact]
     public void Constructor_NullPredicate_Exception() =>
-        Assert.Throws<NullReferenceException>(() => new TestLogicalOperator("AND", [NewPredicate("Left"), null!]));
+        Assert.Throws<ArgumentNullException>(() => new TestLogicalOperator("AND", [NewPredicate("Left"), null!]));
 
     [Fact]
     public void ToString_SinglePredicate() =>

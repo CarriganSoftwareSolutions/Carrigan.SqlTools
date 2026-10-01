@@ -29,11 +29,11 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// </summary>
     /// <param name="columnTag">The column identifier to select.</param>
     /// <param name="aliasTag">The optional alias to apply to the selected column.</param>
+    [Obsolete("No longer needed, except by public obsolete methods.")]
     internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null)
         : this(new ColumnTagExpression(columnTag), aliasTag)
     {
     }
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
@@ -92,21 +92,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     public SelectTags Concat(params IEnumerable<SelectTag> selectTags) =>
         new SelectTags(this).Concat(selectTags);
 
-    /// <summary>
-    /// Creates a column tag from a model property name when no reflected table context is available.
-    /// </summary>
-    /// <param name="propertyName">The model property name to use as the SQL column name.</param>
-    /// <returns>A column tag containing the column name derived from <paramref name="propertyName"/>.</returns>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="propertyName"/> is <see langword="null"/>.
-    /// </exception>
-    private static ColumnTag CreateColumnTag(PropertyName propertyName)
-    {
-        ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
-
-        return new(new ColumnName(propertyName.ToString()));
-    }
-
+    //TODO: Validate that is being used correctly.
     /// <summary>
     /// Gets the simple column tag represented by a column-shaped expression, when applicable.
     /// </summary>
@@ -124,10 +110,14 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     internal IEnumerable<TableTag> TableTags =>
         SqlExpression.AllParticipatingTables;
 
+    internal IEnumerable<SqlExpression> NonAggregateColumnExpressions =>
+        SqlExpression.AllNonAggregateColumns;
+
     /// <summary>
     /// Gets the expected result set column name for this projection, choosing the alias
     /// when present, the underlying column name for simple columns, or the expression text otherwise.
     /// </summary>
+    //TODO: Validate that is being used correctly.
     internal ResultColumnName ResultColumnName =>
         new(AliasTag?.ToString() ?? GetSimpleColumnTag(SqlExpression)?.ColumnName.ToString() ?? SqlExpression.ToString());
 
@@ -135,8 +125,12 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// Indicates whether this select item is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
     /// </summary>
     /// <returns>The aggregate status of the underlying expression or column.</returns>
+    [Obsolete("No longer used, HasAggregates is more useful")]
     public bool IsAggregate() =>
         SqlExpression.IsAggregate();
+
+    public bool HasAggregates() =>
+        SqlExpression.HasAggregates();
 
     /// <summary>
     /// Indicates whether this select item projects one or more columns.
