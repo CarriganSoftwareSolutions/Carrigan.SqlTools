@@ -87,7 +87,7 @@ public class ColumnValueTests : PredicateLogicBaseTests
         string expectedString;
         string actualString;
 
-        Parameter parameter;
+        IParameter parameter;
 
         parameter = byColumnValues.AllParticipatingParameters.Where(param => param.Name.ToString() == "Col1").First();
         expectedValue = "1";
