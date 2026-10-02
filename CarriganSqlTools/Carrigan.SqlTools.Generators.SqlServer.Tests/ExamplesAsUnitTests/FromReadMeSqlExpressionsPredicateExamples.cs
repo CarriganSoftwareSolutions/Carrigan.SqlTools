@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Base.Tests.Helpers;
+﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;
@@ -9,7 +9,7 @@ using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.ExamplesAsUnitTests;
 
-public class PredicateExamples
+public class FromReadMeSqlExpressionsPredicateExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
     private static readonly SqlGenerator<Order> orderGenerator = new();
@@ -39,6 +39,8 @@ public class PredicateExamples
         SqlQueryTestHelper.AssertParameterValue(query, "@Phone_3", "+1(555)555-5555");
     }
 
+    //This method of having an And with only one predicate is supported for uses cases when you might only have one predicate, or might have more.
+    //This way you don't have to test for an the only one edge case. Instead And intelligently ignores itself.
     [Fact]
     public void PredicateSingleAnd()
     {
@@ -56,6 +58,27 @@ public class PredicateExamples
         SqlQueryTestHelper.AssertParameterCount(query, 1);
 
         SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
+    }
+
+    [Fact]
+    public void PredicateBetween()
+    {
+        Parameter minimumTotal = new(100.00m, "MinimumTotal");
+        Parameter maximumTotal = new(500.00m, "MaximumTotal");
+        Column<Order> columnTotal = new(nameof(Order.Total));
+        Between predicate = new(columnTotal, minimumTotal, maximumTotal);
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Where = predicate
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] BETWEEN @MinimumTotal_1 AND @MaximumTotal_2)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "@MinimumTotal_1", 100.00m);
+        SqlQueryTestHelper.AssertParameterValue(query, "@MaximumTotal_2", 500.00m);
     }
 
     [Fact]
@@ -318,6 +341,27 @@ public class PredicateExamples
     }
 
     [Fact]
+    public void PredicateNotBetween()
+    {
+        Parameter minimumTotal = new(100.00m, "MinimumTotal");
+        Parameter maximumTotal = new(500.00m, "MaximumTotal");
+        Column<Order> columnTotal = new(nameof(Order.Total));
+        NotBetween predicate = new(columnTotal, minimumTotal, maximumTotal);
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Where = predicate
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        Assert.Equal("SELECT [Order].* FROM [Order] WHERE ([Order].[Total] NOT BETWEEN @MinimumTotal_1 AND @MaximumTotal_2)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "@MinimumTotal_1", 100.00m);
+        SqlQueryTestHelper.AssertParameterValue(query, "@MaximumTotal_2", 500.00m);
+    }
+
+    [Fact]
     public void PredicateNot()
     {
         Parameter parameterName = new("Hank", "Name");
@@ -412,8 +456,8 @@ public class PredicateExamples
     [Fact]
     public void PredicateSingleOr()
     {
-        //This method of having an add with only one predicate is supported for uses cases when you might only have one predicate, or might have more.
-        //This way you don't HAVE to test for an the only one edge case. Instead OR intelligently ignores itself.
+        //This method of having an Or with only one predicate is supported for uses cases when you might only have one predicate, or might have more.
+        //This way you don't have to test for an the only one edge case. Instead OR intelligently ignores itself.
 
         ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
         Or or = new(equalName);
@@ -435,6 +479,26 @@ public class PredicateExamples
     public void PredicateParameter()
     {
         Parameter parameterName = new("Hank", "Name");
+        Column<Customer> columnName = new(nameof(Customer.Name));
+        Equal equalName = new(columnName, parameterName);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Where = equalName
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@Name_1", "Hank");
+    }
+
+    [Fact]
+    public void PredicateParameterGeneric()
+    {
+        Parameter<Customer> parameterName = new (nameof(Customer.Name), "Hank");
         Column<Customer> columnName = new(nameof(Customer.Name));
         Equal equalName = new(columnName, parameterName);
         SelectBuilder<Customer> selectBuilder = new()

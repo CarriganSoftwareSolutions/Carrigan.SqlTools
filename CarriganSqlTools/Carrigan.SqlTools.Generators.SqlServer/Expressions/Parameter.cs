@@ -49,7 +49,7 @@ public class Parameter<modelT> : Parameter where modelT : class
     /// <param name="value">
     /// The value to assign to the parameter; may be null.
     /// </param>
-    private Parameter(ColumnInfo columnInfo, object? value) : base(value, columnInfo.ParameterTag, columnInfo.FieldPropertiesOrDefault(new PostgreSqlDialect()))
+    private Parameter(ColumnInfo columnInfo, object? value) : base(value, columnInfo.ParameterTag, columnInfo.FieldPropertiesOrDefault(new SqlServerDialect()))
     {
     }
 

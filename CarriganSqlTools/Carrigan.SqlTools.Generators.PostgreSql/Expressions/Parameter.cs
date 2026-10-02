@@ -24,9 +24,9 @@ namespace Carrigan.SqlTools.Expressions;
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
-/// SELECT [Customer].*
-/// FROM [Customer]
-/// WHERE ([Customer].[Name] = @Name_1)
+/// SELECT "Customer".*
+/// FROM "Customer"
+/// WHERE ("Customer"."Name" = $1)
 /// ]]></code>
 /// </example>
 public class Parameter<modelT> : Parameter where modelT : class

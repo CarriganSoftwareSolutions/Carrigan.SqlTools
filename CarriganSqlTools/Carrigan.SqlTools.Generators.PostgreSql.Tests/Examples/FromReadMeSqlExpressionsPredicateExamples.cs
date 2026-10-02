@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Base.Tests.Helpers;
+﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer and Order are defined.
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.JoinTypes;
@@ -9,7 +9,7 @@ using Carrigan.SqlTools.SqlGenerators;
 
 namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Examples;
 
-public class PredicateExamples
+public class FromReadMeSqlExpressionsPredicateExamples
 {
     private static readonly SqlGenerator<Customer> customerGenerator = new();
     private static readonly SqlGenerator<Order> orderGenerator = new();
@@ -44,6 +44,8 @@ public class PredicateExamples
         SqlQueryTestHelper.AssertParameterValue(query, "$3", "+1(555)555-5555");
     }
 
+    //This method of having an And with only one predicate is supported for uses cases when you might only have one predicate, or might have more.
+    //This way you don't have to test for an the only one edge case. Instead And intelligently ignores itself.
     [Fact]
     public void PredicateSingleAnd()
     {
@@ -66,6 +68,32 @@ public class PredicateExamples
         SqlQueryTestHelper.AssertParameterCount(query, 1);
 
         SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hank");
+    }
+
+    [Fact]
+    public void PredicateBetween()
+    {
+        Parameter minimumTotal = new(100.00m, "MinimumTotal");
+        Parameter maximumTotal = new(500.00m, "MaximumTotal");
+        Column<Order> columnTotal = new(nameof(Order.Total));
+        Between predicate = new(columnTotal, minimumTotal, maximumTotal);
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Where = predicate
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expectedQueryText =
+            """
+            SELECT "Order".* FROM "Order" WHERE ("Order"."Total" BETWEEN $1 AND $2)
+            """;
+
+        Assert.Equal(expectedQueryText, query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 100.00m);
+        SqlQueryTestHelper.AssertParameterValue(query, "$2", 500.00m);
     }
 
     [Fact]
@@ -364,6 +392,32 @@ public class PredicateExamples
         SqlQueryTestHelper.AssertParameterCount(query, 1);
 
         SqlQueryTestHelper.AssertParameterValue(query, "$1", "%@example.com");
+    }
+
+    [Fact]
+    public void PredicateNotBetween()
+    {
+        Parameter minimumTotal = new(100.00m, "MinimumTotal");
+        Parameter maximumTotal = new(500.00m, "MaximumTotal");
+        Column<Order> columnTotal = new(nameof(Order.Total));
+        NotBetween predicate = new(columnTotal, minimumTotal, maximumTotal);
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Where = predicate
+        };
+
+        SqlQuery query = orderGenerator.Select(selectBuilder);
+
+        string expectedQueryText =
+            """
+            SELECT "Order".* FROM "Order" WHERE ("Order"."Total" NOT BETWEEN $1 AND $2)
+            """;
+
+        Assert.Equal(expectedQueryText, query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 100.00m);
+        SqlQueryTestHelper.AssertParameterValue(query, "$2", 500.00m);
     }
 
     [Fact]

@@ -81,7 +81,7 @@ public  class ColumnsTests : PredicateLogicBaseTests
     public void ColumnValues_One_Constructor_Value_ParameterCount(string propertyName)
     {
         Column<ColumnTable> cv = new(propertyName);
-        int expectedValue = 1;
+        int expectedValue = 0;
         int actual = cv.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actual);

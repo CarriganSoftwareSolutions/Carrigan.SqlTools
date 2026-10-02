@@ -87,6 +87,96 @@ public abstract class PredicateLogicBaseTests : SqlExpressionsBaseTests
         factory(ColumnA, ColumnB),
     ];
 
+    protected static IEnumerable<Func<SqlExpression>> TernaryAttemptMixedAggregateConstructions
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        (() => factory(AggregateWithParameterNoColumn, ColumnA, Third)),
+        (() => factory(AggregateWithParameterNoColumn, Second, ColumnA)),
+        (() => factory(ColumnA, AggregateWithParameterNoColumn, Third)),
+        (() => factory(First, AggregateWithParameterNoColumn, ColumnA)),
+        (() => factory(ColumnA, Second, AggregateWithParameterNoColumn)),
+        (() => factory(First, ColumnA, AggregateWithParameterNoColumn)),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatAreNotEqual
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(First, Second, Third),
+        factory(DifferentParameter, Second, Third),
+        factory(First, DifferentParameter, Third),
+        factory(First, Second, DifferentParameter),
+        factory(ColumnA, ParameterValue, ParameterValue),
+        factory(ColumnB, ParameterValue, ParameterValue),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatAreEqual
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(ColumnA, ParameterValue, ParameterValue),
+        factory(ColumnA, ParameterDifferentValue, ParameterDifferentValue),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatHaveAggregates
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(AggregateWithParameterNoColumn, Second, Third),
+        factory(First, AggregateWithParameterNoColumn, Third),
+        factory(First, Second, AggregateWithParameterNoColumn),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatHaveNoAggregates
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(First, Second, Third),
+        factory(ColumnA, ColumnB, Column1),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatHaveColumns
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(ColumnA, Second, Third),
+        factory(First, ColumnA, Third),
+        factory(First, Second, ColumnA),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatHaveNoColumns
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(First, Second, Third),
+        factory(AggregateWithParameterNoColumn, Second, Third),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatHaveParameters
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(First, Second, Third),
+        factory(ColumnA, Second, Third),
+    ];
+
+    protected static IEnumerable<SqlExpression> TernaryExpressionsThatHaveNoParameters
+    (
+        Func<SqlExpression, SqlExpression, SqlExpression, SqlExpression> factory
+    ) =>
+    [
+        factory(ColumnA, ColumnB, Column1),
+    ];
+
     protected static IEnumerable<Func<SqlExpression>> UnaryAttemptMixedAggregateConstructions() =>
         [];
 

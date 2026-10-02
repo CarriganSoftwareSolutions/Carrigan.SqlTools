@@ -81,6 +81,26 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Null Operations](#null-operations)
     - [Coalesce Example](#coalesce-example)
     - [NullIf Example](#nullif-example)
+  - [Predicate Operations](#predicate-operations)
+    - [And Examples](#and-examples)
+    - [Between Example](#between-example)
+    - [Column Example](#column-example)
+    - [ColumnValue Example](#columnvalue-example)
+    - [ColumnEqualsColumn Example](#columnequalscolumn-example)
+    - [Contains Example](#contains-example)
+    - [Equal Example](#equal-example)
+    - [GreaterThan Example](#greaterthan-example)
+    - [GreaterThanEquals Example](#greaterthanequals-example)
+    - [IsNotNull Example](#isnotnull-example)
+    - [IsNull Example](#isnull-example)
+    - [LessThan Example](#lessthan-example)
+    - [LessThanEquals Example](#lessthanequals-example)
+    - [Like Example](#like-example)
+    - [NotBetween Example](#notbetween-example)
+    - [Not Example](#not-example)
+    - [NotEqual Example](#notequal-example)
+    - [Or Examples](#or-examples)
+    - [Parameter Examples](#parameter-examples)
   - [String Operations](#string-operations)
     - [CharIndexOf Example](#charindexof-example)
     - [Concat Example](#concat-example)
@@ -1532,6 +1552,530 @@ SqlQuery query = customerGenerator.Select(selectBuilder);
 
 ```SQL
 SELECT NULLIF([Customer].[Phone], @Parameter_1) AS [NullIf] FROM [Customer]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Predicate Operations
+
+#### And Examples
+
+```csharp
+ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
+ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
+And and = new(equalName, equalEmail, equalPhone);
+
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = and
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+This method of having an And with only one predicate is supported for uses cases when you might only have one predicate, or might have more.
+This way you don't have to test for an the only one edge case. Instead And intelligently ignores itself.
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE (([Customer].[Name] = @Name_1) 
+  AND ([Customer].[Email] = @Email_2) 
+  AND ([Customer].[Phone] = @Phone_3))
+```
+
+```csharp
+ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+And and = new(equalName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = and
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Between Example
+
+```csharp
+Parameter minimumTotal = new(100.00m, "MinimumTotal");
+Parameter maximumTotal = new(500.00m, "MaximumTotal");
+Column<Order> columnTotal = new(nameof(Order.Total));
+Between predicate = new(columnTotal, minimumTotal, maximumTotal);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Order].* 
+FROM [Order] 
+WHERE ([Order].[Total] BETWEEN @MinimumTotal_1 AND @MaximumTotal_2)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Column Example
+
+```csharp
+Parameter parameterName = new("Hank", "Name");
+Column<Customer> columnName = new(nameof(Customer.Name));
+Equal equalName = new(columnName, parameterName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = equalName
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Name] = @Name_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### ColumnValue Example
+
+```csharp
+ColumnValue<Customer> columnValue = new(nameof(Customer.Name), "Hank");
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = columnValue
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Name] = @Name_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### ColumnEqualsColumn Example
+
+Note: ColumnEqualsColumn<leftT, rightT> validates the names of the properties, and throws an error if the property isn't valid
+
+```csharp
+//Note: 
+ColumnEqualsColumn<Customer, Order> columnValue = new(nameof(Customer.Id), nameof(Order.CustomerId));
+LeftJoin<Order> join = new(columnValue);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Joins = join
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+LEFT JOIN [Order] 
+  ON ([Customer].[Id] = [Order].[CustomerId])
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Contains Example
+
+```csharp
+Parameter parameterEmail = new("@example.", "Email");
+Column<Customer> columnEmail = new(nameof(Customer.Email));
+Contains<Customer> predicate = new(columnEmail, parameterEmail);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE CONTAINS([Customer].[Email], @Email_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Equal Example
+
+```csharp
+Parameter parameterName = new("Hank", "Name");
+Column<Customer> columnName = new(nameof(Customer.Name));
+Equal equalName = new(columnName, parameterName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = equalName
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Name] = @Name_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### GreaterThan Example
+
+```csharp
+Parameter parameterTotal = new(1776.00m, "Total");
+Column<Order> columnTotal = new(nameof(Order.Total));
+GreaterThan predicate = new(columnTotal, parameterTotal);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Order].* 
+FROM [Order] 
+WHERE ([Order].[Total] > @Total_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### GreaterThanEquals Example
+
+```csharp
+Parameter parameterTotal = new(1776.00m, "Total");
+Column<Order> columnTotal = new(nameof(Order.Total));
+GreaterThanEqual predicate = new(columnTotal, parameterTotal);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Order].* 
+FROM [Order] 
+WHERE ([Order].[Total] >= @Total_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### IsNotNull Example
+
+```csharp
+Column<Customer> columnName = new(nameof(Customer.Name));
+IsNotNull notNull = new(columnName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = notNull
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer]
+WHERE ([Customer].[Name] IS NOT NULL)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### IsNull Example
+
+```csharp
+Column<Customer> columnName = new(nameof(Customer.Name));
+IsNull isNull = new(columnName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = isNull
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].*
+FROM [Customer] 
+WHERE ([Customer].[Name] IS NULL)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### LessThan Example
+
+```csharp
+Parameter parameterTotal = new(1776.00m, "Total");
+Column<Order> columnTotal = new(nameof(Order.Total));
+LessThan predicate = new(columnTotal, parameterTotal);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Order].* 
+FROM [Order] 
+WHERE ([Order].[Total] < @Total_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### LessThanEquals Example
+
+```csharp
+Parameter parameterTotal = new(1776.00m, "Total");
+Column<Order> columnTotal = new(nameof(Order.Total));
+LessThanEqual predicate = new(columnTotal, parameterTotal);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Order].*
+FROM [Order] 
+WHERE ([Order].[Total] <= @Total_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Like Example
+
+```csharp
+Parameter parameterEmail = new("%@example.com", "Email");
+Column<Customer> columnEmail = new(nameof(Customer.Email));
+Like predicate = new(columnEmail, parameterEmail);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Email] LIKE @Email_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### NotBetween Example
+
+```csharp
+Parameter minimumTotal = new(100.00m, "MinimumTotal");
+Parameter maximumTotal = new(500.00m, "MaximumTotal");
+Column<Order> columnTotal = new(nameof(Order.Total));
+NotBetween predicate = new(columnTotal, minimumTotal, maximumTotal);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = orderGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Order].* 
+FROM [Order]
+WHERE ([Order].[Total] NOT BETWEEN @MinimumTotal_1 AND @MaximumTotal_2)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Not Example
+
+```csharp
+Parameter parameterName = new("Hank", "Name");
+Column<Customer> columnName = new(nameof(Customer.Name));
+Equal equal = new(columnName, parameterName);
+Not not = new(equal);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = not
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].*
+FROM [Customer] 
+WHERE (NOT ([Customer].[Name] = @Name_1))
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### NotEqual Example
+
+```csharp
+Parameter parameterName = new("Hank", "Name");
+Column<Customer> columnName = new(nameof(Customer.Name));
+NotEqual predicate = new(columnName, parameterName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = predicate
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Name] <> @Name_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Or Examples
+
+```csharp
+        ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+        ColumnValue<Customer> equalEmail = new(nameof(Customer.Email), "Hank@example.com");
+        ColumnValue<Customer> equalPhone = new(nameof(Customer.Phone), "+1(555)555-5555");
+        Or or = new(equalName, equalEmail, equalPhone);
+
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Where = or
+        };
+
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].*
+FROM [Customer]
+WHERE (([Customer].[Name] = @Name_1) 
+  OR ([Customer].[Email] = @Email_2)
+  OR ([Customer].[Phone] = @Phone_3))
+```
+
+This method of having an Or with only one predicate is supported for uses cases when you might only have one predicate, or might have more.
+This way you don't have to test for an the only one edge case. Instead OR intelligently ignores itself.
+
+```csharp
+ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");
+Or or = new(equalName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = or
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Name] = @Name_1)
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+#### Parameter Examples
+
+```csharp
+Parameter parameterName = new("Hank", "Name");
+Column<Customer> columnName = new(nameof(Customer.Name));
+Equal equalName = new(columnName, parameterName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = equalName
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].*
+FROM [Customer]
+WHERE ([Customer].[Name] = @Name_1)
+```
+
+```csharp
+Parameter<Customer> parameterName = new (nameof(Customer.Name), "Hank");
+Column<Customer> columnName = new(nameof(Customer.Name));
+Equal equalName = new(columnName, parameterName);
+SelectBuilder<Customer> selectBuilder = new()
+{
+    Where = equalName
+};
+
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```SQL
+SELECT [Customer].* 
+FROM [Customer] 
+WHERE ([Customer].[Name] = @Name_1)
 ```
 
 [Table of Contents](#table-of-contents)
