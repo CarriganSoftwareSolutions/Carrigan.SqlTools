@@ -91,6 +91,7 @@ public class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
+    [Obsolete]
     public void ContainsAggregate_WithNestedAggregate_ReturnsTrue()
     {
         SqlExpression expression = new LessThan
@@ -104,6 +105,7 @@ public class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
+    [Obsolete]
     public void ContainsAggregate_WithoutAggregate_ReturnsFalse()
     {
         SqlExpression expression = new LessThan

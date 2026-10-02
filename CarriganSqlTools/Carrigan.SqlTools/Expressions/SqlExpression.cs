@@ -59,7 +59,6 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Gets all parameter expressions below the current node.
     /// </summary>
     [Obsolete("This is likely not doing what we need it to do anymore.")]
-    //TODO: REMOVE and update all unit tests, currently using this property to use AllParticipatingParameters instead. 
     internal IEnumerable<Parameter> DescendantParameters =>
         DescendantNodes.OfType<Parameter>();
     /// <summary>
@@ -96,7 +95,6 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Gets all reflected column expressions below the current node.
     /// </summary>
     [Obsolete("This is likely not doing what we need it to do anymore.")]
-    //TODO: REMOVE and update all unit tests, currently using this property to use AllParticipatingColumns instead. 
     internal IEnumerable<IColumnBase> DescendantColumns =>
         DescendantNodes.OfType<IColumnBase>();
 
@@ -136,6 +134,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// <summary>
     /// Gets all table tags represented by this expression and its descendants.
     /// </summary>
+    [Obsolete("This is likely not doing what we need it to do anymore.")]
     public IEnumerable<TableTag> DescendantLeafTables =>
         AllParticipatingTables;
     #endregion
@@ -181,9 +180,9 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Indicates whether this expression tree contains any aggregate expressions.
     /// </summary>
     /// <returns><c>true</c> if the expression tree contains any aggregate expressions; otherwise, <c>false</c>.</returns>
-    [Obsolete("Use ContainsAggregate() instead.")]
+    [Obsolete("Use HasAggregates() instead.")]
     public bool ContainsAggregate() =>
-        IsAggregate() || DescendantNodes.Any(child => child.IsAggregate());
+        HasAggregates();
 
     /// <summary>
     /// Indicates whether the specified expression tree contains any aggregate expressions.
@@ -192,9 +191,9 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// The expression tree to check for aggregate expressions.
     /// </param>
     /// <returns><c>true</c> if the expression tree contains any aggregate expressions; otherwise, <c>false</c>.</returns>
-    [Obsolete("Use the instance method ContainsAggregate() instead.")]
+    [Obsolete("Use the instance method HasAggregates() instead.")]
     public static bool ContainsAggregate(SqlExpression expression) =>
-        expression.ContainsAggregate();
+        expression.HasAggregates();
     #endregion
 
     /// <summary>

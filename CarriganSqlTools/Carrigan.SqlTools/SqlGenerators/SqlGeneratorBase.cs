@@ -182,7 +182,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// </exception>
     private static void ValidateWherePredicates(Predicates? predicates)
     {
-        if (predicates?.ContainsAggregate() ?? false)
+        if (predicates?.HasAggregates() ?? false)
             throw new AggregateExpressionInWhereClauseException();
     }
 
