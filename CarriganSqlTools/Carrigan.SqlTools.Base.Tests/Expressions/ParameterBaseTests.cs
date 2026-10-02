@@ -71,17 +71,17 @@ public abstract class ParameterBaseTests<modelT> : ParameterTestsBase<modelT> wh
         RunSubMethod(Test, propertyName);
     }
 
-    protected override void ValidateNoDescendantParameters(string propertyName)
+    protected override void ValidateParticipatingParameters(string propertyName)
     {
         static void Test(Parameter parameter) =>
-            Assert.Empty(parameter.DescendantParameters);
+            Assert.Same(parameter, Assert.Single(parameter.AllParticipatingParameters));
         RunSubMethod(Test, propertyName);
     }
 
-    protected override void ValidateNoDescendantColumns(string propertyName)
+    protected override void ValidateParticipatingColumns(string propertyName)
     {
         static void Test(Parameter parameter) =>
-            Assert.Empty(parameter.DescendantColumns);
+            Assert.Empty(parameter.AllParticipatingColumns.OfType<IColumnBase>());
         RunSubMethod(Test, propertyName);
     }
 

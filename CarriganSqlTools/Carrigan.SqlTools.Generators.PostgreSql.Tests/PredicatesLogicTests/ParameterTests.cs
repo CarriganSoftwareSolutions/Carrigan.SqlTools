@@ -68,11 +68,11 @@ public class ParameterTests
     [InlineData("HelloWorld", "Hello World")]
     [InlineData("123", 1)]
     [InlineData("_1", 1)]
-    public void ParameterValues_ParameterCount(string parameter, object value)
+    public void ParameterValues_ParticipatingParameterCount(string parameter, object value)
     {
         Parameter parameterValue = new(value, new ParameterTag(parameter));
-        int expected = 0;
-        int actual = parameterValue.DescendantParameters.Count();
+        int expected = 1;
+        int actual = parameterValue.AllParticipatingParameters.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -125,7 +125,7 @@ public class ParameterTests
         string actual = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
         Assert.Equal(expected, actual);
 
-        int actualInt = predicate.DescendantParameters.Where(parameter => parameter.Name == new ParameterTag("Test")).Count();
+        int actualInt = predicate.AllParticipatingParameters.Where(parameter => parameter.Name == new ParameterTag("Test")).Count();
         int expectedInt = 5;
         Assert.Equal(expectedInt, actualInt);
 
@@ -175,7 +175,7 @@ public class ParameterTests
         string actual = predicate.ToSqlFragments(Dialect).ToSql(Dialect);
         Assert.Equal(expected, actual);
 
-        int actualInt = predicate.DescendantParameters.Where(parameter => parameter.Name == new ParameterTag("Test")).Count();
+        int actualInt = predicate.AllParticipatingParameters.Where(parameter => parameter.Name == new ParameterTag("Test")).Count();
         int expectedInt = 4;
         Assert.Equal(expectedInt, actualInt);
 

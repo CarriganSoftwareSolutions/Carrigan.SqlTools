@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+﻿using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -370,6 +371,28 @@ public class GroupBysTests
         Column<ColumnTable> c = new(nameof(ColumnTable.Col1));
         Add selectedExpression = new(a, b);
         GroupBys groupBys = new(new GroupBy(new Add(a, c)), new GroupBy(new Add(b, c)));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+
+        Assert.False(groupBys.ContainsEquivalent(selectTag));
+    }
+
+    [Fact]
+    public void ContainsEquivalent_GroupedSubexpressionWithAggregate_ReturnsTrue()
+    {
+        Add groupedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
+        Add selectedExpression = new(groupedExpression, new Sum(new Column<ColumnTable>(nameof(ColumnTable.Col1))));
+        GroupBys groupBys = new(new GroupBy(groupedExpression));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+
+        Assert.True(groupBys.ContainsEquivalent(selectTag));
+    }
+
+    [Fact]
+    public void ContainsEquivalent_UngroupedSubexpressionWithAggregate_ReturnsFalse()
+    {
+        Add groupedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
+        Add selectedExpression = new(groupedExpression, new Sum(new Column<ColumnTable>(nameof(ColumnTable.Col1))));
+        GroupBys groupBys = new(new GroupBy<ColumnTable>(nameof(ColumnTable.ColA)));
         SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
 
         Assert.False(groupBys.ContainsEquivalent(selectTag));

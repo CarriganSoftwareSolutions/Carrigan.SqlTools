@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
@@ -42,6 +43,33 @@ public class SqlExpressionHasColumnsTests
     }
 
     [Fact]
+    public void AllParticipatingColumns_IncludesCurrentNode()
+    {
+        ColumnTagExpression column = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Value")));
+
+        Assert.Same(column, Assert.Single(column.AllParticipatingColumns));
+    }
+
+    [Fact]
+    public void AllParticipatingColumns_IncludesColumnsInsideAggregateSubtrees()
+    {
+        ColumnTagExpression column = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Value")));
+        Count count = new(column);
+
+        Assert.Same(column, Assert.Single(count.AllParticipatingColumns));
+    }
+
+    [Fact]
+    public void AllNonAggregateColumns_StopsAtAggregateSubtrees()
+    {
+        ColumnTagExpression groupedColumn = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Grouped")));
+        ColumnTagExpression aggregateColumn = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Aggregated")));
+        Add expression = new(groupedColumn, new Sum(aggregateColumn));
+
+        Assert.Same(groupedColumn, Assert.Single(expression.AllNonAggregateColumns));
+    }
+
+    [Fact]
     public void AllParticipatingParameters_IncludesCurrentNode() =>
         Assert.Single(new Parameter(1, "Value").AllParticipatingParameters);
 
@@ -55,7 +83,7 @@ public class SqlExpressionHasColumnsTests
     }
 
     [Fact]
-    public void AllParticipatingTables_IncludesCurrentAndDescendantLeafTables()
+    public void AllParticipatingTables_IncludesCurrentAndChildTables()
     {
         ParticipatingTableExpression child = new("Child");
         ParticipatingTableExpression expression = new("Parent", child);

@@ -176,24 +176,24 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
         RunSubMethod(Test, propertyName);
     }
 
-    protected override void ValidateNoDescendantParameters(string propertyName)
+    protected override void ValidateParticipatingParameters(string propertyName)
     {
         static void Test(ColumnBase columnBase)
         {
             int expectedValue = 0;
-            int actual = columnBase.DescendantParameters.Count();
+            int actual = columnBase.AllParticipatingParameters.Count();
 
             Assert.Equal(expectedValue, actual);
         }
         RunSubMethod(Test, propertyName);
     }
 
-    protected override void ValidateNoDescendantColumns(string propertyName)
+    protected override void ValidateParticipatingColumns(string propertyName)
     {
         static void Test(ColumnBase columnBase)
         {
-            int expectedValue = 0;
-            int actual = columnBase.DescendantColumns.Count();
+            int expectedValue = 1;
+            int actual = columnBase.AllParticipatingColumns.Count();
 
             Assert.Equal(expectedValue, actual);
         }
@@ -225,12 +225,12 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
         RunValidationMethod(propertyName => RunSubMethod(column => Assert.True(column.HasColumns()), propertyName));
 
     [Fact]
-    public void Run_ValidateNoDescendantParameters() =>
-        RunValidationMethod(ValidateNoDescendantParameters);
+    public void Run_ValidateParticipatingParameters() =>
+        RunValidationMethod(ValidateParticipatingParameters);
 
     [Fact]
-    public void Run_ValidateNoDescendantColumns() =>
-        RunValidationMethod(ValidateNoDescendantColumns);
+    public void Run_ValidateParticipatingColumns() =>
+        RunValidationMethod(ValidateParticipatingColumns);
 
     [Fact]
     public void Run_ValidateColumnSqlFragments() =>

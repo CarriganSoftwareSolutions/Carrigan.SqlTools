@@ -83,7 +83,7 @@ public  class ColumnsTests : PredicateLogicBaseTests
     {
         Column<ColumnTable> cv = new(propertyName);
         int expectedValue = 0;
-        int actual = cv.DescendantParameters.Count();
+        int actual = cv.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actual);
     }
@@ -97,7 +97,7 @@ public  class ColumnsTests : PredicateLogicBaseTests
     {
         Column<ColumnTable> cv = new(propertyName);
         int expectedValue = 0;
-        int actual = cv.DescendantColumns.Count();
+        int actual = cv.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actual);
     }

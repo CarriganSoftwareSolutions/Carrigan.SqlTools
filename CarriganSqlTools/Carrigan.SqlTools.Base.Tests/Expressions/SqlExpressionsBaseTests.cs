@@ -101,6 +101,20 @@ public abstract class SqlExpressionsBaseTests
     }
 
     [Fact]
+    public void Expressions_Equal_HaveMatchingHashCodes()
+    {
+        IEnumerable<SqlExpression>? expressions = ExpressionsThatAreEqual;
+        if (expressions.IsNotNullOrEmpty())
+        {
+            foreach (SqlExpression expression in expressions)
+            {
+                foreach (SqlExpression other in expressions)
+                    Assert.Equal(expression.GetHashCode(), other.GetHashCode());
+            }
+        }
+    }
+
+    [Fact]
     public void Expressions_NotEqual()
     {
         IEnumerable<SqlExpression>? expressions = ExpressionsThatAreNotEqual;

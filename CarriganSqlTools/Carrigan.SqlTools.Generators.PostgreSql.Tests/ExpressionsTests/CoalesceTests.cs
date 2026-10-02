@@ -76,14 +76,14 @@ public class CoalesceTests : SqlExpressionsBaseTests
     ];
 
     [Fact]
-    public void DescendantLeafTables_ContainsNestedColumnTable()
+    public void AllParticipatingTables_ContainsNestedColumnTable()
     {
         Column<Customer> customerId = new(nameof(Customer.Id));
         Add nestedExpression = new(customerId, new Parameter(1, "Offset"));
         Coalesce coalesce = new(nestedExpression, new Parameter(0, "Fallback"));
         TableTag expected = customerId.ColumnInfo.ColumnTag.TableTag;
 
-        TableTag actual = Assert.Single(coalesce.DescendantLeafTables);
+        TableTag actual = Assert.Single(coalesce.AllParticipatingTables);
 
         Assert.Equal(expected, actual);
     }

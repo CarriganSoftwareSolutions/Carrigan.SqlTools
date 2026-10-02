@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -93,6 +93,58 @@ public sealed class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
+    public void Select_WithGroupedSubexpressionInsideMixedAggregate_AllowsAggregateSelectList()
+    {
+        Add groupedExpression = new
+        (
+            new Column<Grades>(nameof(Grades.AcademicYear)),
+            new Column<Grades>(nameof(Grades.SemesterNumber))
+        );
+        GroupBys groupBys = new(new GroupBy(groupedExpression));
+        SelectTags selects = new
+        (
+            new SelectTag
+            (
+                new Add(groupedExpression, new Sum(new Column<Grades>(nameof(Grades.CreditHours)))),
+                "Value"
+            )
+        );
+
+        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+
+        Assert.Equal("SELECT ((\"Grades\".\"AcademicYear\" + \"Grades\".\"SemesterNumber\") + SUM(\"Grades\".\"CreditHours\")) AS \"Value\" FROM \"Grades\" GROUP BY (\"Grades\".\"AcademicYear\" + \"Grades\".\"SemesterNumber\")", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithGroupByAndMatchingSelectWithoutAggregate_AllowsSelectList()
+    {
+        GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
+        SelectTags selects = new(SelectTagGenerator.Get<Customer>(nameof(Customer.Name)));
+
+        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+
+        Assert.Equal("SELECT \"Customer\".\"Name\" FROM \"Customer\" GROUP BY \"Customer\".\"Name\"", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithGroupByAndUngroupedSelectWithoutAggregate_Throws()
+    {
+        GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
+        SelectTags selects = new(SelectTagGenerator.Get<Customer>(nameof(Customer.Email)));
+
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null));
+    }
+
+    [Fact]
+    public void Select_WithHavingAndUngroupedSelectWithoutGroupBy_Throws()
+    {
+        SelectTags selects = new(SelectTagGenerator.Get<Customer>(nameof(Customer.Name)));
+        Predicates having = new GreaterThan(new Count(), new Parameter(1, "MinimumCount"));
+
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, having, null, null));
+    }
+
+    [Fact]
     public void Select_WithUngroupedColumnInExpressionContainingAggregate_Throws()
     {
         SelectTags selects = new
@@ -142,6 +194,60 @@ public sealed class SqlGenerator_AggregateSelectTests
 
         SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
         Assert.Equal("SELECT \"Grades\".\"StudentId\", \"Grades\".\"AcademicYear\", \"Grades\".\"SemesterNumber\", AVG(\"Grades\".\"GradePoint\") AS \"SemesterGPA\" FROM \"Grades\" GROUP BY \"Grades\".\"StudentId\", \"Grades\".\"AcademicYear\", \"Grades\".\"SemesterNumber\" HAVING (AVG(\"Grades\".\"GradePoint\") > $1)", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithGroupedExpressionInHaving_AllowsHaving()
+    {
+        Add groupedExpression = new
+        (
+            new Column<Grades>(nameof(Grades.AcademicYear)),
+            new Column<Grades>(nameof(Grades.SemesterNumber))
+        );
+        GroupBys groupBys = new(new GroupBy(groupedExpression));
+        SelectTags selects = new
+        (
+            new SelectTag(groupedExpression, "AcademicPeriod"),
+            new SelectTag(new Count(), "TotalCount")
+        );
+        Predicates having = new GreaterThan(groupedExpression, new Parameter(2026, "MinimumPeriod"));
+
+        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
+
+        Assert.Equal("SELECT (\"Grades\".\"AcademicYear\" + \"Grades\".\"SemesterNumber\") AS \"AcademicPeriod\", COUNT(*) AS \"TotalCount\" FROM \"Grades\" GROUP BY (\"Grades\".\"AcademicYear\" + \"Grades\".\"SemesterNumber\") HAVING ((\"Grades\".\"AcademicYear\" + \"Grades\".\"SemesterNumber\") > $1)", query.QueryText);
+    }
+
+    [Fact]
+    public void Select_WithUngroupedColumnInHaving_Throws()
+    {
+        GroupBys groupBys = new GroupBys<Grades>(nameof(Grades.AcademicYear));
+        SelectTags selects = new
+        (
+            SelectTagGenerator.Get<Grades>(nameof(Grades.AcademicYear)),
+            new SelectTag(new Count(), "TotalCount")
+        );
+        Predicates having = new GreaterThan(new Column<Grades>(nameof(Grades.SemesterNumber)), new Parameter(1, "MinimumSemester"));
+
+        Assert.Throws<UngroupedColumnInHavingClauseException>(() => gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null));
+    }
+
+    [Fact]
+    public void Select_WithAggregateInGroupBy_Throws()
+    {
+        GroupBys groupBys = new
+        (
+            new GroupBy
+            (
+                new Add
+                (
+                    new Column<Grades>(nameof(Grades.AcademicYear)),
+                    new Sum(new Column<Grades>(nameof(Grades.CreditHours)))
+                )
+            )
+        );
+        SelectTags selects = new(new SelectTag(new Sum(new Column<Grades>(nameof(Grades.CreditHours))), "TotalCredits"));
+
+        Assert.Throws<AggregateExpressionInGroupByClauseException>(() => gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null));
     }
 
     [Fact]

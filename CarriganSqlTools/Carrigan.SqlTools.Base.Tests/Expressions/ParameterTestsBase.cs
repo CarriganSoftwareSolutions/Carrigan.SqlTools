@@ -77,9 +77,9 @@ public abstract class ParameterTestsBase<modelT> where modelT : class
 
     protected abstract void ValidateValue(string propertyName);
 
-    protected abstract void ValidateNoDescendantParameters(string propertyName);
+    protected abstract void ValidateParticipatingParameters(string propertyName);
 
-    protected abstract void ValidateNoDescendantColumns(string propertyName);
+    protected abstract void ValidateParticipatingColumns(string propertyName);
 
     protected abstract void ValidateNotMapped();
 
@@ -106,12 +106,12 @@ public abstract class ParameterTestsBase<modelT> where modelT : class
         RunValidationMethod(ValidateValue);
 
     [Fact]
-    public void Run_ValidateNoDescendantParameters() =>
-        RunValidationMethod(ValidateNoDescendantParameters);
+    public void Run_ValidateParticipatingParameters() =>
+        RunValidationMethod(ValidateParticipatingParameters);
 
     [Fact]
-    public void Run_ValidateNoDescendantColumns() =>
-        RunValidationMethod(ValidateNoDescendantColumns);
+    public void Run_ValidateParticipatingColumns() =>
+        RunValidationMethod(ValidateParticipatingColumns);
 
     [Fact]
     public void Run_ValidateNotMapped() =>

@@ -85,7 +85,7 @@ public class NotTests : PredicateLogicBaseTests
         Predicates predicate = new Not(ColumnIsActive);
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -96,7 +96,7 @@ public class NotTests : PredicateLogicBaseTests
         Predicates predicate = new Not(ColumnIsActive);
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -106,8 +106,8 @@ public class NotTests : PredicateLogicBaseTests
     {
         Predicates predicate = new Not(ColumnIsActive);
 
-        _ = predicate.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsActiveSql).Single();
-        _ = predicate.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsActiveSql).Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public class NotTests : PredicateLogicBaseTests
         Predicates predicate = new Not(new IsNotNull(ParameterPi));
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -141,7 +141,7 @@ public class NotTests : PredicateLogicBaseTests
         Predicates predicate = new Not(new IsNotNull(ParameterPi));
 
         float expectedValue = 3.14f;
-        object? nullableActualValueFloat = predicate.DescendantParameters.First().Value;
+        object? nullableActualValueFloat = predicate.AllParticipatingParameters.First().Value;
         Assert.NotNull(nullableActualValueFloat);
         float actualValue = (float)nullableActualValueFloat;
 
@@ -154,7 +154,7 @@ public class NotTests : PredicateLogicBaseTests
         Predicates predicate = new Not(new IsNotNull(ParameterPi));
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -177,7 +177,7 @@ public class NotTests : PredicateLogicBaseTests
         Predicates and = CreateNestedPredicate();
 
         int expectedValue = 2;
-        int actualValue = and.DescendantParameters.Count();
+        int actualValue = and.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -188,11 +188,11 @@ public class NotTests : PredicateLogicBaseTests
         Predicates and = CreateNestedPredicate();
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = and.DescendantParameters.Where(parameter => parameter.Name == new ParameterTag("Elite")).First().Value;
+        object? nullableActualValueInt = and.AllParticipatingParameters.Where(parameter => parameter.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)and.DescendantParameters.First(parameter => parameter.Name == new ParameterTag("HelloWorld")).Value ?? string.Empty;
+        string actualValueString = (string?)and.AllParticipatingParameters.First(parameter => parameter.Name == new ParameterTag("HelloWorld")).Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -204,7 +204,7 @@ public class NotTests : PredicateLogicBaseTests
         Predicates and = CreateNestedPredicate();
 
         int expectedValue = 2;
-        int actualValue = and.DescendantColumns.Count();
+        int actualValue = and.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -214,10 +214,10 @@ public class NotTests : PredicateLogicBaseTests
     {
         Predicates and = CreateNestedPredicate();
 
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsVisibleSql).Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsArchivedSql).Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
-        _ = and.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsVisibleSql).Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsArchivedSql).Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
     [Fact]

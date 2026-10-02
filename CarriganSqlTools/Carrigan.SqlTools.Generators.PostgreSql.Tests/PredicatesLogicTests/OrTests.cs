@@ -86,7 +86,7 @@ public class OrTests : PredicateLogicBaseTests
     {
         Or or = CreateOr();
 
-        int actual = or.DescendantParameters.Count();
+        int actual = or.AllParticipatingParameters.Count();
         int expected = 3;
 
         Assert.Equal(expected, actual);
@@ -97,7 +97,7 @@ public class OrTests : PredicateLogicBaseTests
     {
         Or or = CreateOr(3);
 
-        Parameter parameter = or.DescendantParameters.Where(parameter => parameter.Name.ToString() == "P1").Single();
+        IParameter parameter = or.AllParticipatingParameters.Where(parameter => parameter.Name.ToString() == "P1").Single();
         object? nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         int actual = (int)nullableActual;
@@ -105,7 +105,7 @@ public class OrTests : PredicateLogicBaseTests
 
         Assert.Equal(expected, actual);
 
-        parameter = or.DescendantParameters.Where(parameter => parameter.Name.ToString() == "P2").Single();
+        parameter = or.AllParticipatingParameters.Where(parameter => parameter.Name.ToString() == "P2").Single();
         nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
@@ -113,7 +113,7 @@ public class OrTests : PredicateLogicBaseTests
 
         Assert.Equal(expected, actual);
 
-        parameter = or.DescendantParameters.Where(parameter => parameter.Name.ToString() == "PA").Single();
+        parameter = or.AllParticipatingParameters.Where(parameter => parameter.Name.ToString() == "PA").Single();
         nullableActual = parameter.Value;
         Assert.NotNull(nullableActual);
         actual = (int)nullableActual;
@@ -127,7 +127,7 @@ public class OrTests : PredicateLogicBaseTests
     {
         Or or = CreateOr();
 
-        int actual = or.DescendantColumns.Count();
+        int actual = or.AllParticipatingColumns.OfType<IColumnBase>().Count();
         int expected = 4;
 
         Assert.Equal(expected, actual);
@@ -138,14 +138,14 @@ public class OrTests : PredicateLogicBaseTests
     {
         Or or = CreateOr();
 
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsActive\"").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsEnabled\"").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsVisible\"").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsArchived\"").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsEnabled").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
-        _ = or.DescendantColumns.Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsActive\"").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsEnabled\"").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsVisible\"").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"LogicalPredicateTable\".\"IsArchived\"").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsEnabled").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
+        _ = or.AllParticipatingColumns.OfType<IColumnBase>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
     }
 
     private static Or CreateOr(int nestedParameterValue = 2) =>

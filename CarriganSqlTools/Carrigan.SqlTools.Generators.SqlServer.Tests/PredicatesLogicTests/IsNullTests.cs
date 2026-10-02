@@ -85,7 +85,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -111,7 +111,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -138,7 +138,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -165,7 +165,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -178,7 +178,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         float expectedValue = 3.14f;
-        object? nullableActualValueFloat = predicate.DescendantParameters.First().Value;
+        object? nullableActualValueFloat = predicate.AllParticipatingParameters.First().Value;
         Assert.NotNull(nullableActualValueFloat);
         float actualValue = (float)nullableActualValueFloat;
 
@@ -208,7 +208,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -221,7 +221,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = predicate.DescendantParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
+        object? nullableActualValueInt = predicate.AllParticipatingParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         Assert.Equal(expectedValueInt, actualValueInt);
@@ -254,7 +254,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantParameters.Count();
+        int actualValue = predicate.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -268,7 +268,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)predicate.DescendantParameters.Where(p => p.Name == new ParameterTag("HelloWorld")).First().Value ?? string.Empty;
+        string actualValueString = (string?)predicate.AllParticipatingParameters.Where(p => p.Name == new ParameterTag("HelloWorld")).First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueString, actualValueString);
     }
@@ -291,7 +291,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
         int expectedValue = 2;
-        int actualValue = and.DescendantParameters.Count();
+        int actualValue = and.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -302,11 +302,11 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
         int expectedValueInt = 1337;
-        object? nullableActualValueInt = and.DescendantParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
+        object? nullableActualValueInt = and.AllParticipatingParameters.Where(p => p.Name == new ParameterTag("Elite")).First().Value;
         Assert.NotNull(nullableActualValueInt);
         int actualValueInt = (int)nullableActualValueInt;
         string expectedValueString = "Hello World!";
-        string actualValueString = (string?)and.DescendantParameters.Where(p => p.Name == new ParameterTag("HelloWorld")).First().Value ?? string.Empty;
+        string actualValueString = (string?)and.AllParticipatingParameters.Where(p => p.Name == new ParameterTag("HelloWorld")).First().Value ?? string.Empty;
 
         Assert.Equal(expectedValueInt, actualValueInt);
         Assert.Equal(expectedValueString, actualValueString);
@@ -320,7 +320,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -332,8 +332,8 @@ public class IsNullTests : PredicateLogicBaseTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Pizza").Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Pizza").Single();
     }
 
     [Fact]
@@ -344,7 +344,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -356,8 +356,8 @@ public class IsNullTests : PredicateLogicBaseTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
     }
 
     [Fact]
@@ -368,7 +368,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -380,8 +380,8 @@ public class IsNullTests : PredicateLogicBaseTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
-        _ = predicate.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
+        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 
     [Fact]
@@ -392,7 +392,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -405,7 +405,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -418,7 +418,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates predicate = new IsNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.DescendantColumns.Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -429,7 +429,7 @@ public class IsNullTests : PredicateLogicBaseTests
         Predicates and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
         int expectedValue = 2;
-        int actualValue = and.DescendantParameters.Count();
+        int actualValue = and.AllParticipatingParameters.Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -439,10 +439,10 @@ public class IsNullTests : PredicateLogicBaseTests
     {
         Predicates and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
-        _ = and.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
+        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 
     [Fact]

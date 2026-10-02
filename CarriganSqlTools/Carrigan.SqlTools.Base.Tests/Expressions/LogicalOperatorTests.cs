@@ -12,6 +12,13 @@ public class LogicalOperatorTests
         }
     }
 
+    private sealed class TestSqlExpressionLogicalOperator : LogicalOperator
+    {
+        public TestSqlExpressionLogicalOperator(string operation, IEnumerable<SqlExpression> expressions) : base(operation, expressions)
+        {
+        }
+    }
+
     [Fact]
     public void Constructor_NullOperation_Exception() =>
         Assert.Throws<ArgumentNullException>(() => new TestLogicalOperator(null!, [NewPredicate("Left")]));
@@ -29,6 +36,10 @@ public class LogicalOperatorTests
     [Fact]
     public void Constructor_EmptyPredicates_Exception() =>
         Assert.Throws<ArgumentException>(() => new TestLogicalOperator("AND", []));
+
+    [Fact]
+    public void Constructor_EmptySqlExpressions_Exception() =>
+        Assert.Throws<ArgumentException>(() => new TestSqlExpressionLogicalOperator("AND", []));
 
     [Fact]
     public void Constructor_NullPredicate_Exception() =>

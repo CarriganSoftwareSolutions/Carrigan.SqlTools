@@ -63,9 +63,9 @@ public abstract class ColumnTestsBase<modelT> where modelT : class
 
     protected abstract void ValidateExpectedPropertySchemaName(string propertyName);
 
-    protected abstract void ValidateNoDescendantParameters(string propertyName);
+    protected abstract void ValidateParticipatingParameters(string propertyName);
 
-    protected abstract void ValidateNoDescendantColumns(string propertyName);
+    protected abstract void ValidateParticipatingColumns(string propertyName);
 
     protected abstract void ValidateNotMapped();
 

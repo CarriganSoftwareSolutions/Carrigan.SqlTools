@@ -72,7 +72,7 @@ public class ColumnValueTests : PredicateLogicBaseTests
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
-        int actual = byColumnValues.DescendantParameters.Count();
+        int actual = byColumnValues.AllParticipatingParameters.Count();
 
         Assert.Equal(expected, actual);
     }
@@ -89,7 +89,7 @@ public class ColumnValueTests : PredicateLogicBaseTests
 
         Parameter parameter;
 
-        parameter = byColumnValues.DescendantParameters.Where(param => param.Name.ToString() == "Col1").First();
+        parameter = byColumnValues.AllParticipatingParameters.Where(param => param.Name.ToString() == "Col1").First();
         expectedValue = "1";
         expectedString = "Col1";
         actualValue = parameter.Value ?? string.Empty;
@@ -103,7 +103,7 @@ public class ColumnValueTests : PredicateLogicBaseTests
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
-        int actual = byColumnValues.DescendantColumns.Count();
+        int actual = byColumnValues.AllParticipatingColumns.OfType<IColumnBase>().Count();
 
         Assert.Equal(expected, actual);
     }
@@ -117,7 +117,7 @@ public class ColumnValueTests : PredicateLogicBaseTests
 
         IColumnBase column;
 
-        column = byColumnValues.DescendantColumns.Where(col => col.ColumnInfo.ToString() == "ColumnTable.Col1").First();
+        column = byColumnValues.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Col1").First();
         expectedString = "\"ColumnTable\".\"Col1\"";
         actualString = column.ColumnInfo.ColumnTag.ToSql(Dialect);
         Assert.Equal(expectedString, actualString);
