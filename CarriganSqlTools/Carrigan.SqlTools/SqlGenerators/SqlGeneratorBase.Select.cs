@@ -8,7 +8,6 @@ using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
-using System.Data.Common;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
