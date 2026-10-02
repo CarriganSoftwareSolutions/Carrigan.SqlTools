@@ -8,6 +8,7 @@ using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
 using System.Data;
+using System.Data.Common;
 
 namespace Carrigan.SqlTools.SqlGenerators;
 
@@ -132,6 +133,8 @@ public abstract partial class SqlGeneratorBase<T>
         PagingBase? paging
     )
     {
+
+        //Checks that predicates in the where clause do not contain aggregate expressions.
         ValidateWherePredicates(where);
 
         if ((selects is null || selects.IsEmpty()) && groupBys.IsNotNullOrEmpty())
@@ -151,6 +154,15 @@ public abstract partial class SqlGeneratorBase<T>
                 if (allSelectedExpressionsAreValid is false)
                     throw new MixedAggregateSelectException();
             }
+        }
+
+        if (having is not null)
+        {
+            bool allHavingExpressionsAreValid = having
+                    .AllNonAggregateColumns
+                    .All(column => (groupBys?.ContainsEquivalent(new SelectTag(column)) ?? false));
+            if (allHavingExpressionsAreValid is false)
+                throw new UngroupedColumnInHavingClauseException();
         }
 
         IEnumerable<ISqlFragment> GetFragments()
@@ -222,6 +234,7 @@ public abstract partial class SqlGeneratorBase<T>
             }
 
         }
+
         IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
 
         IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
