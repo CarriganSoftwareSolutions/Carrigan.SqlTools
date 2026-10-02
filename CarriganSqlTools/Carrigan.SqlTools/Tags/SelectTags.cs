@@ -1,10 +1,8 @@
 using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.IdentifierTypes;
 using System.Collections;
 
 namespace Carrigan.SqlTools.Tags;
@@ -36,15 +34,30 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <summary>
     /// Indicates whether this instance contains no select tags.
     /// </summary>
-    public bool Empty() =>
+    public bool IsEmpty() =>
         Any() is false;
 
+    /// <summary>
+    /// Indicates whether any select tags in this instance contain column expressions.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if any select tag contains column expressions; otherwise, <c>false</c>.
+    /// </returns>
     public bool HasColumns() =>
         _selectTags.Any(select => select.HasColumns());
 
+    /// <summary>
+    /// Indicates whether any select tags in this instance contain aggregate expressions.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if any select tag contains aggregate expressions; otherwise, <c>false</c>.
+    /// </returns>
     public bool HasAggregates() =>
         _selectTags.Any(select => select.HasAggregates());
 
+    /// <summary>
+    /// Gets all non-aggregate column expressions referenced by the contained select tags.
+    /// </summary>
     internal IEnumerable<SqlExpression> NonAggregateColumnExpressions =>
         _selectTags
             .SelectMany(selectTag => selectTag.NonAggregateColumnExpressions);
@@ -64,9 +77,6 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <returns>A new collection containing the existing tags followed by <paramref name="selectTag"/>.</returns>
     public SelectTags Append(SelectTag selectTag) =>
         new(_selectTags.Append(selectTag));
-
-
-
 
     /// <summary>
     /// Creates a new collection with the supplied items appended.
@@ -97,6 +107,12 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     public IEnumerator<SelectTag> GetEnumerator() =>
         _selectTags.GetEnumerator();
 
+    /// <summary>
+    /// Returns an enumerator for the contained select tags.
+    /// </summary>
+    /// <returns>
+    /// An enumerator for the contained select tags.
+    /// </returns>
     IEnumerator IEnumerable.GetEnumerator() =>
         GetEnumerator();
 

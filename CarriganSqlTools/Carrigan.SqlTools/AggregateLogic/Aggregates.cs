@@ -47,15 +47,33 @@ public abstract class Aggregates : SqlExpression
         Distinct = distinct;
     }
 
+    /// <summary>
+    /// Gets the type used for equality comparisons. This is used to ensure that two different derived types are not considered equal even if they have the same properties.
+    /// </summary>
     protected override object EqualityContract =>
         typeof(Aggregates);
 
+    /// <summary>
+    /// Determines whether the current aggregate expression is equal to another SQL expression.
+    /// </summary>
+    /// <param name="other">
+    /// The other SQL expression to compare with the current aggregate expression.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the current aggregate expression is equal to <paramref name="other"/>; otherwise, <c>false</c>.
+    /// </returns>
     protected override bool EqualsCore(SqlExpression other) =>
         other is Aggregates aggregate &&
         string.Equals(FunctionName, aggregate.FunctionName, StringComparison.OrdinalIgnoreCase) &&
         Distinct == aggregate.Distinct &&
         base.EqualsCore(other);
 
+    /// <summary>
+    /// Adds the properties of the aggregate expression to the provided <see cref="HashCode"/> instance for generating a hash code.
+    /// </summary>
+    /// <param name="hashCode">
+    /// The <see cref="HashCode"/> instance to which the properties of the aggregate expression will be added.
+    /// </param>
     protected override void AddToHashCode(ref HashCode hashCode)
     {
         hashCode.Add(FunctionName, StringComparer.OrdinalIgnoreCase);

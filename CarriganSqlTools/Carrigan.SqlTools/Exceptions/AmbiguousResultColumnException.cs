@@ -61,7 +61,7 @@ public class AmbiguousResultColumnException : Exception
     /// </remarks>
     internal static AmbiguousResultColumnException? CheckNames(SelectTags? selects)
     {
-        if (selects is null || selects.Empty())
+        if (selects is null || selects.IsEmpty())
             return null;
         else
         {

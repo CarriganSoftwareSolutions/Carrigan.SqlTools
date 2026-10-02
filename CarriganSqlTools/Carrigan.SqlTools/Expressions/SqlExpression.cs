@@ -7,7 +7,6 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Tags;
-using System.Linq.Expressions;
 using System.Numerics;
 
 namespace Carrigan.SqlTools.Expressions;
@@ -63,7 +62,12 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     //TODO: REMOVE and update all unit tests, currently using this property to use AllParticipatingParameters instead. 
     internal IEnumerable<Parameter> DescendantParameters =>
         DescendantNodes.OfType<Parameter>();
-
+    /// <summary>
+    /// Indicates whether this expression tree contains any parameter expressions.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> when this expression or any child expression represents a parameter; otherwise, <c>false</c>.
+    /// </returns>
     internal bool HasParameters() =>
         AllParticipatingParameters.Any();
     #endregion
@@ -81,6 +85,9 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         EnumerateSelfAndDescendants()
             .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
 
+    /// <summary>
+    /// Gets every column-shaped SQL expression participating in this expression tree, excluding any aggregate expressions.
+    /// </summary>
     internal IEnumerable<SqlExpression> AllNonAggregateColumns =>
         EnumerateAllNonAggregates()
             .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
@@ -135,12 +142,20 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
 
     #region aggregates
     /// <summary>
-    /// Indicates whether this expression is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
+    /// Indicates whether this expression is an aggregate expression.
     /// </summary>
-    /// <returns><c>false</c> unless an expression type overrides this method.</returns>
+    /// <returns>
+    /// <c>true</c> when this expression is an aggregate expression; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsAggregate() =>
         this is Aggregates;
 
+    /// <summary>
+    /// Indicates whether this expression is not an aggregate expression.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> when this expression is not an aggregate expression; otherwise, <c>false</c>.
+    /// </returns>
     public bool IsNotAggregate() =>
         IsAggregate() is false;
 
@@ -153,6 +168,12 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     public bool IsAggregate(GroupBys? groupBys) =>
         IsAggregate();
 
+    /// <summary>
+    /// Indicates whether this expression tree contains any aggregate expressions.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if the expression tree contains any aggregate expressions; otherwise, <c>false</c>.
+    /// </returns>
     public bool HasAggregates() =>
         IsAggregate() || DescendantNodes.Any(child => child.IsAggregate());
 
@@ -376,6 +397,15 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
         }
     }
 
+    /// <summary>
+    /// Recursively enumerates every child expression below the supplied expression collection, excluding any aggregate expressions.
+    /// </summary>
+    /// <param name="expressions">
+    /// The expression collection whose non-aggregate descendants should be enumerated.
+    /// </param>
+    /// <returns>
+    /// All descendant non-aggregate expression nodes in depth-first order.
+    /// </returns>
     private static IEnumerable<SqlExpression> GetAllDescendantNonAggregateExpressions(IEnumerable<SqlExpression> expressions)
     {
         foreach (SqlExpression expression in expressions)

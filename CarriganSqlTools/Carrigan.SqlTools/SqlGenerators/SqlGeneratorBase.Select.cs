@@ -1,6 +1,5 @@
 using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
-using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
@@ -135,30 +134,11 @@ public abstract partial class SqlGeneratorBase<T>
     {
         ValidateWherePredicates(where);
 
-        if ((selects is null || selects.Empty()) && groupBys.IsNotNullOrEmpty())
+        if ((selects is null || selects.IsEmpty()) && groupBys.IsNotNullOrEmpty())
             throw new GroupByRequiresSelectException();
 
         if (selects is not null && selects.Any() && selects.HasAggregates())
         {
-            //static IEnumerable<SqlExpression> GetColumnsOutsideAggregates(SqlExpression sqlExpression)
-            //{
-            //    if (sqlExpression.IsAggregate())
-            //        yield break;
-
-            //    if (sqlExpression is IColumnExpressionIdentity)
-            //    {
-            //        yield return sqlExpression;
-            //        yield break;
-            //    }
-
-            //    foreach (SqlExpression childNode in sqlExpression.ChildNodes)
-            //    {
-            //        foreach (SqlExpression column in GetColumnsOutsideAggregates(childNode))
-            //            yield return column;
-            //    }
-            //}
-
-
             if (selects is not null && selects.Any() && selects.HasAggregates())
             {
 
@@ -171,15 +151,6 @@ public abstract partial class SqlGeneratorBase<T>
                 if (allSelectedExpressionsAreValid is false)
                     throw new MixedAggregateSelectException();
             }
-
-            //bool selectsContainsDisallowedColumns =
-            //    selects
-            //        ._selectTags
-            //        .Any(select => (groupBys?.DoesNotContainsEquivalent(select) ?? true) 
-            //                            && select.NonAggregateColumnExpressions.Any(column => (groupBys?.DoesNotContainsEquivalent(new SelectTag(column)) ?? true)));
-
-            //if (selectsContainsDisallowedColumns)
-            //    throw new MixedAggregateSelectException();
         }
 
         IEnumerable<ISqlFragment> GetFragments()

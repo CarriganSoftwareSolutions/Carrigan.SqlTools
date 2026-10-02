@@ -92,24 +92,15 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     public SelectTags Concat(params IEnumerable<SelectTag> selectTags) =>
         new SelectTags(this).Concat(selectTags);
 
-    //TODO: Validate that is being used correctly.
-    /// <summary>
-    /// Gets the simple column tag represented by a column-shaped expression, when applicable.
-    /// </summary>
-    private static ColumnTag? GetSimpleColumnTag(SqlExpression sqlExpression) =>
-        sqlExpression switch
-        {
-            IColumnBase column => column.ColumnInfo.ColumnTag,
-            ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
-            _ => null
-        };
-
     /// <summary>
     /// Gets the table tags that participate in this select expression.
     /// </summary>
     internal IEnumerable<TableTag> TableTags =>
         SqlExpression.AllParticipatingTables;
 
+    /// <summary>
+    /// Gets the non-aggregate column expressions that participate in this select expression.
+    /// </summary>
     internal IEnumerable<SqlExpression> NonAggregateColumnExpressions =>
         SqlExpression.AllNonAggregateColumns;
 
@@ -117,9 +108,21 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// Gets the expected result set column name for this projection, choosing the alias
     /// when present, the underlying column name for simple columns, or the expression text otherwise.
     /// </summary>
-    //TODO: Validate that is being used correctly.
-    internal ResultColumnName ResultColumnName =>
-        new(AliasTag?.ToString() ?? GetSimpleColumnTag(SqlExpression)?.ColumnName.ToString() ?? SqlExpression.ToString());
+    internal ResultColumnName ResultColumnName
+    {
+        get
+        {
+            //Gets the simple column tag represented by a column-shaped expression, when applicable.
+            static ColumnTag? GetSimpleColumnTag(SqlExpression sqlExpression) =>
+                sqlExpression switch
+                {
+                    IColumnBase column => column.ColumnInfo.ColumnTag,
+                    ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
+                    _ => null
+                };
+            return new (AliasTag?.ToString() ?? GetSimpleColumnTag(SqlExpression)?.ColumnName.ToString() ?? SqlExpression.ToString());
+        }
+    }
 
     /// <summary>
     /// Indicates whether this select item is valid in an aggregate SELECT list for the supplied <c>GROUP BY</c> clause.
@@ -129,6 +132,12 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     public bool IsAggregate() =>
         SqlExpression.IsAggregate();
 
+    /// <summary>
+    /// Indicates whether this select item contains one or more aggregate expressions.
+    /// </summary>
+    /// <returns>
+    /// <c>true</c> if this select item contains one or more aggregate expressions; otherwise, <c>false</c>.
+    /// </returns>
     public bool HasAggregates() =>
         SqlExpression.HasAggregates();
 

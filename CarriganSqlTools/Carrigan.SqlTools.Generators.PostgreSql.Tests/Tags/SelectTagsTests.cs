@@ -50,7 +50,7 @@ public class SelectTagsTests
     public void Empty()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
     }
 
@@ -58,7 +58,7 @@ public class SelectTagsTests
     public void NotEmptyNew()
     {
         SelectTags selectTags = new (d);
-        Assert.False(selectTags.Empty());
+        Assert.False(selectTags.IsEmpty());
         Assert.True(selectTags.Any());
         Assert.Single(selectTags.All());
 
@@ -71,14 +71,14 @@ public class SelectTagsTests
     public void NotEmptyAppendProperty()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append<Order>("Id", "Override");
 
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsAlpha.Empty());
+        Assert.False(selectTagsAlpha.IsEmpty());
         Assert.True(selectTagsAlpha.Any());
 
         Assert.Equal("\"Order\".\"Id\" AS \"Override\"", selectTagsAlpha.ToSql(Dialect));
@@ -90,14 +90,14 @@ public class SelectTagsTests
     public void NotEmptyAppendPropertyName()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append<Order>(new PropertyName("Id"), new AliasName("Override"));
 
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsAlpha.Empty());
+        Assert.False(selectTagsAlpha.IsEmpty());
         Assert.True(selectTagsAlpha.Any());
 
         Assert.Equal("\"Order\".\"Id\" AS \"Override\"", selectTagsAlpha.ToSql(Dialect));
@@ -109,14 +109,14 @@ public class SelectTagsTests
     public void NotEmptyAppend()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Append(a);
 
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsAlpha.Empty());
+        Assert.False(selectTagsAlpha.IsEmpty());
         Assert.True(selectTagsAlpha.Any());
 
         Assert.Equal(aExpectedString, selectTagsAlpha.ToSql(Dialect));
@@ -128,14 +128,14 @@ public class SelectTagsTests
     public void NotEmptyConcat()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
 
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsAlpha.Empty());
+        Assert.False(selectTagsAlpha.IsEmpty());
         Assert.True(selectTagsAlpha.Any());
         Assert.Equal(4, selectTagsAlpha.All().Count());
 
@@ -148,15 +148,15 @@ public class SelectTagsTests
     public void NotEmptyConcatSelects()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat(a, b, c, d);
         SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
 
-        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.True(selectTags.IsEmpty()); //didn't modify original
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsBeta.Empty());
+        Assert.False(selectTagsBeta.IsEmpty());
         Assert.True(selectTagsBeta.Any());
 
         Assert.Equal(4, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
@@ -170,15 +170,15 @@ public class SelectTagsTests
     public void NotEmptyConcatPropertyString()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat<Order>("Id", "CustomerId", "PaymentMethodId", "OrderDate", "Total");
         SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
 
-        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.True(selectTags.IsEmpty()); //didn't modify original
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsBeta.Empty());
+        Assert.False(selectTagsBeta.IsEmpty());
         Assert.True(selectTagsBeta.Any());
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
@@ -192,7 +192,7 @@ public class SelectTagsTests
     public void NotEmptyConcatPropertiesFromGets()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat
         (
@@ -204,10 +204,10 @@ public class SelectTagsTests
         );
         SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
 
-        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.True(selectTags.IsEmpty()); //didn't modify original
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsBeta.Empty());
+        Assert.False(selectTagsBeta.IsEmpty());
         Assert.True(selectTagsBeta.Any());
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
@@ -221,7 +221,7 @@ public class SelectTagsTests
     public void NotEmptyConcatPropertiesFromGetMany()
     {
         SelectTags selectTags = new ();
-        Assert.True(selectTags.Empty());
+        Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
         SelectTags selectTagsAlpha = selectTags.Concat
         (
@@ -229,10 +229,10 @@ public class SelectTagsTests
         );
         SelectTags selectTagsBeta = selectTags.Concat(selectTagsAlpha);
 
-        Assert.True(selectTags.Empty()); //didn't modify original
+        Assert.True(selectTags.IsEmpty()); //didn't modify original
         Assert.False(selectTags.Any());
 
-        Assert.False(selectTagsBeta.Empty());
+        Assert.False(selectTagsBeta.IsEmpty());
         Assert.True(selectTagsBeta.Any());
 
         Assert.Equal(5, selectTagsAlpha.All().Count()); //forming beta didn't modify alpha
