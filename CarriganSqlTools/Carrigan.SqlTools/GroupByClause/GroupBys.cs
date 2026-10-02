@@ -1,10 +1,8 @@
-using Carrigan.Core.Enums;
+﻿using Carrigan.Core.Enums;
 using Carrigan.Core.Extensions;
-using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
-using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
 
@@ -71,6 +69,35 @@ public class GroupBys
         GroupByItems.Any(groupBy => groupBy.Equivalent(sqlExpression));
 
     /// <summary>
+    /// Determines whether every non-aggregate portion of an expression is represented by the grouping keys.
+    /// </summary>
+    /// <remarks>
+    /// Exact grouped sub-expressions satisfy the entire sub-tree. Aggregate sub-trees are intentionally ignored because
+    /// their input columns do not need to be grouped. Other expressions are recursively validated until a grouped
+    /// expression, aggregate expression, or column leaf is reached.
+    /// </remarks>
+    internal bool ContainsAllNonAggregateParts(SqlExpression sqlExpression)
+    {
+        ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
+
+        if (sqlExpression.IsAggregate() || ContainsEquivalent(sqlExpression))
+            return true;
+        
+        else if (sqlExpression is IColumnBase || sqlExpression is IColumnExpressionIdentity)
+            // if we reach this return, it is a non-aggregate column that is not contained in the group by
+            return false;
+
+        else
+            return sqlExpression.ChildNodes.All(ContainsAllNonAggregateParts);
+    }
+
+    /// <summary>
+    /// Indicates whether any grouping expression contains an aggregate expression.
+    /// </summary>
+    internal bool HasAggregates() =>
+        GroupByItems.Any(static groupBy => groupBy.SqlExpression.HasAggregates());
+
+    /// <summary>
     /// Determines whether a selected expression is validly represented by the current grouping keys.
     /// </summary>
     /// <remarks>
@@ -80,11 +107,11 @@ public class GroupBys
     /// </remarks>
     /// <param name="selectTagBase">The selected expression to validate against the grouping keys.</param>
     /// <returns><c>true</c> when the selected expression is represented by the grouping keys; otherwise, <c>false</c>.</returns>
-    public bool ContainsEquivalent(SelectTag selectTagBase)
+    internal bool ContainsEquivalent(SelectTag selectTagBase)
     {
         ArgumentNullException.ThrowIfNull(selectTagBase, nameof(selectTagBase));
 
-        return ContainsEquivalent(selectTagBase.SqlExpression) || ContainsAll(selectTagBase.SqlExpression.AllParticipatingColumns);
+        return ContainsAllNonAggregateParts(selectTagBase.SqlExpression);
     }
     public bool DoesNotContainsEquivalent(SelectTag selectTagBase) =>
         !ContainsEquivalent(selectTagBase);
@@ -105,9 +132,6 @@ public class GroupBys
             groupBy.SqlExpression is IColumnExpressionIdentity groupedColumn
             && groupedColumn.EqualityColumnTag.Equals(column.ColumnInfo.ColumnTag));
     }
-
-    private bool ContainsAll(IEnumerable<SqlExpression> columnExpressions) =>
-        columnExpressions.All(ContainsEquivalent);
 
     /// <summary>
     /// Enumerates all <see cref="TableTag"/> objects referenced in the <c>GROUP BY</c> clause.

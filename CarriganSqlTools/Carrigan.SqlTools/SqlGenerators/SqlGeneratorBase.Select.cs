@@ -1,5 +1,6 @@
-using Carrigan.Core.Extensions;
+﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
@@ -139,30 +140,27 @@ public abstract partial class SqlGeneratorBase<T>
         if ((selects is null || selects.IsEmpty()) && groupBys.IsNotNullOrEmpty())
             throw new GroupByRequiresSelectException();
 
-        if (selects is not null && selects.Any() && selects.HasAggregates())
+        if (groupBys?.HasAggregates() ?? false)
+            throw new AggregateExpressionInGroupByClauseException();
+
+        bool UsesGroupingSemantics() =>
+            groupBys.IsNotNullOrEmpty() || having is not null || (selects?.HasAggregates() ?? false);
+
+        bool IsValidForGrouping(SqlExpression expression) =>
+            groupBys?.ContainsAllNonAggregateParts(expression)
+            ?? expression.AllNonAggregateColumns.Any() is false;
+
+        if (UsesGroupingSemantics() && selects is not null && selects.Any())
         {
-            if (selects is not null && selects.Any() && selects.HasAggregates())
-            {
+            bool allSelectedExpressionsAreValid =
+                selects._selectTags.All(select => IsValidForGrouping(select.SqlExpression));
 
-                bool allSelectedExpressionsAreValid =
-                    selects
-                        ._selectTags
-                        .All(select => (groupBys?.ContainsEquivalent(select) ?? false)
-                                        || select.NonAggregateColumnExpressions.All(column => (groupBys?.ContainsEquivalent(new SelectTag(column)) ?? false)));
-
-                if (allSelectedExpressionsAreValid is false)
-                    throw new MixedAggregateSelectException();
-            }
+            if (allSelectedExpressionsAreValid is false)
+                throw new MixedAggregateSelectException();
         }
 
-        if (having is not null)
-        {
-            bool allHavingExpressionsAreValid = having
-                    .AllNonAggregateColumns
-                    .All(column => (groupBys?.ContainsEquivalent(new SelectTag(column)) ?? false));
-            if (allHavingExpressionsAreValid is false)
-                throw new UngroupedColumnInHavingClauseException();
-        }
+        if (having is not null && IsValidForGrouping(having) is false)
+            throw new UngroupedColumnInHavingClauseException();
 
         IEnumerable<ISqlFragment> GetFragments()
         {

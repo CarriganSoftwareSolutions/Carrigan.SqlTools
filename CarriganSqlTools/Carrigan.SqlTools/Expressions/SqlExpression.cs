@@ -475,7 +475,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Thrown when <paramref name="sqlExpressions"/> is empty.
     /// </exception>
     protected static IEnumerable<SqlExpression> ValidateValues(params IEnumerable<SqlExpression> sqlExpressions) => 
-        ValidateValues(0, sqlExpressions);
+        ValidateValues(1, sqlExpressions);
 
     /// <summary>
     /// Validates that the provided value is not null and wraps it in a <see cref="Parameter"/> expression.

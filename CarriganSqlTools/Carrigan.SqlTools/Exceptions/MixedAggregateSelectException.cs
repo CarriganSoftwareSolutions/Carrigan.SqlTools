@@ -1,7 +1,7 @@
-namespace Carrigan.SqlTools.Exceptions;
+﻿namespace Carrigan.SqlTools.Exceptions;
 
 /// <summary>
-/// Thrown when grouped-query semantics require a non-aggregate SELECT or HAVING column to appear in the GROUP BY clause.
+/// Thrown when grouped-query semantics require a non-aggregate SELECT expression to be represented by the GROUP BY clause.
 /// </summary>
 public sealed class MixedAggregateSelectException : Exception
 {
@@ -9,7 +9,7 @@ public sealed class MixedAggregateSelectException : Exception
     /// Initializes a new instance of the <see cref="MixedAggregateSelectException"/> class.
     /// </summary>
     internal MixedAggregateSelectException()
-        : base("When a SELECT uses aggregate expressions, GROUP BY, or HAVING, every non-aggregate SELECT or HAVING column must be included in the GROUP BY clause.")
+        : base("When a SELECT uses aggregate expressions, GROUP BY, or HAVING, every non-aggregate SELECT expression must be represented by the GROUP BY clause.")
     {
     }
 }
