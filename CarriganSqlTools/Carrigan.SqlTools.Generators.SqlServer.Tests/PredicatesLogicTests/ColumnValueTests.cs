@@ -60,7 +60,7 @@ public class ColumnValueTests : PredicateLogicBaseTests
 
     [Fact]
     public void ByColumnValue_ConstructorSimple_InValid_BadCol() =>
-        Assert.Throws<InvalidPropertyException<ColumnTable>>(() => new ColumnValue<ColumnTable>("ilsabasbdyas", "1"));
+        Assert.Throws<InvalidPropertyException<ColumnTable>>((Func<object?>)(() => new PredicatesLogic.ColumnValue<ColumnTable>("ilsabasbdyas", (object)"1")));
 
     [Fact]
     public void ByColumnValue_ConstructorSimple_Valid() =>
@@ -133,6 +133,6 @@ public class ColumnValueTests : PredicateLogicBaseTests
 
     [Fact]
     public void ByColumnValue_PropertyNameNull_ThrowsArgumentNullException() =>
-        Assert.Throws<ArgumentNullException>(() => new ColumnValue<ColumnTable>((PropertyName)null!, "1"));
+        Assert.Throws<ArgumentNullException>((Func<object?>)(() => new PredicatesLogic.ColumnValue<ColumnTable>((PropertyName)null!, (object)"1")));
 
 }

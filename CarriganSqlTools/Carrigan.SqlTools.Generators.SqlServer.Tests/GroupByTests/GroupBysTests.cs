@@ -222,7 +222,7 @@ public class GroupBysTests
     {
         GroupBys groupBy = new(new GroupBy<Address>("Street"));
 
-        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Contains((ColumnBase)(null!)));
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => groupBy.Contains((Column)(null!)));
         Assert.Equal("column", exception.ParamName);
     }
 

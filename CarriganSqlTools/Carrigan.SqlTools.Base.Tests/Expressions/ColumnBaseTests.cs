@@ -11,25 +11,25 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where modelT : class
 {
-    protected abstract ColumnBase NewColumn(string propertyName);
-    protected abstract ColumnBase NewColumn(PropertyName propertyName);
+    protected abstract Column NewColumn(string propertyName);
+    protected abstract Column NewColumn(PropertyName propertyName);
 
     protected SqlExpression NewColumnAsExpression(string propertyName) =>
         NewColumn(propertyName);
     protected SqlExpression NewColumnAsExpression(PropertyName propertyName) =>
         NewColumn(propertyName);
 
-    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnModelType(string propertyName);
-    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnModelType(PropertyName propertyName);
+    protected abstract Column NewBooleanColumnModelTypeToColumnModelType(string propertyName);
+    protected abstract Column NewBooleanColumnModelTypeToColumnModelType(PropertyName propertyName);
 
-    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBaseModelType(string propertyName);
-    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBaseModelType(PropertyName propertyName);
+    protected abstract Column NewBooleanColumnModelTypeToColumnBaseModelType(string propertyName);
+    protected abstract Column NewBooleanColumnModelTypeToColumnBaseModelType(PropertyName propertyName);
 
-    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBase(string propertyName);
-    protected abstract ColumnBase NewBooleanColumnModelTypeToColumnBase(PropertyName propertyName);
+    protected abstract Column NewBooleanColumnModelTypeToColumnBase(string propertyName);
+    protected abstract Column NewBooleanColumnModelTypeToColumnBase(PropertyName propertyName);
 
-    protected abstract ColumnBase NewBooleanColumnBaseModelTypeToColumnModelType(string propertyName);
-    protected abstract ColumnBase NewBooleanColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
+    protected abstract Column NewBooleanColumnBaseModelTypeToColumnModelType(string propertyName);
+    protected abstract Column NewBooleanColumnBaseModelTypeToColumnModelType(PropertyName propertyName);
 
 
     protected abstract IEnumerable<string> BooleanProperties { get; }
@@ -38,7 +38,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
     }
 
-    private void RunSubMethod(Action<ColumnBase> test, string propertyName)
+    private void RunSubMethod(Action<Column> test, string propertyName)
     {
         test(NewColumn(propertyName));
         test(NewColumn(new PropertyName(propertyName)));
@@ -93,7 +93,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateColumnSqlFragments(string propertyName)
     {
-        void Test(ColumnBase columnBase)
+        void Test(Column columnBase)
         {
             string actual = columnBase?.ToSqlFragments(Dialect)?.ToSql(Dialect) ?? string.Empty;
             string expected = ExpectSqlFragment(ExpectedPropertyColumnName[propertyName].ToString());
@@ -120,7 +120,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateExpectedPropertyColumnTag(string propertyName)
     {
-        void Test(ColumnBase columnBase)
+        void Test(Column columnBase)
         {
             ColumnTag actual = columnBase.ColumnInfo.ColumnTag;
             ColumnTag expected = ExpectedPropertyColumnTag[propertyName];
@@ -131,7 +131,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateExpectedPropertyColumnName(string propertyName)
     {
-        void Test(ColumnBase columnBase)
+        void Test(Column columnBase)
         {
             ColumnName actual = columnBase.ColumnInfo.ColumnTag.ColumnName;
             ColumnName expected = ExpectedPropertyColumnName[propertyName];
@@ -142,7 +142,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateExpectedPropertyTableTag(string propertyName)
     {
-        void Test(ColumnBase columnBase)
+        void Test(Column columnBase)
         {
             TableTag actual = columnBase.ColumnInfo.ColumnTag.TableTag;
             TableTag expected = ExpectedTableTag;
@@ -153,7 +153,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateExpectedPropertyTableName(string propertyName)
     {
-        void Test(ColumnBase columnBase)
+        void Test(Column columnBase)
         {
             TableName actual = columnBase.ColumnInfo.ColumnTag.TableTag.TableName;
             TableName expected = ExpectedTableName;
@@ -164,7 +164,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateExpectedPropertySchemaName(string propertyName)
     {
-        void Test(ColumnBase columnBase)
+        void Test(Column columnBase)
         {
             SchemaName? actual = columnBase.ColumnInfo.ColumnTag.TableTag.SchemaName;
             SchemaName? expected = ExpectedSchemaName;
@@ -178,7 +178,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateParticipatingParameters(string propertyName)
     {
-        static void Test(ColumnBase columnBase)
+        static void Test(Column columnBase)
         {
             int expectedValue = 0;
             int actual = columnBase.AllParticipatingParameters.Count();
@@ -190,7 +190,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
 
     protected override void ValidateParticipatingColumns(string propertyName)
     {
-        static void Test(ColumnBase columnBase)
+        static void Test(Column columnBase)
         {
             int expectedValue = 1;
             int actual = columnBase.AllParticipatingColumns.Count();

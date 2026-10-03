@@ -249,14 +249,14 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column.</param>
     /// <returns>A column expression node bound to <paramref name="propertyName"/>.</returns>
-    protected abstract ColumnBase<T> GetColumn(PropertyName propertyName);
+    protected abstract Column GetColumn(PropertyName propertyName);
     /// <summary>
     /// Creates a dialect-specific column-value predicate for a reflected column and model instance.
     /// </summary>
     /// <param name="columnInfo">The reflected column metadata for the model property.</param>
     /// <param name="entity">The model instance that supplies the value for the generated parameter.</param>
     /// <returns>A predicate that compares the column to the value read from <paramref name="entity"/>.</returns>
-    protected abstract ColumnValueBase<T> GetColumnValue(ColumnInfo columnInfo, T entity);
+    protected abstract ColumnValue GetColumnValue(ColumnInfo columnInfo, T entity);
 
     /// <summary>
     /// Creates a dialect-specific collection of model columns from property names.

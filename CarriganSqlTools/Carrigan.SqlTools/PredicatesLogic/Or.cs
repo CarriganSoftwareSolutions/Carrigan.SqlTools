@@ -17,7 +17,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// <example>
 /// <para>
 /// OR example, note it intelligently handles more than two predicates.
-/// Note: <see cref="ColumnValueBase{T}"/> validates property names and throws an exception if a property name is invalid.
+/// Note: <see cref="ColumnValue{T}"/> validates property names and throws an exception if a property name is invalid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// ColumnValue<Customer> equalName = new(nameof(Customer.Name), "Hank");

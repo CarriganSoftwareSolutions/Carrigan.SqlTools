@@ -216,7 +216,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         
         await using SqlConnection connection = new(_fixture.UnitTestConnectionString);
         ColumnEqualsColumn<Customer, Order> columnEqualsColumn = new (nameof(Customer.Id), nameof(Order.CustomerId));
-        ColumnValueBase<Customer> customerThe = new ColumnValue<Customer>(nameof(Customer.Id), 3);
+        ColumnValue<Customer> customerThe = new ColumnValue<Customer>(nameof(Customer.Id), 3);
 
         Join<Order> joinOrderOn = new(columnEqualsColumn);
         SelectBuilder<Customer> selectBuilder = new()

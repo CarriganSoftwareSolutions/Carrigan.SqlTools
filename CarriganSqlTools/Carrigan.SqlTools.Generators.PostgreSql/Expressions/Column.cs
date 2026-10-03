@@ -2,8 +2,10 @@
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 
 namespace Carrigan.SqlTools.Expressions;
 
@@ -30,10 +32,20 @@ namespace Carrigan.SqlTools.Expressions;
 /// WHERE ("Customer"."Name" = $1)
 /// ]]></code>
 /// </example>
-public class Column<T> : ColumnBase<T>  where T : class
+public class Column<T> : Column  where T : class
 {
     /// <summary>
-    /// Initializes a new <see cref="ColumnBase{T}"/> using a property name.
+    /// Creates a standardized <see cref="ArgumentException"/> for an invalid <paramref name="propertyName"/>.
+    /// </summary>
+    /// <param name="propertyName">The property name that failed validation.</param>
+    /// <returns>
+    /// An <see cref="ArgumentException"/> describing the invalid property and the corresponding model/table context.
+    /// </returns>
+    internal static ArgumentException NoSuchProperty(PropertyName propertyName) =>
+        new($"{propertyName} is not a valid property name on {SqlToolsReflectorCache<T>.Type.Name}, representing: {SqlToolsReflectorCache<T>.Table}.", nameof(propertyName));
+
+    /// <summary>
+    /// Initializes a new <see cref="Column"/> using a property name.
     /// </summary>
     /// <param name="propertyName">The property name that identifies the column.</param>
     /// <exception cref="ArgumentNullException">
@@ -43,7 +55,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// Thrown when <paramref name="propertyName"/> does not map to a valid, eligible property on <typeparamref name="T"/>.
     /// </exception>
     [ExternalOnly]
-    public Column(string propertyName) : base(DialectStatics.SupportedTypes , new PropertyName(propertyName))
+    public Column(string propertyName) : this(new PropertyName(propertyName))
     { }
 
     /// <summary>
@@ -60,7 +72,7 @@ public class Column<T> : ColumnBase<T>  where T : class
     /// Thrown only if the property passes validation but no matching column metadata is returned.
     /// This is not expected under normal conditions.
     /// </exception>
-    public Column(PropertyName propertyName) : base(DialectStatics.SupportedTypes, propertyName)
+    public Column(PropertyName propertyName) : base(GetColumnInfo<T>(DialectStatics.SupportedTypes, propertyName))
     {
     }
 }

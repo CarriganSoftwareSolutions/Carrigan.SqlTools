@@ -35,7 +35,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// WHERE ("Customer"."Name" = $1)
 /// ]]></code>
 /// </example>
-public class ColumnValue<T> : ColumnValueBase<T> where T : class
+public class ColumnValue<T> : ColumnValue where T : class
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnValue{T}"/> class,
@@ -67,13 +67,13 @@ public class ColumnValue<T> : ColumnValueBase<T> where T : class
     }
 
     /// <summary>
-    /// Creates a <see cref="ColumnBase{T}"/> instance for the given <paramref name="propertyName"/>.
+    /// Creates a <see cref="Column{T}"/> instance for the given <paramref name="propertyName"/>.
     /// </summary>
     /// <param name="propertyName">
     /// The property name that identifies the column on the entity type <typeparamref name="T"/>.
     /// </param>
     /// <returns>A PostgreSQL column expression for the specified property.</returns>
-    private static ColumnBase<T> CreateValue(PropertyName propertyName)
+    private static Column CreateValue(PropertyName propertyName)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 

@@ -16,7 +16,7 @@ public class FromReadMeSqlExpressionsDateTimeExamples
     public void CurrentDate_Example()
     {
         CurrentDate currentDate = new();
-        ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+        Column columnBase = new Column<Customer>(nameof(Customer.Name));
         SelectBuilder<Customer> selectBuilder = new()
         {
             Selects = new SelectTags(new SelectTag(currentDate, "Date"), new SelectTag(columnBase, "Name"))
@@ -34,7 +34,7 @@ public class FromReadMeSqlExpressionsDateTimeExamples
     public void CurrentTimeStamp_Example()
     {
         CurrentTimeStamp currentTimeStamp = new();
-        ColumnBase columnBase = new Column<Customer>(nameof(Customer.Name));
+        Column columnBase = new Column<Customer>(nameof(Customer.Name));
         SelectBuilder<Customer> selectBuilder = new()
         {
             Selects = new SelectTags(new SelectTag(currentTimeStamp, "TimeStamp"), new SelectTag(columnBase, "Name"))

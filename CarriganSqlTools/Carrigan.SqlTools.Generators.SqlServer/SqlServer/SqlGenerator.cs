@@ -42,7 +42,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
     /// <returns>A dialect-specific column expression for the requested property.</returns>
-    protected override ColumnBase<T> GetColumn(PropertyName propertyName) =>
+    protected override Column<T> GetColumn(PropertyName propertyName) =>
         new Column<T>(propertyName);
 
     /// <summary>
@@ -51,7 +51,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="columnInfo">The reflected column metadata for the model property.</param>
     /// <param name="entity">The model instance representing the SQL row or parameter set.</param>
     /// <returns>A dialect-specific column-value expression containing the property value from <paramref name="entity"/>.</returns>
-    protected override ColumnValueBase<T> GetColumnValue(ColumnInfo columnInfo, T entity) =>
+    protected override ColumnValue<T> GetColumnValue(ColumnInfo columnInfo, T entity) =>
         new ColumnValue<T>(columnInfo.PropertyName, columnInfo.PropertyInfo.GetValue(entity));
     /// <summary>
     /// Creates a dialect-specific collection of columns from property names.

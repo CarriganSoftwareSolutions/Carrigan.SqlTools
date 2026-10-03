@@ -10,12 +10,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// This class is a convenience wrapper that reduces the boilerplate required to compare a column
 /// against a constant value using the SQL equality operator (<c>=</c>).
 /// </summary>
-/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
-/// <remarks>
-/// Property name validation is performed during construction. If the provided property name does not
-/// map to a valid, eligible property on <typeparamref name="T"/>, an exception will be thrown.
-/// </remarks>
-public abstract class ColumnValueBase<T> : Predicates where T : class
+public class ColumnValue : Predicates
 {
     /// <summary>
     /// The composed predicate (e.g., <c>[T].[Column] = @Parameter_Column</c>) that this class builds.
@@ -23,7 +18,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     protected readonly Predicates value;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ColumnValueBase{T}"/> class,
+    /// Initializes a new instance of the <see cref="ColumnValue"/> class,
     /// representing a predicate that compares a column to a constant value using
     /// the SQL equality operator (<c>=</c>).
     /// </summary>
@@ -33,7 +28,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// <param name="parameterValue">
     /// The constant value to compare against the column in the generated SQL.
     /// </param>
-    public ColumnValueBase(ColumnBase<T> left, object? parameterValue) : this(CreateValue(left, parameterValue))
+    public ColumnValue(Column left, object? parameterValue) : this(CreateValue(left, parameterValue))
     {
     }
 
@@ -42,7 +37,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// with the composed predicate as a child node.
     /// </summary>
     /// <param name="equal">The composed <see cref="Equal"/> predicate.</param>
-    private ColumnValueBase(Equal equal) : base([equal]) =>
+    private ColumnValue(Equal equal) : base([equal]) =>
         value = equal;
 
     /// <summary>
@@ -55,7 +50,7 @@ public abstract class ColumnValueBase<T> : Predicates where T : class
     /// The constant value to compare against the column in the generated SQL.
     /// </param>
     /// <returns>An equality predicate comparing the column to the generated parameter.</returns>
-    protected static Equal CreateValue(ColumnBase<T> left, object? parameterValue)
+    protected static Equal CreateValue(Column left, object? parameterValue)
     {
         Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
 
