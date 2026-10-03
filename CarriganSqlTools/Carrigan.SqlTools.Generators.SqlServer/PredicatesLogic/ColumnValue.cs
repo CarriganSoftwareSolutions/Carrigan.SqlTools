@@ -94,7 +94,7 @@ public class ColumnValue<T> : ColumnValue where T : class
     /// </param>
     /// <remarks>
     /// This constructor is intended for external callers and forwards to the
-    /// <see cref="ColumnValue(PropertyName, object)"/> constructor after wrapping the string in a
+    /// <see cref="ColumnValue{T}(PropertyName, object)"/> constructor after wrapping the string in a
     /// <see cref="PropertyName"/>.
     /// </remarks>
     /// <exception cref="InvalidPropertyException{T}">

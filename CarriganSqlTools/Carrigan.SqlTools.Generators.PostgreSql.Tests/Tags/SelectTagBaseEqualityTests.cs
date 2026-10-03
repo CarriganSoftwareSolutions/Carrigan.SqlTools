@@ -10,12 +10,8 @@ public class SelectTagBaseEqualityTests
     private static SelectTag<SomeTable> New(string columnName, string? aliasName = null) =>
         new (new PropertyName(columnName), AliasName.New(aliasName));
 
-    private static SelectTag NewExpression(string columnName, string? aliasName = null)
-    {
-        ColumnTag columnTag = new(new TableTag(null, "SomeTable"), new ColumnName(columnName));
-        ColumnTagExpression expression = new(columnTag);
-        return new (expression, AliasTag.New(AliasName.New(aliasName)));
-    }
+    private static SelectTag NewExpression(string columnName, string? aliasName = null) =>
+        new(new Column<SomeTable>(columnName), AliasTag.New(AliasName.New(aliasName)));
 
     [Fact]
     public void Equals_SameReference()
@@ -83,17 +79,6 @@ public class SelectTagBaseEqualityTests
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
-    }
-
-    [Fact]
-    public void Equals_ExpressionUsesColumnTagCaseInsensitiveIdentity()
-    {
-        SelectTag left = NewExpression("SomeColumn", "SomeAlias");
-        SelectTag right = NewExpression("somecolumn", "SomeAlias");
-
-        Assert.True(left.Equals(right));
-        Assert.True(left == right);
-        Assert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
     [Fact]
@@ -268,7 +253,7 @@ public class SelectTagBaseEqualityTests
     }
 
     [Fact]
-    public void WithNoAlias_EqualsEquivalentUnaliasedTag()
+    public void WithNoAlias_EqualsEquivalentUnAliasedTag()
     {
         SelectTag withAlias = New("SomeColumn", "SomeAlias");
         SelectTag expected = New("SomeColumn");

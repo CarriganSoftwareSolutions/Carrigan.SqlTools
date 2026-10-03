@@ -14,7 +14,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </typeparam>
 /// <example>
 /// <para>
-/// <see cref="ColumnBase{T}"/> validates property names and throws an exception if the property isn't valid.
+/// <see cref="Column{T}"/> validates property names and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterEmail = new("@example.", "Email");
@@ -39,7 +39,7 @@ public class Contains<T> : Predicates where T : class
     /// <summary>
     /// The column expression searched by the full-text predicate.
     /// </summary>
-    private readonly IColumnBase<T> _column;
+    private readonly Column<T> _column;
 
     /// <summary>
     /// The search-condition parameter rendered as the second argument to <c>CONTAINS</c>.
@@ -50,7 +50,7 @@ public class Contains<T> : Predicates where T : class
     /// Initializes a new instance of the <see cref="Contains{T}"/> predicate.
     /// </summary>
     /// <param name="column">
-    /// The left-hand operand, representing the full-text indexed column (<see cref="ColumnBase{T}"/>).
+    /// The left-hand operand, representing the full-text indexed column (<see cref="Column{T}"/>).
     /// </param>
     /// <param name="parameter">
     /// The right-hand operand, representing the search term parameter (<see cref="Parameter"/>).
@@ -58,7 +58,7 @@ public class Contains<T> : Predicates where T : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="column"/> or <paramref name="parameter"/> is <c>null</c>.
     /// </exception>
-    public Contains(IColumnBase<T> column, Parameter parameter) : base([new Column<T>(column.PropertyName), parameter])
+    public Contains(Column<T> column, Parameter parameter) : base([column, parameter])
     {
         ArgumentNullException.ThrowIfNull(column, nameof(column));
         ArgumentNullException.ThrowIfNull(parameter, nameof(parameter));

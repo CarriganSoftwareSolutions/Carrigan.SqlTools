@@ -305,6 +305,6 @@ public class GroupByItemTests
     {
         PropertyInfo propertyInfo = typeof(Address).GetProperty(propertyName)!;
         ColumnInfo columnInfo = new(schemaName is null ? null : new SchemaName(schemaName), new TableName(tableName), propertyInfo, []);
-        return new GroupBy(new ColumnTagExpression(columnInfo.ColumnTag));
+        return new GroupBy(new Column(columnInfo));
     }
 }

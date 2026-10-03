@@ -140,6 +140,7 @@ public class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
+    [Obsolete("Tests obsolete code.")]
     public void SelectTag_IsAggregate_DelegatesToSqlExpression()
     {       
         SelectTag columnSelect = SelectTagGenerator.Get<Customer>(nameof(Customer.Name));
@@ -194,7 +195,8 @@ public class SqlGenerator_AggregateSelectTests
     }
 
     [Fact]
-    public void Select_WithGroupedSubexpressionInsideMixedAggregate_AllowsAggregateSelectList()
+    [Obsolete("Tests obsolete code.")]
+    public void Select_WithGroupedSubExpressionInsideMixedAggregate_AllowsAggregateSelectList()
     {
         Add groupedExpression = new
         (

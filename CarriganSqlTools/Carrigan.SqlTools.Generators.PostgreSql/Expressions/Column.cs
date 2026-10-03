@@ -59,7 +59,7 @@ public class Column<T> : Column  where T : class
     { }
 
     /// <summary>
-    /// Initializes a new <see cref="ColumnBase{T}"/> using a <see cref="PropertyName"/> wrapper.
+    /// Initializes a new <see cref="Column{T}"/> using a <see cref="PropertyName"/> wrapper.
     /// </summary>
     /// <param name="propertyName">The property name wrapper that identifies the column.</param>
     /// <exception cref="ArgumentNullException">

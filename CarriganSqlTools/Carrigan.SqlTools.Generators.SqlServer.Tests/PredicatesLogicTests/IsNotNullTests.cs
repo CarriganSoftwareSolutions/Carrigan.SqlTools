@@ -317,7 +317,7 @@ public class IsNotNullTests : PredicateLogicBaseTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -330,8 +330,8 @@ public class IsNotNullTests : PredicateLogicBaseTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
 
-        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
-        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Pizza").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Pizza]").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Pizza").Single();
     }
 
     [Fact]
@@ -342,7 +342,7 @@ public class IsNotNullTests : PredicateLogicBaseTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -354,8 +354,8 @@ public class IsNotNullTests : PredicateLogicBaseTests
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
-        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
-        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
     }
 
     [Fact]
@@ -366,7 +366,7 @@ public class IsNotNullTests : PredicateLogicBaseTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 1;
-        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -378,8 +378,8 @@ public class IsNotNullTests : PredicateLogicBaseTests
 
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
-        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
-        _ = predicate.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 
     [Fact]
@@ -390,7 +390,7 @@ public class IsNotNullTests : PredicateLogicBaseTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -403,7 +403,7 @@ public class IsNotNullTests : PredicateLogicBaseTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -416,7 +416,7 @@ public class IsNotNullTests : PredicateLogicBaseTests
         PredicatesLogic.Predicates predicate = new IsNotNull(inner);
 
         int expectedValue = 0;
-        int actualValue = predicate.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actualValue = predicate.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expectedValue, actualValue);
     }
@@ -437,10 +437,10 @@ public class IsNotNullTests : PredicateLogicBaseTests
     {
         PredicatesLogic.Predicates and = new And(new IsNotNull(ParameterElite), new IsNotNull(ParameterHelloWorld), new IsNotNull(ColumnFutureCity), new IsNotNull(ColumnDestructCode));
 
-        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
-        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
-        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
-        _ = and.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[D000destruct0]").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "[ColumnTable].[Express]").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
     }
 
     [Fact]

@@ -77,26 +77,26 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// </summary>
     /// <remarks>
     /// Root + Descendants
-    /// The returned expressions are the actual participating nodes. This includes reflected columns and other column-shaped
-    /// expression nodes, such as <see cref="ColumnTagExpression"/>. Enumeration is deferred and preserves expression-tree traversal order.
+    /// The returned expressions are the actual participating <see cref="Column"/> nodes. Enumeration is deferred
+    /// and preserves expression-tree traversal order.
     /// </remarks>
     public IEnumerable<SqlExpression> AllParticipatingColumns =>
         EnumerateSelfAndDescendants()
-            .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
+            .Where(static expression => expression is Column);
 
     /// <summary>
     /// Gets every column-shaped SQL expression participating in this expression tree, excluding any aggregate expressions.
     /// </summary>
     internal IEnumerable<SqlExpression> AllNonAggregateColumns =>
         EnumerateAllNonAggregates()
-            .Where(static expression => expression is IColumnBase || expression is IColumnExpressionIdentity);
+            .Where(static expression => expression is Column);
 
     /// <summary>
     /// Gets all reflected column expressions below the current node.
     /// </summary>
     [Obsolete("This is likely not doing what we need it to do anymore.")]
-    internal IEnumerable<IColumnBase> DescendantColumns =>
-        DescendantNodes.OfType<IColumnBase>();
+    internal IEnumerable<Column> DescendantColumns =>
+        DescendantNodes.OfType<Column>();
 
     /// <summary>
     /// Indicates whether this expression tree contains any column expressions.
@@ -213,7 +213,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// representations override this value so equivalent SQL constructs can compare structurally.
     /// </remarks>
     protected virtual object EqualityContract =>
-        this is IColumnExpressionIdentity ? typeof(IColumnExpressionIdentity) :
+        this is Column ? typeof(Column) :
         this is IParameter ? typeof(IParameter) :
         GetType();
 
@@ -222,8 +222,8 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// </summary>
     protected virtual bool EqualsCore(SqlExpression other)
     {
-        if (this is IColumnExpressionIdentity leftColumn && other is IColumnExpressionIdentity rightColumn)
-            return leftColumn.EqualityColumnTag.Equals(rightColumn.EqualityColumnTag);
+        if (this is Column leftColumn && other is Column rightColumn)
+            return leftColumn.ColumnInfo.ColumnTag.Equals(rightColumn.ColumnInfo.ColumnTag);
 
         if (this is IParameter leftParameter && other is IParameter rightParameter)
             return leftParameter.Name.Equals(rightParameter.Name);
@@ -236,9 +236,9 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// </summary>
     protected virtual void AddToHashCode(ref HashCode hashCode)
     {
-        if (this is IColumnExpressionIdentity column)
+        if (this is Column column)
         {
-            hashCode.Add(column.EqualityColumnTag);
+            hashCode.Add(column.ColumnInfo.ColumnTag);
             return;
         }
 

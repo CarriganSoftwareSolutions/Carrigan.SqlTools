@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 /// <example>
 /// <para>
-/// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
+/// <see cref="Column"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Column<Customer> columnName = new(nameof(Customer.Name));
@@ -50,7 +50,7 @@ public class IsNotNull : Predicates
     /// </summary>
     /// <param name="anExpression">
     /// The expression to test for non-null.
-    /// Typically a <see cref="ColumnBase{T}"/> instance representing a database column.
+    /// Typically a <see cref="Column"/> instance representing a database column.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="anExpression"/> is <c>null</c>.

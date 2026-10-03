@@ -143,7 +143,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>Select with join, where, and order by example:</para>
     /// <para>
-    /// Note: <see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
+    /// Note: <see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// Note: <see cref="OrderBy{T}"/> validates the names of the properties, and throws an error if the property isn't valid.
     /// </para>
     /// <code language="csharp"><![CDATA[

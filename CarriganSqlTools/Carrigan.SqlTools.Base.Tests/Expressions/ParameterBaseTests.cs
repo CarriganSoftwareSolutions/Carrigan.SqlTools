@@ -81,7 +81,7 @@ public abstract class ParameterBaseTests<modelT> : ParameterTestsBase<modelT> wh
     protected override void ValidateParticipatingColumns(string propertyName)
     {
         static void Test(Parameter parameter) =>
-            Assert.Empty(parameter.AllParticipatingColumns.OfType<IColumnBase>());
+            Assert.Empty(parameter.AllParticipatingColumns.OfType<Column>());
         RunSubMethod(Test, propertyName);
     }
 

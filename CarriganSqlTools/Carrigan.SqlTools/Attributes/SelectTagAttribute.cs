@@ -77,13 +77,12 @@ public class SelectTagAttribute<T> : SelectTagAttribute
     internal SelectTagAttribute(PropertyName propertyName, AliasName? aliasName = null)
     {
         ColumnInfo columnInfo = SqlToolsReflectorCache<T>.GetSelectColumnInfo(propertyName);
-        ColumnTag columnTag = columnInfo.SelectColumnTag;
         AliasTag? aliasTag = aliasName is null
             ? columnInfo.SelectAliasTag
             : AliasTag.New(aliasName);
 
-        ColumnTag = columnTag;
+        ColumnTag = columnInfo.SelectColumnTag;
         AliasTag = aliasTag;
-        SelectTag = new ReflectedSelectTag(columnTag, aliasTag);
+        SelectTag = new SelectTag(new Expressions.Column(columnInfo), aliasTag);
     }
 }

@@ -91,26 +91,26 @@ public class SqlExpressionEqualityTests
             () => new Column<BooleanEqualityEntity>(nameof(BooleanEqualityEntity.Second)));
 
     [Fact]
-    public void ColumnTagExpression_EqualityContract()
+    public void NeutralColumn_EqualityContract()
     {
         Column<Grades> creditHours = new(nameof(Grades.CreditHours));
         Column<Grades> academicYear = new(nameof(Grades.AcademicYear));
 
         AssertEqualityContract(
-            () => new ColumnTagExpression(creditHours.ColumnInfo.ColumnTag),
-            () => new ColumnTagExpression(creditHours.ColumnInfo.ColumnTag),
-            () => new ColumnTagExpression(creditHours.ColumnInfo.ColumnTag),
-            () => new ColumnTagExpression(academicYear.ColumnInfo.ColumnTag));
+            () => new Column(creditHours.ColumnInfo),
+            () => new Column(creditHours.ColumnInfo),
+            () => new Column(creditHours.ColumnInfo),
+            () => new Column(academicYear.ColumnInfo));
     }
 
     [Fact]
     public void EquivalentColumnRepresentations_AreEqual()
     {
         Column<Grades> column = new(nameof(Grades.CreditHours));
-        ColumnTagExpression columnTagExpression = new(column.ColumnInfo.ColumnTag);
+        Column neutralColumn = new(column.ColumnInfo);
 
         SqlExpression columnExpression = column;
-        SqlExpression tagExpression = columnTagExpression;
+        SqlExpression tagExpression = neutralColumn;
 
         Assert.True(columnExpression == tagExpression);
         Assert.Equal(columnExpression.GetHashCode(), tagExpression.GetHashCode());

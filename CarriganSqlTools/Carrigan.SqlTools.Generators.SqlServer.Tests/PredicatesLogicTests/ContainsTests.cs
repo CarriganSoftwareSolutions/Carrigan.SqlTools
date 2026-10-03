@@ -69,7 +69,7 @@ public class ContainsTests : PredicateLogicBaseTests
 
     [Fact]
     public void Contains_NullColumn_ThrowsNullReferenceException() =>
-    Assert.Throws<NullReferenceException>(() =>
+    Assert.Throws<ArgumentNullException>(() =>
         new Contains<ColumnTable>(null!, new Parameter("test", "Col1")));
 
     [Fact]

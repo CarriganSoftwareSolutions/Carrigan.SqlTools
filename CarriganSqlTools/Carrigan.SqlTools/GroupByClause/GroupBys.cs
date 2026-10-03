@@ -83,7 +83,7 @@ public class GroupBys
         if (sqlExpression.IsAggregate() || ContainsEquivalent(sqlExpression))
             return true;
         
-        else if (sqlExpression is IColumnBase || sqlExpression is IColumnExpressionIdentity)
+        else if (sqlExpression is Column)
             // if we reach this return, it is a non-aggregate column that is not contained in the group by
             return false;
 
@@ -124,13 +124,13 @@ public class GroupBys
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="column"/> is <c>null</c>.
     /// </exception>
-    public bool Contains(IColumnBase column)
+    public bool Contains(Column column)
     {
         ArgumentNullException.ThrowIfNull(column, nameof(column));
 
         return GroupByItems.Any(groupBy =>
-            groupBy.SqlExpression is IColumnExpressionIdentity groupedColumn
-            && groupedColumn.EqualityColumnTag.Equals(column.ColumnInfo.ColumnTag));
+            groupBy.SqlExpression is Column groupedColumn
+            && groupedColumn.ColumnInfo.ColumnTag.Equals(column.ColumnInfo.ColumnTag));
     }
 
     /// <summary>

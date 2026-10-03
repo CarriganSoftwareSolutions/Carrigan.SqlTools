@@ -25,17 +25,6 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     internal readonly AliasTag? AliasTag;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTag"/> class.
-    /// </summary>
-    /// <param name="columnTag">The column identifier to select.</param>
-    /// <param name="aliasTag">The optional alias to apply to the selected column.</param>
-    [Obsolete("No longer needed, except by public obsolete methods.")]
-    internal SelectTag(ColumnTag columnTag, AliasTag? aliasTag = null)
-        : this(new ColumnTagExpression(columnTag), aliasTag)
-    {
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
     /// </summary>
     /// <param name="sqlExpression">The SQL expression to project.</param>
@@ -112,15 +101,8 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     {
         get
         {
-            //Gets the simple column tag represented by a column-shaped expression, when applicable.
-            static ColumnTag? GetSimpleColumnTag(SqlExpression sqlExpression) =>
-                sqlExpression switch
-                {
-                    IColumnBase column => column.ColumnInfo.ColumnTag,
-                    ColumnTagExpression columnTagExpression => columnTagExpression.ColumnTag,
-                    _ => null
-                };
-            return new (AliasTag?.ToString() ?? GetSimpleColumnTag(SqlExpression)?.ColumnName.ToString() ?? SqlExpression.ToString());
+            ColumnTag? columnTag = (SqlExpression as Column)?.ColumnInfo.ColumnTag;
+            return new(AliasTag?.ToString() ?? columnTag?.ColumnName.ToString() ?? SqlExpression.ToString());
         }
     }
 
@@ -253,6 +235,6 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <summary>
     /// Creates a new <see cref="SelectTag"/> instance with the same column as the current instance but without any alias.
     /// </summary>
-    public virtual SelectTag WithNoAlias() =>
-        new(SqlExpression);
+    public SelectTag WithNoAlias() =>
+        AliasTag is null ? this : new SelectTag(SqlExpression);
 }

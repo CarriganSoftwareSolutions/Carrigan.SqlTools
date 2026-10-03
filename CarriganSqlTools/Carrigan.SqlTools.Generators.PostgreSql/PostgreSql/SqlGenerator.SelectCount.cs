@@ -44,14 +44,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// SqlQuery query = orderGenerator.SelectCount(null, null, null, null);
     /// ]]></code>
-    /// <para><see cref="ColumnBase{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
+    /// <para><see cref="Column{T}"/> validates the names of the properties, and throws an error if the property isn't valid</para>
     /// <code><![CDATA[
     /// SELECT COUNT("Order"."Id") FROM "Order"
     /// ]]></code>
     /// </example>
     /// <example>
     /// <para>
-    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Column<Order> totalCol = new(nameof(Order.Total));
@@ -70,7 +70,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <example>
     /// <para>
     /// <see cref="ColumnEqualsColumn{leftT, rightT}"/> validates the names of the properties, and throws an error if a property isn't valid
-    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[
     /// Column<Order> totalCol = new(nameof(Order.Total));

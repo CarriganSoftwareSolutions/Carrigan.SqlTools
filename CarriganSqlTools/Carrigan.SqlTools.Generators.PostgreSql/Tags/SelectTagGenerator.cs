@@ -31,7 +31,7 @@ public static class SelectTagGenerator
         ArgumentNullException.ThrowIfNull(groupBy, nameof(groupBy));
         if(groupBy.SqlExpression is Column column)
         {
-            return new(column.ColumnInfo.ColumnTag);
+            return new(column);
         }
         else
         {

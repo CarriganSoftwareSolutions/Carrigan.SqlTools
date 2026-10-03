@@ -184,7 +184,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
         {
             SelectColumnTag = ColumnTag;
             SelectAliasTag = AliasTag.New(aliasName);
-            SelectTag = new ReflectedSelectTag(SelectColumnTag, SelectAliasTag);
+            SelectTag = new SelectTag(new Expressions.Column(this), SelectAliasTag);
         }
         else
         {
@@ -195,8 +195,8 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
                 SelectAliasTag = AliasTag.New(aliasName ?? new AliasName(columnName));
 
             SelectTag = selectTagAttribute.SelectTag is null
-                ? new ReflectedSelectTag(SelectColumnTag, SelectAliasTag)
-                : new ReflectedSelectTag(selectTagAttribute.SelectTag.SqlExpression, SelectAliasTag);
+                ? new SelectTag(new Expressions.Column(this), SelectAliasTag)
+                : new SelectTag(selectTagAttribute.SelectTag.SqlExpression, SelectAliasTag);
         }
 
         IsKeyPart = keys.Contains(propertyInfo);

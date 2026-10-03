@@ -102,7 +102,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
-internal class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, ColumnTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
+public class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, ColumnTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
     /// <summary>
     /// The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.

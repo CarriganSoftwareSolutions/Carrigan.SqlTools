@@ -190,7 +190,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <para>
     /// Create a PostgreSQL update that uses a <c>FROM</c> source and <c>WHERE</c> predicate.
     /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-    /// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+    /// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
     /// </para>
     /// <code language="csharp"><![CDATA[

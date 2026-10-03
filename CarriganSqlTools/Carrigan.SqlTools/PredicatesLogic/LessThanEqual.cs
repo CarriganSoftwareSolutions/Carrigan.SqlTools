@@ -8,7 +8,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 /// </summary>
 /// <example>
 /// <para>
-/// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an exception if the property isn't valid.
+/// <see cref="Column"/> validates the names of the property, and throws an exception if the property isn't valid.
 /// </para>
 /// <code language="csharp"><![CDATA[
 /// Parameter parameterTotal = new(1776.00m, "Total");
@@ -42,7 +42,7 @@ public class LessThanEqual : ComparisonOperator
     /// less-than-or-equal (<c>&lt;=</c>) operator.
     /// </summary>
     /// <param name="left">
-    /// The left-hand operand of the comparison, typically a <see cref="ColumnBase{T}"/> instance.
+    /// The left-hand operand of the comparison, typically a <see cref="Column"/> instance.
     /// </param>
     /// <param name="right">
     /// The right-hand operand of the comparison, typically a <see cref="Parameter"/> or another <see cref="Predicates"/> expression.

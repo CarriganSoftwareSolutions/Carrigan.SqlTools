@@ -97,7 +97,7 @@ public  class ColumnsTests : PredicateLogicBaseTests
     {
         Column<ColumnTable> cv = new(propertyName);
         int expectedValue = 1;
-        int actual = cv.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actual = cv.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expectedValue, actual);
     }

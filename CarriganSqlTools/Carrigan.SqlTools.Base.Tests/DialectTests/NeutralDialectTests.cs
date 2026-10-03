@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
 
@@ -10,13 +11,19 @@ namespace Carrigan.SqlTools.Base.Tests.DialectTests;
 
 public class NeutralDialectTests
 {
+    private sealed class ColumnSource
+    {
+        public int Column { get; set; }
+    }
+
     [Fact]
     public void ColumnExpression_ToString()
     {
-        TableTag tableTag = new(new SchemaName("Schema"), new TableName("Table"));
-        ColumnTagExpression columnTagExpression = new(new ColumnTag(tableTag, new ColumnName("Column")));
+        var propertyInfo = typeof(ColumnSource).GetProperty(nameof(ColumnSource.Column))!;
+        ColumnInfo columnInfo = new(new SchemaName("Schema"), new TableName("Table"), propertyInfo, []);
+        Column column = new(columnInfo);
 
-        Assert.Equal("Schema.Table.Column", columnTagExpression.ToString());
+        Assert.Equal("Schema.Table.Column", column.ToString());
     }
 
     [Fact]

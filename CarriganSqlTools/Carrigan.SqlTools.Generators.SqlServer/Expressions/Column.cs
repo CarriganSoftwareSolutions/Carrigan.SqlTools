@@ -32,11 +32,11 @@ namespace Carrigan.SqlTools.Expressions;
 /// WHERE ([Customer].[Name] = @Name_1)
 /// ]]></code>
 /// </example>
-public class Column<T> : Column, IColumnBase<T> where T : class
+public class Column<T> : Column where T : class
 {
 
     /// <summary>
-    /// Initializes a new <see cref="ColumnBase{T}"/> using a property name.
+    /// Initializes a new <see cref="Column{T}"/> using a property name.
     /// </summary>
     /// <param name="propertyName">The property name that identifies the column.</param>
     /// <exception cref="ArgumentNullException">

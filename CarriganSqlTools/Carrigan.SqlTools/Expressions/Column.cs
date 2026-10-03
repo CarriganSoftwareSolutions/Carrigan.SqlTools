@@ -7,14 +7,14 @@ using Carrigan.SqlTools.Tags;
 namespace Carrigan.SqlTools.Expressions;
 
 /// <summary>
-/// Base class for SQL expression nodes that reference a single reflected table column.
-/// Carries the resolved <see cref="ColumnInfo"/> and exposes the owning <see cref="TableTag"/>.
+/// Represents the canonical SQL expression for a single reflected table column.
 /// </summary>
 /// <remarks>
-/// This class exists to centralize column/table metadata for expression nodes. Predicate types can consume
-/// these column expressions when building SQL <c>WHERE</c>, <c>JOIN</c>, and other expression-bearing clauses.
+/// Reflection-created projections use this dialect-neutral representation so the complete <see cref="ColumnInfo"/>
+/// remains available throughout the expression tree. Dialect packages derive their public <c>Column&lt;T&gt;</c> types
+/// from this class and validate model property CLR types against the dialect's supported types during construction.
 /// </remarks>
-public class Column : SqlExpression, IColumnBase, IColumnExpressionIdentity
+public class Column : SqlExpression
 {
     /// <summary>
     /// Gets the resolved column metadata (name, tags, etc.) used by the expression.
@@ -28,20 +28,18 @@ public class Column : SqlExpression, IColumnBase, IColumnExpressionIdentity
         ColumnInfo.PropertyName;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Column"/> class.
+    /// Initializes a dialect-neutral column expression from already resolved reflection metadata.
     /// </summary>
-    /// <param name="columnInfo">The resolved column metadata.</param>
+    /// <param name="columnInfo">The resolved column metadata retained by this expression.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="columnInfo"/> is <c>null</c>.
     /// </exception>
-    protected Column(ColumnInfo columnInfo) : base([])
+    protected internal Column(ColumnInfo columnInfo) : base([])
     {
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ColumnInfo = columnInfo;
     }
 
-    ColumnTag IColumnExpressionIdentity.EqualityColumnTag =>
-        ColumnInfo.ColumnTag;
 
     /// <summary>
     /// Gets the table tag represented by this column leaf expression.

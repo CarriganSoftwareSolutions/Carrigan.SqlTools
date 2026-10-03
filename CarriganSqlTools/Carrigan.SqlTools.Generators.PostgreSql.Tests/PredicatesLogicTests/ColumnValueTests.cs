@@ -103,7 +103,7 @@ public class ColumnValueTests : PredicateLogicBaseTests
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
         int expected = 1;
-        int actual = byColumnValues.AllParticipatingColumns.OfType<IColumnBase>().Count();
+        int actual = byColumnValues.AllParticipatingColumns.OfType<Column>().Count();
 
         Assert.Equal(expected, actual);
     }
@@ -115,9 +115,9 @@ public class ColumnValueTests : PredicateLogicBaseTests
         string expectedString;
         string actualString;
 
-        IColumnBase column;
+        Column column;
 
-        column = byColumnValues.AllParticipatingColumns.OfType<IColumnBase>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Col1").First();
+        column = byColumnValues.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Col1").First();
         expectedString = "\"ColumnTable\".\"Col1\"";
         actualString = column.ColumnInfo.ColumnTag.ToSql(Dialect);
         Assert.Equal(expectedString, actualString);

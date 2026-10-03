@@ -3,12 +3,26 @@ using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class SqlExpressionHasColumnsTests
 {
+    private sealed class ColumnSource
+    {
+        public int Value { get; set; }
+        public int Grouped { get; set; }
+        public int Aggregated { get; set; }
+    }
+
+    private static Column NewColumn(string propertyName)
+    {
+        var propertyInfo = typeof(ColumnSource).GetProperty(propertyName)!;
+        return new Column(new ColumnInfo(null, new TableName("TestTable"), propertyInfo, []));
+    }
+
     private sealed class WrapperExpression : SqlExpression
     {
         internal WrapperExpression(SqlExpression child) : base([child])
@@ -20,9 +34,9 @@ public class SqlExpressionHasColumnsTests
     }
 
     [Fact]
-    public void HasColumns_NestedColumnTagExpression_ReturnsTrue()
+    public void HasColumns_NestedColumn_ReturnsTrue()
     {
-        ColumnTagExpression column = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Value")));
+        Column column = NewColumn(nameof(ColumnSource.Value));
 
         Assert.True(new WrapperExpression(column).HasColumns());
     }
@@ -45,7 +59,7 @@ public class SqlExpressionHasColumnsTests
     [Fact]
     public void AllParticipatingColumns_IncludesCurrentNode()
     {
-        ColumnTagExpression column = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Value")));
+        Column column = NewColumn(nameof(ColumnSource.Value));
 
         Assert.Same(column, Assert.Single(column.AllParticipatingColumns));
     }
@@ -53,7 +67,7 @@ public class SqlExpressionHasColumnsTests
     [Fact]
     public void AllParticipatingColumns_IncludesColumnsInsideAggregateSubtrees()
     {
-        ColumnTagExpression column = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Value")));
+        Column column = NewColumn(nameof(ColumnSource.Value));
         Count count = new(column);
 
         Assert.Same(column, Assert.Single(count.AllParticipatingColumns));
@@ -62,8 +76,8 @@ public class SqlExpressionHasColumnsTests
     [Fact]
     public void AllNonAggregateColumns_StopsAtAggregateSubtrees()
     {
-        ColumnTagExpression groupedColumn = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Grouped")));
-        ColumnTagExpression aggregateColumn = new(new ColumnTag(new TableTag(null, "TestTable"), new ColumnName("Aggregated")));
+        Column groupedColumn = NewColumn(nameof(ColumnSource.Grouped));
+        Column aggregateColumn = NewColumn(nameof(ColumnSource.Aggregated));
         Add expression = new(groupedColumn, new Sum(aggregateColumn));
 
         Assert.Same(groupedColumn, Assert.Single(expression.AllNonAggregateColumns));

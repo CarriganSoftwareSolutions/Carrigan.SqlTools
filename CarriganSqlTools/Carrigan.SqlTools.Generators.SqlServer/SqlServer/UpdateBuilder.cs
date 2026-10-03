@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.SqlServer;
 /// <para>
 /// Create Update SQL query with a Where clause.
 /// <see cref="ColumnCollectionBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
-/// <see cref="ColumnBase{T}"/> validates the names of the property, and throws an error if the property isn't valid
+/// <see cref="Column{T}"/> validates the names of the property, and throws an error if the property isn't valid
 /// <see cref="ColumnValue{T}"/> validates the names of the property, and throws an error if the property isn't valid
 /// </para>
 /// <code language="csharp"><![CDATA[

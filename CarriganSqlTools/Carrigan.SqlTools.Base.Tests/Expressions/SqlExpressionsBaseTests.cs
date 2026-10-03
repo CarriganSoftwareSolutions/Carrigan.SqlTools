@@ -3,6 +3,8 @@ using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.ReflectorCache;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
@@ -54,8 +56,12 @@ public abstract class SqlExpressionsBaseTests
     protected static SqlExpression Column2 => NewColumnExpression("Col2");
     protected static Count AggregateColumn => new(ColumnA);
 
-    private static SqlExpression NewColumnExpression(string columnName) =>
-        new ColumnTagExpression(new ColumnTag(new TableTag(null, "ColumnTable"), new ColumnName(columnName)));
+    private static SqlExpression NewColumnExpression(string columnName)
+    {
+        var propertyInfo = typeof(ColumnTable).GetProperty(columnName)!;
+        ColumnInfo columnInfo = new(null, new TableName(nameof(ColumnTable)), propertyInfo, []);
+        return new Column(columnInfo);
+    }
 
 
     [Fact]

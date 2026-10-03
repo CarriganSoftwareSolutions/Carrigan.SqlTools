@@ -218,10 +218,10 @@ public class SqlToolsReflectorCache<T>
     /// <param name="propertyName">The property whose SELECT projection metadata should be resolved.</param>
     /// <returns>The reflected column metadata for <paramref name="propertyName"/>.</returns>
     /// <remarks>
-    /// This method does not filter out unsupported types for a given dialect.
-    /// This is intended for use only with Reflection based SelectTags generated from attributes.
-    /// We can get away with this because the attribute should only be applied to valid types.
-    /// It is still a good to filter out unsupported types when using this method.
+    /// This method intentionally resolves reflection metadata without applying dialect-specific CLR-type filtering.
+    /// It is used while attribute metadata is being constructed, before a dialect-specific generator is involved.
+    /// The returned <see cref="ColumnInfo"/> is retained by the neutral <see cref="Column"/> expression so dialect
+    /// consumers can still inspect and validate the original CLR type when producing dialect-specific SQL.
     /// </remarks>
     internal static ColumnInfo GetSelectColumnInfo(PropertyName propertyName)
     {
@@ -396,18 +396,18 @@ public class SqlToolsReflectorCache<T>
     }
 
     /// <summary>
-    /// Creates a neutral reflected select tag for the specified property without filtering by dialect support.
+    /// Creates a dialect-neutral select tag for the specified property without filtering by dialect support.
     /// </summary>
     /// <remarks>
-    /// This overload exists for attributes that are attached directly to a property and therefore need to
-    /// describe projection metadata before a dialect-specific generator is involved.
+    /// This overload resolves reflection metadata before a dialect-specific generator is involved. Consumers that
+    /// create dialect-specific SQL must validate the participating column CLR types against that dialect's supported types.
     /// </remarks>
     internal static SelectTag GetSelectTag(PropertyName propertyName, AliasName? aliasName = null)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
         ColumnInfo columnInfo = _ColumnInfoCache.Get(propertyName);
-        return CreateSelectTag(columnInfo, aliasName, static (sqlExpression, aliasTag) => new ReflectedSelectTag(sqlExpression, aliasTag));
+        return CreateSelectTag(columnInfo, aliasName, static (sqlExpression, aliasTag) => new SelectTag(sqlExpression, aliasTag));
     }
 
     private static selectTagT CreateSelectTag<selectTagT>
