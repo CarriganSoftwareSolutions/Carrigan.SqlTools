@@ -31,7 +31,19 @@ public class FromReadMeGettingStarted
         Assert.Equal("SELECT [Customer].* FROM [Customer]", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
-        //Assert.Empty(query.Parameters);
+        Assert.Empty(query.Parameters);
+    }
+
+    [Fact]
+    public void SelectAllRowsWithQueryBuilder()
+    {
+        SelectBuilder<Customer> selectBuilder = new();
+        SqlQuery query = customerGenerator.Select(selectBuilder);
+
+        Assert.Equal("SELECT [Customer].* FROM [Customer]", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 0);
+        Assert.Empty(query.Parameters);
     }
 
     [Fact]

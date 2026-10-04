@@ -59,6 +59,35 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         base.BaseSelectAll(orderBy);
 
     /// <summary>
+    /// Builds a SELECT SQL query for the supplied model data.
+    /// </summary>
+    /// <param name="selectQuery">The select builder to materialize.</param>
+    /// <returns>A <see cref="SqlQuery"/> representing the SELECT statement.</returns>
+    /// <example>
+    /// <code language="csharp"><![CDATA[
+    /// SelectBuilder<Customer> selectBuilder = new();
+    /// SqlQuery query = customerGenerator.Select(selectBuilder);
+    /// ]]></code>
+    /// <para>Resulting SQL:</para>
+    /// <code><![CDATA[
+    /// SELECT "Customer".* FROM "Customer"
+    /// ]]></code>
+    /// </example>
+    public SqlQuery Select(SelectBuilder<T> selectQuery) =>
+        InternalSelect
+        (
+            selectQuery.Distinct,
+            selectQuery.Subquery,
+            selectQuery.Selects,
+            selectQuery.Joins,
+            selectQuery.Where,
+            selectQuery.GroupBys,
+            selectQuery.Having,
+            selectQuery.OrderBys,
+            selectQuery.Paging
+        );
+
+    /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
     /// <c>SELECT</c> from the table represented by <typeparamref name="T"/>,
     /// with optional <c>JOIN</c>, <c>WHERE</c>, <c>GROUP BY</c>, <c>HAVING</c>,
@@ -236,25 +265,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         PagingBase? paging
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
-
-    /// <summary>
-    /// Builds a SELECT SQL query for the supplied model data.
-    /// </summary>
-    /// <param name="selectQuery">The select builder to materialize.</param>
-    /// <returns>A <see cref="SqlQuery"/> representing the SELECT statement.</returns>
-    public SqlQuery Select(SelectBuilder<T> selectQuery) =>
-        InternalSelect
-        (
-            selectQuery.Distinct,
-            selectQuery.Subquery,
-            selectQuery.Selects,
-            selectQuery.Joins,
-            selectQuery.Where,
-            selectQuery.GroupBys,
-            selectQuery.Having,
-            selectQuery.OrderBys, 
-            selectQuery.Paging
-        );
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key

@@ -229,7 +229,19 @@ public SqlGenerator<Order> orderGenerator = new();
 
 ```csharp
 SqlQuery query = customerGenerator.SelectAll();
-// SELECT "Customer".* FROM "Customer"
+```
+
+```sql
+SELECT "Customer".* FROM "Customer"
+```
+
+```csharp
+SelectBuilder<Customer> selectBuilder = new();
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT "Customer".* FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)
