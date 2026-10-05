@@ -93,7 +93,6 @@ public class FromReadMeMoreComplexExamples
     }
 
     [Fact]
-    [Obsolete("Use the Select Aggregate Count instead.")]
     public void SelectCountWithWhere()
     {
         //Note: Column<T> validates the names of the properties, and throws an error if the property isn't valid
@@ -101,9 +100,15 @@ public class FromReadMeMoreComplexExamples
         Parameter minTotal = new(500m, "Total");
         GreaterThan greaterThan = new(totalCol, minTotal);
 
-        SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
+        SelectBuilder<Order> selectBuilder = new()
+        {
+            Selects = new SelectTag(new Count(), "OrderCount"),
+            Where = greaterThan
+        };
 
-        Assert.Equal("SELECT COUNT([Order].[Id]) FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
+        SqlQuery query = selectBuilder.AsSqlQuery();
+
+        Assert.Equal("SELECT COUNT(*) AS [OrderCount] FROM [Order] WHERE ([Order].[Total] > @Total_1)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
         SqlQueryTestHelper.AssertParameterCount(query, 1);
         SqlQueryTestHelper.AssertParameterValue(query, "@Total_1", 500m);

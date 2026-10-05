@@ -597,11 +597,17 @@ Column<Order> totalCol = new(nameof(Order.Total));
 Parameter minTotal = new(500m, "Total");
 GreaterThan greaterThan = new(totalCol, minTotal);
 
-SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = new SelectTag(new Count(), "OrderCount"),
+    Where = greaterThan
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
 ```
 
 ```sql
-SELECT COUNT("Order"."Id")
+SELECT COUNT(*) AS "OrderCount"
 FROM "Order"
 WHERE ("Order"."Total" > $1)
 ```
