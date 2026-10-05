@@ -187,6 +187,7 @@ All examples use the following `using` statements to keep the code examples focu
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
@@ -346,6 +347,24 @@ SET [Email] = @Email_1
 WHERE [Id] = @Id_2;
 ```
 
+`ColumnCollection<T>` validates property names and throws an error when a property name is not valid.
+
+```csharp
+UpdateBuilder<Customer> updateBuilder = new()
+{
+    Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+    UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.Email)),
+    Values = new() { Email = "Hank@example.gov" }
+};
+SqlQuery query = updateBuilder.AsSqlQuery();
+```
+
+```sql
+UPDATE [Customer] 
+SET [Email] = @Email_1
+WHERE ([Customer].[Id] = @Id_2)
+```
+
 [Table of Contents](#table-of-contents)
 
 ### Delete
@@ -358,7 +377,25 @@ SqlQuery query = customerGenerator.Delete(entity);
 ```
 
 ```sql
-DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)
+DELETE
+FROM [Customer]
+WHERE ([Customer].[Id] = @Id_1)
+```
+
+Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+
+```csharp
+DeleteBuilder<Customer> deleteBuilder = new()
+{
+    Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+};
+SqlQuery query = deleteBuilder.AsSqlQuery();
+```
+
+```sql
+DELETE 
+FROM [Customer] 
+WHERE ([Customer].[Id] = @Id_1)
 ```
 
 [Table of Contents](#table-of-contents)
@@ -372,6 +409,26 @@ A key attribute is required. Composite keys are supported by marking multiple ke
 ```csharp
 Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
+```
+
+```sql
+DELETE FROM [Customer] 
+WHERE (([Customer].[Id] = @Id_1) 
+   OR ([Customer].[Id] = @Id_2))
+```
+
+Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+
+```csharp
+DeleteBuilder<Customer> deleteBuilder = new()
+{
+    Where = new Or
+    (
+        new ColumnValue<Customer>(nameof(Customer.Id), 1),
+        new ColumnValue<Customer>(nameof(Customer.Id), 2)
+    )
+};
+SqlQuery query = deleteBuilder.AsSqlQuery();
 ```
 
 ```sql

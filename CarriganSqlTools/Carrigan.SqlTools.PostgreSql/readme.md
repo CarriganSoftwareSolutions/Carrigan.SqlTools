@@ -356,6 +356,24 @@ SET "Email" = $1
 WHERE "Id" = $2;
 ```
 
+`ColumnCollection<T>` validates property names and throws an error when a property name is not valid for the model.
+
+```csharp
+UpdateBuilder<Customer> updateBuilder = new()
+{
+    Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+    UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.Email)),
+    Values = new() { Email = "Hank@example.gov" }
+};
+SqlQuery query = updateBuilder.AsSqlQuery();
+```
+
+```sql
+UPDATE "Customer"
+SET "Email" = $1
+WHERE ("Customer"."Id" = $2)
+```
+
 [Table of Contents](#table-of-contents)
 
 ### Delete
@@ -368,7 +386,24 @@ SqlQuery query = customerGenerator.Delete(entity);
 ```
 
 ```sql
-DELETE FROM "Customer"
+DELETE
+FROM "Customer"
+WHERE ("Customer"."Id" = $1)
+```
+
+Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+
+```csharp
+DeleteBuilder<Customer> deleteBuilder = new()
+{
+    Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+};
+SqlQuery query = deleteBuilder.AsSqlQuery();
+```
+
+```sql
+DELETE
+FROM "Customer"
 WHERE ("Customer"."Id" = $1)
 ```
 
@@ -383,6 +418,26 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ```csharp
 Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
+```
+
+```sql
+DELETE FROM "Customer"
+WHERE (("Customer"."Id" = $1)
+   OR ("Customer"."Id" = $2))
+```
+
+Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+
+```csharp
+DeleteBuilder<Customer> deleteBuilder = new()
+{
+    Where = new Or
+    (
+        new ColumnValue<Customer>(nameof(Customer.Id), 1),
+        new ColumnValue<Customer>(nameof(Customer.Id), 2)
+    )
+};
+SqlQuery query = deleteBuilder.AsSqlQuery();
 ```
 
 ```sql

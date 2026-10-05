@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
 using Carrigan.SqlTools.PostgreSql;
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 
@@ -170,6 +171,32 @@ public class FromReadMeGettingStarted
     }
 
     [Fact]
+    public void UpdateByIdSelectColumnsUsingUpdateBuilder()
+    {
+        UpdateBuilder<Customer> updateBuilder = new()
+        {
+            //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+            Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+            UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.Email)),
+            Values = new() { Email = "Hank@example.gov" }
+        };
+        SqlQuery query = updateBuilder.AsSqlQuery();
+
+        string expectedQueryText =
+            """
+            UPDATE "Customer" SET "Email" = $1 WHERE ("Customer"."Id" = $2)
+            """;
+
+        Assert.Equal(expectedQueryText, query.QueryText);
+
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", "Hank@example.gov");
+        SqlQueryTestHelper.AssertParameterValue(query, "$2", 42);
+    }
+
+    [Fact]
     public void Delete()
     {
         Customer entity = new() { Id = 42 };
@@ -187,10 +214,59 @@ public class FromReadMeGettingStarted
     }
 
     [Fact]
+    public void DeleteUsingDeleteBuilder()
+    {
+        DeleteBuilder<Customer> deleteBuilder = new()
+        {
+            //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+            Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+        };
+        SqlQuery query = deleteBuilder.AsSqlQuery();
+
+        string expectedQueryText =
+            """
+            DELETE FROM "Customer" WHERE ("Customer"."Id" = $1)
+            """;
+
+        Assert.Equal(expectedQueryText, query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 42);
+    }
+
+    [Fact]
     public void DeleteById()
     {
         Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
         SqlQuery query = customerGenerator.DeleteById(entities);
+
+        string expectedQueryText =
+            """
+            DELETE FROM "Customer" WHERE (("Customer"."Id" = $1) OR ("Customer"."Id" = $2))
+            """;
+
+        Assert.Equal(expectedQueryText, query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+
+        SqlQueryTestHelper.AssertParameterValue(query, "$1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "$2", 2);
+    }
+
+    [Fact]
+    public void DeleteByIdUsingDeleteBuilder()
+    {
+        DeleteBuilder<Customer> deleteBuilder = new()
+        {
+            //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+            Where = new Or
+            (
+                new ColumnValue<Customer>(nameof(Customer.Id), 1),
+                new ColumnValue<Customer>(nameof(Customer.Id), 2)
+            )
+        };
+        SqlQuery query = deleteBuilder.AsSqlQuery();
+
 
         string expectedQueryText =
             """

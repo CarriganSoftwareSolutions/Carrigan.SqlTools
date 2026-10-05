@@ -1,5 +1,6 @@
 using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.TestEntities; //this is where Customer, Order, PhoneModel, EmailModel and ProcedureExec defined.
+using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.Sets;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.SqlServer;
@@ -146,6 +147,26 @@ public class FromReadMeGettingStarted
     }
 
     [Fact]
+    public void UpdateByIdSelectColumnsUsingUpdateBuilder()
+    {
+        UpdateBuilder<Customer> updateBuilder = new()
+        {
+            //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+            Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+            UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.Email)),
+            Values = new() { Email = "Hank@example.gov" }
+        };
+        SqlQuery query = updateBuilder.AsSqlQuery();
+
+        Assert.Equal("UPDATE [Customer] SET [Email] = @Email_1 WHERE ([Customer].[Id] = @Id_2)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@Email_1", "Hank@example.gov");
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_2", 42);
+    }
+
+    [Fact]
     public void Delete()
     {
         Customer entity = new() { Id = 42 };
@@ -158,10 +179,48 @@ public class FromReadMeGettingStarted
     }
 
     [Fact]
+    public void DeleteUsingDeleteBuilder()
+    {
+        DeleteBuilder<Customer> deleteBuilder = new()
+        {
+            //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+            Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+        };
+        SqlQuery query = deleteBuilder.AsSqlQuery();
+
+        Assert.Equal("DELETE FROM [Customer] WHERE ([Customer].[Id] = @Id_1)", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 42);
+    }
+
+    [Fact]
     public void DeleteById()
     {
         Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
         SqlQuery query = customerGenerator.DeleteById(entities);
+
+        Assert.Equal("DELETE FROM [Customer] WHERE (([Customer].[Id] = @Id_1) OR ([Customer].[Id] = @Id_2))", query.QueryText);
+        Assert.Equal(System.Data.CommandType.Text, query.CommandType);
+        SqlQueryTestHelper.AssertParameterCount(query, 2);
+
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_1", 1);
+        SqlQueryTestHelper.AssertParameterValue(query, "@Id_2", 2);
+    }
+
+    [Fact]
+    public void DeleteByIdUsingDeleteBuilder()
+    {
+        DeleteBuilder<Customer> deleteBuilder = new()
+        {
+            //Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+            Where = new Or
+            (
+                new ColumnValue<Customer>(nameof(Customer.Id), 1),
+                new ColumnValue<Customer>(nameof(Customer.Id), 2)
+            )
+        };
+        SqlQuery query = deleteBuilder.AsSqlQuery();
 
         Assert.Equal("DELETE FROM [Customer] WHERE (([Customer].[Id] = @Id_1) OR ([Customer].[Id] = @Id_2))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
