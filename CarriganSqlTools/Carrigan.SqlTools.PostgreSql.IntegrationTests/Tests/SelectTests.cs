@@ -34,9 +34,9 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
         IEnumerable<Book> books = await CommandsAsync.ExecuteReaderAsync<Book>(query, null, unitTestConnection);
 
         Assert.Equal(11, books.Count());
-        for (int i = 1; i < 12; i++)
+        for (int index = 1; index < 12; index++)
         {
-            BookDataSet.ValidateById(books, i);
+            BookDataSet.ValidateById(books, index);
         }
     }
 
@@ -194,9 +194,9 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
 
 
         Assert.Equal(10, books.Count());
-        for (int i = 1; i < 11; i++)
+        for (int index = 1; index < 11; index++)
         {
-            BookDataSet.ValidateById(books, i);
+            BookDataSet.ValidateById(books, index);
         }
     }
 

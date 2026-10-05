@@ -256,7 +256,6 @@ public static class CustomerDataSet
     ];
 }
 
-/*
-Footer - Dataset Methodology
-This customer dataset contains twenty deterministic records with unique first-name and last-name combinations. First names and last names were selected from common United States naming patterns, with gender assigned consistently for conventionally male and female names and deterministically for gender-neutral names. Ages are all adult values and were distributed to roughly resemble a broad adult customer population rather than a uniform range. Any relationship between these records and real-world persons is purely coincidental.
-*/
+#region Dataset Methodology
+// This customer dataset contains twenty deterministic records with unique first-name and last-name combinations. First names and last names were selected from common United States naming patterns, with gender assigned consistently for conventionally male and female names and deterministically for gender-neutral names. Ages are all adult values and were distributed to roughly resemble a broad adult customer population rather than a uniform range. Any relationship between these records and real-world persons is purely coincidental.
+#endregion

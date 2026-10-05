@@ -132,7 +132,7 @@ public class Join<rightT> : JoinBase where rightT : class
             throw new InvalidOperationException("JOIN requires at least one predicate for the ON clause.");
 
         yield return new SqlFragmentText(" JOIN ");
-        if(Subquery is not null)
+        if (Subquery is not null)
         {
             yield return Subquery;
             yield return new SqlFragmentText(" AS ");

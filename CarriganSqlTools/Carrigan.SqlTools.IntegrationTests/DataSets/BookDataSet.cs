@@ -169,7 +169,6 @@ public static class BookDataSet
     ];
 }
 
-/*
-Footer - Dataset Methodology
-This book dataset contains ten deterministic records selected from older literary works commonly available through public-domain collections. Public domain titles were specifically chosen so that the integration-test data avoids current copyrighted catalog entries. Prices, page counts, descriptions, and stock-adjacent values are synthetic values intended for repeatable software tests and should not be treated as current retail, bibliographic, or publishing data.
-*/
+#region Dataset Methodology
+// This book dataset contains ten deterministic records selected from older literary works commonly available through public-domain collections. Public domain titles were specifically chosen so that the integration-test data avoids current copyrighted catalog entries. Prices, page counts, descriptions, and stock-adjacent values are synthetic values intended for repeatable software tests and should not be treated as current retail, bibliographic, or publishing data.
+#endregion

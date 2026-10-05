@@ -122,7 +122,7 @@ public class Cast : SqlExpression
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
         yield return new SqlFragmentText("CAST(");
-        foreach(ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect))
+        foreach (ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect))
         {
             yield return sqlFragment;
         }

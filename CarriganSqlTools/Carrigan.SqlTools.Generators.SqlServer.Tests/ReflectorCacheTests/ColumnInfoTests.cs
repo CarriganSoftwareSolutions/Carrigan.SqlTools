@@ -110,7 +110,7 @@ public class ColumnInfoTests
         Assert.Equal(expectedPropertyName, columnInfo.PropertyName.ToString());
         Assert.Equal(parameterTag, columnInfo.ParameterTag.ToString());
 
-        if(expectedAliasName is null)
+        if (expectedAliasName is null)
         {
             Assert.Null(columnInfo.AliasName);
             Assert.Null(columnInfo.SelectTag.AliasTag);

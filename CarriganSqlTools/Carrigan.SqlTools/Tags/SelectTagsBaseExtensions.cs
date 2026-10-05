@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Carrigan.SqlTools.Tags;
 
+/// <summary>
+/// Provides conversion helpers for creating <see cref="SelectTags"/> collections.
+/// </summary>
 public static class SelectTagsBaseExtensions
 {
     /// <summary>

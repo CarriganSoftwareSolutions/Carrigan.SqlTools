@@ -6,6 +6,10 @@ using Carrigan.SqlTools.Types;
 
 namespace Carrigan.SqlTools.Expressions;
 
+/// <summary>
+/// Represents a SQL parameter whose value is <see langword="null"/> while retaining type metadata for <typeparamref name="T"/>.
+/// </summary>
+/// <typeparam name="T">The CLR type used to determine the parameter's default SQL field properties.</typeparam>
 public class NullParameter<T> : Parameter
 {
     /// <summary>

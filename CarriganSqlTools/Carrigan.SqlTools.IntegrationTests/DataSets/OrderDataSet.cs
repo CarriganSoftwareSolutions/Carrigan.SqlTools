@@ -297,7 +297,6 @@ public static class OrderDataSet
     ];
 }
 
-/*
-Footer - Dataset Methodology
-This order dataset gives every generated customer at least one order. Order counts follow a half-bell style distribution where one order is most common and the highest-volume customer has five orders. Order dates were assigned between 2000 and 2025 and checked against the customer's generated age so that each customer would have been at least eighteen during the order year under the dataset's approximate age model. SalesTaxPercent values are best-effort synthetic current-rate approximations for the order address ZIP/city/state combinations, distributed nationwide and not limited to no-sales-tax jurisdictions. They are suitable for integration testing but are not audit-grade historical sales-tax records. Any relationship between these records and real-world persons or transactions is purely coincidental.
-*/
+#region Dataset Methodology
+// This order dataset gives every generated customer at least one order. Order counts follow a half-bell style distribution where one order is most common and the highest-volume customer has five orders. Order dates were assigned between 2000 and 2025 and checked against the customer's generated age so that each customer would have been at least eighteen during the order year under the dataset's approximate age model. SalesTaxPercent values are best-effort synthetic current-rate approximations for the order address ZIP/city/state combinations, distributed nationwide and not limited to no-sales-tax jurisdictions. They are suitable for integration testing but are not audit-grade historical sales-tax records. Any relationship between these records and real-world persons or transactions is purely coincidental.
+#endregion

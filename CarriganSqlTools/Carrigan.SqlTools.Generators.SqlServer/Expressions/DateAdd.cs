@@ -28,9 +28,21 @@ public class DateAdd : SqlExpression
 {
     private readonly string _datePart;
 
+    /// <summary>
+    /// Initializes a <c>DATEADD</c> expression using a date part shared across supported SQL dialects.
+    /// </summary>
+    /// <param name="datePart">The date part to add.</param>
+    /// <param name="number">The expression that yields the number of date parts to add.</param>
+    /// <param name="date">The date expression to modify.</param>
     public DateAdd(SharedDateTimePartEnum datePart, SqlExpression number, SqlExpression date)
         : base([ValidateValue(number), ValidateValue(date)]) => _datePart = GetDatePart(datePart);
 
+    /// <summary>
+    /// Initializes a <c>DATEADD</c> expression using a SQL Server-specific date part.
+    /// </summary>
+    /// <param name="datePart">The SQL Server date part to add.</param>
+    /// <param name="number">The expression that yields the number of date parts to add.</param>
+    /// <param name="date">The date expression to modify.</param>
     public DateAdd(DateAddDateTimePartEnum datePart, SqlExpression number, SqlExpression date)
         : base([ValidateValue(number), ValidateValue(date)]) => _datePart = GetDatePart(datePart);
 

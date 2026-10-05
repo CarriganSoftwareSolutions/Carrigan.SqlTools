@@ -7,7 +7,7 @@ using Carrigan.SqlTools.SqlGenerators;
 namespace Carrigan.SqlTools.PredicatesLogic;
 
 /// <summary>
-/// 
+/// Represents a SQL <c>NOT BETWEEN</c> predicate.
 /// </summary>
 /// <example>
 /// <code language="csharp"><![CDATA[
@@ -34,6 +34,12 @@ public class NotBetween : Predicates
 {
     private static readonly ISqlFragment NotBetweenFragment = new SqlFragmentText(" NOT BETWEEN ");
     private static readonly ISqlFragment AndFragment = new SqlFragmentText(" AND ");
+    /// <summary>
+    /// Initializes a SQL <c>NOT BETWEEN</c> predicate.
+    /// </summary>
+    /// <param name="sqlExpression">The expression whose value is tested.</param>
+    /// <param name="left">The lower-bound expression.</param>
+    /// <param name="right">The upper-bound expression.</param>
     public NotBetween(SqlExpression sqlExpression, SqlExpression left, SqlExpression right) :
         base(ValidateValues(sqlExpression, left, right))
     {

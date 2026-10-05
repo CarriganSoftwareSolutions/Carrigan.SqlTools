@@ -96,25 +96,25 @@ internal static class CommandSharedMethods
 
         try
         {
-            for (int i = 0; i < dataReader.FieldCount; i++)
+            for (int index = 0; index < dataReader.FieldCount; index++)
             {
-                currentOrdinal = i;
-                currentColumnName = dataReader.GetName(i);
+                currentOrdinal = index;
+                currentColumnName = dataReader.GetName(index);
 
-                string dataTypeName = dataReader.GetDataTypeName(i);
+                string dataTypeName = dataReader.GetDataTypeName(index);
 
-                if (dataReader.IsDBNull(i))
+                if (dataReader.IsDBNull(index))
                     rowData.Add(currentColumnName, DBNull.Value);
-                else if (TryReadNullableArrayValue<T>(dataReader, i, new (currentColumnName), dataTypeName, out object? arrayValue))
+                else if (TryReadNullableArrayValue<T>(dataReader, index, new (currentColumnName), dataTypeName, out object? arrayValue))
                     rowData.Add(currentColumnName, arrayValue);
                 else if (string.Equals(dataTypeName, "xml", StringComparison.OrdinalIgnoreCase))
                 {
-                    using StringReader stringReader = new(dataReader.GetString(i));
+                    using StringReader stringReader = new(dataReader.GetString(index));
                     using XmlReader xmlReader = XmlReader.Create(stringReader, _xmlReaderSettings);
                     rowData.Add(currentColumnName, new SqlXml(xmlReader));
                 }
                 else
-                    rowData.Add(currentColumnName, dataReader.GetValue(i));
+                    rowData.Add(currentColumnName, dataReader.GetValue(index));
             }
         }
         catch (Exception exception) when (SqlToolsErrorFactory.IsAlreadyWrapped(exception) is false)

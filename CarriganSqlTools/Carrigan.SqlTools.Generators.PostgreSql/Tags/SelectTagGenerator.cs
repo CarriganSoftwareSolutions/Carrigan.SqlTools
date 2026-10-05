@@ -29,7 +29,7 @@ public static class SelectTagGenerator
     public static SelectTag Get(GroupBy groupBy)
     {
         ArgumentNullException.ThrowIfNull(groupBy, nameof(groupBy));
-        if(groupBy.SqlExpression is Column column)
+        if (groupBy.SqlExpression is Column column)
         {
             return new(column);
         }

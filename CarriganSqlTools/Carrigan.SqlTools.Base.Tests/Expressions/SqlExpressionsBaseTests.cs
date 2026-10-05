@@ -1,11 +1,10 @@
 ﻿using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.AggregateLogic;
-using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Tags;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 //IGNORE SPELLING: abcdef
@@ -56,9 +55,9 @@ public abstract class SqlExpressionsBaseTests
     protected static SqlExpression Column2 => NewColumnExpression("Col2");
     protected static Count AggregateColumn => new(ColumnA);
 
-    private static SqlExpression NewColumnExpression(string columnName)
+    private static Column NewColumnExpression(string columnName)
     {
-        var propertyInfo = typeof(ColumnTable).GetProperty(columnName)!;
+        PropertyInfo propertyInfo = typeof(ColumnTable).GetProperty(columnName)!;
         ColumnInfo columnInfo = new(null, new TableName(nameof(ColumnTable)), propertyInfo, []);
         return new Column(columnInfo);
     }

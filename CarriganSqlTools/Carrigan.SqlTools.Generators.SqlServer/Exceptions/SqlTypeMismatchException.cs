@@ -148,7 +148,7 @@ public sealed class SqlTypeMismatchException : Exception
         else
         {
             propertyType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
-            if(TestTheType(propertyType, attributeMappingType))
+            if (TestTheType(propertyType, attributeMappingType))
                 return null;
             else
                 return new SqlTypeMismatchException(propertyInfo, attributeMappingType);

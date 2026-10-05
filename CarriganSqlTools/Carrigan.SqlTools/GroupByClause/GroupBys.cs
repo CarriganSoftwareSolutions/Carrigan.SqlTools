@@ -122,6 +122,11 @@ public class GroupBys
 
         return ContainsAllNonAggregateParts(selectTagBase.SqlExpression);
     }
+    /// <summary>
+    /// Determines whether a selected expression is not validly represented by the current grouping keys.
+    /// </summary>
+    /// <param name="selectTagBase">The selected expression to compare with the grouping keys.</param>
+    /// <returns><c>true</c> when the selected expression is not represented by the grouping keys; otherwise, <c>false</c>.</returns>
     public bool DoesNotContainsEquivalent(SelectTag selectTagBase) =>
         !ContainsEquivalent(selectTagBase);
 

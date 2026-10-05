@@ -254,7 +254,6 @@ public static class AddressDataSet
     ];
 }
 
-/*
-Footer - Dataset Methodology
-This address dataset contains at least one address for each generated customer, with no generated address intended to belong to more than one customer. Street names were selected from generic United States street-name patterns, street numbers were assigned with a center-heavy distribution, and ZIP code, city, and state combinations were selected from valid United States locations with nationwide geographic variety. Any resemblance to a real-world person, household, or address is purely coincidental.
-*/
+#region Dataset Methodology
+// This address dataset contains at least one address for each generated customer, with no generated address intended to belong to more than one customer. Street names were selected from generic United States street-name patterns, street numbers were assigned with a center-heavy distribution, and ZIP code, city, and state combinations were selected from valid United States locations with nationwide geographic variety. Any resemblance to a real-world person, household, or address is purely coincidental.
+#endregion

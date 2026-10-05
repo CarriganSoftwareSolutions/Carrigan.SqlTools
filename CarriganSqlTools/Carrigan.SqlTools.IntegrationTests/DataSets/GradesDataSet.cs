@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.IntegrationTests.Models;
+using System.Data;
 
 namespace Carrigan.SqlTools.IntegrationTests.DataSets;
 
@@ -1365,14 +1366,14 @@ public static class GradesDataSet
     ];
 }
 
+#region Footer - Dataset Methodology
 /*
-Footer - Dataset Methodology
 This deterministic synthetic dataset contains 20 Computer Science students and 147 department-course attempts. 
 Exactly four students (20 percent) leave before completing the major: one random withdrawal, one withdrawal after failing an introductory course, 
 one department-GPA washout after three courses, and one washout after three unsuccessful attempts at the same course. 
 The remaining students stop after earning at least 24 successful department credit hours, and no records are generated after completion or withdrawal.
 
-Student identifiers were generated once from a seeded pseudorandom process and are unique.
+Student identifiers were generated once from a seeded pseudo-random process and are unique.
 Starting academic years and semesters were also seeded, with every start semester represented and all records constrained to academic years 2000 through 2010. 
 Fall and spring terms contain at least one course while a student remains active; summer enrollment is optional.
 
@@ -1389,3 +1390,4 @@ Accessed 2026-08-03. The dataset uses SI204 at four semester hours and SI211, SI
 Only the factual course identifiers and credit totals were used; every student, enrollment, term, and grade value is synthetic and randomly generated.
 Course information may contain transcription or copying errors. This test dataset should not, in any way, be construed as an official document of any government entity.
 */
+#endregion

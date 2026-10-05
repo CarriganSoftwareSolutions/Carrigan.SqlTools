@@ -225,6 +225,18 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
 
+    /// <summary>
+    /// Generates a <c>SELECT</c> query from the supplied legacy clause arguments.
+    /// </summary>
+    /// <param name="distinct">Whether to generate <c>SELECT DISTINCT</c>.</param>
+    /// <param name="subQuery">An optional subquery used as the source.</param>
+    /// <param name="selects">The expressions to project.</param>
+    /// <param name="joins">The joins to include.</param>
+    /// <param name="predicates">The <c>WHERE</c> predicates.</param>
+    /// <param name="groupBys">The <c>GROUP BY</c> expressions.</param>
+    /// <param name="orderBys">The <c>ORDER BY</c> expressions.</param>
+    /// <param name="paging">The paging clause.</param>
+    /// <returns>The generated SQL query and its parameters.</returns>
     [Obsolete("Use the overload with selectBuilder argument.")]
     public SqlQuery Select
     (
@@ -239,6 +251,17 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ) =>
         base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, null, orderBys, paging);
 
+    /// <summary>
+    /// Generates a <c>SELECT</c> query from the supplied legacy clause arguments without grouping.
+    /// </summary>
+    /// <param name="distinct">Whether to generate <c>SELECT DISTINCT</c>.</param>
+    /// <param name="subQuery">An optional subquery used as the source.</param>
+    /// <param name="selects">The expressions to project.</param>
+    /// <param name="joins">The joins to include.</param>
+    /// <param name="predicates">The <c>WHERE</c> predicates.</param>
+    /// <param name="orderBys">The <c>ORDER BY</c> expressions.</param>
+    /// <param name="paging">The paging clause.</param>
+    /// <returns>The generated SQL query and its parameters.</returns>
     [Obsolete("Use the overload with selectBuilder argument.")]
     public SqlQuery Select
     (

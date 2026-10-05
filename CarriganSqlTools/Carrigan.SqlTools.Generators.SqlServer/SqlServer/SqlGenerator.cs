@@ -91,11 +91,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
                     exceptions.Add(sqlTypeMismatchException);
             });
 
-        if(exceptions.Count ==  1)
+        if (exceptions.Count == 1)
         {
             throw exceptions.Single();
         }
-        else if(exceptions.Count > 1)
+        else if (exceptions.Count > 1)
         {
             throw new AggregateException(exceptions);
         }

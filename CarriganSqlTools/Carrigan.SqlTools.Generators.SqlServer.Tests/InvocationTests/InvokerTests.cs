@@ -229,7 +229,7 @@ public class InvokerTests
 
                         start.Wait();
 
-                        for (int i = 0; i < 100; i++)
+                        for (int index = 0; index < 100; index++)
                         {
                             ConcurrentNullableEntity entity = Invoker<ConcurrentNullableEntity>.Invoke(invocation);
                             Assert.Equal("required", entity.Required);

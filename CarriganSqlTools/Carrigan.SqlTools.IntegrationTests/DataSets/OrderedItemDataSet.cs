@@ -379,7 +379,6 @@ public static class OrderedItemDataSet
     ];
 }
 
-/*
-Footer - Dataset Methodology
-This ordered item dataset gives each order between one and three book records, using a half-bell style distribution where one book is most common. Book selections are deterministic and do not repeat within a single order. Ordered item prices were generated within a narrow range around the corresponding Book.Price value so that tests can validate decimal values without relying on exact retail history. Any relationship between these records and real-world persons, purchases, or transactions is purely coincidental.
-*/
+#region Dataset Methodology
+// This ordered item dataset gives each order between one and three book records, using a half-bell style distribution where one book is most common. Book selections are deterministic and do not repeat within a single order. Ordered item prices were generated within a narrow range around the corresponding Book.Price value so that tests can validate decimal values without relying on exact retail history. Any relationship between these records and real-world persons, purchases, or transactions is purely coincidental.
+#endregion

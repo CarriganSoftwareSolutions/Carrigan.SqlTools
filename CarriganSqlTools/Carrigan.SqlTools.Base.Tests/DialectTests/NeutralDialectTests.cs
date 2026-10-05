@@ -4,8 +4,8 @@ using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
-using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.Types;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Base.Tests.DialectTests;
 
@@ -19,7 +19,7 @@ public class NeutralDialectTests
     [Fact]
     public void ColumnExpression_ToString()
     {
-        var propertyInfo = typeof(ColumnSource).GetProperty(nameof(ColumnSource.Column))!;
+        PropertyInfo propertyInfo = typeof(ColumnSource).GetProperty(nameof(ColumnSource.Column))!;
         ColumnInfo columnInfo = new(new SchemaName("Schema"), new TableName("Table"), propertyInfo, []);
         Column column = new(columnInfo);
 

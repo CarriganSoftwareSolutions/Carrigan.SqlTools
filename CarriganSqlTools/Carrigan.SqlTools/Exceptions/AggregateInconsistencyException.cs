@@ -11,6 +11,10 @@ public class AggregateInconsistencyException : Exception
     internal AggregateInconsistencyException() : base("Aggregate and non-aggregate expressions cannot be mixed inconsistently within the same expression context.")
     {
     }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AggregateInconsistencyException"/> class with a custom message.
+    /// </summary>
+    /// <param name="message">The message describing the aggregate-expression inconsistency.</param>
     protected AggregateInconsistencyException(string message) : base(message)
     {
     }

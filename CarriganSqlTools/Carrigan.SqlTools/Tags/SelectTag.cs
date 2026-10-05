@@ -139,11 +139,11 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
     {
 
-        foreach(ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect).Flatten(dialect))
+        foreach (ISqlFragment sqlFragment in SqlExpression.ToSqlFragments(dialect).Flatten(dialect))
         {
             yield return sqlFragment;
         }
-        if(AliasTag is not null)
+        if (AliasTag is not null)
         {
             yield return new SqlFragmentText(" AS ");
             yield return AliasTag;

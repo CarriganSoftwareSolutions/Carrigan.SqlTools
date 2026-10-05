@@ -70,8 +70,8 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
     {
         IEnumerable<Customer> allCustomers = await GetAllCustomersNoTest();
         Assert.Equal(25, allCustomers.Count());
-        for (int i = 0; i < 25;)
-            CustomerDataSet.ValidateById(allCustomers, ++i);
+        for (int index = 0; index < 25;)
+            CustomerDataSet.ValidateById(allCustomers, ++index);
 
         return allCustomers;
     }

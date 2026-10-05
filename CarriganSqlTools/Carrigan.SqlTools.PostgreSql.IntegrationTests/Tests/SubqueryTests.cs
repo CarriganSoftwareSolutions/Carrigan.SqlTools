@@ -39,8 +39,8 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
         IEnumerable<Customer> customers = await CommandsAsync.ExecuteReaderAsync<Customer>(query, null, unitTestConnection);
 
         Assert.Equal(25, customers.Count());
-        for(int i = 0; i < 25;)
-            CustomerDataSet.ValidateById(customers, ++i);
+        for (int index = 0; index < 25;)
+            CustomerDataSet.ValidateById(customers, ++index);
     }
 
     [Fact]

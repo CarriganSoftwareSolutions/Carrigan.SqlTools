@@ -69,7 +69,6 @@ public static class BookStatsDataSet
     ];
 }
 
-/*
-Footer - Dataset Methodology
-This book statistics dataset contains exactly one statistics record for each Book record. Stock counts and average review values were generated as deterministic synthetic values with plausible ranges for integration testing. Any resemblance to a real store inventory, review history, or commercial catalog is purely coincidental.
-*/
+#region Dataset Methodology
+// This book statistics dataset contains exactly one statistics record for each Book record. Stock counts and average review values were generated as deterministic synthetic values with plausible ranges for integration testing. Any resemblance to a real store inventory, review history, or commercial catalog is purely coincidental.
+#endregion

@@ -420,7 +420,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
             .Single();
         Customer? expectedCustomer = null;
         Order? expectedOrder = null;
-        if(expectedCustomerId is not null)
+        if (expectedCustomerId is not null)
         {
             expectedCustomer = CustomerDataSet
                 .Data
@@ -428,7 +428,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
                 .Single();
         }
         
-        if(expectedOrderId is not null)
+        if (expectedOrderId is not null)
         {
             expectedOrder = OrderDataSet
                 .Data

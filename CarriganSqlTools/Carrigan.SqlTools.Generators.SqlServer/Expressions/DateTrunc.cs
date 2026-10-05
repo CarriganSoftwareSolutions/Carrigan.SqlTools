@@ -26,9 +26,19 @@ public class DateTrunc : SqlExpression
 {
     private readonly string _datePart;
 
+    /// <summary>
+    /// Initializes a <c>DATETRUNC</c> expression using a date part shared across supported SQL dialects.
+    /// </summary>
+    /// <param name="datePart">The date part to which the value is truncated.</param>
+    /// <param name="expression">The date or time expression to truncate.</param>
     public DateTrunc(SharedDateTimePartEnum datePart, SqlExpression expression) : base([ValidateValue(expression)]) =>
         _datePart = GetDatePart(datePart);
 
+    /// <summary>
+    /// Initializes a <c>DATETRUNC</c> expression using a SQL Server-specific date part.
+    /// </summary>
+    /// <param name="datePart">The SQL Server date part to which the value is truncated.</param>
+    /// <param name="expression">The date or time expression to truncate.</param>
     public DateTrunc(DateTruncDateTimePartEnum datePart, SqlExpression expression) : base([ValidateValue(expression)]) =>
         _datePart = GetDatePart(datePart);
 

@@ -77,19 +77,19 @@ public sealed class ReturnModelRoundTripTests : IClassFixture<ReturnFixture>
         Assert.Equal(3, dbRows.Count);
 
         // Compare per-row: DB vs values returned by the INSERT
-        for (int i = 0; i < dbRows.Count; i++)
+        for (int index = 0; index < dbRows.Count; index++)
         {
-            ReturnModel fromInsert = returnedRows[i];
-            ReturnModel fromDb = dbRows[i];
+            ReturnModel fromInsert = returnedRows[index];
+            ReturnModel fromDb = dbRows[index];
 
             // Primary keys
             Assert.Equal(fromInsert.Id1, fromDb.Id1);
             Assert.Equal(fromInsert.Id2, fromDb.Id2);
 
             // Inserted values (NotKey1-3) should match original entities
-            Assert.Equal(toInsert[i].NotKey1, fromDb.NotKey1);
-            Assert.Equal(toInsert[i].NotKey2, fromDb.NotKey2);
-            Assert.Equal(toInsert[i].NotKey3, fromDb.NotKey3);
+            Assert.Equal(toInsert[index].NotKey1, fromDb.NotKey1);
+            Assert.Equal(toInsert[index].NotKey2, fromDb.NotKey2);
+            Assert.Equal(toInsert[index].NotKey3, fromDb.NotKey3);
 
             // Defaults: values returned from INSERT must match stored values
             Assert.Equal(fromInsert.Status, fromDb.Status);

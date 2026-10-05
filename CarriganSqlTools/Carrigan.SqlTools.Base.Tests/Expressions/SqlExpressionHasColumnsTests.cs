@@ -5,6 +5,7 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
+using System.Reflection;
 
 namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
@@ -19,7 +20,7 @@ public class SqlExpressionHasColumnsTests
 
     private static Column NewColumn(string propertyName)
     {
-        var propertyInfo = typeof(ColumnSource).GetProperty(propertyName)!;
+        PropertyInfo propertyInfo = typeof(ColumnSource).GetProperty(propertyName)!;
         return new Column(new ColumnInfo(null, new TableName("TestTable"), propertyInfo, []));
     }
 

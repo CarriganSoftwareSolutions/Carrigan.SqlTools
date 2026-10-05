@@ -26,9 +26,19 @@ public class DatePart : SqlExpression
 {
     private readonly string _datePart;
 
+    /// <summary>
+    /// Initializes a <c>DATEPART</c> expression using a date part shared across supported SQL dialects.
+    /// </summary>
+    /// <param name="datePart">The date part to extract.</param>
+    /// <param name="expression">The SQL expression from which to extract the date part.</param>
     public DatePart(SharedDateTimePartEnum datePart, SqlExpression expression) : base([ValidateValue(expression)]) =>
         _datePart = GetDatePart(datePart);
 
+    /// <summary>
+    /// Initializes a <c>DATEPART</c> expression using a SQL Server-specific date part.
+    /// </summary>
+    /// <param name="datePart">The SQL Server date part to extract.</param>
+    /// <param name="expression">The SQL expression from which to extract the date part.</param>
     public DatePart(DatePartDateTimePartEnum datePart, SqlExpression expression) : base([ValidateValue(expression)]) =>
         _datePart = GetDatePart(datePart);
 
