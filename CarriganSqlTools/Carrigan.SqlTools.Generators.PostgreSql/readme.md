@@ -41,7 +41,8 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Delete with Using and Where](#delete-with-using-and-where)
   - [Select Count With Where](#select-count-with-where)
   - [Update with From and Where](#update-with-from-and-where)
-  - [Having Examples](#having-examples)
+  - [GroupBy Example](#groupby-example)
+  - [Having Example](#having-example)
 - [SqlExpression Examples](#sqlexpression-examples)
   - [Aggregate Expression Examples](#aggregate-expression-examples)
     - [Average Examples](#average-examples)
@@ -231,7 +232,19 @@ public SqlGenerator<Order> orderGenerator = new();
 
 ```csharp
 SqlQuery query = customerGenerator.SelectAll();
-// SELECT "Customer".* FROM "Customer"
+```
+
+```sql
+SELECT "Customer".* FROM "Customer"
+```
+
+```csharp
+SelectBuilder<Customer> selectBuilder = new();
+SqlQuery query = customerGenerator.Select(selectBuilder);
+```
+
+```sql
+SELECT "Customer".* FROM "Customer"
 ```
 
 [Table of Contents](#table-of-contents)
@@ -346,6 +359,24 @@ SET "Email" = $1
 WHERE "Id" = $2;
 ```
 
+`ColumnCollection<T>` validates property names and throws an error when a property name is not valid for the model.
+
+```csharp
+UpdateBuilder<Customer> updateBuilder = new()
+{
+    Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+    UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.Email)),
+    Values = new() { Email = "Hank@example.gov" }
+};
+SqlQuery query = updateBuilder.AsSqlQuery();
+```
+
+```sql
+UPDATE "Customer"
+SET "Email" = $1
+WHERE ("Customer"."Id" = $2)
+```
+
 [Table of Contents](#table-of-contents)
 
 ### Delete
@@ -358,7 +389,24 @@ SqlQuery query = customerGenerator.Delete(entity);
 ```
 
 ```sql
-DELETE FROM "Customer"
+DELETE
+FROM "Customer"
+WHERE ("Customer"."Id" = $1)
+```
+
+Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+
+```csharp
+DeleteBuilder<Customer> deleteBuilder = new()
+{
+    Where = new ColumnValue<Customer>(nameof(Customer.Id), 42),
+};
+SqlQuery query = deleteBuilder.AsSqlQuery();
+```
+
+```sql
+DELETE
+FROM "Customer"
 WHERE ("Customer"."Id" = $1)
 ```
 
@@ -373,6 +421,26 @@ Key attribute required, and composite keys are supported by specifying multiple 
 ```csharp
 Customer[] entities = [new() { Id = 1 }, new() { Id = 2 }];
 SqlQuery query = customerGenerator.DeleteById(entities);
+```
+
+```sql
+DELETE FROM "Customer"
+WHERE (("Customer"."Id" = $1)
+   OR ("Customer"."Id" = $2))
+```
+
+Note: ColumnCollection<T> validates the names of the properties, and throws an error if the property isn't valid
+
+```csharp
+DeleteBuilder<Customer> deleteBuilder = new()
+{
+    Where = new Or
+    (
+        new ColumnValue<Customer>(nameof(Customer.Id), 1),
+        new ColumnValue<Customer>(nameof(Customer.Id), 2)
+    )
+};
+SqlQuery query = deleteBuilder.AsSqlQuery();
 ```
 
 ```sql
@@ -532,11 +600,17 @@ Column<Order> totalCol = new(nameof(Order.Total));
 Parameter minTotal = new(500m, "Total");
 GreaterThan greaterThan = new(totalCol, minTotal);
 
-SqlQuery query = orderGenerator.SelectCount(null, null, null, greaterThan);
+SelectBuilder<Order> selectBuilder = new()
+{
+    Selects = new SelectTag(new Count(), "OrderCount"),
+    Where = greaterThan
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
 ```
 
 ```sql
-SELECT COUNT("Order"."Id")
+SELECT COUNT(*) AS "OrderCount"
 FROM "Order"
 WHERE ("Order"."Total" > $1)
 ```
@@ -582,7 +656,50 @@ WHERE (("Order"."CustomerId" = "Customer"."Id")
 
 [Table of Contents](#table-of-contents)
 
-## Having Examples
+### GroupBy Example
+
+```csharp
+Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+        SelectTagGenerator.Get<Grades>(nameof(Grades.CourseCode)),
+        new SelectTag(new Average(gradePoint), "AverageGradePoint"),
+        new SelectTag(new Sum(gradePoint), "TotalGradePoints"),
+        new SelectTag(new Min(gradePoint), "MinimumGradePoint"),
+        new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
+        new SelectTag(new Count(gradePoint), "GradePointCount")
+    ),
+    GroupBys = new GroupBys<Grades>(nameof(Grades.StudentId))
+        .Append<Grades>(nameof(Grades.CourseCode))
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT 
+    "Grades"."StudentId", 
+    "Grades"."CourseCode",
+    AVG("Grades"."GradePoint") AS "AverageGradePoint",
+    SUM("Grades"."GradePoint") AS "TotalGradePoints", 
+    MIN("Grades"."GradePoint") AS "MinimumGradePoint", 
+    MAX("Grades"."GradePoint") AS "MaximumGradePoint",
+    COUNT("Grades"."GradePoint") AS "GradePointCount" 
+FROM "Grades" 
+GROUP BY
+    "Grades"."StudentId",
+    "Grades"."CourseCode"
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+## Having Example
 
 ```csharp
 Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
