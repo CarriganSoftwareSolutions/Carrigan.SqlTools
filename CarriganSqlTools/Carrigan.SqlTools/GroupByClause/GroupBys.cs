@@ -65,6 +65,15 @@ public class GroupBys
         return GroupByItems.Contains(groupByItem);
     }
 
+    /// <summary>
+    /// Determines whether the specified <paramref name="sqlExpression"/> is represented by any of the grouping expressions.
+    /// </summary>
+    /// <param name="sqlExpression">
+    /// The expression to check for representation in the <c>GROUP BY</c> clause.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the expression is represented by any grouping expression; otherwise, <c>false</c>.
+    /// </returns>
     private bool ContainsEquivalent(SqlExpression sqlExpression) =>
         GroupByItems.Any(groupBy => groupBy.Equivalent(sqlExpression));
 
