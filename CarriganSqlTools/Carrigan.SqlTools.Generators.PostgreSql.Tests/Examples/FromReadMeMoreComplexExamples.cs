@@ -195,7 +195,9 @@ public class FromReadMeMoreComplexExamples
 
         Assert.Equal
         (
+            """
             "SELECT \"Grades\".\"StudentId\", \"Grades\".\"CourseCode\", AVG(\"Grades\".\"GradePoint\") AS \"AverageGradePoint\", SUM(\"Grades\".\"GradePoint\") AS \"TotalGradePoints\", MIN(\"Grades\".\"GradePoint\") AS \"MinimumGradePoint\", MAX(\"Grades\".\"GradePoint\") AS \"MaximumGradePoint\", COUNT(\"Grades\".\"GradePoint\") AS \"GradePointCount\" FROM \"Grades\" GROUP BY \"Grades\".\"StudentId\", \"Grades\".\"CourseCode\"",
+            """,
             query.QueryText
         );
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

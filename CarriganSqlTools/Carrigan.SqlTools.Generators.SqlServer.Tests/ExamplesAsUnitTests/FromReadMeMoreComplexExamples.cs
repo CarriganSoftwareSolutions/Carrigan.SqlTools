@@ -151,7 +151,7 @@ public class FromReadMeMoreComplexExamples
     }
 
     [Fact]
-    public void SelectWithAggregatesAndGroupBys()
+    public void GroupByExample()
     {
         Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
 
@@ -183,7 +183,7 @@ public class FromReadMeMoreComplexExamples
     }
 
     [Fact]
-    public void SelectWithAggregatesGroupBysAndHaving()
+    public void HavingExample()
     {
         Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
 

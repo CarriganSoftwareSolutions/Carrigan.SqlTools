@@ -39,7 +39,8 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Delete with Join and Where](#delete-with-join-and-where)
   - [Select Count With Where](#select-count-with-where)
   - [Update with Joins and Where](#update-with-joins-and-where)
-  - [Having Examples](#having-examples)
+  - [GroupBy Example](#groupby-example)
+  - [Having Example](#having-example)
 - [SqlExpression Examples](#sqlexpression-examples)
   - [Aggregate Expression Examples](#aggregate-expression-examples)
     - [Average Examples](#average-examples)
@@ -649,7 +650,50 @@ WHERE ([Customer].[Email] = @Email_2)
 
 [Table of Contents](#table-of-contents)
 
-### Having Examples
+### GroupBy Example
+
+```csharp
+Column<Grades> gradePoint = new(nameof(Grades.GradePoint));
+
+SelectBuilder<Grades> selectBuilder = new()
+{
+    Selects = new SelectTags
+    (
+        SelectTagGenerator.Get<Grades>(nameof(Grades.StudentId)),
+        SelectTagGenerator.Get<Grades>(nameof(Grades.CourseCode)),
+        new SelectTag(new Average(gradePoint), "AverageGradePoint"),
+        new SelectTag(new Sum(gradePoint), "TotalGradePoints"),
+        new SelectTag(new Min(gradePoint), "MinimumGradePoint"),
+        new SelectTag(new Max(gradePoint), "MaximumGradePoint"),
+        new SelectTag(new Count(gradePoint), "GradePointCount")
+    ),
+    GroupBys = new GroupBys<Grades>(nameof(Grades.StudentId))
+        .Append<Grades>(nameof(Grades.CourseCode))
+};
+
+SqlQuery query = selectBuilder.AsSqlQuery();
+```
+
+```sql
+SELECT 
+    [Grades].[StudentId], 
+    [Grades].[CourseCode], 
+    AVG([Grades].[GradePoint]) AS [AverageGradePoint], 
+    SUM([Grades].[GradePoint]) AS [TotalGradePoints], 
+    MIN([Grades].[GradePoint]) AS [MinimumGradePoint], 
+    MAX([Grades].[GradePoint]) AS [MaximumGradePoint], 
+    COUNT([Grades].[GradePoint]) AS [GradePointCount]
+FROM [Grades]
+GROUP BY 
+    [Grades].[StudentId], 
+    [Grades].[CourseCode]
+```
+
+[Table of Contents](#table-of-contents)
+
+---
+
+### Having Example
 
 ```csharp
 Average semesterGpa = new(new Column<Grades>(nameof(Grades.GradePoint)));
