@@ -11,7 +11,7 @@ namespace Carrigan.SqlTools.SqlGenerators;
 /// </summary>
 public class SqlQuery
 {
-    private IReadOnlyList<ISqlFragment> _sqlFragments = Array.Empty<ISqlFragment>();
+    private IReadOnlyList<ISqlFragment> _sqlFragments = [];
 
     /// <summary>
     /// Gets or sets the SQL fragments used to render the command text and collect parameters.
