@@ -20,7 +20,7 @@ public class Column : SqlExpression
     /// Gets the legacy resolved reflection metadata retained for compatibility.
     /// </summary>
     [Obsolete("No Longer Used")]
-    public ColumnInfo ColumnInfo { get; }
+    public ColumnInfo? ColumnInfo { get; }
 
     /// <summary>
     /// Gets the unique tag representing the column in SQL expressions and fragments.
@@ -56,6 +56,17 @@ public class Column : SqlExpression
         ColumnParameterTag = columnInfo.ParameterTag;
     }
 
+    /// <summary>
+    /// Initializes a dialect-neutral column expression from a unique column tag.
+    /// </summary>
+    /// <param name="columnTag">
+    /// The unique tag representing the column in SQL expressions and fragments.
+    /// </param>
+    protected internal Column(ColumnTag columnTag) : base([])
+    {
+        ColumnTag = columnTag;
+        ColumnParameterTag = new ParameterTag(columnTag.ColumnName.ToString());
+    }
 
     /// <summary>
     /// Gets the table tag represented by this column leaf expression.
