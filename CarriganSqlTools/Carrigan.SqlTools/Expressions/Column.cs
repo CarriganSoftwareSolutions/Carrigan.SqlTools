@@ -49,7 +49,9 @@ public class Column : SqlExpression
     protected internal Column(ColumnInfo columnInfo) : base([])
     {
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
+#pragma warning disable CS0618 // Type or member is obsolete
         ColumnInfo = columnInfo;
+#pragma warning restore CS0618 // Type or member is obsolete
         ColumnTag = columnInfo.ColumnTag;
         ColumnParameterTag = columnInfo.ParameterTag;
     }
