@@ -101,7 +101,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     {
         get
         {
-            ColumnTag? columnTag = (SqlExpression as Column)?.ColumnInfo.ColumnTag;
+            ColumnTag? columnTag = (SqlExpression as Column)?.ColumnTag;
             return new(AliasTag?.ToString() ?? columnTag?.ColumnName.ToString() ?? SqlExpression.ToString());
         }
     }

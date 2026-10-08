@@ -109,21 +109,6 @@ public class ColumnValueTests : PredicateLogicBaseTests
     }
 
     [Fact]
-    public void ByColumnValue_ConstructorSimple_Validate()
-    {
-        ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");
-        string expectedString;
-        string actualString;
-
-        Column column;
-
-        column = byColumnValues.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Col1").First();
-        expectedString = "\"ColumnTable\".\"Col1\"";
-        actualString = column.ColumnInfo.ColumnTag.ToSql(Dialect);
-        Assert.Equal(expectedString, actualString);
-    }
-
-    [Fact]
     public void ByColumnValue_ConstructorSimple_ToSql()
     {
         ColumnValue<ColumnTable> byColumnValues = new(nameof(ColumnTable.Col1), "1");

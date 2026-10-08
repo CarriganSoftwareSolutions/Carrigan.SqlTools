@@ -331,8 +331,7 @@ public class IsNullTests : PredicateLogicBaseTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Pizza\"").Single();
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Pizza").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Pizza\"").Single();
     }
 
     [Fact]
@@ -355,8 +354,7 @@ public class IsNullTests : PredicateLogicBaseTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"D000destruct0\"").Single();
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"D000destruct0\"").Single();
     }
 
     [Fact]
@@ -379,8 +377,7 @@ public class IsNullTests : PredicateLogicBaseTests
 
         Predicates predicate = new IsNull(inner);
 
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Express\"").Single();
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Express\"").Single();
     }
 
     [Fact]
@@ -438,10 +435,8 @@ public class IsNullTests : PredicateLogicBaseTests
     {
         Predicates and = new And(new IsNull(ParameterElite), new IsNull(ParameterHelloWorld), new IsNull(ColumnFutureCity), new IsNull(ColumnDestructCode));
 
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"D000destruct0\"").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Express\"").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.D000destruct0").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnInfo.ToString() == "ColumnTable.Express").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"D000destruct0\"").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(col => col.ColumnTag.ToSql(Dialect) == "\"ColumnTable\".\"Express\"").Single();
     }
 
     [Fact]

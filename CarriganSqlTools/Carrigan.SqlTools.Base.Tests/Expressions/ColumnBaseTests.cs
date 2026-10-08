@@ -122,7 +122,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            ColumnTag actual = columnBase.ColumnInfo.ColumnTag;
+            ColumnTag actual = columnBase.ColumnTag;
             ColumnTag expected = ExpectedPropertyColumnTag[propertyName];
             Assert.Equal(expected, actual);
         }
@@ -133,7 +133,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            ColumnName actual = columnBase.ColumnInfo.ColumnTag.ColumnName;
+            ColumnName actual = columnBase.ColumnTag.ColumnName;
             ColumnName expected = ExpectedPropertyColumnName[propertyName];
             Assert.Equal(expected, actual);
         }
@@ -144,7 +144,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            TableTag actual = columnBase.ColumnInfo.ColumnTag.TableTag;
+            TableTag actual = columnBase.ColumnTag.TableTag;
             TableTag expected = ExpectedTableTag;
             Assert.Equal(expected, actual);
         }
@@ -155,7 +155,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            TableName actual = columnBase.ColumnInfo.ColumnTag.TableTag.TableName;
+            TableName actual = columnBase.ColumnTag.TableTag.TableName;
             TableName expected = ExpectedTableName;
             Assert.Equal(expected, actual);
         }
@@ -166,7 +166,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            SchemaName? actual = columnBase.ColumnInfo.ColumnTag.TableTag.SchemaName;
+            SchemaName? actual = columnBase.ColumnTag.TableTag.SchemaName;
             SchemaName? expected = ExpectedSchemaName;
             if (expected is null)
                 Assert.Null(actual);

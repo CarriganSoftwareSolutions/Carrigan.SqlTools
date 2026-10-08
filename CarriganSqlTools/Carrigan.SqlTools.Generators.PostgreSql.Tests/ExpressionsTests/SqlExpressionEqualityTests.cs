@@ -80,31 +80,6 @@ public class SqlExpressionEqualityTests
             () => new Column<Grades>(nameof(Grades.CreditHours)),
             () => new Column<Grades>(nameof(Grades.AcademicYear)));
 
-    [Fact]
-    public void NeutralColumn_EqualityContract()
-    {
-        Column<Grades> creditHours = new(nameof(Grades.CreditHours));
-        Column<Grades> academicYear = new(nameof(Grades.AcademicYear));
-
-        AssertEqualityContract(
-            () => new Column(creditHours.ColumnInfo),
-            () => new Column(creditHours.ColumnInfo),
-            () => new Column(creditHours.ColumnInfo),
-            () => new Column(academicYear.ColumnInfo));
-    }
-
-    [Fact]
-    public void EquivalentColumnRepresentations_AreEqual()
-    {
-        Column<Grades> column = new(nameof(Grades.CreditHours));
-        Column neutralColumn = new(column.ColumnInfo);
-
-        SqlExpression columnExpression = column;
-        SqlExpression tagExpression = neutralColumn;
-
-        Assert.True(columnExpression == tagExpression);
-        Assert.Equal(columnExpression.GetHashCode(), tagExpression.GetHashCode());
-    }
 
     [Fact]
     public void Parameter_EqualityContract_UsesParameterName() =>

@@ -105,8 +105,7 @@ public class NotTests : PredicateLogicBaseTests
     {
         Predicates predicate = new Not(ColumnIsActive);
 
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsActiveSql).Single();
-        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
+        _ = predicate.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == ColumnIsActiveSql).Single();
     }
 
     [Fact]
@@ -213,10 +212,8 @@ public class NotTests : PredicateLogicBaseTests
     {
         Predicates and = CreateNestedPredicate();
 
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsVisibleSql).Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == ColumnIsArchivedSql).Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == ColumnIsVisibleSql).Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == ColumnIsArchivedSql).Single();
     }
 
     [Fact]

@@ -139,14 +139,10 @@ public class OrTests : PredicateLogicBaseTests
     {
         Or or = CreateOr();
 
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsActive]").Single();
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsEnabled]").Single();
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsVisible]").Single();
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsArchived]").Single();
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsActive").Single();
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsEnabled").Single();
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsVisible").Single();
-        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
+        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsActive]").Single();
+        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsEnabled]").Single();
+        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsVisible]").Single();
+        _ = or.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsArchived]").Single();
     }
 
     private static Or CreateOr(int nestedParameterValue = 2) =>

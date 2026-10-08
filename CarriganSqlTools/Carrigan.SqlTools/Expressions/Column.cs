@@ -19,13 +19,25 @@ public class Column : SqlExpression
     /// <summary>
     /// Gets the resolved column metadata (name, tags, etc.) used by the expression.
     /// </summary>
+    [Obsolete("No Longer Used")]
     public ColumnInfo ColumnInfo { get; }
+
+    /// <summary>
+    /// Gets the unique tag representing the column in SQL expressions and fragments.
+    /// </summary>
+    public ColumnTag ColumnTag { get; }
+
+    /// <summary>
+    /// Gets the unique tag representing the parameterized value of the column in SQL expressions and fragments.
+    /// </summary>
+    public ParameterTag ColumnParameterTag { get; }
 
     /// <summary>
     /// The name of the property representing the column.
     /// </summary>
-    public PropertyName PropertyName => 
-        ColumnInfo.PropertyName;
+    [Obsolete ("No Longer Used")]
+    public PropertyName? PropertyName => 
+        ColumnInfo?.PropertyName;
 
     /// <summary>
     /// Initializes a dialect-neutral column expression from already resolved reflection metadata.
@@ -38,6 +50,8 @@ public class Column : SqlExpression
     {
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ColumnInfo = columnInfo;
+        ColumnTag = columnInfo.ColumnTag;
+        ColumnParameterTag = columnInfo.ParameterTag;
     }
 
 
@@ -45,7 +59,7 @@ public class Column : SqlExpression
     /// Gets the table tag represented by this column leaf expression.
     /// </summary>
     public override IEnumerable<TableTag> LeafTables =>
-        [ColumnInfo.ColumnTag.TableTag];
+        [ColumnTag.TableTag];
 
     /// <summary>
     /// Resolves reflected column metadata for a model property after applying dialect type filtering.
@@ -85,6 +99,6 @@ public class Column : SqlExpression
     /// </returns>
     public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
     {
-        yield return ColumnInfo.ColumnTag;
+        yield return ColumnTag;
     }
 }

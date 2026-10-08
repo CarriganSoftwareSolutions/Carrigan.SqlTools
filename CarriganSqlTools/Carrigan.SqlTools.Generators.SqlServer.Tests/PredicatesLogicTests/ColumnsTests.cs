@@ -123,8 +123,7 @@ public  class ColumnsTests : PredicateLogicBaseTests
 
         foreach (string columnName in propertyNames)
         {
-            _ = columnValues.Single(col => col.ColumnInfo.ColumnTag.ToSql(Dialect) == $"[ColumnTable].[{columnName}]");
-            _ = columnValues.Single(col => col.ColumnInfo.ToString() == $"ColumnTable.{columnName}");
+            _ = columnValues.Single(col => col.ColumnTag.ToSql(Dialect) == $"[ColumnTable].[{columnName}]");
         }
     }
     [Theory]
@@ -139,9 +138,8 @@ public  class ColumnsTests : PredicateLogicBaseTests
     {
         Column<ColumnTable> column = new(propertyName);
 
-        Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnInfo.ColumnTag.ToSql(Dialect));
-        Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnInfo.ToString());
-        Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnInfo.ColumnTag.ToString());
+        Assert.Equal($"[ColumnTable].[{ expectedColumnName}]", column.ColumnTag.ToSql(Dialect));
+        Assert.Equal($"ColumnTable.{expectedColumnName}", column.ColumnTag.ToString());
     }
 
     [Fact]

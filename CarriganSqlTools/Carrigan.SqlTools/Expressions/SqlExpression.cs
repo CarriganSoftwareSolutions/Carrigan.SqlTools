@@ -223,7 +223,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     protected virtual bool EqualsCore(SqlExpression other)
     {
         if (this is Column leftColumn && other is Column rightColumn)
-            return leftColumn.ColumnInfo.ColumnTag.Equals(rightColumn.ColumnInfo.ColumnTag);
+            return leftColumn.ColumnTag.Equals(rightColumn.ColumnTag);
 
         if (this is IParameter leftParameter && other is IParameter rightParameter)
             return leftParameter.Name.Equals(rightParameter.Name);
@@ -238,7 +238,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     {
         if (this is Column column)
         {
-            hashCode.Add(column.ColumnInfo.ColumnTag);
+            hashCode.Add(column.ColumnTag);
             return;
         }
 

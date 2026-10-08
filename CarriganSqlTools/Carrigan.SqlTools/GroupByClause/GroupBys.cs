@@ -144,7 +144,7 @@ public class GroupBys
 
         return GroupByItems.Any(groupBy =>
             groupBy.SqlExpression is Column groupedColumn
-            && groupedColumn.ColumnInfo.ColumnTag.Equals(column.ColumnInfo.ColumnTag));
+            && groupedColumn.ColumnTag.Equals(column.ColumnTag));
     }
 
     /// <summary>

@@ -135,12 +135,12 @@ public class AndTests : PredicateLogicBaseTests
     {
         And and = CreateAnd();
 
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsActive]").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsEnabled]").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsVisible]").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsArchived]").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ColumnTag.ToString() == "LogicalPredicateTable.IsArchived").Single();
-        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnInfo.ToString() == "LogicalPredicateTable.IsArchived").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsActive]").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsEnabled]").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsVisible]").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToSql(Dialect) == "[LogicalPredicateTable].[IsArchived]").Single();
+        _ = and.AllParticipatingColumns.OfType<Column>().Where(column => column.ColumnTag.ToString() == "LogicalPredicateTable.IsArchived").Single();
+
     }
 
     private static And CreateAnd(int nestedParameterValue = 2) =>

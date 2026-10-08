@@ -52,7 +52,7 @@ public class ColumnValue : Predicates
     /// <returns>An equality predicate comparing the column to the generated parameter.</returns>
     protected static Equal CreateValue(Column left, object? parameterValue)
     {
-        Parameter right = new(parameterValue, left.ColumnInfo.ParameterTag);
+        Parameter right = new(parameterValue, left.ColumnParameterTag);
 
         return new Equal(left, right);
     }
