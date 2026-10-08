@@ -6,7 +6,7 @@ namespace Carrigan.SqlTools.Base.Tests.Expressions;
 
 public class ColumnTagConstructorTests
 {
-    private static readonly SchemaName SchemaName = SchemaName.New("TestSchema");
+    private static readonly SchemaName? SchemaName = SchemaName.New("TestSchema");
     private static readonly TableName TableName = new("TestTable");
     private static readonly ColumnName ColumnName = new("TestColumn");
 

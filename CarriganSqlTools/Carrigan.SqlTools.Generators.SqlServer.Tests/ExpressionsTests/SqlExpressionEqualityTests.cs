@@ -111,10 +111,10 @@ public class SqlExpressionEqualityTests
 
 #pragma warning disable CS0618 // ColumnInfo remains available for compatibility while neutral Column construction still requires it.
         AssertEqualityContract(
-            () => new Column(creditHours.ColumnInfo),
-            () => new Column(creditHours.ColumnInfo),
-            () => new Column(creditHours.ColumnInfo),
-            () => new Column(academicYear.ColumnInfo));
+            () => new Column(creditHours.ColumnInfo!),
+            () => new Column(creditHours.ColumnInfo!),
+            () => new Column(creditHours.ColumnInfo!),
+            () => new Column(academicYear.ColumnInfo!));
 #pragma warning restore CS0618
     }
 
@@ -123,7 +123,7 @@ public class SqlExpressionEqualityTests
     {
         Column<Grades> column = new(nameof(Grades.CreditHours));
 #pragma warning disable CS0618 // ColumnInfo remains available for compatibility while neutral Column construction still requires it.
-        Column neutralColumn = new(column.ColumnInfo);
+        Column neutralColumn = new(column.ColumnInfo!);
 #pragma warning restore CS0618
 
         SqlExpression columnExpression = column;

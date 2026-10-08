@@ -121,6 +121,7 @@ public class TableTag : IEquatable<TableTag>, IEqualityOperators<TableTag, Table
     /// The table identifier without the schema qualifier.
     /// </summary>
     internal readonly TableName TableName;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TableTag"/> class.
     /// </summary>
