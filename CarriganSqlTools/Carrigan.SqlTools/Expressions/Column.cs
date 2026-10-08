@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.Dialects;
+﻿using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.ReflectorCache;
@@ -10,14 +10,14 @@ namespace Carrigan.SqlTools.Expressions;
 /// Represents the canonical SQL expression for a single reflected table column.
 /// </summary>
 /// <remarks>
-/// Reflection-created projections use this dialect-neutral representation so the complete <see cref="ColumnInfo"/>
-/// remains available throughout the expression tree. Dialect packages derive their public <c>Column&lt;T&gt;</c> types
-/// from this class and validate model property CLR types against the dialect's supported types during construction.
+/// Reflection-created projections use this dialect-neutral representation. <see cref="ColumnTag"/> is the canonical
+/// column identity used for rendering, equality, and table participation; the obsolete <see cref="ColumnInfo"/> property
+/// remains available for compatibility. Dialect packages derive their public <c>Column&lt;T&gt;</c> types from this class.
 /// </remarks>
 public class Column : SqlExpression
 {
     /// <summary>
-    /// Gets the resolved column metadata (name, tags, etc.) used by the expression.
+    /// Gets the legacy resolved reflection metadata retained for compatibility.
     /// </summary>
     [Obsolete("No Longer Used")]
     public ColumnInfo ColumnInfo { get; }
@@ -42,7 +42,7 @@ public class Column : SqlExpression
     /// <summary>
     /// Initializes a dialect-neutral column expression from already resolved reflection metadata.
     /// </summary>
-    /// <param name="columnInfo">The resolved column metadata retained by this expression.</param>
+    /// <param name="columnInfo">The resolved reflection metadata used to initialize the column and parameter tags.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="columnInfo"/> is <c>null</c>.
     /// </exception>

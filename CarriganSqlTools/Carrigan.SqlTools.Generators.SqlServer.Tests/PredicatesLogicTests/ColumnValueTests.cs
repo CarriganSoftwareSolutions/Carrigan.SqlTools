@@ -1,5 +1,6 @@
 ﻿using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
@@ -114,6 +115,16 @@ public class ColumnValueTests : PredicateLogicBaseTests
         string expectedString = "([ColumnTable].[Col1] = @Col1_1)";
         string actualString = byColumnValues.ToSqlFragments(Dialect).ToSql(Dialect);
         Assert.Equal(expectedString, actualString);
+    }
+
+    [Fact]
+    public void ParameterAttribute_UsesColumnParameterTag()
+    {
+        ColumnValue<ParameterAttributeEntity> columnValue = new(nameof(ParameterAttributeEntity.Id), 1);
+        IParameter parameter = columnValue.AllParticipatingParameters.Single();
+
+        Assert.Equal("IdParameter", parameter.Name.ToString());
+        Assert.Contains("@IdParameter_1", columnValue.ToSqlFragments(Dialect).ToSql(Dialect));
     }
 
     [Fact]

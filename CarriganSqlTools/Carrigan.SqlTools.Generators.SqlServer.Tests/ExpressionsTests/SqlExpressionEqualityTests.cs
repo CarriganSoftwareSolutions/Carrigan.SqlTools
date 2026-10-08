@@ -1,4 +1,4 @@
-using Carrigan.SqlTools.AggregateLogic;
+﻿using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
@@ -101,6 +101,36 @@ public class SqlExpressionEqualityTests
 
         Assert.True(columnExpression == booleanExpression);
         Assert.Equal(columnExpression.GetHashCode(), booleanExpression.GetHashCode());
+    }
+
+    [Fact]
+    public void NeutralColumn_EqualityContract()
+    {
+        Column<Grades> creditHours = new(nameof(Grades.CreditHours));
+        Column<Grades> academicYear = new(nameof(Grades.AcademicYear));
+
+#pragma warning disable CS0618 // ColumnInfo remains available for compatibility while neutral Column construction still requires it.
+        AssertEqualityContract(
+            () => new Column(creditHours.ColumnInfo),
+            () => new Column(creditHours.ColumnInfo),
+            () => new Column(creditHours.ColumnInfo),
+            () => new Column(academicYear.ColumnInfo));
+#pragma warning restore CS0618
+    }
+
+    [Fact]
+    public void EquivalentColumnRepresentations_AreEqual()
+    {
+        Column<Grades> column = new(nameof(Grades.CreditHours));
+#pragma warning disable CS0618 // ColumnInfo remains available for compatibility while neutral Column construction still requires it.
+        Column neutralColumn = new(column.ColumnInfo);
+#pragma warning restore CS0618
+
+        SqlExpression columnExpression = column;
+        SqlExpression tagExpression = neutralColumn;
+
+        Assert.True(columnExpression == tagExpression);
+        Assert.Equal(columnExpression.GetHashCode(), tagExpression.GetHashCode());
     }
 
     [Fact]
