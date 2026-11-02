@@ -14,7 +14,7 @@ public class SelectTagsTests
     private static readonly PostgreSqlDialect Dialect = new();
     private static readonly SqlGenerator<Order> OrderSqlGenerator = new();
     private static SelectTag<SomeTable> New(string columnName, string? aliasName) =>
-        new (new PropertyName(columnName), AliasName.New(aliasName));
+        new (new PropertyName(columnName), ColumnAlias.New(aliasName));
 
     private static readonly SelectTag a = New("SomeColumn", null);
     private static readonly SelectTag b = New("OtherColumn", null);
@@ -92,7 +92,7 @@ public class SelectTagsTests
         SelectTags selectTags = new ();
         Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());
-        SelectTags selectTagsAlpha = selectTags.Append<Order>(new PropertyName("Id"), new AliasName("Override"));
+        SelectTags selectTagsAlpha = selectTags.Append<Order>(new PropertyName("Id"), new ColumnAlias("Override"));
 
         Assert.True(selectTags.IsEmpty());
         Assert.False(selectTags.Any());

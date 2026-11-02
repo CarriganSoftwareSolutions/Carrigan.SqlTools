@@ -108,7 +108,7 @@ public class SqlGenerator_SubqueryTests
     public void SubqueryBase_MaterializesSourceFragments()
     {
         List<ISqlFragment> source = [new SqlFragmentText("SELECT 1")];
-        SubqueryBase subQuery = new(source, Dialect);
+        Subquery subQuery = new(source, Dialect);
 
         source[0] = new SqlFragmentText("SELECT 2");
 

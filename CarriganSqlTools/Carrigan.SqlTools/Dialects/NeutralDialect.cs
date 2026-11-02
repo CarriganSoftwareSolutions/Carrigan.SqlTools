@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.ReflectorCache;
@@ -49,9 +49,17 @@ internal sealed class NeutralDialect : ISqlDialects
     }
 
     /// <summary>
+    /// Generates a string representation of the specified database table alias
+    /// </summary>
+    /// <param name="aliasTag">The alias tag for the table. May be null to omit the alias.</param>
+    /// <returns>A string containing the rendered representation of the specified table alias.</returns>
+    public string RenderTableAlias(AliasTag? aliasTag) =>
+        aliasTag?.ToString() ?? string.Empty;
+
+    /// <summary>
     /// Renders a column and optional table qualification without database-specific quoting.
     /// </summary>
-    public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true)
+    public string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true)
     {
         ArgumentNullException.ThrowIfNull(tableTag);
         ArgumentNullException.ThrowIfNull(columnName);

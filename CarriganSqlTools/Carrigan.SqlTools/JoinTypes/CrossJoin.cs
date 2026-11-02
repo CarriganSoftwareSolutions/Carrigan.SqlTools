@@ -1,33 +1,38 @@
+using Carrigan.Core.Exceptions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+
 
 namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
 /// Represents an SQL <c>CROSS JOIN</c> operation.
 /// </summary>
-/// <typeparam name="rightT">
-/// The data model representing the right-side table being joined.
-/// </typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
-/// CrossJoin<Order> join = new();
+/// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
+/// CrossJoin<Order> join = new(predicate);
 /// 
 /// SelectBuilder<Customer> selectBuilder = new()
 /// {
 ///     Joins = join
 /// };
+/// 
+/// SqlQuery query = customerGenerator.Select(selectBuilder);
 /// ]]></code>
 /// <para>Resulting SQL:</para>
 /// <code><![CDATA[
 /// --PostgreSql
 /// SELECT "Customer".* 
 /// FROM "Customer" 
-/// CROSS JOIN "Order"
+/// CROSS JOIN "Order" 
 /// 
 /// --SqlServer
 /// SELECT [Customer].*
@@ -35,79 +40,107 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// CROSS JOIN [Order]
 /// ]]></code>
 /// </example>
-public class CrossJoin<rightT> : JoinBase where rightT : class
+public class CrossJoin : Join
 {
-    /// <summary>
-    /// Optional readonly subquery for the right-hand side.
-    /// </summary>
-    /// <remarks>Null when no subquery is provided. Assigned at construction and immutable
-    /// thereafter.</remarks>
-    private readonly Subquery<rightT>? Subquery;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CrossJoin{rightT}"/> class.
-    /// </summary>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
-    public CrossJoin(Subquery<rightT>? subQuery = null) : base(new EmptyPredicate()) =>
-        Subquery = subQuery;
-
-    /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
-    /// a newly created <see cref="CrossJoin{rightT}"/> operation.
-    /// </summary>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
-    /// <typeparam name="leftT">
-    /// The data model representing the left (base) table being joined onto.
-    /// </typeparam>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="CrossJoin{rightT}"/> instance.
-    /// </returns>
-    public static Joins<leftT> Joins<leftT>(Subquery<rightT>? subQuery = null) where leftT : class =>
-        new(new CrossJoin<rightT>(subQuery));
-
-    /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
-    /// the current <see cref="CrossJoin{rightT}"/> instance.
-    /// </summary>
-    /// <typeparam name="leftT">
-    /// The data model representing the left (base) table being joined onto.
-    /// </typeparam>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> object containing the current <see cref="CrossJoin{rightT}"/> instance.
-    /// </returns>
-    public Joins<leftT> AsJoins<leftT>() where leftT : class =>
-        new(this);
-
-    /// <summary>
-    /// Gets the <see cref="TableTag"/> associated with the right-side table in the <c>CROSS JOIN</c> operation.
-    /// </summary>
-    /// <exception cref="TypeInitializationException">
-    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
-    /// </exception>
-    internal override TableTag TableTag =>
-        SqlToolsReflectorCache<rightT>.Table;
-
-    /// <summary>
-    /// Generates the SQL fragments representing the <c>CROSS JOIN</c> operation.
-    /// </summary>
-    /// <param name="dialect">The SQL dialect used to render the joined table or subquery.</param>
-    /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects that compose the SQL representation of this instance.</returns>
-    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
+    #region constructors from SubQuery
+    [ExternalOnly]
+    public CrossJoin(Subquery subQuery, string tableAlias)
+        : this(subQuery, new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(tableAlias)))
     {
-        yield return new SqlFragmentText(" CROSS JOIN ");
-        if (Subquery is not null)
-        {
-            yield return Subquery;
-            yield return new SqlFragmentText(" AS ");
-        }
-        yield return TableTag;
     }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Join"/> class with the specified subquery and table alias.
+    /// Represents a Join with a default join type of Join
+    /// </summary>
+    /// <param name="subQuery">
+    ///  An optional <see cref="Subquery"/> to use as the right-hand side of the join instead of a direct table reference. 
+    ///  This allows for joining against complex subqueries while maintaining type safety and intellisense support for the right-hand side model.
+    /// </param>
+    /// <param name="tableAlias">
+    /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause. 
+    /// This is required when joining on a subquery to provide a reference name for the derived table.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="tableAlias"/> is <c>null</c>.
+    /// </exception>
+    public CrossJoin(Subquery subQuery, TableAlias tableAlias)
+        : this(subQuery, new TableAliasTag(tableAlias ?? throw new ArgumentNullException(nameof(tableAlias))))
+    {
+    }
+
+    internal CrossJoin(Subquery subQuery, TableAliasTag tableAlias)
+        : base(JoinFragment.CrossJoin, new EmptyPredicate(), subQuery, tableAlias)
+    {
+    }
+    #endregion
+
+    #region constructors from TableTag, SelectTag
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Join"/> class with the specified join type, select tags, table tag, and optional table alias.
+    /// </summary>
+    /// <param name="tableTag">
+    /// The tag associated with the table being joined.
+    /// </param>
+    /// <param name="selectTags">
+    /// The select tags for the joined table or subquery.
+    /// </param>
+    /// <param name="tableAlias">
+    /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
+    /// </param>
+    internal CrossJoin(TableTag tableTag, SelectTags selectTags, TableAliasTag? tableAlias)
+        : base(JoinFragment.CrossJoin, tableTag, selectTags, new EmptyPredicate(), tableAlias)
+    {
+
+    }
+    #endregion
+
+
+    #region public static creation methods
+    /// <summary>
+    /// Creates and returns a new <see cref="JoinTypes.Joins"/> object that contains
+    /// a newly created <see cref="Join"/> operation.
+    /// </summary>
+    /// <param name="subQuery">
+    /// An optional <see cref="Subquery"/> to use as the right-hand side of the join instead of a
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
+    /// <param name="joinTableAlias">
+    /// The table alias representing the right table being joined onto.
+    /// </param>
+    /// 
+    /// <returns>
+    /// A new <see cref="JoinTypes.Joins"/> object containing a single <see cref="Join"/> instance.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when an alias argument is invalid.
+    /// </exception>
+    [ExternalOnly]
+    public static Joins Joins(Subquery subQuery, string joinTableAlias) =>
+        new(new CrossJoin(subQuery, new TableAlias(joinTableAlias)));
+
+    /// <summary>
+    /// Creates and returns a new <see cref="JoinTypes.Joins"/> object that contains
+    /// a newly created <see cref="Join"/> operation.
+    /// </summary>
+    /// <param name="subQuery">
+    /// An optional <see cref="Subquery"/> to use as the right-hand side of the join instead of a
+    /// direct table reference. This allows for joining against complex subqueries while maintaining type
+    /// safety and intellisense support for the right-hand side model.
+    /// </param>
+    /// <param name="rightTableAlias">
+    /// The table alias representing the right table being joined onto.
+    /// </param>
+    /// 
+    /// <returns>
+    /// A new <see cref="JoinTypes.Joins"/> object containing a single <see cref="Join"/> instance.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when an alias argument is invalid.
+    /// </exception>
+    public static Joins Joins(Subquery subQuery, TableAlias rightTableAlias) =>
+        new(new CrossJoin(subQuery, rightTableAlias));
+    #endregion
 }

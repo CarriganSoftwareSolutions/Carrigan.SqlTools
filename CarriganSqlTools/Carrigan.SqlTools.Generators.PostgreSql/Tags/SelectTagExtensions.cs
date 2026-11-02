@@ -16,7 +16,7 @@ public static class SelectTagExtensions
     /// <param name="selectTag">The select tag to append to.</param>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
     /// <param name="aliasName">The SQL alias name to apply.</param>
-    public static SelectTags Append<T>(this SelectTag selectTag, PropertyName propertyName, AliasName? aliasName = null) where T : class =>
+    public static SelectTags Append<T>(this SelectTag selectTag, PropertyName propertyName, ColumnAlias? aliasName = null) where T : class =>
         new SelectTags(selectTag).Append<T>(propertyName, aliasName);
 
     /// <summary>
@@ -28,7 +28,7 @@ public static class SelectTagExtensions
     /// <param name="aliasName">The SQL alias name to apply.</param>
     [ExternalOnly]
     public static SelectTags Append<T>(this SelectTag selectTag, string propertyName, string? aliasName = null) where T : class =>
-        selectTag.Append<T>(new PropertyName(propertyName), AliasName.New(aliasName));
+        selectTag.Append<T>(new PropertyName(propertyName), ColumnAlias.New(aliasName));
 
     /// <summary>
     /// Creates a <see cref="SelectTags"/> collection containing this tag and tags for the specified properties.

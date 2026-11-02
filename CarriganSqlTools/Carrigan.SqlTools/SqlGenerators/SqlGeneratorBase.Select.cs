@@ -120,12 +120,12 @@ public abstract partial class SqlGeneratorBase<T>
     /// <param name="orderBy">The optional ORDER BY clause.</param>
     /// <param name="paging">The optional paging clause.</param>
     /// <returns>The SQL fragments that render the SELECT statement.</returns>
-    private IEnumerable<ISqlFragment> BaseSelectFragments
+    protected virtual IEnumerable<ISqlFragment> BaseSelectFragments
     (
         bool? distinct,
-        Subquery<T>? subQuery,
+        Subquery? subQuery,
         SelectTags? selects,
-        Joins<T>? joins,
+        Joins? joins,
         Predicates? where,
         GroupBys? groupBys,
         Predicates? having, 
@@ -189,7 +189,7 @@ public abstract partial class SqlGeneratorBase<T>
 
             if (joins?.IsNotNullOrEmpty() ?? false)
             {
-                foreach (ISqlFragment fragment in joins.ToSqlFragments(Dialect))
+                foreach (ISqlFragment fragment in joins.Flatten(Dialect))
                     yield return fragment;
             }
 
@@ -232,24 +232,24 @@ public abstract partial class SqlGeneratorBase<T>
 
         }
 
-        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+        IEnumerable<TableTagBase> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
 
-        IEnumerable<TableTag> selectedTableTags = [.. selects?.GetTableTags() ?? []];
-        IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
+        IEnumerable<TableTagBase> selectedTableTags = [.. selects?.GetTableTags() ?? []];
+        IEnumerable<TableTagBase> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> predicateTableTags = [.. where?.AllParticipatingTables?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidPredicateTableTags = predicateTableTags.Except(selectableTableTags);
+        IEnumerable<TableTagBase> predicateTableTags = [.. where?.AllParticipatingTables?.Distinct() ?? []];
+        IEnumerable<TableTagBase> invalidPredicateTableTags = predicateTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidGroupByTableTags = groupByTableTags.Except(selectableTableTags);
+        IEnumerable<TableTagBase> groupByTableTags = [.. groupBys?.TableTags?.Distinct() ?? []];
+        IEnumerable<TableTagBase> invalidGroupByTableTags = groupByTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> havingTableTags = [.. having?.AllParticipatingTables?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidHavingTableTags = havingTableTags.Except(selectableTableTags);
+        IEnumerable<TableTagBase> havingTableTags = [.. having?.AllParticipatingTables?.Distinct() ?? []];
+        IEnumerable<TableTagBase> invalidHavingTableTags = havingTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
+        IEnumerable<TableTagBase> orderByTableTags = [.. orderBy?.TableTags?.Distinct() ?? []];
+        IEnumerable<TableTagBase> invalidOrderByTags = orderByTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> invalidTags = invalidSelectedTags
+        IEnumerable<TableTagBase> invalidTags = invalidSelectedTags
             .Concat(invalidPredicateTableTags)
             .Concat(invalidGroupByTableTags)
             .Concat(invalidHavingTableTags)

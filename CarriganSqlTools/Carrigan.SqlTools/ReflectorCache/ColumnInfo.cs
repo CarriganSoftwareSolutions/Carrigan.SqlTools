@@ -88,10 +88,10 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
     internal readonly ParameterTag ParameterTag;
 
     /// <summary>
-    /// The <see cref="IdentifierTypes.AliasName"/> defined for this property,
+    /// The <see cref="IdentifierTypes.ColumnAlias"/> defined for this property,
     /// if specified via an <see cref="AliasAttribute"/>.
     /// </summary>
-    internal readonly AliasName? AliasName;
+    internal readonly ColumnAlias? AliasName;
 
     /// <summary>
     /// The source column selected for this property in SELECT clauses.
@@ -163,11 +163,11 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
             propertyInfo.GetCustomAttribute<ParameterAttribute>()?.Name
             ?? columnName;
 
-        AliasName? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
+        ColumnAlias? aliasName = propertyInfo.GetCustomAttribute<AliasAttribute>()?.Name;
         SqlTypeAttribute? sqlTypeAttribute = propertyInfo.GetCustomAttribute<SqlTypeAttribute>();
 
         ColumnName = new(columnName);
-        ColumnTag = new(new(schemaName, tableName), ColumnName);
+        ColumnTag = new(new TableTag(schemaName, tableName), ColumnName);
 
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);
@@ -192,7 +192,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
             SelectAliasTag = selectTagAttribute.AliasTag;
 
             if (SelectAliasTag is null && selectTagAttribute.UseDecoratedPropertyNameAsDefaultAlias)
-                SelectAliasTag = AliasTag.New(aliasName ?? new AliasName(columnName));
+                SelectAliasTag = AliasTag.New(aliasName ?? new ColumnAlias(columnName));
 
             SelectTag = selectTagAttribute.SelectTag is null
                 ? new SelectTag(new Expressions.Column(this), SelectAliasTag)

@@ -1,5 +1,9 @@
+using Carrigan.Core.Exceptions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
@@ -11,9 +15,6 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// <summary>
 /// Represents an SQL <c>LEFT JOIN</c> operation.
 /// </summary>
-/// <typeparam name="rightT">
-/// The data model representing the right-side table being joined.
-/// </typeparam>
 /// <example>
 /// <code language="csharp"><![CDATA[
 /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
@@ -41,106 +42,119 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class LeftJoin<rightT> : JoinBase where rightT : class
+public class LeftJoin : Join
 {
-    /// <summary>
-    /// Optional readonly subquery for the right-hand side.
-    /// </summary>
-    /// <remarks>Null when no subquery is provided. Assigned at construction and immutable
-    /// thereafter.</remarks>
-    private readonly Subquery<rightT>? Subquery;
+
+    #region constructors from SubQuery
+    [ExternalOnly]
+    public LeftJoin(Predicates predicates, Subquery subQuery, string tableAlias)
+        : this(predicates, subQuery, new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(tableAlias)))
+    {
+    }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LeftJoin{rightT}"/> class.
+    /// Initializes a new instance of the <see cref="Join"/> class with the specified predicates, subquery, and table alias.
+    /// Represents a Join with a default join type of Join
     /// </summary>
     /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
+    /// The predicate(s) used to define the <c>ON</c> condition for the <c>JOIN</c> clause.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
+    ///  An optional <see cref="Subquery"/> to use as the right-hand side of the join instead of a direct table reference. 
+    ///  This allows for joining against complex subqueries while maintaining type safety and intellisense support for the right-hand side model.
+    /// </param>
+    /// <param name="tableAlias">
+    /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause. 
+    /// This is required when joining on a subquery to provide a reference name for the derived table.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicates"/> or <paramref name="tableAlias"/> is <c>null</c>.
+    /// </exception>
+    public LeftJoin(Predicates predicates, Subquery subQuery, TableAlias tableAlias)
+        : this(predicates, subQuery, new TableAliasTag(tableAlias ?? throw new ArgumentNullException(nameof(tableAlias))))
+    {
+    }
+
+    internal LeftJoin(Predicates predicates, Subquery subQuery, TableAliasTag tableAlias)
+        : base(JoinFragment.LeftJoin, predicates, subQuery, tableAlias)
+    {
+    }
+    #endregion
+
+    #region constructors from TableTag, SelectTag
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Join"/> class with the specified join type, select tags, predicates, table tag, and optional table alias.
+    /// </summary>
+    /// <param name="tableTag">
+    /// The tag associated with the table being joined.
+    /// </param>
+    /// <param name="selectTags">
+    /// The select tags for the joined table or subquery.
+    /// </param>
+    /// <param name="predicates">
+    /// The predicate(s) used to define the <c>ON</c> condition for the <c>JOIN</c> clause.
+    /// </param>
+    /// <param name="tableAlias">
+    /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
+    /// </param>
+    internal LeftJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
+        : base(JoinFragment.LeftJoin, tableTag, selectTags, predicates, tableAlias)
+    {
+
+    }
+    #endregion
+
+
+    #region public static creation methods
+    /// <summary>
+    /// Creates and returns a new <see cref="JoinTypes.Joins"/> object that contains
+    /// a newly created <see cref="Join"/> operation.
+    /// </summary>
+    /// <param name="predicates">
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
+    /// </param>
+    /// <param name="subQuery">
+    /// An optional <see cref="Subquery"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
+    /// <param name="joinTableAlias">
+    /// The table alias representing the right table being joined onto.
+    /// </param>
+    /// 
+    /// <returns>
+    /// A new <see cref="JoinTypes.Joins"/> object containing a single <see cref="Join"/> instance.
+    /// </returns>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public LeftJoin(Predicates predicates, Subquery<rightT>? subQuery = null) : base(predicates) =>
-        Subquery = subQuery;
+    [ExternalOnly]
+    public static new Joins Joins(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
+        new(new LeftJoin(predicates, subQuery, new TableAlias(joinTableAlias)));
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
-    /// a newly created <see cref="LeftJoin{rightT}"/> operation.
+    /// Creates and returns a new <see cref="JoinTypes.Joins"/> object that contains
+    /// a newly created <see cref="Join"/> operation.
     /// </summary>
-    /// <typeparam name="leftT">
-    /// The data model representing the left (base) table being joined onto.
-    /// </typeparam>
-    /// <param name="predicate">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.
+    /// <param name="predicates">
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
     /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
+    /// An optional <see cref="Subquery"/> to use as the right-hand side of the join instead of a
     /// direct table reference. This allows for joining against complex subqueries while maintaining type
     /// safety and intellisense support for the right-hand side model.
     /// </param>
+    /// <param name="rightTableAlias">
+    /// The table alias representing the right table being joined onto.
+    /// </param>
+    /// 
     /// <returns>
-    /// A new <see cref="Joins{leftT}"/> object containing a single <see cref="LeftJoin{rightT}"/> instance.
+    /// A new <see cref="JoinTypes.Joins"/> object containing a single <see cref="Join"/> instance.
     /// </returns>
     /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="predicate"/> is <c>null</c>.
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public static Joins<leftT> Joins<leftT>(Predicates predicate, Subquery<rightT>? subQuery = null) where leftT : class =>
-        new(new LeftJoin<rightT>(predicate, subQuery));
-
-    /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> object that contains
-    /// the current <see cref="LeftJoin{rightT}"/> instance.
-    /// </summary>
-    /// <typeparam name="leftT">
-    /// The data model representing the left (base) table being joined onto.
-    /// </typeparam>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> object containing the current <see cref="LeftJoin{rightT}"/> instance.
-    /// </returns>
-    public Joins<leftT> AsJoins<leftT>() where leftT : class =>
-        new(this);
-
-    /// <summary>
-    /// Gets the <see cref="TableTag"/> associated with the right-side table in the <c>LEFT JOIN</c> operation.
-    /// </summary>
-    /// <exception cref="TypeInitializationException">
-    /// Thrown when the SQL reflection cache for <typeparamref name="rightT"/> fails to initialize.
-    /// </exception>
-    internal override TableTag TableTag =>
-        SqlToolsReflectorCache<rightT>.Table;
-
-    /// <summary>
-    /// Converts the current <see cref="LeftJoin{rightT}"/> instance to its <see cref="ISqlFragment"/> representation.
-    /// </summary>
-    /// <param name="dialect"></param>
-    /// <returns>
-    /// A <see cref="ISqlFragment"/> representing the <c>LEFT JOIN</c> clause.
-    /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the join predicates render to an empty SQL expression, because <c>LEFT JOIN</c> requires an <c>ON</c> clause.
-    /// </exception>
-    /// <remarks>
-    /// Any exception thrown while rendering the predicate tree or while resolving <see cref="TableTag"/> will be propagated to the caller.
-    /// </remarks>
-    ///
-    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
-    {
-        if (_predicates is null || _predicates is EmptyPredicate)
-            throw new InvalidOperationException("LEFT JOIN requires at least one predicate for the ON clause.");
-
-        yield return new SqlFragmentText(" LEFT JOIN ");
-        if (Subquery is not null)
-        {
-            yield return Subquery;
-            yield return new SqlFragmentText(" AS ");
-        }
-        yield return TableTag;
-        yield return new SqlFragmentText(" ON ");
-        foreach (ISqlFragment fragment in _predicates.ToSqlFragments(dialect))
-            yield return fragment;
-    }
+    public static new Joins Joins(Predicates predicates, Subquery subQuery, TableAlias rightTableAlias) =>
+        new(new LeftJoin(predicates, subQuery, rightTableAlias));
+    #endregion
 }

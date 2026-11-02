@@ -37,4 +37,7 @@ public class ResultColumnName : TextWrapper
     /// </returns>
     public static ResultColumnName? New(string? name) =>
         name.IsNullOrEmpty() ? null : new(name);
+
+    public static explicit operator ColumnName(ResultColumnName resultColumnName) =>
+        new (resultColumnName.ToString());
 }

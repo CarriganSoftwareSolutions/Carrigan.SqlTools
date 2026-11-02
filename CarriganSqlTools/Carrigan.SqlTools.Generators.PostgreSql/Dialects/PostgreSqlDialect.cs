@@ -53,12 +53,22 @@ public class PostgreSqlDialect : ISqlDialects
             : QuoteIdentifier(tableName.ToString());
 
     /// <summary>
+    /// Generates a string representation of the specified database table alias
+    /// </summary>
+    /// <param name="aliasTag">The alias tag for the table. May be null to omit the alias.</param>
+    /// <returns>A string containing the rendered representation of the specified table alias.</returns>
+    public string RenderTableAlias(AliasTag? aliasTag) =>
+        aliasTag.IsNotNullOrEmpty()
+            ? QuoteIdentifier(aliasTag.ToString())
+            : string.Empty;
+
+    /// <summary>
     /// Renders the fully qualified PostgreSQL column name.
     /// </summary>
     /// <param name="tableTag">The tableTag value.</param>
     /// <param name="columnName">The SQL column name to apply.</param>
     /// <param name="includeTable">The includeTable value.</param>
-    public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
+    public string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
             ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName.ToString())}"
             : QuoteIdentifier(columnName.ToString());

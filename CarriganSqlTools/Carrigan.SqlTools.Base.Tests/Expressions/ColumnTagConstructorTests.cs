@@ -40,7 +40,7 @@ public class ColumnTagConstructorTests
 
         Column column = new(columnTag);
 
-        TableTag actual = Assert.Single(column.LeafTables);
+        TableTagBase actual = Assert.Single(column.LeafTables);
         Assert.Same(columnTag.TableTag, actual);
     }
 }

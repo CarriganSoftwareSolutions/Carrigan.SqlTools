@@ -41,7 +41,7 @@ public class NotExists : SubqueryPredicateBase
     /// </summary>
     /// <remarks>Passes the subquery and the NOT EXISTS operator to the base class.</remarks>
     /// <param name="subQuery">Subquery to evaluate with the NOT EXISTS operator.</param>
-    public NotExists(SubqueryBase subQuery) : base(subQuery, "NOT EXISTS")
+    public NotExists(Subquery subQuery) : base(subQuery, "NOT EXISTS")
     {
     }
 }

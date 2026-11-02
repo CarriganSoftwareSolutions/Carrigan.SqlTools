@@ -63,5 +63,6 @@ public interface ISqlFragment
     /// </param>
     /// <returns>An enumerable collection of <see cref="ISqlFragment"/> objects representing the flattened structure of this
     /// fragment. The collection may be empty if there are no child fragments.</returns>
+    //TODO: Consolidate  with the GetSqlFragments method from Predicates?
     IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect);
 }

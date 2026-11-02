@@ -111,7 +111,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="InvalidTableException">
-    /// Thrown when a <see cref="TableTag"/> referenced by <paramref name="predicates"/> is not present
+    /// Thrown when a <see cref="TableTagBase"/> referenced by <paramref name="predicates"/> is not present
     /// in the <paramref name="joins"/> set nor equal to the primary table.
     /// </exception>
     /// <exception cref="AggregateExpressionInWhereClauseException">
@@ -121,7 +121,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
     /// </param>
-    protected virtual SqlQuery BaseDelete(IEnumerable<TableTag>? usings, JoinsBase? joins, Predicates? predicates)
+    protected virtual SqlQuery BaseDelete(IEnumerable<TableTagBase>? usings, JoinsBase? joins, Predicates? predicates)
     {
         ValidateWherePredicates(predicates);
 
@@ -167,9 +167,9 @@ public abstract partial class SqlGeneratorBase<T>
         }
         else
         {
-            IEnumerable<TableTag> selectTableTags = (usings ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
-            IEnumerable<TableTag> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
-            IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
+            IEnumerable<TableTagBase> selectTableTags = (usings ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
+            IEnumerable<TableTagBase> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
+            IEnumerable<TableTagBase> invalidTags = predicateTableTags.Except(selectTableTags);
             if (invalidTags.Any())
                 throw new InvalidTableException(invalidTags);
 

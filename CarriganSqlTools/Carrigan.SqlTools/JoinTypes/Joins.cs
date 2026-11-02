@@ -1,7 +1,12 @@
+using Carrigan.Core.Exceptions;
 using Carrigan.Core.Extensions;
+using Carrigan.Core.Interfaces;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
+using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
@@ -12,11 +17,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 
 /// <summary>
 /// Represents one or more SQL <c>JOIN</c> operations applied to the table modeled by
-/// <typeparamref name="leftT"/>.
 /// </summary>
-/// <typeparam name="leftT">
-/// The data model representing the left (base) table onto which joins are applied.
-/// </typeparam>
 /// <remarks>
 /// Join definitions are validated in the order provided. Each join’s predicate(s) may only reference:
 /// <list type="bullet">
@@ -124,46 +125,48 @@ namespace Carrigan.SqlTools.JoinTypes;
 ///    ON ([Order].[PaymentMethodId] = [PaymentMethod].[Id])
 /// ]]></code>
 /// </example>
-public class Joins<leftT> : JoinsBase where leftT : class
+
+public class Joins : ISqlFragment, IEmpty
 {
     /// <summary>
     /// The collection of join operations represented by this instance.
     /// </summary>
-    protected IEnumerable<JoinBase> Joints { get; set; }
+    protected IEnumerable<Join> Joints { get; set; }
 
+    #region constructors
     /// <summary>
-    /// Initializes a new instance of the <see cref="Joins{leftT}"/> class from one or more join definitions.
+    /// Initializes a new instance of the <see cref="Joins"/> class from one or more join definitions.
     /// </summary>
     /// <param name="joins">The join operations in the order they should appear in SQL.</param>
+    /// 
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="joins"/> is <c>null</c> or contains a <c>null</c> join entry.
     /// </exception>
     /// <exception cref="InvalidTableException">
     /// Thrown when a join’s predicate references a table that has not been introduced earlier in the join sequence.
     /// </exception>
-    /// <exception cref="TypeInitializationException">
-    /// Thrown when the SQL reflection cache for <typeparamref name="leftT"/> fails to initialize.
-    /// </exception>
-    public Joins(params IEnumerable<JoinBase> joins)
+    public Joins(params IEnumerable<Join> joins)
     {
         ArgumentNullException.ThrowIfNull(joins);
 
-        if (joins.Any(static join => join is null))
-        {
-            throw new ArgumentNullException(nameof(joins), "joins contains null join entries.");
-        }
+        Joints = joins.Materialize(Core.Enums.NullOptionsEnum.ArgumentNullException);
+    }
+    #endregion
 
-        List<JoinBase> joints = [];
-        HashSet<TableTag> invalids = [];
-        HashSet<TableTag> validTables = [TableTag];
+    public IEnumerable<Join> Validate(TableTagBase joinOntoRoot)
+    {
+
+        List<Join> joints = [];
+        HashSet<TableTagBase> invalids = [];
+        HashSet<TableTagBase> validTables = [joinOntoRoot];
 
         // Validate each join to ensure it is joined in the proper order for column participation.
-        foreach (JoinBase join in joins)
+        foreach (Join join in Joints)
         {
-            validTables.Add(join.TableTag);
+            validTables.Add(join.JoinAs);
 
             // Ensure each table involved in the join comes from either an earlier table or the table being joined.
-            TableTag[] newInvalids =
+            TableTagBase[] newInvalids =
             [
                 .. join.JoinsOn.Where(tableTag => validTables.DoesNotContain(tableTag))
             ];
@@ -182,165 +185,164 @@ public class Joins<leftT> : JoinsBase where leftT : class
         {
             throw new InvalidTableException([.. invalids]);
         }
-
-        Joints = joints;
+        return joints;
     }
 
+    #region static Creators
+
+    public static Joins CrossJoin(Subquery subQuery, string joinTableAlias) =>
+        JoinTypes.CrossJoin.Joins
+        (
+            subQuery,
+            new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(joinTableAlias))
+        );
+
+    public static Joins CrossJoin(Subquery subQuery, TableAlias joinTableAlias) =>
+        JoinTypes.CrossJoin.Joins
+        (
+            JoinFragment.CrossJoin,
+            new EmptyPredicate(),
+            subQuery,
+            new TableAliasTag(joinTableAlias)
+        );
+
+    public static Joins FullJoin(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
+        JoinTypes.FullJoin.Joins
+        (
+            predicates,
+            subQuery,
+            new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(joinTableAlias))
+        );
+
+    public static Joins FullJoin(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
+        JoinTypes.FullJoin.Joins
+        (
+            JoinFragment.FullJoin,
+            predicates,
+            subQuery,
+            new TableAliasTag(joinTableAlias)
+        );
+
+    public static Joins InnerJoin(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
+        JoinTypes.InnerJoin.Joins
+        (
+            predicates,
+            subQuery,
+            new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(joinTableAlias))
+        );
+
+    public static Joins InnerJoin(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
+        JoinTypes.InnerJoin.Joins
+        (
+            JoinFragment.InnerJoin,
+            predicates,
+            subQuery,
+            new TableAliasTag(joinTableAlias)
+        );
+
+    public static Joins Join(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
+        JoinTypes.Join.Joins
+        (
+            predicates,
+            subQuery,
+            new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(joinTableAlias))
+        );
+
+    public static Joins Join(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
+        JoinTypes.Join.Joins
+        (
+            JoinFragment.Join,
+            predicates,
+            subQuery,
+            new TableAliasTag(joinTableAlias)
+        );
+
+    public static Joins RightJoin(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
+        JoinTypes.RightJoin.Joins
+        (
+            predicates,
+            subQuery,
+            new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(joinTableAlias))
+        );
+
+    public static Joins RightJoin(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
+        JoinTypes.RightJoin.Joins
+        (
+            JoinFragment.RightJoin,
+            predicates,
+            subQuery,
+            new TableAliasTag(joinTableAlias)
+        );
+
+    #endregion
+
+
+    #region IEnumerable Style methods
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
-    /// plus the additional join provided.
+    /// Gets the first join in the current join sequence.
     /// </summary>
-    /// <param name="newJoin">The join operation to append.</param>
-    /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional join.</returns>
-    public Joins<leftT> Append(JoinBase newJoin) =>
-        new(Joints.Append(newJoin));
+    /// <returns>The first join in the sequence.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <see cref="Joints"/> is <see langword="null"/> or contains a <see langword="null"/> entry.
+    /// </exception>
+    internal Join First() =>
+        Joints.First();
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
-    /// plus the additional joins provided.
+    /// Determines whether this <see cref="Joins"/> instance contains any join definitions.
     /// </summary>
-    /// <param name="newJoins">The additional join operations to include.</param>
-    /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional joins.</returns>
-    public Joins<leftT> Concat(IEnumerable<JoinBase> newJoins) =>
-        new(Joints.Concat(newJoins));
-
-    /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains all joins from the current instance
-    /// plus the additional joins provided.
-    /// </summary>
-    /// <typeparam name="rightT"></typeparam>
-    /// <param name="newJoins">The additional join operations to include.</param>
-    /// <returns>A new <see cref="Joins{leftT}"/> instance containing the additional joins.</returns>
-    public Joins<leftT> Concat<rightT>(Joins<rightT> newJoins) where rightT : class =>
-        new(Joints.Concat(newJoins.Joints));
-
-    /// <summary>
-    /// Enumerates all <see cref="TableTag"/> objects included in the current join sequence,
-    /// including the base (left-most) table.
-    /// </summary>
-    /// <remarks>
-    /// This provides a quick way to determine whether a given table participates in
-    /// any join operation within this <see cref="Joins{leftT}"/> instance.
-    /// </remarks>
     /// <returns>
-    /// An enumeration of all <see cref="TableTag"/> instances involved in the join sequence.
+    /// <see langword="true"/> if no joins are defined; otherwise, <see langword="false"/>.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
     /// </exception>
-    internal override IEnumerable<TableTag> TableTags =>
-        ValidatedJoints.Select(static join => join.TableTag).Prepend(TableTag);
+    public bool IsEmpty() =>
+        Joints.None();
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
-    /// a newly created <see cref="LeftJoin{rightT}"/> operation.
+    /// Determines whether this <see cref="Joins"/> instance contains any join definitions.
     /// </summary>
-    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
-    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>LEFT JOIN</c>.</param>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
     /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="LeftJoin{rightT}"/>.
+    /// <see langword="true"/> if one or more joins are defined; otherwise, <see langword="false"/>.           
     /// </returns>
-    public static Joins<leftT> LeftJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
-        JoinTypes.LeftJoin<rightT>.Joins<leftT>(predicates, subQuery);
+    public bool IsNotEmpty() =>
+        IsEmpty() is false;
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
-    /// a newly created <see cref="RightJoin{rightT}"/> operation.
+    /// Creates and returns a new <see cref="Joins"/> instance that contains all joins from the current instance
+    /// plus the additional join provided.
     /// </summary>
-    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
-    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>RIGHT JOIN</c>.</param>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="RightJoin{rightT}"/>.
-    /// </returns>
-    public static Joins<leftT> RightJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
-        JoinTypes.RightJoin<rightT>.Joins<leftT>(predicates, subQuery);
+    /// <param name="newJoin">The join operation to append.</param>
+    /// <returns>A new <see cref="Joins"/> instance containing the additional join.</returns>
+    public Joins Append(Join newJoin) =>
+        new(Joints.Append(newJoin));
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
-    /// a newly created generic <see cref="Join{rightT}"/> operation.
+    /// Creates and returns a new <see cref="Joins"/> instance that contains all joins from the current instance
+    /// plus the additional joins provided.
     /// </summary>
-    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
-    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.</param>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="Join{rightT}"/>.
-    /// </returns>
-    public static Joins<leftT> Join<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
-        JoinTypes.Join<rightT>.Joins<leftT>(predicates, subQuery);
+    /// <param name="newJoins">The additional join operations to include.</param>
+    /// <returns>A new <see cref="Joins"/> instance containing the additional joins.</returns>
+    public Joins Concat(IEnumerable<Join> newJoins) =>
+        new(Joints.Concat(newJoins));
 
     /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
-    /// a newly created <see cref="InnerJoin{rightT}"/> operation.
+    /// Creates and returns a new <see cref="Joins"/> instance that contains all joins from the current instance
+    /// plus the additional joins provided.
     /// </summary>
-    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
-    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>INNER JOIN</c>.</param>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="InnerJoin{rightT}"/>.
-    /// </returns>
-    public static Joins<leftT> InnerJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
-        JoinTypes.InnerJoin<rightT>.Joins<leftT>(predicates, subQuery);
+    /// <typeparam name="rightT"></typeparam>
+    /// <param name="newJoins">The additional join operations to include.</param>
+    /// <returns>A new <see cref="Joins"/> instance containing the additional joins.</returns>
+    public Joins Concat<rightT>(Joins newJoins) where rightT : class =>
+        new(Joints.Concat(newJoins.Joints));
 
-    /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
-    /// a newly created <see cref="FullJoin{rightT}"/> operation.
-    /// </summary>
-    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
-    /// <param name="predicates">The predicate(s) that define the <c>ON</c> clause of the SQL <c>FULL JOIN</c>.</param>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="FullJoin{rightT}"/>.
-    /// </returns>
-    public static Joins<leftT> FullJoin<rightT>(Predicates predicates, Subquery<rightT>? subQuery = null) where rightT : class =>
-        JoinTypes.FullJoin<rightT>.Joins<leftT>(predicates, subQuery);
+    #endregion
 
-    /// <summary>
-    /// Creates and returns a new <see cref="Joins{leftT}"/> instance that contains
-    /// a newly created <see cref="CrossJoin{rightT}"/> operation.
-    /// </summary>
-    /// <typeparam name="rightT">The data model representing the right-side table being joined.</typeparam>
-    /// <param name="subQuery">
-    /// An optional <see cref="Subquery{rightT}"/> to use as the right-hand side of the join instead of a
-    /// direct table reference. This allows for joining against complex subqueries while maintaining type
-    /// safety and intellisense support for the right-hand side model.
-    /// </param>
-    /// <returns>
-    /// A new <see cref="Joins{leftT}"/> containing a single <see cref="CrossJoin{rightT}"/>.
-    /// </returns>
-    public static Joins<leftT> CrossJoin<rightT>(Subquery<rightT>? subQuery = null) where rightT : class =>
-        JoinTypes.CrossJoin<rightT>.Joins<leftT>(subQuery);
-
-    /// <summary>
-    /// Gets the <see cref="TableTag"/> associated with the left (base) table in the join sequence.
-    /// </summary>
-    internal static TableTag TableTag =>
-        SqlToolsReflectorCache<leftT>.Table;
-
+    #region ISqlFragment Implementation
     /// <summary>
     /// Generates the SQL fragments for all <c>JOIN</c> clauses
-    /// represented by this <see cref="Joins{leftT}"/> instance.
+    /// represented by this <see cref="Joins"/> instance.
     /// </summary>
     /// <returns>
     /// The SQL fragments that render each <c>JOIN</c> clause in sequence.
@@ -351,60 +353,16 @@ public class Joins<leftT> : JoinsBase where leftT : class
     /// <remarks>
     /// Any exception thrown by an individual join while rendering SQL will be propagated to the caller.
     /// </remarks>
-    public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect)
-    {
-        if (ValidatedJoints.Count() == 1)
-            return ValidatedJoints.SelectMany(join => join.ToSqlFragments(dialect));
-        else
-            return ValidatedJoints.SelectMany((join, i) => join.ToSqlFragments(dialect));
-    }
+    public IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) =>
+        Joints.SelectMany(join => join.ToSqlFragments(dialect));
 
-    /// <summary>
-    /// Determines whether this <see cref="Joins{leftT}"/> instance contains any join definitions.
-    /// </summary>
-    /// <returns>
-    /// <see langword="true"/> if no joins are defined; otherwise, <see langword="false"/>.
-    /// </returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
-    /// </exception>
-    internal override bool IsEmpty() =>
-        ValidatedJoints.None();
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
+        ToSqlFragments(dialect).SelectMany(sqlFragment => sqlFragment.GetSqlFragmentParameters(dialect));
 
-    /// <summary>
-    /// Gets the materialized join collection after verifying that it is not <see langword="null"/> and contains no <see langword="null"/> entries.
-    /// </summary>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when <see cref="Joints"/> is <see langword="null"/> or contains a <see langword="null"/> entry.
-    /// </exception>
-    private IEnumerable<JoinBase> ValidatedJoints
-    {
-        get
-        {
-            IEnumerable<JoinBase>? joints = Joints ?? throw new InvalidOperationException($"{GetType().Name}.{nameof(Joints)} returned null.");
-            JoinBase[] materialized = joints as JoinBase[] ?? [.. joints];
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) =>
+        ToSqlFragments(dialect);
 
-            if (materialized.Any(static j => j is null))
-                throw new InvalidOperationException($"{GetType().Name}.{nameof(Joints)} contains null join entries.");
-
-            return materialized;
-        }
-    }
-
-    /// <summary>
-    /// Gets the first join in the current join sequence.
-    /// </summary>
-    /// <returns>The first join in the sequence.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when <see cref="Joints"/> is <see langword="null"/> or contains a <see langword="null"/> entry.
-    /// </exception>
-    internal override JoinBase First() =>
-        ValidatedJoints.First();
-
-    /// <summary>
-    /// Creates a <see cref="Joins{leftT}"/> collection containing a single join.
-    /// </summary>
-    /// <param name="joins">The SQL join to place in the collection.</param>
-    /// <returns>A join collection containing <paramref name="joins"/>.</returns>
-    public static implicit operator Joins<leftT>(JoinBase joins) => new (joins);
+    public string ToSql(ISqlDialects dialect) =>
+        Flatten(dialect).ToSql(dialect);
+    #endregion
 }

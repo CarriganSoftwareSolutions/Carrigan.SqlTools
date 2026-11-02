@@ -181,7 +181,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
     /// </param>
-    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, JoinsBase? joins, Predicates? predicates)
+    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTagBase>? from, JoinsBase? joins, Predicates? predicates)
     {
         ArgumentNullException.ThrowIfNull(entity);
         ValidateWherePredicates(predicates);
@@ -189,9 +189,9 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<ColumnInfo> updateTheseColumns =
             [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : GetGetColumnInfoLessKeys(SupportedTypes))];
 
-        IEnumerable<TableTag> selectTableTags = (from ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectTableTags);
+        IEnumerable<TableTagBase> selectTableTags = (from ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
+        IEnumerable<TableTagBase> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
+        IEnumerable<TableTagBase> invalidTags = predicateTableTags.Except(selectTableTags);
         bool useFullyQualifiedSets = Dialect.DoesUpdateSupportsFullyQualifiedSets() && joins.IsNotNullOrEmpty();
 
         if (invalidTags.Any())

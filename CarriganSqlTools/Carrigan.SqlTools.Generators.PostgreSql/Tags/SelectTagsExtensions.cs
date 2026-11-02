@@ -18,7 +18,7 @@ public static class SelectTagsExtensions
     /// </param>
     /// <param name="propertyName">The C# property name representing the SQL column or parameter.</param>
     /// <param name="aliasName">The SQL alias name to apply.</param>
-    public static SelectTags Append<T>(this SelectTags selectTags, PropertyName propertyName, AliasName? aliasName = null) where T : class =>
+    public static SelectTags Append<T>(this SelectTags selectTags, PropertyName propertyName, ColumnAlias? aliasName = null) where T : class =>
         selectTags.Append(SelectTagGenerator.Get<T>(propertyName, aliasName));
 
     /// <summary>
@@ -32,7 +32,7 @@ public static class SelectTagsExtensions
     /// <param name="aliasName">The SQL alias name to apply.</param>
     [ExternalOnly]
     public static SelectTags Append<T>(this SelectTags selectTags, string propertyName, string? aliasName = null) where T : class =>
-        selectTags.Append<T>(new PropertyName(propertyName), AliasName.New(aliasName));
+        selectTags.Append<T>(new PropertyName(propertyName), ColumnAlias.New(aliasName));
 
 
 

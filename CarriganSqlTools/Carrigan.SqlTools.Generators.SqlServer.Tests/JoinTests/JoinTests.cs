@@ -48,30 +48,19 @@ public class JoinTests
     }
 
     [Fact]
-    public void TableTag()
-    {
-        Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
-        Join<JoinLeftTable> join = new(id);
-
-        TableTag expected = new(null, "Left");
-
-        Assert.Equal(expected, join.TableTag);
-    }
-
-    [Fact]
     public void Constructor_Null_Exception() => 
         Assert.Throws<ArgumentNullException>(() => new Join<JoinRightTable>(null!));
 
     [Fact]
     public void Joins_Null_Exception() => 
-        Assert.Throws<ArgumentNullException>(() => Join<JoinRightTable>.Joins<JoinLeftTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => Join<JoinRightTable>.Joins<JoinLeftTable>());
 
     [Fact]
     public void JoinsNewJoin()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Join<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = Join<JoinRightTable>.Joins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);

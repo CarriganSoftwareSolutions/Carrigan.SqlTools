@@ -150,7 +150,7 @@ public class JoinSubqueryTests
     [Fact]
     public void JoinsCrossJoin_WithSubquery_RendersSubqueryAndAlias()
     {
-        Joins<JoinLeftTable> joins = Joins<JoinLeftTable>.CrossJoin(RightSubquery());
+        Joins<JoinLeftTable> joins = Joins<JoinLeftTable>.CrossJoin();
 
         string actual = joins.ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN (SELECT [Right].* FROM [Right]) AS [Right]";
@@ -161,7 +161,7 @@ public class JoinSubqueryTests
     [Fact]
     public void JoinStaticFactory_WithSubquery_RendersSubqueryAndAlias()
     {
-        Joins<JoinLeftTable> joins = Join<JoinRightTable>.Joins<JoinLeftTable>(RightOnLeftPredicate(), RightSubquery());
+        Joins<JoinLeftTable> joins = Join<JoinRightTable>.Joins<JoinLeftTable>();
 
         string actual = joins.ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])";
@@ -172,7 +172,7 @@ public class JoinSubqueryTests
     [Fact]
     public void InnerJoinStaticFactory_WithSubquery_RendersSubqueryAndAlias()
     {
-        Joins<JoinLeftTable> joins = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(RightOnLeftPredicate(), RightSubquery());
+        Joins<JoinLeftTable> joins = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>();
 
         string actual = joins.ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " INNER JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])";
@@ -183,7 +183,7 @@ public class JoinSubqueryTests
     [Fact]
     public void LeftJoinStaticFactory_WithSubquery_RendersSubqueryAndAlias()
     {
-        Joins<JoinLeftTable> joins = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(RightOnLeftPredicate(), RightSubquery());
+        Joins<JoinLeftTable> joins = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>();
 
         string actual = joins.ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " LEFT JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])";
@@ -194,7 +194,7 @@ public class JoinSubqueryTests
     [Fact]
     public void RightJoinStaticFactory_WithSubquery_RendersSubqueryAndAlias()
     {
-        Joins<JoinLeftTable> joins = RightJoin<JoinRightTable>.Joins<JoinLeftTable>(RightOnLeftPredicate(), RightSubquery());
+        Joins<JoinLeftTable> joins = RightJoin<JoinRightTable>.Joins<JoinLeftTable>();
 
         string actual = joins.ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " RIGHT JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])";
@@ -205,7 +205,7 @@ public class JoinSubqueryTests
     [Fact]
     public void FullJoinStaticFactory_WithSubquery_RendersSubqueryAndAlias()
     {
-        Joins<JoinLeftTable> joins = FullJoin<JoinRightTable>.Joins<JoinLeftTable>(RightOnLeftPredicate(), RightSubquery());
+        Joins<JoinLeftTable> joins = FullJoin<JoinRightTable>.Joins<JoinLeftTable>();
 
         string actual = joins.ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " FULL JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])";

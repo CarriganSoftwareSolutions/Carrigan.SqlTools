@@ -9,10 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.8" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.9-alpha.202610212318" />
     <PackageReference Include="coverlet.MTP" Version="10.1.0" />
     <PackageReference Include="Respawn" Version="7.0.0" />
-    <PackageReference Include="xunit.v3" Version="4.0.1" />
+    <PackageReference Include="xunit.v3" Version="4.0.2" />
   </ItemGroup>
 
   <ItemGroup>

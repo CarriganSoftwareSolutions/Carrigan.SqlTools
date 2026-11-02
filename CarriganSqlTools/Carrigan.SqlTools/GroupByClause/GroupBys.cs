@@ -148,9 +148,9 @@ public class GroupBys
     }
 
     /// <summary>
-    /// Enumerates all <see cref="TableTag"/> objects referenced in the <c>GROUP BY</c> clause.
+    /// Enumerates all <see cref="TableTagBase"/> objects referenced in the <c>GROUP BY</c> clause.
     /// </summary>
-    internal IEnumerable<TableTag> TableTags =>
+    internal IEnumerable<TableTagBase> TableTags =>
         GroupByItems.SelectMany(static item => item.TableTags);
 
     /// <summary>

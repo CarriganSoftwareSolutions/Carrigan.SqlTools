@@ -60,6 +60,17 @@ public class SqlServerDialect : ISqlDialects
         schemaName.IsNotNullOrEmpty()
             ? $"{QuoteIdentifier(schemaName!.ToString())}.{QuoteIdentifier(tableName.ToString())}"
             : QuoteIdentifier(tableName.ToString());
+
+    /// <summary>
+    /// Generates a string representation of the specified database table alias
+    /// </summary>
+    /// <param name="aliasTag">The alias tag for the table. May be null to omit the alias.</param>
+    /// <returns>A string containing the rendered representation of the specified table alias.</returns>
+    public string RenderTableAlias(AliasTag? aliasTag) =>
+        aliasTag.IsNotNullOrEmpty()
+            ? QuoteIdentifier(aliasTag.ToString())
+            : string.Empty;
+
     /// <summary>
     /// Renders the fully qualified name of a database column, optionally including the table name and schema.
     /// </summary>
@@ -67,7 +78,7 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="tableTag">The tableTag value.</param>
     /// <param name="columnName">The SQL column name to apply.</param>
     /// <returns>A string representing the fully qualified column name, formatted according to the specified parameters.</returns>
-    public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
+    public string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
                 ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName.ToString())}"
                 : QuoteIdentifier(columnName.ToString());

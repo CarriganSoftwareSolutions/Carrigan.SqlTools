@@ -21,7 +21,7 @@ public static class SqlExpressionExtensions
     /// <returns>
     /// A SelectTag that represents the given SqlExpression with the specified AliasName.
     /// </returns>
-    public static SelectTag AsSelectTag(this SqlExpression sqlExpression, AliasName aliasName) =>
+    public static SelectTag AsSelectTag(this SqlExpression sqlExpression, ColumnAlias aliasName) =>
         new(sqlExpression, aliasName);
 
     /// <summary>
@@ -38,5 +38,5 @@ public static class SqlExpressionExtensions
     /// </returns>
     [ExternalOnly]
     public static SelectTag AsSelectTag(this SqlExpression sqlExpression, string aliasName) =>
-        new(sqlExpression, new AliasName(aliasName));
+        new(sqlExpression, new ColumnAlias(aliasName));
 }

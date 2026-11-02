@@ -3,6 +3,7 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.SqlGenerators;
@@ -25,6 +26,9 @@ public abstract partial class SqlGeneratorBase<T>
         Predicates? having,
         OrderBys? orderBy, PagingBase? paging
     ) =>
-        new(BaseSelectFragments(distinct, null, selects, joins, where, groupBys, having, orderBy, paging), Dialect);
-
+        new
+        (
+            selects ?? new SelectTags(GetColumnInfo(SupportedTypes).Select(columnInfo => columnInfo.SelectTag)),
+            BaseSelectFragments(distinct, null, selects, joins, where, groupBys, having, orderBy, paging)
+        );
 }

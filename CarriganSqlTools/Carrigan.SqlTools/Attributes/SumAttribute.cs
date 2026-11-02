@@ -22,7 +22,7 @@ public sealed class SumAttribute<T> : SelectTagAttribute<T>
     /// </param>
     [ExternalOnly]
     public SumAttribute(string propertyName, string? aliasName = null)
-        : this(new PropertyName(propertyName), false, AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), false, ColumnAlias.New(aliasName))
     {
     }
 
@@ -34,14 +34,14 @@ public sealed class SumAttribute<T> : SelectTagAttribute<T>
     /// <param name="aliasName">The optional SQL result-column alias.</param>
     [ExternalOnly]
     public SumAttribute(string propertyName, bool distinct, string? aliasName = null)
-        : this(new PropertyName(propertyName), distinct, AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), distinct, ColumnAlias.New(aliasName))
     {
     }
 
     /// <summary>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
-    internal SumAttribute(PropertyName propertyName, AliasName? aliasName = null)
+    internal SumAttribute(PropertyName propertyName, ColumnAlias? aliasName = null)
         : this(propertyName, false, aliasName)
     {
     }
@@ -49,7 +49,7 @@ public sealed class SumAttribute<T> : SelectTagAttribute<T>
     /// <summary>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
-    internal SumAttribute(PropertyName propertyName, bool distinct, AliasName? aliasName = null)
+    internal SumAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
         AliasTag = AliasTag.New(aliasName);

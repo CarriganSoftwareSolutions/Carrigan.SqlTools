@@ -23,15 +23,15 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
     [
-        new Exists(new SubqueryBase([], new SqlServerDialect())),
-        new Exists(new SubqueryBase([], new SqlServerDialect())),
+        new Exists(new Subquery([], new SqlServerDialect())),
+        new Exists(new Subquery([], new SqlServerDialect())),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatAreEqual
     {
         get
         {
-            SubqueryBase subquery = new([], new SqlServerDialect());
+            Subquery subquery = new([], new SqlServerDialect());
 
             return
             [
@@ -46,7 +46,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
     [
-        new Exists(new SubqueryBase([], new SqlServerDialect())),
+        new Exists(new Subquery([], new SqlServerDialect())),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
@@ -54,7 +54,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
     [
-        new Exists(new SubqueryBase([], new SqlServerDialect())),
+        new Exists(new Subquery([], new SqlServerDialect())),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
@@ -62,7 +62,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
     [
-        new Exists(new SubqueryBase([], new SqlServerDialect())),
+        new Exists(new Subquery([], new SqlServerDialect())),
     ];
 
     [Fact]

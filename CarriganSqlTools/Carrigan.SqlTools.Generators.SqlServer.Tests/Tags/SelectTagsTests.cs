@@ -14,7 +14,7 @@ public class SelectTagsTests
     private static readonly SqlServerDialect Dialect = new();
     private static readonly SqlGenerator<Order> OrderSqlGenerator = new();
     private static SelectTag<SomeTable> New(string columnName, string? aliasName) =>
-        new (new PropertyName(columnName), AliasName.New(aliasName));
+        new (new PropertyName(columnName), ColumnAlias.New(aliasName));
 
     private static readonly SelectTag a = New("SomeColumn", null);
     private static readonly SelectTag b = New("OtherColumn", null);

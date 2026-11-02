@@ -20,14 +20,14 @@ public sealed class CountAttribute : SelectTagAttribute
     /// </param>
     [ExternalOnly]
     public CountAttribute(string? aliasName = null)
-        : this(AliasName.New(aliasName))
+        : this(ColumnAlias.New(aliasName))
     {
     }
 
     /// <summary>
     /// Initializes a new instance from a strongly typed alias value.
     /// </summary>
-    internal CountAttribute(AliasName? aliasName)
+    internal CountAttribute(ColumnAlias? aliasName)
     {
         AliasTag = AliasTag.New(aliasName);
         SelectTag = new SelectTag(new Count(), AliasTag);
@@ -52,7 +52,7 @@ public sealed class CountAttribute<T> : SelectTagAttribute<T>
     /// </param>
     [ExternalOnly]
     public CountAttribute(string propertyName, string? aliasName = null)
-        : this(new PropertyName(propertyName), false, AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), false, ColumnAlias.New(aliasName))
     {
     }
 
@@ -64,14 +64,14 @@ public sealed class CountAttribute<T> : SelectTagAttribute<T>
     /// <param name="aliasName">The optional SQL result-column alias.</param>
     [ExternalOnly]
     public CountAttribute(string propertyName, bool distinct, string? aliasName = null)
-        : this(new PropertyName(propertyName), distinct, AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), distinct, ColumnAlias.New(aliasName))
     {
     }
 
     /// <summary>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
-    internal CountAttribute(PropertyName propertyName, AliasName? aliasName = null)
+    internal CountAttribute(PropertyName propertyName, ColumnAlias? aliasName = null)
         : this(propertyName, false, aliasName)
     {
     }
@@ -79,7 +79,7 @@ public sealed class CountAttribute<T> : SelectTagAttribute<T>
     /// <summary>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
-    internal CountAttribute(PropertyName propertyName, bool distinct, AliasName? aliasName = null)
+    internal CountAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
         AliasTag = AliasTag.New(aliasName);

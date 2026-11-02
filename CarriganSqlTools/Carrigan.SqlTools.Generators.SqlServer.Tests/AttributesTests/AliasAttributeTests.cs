@@ -21,7 +21,7 @@ public class AliasAttributeTests
         Assert.NotNull(property);
         IEnumerable<AliasAttribute> aliasAttributes = property.GetCustomAttributes<AliasAttribute>();
         Assert.NotEmpty(aliasAttributes);
-        Assert.Equal(new AliasName("AnAlias"), aliasAttributes.Single().Name);
+        Assert.Equal(new ColumnAlias("AnAlias"), aliasAttributes.Single().Name);
     }
 
     [Fact]

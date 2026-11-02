@@ -78,7 +78,7 @@ public class SqlGenerator_SelectCountTests
     {
         Predicates joinId = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Predicates predicateId = new Equal(new Column<JoinRightTable>("Id"), new Parameter(3, "Id"));
-        Joins<JoinLeftTable> join = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>(joinId);
+        Joins<JoinLeftTable> join = InnerJoin<JoinRightTable>.Joins<JoinLeftTable>();
         SqlQuery query = _sqlGeneratorForJoinLeftTable.SelectCount(null, null, join, predicateId);
 
         string expectedSql = "SELECT COUNT([Left].[Id]) FROM [Left] INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Id] = @Id_1)";

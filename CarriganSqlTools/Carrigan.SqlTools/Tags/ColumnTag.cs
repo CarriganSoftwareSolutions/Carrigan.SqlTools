@@ -110,19 +110,23 @@ public class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, Co
     internal readonly ColumnName ColumnName;
 
     /// <summary>
-    /// The <see cref="Tags.TableTag"/> representing the table containing the column.
+    /// The <see cref="Tags.TableTagBase"/> representing the table containing the column.
     /// </summary>
-    internal readonly TableTag TableTag;
+    internal readonly TableTagBase TableTag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnTag"/> class.
     /// </summary>
-    /// <param name="tableTag">The <see cref="Tags.TableTag"/> representing the table containing the column.</param>
+    /// <param name="tableTag">The <see cref="Tags.TableTagBase"/> representing the table containing the column.</param>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
-    internal ColumnTag(TableTag tableTag, ColumnName columnName)
+    internal ColumnTag(TableTagBase tableTag, ColumnName columnName)
     {
         ColumnName = columnName;
         TableTag = tableTag;
+    }
+
+    internal ColumnTag(TableAlias tableAlias, ResultColumnName resultColumnName) : this (new TableAliasTag(tableAlias), (ColumnName)resultColumnName)
+    {
     }
 
     /// <summary>
@@ -132,7 +136,7 @@ public class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, Co
     internal ColumnTag(ColumnName columnName)
     {
         ColumnName = columnName;
-        TableTag = new(SchemaName.New(null), new TableName(null));
+        TableTag = new TableTag(SchemaName.New(null), new TableName(null));
     }
 
     /// <summary>
@@ -152,15 +156,7 @@ public class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, Co
         if (other is null)
             return false;
 
-        if (TableTag.SchemaName.IsNotNullOrEmpty() != other.TableTag.SchemaName.IsNotNullOrEmpty())
-            return false;
-
-        if (TableTag.SchemaName.IsNotNullOrEmpty() &&
-            string.Equals(TableTag.SchemaName!.ToString(), other.TableTag.SchemaName!.ToString(), StringComparison.OrdinalIgnoreCase) == false)
-            return false;
-
-        return string.Equals(TableTag.TableName.ToString(), other.TableTag.TableName.ToString(), StringComparison.OrdinalIgnoreCase) &&
-               string.Equals(ColumnName.ToString(), other.ColumnName.ToString(), StringComparison.OrdinalIgnoreCase);
+        return TableTag.Equals(other.TableTag) && ColumnName.Equals(other.ColumnName);
     }
 
     /// <summary>
@@ -175,9 +171,8 @@ public class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, Co
     public override int GetHashCode()
     {
         HashCode hashCode = new();
-        hashCode.Add(TableTag.SchemaName.IsNotNullOrEmpty() ? TableTag.SchemaName!.ToString() : string.Empty, StringComparer.OrdinalIgnoreCase);
-        hashCode.Add(TableTag.TableName.ToString(), StringComparer.OrdinalIgnoreCase);
-        hashCode.Add(ColumnName.ToString(), StringComparer.OrdinalIgnoreCase);
+        hashCode.Add(TableTag);
+        hashCode.Add(ColumnName);
         return hashCode.ToHashCode();
     }
 

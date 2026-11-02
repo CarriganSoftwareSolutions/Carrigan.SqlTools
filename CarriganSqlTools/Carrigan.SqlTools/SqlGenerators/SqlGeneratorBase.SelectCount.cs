@@ -88,15 +88,15 @@ public abstract partial class SqlGeneratorBase<T>
                     yield return fragment;
             }
         }
-        IEnumerable<TableTag> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+        IEnumerable<TableTagBase> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
 
-        IEnumerable<TableTag> selectedTableTags = select?.TableTags ?? [Table];
-        IEnumerable<TableTag> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
+        IEnumerable<TableTagBase> selectedTableTags = select?.TableTags ?? [Table];
+        IEnumerable<TableTagBase> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
-        IEnumerable<TableTag> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
+        IEnumerable<TableTagBase> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
+        IEnumerable<TableTagBase> invalidPredicateTags = predicateTableTags.Except(selectableTableTags);
 
-        IEnumerable<TableTag> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
+        IEnumerable<TableTagBase> invalidTags = [.. invalidSelectedTags.Concat(invalidPredicateTags).Distinct()];
 
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);

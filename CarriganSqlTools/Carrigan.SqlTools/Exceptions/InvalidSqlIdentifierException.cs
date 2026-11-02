@@ -162,11 +162,11 @@ public class InvalidSqlIdentifierException: Exception
     /// for one or more invalid alias names and their associated properties.
     /// </summary>
     /// <param name="names">
-    /// Tuples pairing the invalid <see cref="AliasName"/> values with the
+    /// Tuples pairing the invalid <see cref="ColumnAlias"/> values with the
     /// <see cref="PropertyInfo"/> each originated from.
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="names"/> is <c>null</c>.</exception>
-    internal InvalidSqlIdentifierException(params IEnumerable<Tuple<PropertyInfo, AliasName>> names) :
+    internal InvalidSqlIdentifierException(params IEnumerable<Tuple<PropertyInfo, ColumnAlias>> names) :
         base(CreateMessage(names))
     {
     }
@@ -175,16 +175,16 @@ public class InvalidSqlIdentifierException: Exception
     /// Builds an error message listing invalid alias names and the properties they are associated with.
     /// </summary>
     /// <param name="names">
-    /// Tuples pairing the invalid <see cref="AliasName"/> values with the
+    /// Tuples pairing the invalid <see cref="ColumnAlias"/> values with the
     /// <see cref="PropertyInfo"/> each originated from.
     /// </param>
     /// <returns>A formatted error message.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="names"/> is <c>null</c>.</exception>
-    private static string CreateMessage(params IEnumerable<Tuple<PropertyInfo, AliasName>> names)
+    private static string CreateMessage(params IEnumerable<Tuple<PropertyInfo, ColumnAlias>> names)
     {
         ArgumentNullException.ThrowIfNull(names, nameof(names));
 
-        IReadOnlyCollection<Tuple<PropertyInfo, AliasName>> pairs = [.. names];
+        IReadOnlyCollection<Tuple<PropertyInfo, ColumnAlias>> pairs = [.. names];
 
         return "The following alias name(s) do not follow the SQL naming convention: "
             + pairs.Select(pair => $"\"{pair.Item2}\"").JoinAnd()
@@ -198,7 +198,7 @@ public class InvalidSqlIdentifierException: Exception
     /// for an invalid alias name.
     /// </summary>
     /// <param name="names">The invalid alias names.</param>
-    internal InvalidSqlIdentifierException(params IEnumerable<AliasName> names) :
+    internal InvalidSqlIdentifierException(params IEnumerable<ColumnAlias> names) :
         base(CreateMessage(names))
     {
     }
@@ -208,7 +208,7 @@ public class InvalidSqlIdentifierException: Exception
     /// </summary>
     /// <param name="names">The invalid alias names.</param>
     /// <returns>A formatted error message.</returns>
-    private static string CreateMessage(params IEnumerable<AliasName> names) =>
+    private static string CreateMessage(params IEnumerable<ColumnAlias> names) =>
         $"The following alias names do not follow the SQL naming convention: "
             + names
                 .Select(name => name.ToString())

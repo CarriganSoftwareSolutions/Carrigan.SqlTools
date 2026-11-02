@@ -8,10 +8,10 @@ namespace Carrigan.SqlTools.Generators.PostgreSql.Tests.Tags;
 public class SelectTagBaseEqualityTests
 {
     private static SelectTag<SomeTable> New(string columnName, string? aliasName = null) =>
-        new (new PropertyName(columnName), AliasName.New(aliasName));
+        new (new PropertyName(columnName), ColumnAlias.New(aliasName));
 
     private static SelectTag NewExpression(string columnName, string? aliasName = null) =>
-        new(new Column<SomeTable>(columnName), AliasTag.New(AliasName.New(aliasName)));
+        new(new Column<SomeTable>(columnName), AliasTag.New(ColumnAlias.New(aliasName)));
 
     [Fact]
     public void Equals_SameReference()
@@ -128,7 +128,7 @@ public class SelectTagBaseEqualityTests
     public void Equals_ObjectWrongType()
     {
         SelectTag selectTag = New("SomeColumn", "SomeAlias");
-        object other = new AliasName("SomeAlias");
+        object other = new ColumnAlias("SomeAlias");
 
         Assert.False(selectTag.Equals(other));
     }

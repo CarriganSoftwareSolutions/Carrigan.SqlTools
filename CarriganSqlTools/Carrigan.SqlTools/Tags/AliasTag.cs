@@ -12,17 +12,18 @@ namespace Carrigan.SqlTools.Tags;
 /// Represents an SQL alias token used by SQL generation.
 /// </summary>
 /// <remarks>
-/// Equality and hashing are based on the underlying <see cref="AliasName"/> value.
+/// Equality and hashing are based on the underlying <see cref="ColumnAlias"/> value.
 /// </remarks>
+//TODO: ColumnAliasTag
 public class AliasTag : IEquatable<AliasTag>, IEqualityOperators<AliasTag, AliasTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
-    private readonly AliasName _aliasName;
+    private readonly ColumnAlias _aliasName;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasTag"/> class.
     /// </summary>
     /// <param name="aliasName">The alias name to associate with this tag.</param>
-    public AliasTag(AliasName aliasName)
+    public AliasTag(ColumnAlias aliasName)
     {
         ArgumentNullException.ThrowIfNull(aliasName);
         _aliasName = aliasName;
@@ -37,7 +38,7 @@ public class AliasTag : IEquatable<AliasTag>, IEqualityOperators<AliasTag, Alias
     /// A new <see cref="AliasTag"/> instance if <paramref name="name"/> contains a value;
     /// otherwise, <c>null</c>.
     /// </returns>
-    public static AliasTag? New(AliasName? name)
+    public static AliasTag? New(ColumnAlias? name)
     {
         if (name.IsNotNullOrEmpty())
             return new AliasTag(name);

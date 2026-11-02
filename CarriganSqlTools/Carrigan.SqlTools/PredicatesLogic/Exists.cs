@@ -55,6 +55,6 @@ public class Exists : SubqueryPredicateBase
     /// The subquery to evaluate for the EXISTS predicate.
     /// This subquery should return rows that satisfy the conditions being checked for existence.
     /// </param>
-    public Exists(SubqueryBase subQuery) : base(subQuery, "EXISTS")
+    public Exists(Subquery subQuery) : base(subQuery, "EXISTS")
     { }
 }

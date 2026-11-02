@@ -17,9 +17,9 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     public SqlExpression SqlExpression { get; }
 
     /// <summary>
-    /// Gets the <see cref="IEnumerable{TableTag}"/> associated with this item.
+    /// Gets the <see cref="IEnumerable{TableTagBase}"/> associated with this item.
     /// </summary>
-    internal IEnumerable<TableTag> TableTags =>
+    internal IEnumerable<TableTagBase> TableTags =>
         SqlExpression.AllParticipatingTables;
 
     /// <summary>

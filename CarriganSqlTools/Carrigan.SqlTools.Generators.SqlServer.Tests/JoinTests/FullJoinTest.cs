@@ -64,7 +64,7 @@ public class FullJoinTest
 
     [Fact]
     public void Joins_Null_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => FullJoin<JoinRightTable>.Joins<JoinLeftTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => FullJoin<JoinRightTable>.Joins<JoinLeftTable>());
 
     [Fact]
     public void ToSql_EmptyPredicate_Exception()

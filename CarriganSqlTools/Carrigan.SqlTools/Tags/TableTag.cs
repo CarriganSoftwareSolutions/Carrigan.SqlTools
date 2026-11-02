@@ -102,7 +102,7 @@ namespace Carrigan.SqlTools.Tags;
 /// WHERE [Id] = @Id_3;
 /// ]]></code>
 /// </example>
-public class TableTag : IEquatable<TableTag>, IEqualityOperators<TableTag, TableTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
+public class TableTag : TableTagBase, IEquatable<TableTag>, IEqualityOperators<TableTag, TableTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
     /// <summary>
     /// Gets the reflected table tag for the specified model type.
@@ -255,47 +255,20 @@ public class TableTag : IEquatable<TableTag>, IEqualityOperators<TableTag, Table
     /// <summary>
     /// Indicates whether the rendered table tag is empty or consists only of whitespace characters.
     /// </summary>
-    public bool IsWhiteSpace() =>
+    public override bool IsWhiteSpace() =>
         SchemaName.IsNullOrWhiteSpace() && TableName.IsWhiteSpace();
-
-    /// <summary>
-    /// Indicates whether the rendered table tag contains at least one non-whitespace character.
-    /// </summary>
-    public bool IsNotWhiteSpace() =>
-        IsWhiteSpace() == false;
 
     /// <summary>
     /// Indicates whether the rendered table tag is empty.
     /// </summary>
-    public bool IsEmpty() =>
+    public override bool IsEmpty() =>
         SchemaName.IsNullOrEmpty() && TableName.IsEmpty();
-
-    /// <summary>
-    /// Indicates whether the rendered table tag is not empty.
-    /// </summary>
-    public bool IsNotEmpty() =>
-        IsEmpty() == false;
-
-    /// <summary>
-    /// Flattens this fragment into the sequence of fragments used to render SQL text.
-    /// </summary>
-    /// <returns>A single-item sequence containing this table tag.</returns>
-    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
-    {
-        yield return this;
-    }
-    /// <summary>
-    /// Gets the SQL parameters contained by this fragment.
-    /// </summary>
-    /// <returns>An empty sequence because table-name fragments do not contain SQL parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
-        [];
 
     /// <summary>
     /// Renders the schema-qualified table name using the supplied SQL dialect.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to quote and combine the schema and table identifiers.</param>
     /// <returns>The rendered table identifier.</returns>
-    public string ToSql(ISqlDialects dialect) =>
+    public override string ToSql(ISqlDialects dialect) =>
         dialect.RenderTable(SchemaName, TableName);
 }

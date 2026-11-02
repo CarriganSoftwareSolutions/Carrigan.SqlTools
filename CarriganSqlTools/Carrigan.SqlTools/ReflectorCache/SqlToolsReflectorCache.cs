@@ -359,7 +359,7 @@ public class SqlToolsReflectorCache<T>
         PropertyName propertyName,
         HashSet<Type> supportedTypes,
         Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory,
-        AliasName? aliasName = null
+        ColumnAlias? aliasName = null
     )
         where selectTagT : SelectTag
     {
@@ -402,7 +402,7 @@ public class SqlToolsReflectorCache<T>
     /// This overload resolves reflection metadata before a dialect-specific generator is involved. Consumers that
     /// create dialect-specific SQL must validate the participating column CLR types against that dialect's supported types.
     /// </remarks>
-    internal static SelectTag GetSelectTag(PropertyName propertyName, AliasName? aliasName = null)
+    internal static SelectTag GetSelectTag(PropertyName propertyName, ColumnAlias? aliasName = null)
     {
         ArgumentNullException.ThrowIfNull(propertyName, nameof(propertyName));
 
@@ -413,7 +413,7 @@ public class SqlToolsReflectorCache<T>
     private static selectTagT CreateSelectTag<selectTagT>
     (
         ColumnInfo columnInfo,
-        AliasName? aliasName,
+        ColumnAlias? aliasName,
         Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory
     )
         where selectTagT : SelectTag

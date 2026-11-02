@@ -10,7 +10,7 @@ namespace Carrigan.SqlTools.Attributes;
 /// </summary>
 /// <remarks>
 /// <para>
-/// The value is stored as a strongly typed <see cref="AliasName"/> and is typically consumed by
+/// The value is stored as a strongly typed <see cref="ColumnAlias"/> and is typically consumed by
 /// reflection-driven components (e.g., the column/selection caches) to derive a result set
 /// column name. Library consumers can still override the alias per query.
 /// </para>
@@ -115,7 +115,7 @@ public sealed class AliasAttribute : Attribute
     /// <summary>
     /// Gets the alias name to apply in the <c>AS</c> clause for the decorated property.
     /// </summary>
-    internal AliasName Name { get; }
+    internal ColumnAlias Name { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasAttribute"/> class.

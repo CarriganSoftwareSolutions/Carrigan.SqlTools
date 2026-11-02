@@ -23,15 +23,15 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
     [
-        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
-        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+        new Exists(new Subquery([], new PostgreSqlDialect())),
+        new Exists(new Subquery([], new PostgreSqlDialect())),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatAreEqual
     {
         get
         {
-            SubqueryBase subquery = new([], new PostgreSqlDialect());
+            Subquery subquery = new([], new PostgreSqlDialect());
 
             return
             [
@@ -46,7 +46,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
     [
-        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+        new Exists(new Subquery([], new PostgreSqlDialect())),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
@@ -54,7 +54,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
     [
-        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+        new Exists(new Subquery([], new PostgreSqlDialect())),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
@@ -62,7 +62,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
     [
-        new Exists(new SubqueryBase([], new PostgreSqlDialect())),
+        new Exists(new Subquery([], new PostgreSqlDialect())),
     ];
 
     [Fact]

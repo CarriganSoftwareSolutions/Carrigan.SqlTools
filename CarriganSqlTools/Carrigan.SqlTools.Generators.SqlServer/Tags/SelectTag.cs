@@ -19,7 +19,7 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="aliasName">
     /// An optional alias to use for this projection.
     /// </param>
-    public SelectTag(PropertyName propertyName, AliasName? aliasName = null)
+    public SelectTag(PropertyName propertyName, ColumnAlias? aliasName = null)
         : this(SelectTagGenerator.Get<modelT>(propertyName, aliasName))
     {
     }
@@ -33,7 +33,7 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="aliasName">
     /// An alias to use for this projection.
     /// </param>
-    public SelectTag(string propertyName, string aliasName) : this(new PropertyName(propertyName), AliasName.New(aliasName))
+    public SelectTag(string propertyName, string aliasName) : this(new PropertyName(propertyName), ColumnAlias.New(aliasName))
     {
     }
     /// <summary>
@@ -45,7 +45,7 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="aliasName">
     /// An optional alias to use for this projection.
     /// </param>
-    public SelectTag(string propertyName, AliasName? aliasName = null) : this(new PropertyName(propertyName), aliasName)
+    public SelectTag(string propertyName, ColumnAlias? aliasName = null) : this(new PropertyName(propertyName), aliasName)
     {
     }
     /// <summary>
@@ -57,7 +57,7 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="aliasName">
     /// An alias to use for this projection.
     /// </param>
-    public SelectTag(PropertyName propertyName, string aliasName) : this(propertyName, AliasName.New(aliasName))
+    public SelectTag(PropertyName propertyName, string aliasName) : this(propertyName, ColumnAlias.New(aliasName))
     {
     }
 

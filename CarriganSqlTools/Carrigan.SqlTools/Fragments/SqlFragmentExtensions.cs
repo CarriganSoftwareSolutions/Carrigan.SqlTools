@@ -7,6 +7,7 @@ namespace Carrigan.SqlTools.Fragments;
 /// <summary>
 /// Extension methods for <see cref="ISqlFragment"/> sequences.
 /// </summary>
+//TODO: consolidate some interface methods to be defined here. Possible candidates include ToSql, GetSqlFragmentParameters, Flatten
 internal static class SqlFragmentExtensions
 {
     /// <summary>

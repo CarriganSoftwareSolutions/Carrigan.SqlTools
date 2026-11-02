@@ -33,7 +33,7 @@ internal sealed class PredicateWrapper : Predicates
     /// <summary>
     /// Gets the leaf tables represented by the underlying expression.
     /// </summary>
-    public override IEnumerable<TableTag> LeafTables =>
+    public override IEnumerable<TableTagBase> LeafTables =>
         _sqlExpression.LeafTables;
 
     /// <summary>

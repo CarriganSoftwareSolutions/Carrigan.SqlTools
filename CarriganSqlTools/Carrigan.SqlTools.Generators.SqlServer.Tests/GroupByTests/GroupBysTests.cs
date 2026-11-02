@@ -348,7 +348,7 @@ public class GroupBysTests
     {
         Add selectedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
         GroupBys groupBys = new(new GroupBy(selectedExpression));
-        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new ColumnAlias("Value"));
 
         Assert.True(groupBys.ContainsEquivalent(selectTag));
     }
@@ -358,7 +358,7 @@ public class GroupBysTests
     {
         Add selectedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
         GroupBys groupBys = new(new GroupBy<ColumnTable>(nameof(ColumnTable.ColA)), new GroupBy<ColumnTable>(nameof(ColumnTable.ColB)));
-        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new ColumnAlias("Value"));
 
         Assert.True(groupBys.ContainsEquivalent(selectTag));
     }
@@ -371,7 +371,7 @@ public class GroupBysTests
         Column<ColumnTable> c = new(nameof(ColumnTable.Col1));
         Add selectedExpression = new(a, b);
         GroupBys groupBys = new(new GroupBy(new Add(a, c)), new GroupBy(new Add(b, c)));
-        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new ColumnAlias("Value"));
 
         Assert.False(groupBys.ContainsEquivalent(selectTag));
     }
@@ -382,7 +382,7 @@ public class GroupBysTests
         Add groupedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
         Add selectedExpression = new(groupedExpression, new Sum(new Column<ColumnTable>(nameof(ColumnTable.Col1))));
         GroupBys groupBys = new(new GroupBy(groupedExpression));
-        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new ColumnAlias("Value"));
 
         Assert.True(groupBys.ContainsEquivalent(selectTag));
     }
@@ -393,7 +393,7 @@ public class GroupBysTests
         Add groupedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
         Add selectedExpression = new(groupedExpression, new Sum(new Column<ColumnTable>(nameof(ColumnTable.Col1))));
         GroupBys groupBys = new(new GroupBy<ColumnTable>(nameof(ColumnTable.ColA)));
-        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new ColumnAlias("Value"));
 
         Assert.False(groupBys.ContainsEquivalent(selectTag));
     }
@@ -404,7 +404,7 @@ public class GroupBysTests
         Add selectedExpression = new(new Column<ColumnTable>(nameof(ColumnTable.ColA)), new Column<ColumnTable>(nameof(ColumnTable.ColB)));
         Add groupedExpression = new(selectedExpression, new Column<ColumnTable>(nameof(ColumnTable.Col1)));
         GroupBys groupBys = new(new GroupBy(groupedExpression));
-        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new AliasName("Value"));
+        SelectTag selectTag = SelectTagGenerator.Get(selectedExpression, new ColumnAlias("Value"));
 
         Assert.False(groupBys.ContainsEquivalent(selectTag));
     }

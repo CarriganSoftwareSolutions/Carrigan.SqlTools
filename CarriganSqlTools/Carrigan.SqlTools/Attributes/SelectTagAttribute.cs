@@ -62,7 +62,7 @@ public class SelectTagAttribute<T> : SelectTagAttribute
     /// <param name="aliasName">The optional SQL result-column alias to apply to the selected property.</param>
     [ExternalOnly]
     public SelectTagAttribute(string propertyName, string? aliasName = null) :
-        this(new(propertyName), AliasName.New(aliasName))
+        this(new(propertyName), ColumnAlias.New(aliasName))
     {
     }
 
@@ -74,7 +74,7 @@ public class SelectTagAttribute<T> : SelectTagAttribute
     /// <exception cref="ArgumentException">
     /// Thrown when <paramref name="propertyName"/> does not map to a valid selected property on <typeparamref name="T"/>.
     /// </exception>
-    internal SelectTagAttribute(PropertyName propertyName, AliasName? aliasName = null)
+    internal SelectTagAttribute(PropertyName propertyName, ColumnAlias? aliasName = null)
     {
         ColumnInfo columnInfo = SqlToolsReflectorCache<T>.GetSelectColumnInfo(propertyName);
         AliasTag? aliasTag = aliasName is null

@@ -304,12 +304,12 @@ public class JoinsTest
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
         TableTag expected = new(null, "Left");
-        Assert.Equal(expected, Joins<JoinLeftTable>.TableTag);
+        Assert.Equal(expected, Joins<JoinLeftTable>.JoinOnto);
     }
 
     [Fact]
     public void Constructor_NullJoins_Exception() => 
-        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>());
 
     [Fact]
     public void Constructor_NullJoinEntry_Exception()
@@ -320,7 +320,7 @@ public class JoinsTest
         null!
         ];
 
-        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(joins));
+        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>());
     }
 
     [Fact]

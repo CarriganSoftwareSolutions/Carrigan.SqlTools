@@ -22,7 +22,7 @@ public sealed class AverageAttribute<T> : SelectTagAttribute<T>
     /// </param>
     [ExternalOnly]
     public AverageAttribute(string propertyName, string? aliasName = null)
-        : this(new PropertyName(propertyName), false, AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), false, ColumnAlias.New(aliasName))
     {
     }
 
@@ -34,14 +34,14 @@ public sealed class AverageAttribute<T> : SelectTagAttribute<T>
     /// <param name="aliasName">The optional SQL result-column alias.</param>
     [ExternalOnly]
     public AverageAttribute(string propertyName, bool distinct, string? aliasName = null)
-        : this(new PropertyName(propertyName), distinct, AliasName.New(aliasName))
+        : this(new PropertyName(propertyName), distinct, ColumnAlias.New(aliasName))
     {
     }
 
     /// <summary>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
-    internal AverageAttribute(PropertyName propertyName, AliasName? aliasName = null)
+    internal AverageAttribute(PropertyName propertyName, ColumnAlias? aliasName = null)
         : this(propertyName, false, aliasName)
     {
     }
@@ -49,7 +49,7 @@ public sealed class AverageAttribute<T> : SelectTagAttribute<T>
     /// <summary>
     /// Initializes a new instance from strongly typed identifier values.
     /// </summary>
-    internal AverageAttribute(PropertyName propertyName, bool distinct, AliasName? aliasName = null)
+    internal AverageAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
         AliasTag = AliasTag.New(aliasName);

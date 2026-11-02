@@ -128,7 +128,7 @@ public class SelectTagsRefactorTests
             () => first.Append<SelectRight>
             (
                 new PropertyName(nameof(SelectRight.Name)),
-                new AliasName("123Invalid")
+                new ColumnAlias("123Invalid")
             )
         );
     }

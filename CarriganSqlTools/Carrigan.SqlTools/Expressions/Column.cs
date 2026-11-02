@@ -71,7 +71,7 @@ public class Column : SqlExpression
     /// <summary>
     /// Gets the table tag represented by this column leaf expression.
     /// </summary>
-    public override IEnumerable<TableTag> LeafTables =>
+    public override IEnumerable<TableTagBase> LeafTables =>
         [ColumnTag.TableTag];
 
     /// <summary>

@@ -30,7 +30,7 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
             && EqualityComparer<ColumnTag>.Default.Equals(left.SelectColumnTag, right.SelectColumnTag)
             && EqualityComparer<AliasTag>.Default.Equals(left.SelectAliasTag, right.SelectAliasTag)
             && EqualityComparer<SelectTag>.Default.Equals(left.SelectTag, right.SelectTag)
-            && EqualityComparer<AliasName>.Default.Equals(left.AliasName, right.AliasName)
+            && EqualityComparer<ColumnAlias>.Default.Equals(left.AliasName, right.AliasName)
             && left.IsKeyPart == right.IsKeyPart
             && left.IsEncrypted == right.IsEncrypted
             && left.IsKeyVersionProperty == right.IsKeyVersionProperty

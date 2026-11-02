@@ -29,7 +29,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// </summary>
     /// <param name="sqlExpression">The SQL expression to project.</param>
     /// <param name="aliasName">An optional alias to use for this projection.</param>
-    public SelectTag(SqlExpression sqlExpression, AliasName aliasName) : this(sqlExpression, AliasTag.New(aliasName))
+    public SelectTag(SqlExpression sqlExpression, ColumnAlias aliasName) : this(sqlExpression, AliasTag.New(aliasName))
     {
     }
 
@@ -39,7 +39,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <param name="sqlExpression">The SQL expression to project.</param>
     /// <param name="aliasName">An optional alias to use for this projection.</param>
     [ExternalOnly]
-    public SelectTag(SqlExpression sqlExpression, string aliasName) : this(sqlExpression, new AliasName(aliasName))
+    public SelectTag(SqlExpression sqlExpression, string aliasName) : this(sqlExpression, new ColumnAlias(aliasName))
     {
     }
 
@@ -84,7 +84,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <summary>
     /// Gets the table tags that participate in this select expression.
     /// </summary>
-    internal IEnumerable<TableTag> TableTags =>
+    internal IEnumerable<TableTagBase> TableTags =>
         SqlExpression.AllParticipatingTables;
 
     /// <summary>
@@ -104,6 +104,13 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
             ColumnTag? columnTag = (SqlExpression as Column)?.ColumnTag;
             return new(AliasTag?.ToString() ?? columnTag?.ColumnName.ToString() ?? SqlExpression.ToString());
         }
+    }
+
+
+    internal SelectTag FromTableAlias(TableAlias tableAlias)
+    {
+        ArgumentNullException.ThrowIfNull(tableAlias, nameof(tableAlias));
+        return new(new Column(new ColumnTag(tableAlias, ResultColumnName)));
     }
 
     /// <summary>

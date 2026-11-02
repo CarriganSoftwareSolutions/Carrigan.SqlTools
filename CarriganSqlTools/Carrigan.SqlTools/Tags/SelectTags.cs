@@ -3,6 +3,7 @@ using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
 using System.Collections;
 
 namespace Carrigan.SqlTools.Tags;
@@ -24,6 +25,19 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <param name="selectTags">The select tags to include in this instance.</param>
     public SelectTags(params IEnumerable<SelectTag> selectTags) =>
         _selectTags = selectTags.Materialize(NullOptionsEnum.ArgumentNullException);
+
+    /// <summary>
+    /// Projects the result columns in this collection as columns qualified by the supplied table alias.
+    /// </summary>
+    /// <param name="tableAlias">The table alias used to qualify the projected result columns.</param>
+    /// <returns>
+    /// This instance when <paramref name="tableAlias"/> is <see langword="null"/>; otherwise, a new collection
+    /// containing non-aliased select tags whose column expressions reference the result column names through the table alias.
+    /// </returns>
+    internal SelectTags FromTableAlias(TableAlias? tableAlias) =>
+        tableAlias is null
+            ? this
+            : new(_selectTags.Select(selectTag => selectTag.FromTableAlias(tableAlias)));
 
     /// <summary>
     /// Indicates whether this instance contains any select tags.
@@ -63,9 +77,9 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
             .SelectMany(selectTag => selectTag.NonAggregateColumnExpressions);
 
     /// <summary>
-    /// Gets all distinct <see cref="TableTag"/> values referenced by the contained select tags.
+    /// Gets all distinct <see cref="TableTagBase"/> values referenced by the contained select tags.
     /// </summary>
-    internal IEnumerable<TableTag> GetTableTags() =>
+    internal IEnumerable<TableTagBase> GetTableTags() =>
         _selectTags
             .SelectMany(static select => select.TableTags)
             .Distinct();

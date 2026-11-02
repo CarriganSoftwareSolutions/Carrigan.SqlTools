@@ -24,7 +24,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Predicates? predicates,
         GroupBys? groupBys,
         Predicates? having,
-        OrderBys? orderBy, PagingBase? paging
+        OrderBys? orderBy, 
+        PagingBase? paging
     ) =>
         BaseSubquery(distinct, selects, joins, predicates, groupBys, having, orderBy, paging);
 
@@ -40,7 +41,8 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Predicates? predicates,
         GroupBys? groupBys,
         Predicates? having,
-        OrderBys? orderBy, PagingBase? paging
+        OrderBys? orderBy, 
+        PagingBase? paging
     ) =>
         InternalSubquery(distinct, selects, joins, predicates, groupBys, having, orderBy, paging);
 

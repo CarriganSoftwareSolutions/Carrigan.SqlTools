@@ -67,7 +67,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
     {
         List<Exception> exceptions = [];
         IEnumerable<Tuple<PropertyInfo, ColumnName>> invalidColumns = [];
-        IEnumerable<Tuple<PropertyInfo, AliasName>> invalidAliases = [];
+        IEnumerable<Tuple<PropertyInfo, ColumnAlias>> invalidAliases = [];
         IEnumerable<Tuple<PropertyInfo, ParameterTag>> invalidParameters = [];
         IEnumerable<Type> unsupportedKeyTypes =
             KeyColumnInfo
@@ -99,9 +99,9 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
                 .Where(static column => column.AliasName is not null && SqlIdentifierPattern.Fails(column.AliasName.ToString()))
                 .Select(static column =>
                     column.AliasName is not null
-                        ? new Tuple<PropertyInfo, AliasName>(column.PropertyInfo, column.AliasName)
+                        ? new Tuple<PropertyInfo, ColumnAlias>(column.PropertyInfo, column.AliasName)
                         : null)
-                .OfType<Tuple<PropertyInfo, AliasName>>()
+                .OfType<Tuple<PropertyInfo, ColumnAlias>>()
                 .Materialize(NullOptionsEnum.NullReferenceException);
 
         if (invalidAliases.Any())

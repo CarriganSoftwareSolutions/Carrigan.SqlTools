@@ -16,7 +16,8 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// by the SQL generator.
 /// </para>
 /// </remarks>
-public class AliasName : TextWrapper
+[Obsolete("Use ColumnAlias instead.")]
+public class AliasName : ColumnAlias
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AliasName"/> class.
@@ -35,6 +36,6 @@ public class AliasName : TextWrapper
     /// A new <see cref="AliasName"/> instance if <paramref name="name"/> contains a valid value;
     /// otherwise, <c>null</c>.
     /// </returns>
-    public static AliasName? New(string? name) =>
+    public static new AliasName? New(string? name) =>
         name.IsNullOrEmpty() ? null : new(name);
 }

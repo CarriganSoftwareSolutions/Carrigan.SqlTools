@@ -11,7 +11,7 @@ public class SqlExpressionExtensionsTests
     public void AsSelectTag_AliasName_ReturnsSelectTagWithExpressionAndAlias()
     {
         SqlExpression sqlExpression = new Parameter(123, "Value");
-        AliasName aliasName = new("Result");
+        ColumnAlias aliasName = new("Result");
 
         SelectTag selectTag = sqlExpression.AsSelectTag(aliasName);
 
@@ -27,6 +27,6 @@ public class SqlExpressionExtensionsTests
         SelectTag selectTag = sqlExpression.AsSelectTag("Result");
 
         Assert.Same(sqlExpression, selectTag.SqlExpression);
-        Assert.Equal(new SelectTag(sqlExpression, new AliasName("Result")), selectTag);
+        Assert.Equal(new SelectTag(sqlExpression, new ColumnAlias("Result")), selectTag);
     }
 }

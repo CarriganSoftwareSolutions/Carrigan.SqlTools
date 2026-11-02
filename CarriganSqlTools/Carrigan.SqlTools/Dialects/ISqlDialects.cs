@@ -37,6 +37,13 @@ public interface ISqlDialects
     string RenderTable(SchemaName? schemaName, TableName tableName);
 
     /// <summary>
+    /// Generates a string representation of the specified database table alias
+    /// </summary>
+    /// <param name="aliasTag">The alias tag for the table. May be null to omit the alias.</param>
+    /// <returns>A string containing the rendered representation of the specified table alias.</returns>
+    string RenderTableAlias(AliasTag? aliasTag);
+
+    /// <summary>
     /// Renders a fully qualified column name for use in SQL statements.
     /// </summary>
     /// <remarks>If <paramref name="includeTable"/> is false, only the column name is rendered.</remarks>
@@ -44,7 +51,7 @@ public interface ISqlDialects
     /// <param name="columnName">The column name to render.</param>
     /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
     /// <returns>A string containing the rendered column name, optionally qualified by table and schema as specified.</returns>
-    string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true);
+    string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true);
 
 
     /// <summary>
