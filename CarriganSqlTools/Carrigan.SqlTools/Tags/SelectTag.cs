@@ -22,14 +22,14 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <summary>
     /// The optional alias applied to this select item.
     /// </summary>
-    internal readonly AliasTag? AliasTag;
+    internal readonly ColumnAliasTag? AliasTag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
     /// </summary>
     /// <param name="sqlExpression">The SQL expression to project.</param>
     /// <param name="aliasName">An optional alias to use for this projection.</param>
-    public SelectTag(SqlExpression sqlExpression, ColumnAlias aliasName) : this(sqlExpression, AliasTag.New(aliasName))
+    public SelectTag(SqlExpression sqlExpression, ColumnAlias aliasName) : this(sqlExpression, ColumnAliasTag.New(aliasName))
     {
     }
 
@@ -51,7 +51,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
-    public SelectTag(SqlExpression sqlExpression, AliasTag? aliasTag = null)
+    public SelectTag(SqlExpression sqlExpression, ColumnAliasTag? aliasTag = null)
     {
         ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
 
@@ -191,7 +191,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
         if (other is null)
             return false;
 
-        return SqlExpression.Equals(other.SqlExpression) && EqualityComparer<AliasTag?>.Default.Equals(AliasTag, other.AliasTag);
+        return SqlExpression.Equals(other.SqlExpression) && EqualityComparer<ColumnAliasTag?>.Default.Equals(AliasTag, other.AliasTag);
     }
 
     /// <summary>

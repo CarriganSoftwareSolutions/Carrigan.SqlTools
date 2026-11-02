@@ -31,7 +31,7 @@ public abstract record UpdateBuilderBase<T, joinsT>
     /// <summary>
     /// Gets or sets the joins to include in the UPDATE statement.
     /// </summary>
-    public virtual Joins<joinsT>? Joins { get; set; }
+    public virtual Joins? Joins { get; set; }
 
     /// <summary>
     /// Gets or sets the predicates used to filter the rows being updated.
@@ -59,7 +59,7 @@ public abstract record UpdateBuilderBase<T, joinsT>
     /// </summary>
     /// <param name="joins">The joins to include in the UPDATE statement.</param>
     /// <returns>A new query instance with the specified joins.</returns>
-    public virtual UpdateBuilderBase<T, joinsT> WithJoins(Joins<joinsT>? joins) =>
+    public virtual UpdateBuilderBase<T, joinsT> WithJoins(Joins? joins) =>
         this with { Joins = joins };
 
     /// <summary>

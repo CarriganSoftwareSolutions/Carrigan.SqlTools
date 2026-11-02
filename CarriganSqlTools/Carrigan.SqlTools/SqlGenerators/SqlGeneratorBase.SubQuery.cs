@@ -20,7 +20,7 @@ public abstract partial class SqlGeneratorBase<T>
     (
         bool? distinct,
         SelectTags? selects,
-        Joins<T>? joins,
+        Joins? joins,
         Predicates? where,
         GroupBys? groupBys,
         Predicates? having,

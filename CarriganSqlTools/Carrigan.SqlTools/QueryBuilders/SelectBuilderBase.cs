@@ -29,12 +29,12 @@ public abstract record SelectBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the subquery to use as the query source instead of the default table.
     /// </summary>
-    public Subquery<T>? Subquery { get; set; }
+    public Subquery? Subquery { get; set; }
 
     /// <summary>
     /// Gets or sets the joins to include in the query.
     /// </summary>
-    public Joins<T>? Joins { get; set; }
+    public Joins? Joins { get; set; }
 
     /// <summary>
     /// Gets or sets the WHERE predicates for the query.
@@ -96,7 +96,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="subQuery">The subquery to use as the query source.</param>
     /// <returns>A new query instance with the specified subquery source.</returns>
-    public SelectBuilderBase<T> WithSubquery(Subquery<T>? subQuery) =>
+    public SelectBuilderBase<T> WithSubquery(Subquery? subQuery) =>
         this with { Subquery = subQuery };
 
     /// <summary>
@@ -104,7 +104,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="joins">The joins to include in the query.</param>
     /// <returns>A new query instance with the specified joins.</returns>
-    public SelectBuilderBase<T> WithJoins(Joins<T>? joins) =>
+    public SelectBuilderBase<T> WithJoins(Joins? joins) =>
         this with { Joins = joins };
 
     /// <summary>

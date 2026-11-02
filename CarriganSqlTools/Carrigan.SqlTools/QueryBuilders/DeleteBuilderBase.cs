@@ -19,7 +19,7 @@ public abstract record DeleteBuilderBase<T, usingsT>
     /// <summary>
     /// Gets or sets the joins to include in the DELETE statement.
     /// </summary>
-    public virtual Joins<usingsT>? Joins { get; set; }
+    public virtual Joins? Joins { get; set; }
 
     /// <summary>
     /// Gets or sets the predicates used to filter the rows being deleted.
@@ -31,7 +31,7 @@ public abstract record DeleteBuilderBase<T, usingsT>
     /// </summary>
     /// <param name="joins">The joins to include in the DELETE statement.</param>
     /// <returns>A new query instance with the specified joins.</returns>
-    public virtual DeleteBuilderBase<T, usingsT> WithJoins(Joins<usingsT>? joins) =>
+    public virtual DeleteBuilderBase<T, usingsT> WithJoins(Joins? joins) =>
         this with { Joins = joins };
 
     /// <summary>

@@ -15,33 +15,33 @@ namespace Carrigan.SqlTools.Tags;
 /// Equality and hashing are based on the underlying <see cref="ColumnAlias"/> value.
 /// </remarks>
 //TODO: ColumnAliasTag
-public class AliasTag : IEquatable<AliasTag>, IEqualityOperators<AliasTag, AliasTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
+public class ColumnAliasTag : IEquatable<ColumnAliasTag>, IEqualityOperators<ColumnAliasTag, ColumnAliasTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
     private readonly ColumnAlias _aliasName;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AliasTag"/> class.
+    /// Initializes a new instance of the <see cref="ColumnAliasTag"/> class.
     /// </summary>
     /// <param name="aliasName">The alias name to associate with this tag.</param>
-    public AliasTag(ColumnAlias aliasName)
+    public ColumnAliasTag(ColumnAlias aliasName)
     {
         ArgumentNullException.ThrowIfNull(aliasName);
         _aliasName = aliasName;
     }
 
     /// <summary>
-    /// Creates a new <see cref="AliasTag"/> instance if the specified alias name is not null or empty;
+    /// Creates a new <see cref="ColumnAliasTag"/> instance if the specified alias name is not null or empty;
     /// otherwise returns <c>null</c>.
     /// </summary>
     /// <param name="name">The alias name to wrap.</param>
     /// <returns>
-    /// A new <see cref="AliasTag"/> instance if <paramref name="name"/> contains a value;
+    /// A new <see cref="ColumnAliasTag"/> instance if <paramref name="name"/> contains a value;
     /// otherwise, <c>null</c>.
     /// </returns>
-    public static AliasTag? New(ColumnAlias? name)
+    public static ColumnAliasTag? New(ColumnAlias? name)
     {
         if (name.IsNotNullOrEmpty())
-            return new AliasTag(name);
+            return new ColumnAliasTag(name);
         else
             return null;
     }
@@ -54,11 +54,11 @@ public class AliasTag : IEquatable<AliasTag>, IEqualityOperators<AliasTag, Alias
         _aliasName.ToString();
 
     /// <summary>
-    /// Determines whether this instance represents the same alias as another <see cref="AliasTag"/>.
+    /// Determines whether this instance represents the same alias as another <see cref="ColumnAliasTag"/>.
     /// </summary>
     /// <param name="other">The other alias tag to compare.</param>
     /// <returns><c>true</c> when both tags represent equal alias names; otherwise, <c>false</c>.</returns>
-    public bool Equals(AliasTag? other)
+    public bool Equals(ColumnAliasTag? other)
     {
         if (other is null)
             return false;
@@ -73,21 +73,21 @@ public class AliasTag : IEquatable<AliasTag>, IEqualityOperators<AliasTag, Alias
     /// Determines whether the specified object represents the same alias as this instance.
     /// </summary>
     /// <param name="obj">The object to compare.</param>
-    /// <returns><c>true</c> when <paramref name="obj"/> is an equivalent <see cref="AliasTag"/>; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> when <paramref name="obj"/> is an equivalent <see cref="ColumnAliasTag"/>; otherwise, <c>false</c>.</returns>
     public override bool Equals(object? obj) =>
-        Equals(obj as AliasTag);
+        Equals(obj as ColumnAliasTag);
 
     /// <summary>
     /// Returns a hash code for this alias tag.
     /// </summary>
-    /// <returns>A hash code consistent with <see cref="Equals(AliasTag?)"/>.</returns>
+    /// <returns>A hash code consistent with <see cref="Equals(ColumnAliasTag?)"/>.</returns>
     public override int GetHashCode() =>
         _aliasName.GetHashCode();
 
     /// <summary>
     /// Determines whether two alias tags represent the same alias name.
     /// </summary>
-    public static bool operator ==(AliasTag? left, AliasTag? right)
+    public static bool operator ==(ColumnAliasTag? left, ColumnAliasTag? right)
     {
         if (ReferenceEquals(left, right))
             return true;
@@ -101,7 +101,7 @@ public class AliasTag : IEquatable<AliasTag>, IEqualityOperators<AliasTag, Alias
     /// <summary>
     /// Determines whether two alias tags represent different alias names.
     /// </summary>
-    public static bool operator !=(AliasTag? left, AliasTag? right) =>
+    public static bool operator !=(ColumnAliasTag? left, ColumnAliasTag? right) =>
         !(left == right);
 
     /// <summary>

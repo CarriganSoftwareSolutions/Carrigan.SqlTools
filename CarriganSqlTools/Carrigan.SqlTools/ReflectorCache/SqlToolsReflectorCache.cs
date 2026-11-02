@@ -149,7 +149,7 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<selectTagT> CreateAllSelectTags<selectTagT>
     (
         HashSet<Type> supportedTypes,
-        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory
+        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory
     )
         where selectTagT : SelectTag =>
             GetColumnInfo(supportedTypes)
@@ -358,7 +358,7 @@ public class SqlToolsReflectorCache<T>
     (
         PropertyName propertyName,
         HashSet<Type> supportedTypes,
-        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory,
+        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory,
         ColumnAlias? aliasName = null
     )
         where selectTagT : SelectTag
@@ -382,7 +382,7 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<selectTagT> CreateSelectTags<selectTagT>
     (
         HashSet<Type> supportedTypes,
-        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory,
+        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory,
         params IEnumerable<PropertyName> propertyNames
     )
         where selectTagT : SelectTag
@@ -414,7 +414,7 @@ public class SqlToolsReflectorCache<T>
     (
         ColumnInfo columnInfo,
         ColumnAlias? aliasName,
-        Func<SqlExpression, AliasTag?, selectTagT> selectTagFactory
+        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory
     )
         where selectTagT : SelectTag
     {
@@ -425,9 +425,9 @@ public class SqlToolsReflectorCache<T>
             throw new InvalidSqlIdentifierException(aliasName);
 
         SqlExpression sqlExpression = columnInfo.SelectTag.SqlExpression;
-        AliasTag? aliasTag = aliasName is null
+        ColumnAliasTag? aliasTag = aliasName is null
             ? columnInfo.SelectAliasTag
-            : AliasTag.New(aliasName);
+            : ColumnAliasTag.New(aliasName);
 
         return selectTagFactory(sqlExpression, aliasTag);
     }

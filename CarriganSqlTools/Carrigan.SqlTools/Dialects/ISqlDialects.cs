@@ -41,7 +41,7 @@ public interface ISqlDialects
     /// </summary>
     /// <param name="aliasTag">The alias tag for the table. May be null to omit the alias.</param>
     /// <returns>A string containing the rendered representation of the specified table alias.</returns>
-    string RenderTableAlias(AliasTag? aliasTag);
+    string RenderTableAlias(ColumnAliasTag? aliasTag);
 
     /// <summary>
     /// Renders a fully qualified column name for use in SQL statements.

@@ -102,7 +102,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
     /// <summary>
     /// The alias used when this property is selected.
     /// </summary>
-    internal readonly AliasTag? SelectAliasTag;
+    internal readonly ColumnAliasTag? SelectAliasTag;
 
     /// <summary>
     /// The <see cref="Tags.SelectTag"/> used to represent this column
@@ -183,7 +183,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
         if (selectTagAttribute is null)
         {
             SelectColumnTag = ColumnTag;
-            SelectAliasTag = AliasTag.New(aliasName);
+            SelectAliasTag = ColumnAliasTag.New(aliasName);
             SelectTag = new SelectTag(new Expressions.Column(this), SelectAliasTag);
         }
         else
@@ -192,7 +192,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
             SelectAliasTag = selectTagAttribute.AliasTag;
 
             if (SelectAliasTag is null && selectTagAttribute.UseDecoratedPropertyNameAsDefaultAlias)
-                SelectAliasTag = AliasTag.New(aliasName ?? new ColumnAlias(columnName));
+                SelectAliasTag = ColumnAliasTag.New(aliasName ?? new ColumnAlias(columnName));
 
             SelectTag = selectTagAttribute.SelectTag is null
                 ? new SelectTag(new Expressions.Column(this), SelectAliasTag)

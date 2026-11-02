@@ -9,7 +9,7 @@ public class AliasTagTests
     public void Constructor()
     {
         ColumnAlias aliasName = new("Alias");
-        AliasTag aliasTag = new(aliasName);
+        ColumnAliasTag aliasTag = new(aliasName);
 
         Assert.NotNull(aliasTag);
         Assert.Equal("Alias", aliasTag.ToString());
@@ -17,12 +17,12 @@ public class AliasTagTests
 
     [Fact]
     public void Constructor_Null_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => new AliasTag(null!));
+        Assert.Throws<ArgumentNullException>(() => new ColumnAliasTag(null!));
 
     [Fact]
     public void New_Null()
     {
-        AliasTag? aliasTag = AliasTag.New(null);
+        ColumnAliasTag? aliasTag = ColumnAliasTag.New(null);
 
         Assert.Null(aliasTag);
     }
@@ -30,7 +30,7 @@ public class AliasTagTests
     [Fact]
     public void New_Empty()
     {
-        AliasTag? aliasTag = AliasTag.New(new ColumnAlias(string.Empty));
+        ColumnAliasTag? aliasTag = ColumnAliasTag.New(new ColumnAlias(string.Empty));
 
         Assert.Null(aliasTag);
     }
@@ -38,7 +38,7 @@ public class AliasTagTests
     [Fact]
     public void New_Whitespace()
     {
-        AliasTag? aliasTag = AliasTag.New(new ColumnAlias(" "));
+        ColumnAliasTag? aliasTag = ColumnAliasTag.New(new ColumnAlias(" "));
 
         Assert.NotNull(aliasTag);
         Assert.Equal(" ", aliasTag.ToString());
@@ -51,7 +51,7 @@ public class AliasTagTests
     [InlineData(" Alias ", " Alias ")]
     public void ToString_Value(string? value, string expected)
     {
-        AliasTag aliasTag = new(new ColumnAlias(value));
+        ColumnAliasTag aliasTag = new(new ColumnAlias(value));
 
         Assert.Equal(expected, aliasTag.ToString());
         Assert.Equal(expected, $"{aliasTag}");
@@ -60,7 +60,7 @@ public class AliasTagTests
     [Fact]
     public void Equals_SameReference()
     {
-        AliasTag aliasTag = new(new ColumnAlias("Alias"));
+        ColumnAliasTag aliasTag = new(new ColumnAlias("Alias"));
 
         Assert.True(aliasTag.Equals(aliasTag));
 #pragma warning disable CS1718 // Comparison made to same variable
@@ -72,8 +72,8 @@ public class AliasTagTests
     [Fact]
     public void Equals_EquivalentInstances()
     {
-        AliasTag left = new(new ColumnAlias("Alias"));
-        AliasTag right = new(new ColumnAlias("Alias"));
+        ColumnAliasTag left = new(new ColumnAlias("Alias"));
+        ColumnAliasTag right = new(new ColumnAlias("Alias"));
 
         Assert.True(left.Equals(right));
         Assert.True(right.Equals(left));
@@ -84,9 +84,9 @@ public class AliasTagTests
     [Fact]
     public void Equals_Transitive()
     {
-        AliasTag first = new(new ColumnAlias("Alias"));
-        AliasTag second = new(new ColumnAlias("Alias"));
-        AliasTag third = new(new ColumnAlias("Alias"));
+        ColumnAliasTag first = new(new ColumnAlias("Alias"));
+        ColumnAliasTag second = new(new ColumnAlias("Alias"));
+        ColumnAliasTag third = new(new ColumnAlias("Alias"));
 
         Assert.True(first.Equals(second));
         Assert.True(second.Equals(third));
@@ -96,8 +96,8 @@ public class AliasTagTests
     [Fact]
     public void Equals_NullAndEmptyAliasName()
     {
-        AliasTag left = new(new ColumnAlias(null));
-        AliasTag right = new(new ColumnAlias(string.Empty));
+        ColumnAliasTag left = new(new ColumnAlias(null));
+        ColumnAliasTag right = new(new ColumnAlias(string.Empty));
 
         Assert.True(left.Equals(right));
         Assert.True(left == right);
@@ -108,8 +108,8 @@ public class AliasTagTests
     [Fact]
     public void Equals_DifferentValue()
     {
-        AliasTag left = new(new ColumnAlias("AliasOne"));
-        AliasTag right = new(new ColumnAlias("AliasTwo"));
+        ColumnAliasTag left = new(new ColumnAlias("AliasOne"));
+        ColumnAliasTag right = new(new ColumnAlias("AliasTwo"));
 
         Assert.False(left.Equals(right));
         Assert.False(right.Equals(left));
@@ -119,8 +119,8 @@ public class AliasTagTests
     [Fact]
     public void Equals_CaseSensitive()
     {
-        AliasTag left = new(new ColumnAlias("Alias"));
-        AliasTag right = new(new ColumnAlias("alias"));
+        ColumnAliasTag left = new(new ColumnAlias("Alias"));
+        ColumnAliasTag right = new(new ColumnAlias("alias"));
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
@@ -129,8 +129,8 @@ public class AliasTagTests
     [Fact]
     public void Equals_PreservesWhitespace()
     {
-        AliasTag left = new(new ColumnAlias("Alias"));
-        AliasTag right = new(new ColumnAlias(" Alias "));
+        ColumnAliasTag left = new(new ColumnAlias("Alias"));
+        ColumnAliasTag right = new(new ColumnAlias(" Alias "));
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
@@ -139,8 +139,8 @@ public class AliasTagTests
     [Fact]
     public void Equals_Null()
     {
-        AliasTag aliasTag = new(new ColumnAlias("Alias"));
-        AliasTag? other = null;
+        ColumnAliasTag aliasTag = new(new ColumnAlias("Alias"));
+        ColumnAliasTag? other = null;
 
         Assert.False(aliasTag.Equals(other));
         Assert.False(aliasTag.Equals((object?)null));
@@ -149,8 +149,8 @@ public class AliasTagTests
     [Fact]
     public void Equals_ObjectEquivalent()
     {
-        AliasTag aliasTag = new(new ColumnAlias("Alias"));
-        object other = new AliasTag(new ColumnAlias("Alias"));
+        ColumnAliasTag aliasTag = new(new ColumnAlias("Alias"));
+        object other = new ColumnAliasTag(new ColumnAlias("Alias"));
 
         Assert.True(aliasTag.Equals(other));
     }
@@ -158,7 +158,7 @@ public class AliasTagTests
     [Fact]
     public void Equals_ObjectWrongType()
     {
-        AliasTag aliasTag = new(new ColumnAlias("Alias"));
+        ColumnAliasTag aliasTag = new(new ColumnAlias("Alias"));
         object other = new ColumnAlias("Alias");
 
         Assert.False(aliasTag.Equals(other));
@@ -167,8 +167,8 @@ public class AliasTagTests
     [Fact]
     public void EqualOperator_EquivalentInstances()
     {
-        AliasTag left = new(new ColumnAlias("Alias"));
-        AliasTag right = new(new ColumnAlias("Alias"));
+        ColumnAliasTag left = new(new ColumnAlias("Alias"));
+        ColumnAliasTag right = new(new ColumnAlias("Alias"));
 
         Assert.True(left == right);
         Assert.True(right == left);
@@ -179,8 +179,8 @@ public class AliasTagTests
     [Fact]
     public void EqualOperator_DifferentInstances()
     {
-        AliasTag left = new(new ColumnAlias("AliasOne"));
-        AliasTag right = new(new ColumnAlias("AliasTwo"));
+        ColumnAliasTag left = new(new ColumnAlias("AliasOne"));
+        ColumnAliasTag right = new(new ColumnAlias("AliasTwo"));
 
         Assert.False(left == right);
         Assert.False(right == left);
@@ -191,8 +191,8 @@ public class AliasTagTests
     [Fact]
     public void EqualOperator_Null()
     {
-        AliasTag aliasTag = new(new ColumnAlias("Alias"));
-        AliasTag? nullAliasTag = null;
+        ColumnAliasTag aliasTag = new(new ColumnAlias("Alias"));
+        ColumnAliasTag? nullAliasTag = null;
         bool nullIsNull;
         bool nullIsNotNull;
 
@@ -209,8 +209,8 @@ public class AliasTagTests
     [Fact]
     public void GetHashCode_EquivalentInstances()
     {
-        AliasTag left = new(new ColumnAlias("Alias"));
-        AliasTag right = new(new ColumnAlias("Alias"));
+        ColumnAliasTag left = new(new ColumnAlias("Alias"));
+        ColumnAliasTag right = new(new ColumnAlias("Alias"));
 
         Assert.Equal(left, right);
         Assert.Equal(left.GetHashCode(), right.GetHashCode());
@@ -219,9 +219,9 @@ public class AliasTagTests
     [Fact]
     public void DictionaryKey_EquivalentInstance()
     {
-        AliasTag storedKey = new(new ColumnAlias("Alias"));
-        AliasTag lookupKey = new(new ColumnAlias("Alias"));
-        Dictionary<AliasTag, decimal> dictionary = [];
+        ColumnAliasTag storedKey = new(new ColumnAlias("Alias"));
+        ColumnAliasTag lookupKey = new(new ColumnAlias("Alias"));
+        Dictionary<ColumnAliasTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.True(dictionary.ContainsKey(lookupKey));
@@ -231,9 +231,9 @@ public class AliasTagTests
     [Fact]
     public void DictionaryKey_NullAndEmptyAliasName()
     {
-        AliasTag storedKey = new(new ColumnAlias(null));
-        AliasTag lookupKey = new(new ColumnAlias(string.Empty));
-        Dictionary<AliasTag, decimal> dictionary = [];
+        ColumnAliasTag storedKey = new(new ColumnAlias(null));
+        ColumnAliasTag lookupKey = new(new ColumnAlias(string.Empty));
+        Dictionary<ColumnAliasTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.True(dictionary.ContainsKey(lookupKey));
@@ -243,9 +243,9 @@ public class AliasTagTests
     [Fact]
     public void DictionaryKey_DifferentInstance()
     {
-        AliasTag storedKey = new(new ColumnAlias("AliasOne"));
-        AliasTag lookupKey = new(new ColumnAlias("AliasTwo"));
-        Dictionary<AliasTag, decimal> dictionary = [];
+        ColumnAliasTag storedKey = new(new ColumnAlias("AliasOne"));
+        ColumnAliasTag lookupKey = new(new ColumnAlias("AliasTwo"));
+        Dictionary<ColumnAliasTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.False(dictionary.ContainsKey(lookupKey));
@@ -254,9 +254,9 @@ public class AliasTagTests
     [Fact]
     public void DictionaryKey_EquivalentAssignmentReplacesValue()
     {
-        AliasTag firstKey = new(new ColumnAlias("Alias"));
-        AliasTag secondKey = new(new ColumnAlias("Alias"));
-        Dictionary<AliasTag, decimal> dictionary = [];
+        ColumnAliasTag firstKey = new(new ColumnAlias("Alias"));
+        ColumnAliasTag secondKey = new(new ColumnAlias("Alias"));
+        Dictionary<ColumnAliasTag, decimal> dictionary = [];
         dictionary[firstKey] = 3.14159m;
         dictionary[secondKey] = 2.71828m;
 
@@ -268,9 +268,9 @@ public class AliasTagTests
     [Fact]
     public void DictionaryKey_CaseSensitive()
     {
-        AliasTag storedKey = new(new ColumnAlias("Alias"));
-        AliasTag lookupKey = new(new ColumnAlias("alias"));
-        Dictionary<AliasTag, decimal> dictionary = [];
+        ColumnAliasTag storedKey = new(new ColumnAlias("Alias"));
+        ColumnAliasTag lookupKey = new(new ColumnAlias("alias"));
+        Dictionary<ColumnAliasTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.False(dictionary.ContainsKey(lookupKey));

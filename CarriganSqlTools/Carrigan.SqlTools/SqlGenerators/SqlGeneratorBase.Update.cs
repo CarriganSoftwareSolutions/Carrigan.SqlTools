@@ -157,7 +157,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// </param>
     /// <param name="from">Optional table sources to place in the UPDATE FROM clause.</param>
     /// <param name="joins">
-    /// Optional <see cref="JoinsBase"/> describing tables to join for the update.
+    /// Optional <see cref="Joins"/> describing tables to join for the update.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,
@@ -181,7 +181,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
     /// </param>
-    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTagBase>? from, JoinsBase? joins, Predicates? predicates)
+    protected virtual SqlQuery BaseUpdate(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTagBase>? from, Joins? joins, Predicates? predicates)
     {
         ArgumentNullException.ThrowIfNull(entity);
         ValidateWherePredicates(predicates);
@@ -189,9 +189,11 @@ public abstract partial class SqlGeneratorBase<T>
         IEnumerable<ColumnInfo> updateTheseColumns =
             [.. ((columns?.ColumnInfo?.Any() ?? false) ? columns.ColumnInfo : GetGetColumnInfoLessKeys(SupportedTypes))];
 
-        IEnumerable<TableTagBase> selectTableTags = (from ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
+        TableTagBase rootTableTag = SqlToolsReflectorCache<T>.Table;
+
+        IEnumerable<TableTagBase> selectableTableTags = ((joins?.Validate(rootTableTag)?.TableTags() ?? []).Prepend(rootTableTag)).Distinct();
         IEnumerable<TableTagBase> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
-        IEnumerable<TableTagBase> invalidTags = predicateTableTags.Except(selectTableTags);
+        IEnumerable<TableTagBase> invalidTags = predicateTableTags.Except(selectableTableTags);
         bool useFullyQualifiedSets = Dialect.DoesUpdateSupportsFullyQualifiedSets() && joins.IsNotNullOrEmpty();
 
         if (invalidTags.Any())

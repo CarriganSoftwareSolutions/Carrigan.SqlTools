@@ -11,7 +11,7 @@ public class SelectTagBaseEqualityTests
         new (new PropertyName(columnName), ColumnAlias.New(aliasName));
 
     private static SelectTag NewExpression(string columnName, string? aliasName = null) =>
-        new(new Column<SomeTable>(columnName), AliasTag.New(ColumnAlias.New(aliasName)));
+        new(new Column<SomeTable>(columnName), ColumnAliasTag.New(ColumnAlias.New(aliasName)));
 
     [Fact]
     public void Equals_SameReference()

@@ -153,6 +153,8 @@ public class Joins : ISqlFragment, IEmpty
     }
     #endregion
 
+
+
     public IEnumerable<Join> Validate(TableTagBase joinOntoRoot)
     {
 

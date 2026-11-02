@@ -57,7 +57,7 @@ public class PostgreSqlDialect : ISqlDialects
     /// </summary>
     /// <param name="aliasTag">The alias tag for the table. May be null to omit the alias.</param>
     /// <returns>A string containing the rendered representation of the specified table alias.</returns>
-    public string RenderTableAlias(AliasTag? aliasTag) =>
+    public string RenderTableAlias(ColumnAliasTag? aliasTag) =>
         aliasTag.IsNotNullOrEmpty()
             ? QuoteIdentifier(aliasTag.ToString())
             : string.Empty;

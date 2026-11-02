@@ -461,7 +461,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectJoin()
     {
         ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
-        JoinBase join = new Join<BookStats>(joinPredicate);
+        Join join = new Join<BookStats>(joinPredicate);
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
         Parameter ratingParameter = new(4.6m, "Rating");
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
@@ -486,7 +486,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectJoinWithOrderBys()
     {
         ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
-        JoinBase join = new Join<BookStats>(joinPredicate);
+        Join join = new Join<BookStats>(joinPredicate);
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
         Parameter ratingParameter = new(4.5m, "Rating");
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
@@ -515,7 +515,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectJoinWithOrderBysAndPaging()
     {
         ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
-        JoinBase join = new Join<BookStats>(joinPredicate);
+        Join join = new Join<BookStats>(joinPredicate);
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
         Parameter ratingParameter = new(4.3m, "Rating");
         Predicates wherePredicate = new GreaterThan(ratingColumn, ratingParameter);
@@ -544,7 +544,7 @@ public sealed class SelectTests : IClassFixture<SelectsFixture>
     public async Task SelectJoinWithOrderBysAndPagingAndSelectTags()
     {
         ColumnEqualsColumn<Book, BookStats> joinPredicate = new(nameof(Book.Id), nameof(BookStats.BookId));
-        JoinBase join = new Join<BookStats>(joinPredicate);
+        Join join = new Join<BookStats>(joinPredicate);
 
         Column<BookStats> ratingColumn = new(nameof(BookStats.AverageReview));
         Parameter ratingParameter = new(4.3m, "Rating");

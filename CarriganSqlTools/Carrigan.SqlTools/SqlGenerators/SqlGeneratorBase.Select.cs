@@ -7,6 +7,7 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
@@ -94,9 +95,9 @@ public abstract partial class SqlGeneratorBase<T>
     protected virtual SqlQuery BaseSelect
     (
         bool? distinct,
-        Subquery<T>? subQuery,
+        Subquery? subQuery,
         SelectTags? selects,
-        Joins<T>? joins,
+        Joins? joins,
         Predicates? where,
         GroupBys? groupBys,
         Predicates? having, 
@@ -232,7 +233,9 @@ public abstract partial class SqlGeneratorBase<T>
 
         }
 
-        IEnumerable<TableTagBase> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+        TableTagBase rootTableTag = SqlToolsReflectorCache<T>.Table;
+
+        IEnumerable<TableTagBase> selectableTableTags = ((joins?.Validate(rootTableTag)?.TableTags() ?? []).Prepend(rootTableTag)).Distinct();
 
         IEnumerable<TableTagBase> selectedTableTags = [.. selects?.GetTableTags() ?? []];
         IEnumerable<TableTagBase> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);

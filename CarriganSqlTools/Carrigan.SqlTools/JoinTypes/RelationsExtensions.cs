@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Tags;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Carrigan.SqlTools.JoinTypes;
@@ -42,4 +43,22 @@ internal static class RelationsExtensions
     /// </exception>
     internal static bool IsNotNullOrEmpty([NotNullWhen(true)] this Joins? relation) =>
         relation.IsNullOrEmpty() == false;
+
+
+    /// <summary>
+    /// Enumerates all <see cref="TableTag"/> objects included in the current join sequence,
+    /// including the base (left-most) table.
+    /// </summary>
+    /// <remarks>
+    /// This provides a quick way to determine whether a given table participates in
+    /// any join operation within this <see cref="Joins"/> instance.
+    /// </remarks>
+    /// <returns>
+    /// An enumeration of all <see cref="TableTag"/> instances involved in the join sequence.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// </exception>
+    public static IEnumerable<TableTagBase> TableTags(this IEnumerable<Join> joins) =>
+        joins.Select(static join => join.JoinAs);
 }

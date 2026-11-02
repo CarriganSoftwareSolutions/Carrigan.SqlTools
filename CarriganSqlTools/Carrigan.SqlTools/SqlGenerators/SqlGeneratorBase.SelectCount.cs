@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
@@ -53,7 +54,7 @@ public abstract partial class SqlGeneratorBase<T>
     (
         bool? distinct,
         SelectTag? select, 
-        Joins<T>? joins, 
+        Joins? joins, 
         Predicates? predicates
     )
     {
@@ -88,7 +89,9 @@ public abstract partial class SqlGeneratorBase<T>
                     yield return fragment;
             }
         }
-        IEnumerable<TableTagBase> selectableTableTags = (joins?.TableTags ?? []).Append(Table).Distinct();
+        TableTagBase rootTableTag = SqlToolsReflectorCache<T>.Table;
+
+        IEnumerable<TableTagBase> selectableTableTags = ((joins?.Validate(rootTableTag)?.TableTags() ?? []).Prepend(rootTableTag)).Distinct();
 
         IEnumerable<TableTagBase> selectedTableTags = select?.TableTags ?? [Table];
         IEnumerable<TableTagBase> invalidSelectedTags = selectedTableTags.Except(selectableTableTags);

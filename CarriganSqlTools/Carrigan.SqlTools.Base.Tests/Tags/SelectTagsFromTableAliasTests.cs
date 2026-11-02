@@ -21,14 +21,14 @@ public class SelectTagsFromTableAliasTests
     public void FromTableAlias_ProjectsResultColumnThroughAlias()
     {
         SelectTags selectTags = NewSelectTags("ProjectedName");
-        SqlTools.Tags.ColumnAlias aliasTag = new(new IdentifierTypes.ColumnAlias("DerivedTable"));
+        TableAlias tableAlias = new ("DerivedTable");
 
-        SelectTags actual = selectTags.FromTableAlias(aliasTag);
+        SelectTags actual = selectTags.FromTableAlias(tableAlias);
 
         SelectTag selectTag = Assert.Single(actual);
         Column column = Assert.IsType<Column>(selectTag.SqlExpression);
         TableAliasTag tableAliasTag = Assert.IsType<TableAliasTag>(column.ColumnTag.TableTag);
-        Assert.Same(aliasTag, tableAliasTag.TableAlias);
+        Assert.Same(tableAlias, tableAliasTag.TableAlias);
         Assert.Equal("ProjectedName", column.ColumnTag.ColumnName.ToString());
         Assert.Equal("DerivedTable.ProjectedName", selectTag.ToSql(NeutralDialect.Instance));
     }

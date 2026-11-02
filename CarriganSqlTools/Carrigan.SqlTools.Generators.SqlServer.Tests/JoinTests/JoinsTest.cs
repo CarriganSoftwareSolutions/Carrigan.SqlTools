@@ -314,7 +314,7 @@ public class JoinsTest
     [Fact]
     public void Constructor_NullJoinEntry_Exception()
     {
-        JoinBase[] joins =
+        Join[] joins =
         [
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
         null!
@@ -403,7 +403,7 @@ public class JoinsTest
     {
         Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
 
-        Assert.Throws<ArgumentNullException>(() => relation.Concat((IEnumerable<JoinBase>)null!));
+        Assert.Throws<ArgumentNullException>(() => relation.Concat((IEnumerable<Join>)null!));
     }
 
     [Fact]

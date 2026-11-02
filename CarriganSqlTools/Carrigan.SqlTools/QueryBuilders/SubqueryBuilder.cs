@@ -27,7 +27,7 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// <summary>
     /// Gets or sets the joins to include in the subquery.
     /// </summary>
-    public Joins<T>? Joins { get; set; }
+    public Joins? Joins { get; set; }
 
     /// <summary>
     /// Gets or sets the WHERE predicates for the subquery.
@@ -89,7 +89,7 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// </summary>
     /// <param name="joins">The joins to include in the subquery.</param>
     /// <returns>A new subquery instance with the specified joins.</returns>
-    public SubqueryBuilderBase<T> WithJoins(Joins<T>? joins) =>
+    public SubqueryBuilderBase<T> WithJoins(Joins? joins) =>
         this with { Joins = joins };
 
     /// <summary>

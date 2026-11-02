@@ -52,7 +52,7 @@ public sealed class MinAttribute<T> : SelectTagAttribute<T>
     internal MinAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
-        AliasTag = AliasTag.New(aliasName);
+        AliasTag = ColumnAliasTag.New(aliasName);
         SelectTag = new SelectTag(new Min(SelectTag!.SqlExpression, distinct), AliasTag);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }

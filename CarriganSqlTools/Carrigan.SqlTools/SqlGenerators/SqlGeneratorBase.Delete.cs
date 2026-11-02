@@ -3,6 +3,7 @@ using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.Tags;
 using System.Data;
 
@@ -101,7 +102,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// </summary>
     /// <param name="usings">Optional table sources to place in a PostgreSQL-style USING clause.</param>
     /// <param name="joins">
-    /// Optional <see cref="JoinsBase"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>DELETE</c> statement.
@@ -121,7 +122,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions
     /// that determine which rows to delete.
     /// </param>
-    protected virtual SqlQuery BaseDelete(IEnumerable<TableTagBase>? usings, JoinsBase? joins, Predicates? predicates)
+    protected virtual SqlQuery BaseDelete(IEnumerable<TableTagBase>? usings, Joins? joins, Predicates? predicates)
     {
         ValidateWherePredicates(predicates);
 
@@ -167,9 +168,11 @@ public abstract partial class SqlGeneratorBase<T>
         }
         else
         {
-            IEnumerable<TableTagBase> selectTableTags = (usings ?? []).Prepend(Table).Concat(joins?.TableTags ?? []).Distinct();
+            TableTagBase rootTableTag = SqlToolsReflectorCache<T>.Table;
+
+            IEnumerable<TableTagBase> selectableTableTags = ((joins?.Validate(rootTableTag)?.TableTags() ?? []).Prepend(rootTableTag)).Distinct();
             IEnumerable<TableTagBase> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
-            IEnumerable<TableTagBase> invalidTags = predicateTableTags.Except(selectTableTags);
+            IEnumerable<TableTagBase> invalidTags = predicateTableTags.Except(selectableTableTags);
             if (invalidTags.Any())
                 throw new InvalidTableException(invalidTags);
 

@@ -29,7 +29,7 @@ public sealed class CountAttribute : SelectTagAttribute
     /// </summary>
     internal CountAttribute(ColumnAlias? aliasName)
     {
-        AliasTag = AliasTag.New(aliasName);
+        AliasTag = ColumnAliasTag.New(aliasName);
         SelectTag = new SelectTag(new Count(), AliasTag);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }
@@ -82,7 +82,7 @@ public sealed class CountAttribute<T> : SelectTagAttribute<T>
     internal CountAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
-        AliasTag = AliasTag.New(aliasName);
+        AliasTag = ColumnAliasTag.New(aliasName);
         SelectTag = new SelectTag(new Count(SelectTag!.SqlExpression, distinct), AliasTag);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }

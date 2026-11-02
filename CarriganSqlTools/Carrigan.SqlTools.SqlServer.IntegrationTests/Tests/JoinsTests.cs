@@ -28,7 +28,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     public async Task Join()
     {
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        JoinBase join = new Join<Order>(joinPredicate);
+        Join join = new Join<Order>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
 
         SelectBuilder<Customer> selectBuilder = new()
@@ -84,7 +84,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     public async Task InnerJoin()
     {
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        JoinBase join = new InnerJoin<Order>(joinPredicate);
+        Join join = new InnerJoin<Order>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
 
         SelectBuilder<Customer> selectBuilder = new()
@@ -140,7 +140,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     public async Task LeftJoin()
     {
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        JoinBase join = new LeftJoin<Order>(joinPredicate);
+        Join join = new LeftJoin<Order>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
 
         SelectBuilder<Customer> selectBuilder = new()
@@ -202,7 +202,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     public async Task RightJoin()
     {
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        JoinBase join = new RightJoin<Customer>(joinPredicate);
+        Join join = new RightJoin<Customer>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
 
         SelectBuilder<Order> selectBuilder = new()
@@ -264,7 +264,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     public async Task FullJoin()
     {
         ColumnEqualsColumn<LeftWords, RightWords> joinPredicate = new(nameof(LeftWords.Id), nameof(RightWords.Id));
-        JoinBase join = new FullJoin<RightWords>(joinPredicate);
+        Join join = new FullJoin<RightWords>(joinPredicate);
         SelectTags selectTags = SelectTagGenerator.GetAll<LeftRight>();
 
         SelectBuilder<LeftWords> selectBuilder = new()
@@ -291,7 +291,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
     [Fact]
     public async Task CrossJoin()
     {
-        JoinBase join = new CrossJoin<RightWords>();
+        Join join = new CrossJoin<RightWords>();
         SelectTags selectTags = SelectTagGenerator.GetAll<LeftRight>();
 
         SelectBuilder<LeftWords> selectBuilder = new()

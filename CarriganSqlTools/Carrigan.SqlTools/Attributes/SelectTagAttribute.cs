@@ -18,7 +18,7 @@ public abstract class SelectTagAttribute : Attribute
     /// <summary>
     /// Gets or initializes the alias applied by this attribute.
     /// </summary>
-    internal AliasTag? AliasTag { get; init; }
+    internal ColumnAliasTag? AliasTag { get; init; }
 
     /// <summary>
     /// Gets or initializes the reflected SELECT projection metadata created by the concrete attribute.
@@ -77,9 +77,9 @@ public class SelectTagAttribute<T> : SelectTagAttribute
     internal SelectTagAttribute(PropertyName propertyName, ColumnAlias? aliasName = null)
     {
         ColumnInfo columnInfo = SqlToolsReflectorCache<T>.GetSelectColumnInfo(propertyName);
-        AliasTag? aliasTag = aliasName is null
+        ColumnAliasTag? aliasTag = aliasName is null
             ? columnInfo.SelectAliasTag
-            : AliasTag.New(aliasName);
+            : ColumnAliasTag.New(aliasName);
 
         ColumnTag = columnInfo.SelectColumnTag;
         AliasTag = aliasTag;

@@ -49,7 +49,7 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
         SubqueryBuilder<Order> subqueryBuilder = new() { };
         Subquery<Order> subquery = OrderSqlGenerator.Subquery(subqueryBuilder);
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        JoinBase join = new Join<Order>(joinPredicate, subquery);
+        Join join = new Join<Order>(joinPredicate, subquery);
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
 
         SelectBuilder<Customer> selectBuilder = new()
