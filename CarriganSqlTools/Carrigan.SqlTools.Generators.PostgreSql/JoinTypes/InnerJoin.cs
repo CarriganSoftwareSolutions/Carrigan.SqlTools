@@ -53,9 +53,6 @@ public class InnerJoin<rightT> : InnerJoin where rightT : class
     /// <param name="predicates">
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
-    /// <param name="joinAsTableAlias">
-    /// An optional <see cref="TableAliasTag"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
-    /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>

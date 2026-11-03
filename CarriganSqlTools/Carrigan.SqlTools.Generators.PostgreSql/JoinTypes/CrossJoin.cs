@@ -48,9 +48,6 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     /// <summary>
     /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
-    /// <param name="joinAsTableAlias">
-    /// An optional <see cref="TableAliasTag"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
-    /// </param>
     public CrossJoin() : this((TableAliasTag?)null)
     {
     }
