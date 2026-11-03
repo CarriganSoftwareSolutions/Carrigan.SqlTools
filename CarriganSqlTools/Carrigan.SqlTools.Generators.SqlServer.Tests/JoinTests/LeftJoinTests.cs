@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -64,14 +64,14 @@ public class LeftJoinTest
 
     [Fact]
     public void Joins_Null_Exception() => 
-        Assert.Throws<ArgumentNullException>(() => LeftJoin<JoinRightTable>.Joins<JoinLeftTable>());
+        Assert.Throws<ArgumentNullException>(() => LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(null!));
 
     [Fact]
     public void JoinsNewLeftJoin()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = LeftJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);

@@ -198,7 +198,7 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     /// Gets or sets the obsolete joins member that is intentionally unavailable for this PostgreSQL builder.
     /// </summary>
     [Obsolete(JoinsNotSupportedMessage, true)]
-    public override Joins<T>? Joins { get; set; }
+    public override Joins? Joins { get; set; }
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 
 
@@ -209,7 +209,7 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     /// <param name="joins">The SQL joins used by the query.</param>
     /// <returns>This member is obsolete with <c>error: true</c> and should not be called.</returns>
     [Obsolete(JoinsNotSupportedMessage, true)]
-    public override DeleteBuilder<T> WithJoins(Joins<T>? joins) =>
+    public override DeleteBuilder<T> WithJoins(Joins? joins) =>
         this with { Joins = joins };
 #pragma warning restore CS0809 // Obsolete member overrides non-obsolete member
 

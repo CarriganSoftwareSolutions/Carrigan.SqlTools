@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.AggregateLogic;
+using Carrigan.SqlTools.AggregateLogic;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;

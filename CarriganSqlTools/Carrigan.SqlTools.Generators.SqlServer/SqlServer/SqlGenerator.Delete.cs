@@ -177,7 +177,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Email_1)
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete(Joins<T>? joins, Predicates? predicates) =>
+    public SqlQuery Delete(Joins? joins, Predicates? predicates) =>
         base.BaseDelete(null, joins, predicates);
 
     /// <summary>

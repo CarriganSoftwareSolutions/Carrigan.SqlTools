@@ -9,7 +9,7 @@ public class TableAliasTagTests
     [Fact]
     public void Constructor_AliasTag_PreservesAlias()
     {
-        SqlTools.Tags.ColumnAlias aliasTag = new(new IdentifierTypes.ColumnAlias("DerivedTable"));
+        SqlTools.IdentifierTypes.TableAlias aliasTag = new("DerivedTable");
 
         TableAliasTag tableAliasTag = new(aliasTag);
 

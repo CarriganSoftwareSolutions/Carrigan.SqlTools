@@ -38,7 +38,7 @@ public class SelectTagsFromTableAliasTests
     {
         SelectTags selectTags = NewSelectTags();
 
-        SelectTag actual = Assert.Single(selectTags.FromTableAlias(new SqlTools.Tags.ColumnAlias(new IdentifierTypes.ColumnAlias("DerivedTable"))));
+        SelectTag actual = Assert.Single(selectTags.FromTableAlias(new TableAlias("DerivedTable")));
 
         Column column = Assert.IsType<Column>(actual.SqlExpression);
         Assert.Equal("SourceColumn", column.ColumnTag.ColumnName.ToString());

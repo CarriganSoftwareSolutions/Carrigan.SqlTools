@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Clients.PostgreSql;
+using Carrigan.SqlTools.Clients.PostgreSql;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;

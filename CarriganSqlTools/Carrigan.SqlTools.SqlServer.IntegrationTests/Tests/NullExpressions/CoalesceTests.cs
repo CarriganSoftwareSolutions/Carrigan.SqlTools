@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Clients.SqlServer;
+using Carrigan.SqlTools.Clients.SqlServer;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.IntegrationTests.CompositeModels;

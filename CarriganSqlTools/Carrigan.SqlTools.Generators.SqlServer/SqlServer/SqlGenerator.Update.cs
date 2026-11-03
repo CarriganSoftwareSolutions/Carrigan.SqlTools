@@ -243,7 +243,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// WHERE ([Customer].[Email] = @Email_2
     /// ]]></code>
     /// </example>
-    public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, Joins<T>? joins, Predicates? predicates) =>
+    public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, Joins? joins, Predicates? predicates) =>
         base.BaseUpdate(entity, columns, null, joins, predicates);
 
     /// <summary>

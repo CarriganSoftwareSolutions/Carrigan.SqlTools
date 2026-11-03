@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Base.Tests.TestEntities.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Exceptions;
@@ -309,7 +309,7 @@ public class JoinsTest
 
     [Fact]
     public void Constructor_NullJoins_Exception() => 
-        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>());
+        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(null!));
 
     [Fact]
     public void Constructor_NullJoinEntry_Exception()
@@ -320,7 +320,7 @@ public class JoinsTest
         null!
         ];
 
-        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>());
+        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(joins));
     }
 
     [Fact]

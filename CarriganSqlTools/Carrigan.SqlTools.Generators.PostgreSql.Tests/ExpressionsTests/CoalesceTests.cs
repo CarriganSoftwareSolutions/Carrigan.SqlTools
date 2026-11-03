@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.Expressions;
+using Carrigan.SqlTools.Base.Tests.Expressions;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Tags;
@@ -81,9 +81,9 @@ public class CoalesceTests : SqlExpressionsBaseTests
         Column<Customer> customerId = new(nameof(Customer.Id));
         Add nestedExpression = new(customerId, new Parameter(1, "Offset"));
         Coalesce coalesce = new(nestedExpression, new Parameter(0, "Fallback"));
-        TableTag expected = customerId.ColumnTag.TableTag;
+        TableTagBase expected = customerId.ColumnTag.TableTag;
 
-        TableTag actual = Assert.Single(coalesce.AllParticipatingTables);
+        TableTagBase actual = Assert.Single(coalesce.AllParticipatingTables);
 
         Assert.Equal(expected, actual);
     }
