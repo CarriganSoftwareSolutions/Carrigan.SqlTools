@@ -67,9 +67,9 @@ public class UpdateTests
         };
         ColumnCollection<JoinLeftTable> updateColumns = new(nameof(JoinLeftTable.Col1));
         Predicates joinPredicate = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        Joins<JoinRightTable> joins = new InnerJoin<JoinLastTable>(joinPredicate);
+        Joins joins = new InnerJoin<JoinLastTable>(joinPredicate);
 
-        Assert.Throws<InvalidTableException>(() => generator.Update(values, updateColumns, null, joins, null));
+        Assert.Throws<InvalidTableException>(() => generator.Update<JoinRightTable>(values, updateColumns, null, joins, null));
     }
 
     [Fact]
@@ -81,8 +81,8 @@ public class UpdateTests
         };
         ColumnCollection<JoinLeftTable> updateColumns = new(nameof(JoinLeftTable.Col1));
         Predicates joinPredicate = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        Joins<JoinRightTable> joins = new InnerJoin<JoinLastTable>(joinPredicate);
+        Joins joins = new InnerJoin<JoinLastTable>(joinPredicate);
 
-        Assert.Throws<InvalidTableException>(() => generator.Update(values, updateColumns, [TableTag.Get<JoinLastTable>()], joins, null));
+        Assert.Throws<InvalidTableException>(() => generator.Update<JoinRightTable>(values, updateColumns, [TableTag.Get<JoinLastTable>()], joins, null));
     }
 }

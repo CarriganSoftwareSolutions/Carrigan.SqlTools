@@ -182,7 +182,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ///  AND ("Customer"."Email" = $1))
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete<joinsT>(IEnumerable<TableTag>? usings, Joins<joinsT>? joins, Predicates? predicates) where joinsT : class
+    public SqlQuery Delete<joinsT>(IEnumerable<TableTag>? usings, Joins? joins, Predicates? predicates) where joinsT : class =>
+        DeleteWithJoins<joinsT>(usings, joins, predicates);
+
+    private SqlQuery DeleteWithJoins<joinsT>(IEnumerable<TableTag>? usings, Joins? joins, Predicates? predicates) where joinsT : class
     {
         TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
 
@@ -227,7 +230,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     public SqlQuery Delete<usingsT>(DeleteBuilder<T, usingsT> deleteQuery) where usingsT : class =>
         deleteQuery.Joins is null
             ? Delete(deleteQuery.Usings, deleteQuery.Where)
-            : Delete(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
+            : DeleteWithJoins<usingsT>(deleteQuery.Usings, deleteQuery.Joins, deleteQuery.Where);
 
     /// <summary>
     /// Creates a PostgreSQL <c>DELETE</c> statement from a builder without a typed join chain.

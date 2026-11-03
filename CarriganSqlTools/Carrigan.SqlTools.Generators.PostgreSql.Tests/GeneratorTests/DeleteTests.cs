@@ -31,17 +31,17 @@ public class DeleteTests
     public void Delete_WithJoinMissingUsing_Exception()
     {
         Predicates joinPredicate = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        Joins<JoinRightTable> joins = new InnerJoin<JoinLastTable>(joinPredicate);
+        Joins joins = new InnerJoin<JoinLastTable>(joinPredicate);
 
-        Assert.Throws<InvalidTableException>(() => generator.Delete(null, joins, null));
+        Assert.Throws<InvalidTableException>(() => generator.Delete<JoinRightTable>(null, joins, null));
     }
 
     [Fact]
     public void Delete_WithJoinRootMissingUsing_Exception()
     {
         Predicates joinPredicate = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        Joins<JoinRightTable> joins = new InnerJoin<JoinLastTable>(joinPredicate);
+        Joins joins = new InnerJoin<JoinLastTable>(joinPredicate);
 
-        Assert.Throws<InvalidTableException>(() => generator.Delete([TableTag.Get<JoinLastTable>()], joins, null));
+        Assert.Throws<InvalidTableException>(() => generator.Delete<JoinRightTable>([TableTag.Get<JoinLastTable>()], joins, null));
     }
 }

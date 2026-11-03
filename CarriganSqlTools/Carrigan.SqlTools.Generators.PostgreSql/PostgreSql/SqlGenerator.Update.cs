@@ -252,7 +252,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
     /// </param>
-    public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Joins<joinsT>? joins, Predicates? predicates) where joinsT : class
+    public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Joins? joins, Predicates? predicates) where joinsT : class =>
+        UpdateWithJoins<joinsT>(entity, columns, from, joins, predicates);
+
+    private SqlQuery UpdateWithJoins<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Joins? joins, Predicates? predicates) where joinsT : class
     {
         TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
 
@@ -293,7 +296,9 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="updateQuery">The builder containing values, update columns, <c>FROM</c> sources, joins, and predicates.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>UPDATE</c> statement.</returns>
     public SqlQuery Update<joinsT>(UpdateBuilder<T, joinsT> updateQuery) where joinsT : class =>
-        Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
+        updateQuery.Joins is null
+            ? Update(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Where)
+            : UpdateWithJoins<joinsT>(updateQuery.Values, updateQuery.UpdateColumns, updateQuery.From, updateQuery.Joins, updateQuery.Where);
 
     /// <summary>
     /// Creates a PostgreSQL <c>UPDATE</c> statement from a builder that does not include a typed join chain.

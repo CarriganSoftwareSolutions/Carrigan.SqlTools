@@ -40,7 +40,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ON ([Customer].[Id] = [Order].[CustomerId])
 /// ]]></code>
 /// </example>
-public class Join : ISelectable, IAliasedTable, ISqlFragment
+public class Join : ITableExpression
 {
     /// <summary>Wraps this join in a non-generic join sequence.</summary>
     public Joins AsJoins() => new(this);

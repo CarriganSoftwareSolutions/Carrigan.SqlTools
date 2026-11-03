@@ -28,7 +28,7 @@ public class SelectTagsRefactorTests
     [Fact]
     public void Concat_UsesReflectedSelectProjectionMetadata()
     {
-        SelectTags result = new SelectTags().Concat(
+        SelectTags result = new SelectTags().Concat<SelectProjection>(
             new PropertyName(nameof(SelectProjection.LeftId)),
             new PropertyName(nameof(SelectProjection.RightName))
         );
