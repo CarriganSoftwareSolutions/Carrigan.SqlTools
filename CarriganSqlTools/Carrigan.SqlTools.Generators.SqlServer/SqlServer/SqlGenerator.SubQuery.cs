@@ -20,7 +20,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     (
         bool? distinct,
         SelectTags? selects,
-        Joins<T>? joins,
+        Joins? joins,
         Predicates? predicates,
         GroupBys? groupBys,
         Predicates? having,
@@ -37,7 +37,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     (
         bool? distinct,
         SelectTags? selects,
-        Joins<T>? joins,
+        Joins? joins,
         Predicates? predicates,
         GroupBys? groupBys,
         Predicates? having,
@@ -54,7 +54,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     (
         bool? distinct,
         SelectTags? selects,
-        Joins<T>? joins,
+        Joins? joins,
         Predicates? predicates,
         GroupBys? groupBys,
         OrderBys? orderBy, 
