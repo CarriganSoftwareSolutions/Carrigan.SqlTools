@@ -369,7 +369,7 @@ public class DeleteTests : IClassFixture<DeleteFixture>
             new Column<OrderedItem>(nameof(OrderedItem.Price)),
             new Parameter(13m, "Thirteen")
         );
-        Joins<OrderedItem> joins = new Joins<OrderedItem>(new Join<Order>(orderOrderedItemPredicate))
+        Joins joins = new Joins(new Join<Order>(orderOrderedItemPredicate))
             .Append(new Join<Customer>(customerOrderPredicate));
 
         SqlQuery selectAllQuery = OrderedItemSqlGenerator.SelectAll();

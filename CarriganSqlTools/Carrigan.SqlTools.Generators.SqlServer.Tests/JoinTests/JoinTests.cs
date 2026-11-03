@@ -18,7 +18,7 @@ public class JoinTests
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Join<JoinRightTable> join = new(id);
 
-        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = (new Joins(join)).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -30,7 +30,7 @@ public class JoinTests
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Join<JoinRightTable> join = new(id);
 
-        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = join.AsJoins().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -41,7 +41,7 @@ public class JoinTests
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Joins<JoinLeftTable>.Join<JoinRightTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = Join<JoinRightTable>.Joins(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -53,14 +53,14 @@ public class JoinTests
 
     [Fact]
     public void Joins_Null_Exception() => 
-        Assert.Throws<ArgumentNullException>(() => Join<JoinRightTable>.Joins<JoinLeftTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => Join<JoinRightTable>.Joins(null!));
 
     [Fact]
     public void JoinsNewJoin()
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Join<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = Join<JoinRightTable>.Joins(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);

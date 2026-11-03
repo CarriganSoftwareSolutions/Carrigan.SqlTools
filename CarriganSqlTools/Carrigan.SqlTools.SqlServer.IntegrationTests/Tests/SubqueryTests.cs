@@ -28,7 +28,7 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
     public async Task SelectFromSubquery()
     {
         SubqueryBuilder<Customer> subqueryBuilder = new() { };
-        Subquery<Customer> subquery = CustomerSqlGenerator.Subquery(subqueryBuilder);
+        Subquery subquery = CustomerSqlGenerator.Subquery(subqueryBuilder);
         SelectBuilder<Customer> select = new() { Subquery = subquery };
 
         SqlQuery query = CustomerSqlGenerator.Select(select);
@@ -45,9 +45,9 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
     public async Task JoinOnSubquery()
     {
         SubqueryBuilder<Order> subqueryBuilder = new() { };
-        Subquery<Order> subquery = OrderSqlGenerator.Subquery(subqueryBuilder);
+        Subquery subquery = OrderSqlGenerator.Subquery(subqueryBuilder);
         ColumnEqualsColumn<Customer, Order> joinPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
-        Join join = new Join<Order>(joinPredicate, subquery);
+        Join join = new(joinPredicate, subquery, "Order");
         SelectTags selectTags = SelectTagGenerator.GetAll<CustomerOrder>();
 
         SelectBuilder<Customer> selectBuilder = new()

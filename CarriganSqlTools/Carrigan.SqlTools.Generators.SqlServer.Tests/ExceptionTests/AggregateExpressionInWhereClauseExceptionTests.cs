@@ -106,7 +106,7 @@ public sealed class AggregateExpressionInWhereClauseExceptionTests
         SqlGenerator<Customer> customerGenerator = new();
         SqlGenerator<Order> orderGenerator = new();
         SelectTags aggregateSelect = new(new SelectTag(new Count(), "TotalCount"));
-        Subquery<Order> subquery = orderGenerator.InternalSubquery(null, aggregateSelect, null, null, null, null, null, null);
+        Subquery subquery = orderGenerator.InternalSubquery(null, aggregateSelect, null, null, null, null, null, null);
         SelectBuilder<Customer> selectBuilder = new()
         {
             Where = new Exists(subquery)

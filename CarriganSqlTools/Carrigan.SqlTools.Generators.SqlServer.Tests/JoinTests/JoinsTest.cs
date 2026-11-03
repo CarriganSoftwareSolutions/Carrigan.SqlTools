@@ -23,28 +23,28 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewLeftJoin()
     {
-        Joins<JoinLeftTable> relation = new (new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new (new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
     [Fact]
     public void NewJoinsNewJoin()
     {
-        Joins<JoinLeftTable> relation = new(new Join<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new(new Join<JoinRightTable>(RightOnLeftPredicate));
         string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
     [Fact]
     public void NewJoinsNewInnerJoin()
     {
-        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
         string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
     [Fact]
     public void NewJoinsNewFullJoin()
     {
-        Joins<JoinLeftTable> relation = new(new FullJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new(new FullJoin<JoinRightTable>(RightOnLeftPredicate));
         string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
@@ -52,7 +52,7 @@ public class JoinsTest
     [Fact]
     public void JoinsLeftJoin()
     {
-        Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.LeftJoin<JoinRightTable>(RightOnLeftPredicate);
+        Joins relation = LeftJoin<JoinRightTable>.Joins(RightOnLeftPredicate);
         string expected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
@@ -60,7 +60,7 @@ public class JoinsTest
     [Fact]
     public void JoinsRightJoin()
     {
-        Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.RightJoin<JoinRightTable>(RightOnLeftPredicate);
+        Joins relation = RightJoin<JoinRightTable>.Joins(RightOnLeftPredicate);
         string expected = " RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
@@ -68,7 +68,7 @@ public class JoinsTest
     [Fact]
     public void JoinsJoin()
     {
-        Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.Join<JoinRightTable>(RightOnLeftPredicate);
+        Joins relation = Join<JoinRightTable>.Joins(RightOnLeftPredicate);
         string expected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
@@ -76,7 +76,7 @@ public class JoinsTest
     [Fact]
     public void JoinsInnerJoin()
     {
-        Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.InnerJoin<JoinRightTable>(RightOnLeftPredicate);
+        Joins relation = InnerJoin<JoinRightTable>.Joins(RightOnLeftPredicate);
         string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
@@ -84,7 +84,7 @@ public class JoinsTest
     [Fact]
     public void JoinsFullJoin()
     {
-        Joins<JoinLeftTable> relation = Joins<JoinLeftTable>.FullJoin<JoinRightTable>(RightOnLeftPredicate);
+        Joins relation = FullJoin<JoinRightTable>.Joins(RightOnLeftPredicate);
         string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         Assert.Equal(expected, relation.ToSqlFragments(Dialect).ToSql(Dialect));
     }
@@ -92,7 +92,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewLeftJoinNewLeftJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
@@ -104,7 +104,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewLeftJoinNewJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
@@ -116,7 +116,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewLeftJoinNewInnerJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
@@ -128,7 +128,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewLeftJoinNewFullJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new LeftJoin<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
@@ -140,7 +140,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewJoinNewLeftJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
@@ -152,7 +152,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewJoinNewJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
@@ -164,7 +164,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewJoinNewInnerJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
@@ -176,7 +176,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewJoinNewFullJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new Join<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
@@ -188,7 +188,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewInnerJoinNewLeftJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
@@ -200,7 +200,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewInnerJoinNewJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
@@ -212,7 +212,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewInnerJoinNewInnerJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
@@ -224,7 +224,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewInnerJoinNewFullJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
@@ -236,7 +236,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewFullJoinNewLeftJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new LeftJoin<JoinLastTable>(LastOnRightPredicate)
@@ -248,7 +248,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewFullJoinNewJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new Join<JoinLastTable>(LastOnRightPredicate)
@@ -261,7 +261,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewFullJoinNewInnerJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
@@ -273,7 +273,7 @@ public class JoinsTest
     [Fact]
     public void NewJoinsNewFullJoinNewFullJoin()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new FullJoin<JoinRightTable>(RightOnLeftPredicate),
             new FullJoin<JoinLastTable>(LastOnRightPredicate)
@@ -287,29 +287,30 @@ public class JoinsTest
     {
 
         Predicates stupidPredicate = new ColumnEqualsColumn<ColumnIdentifiers, PhoneModel>(nameof(ColumnIdentifiers.Id), nameof(PhoneModel.Id));
-        Assert.Throws<InvalidTableException>(() =>  new Joins<JoinLeftTable>
+        Joins joins = new
         (
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate),
             new InnerJoin<ColumnIdentifiers>(stupidPredicate)
-        ));
+        );
+        Assert.Throws<InvalidTableException>(() => joins.Validate(new TableTag(null, "Left")));
     }
 
     [Fact]
     public void TableTag()
     {
-        Joins<JoinLeftTable> relation = new
+        Joins relation = new
         (
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
         TableTag expected = new(null, "Left");
-        Assert.Equal(expected, Joins<JoinLeftTable>.JoinOnto);
+        Assert.Equal(2, relation.Validate(expected).Count());
     }
 
     [Fact]
     public void Constructor_NullJoins_Exception() => 
-        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => new Joins(null!));
 
     [Fact]
     public void Constructor_NullJoinEntry_Exception()
@@ -320,13 +321,13 @@ public class JoinsTest
         null!
         ];
 
-        Assert.Throws<ArgumentNullException>(() => new Joins<JoinLeftTable>(joins));
+        Assert.Throws<ArgumentNullException>(() => new Joins(joins));
     }
 
     [Fact]
     public void JoinsCrossJoin()
     {
-        string actual = Joins<JoinLeftTable>.CrossJoin<JoinRightTable>().ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = CrossJoin<JoinRightTable>.Joins().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
@@ -335,7 +336,7 @@ public class JoinsTest
     [Fact]
     public void Append_NewJoin_AddsJoinToEnd()
     {
-        Joins<JoinLeftTable> relation = new Joins<JoinLeftTable>(new InnerJoin<JoinRightTable>(RightOnLeftPredicate))
+        Joins relation = new Joins(new InnerJoin<JoinRightTable>(RightOnLeftPredicate))
             .Append(new LeftJoin<JoinLastTable>(LastOnRightPredicate));
 
         string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) LEFT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
@@ -346,8 +347,8 @@ public class JoinsTest
     [Fact]
     public void Append_NewJoin_ReturnsNewJoinsAndDoesNotModifyOriginal()
     {
-        Joins<JoinLeftTable> original = new(new Join<JoinRightTable>(RightOnLeftPredicate));
-        Joins<JoinLeftTable> actual = original.Append(new FullJoin<JoinLastTable>(LastOnRightPredicate));
+        Joins original = new(new Join<JoinRightTable>(RightOnLeftPredicate));
+        Joins actual = original.Append(new FullJoin<JoinLastTable>(LastOnRightPredicate));
 
         string originalExpected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         string actualExpected = " JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
@@ -360,7 +361,7 @@ public class JoinsTest
     [Fact]
     public void Append_NullJoin_ThrowsArgumentNullException()
     {
-        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
 
         Assert.Throws<ArgumentNullException>(() => relation.Append(null!));
     }
@@ -368,15 +369,15 @@ public class JoinsTest
     [Fact]
     public void Append_InvalidJoinOrder_ThrowsInvalidTableException()
     {
-        Joins<JoinLeftTable> relation = new();
+        Joins relation = new();
 
-        Assert.Throws<InvalidTableException>(() => relation.Append(new LeftJoin<JoinLastTable>(LastOnRightPredicate)));
+        Assert.Throws<InvalidTableException>(() => relation.Append(new LeftJoin<JoinLastTable>(LastOnRightPredicate)).Validate(new TableTag(null, "Left")));
     }
 
     [Fact]
     public void Concat_JoinBaseEnumerable_AddsJoinsToEnd()
     {
-        Joins<JoinLeftTable> relation = new Joins<JoinLeftTable>(new InnerJoin<JoinRightTable>(RightOnLeftPredicate))
+        Joins relation = new Joins(new InnerJoin<JoinRightTable>(RightOnLeftPredicate))
             .Concat([new RightJoin<JoinLastTable>(LastOnRightPredicate)]);
 
         string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) RIGHT JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
@@ -387,8 +388,8 @@ public class JoinsTest
     [Fact]
     public void Concat_JoinBaseEnumerable_ReturnsNewJoinsAndDoesNotModifyOriginal()
     {
-        Joins<JoinLeftTable> original = new(new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
-        Joins<JoinLeftTable> actual = original.Concat([new Join<JoinLastTable>(LastOnRightPredicate)]);
+        Joins original = new(new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins actual = original.Concat([new Join<JoinLastTable>(LastOnRightPredicate)]);
 
         string originalExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         string actualExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
@@ -401,7 +402,7 @@ public class JoinsTest
     [Fact]
     public void Concat_JoinBaseEnumerable_NullEnumerable_ThrowsArgumentNullException()
     {
-        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
 
         Assert.Throws<ArgumentNullException>(() => relation.Concat((IEnumerable<Join>)null!));
     }
@@ -409,7 +410,7 @@ public class JoinsTest
     [Fact]
     public void Concat_JoinBaseEnumerable_NullJoinEntry_ThrowsArgumentNullException()
     {
-        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
 
         Assert.Throws<ArgumentNullException>(() => relation.Concat([null!]));
     }
@@ -417,18 +418,18 @@ public class JoinsTest
     [Fact]
     public void Concat_JoinBaseEnumerable_InvalidJoinOrder_ThrowsInvalidTableException()
     {
-        Joins<JoinLeftTable> relation = new();
+        Joins relation = new();
 
-        Assert.Throws<InvalidTableException>(() => relation.Concat([new LeftJoin<JoinLastTable>(LastOnRightPredicate)]));
+        Assert.Throws<InvalidTableException>(() => relation.Concat([new LeftJoin<JoinLastTable>(LastOnRightPredicate)]).Validate(new TableTag(null, "Left")));
     }
 
     [Fact]
     public void Concat_Joins_AddsJoinsToEnd()
     {
-        Joins<JoinLeftTable> existingJoins = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
-        Joins<JoinRightTable> newJoins = new(new FullJoin<JoinLastTable>(LastOnRightPredicate));
+        Joins existingJoins = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins newJoins = new(new FullJoin<JoinLastTable>(LastOnRightPredicate));
 
-        Joins<JoinLeftTable> relation = existingJoins.Concat(newJoins);
+        Joins relation = existingJoins.Concat(newJoins);
 
         string expected = " INNER JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) FULL JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
 
@@ -438,10 +439,10 @@ public class JoinsTest
     [Fact]
     public void Concat_Joins_ReturnsNewJoinsAndDoesNotModifyOriginal()
     {
-        Joins<JoinLeftTable> original = new(new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
-        Joins<JoinRightTable> newJoins = new(new InnerJoin<JoinLastTable>(LastOnRightPredicate));
+        Joins original = new(new LeftJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins newJoins = new(new InnerJoin<JoinLastTable>(LastOnRightPredicate));
 
-        Joins<JoinLeftTable> actual = original.Concat(newJoins);
+        Joins actual = original.Concat(newJoins);
 
         string originalExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
         string actualExpected = " LEFT JOIN [Right] ON ([Left].[RightId] = [Right].[Id]) INNER JOIN [Last] ON ([Right].[LastId] = [Last].[Id])";
@@ -454,8 +455,8 @@ public class JoinsTest
     [Fact]
     public void Concat_Joins_NullJoins_ThrowsArgumentNullException()
     {
-        Joins<JoinLeftTable> relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
+        Joins relation = new(new InnerJoin<JoinRightTable>(RightOnLeftPredicate));
 
-        Assert.Throws<NullReferenceException>(() => relation.Concat<JoinRightTable>(null!));
+        Assert.Throws<NullReferenceException>(() => relation.Concat((Joins)null!));
     }
 }

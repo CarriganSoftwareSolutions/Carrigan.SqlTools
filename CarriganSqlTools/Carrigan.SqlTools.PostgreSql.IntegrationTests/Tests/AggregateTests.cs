@@ -47,7 +47,7 @@ public class AggregateTests : IClassFixture<AggregateFixture>
             new SelectTag(new Sum(new Column<Address>(nameof(Address.StreetNumber))), "Sum")
         );
 
-        Joins<Customer> joins = new
+        Joins joins = new
         (
             new InnerJoin<Order>
             (
@@ -132,7 +132,7 @@ public class AggregateTests : IClassFixture<AggregateFixture>
             new SelectTag(new Cast(new Sum(new Column<Address>(nameof(Address.StreetNumber))), PostgreSqlTypesProvider.AsDoublePrecision(false)), "Sum")
         );
 
-        Joins<Customer> joins = new
+        Joins joins = new
         (
             new InnerJoin<Order>
             (

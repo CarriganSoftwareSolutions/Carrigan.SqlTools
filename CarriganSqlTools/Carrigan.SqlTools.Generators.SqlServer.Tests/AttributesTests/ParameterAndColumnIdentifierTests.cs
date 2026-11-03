@@ -167,7 +167,7 @@ public class ParameterAndColumnIdentifierTests
     public void JoinTest()
     {
         LeftJoin<JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
-        SqlQuery query = _generator.Delete(join.AsJoins<ColumnIdentifiers>(), null);
+        SqlQuery query = _generator.Delete(join.AsJoins(), null);
         string actual = query.QueryText;
         string expected = "DELETE [ColumnIdentifiers] FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
         Assert.Equal(expected, actual);
@@ -179,7 +179,7 @@ public class ParameterAndColumnIdentifierTests
     public void LeftJoinTest()
     {
         LeftJoin<JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
-        SqlQuery query = _generator.Delete(join.AsJoins<ColumnIdentifiers>(), null);
+        SqlQuery query = _generator.Delete(join.AsJoins(), null);
         string actual = query.QueryText;
         string expected = "DELETE [ColumnIdentifiers] FROM [ColumnIdentifiers] LEFT JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";
         Assert.Equal(expected, actual);
@@ -191,7 +191,7 @@ public class ParameterAndColumnIdentifierTests
     public void InnerJoinTest()
     {
         InnerJoin<JoinRightTable> join = new(new ColumnEqualsColumn<ColumnIdentifiers, JoinRightTable>(nameof(ColumnIdentifiers.Id), nameof(JoinRightTable.Id)));
-        Joins<ColumnIdentifiers> joins = join.AsJoins<ColumnIdentifiers>();
+        Joins joins = join.AsJoins();
         SqlQuery query = _generator.Delete(joins, null);
         string actual = query.QueryText;
         string expected = "DELETE [ColumnIdentifiers] FROM [ColumnIdentifiers] INNER JOIN [Right] ON ([ColumnIdentifiers].[Id] = [Right].[Id])";

@@ -117,7 +117,7 @@ public class DeleteGeneratorExamples
 
         ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
         InnerJoin<PaymentMethod> paymentMethodJoin = new(paymentMethodIdEquals);
-        Joins<Order> joins = new(paymentMethodJoin);
+        Joins joins = new(paymentMethodJoin);
 
         ColumnValue<PaymentMethod> paymentMethodZipCode = new(nameof(PaymentMethod.ZipCode), "37040");
 

@@ -54,7 +54,7 @@ public class SqlGeneratorSelectExamples
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new(predicate);
-        Joins<Customer> joins = new(join);
+        Joins joins = new(join);
 
         SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null, null);
 
@@ -78,7 +78,7 @@ public class SqlGeneratorSelectExamples
         //Note: OrderBy<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new(predicate);
-        Joins<Customer> joins = new(join);
+        Joins joins = new(join);
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
@@ -105,7 +105,7 @@ public class SqlGeneratorSelectExamples
         //Note: OrderBy<Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new(predicate);
-        Joins<Customer> joins = new(join);
+        Joins joins = new(join);
 
         Column<Order> totalCol = new(nameof(Order.Total));
         Parameter minTotal = new(500m, "Total");

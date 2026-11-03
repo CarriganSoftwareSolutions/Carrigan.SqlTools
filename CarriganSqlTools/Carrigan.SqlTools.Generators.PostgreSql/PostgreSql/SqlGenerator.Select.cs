@@ -143,7 +143,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
-    /// Joins<Customer> joins = new(join);
+    /// Joins joins = new(join);
     /// 
     /// SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null, null);
     /// ]]></code>
@@ -164,7 +164,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
-    /// Joins<Customer> joins = new(join);
+    /// Joins joins = new(join);
     /// 
     /// OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
     /// 
@@ -189,7 +189,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <code language="csharp"><![CDATA[
     /// ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
     /// InnerJoin<Order> join = new(predicate);
-    /// Joins<Customer> joins = new(join);
+    /// Joins joins = new(join);
     /// 
     /// Column<Order> totalCol = new(nameof(Order.Total));
     /// Parameter minTotal = new(500m, "Total");

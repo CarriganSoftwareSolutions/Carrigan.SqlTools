@@ -96,7 +96,7 @@ public class ColumnEqualsColumnTests : PredicateLogicBaseTests
     public void LeftRightSql()
     {
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
-        Joins<JoinLeftTable> relations = new (new Join<JoinRightTable>(columnEqualsColumn));
+        Joins relations = new (new Join<JoinRightTable>(columnEqualsColumn));
         SqlQuery query = leftGenerator.InternalSelect(null, null, null, relations, null, null, null, null, null);
 
         Assert.Equal("SELECT \"Left\".* FROM \"Left\" JOIN \"Right\" ON (\"Left\".\"RightId\" = \"Right\".\"Id\")", query.QueryText);
@@ -107,7 +107,7 @@ public class ColumnEqualsColumnTests : PredicateLogicBaseTests
     public void RightLastSql()
     {
         ColumnEqualsColumn<JoinRightTable, JoinLastTable> columnEqualsColumn = new(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        Joins<JoinRightTable> relations = new (new Join<JoinLastTable>(columnEqualsColumn));
+        Joins relations = new (new Join<JoinLastTable>(columnEqualsColumn));
         SqlQuery query = rightGenerator.InternalSelect(null, null, null, relations, null, null, null, null, null);
 
         Assert.Equal("SELECT \"Right\".* FROM \"Right\" JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\")", query.QueryText);

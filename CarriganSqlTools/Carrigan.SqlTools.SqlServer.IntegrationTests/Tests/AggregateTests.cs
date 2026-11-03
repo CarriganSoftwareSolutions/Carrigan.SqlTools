@@ -45,7 +45,7 @@ public class AggregateTests : IClassFixture<AggregateFixture>
             new SelectTag(new Sum(new Column<Address>(nameof(Address.StreetNumber))), "Sum")
         );
 
-        Joins<Customer> joins = new
+        Joins joins = new
         (
             new InnerJoin<Order>
             (

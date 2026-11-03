@@ -19,7 +19,7 @@ public class JoinsParameterTest
 
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<PaymentMethod> join2 = new(paymentCondition);
-        Joins<Customer> joins = new(join1, join2);
+        Joins joins = new(join1, join2);
 
         SqlQuery query = customerGenerator.InternalSelect(null, null, null, joins, null, null, null, null, null);
 
@@ -40,7 +40,7 @@ public class JoinsParameterTest
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
-        SqlQuery query = customerGenerator.SelectCount(null, null, new Joins<Customer>(join1, join2), null);
+        SqlQuery query = customerGenerator.SelectCount(null, null, new Joins(join1, join2), null);
 
         Assert.Equal("SELECT COUNT([Customer].[Id]) FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_1) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -65,7 +65,7 @@ public class JoinsParameterTest
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
-        SqlQuery query = customerGenerator.Update(customer, null, new Joins<Customer>(join1, join2), null);
+        SqlQuery query = customerGenerator.Update(customer, null, new Joins(join1, join2), null);
 
         Assert.Equal("UPDATE [Customer] SET [Customer].[Name] = @Name_1, [Customer].[Email] = @Email_2, [Customer].[Phone] = @Phone_3 FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_4) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_5)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -86,7 +86,7 @@ public class JoinsParameterTest
         ColumnValue<PaymentMethod> paymentCondition = new(nameof(PaymentMethod.ZipCode), "37067");
         InnerJoin<PaymentMethod> join2 = new(paymentCondition);
 
-        SqlQuery query = customerGenerator.Delete(new Joins<Customer>(join1, join2), null);
+        SqlQuery query = customerGenerator.Delete(new Joins(join1, join2), null);
 
         Assert.Equal("DELETE [Customer] FROM [Customer] INNER JOIN [Order] ON ([Order].[Total] = @Total_1) INNER JOIN [PaymentMethod] ON ([PaymentMethod].[ZipCode] = @ZipCode_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

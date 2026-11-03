@@ -60,7 +60,7 @@ public class Join<rightT> : Join where rightT : class
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
     [ExternalOnly]
-    public Join(Predicates predicates, string? joinAsTableAlias = null) : this(predicates, TableAlias.New(joinAsTableAlias))
+    public Join(Predicates predicates, string? joinAsTableAlias) : this(predicates, TableAlias.New(joinAsTableAlias))
     {
     }
 
@@ -84,7 +84,7 @@ public class Join<rightT> : Join where rightT : class
 
     #region static creators
 
-    public static Joins Joins(Predicates predicates, string? joinAsTableAlias = null) =>
+    public static Joins Joins(Predicates predicates, string? joinAsTableAlias) =>
         new (new Join<rightT>(predicates, TableAlias.New(joinAsTableAlias)) );
 
     public static Joins Joins(Predicates predicates, TableAlias? joinAsTableAlias = null) =>

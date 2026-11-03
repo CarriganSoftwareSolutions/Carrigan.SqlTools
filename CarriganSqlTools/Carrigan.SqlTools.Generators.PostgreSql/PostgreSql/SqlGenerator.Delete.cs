@@ -107,7 +107,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     /// <typeparam name="joinsT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
     /// <param name="joins">
-    /// Optional <see cref="Joins{joinsT}"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions

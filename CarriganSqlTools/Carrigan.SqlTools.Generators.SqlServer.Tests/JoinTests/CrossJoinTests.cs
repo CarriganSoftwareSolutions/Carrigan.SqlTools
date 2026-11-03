@@ -15,7 +15,7 @@ public class CrossJoinTest
     {
         CrossJoin<JoinRightTable> join = new();
 
-        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = (new Joins(join)).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
@@ -26,7 +26,7 @@ public class CrossJoinTest
     {
         CrossJoin<JoinRightTable> join = new();
 
-        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = join.AsJoins().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
@@ -52,7 +52,7 @@ public class CrossJoinTest
     [Fact]
     public void CrossJoin_JoinsFactoryMethod()
     {
-        string actual = CrossJoin<JoinRightTable>.Joins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = CrossJoin<JoinRightTable>.Joins().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " CROSS JOIN [Right]";
 
         Assert.Equal(expected, actual);
@@ -62,7 +62,7 @@ public class CrossJoinTest
     public void CrossJoin_NotEmpty()
     {
         CrossJoin<Customer> join = new();
-        Joins<Order>? joins = new (join);
+        Joins? joins = new (join);
         Assert.False(joins.IsNullOrEmpty());
     }
 }

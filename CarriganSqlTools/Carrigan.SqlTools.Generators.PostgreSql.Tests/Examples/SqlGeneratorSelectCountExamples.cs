@@ -91,7 +91,7 @@ public class SqlGeneratorSelectCountExamples
         ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
         InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
 
-        Joins<Customer> joins = new(join1, join2);
+        Joins joins = new(join1, join2);
 
         SqlQuery query = customerGenerator.SelectCount(true, selectTag, joins, null);
 

@@ -170,7 +170,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional PostgreSQL <c>FROM</c> sources used by predicates or joins. Do not include the update target table unless an aliased self-join is intentionally modeled elsewhere.
     /// </param>
     /// <param name="joins">
-    /// Optional <see cref="Joins{joinsT}"/> describing joins to append to the PostgreSQL <c>FROM</c> source chain.
+    /// Optional <see cref="Joins"/> describing joins to append to the PostgreSQL <c>FROM</c> source chain.
     /// </param>
     /// <returns>
     /// An <see cref="SqlQuery"/> representing the generated <c>UPDATE</c> statement,

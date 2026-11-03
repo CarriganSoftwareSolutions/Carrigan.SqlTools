@@ -34,7 +34,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
 /// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
 /// 
-/// Joins<Customer> joins = new(join1, join2);
+/// Joins joins = new(join1, join2);
 /// 
 /// SelectBuilder<Customer> selectBuilder = new()
 /// {
@@ -78,7 +78,7 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
 /// InnerJoin<PaymentMethod> join2 = new(paymentMethodIdEquals);
 /// 
-/// Joins<Customer> joins = new(join1, join2);
+/// Joins joins = new(join1, join2);
 /// 
 /// SelectBuilder<Customer> selectBuilder = new()
 /// {
@@ -132,6 +132,8 @@ public class Joins : ISqlFragment, IEmpty
     /// The collection of join operations represented by this instance.
     /// </summary>
     protected IEnumerable<Join> Joints { get; set; }
+
+    public static implicit operator Joins(Join join) => new(join);
 
     #region constructors
     /// <summary>
@@ -200,13 +202,7 @@ public class Joins : ISqlFragment, IEmpty
         );
 
     public static Joins CrossJoin(Subquery subQuery, TableAlias joinTableAlias) =>
-        JoinTypes.CrossJoin.Joins
-        (
-            JoinFragment.CrossJoin,
-            new EmptyPredicate(),
-            subQuery,
-            new TableAliasTag(joinTableAlias)
-        );
+        JoinTypes.CrossJoin.Joins(subQuery, joinTableAlias);
 
     public static Joins FullJoin(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
         JoinTypes.FullJoin.Joins
@@ -217,13 +213,7 @@ public class Joins : ISqlFragment, IEmpty
         );
 
     public static Joins FullJoin(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
-        JoinTypes.FullJoin.Joins
-        (
-            JoinFragment.FullJoin,
-            predicates,
-            subQuery,
-            new TableAliasTag(joinTableAlias)
-        );
+        JoinTypes.FullJoin.Joins(predicates, subQuery, joinTableAlias);
 
     public static Joins InnerJoin(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
         JoinTypes.InnerJoin.Joins
@@ -234,13 +224,7 @@ public class Joins : ISqlFragment, IEmpty
         );
 
     public static Joins InnerJoin(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
-        JoinTypes.InnerJoin.Joins
-        (
-            JoinFragment.InnerJoin,
-            predicates,
-            subQuery,
-            new TableAliasTag(joinTableAlias)
-        );
+        JoinTypes.InnerJoin.Joins(predicates, subQuery, joinTableAlias);
 
     public static Joins Join(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
         JoinTypes.Join.Joins
@@ -251,13 +235,18 @@ public class Joins : ISqlFragment, IEmpty
         );
 
     public static Joins Join(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
-        JoinTypes.Join.Joins
+        JoinTypes.Join.Joins(predicates, subQuery, joinTableAlias);
+
+    public static Joins LeftJoin(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
+        JoinTypes.LeftJoin.Joins
         (
-            JoinFragment.Join,
             predicates,
             subQuery,
-            new TableAliasTag(joinTableAlias)
+            new TableAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(joinTableAlias))
         );
+
+    public static Joins LeftJoin(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
+        JoinTypes.LeftJoin.Joins(predicates, subQuery, joinTableAlias);
 
     public static Joins RightJoin(Predicates predicates, Subquery subQuery, string joinTableAlias) =>
         JoinTypes.RightJoin.Joins
@@ -268,13 +257,7 @@ public class Joins : ISqlFragment, IEmpty
         );
 
     public static Joins RightJoin(Predicates predicates, Subquery subQuery, TableAlias joinTableAlias) =>
-        JoinTypes.RightJoin.Joins
-        (
-            JoinFragment.RightJoin,
-            predicates,
-            subQuery,
-            new TableAliasTag(joinTableAlias)
-        );
+        JoinTypes.RightJoin.Joins(predicates, subQuery, joinTableAlias);
 
     #endregion
 
@@ -336,7 +319,7 @@ public class Joins : ISqlFragment, IEmpty
     /// <typeparam name="rightT"></typeparam>
     /// <param name="newJoins">The additional join operations to include.</param>
     /// <returns>A new <see cref="Joins"/> instance containing the additional joins.</returns>
-    public Joins Concat<rightT>(Joins newJoins) where rightT : class =>
+    public Joins Concat(Joins newJoins) =>
         new(Joints.Concat(newJoins.Joints));
 
     #endregion

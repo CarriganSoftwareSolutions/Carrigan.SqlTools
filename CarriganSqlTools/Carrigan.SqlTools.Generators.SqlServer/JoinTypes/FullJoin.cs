@@ -60,7 +60,7 @@ public class FullJoin<rightT> : FullJoin where rightT : class
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
     [ExternalOnly]
-    public FullJoin(Predicates predicates, string? joinAsTableAlias = null) : this(predicates, IdentifierTypes.TableAlias.New(joinAsTableAlias))
+    public FullJoin(Predicates predicates, string? joinAsTableAlias) : this(predicates, IdentifierTypes.TableAlias.New(joinAsTableAlias))
     {
     }
 
@@ -98,7 +98,7 @@ public class FullJoin<rightT> : FullJoin where rightT : class
     }
     #endregion
 
-    public static Joins Joins(Predicates predicates, string? joinAsTableAlias = null) =>
+    public static Joins Joins(Predicates predicates, string? joinAsTableAlias) =>
         new (new FullJoin<rightT>(predicates, TableAlias.New(joinAsTableAlias)) );
 
     public static Joins Joins(Predicates predicates, TableAlias? joinAsTableAlias = null) =>

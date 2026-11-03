@@ -16,7 +16,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <summary>
     /// Gets the SQL fragment that starts a subquery expression.
     /// </summary>
-    internal Subquery<T> InternalSubquery
+    internal Subquery InternalSubquery
     (
         bool? distinct,
         SelectTags? selects,
@@ -33,7 +33,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Gets the SQL fragment that starts a subquery expression.
     /// </summary>
     [Obsolete("Use the overloaded method with the subqueryBuilder argument.")]
-    public Subquery<T> Subquery
+    public Subquery Subquery
     (
         bool? distinct,
         SelectTags? selects,
@@ -50,7 +50,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Gets the SQL fragment that starts a subquery expression.
     /// </summary>
     [Obsolete("Use the overloaded method with the subqueryBuilder argument.")]
-    public Subquery<T> Subquery
+    public Subquery Subquery
     (
         bool? distinct,
         SelectTags? selects,
@@ -68,6 +68,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// </summary>
     /// <param name="subqueryBuilder">The subquery builder to materialize.</param>
     /// <returns>A subquery that can be used as a SQL fragment.</returns>
-    public Subquery<T> Subquery(SubqueryBuilder<T> subqueryBuilder) =>
+    public Subquery Subquery(SubqueryBuilder<T> subqueryBuilder) =>
         InternalSubquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, subqueryBuilder.GroupBys, subqueryBuilder.Having, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
 }

@@ -16,7 +16,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// <summary>
     /// Gets the SQL fragment used to begin a subquery expression in shared generation code.
     /// </summary>
-    protected virtual Subquery<T> BaseSubquery
+    protected virtual Subquery BaseSubquery
     (
         bool? distinct,
         SelectTags? selects,

@@ -322,8 +322,8 @@ public class SqlExpressionEqualityTests
     public void Exists_EqualityContract_UsesSubqueryInstanceIdentity()
     {
         SqlGenerator<Order> generator = new();
-        Subquery<Order> subquery = CreateSubquery(generator);
-        Subquery<Order> differentSubquery = CreateSubquery(generator);
+        Subquery subquery = CreateSubquery(generator);
+        Subquery differentSubquery = CreateSubquery(generator);
 
         AssertEqualityContract(
             () => new Exists(subquery),
@@ -336,8 +336,8 @@ public class SqlExpressionEqualityTests
     public void NotExists_EqualityContract_UsesSubqueryInstanceIdentity()
     {
         SqlGenerator<Order> generator = new();
-        Subquery<Order> subquery = CreateSubquery(generator);
-        Subquery<Order> differentSubquery = CreateSubquery(generator);
+        Subquery subquery = CreateSubquery(generator);
+        Subquery differentSubquery = CreateSubquery(generator);
 
         AssertEqualityContract(
             () => new NotExists(subquery),
@@ -371,7 +371,7 @@ public class SqlExpressionEqualityTests
             IsNullable = true
         };
 
-    private static Subquery<Order> CreateSubquery(SqlGenerator<Order> generator)
+    private static Subquery CreateSubquery(SqlGenerator<Order> generator)
     {
         Predicates predicate = new GreaterThan(new Column<Order>(nameof(Order.Total)), new Parameter(100.00m, "Total"));
         return generator.InternalSubquery(null, null, null, predicate, null, null, null, null);

@@ -164,7 +164,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <c>null</c>, all non-key columns are updated.
     /// </param>
     /// <param name="joins">
-    /// Optional <see cref="Joins{T}"/> describing tables to join for the update.
+    /// Optional <see cref="Joins"/> describing tables to join for the update.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that

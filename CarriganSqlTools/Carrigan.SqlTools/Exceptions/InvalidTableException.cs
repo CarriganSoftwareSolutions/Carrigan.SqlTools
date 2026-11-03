@@ -17,14 +17,15 @@ namespace Carrigan.SqlTools.Exceptions;
 /// Predicates invalidPredicate =
 ///     new ColumnEqualsColumn<ColumnIdentifiers, PhoneModel>(nameof(ColumnIdentifiers.Id), nameof(PhoneModel.Id));
 ///
-/// // ColumnIdentifiers is not part of the join chain for Joins<JoinLeftTable>,
-/// // so the join construction will throw InvalidTableException.
-/// _ = new Joins<JoinLeftTable>
+/// // ColumnIdentifiers is not part of the join chain for Joins,
+/// // so join validation will throw InvalidTableException.
+/// Joins joins = new
 /// (
 ///     new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
 ///     new InnerJoin<JoinLastTable>(LastOnRightPredicate),
 ///     new InnerJoin<ColumnIdentifiers>(invalidPredicate)
 /// );
+/// joins.Validate(new TableTag(null, "JoinLeftTable"));
 /// ]]></code>
 /// </example>
 public class InvalidTableException : Exception

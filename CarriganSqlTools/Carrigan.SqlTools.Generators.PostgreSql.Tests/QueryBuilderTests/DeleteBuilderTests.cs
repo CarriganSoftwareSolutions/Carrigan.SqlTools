@@ -44,7 +44,7 @@ public class DeleteBuilderTests
         Predicates where = new ColumnValue<JoinRightTable>(nameof(JoinRightTable.Id), 3);
 
         Predicates joinOn = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        Joins<JoinRightTable> joins = new InnerJoin<JoinLastTable>(joinOn);
+        Joins joins = new InnerJoin<JoinLastTable>(joinOn);
 
         DeleteBuilder<JoinLeftTable, JoinRightTable> deleteBuilder = new()
         {

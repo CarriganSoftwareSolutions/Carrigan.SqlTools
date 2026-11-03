@@ -58,7 +58,7 @@ public class UpdateBuilderTests
         Predicates usingJoin = new Equal(new Column<JoinLeftTable>(nameof(JoinLeftTable.RightId)), new Column<JoinRightTable>(nameof(JoinRightTable.Id)));
         Predicates where = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Id)), new Parameter(3, "Id"));
         Predicates lastJoin = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
-        Joins<JoinRightTable> joins = new(new InnerJoin<JoinLastTable>(lastJoin));
+        Joins joins = new(new InnerJoin<JoinLastTable>(lastJoin));
 
         UpdateBuilder<JoinLeftTable, JoinRightTable> updateBuilder = new()
         {

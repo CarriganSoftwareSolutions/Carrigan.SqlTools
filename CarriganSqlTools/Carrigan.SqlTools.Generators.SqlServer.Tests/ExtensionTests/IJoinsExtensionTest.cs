@@ -10,14 +10,14 @@ public class IJoinsExtensionTest
     [Fact]
     public void IsNullOrEmpty_Null()
     {
-        Joins<Order>? joins = null;
+        Joins? joins = null;
         Assert.True(joins.IsNullOrEmpty());
     }
 
     [Fact]
     public void IsNullOrEmpty_Empty()
     {
-        Joins<Order> joins = new ([]);
+        Joins joins = new ([]);
         Assert.True(joins.IsNullOrEmpty());
     }
 
@@ -26,7 +26,7 @@ public class IJoinsExtensionTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         LeftJoin<JoinRightTable> join = new (id);
-        Joins<JoinLeftTable> joins_ = new (join);
+        Joins joins_ = new (join);
         Assert.False(joins_.IsNullOrEmpty());
     }
 }

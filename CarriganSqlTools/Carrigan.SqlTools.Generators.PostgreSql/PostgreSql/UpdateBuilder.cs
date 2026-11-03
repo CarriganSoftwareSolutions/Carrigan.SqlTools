@@ -132,7 +132,7 @@ public sealed record UpdateBuilder<T> : QueryBuilders.UpdateBuilderBase<T, T>, I
     private const string JoinsNotSupportedMessage =
     "PostgreSQL UPDATE joins are rooted from a table in the FROM clause, not from the table being updated. " +
     "This one-type UpdateBuilder<T> exists only for PostgreSQL UPDATE statements that do not use Joins. " +
-    "The inherited Joins member must exist because UpdateBuilderBase<T, T> defines it, but using Joins<T> here would incorrectly require the join chain to start with the update type. " +
+    "The inherited Joins member must exist because UpdateBuilderBase<T, T> defines it, but using Joins here would incorrectly require the join chain to start with the update type. " +
     "Use UpdateBuilder<T, joinsT> when a PostgreSQL UPDATE statement requires joins.";
 
     /// <summary>

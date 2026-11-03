@@ -189,7 +189,7 @@ public class FromReadMeSqlExpressionsPredicateExamples
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null, null, null);
+        Subquery subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null, null, null);
         Exists exists = new(subQuery);
 
         SelectBuilder<Customer> selectBuilder = new()
@@ -413,7 +413,7 @@ public class FromReadMeSqlExpressionsPredicateExamples
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery<Order> subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null, null, null);
+        Subquery subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null, null, null);
         NotExists notExists = new(subQuery);
 
         SelectBuilder<Customer> selectBuilder = new()

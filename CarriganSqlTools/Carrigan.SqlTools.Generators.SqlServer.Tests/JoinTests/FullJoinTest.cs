@@ -18,7 +18,7 @@ public class FullJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         FullJoin<JoinRightTable> join = new(id);
 
-        string actual = (new Joins<JoinLeftTable>(join)).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = (new Joins(join)).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -30,7 +30,7 @@ public class FullJoinTest
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         FullJoin<JoinRightTable> join = new(id);
 
-        string actual = join.AsJoins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = join.AsJoins().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -41,7 +41,7 @@ public class FullJoinTest
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Joins<JoinLeftTable>.FullJoin<JoinRightTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = FullJoin<JoinRightTable>.Joins(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " FULL JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -64,7 +64,7 @@ public class FullJoinTest
 
     [Fact]
     public void Joins_Null_Exception() =>
-        Assert.Throws<ArgumentNullException>(() => FullJoin<JoinRightTable>.Joins<JoinLeftTable>(null!));
+        Assert.Throws<ArgumentNullException>(() => FullJoin<JoinRightTable>.Joins(null!));
 
     [Fact]
     public void ToSql_EmptyPredicate_Exception()

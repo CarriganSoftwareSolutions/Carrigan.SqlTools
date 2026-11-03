@@ -95,7 +95,7 @@ namespace Carrigan.SqlTools.PostgreSql;
 /// 
 /// ColumnEqualsColumn<Order, PaymentMethod> paymentMethodIdEquals = new(nameof(Order.PaymentMethodId), nameof(PaymentMethod.Id));
 /// InnerJoin<PaymentMethod> paymentMethodJoin = new(paymentMethodIdEquals);
-/// Joins<Order> joins = new(paymentMethodJoin);
+/// Joins joins = new(paymentMethodJoin);
 /// 
 /// ColumnValue<PaymentMethod> paymentMethodZipCode = new(nameof(PaymentMethod.ZipCode), "37040");
 /// 
@@ -173,7 +173,7 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     private const string JoinsNotSupportedMessage =
     "PostgreSQL DELETE joins are rooted from a table in the USING clause, not from the table being deleted. " +
     "This one-type DeleteBuilder<T> exists only for PostgreSQL DELETE statements that do not use Joins. " +
-    "The inherited Joins member must exist because DeleteBuilderBase<T, T> defines it, but using Joins<T> here would incorrectly require the join chain to start with the deleted type. " +
+    "The inherited Joins member must exist because DeleteBuilderBase<T, T> defines it, but using Joins here would incorrectly require the join chain to start with the deleted type. " +
     "Use DeleteBuilder<T, joinsT> when a PostgreSQL DELETE statement requires joins.";
 
     /// <summary>

@@ -42,6 +42,9 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </example>
 public class Join : ISelectable, IAliasedTable, ISqlFragment
 {
+    /// <summary>Wraps this join in a non-generic join sequence.</summary>
+    public Joins AsJoins() => new(this);
+
     #region properties
     /// <summary>
     /// Optional readonly subquery for the right-hand side.

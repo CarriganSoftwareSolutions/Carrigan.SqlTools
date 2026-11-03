@@ -333,7 +333,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> customerOrderPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         ColumnEqualsColumn<Order, OrderedItem> orderOrderedItemPredicate = new(nameof(Order.Id), nameof(OrderedItem.OrderId));
         ColumnEqualsColumn<OrderedItem, Book> orderedItemBookPredicate = new(nameof(OrderedItem.BookId), nameof(Book.Id));
-        Joins<Customer> joins = new Joins<Customer>(new Join<Order>(customerOrderPredicate))
+        Joins joins = new Joins(new Join<Order>(customerOrderPredicate))
             .Append(new Join<OrderedItem>(orderOrderedItemPredicate))
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = SelectTagGenerator.GetAll<Book>();
@@ -369,7 +369,7 @@ public sealed class JoinsTests : IClassFixture<JoinsFixture>
         ColumnEqualsColumn<Customer, Order> customerOrderPredicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         ColumnEqualsColumn<Order, OrderedItem> orderOrderedItemPredicate = new(nameof(Order.Id), nameof(OrderedItem.OrderId));
         ColumnEqualsColumn<OrderedItem, Book> orderedItemBookPredicate = new(nameof(OrderedItem.BookId), nameof(Book.Id));
-        Joins<Customer> joins = new Joins<Customer>(new Join<Order>(customerOrderPredicate))
+        Joins joins = new Joins(new Join<Order>(customerOrderPredicate))
             .Append(new Join<OrderedItem>(orderOrderedItemPredicate))
             .Append(new Join<Book>(orderedItemBookPredicate));
         SelectTags selectTags = SelectTagGenerator.GetAll<Book>();

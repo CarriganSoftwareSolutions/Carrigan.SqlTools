@@ -52,7 +52,7 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     /// An optional <see cref="TableAlias"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
     /// </param>
     [ExternalOnly]
-    public CrossJoin(string? joinAsTableAlias = null) : this(IdentifierTypes.TableAlias.New(joinAsTableAlias))
+    public CrossJoin(string? joinAsTableAlias) : this(IdentifierTypes.TableAlias.New(joinAsTableAlias))
     {
     }
 
@@ -78,7 +78,7 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     }
     #endregion
 
-    public static Joins Joins(string? joinAsTableAlias = null) =>
+    public static Joins Joins(string? joinAsTableAlias) =>
         new(new CrossJoin<rightT>(TableAlias.New(joinAsTableAlias)));
 
     public static Joins Joins(TableAlias? joinAsTableAlias = null) =>

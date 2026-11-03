@@ -104,7 +104,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <typeparamref name="T"/>, with optional joins and filter predicates.
     /// </summary>
     /// <param name="joins">
-    /// Optional <see cref="Joins{T}"/> that specify related tables to join when forming the delete statement.
+    /// Optional <see cref="Joins"/> that specify related tables to join when forming the delete statement.
     /// </param>
     /// <param name="predicates">
     /// Optional <see cref="Predicates"/> representing the <c>WHERE</c> conditions

@@ -175,7 +175,7 @@ public class SqlGenerator_ConstructorValidationTests
     {
         SqlGenerator<AmbiguousLeft> sqlGenerator = new();
         ColumnEqualsColumn<AmbiguousLeft, AmbiguousRight> id = new (nameof(AmbiguousLeft.Id), nameof(AmbiguousRight.Id));
-        Joins<AmbiguousLeft> joins = Joins<AmbiguousLeft>.LeftJoin<AmbiguousRight>(id);
+        Joins joins = LeftJoin<AmbiguousRight>.Joins(id);
         SelectTags selects = 
             SelectTagGenerator.Get<AmbiguousLeft>(nameof(AmbiguousLeft.Id))
                 .Append<AmbiguousRight>(nameof(AmbiguousRight.Id));

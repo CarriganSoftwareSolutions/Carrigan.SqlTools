@@ -18,7 +18,7 @@ public class RightJoinTests
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         RightJoin<JoinRightTable> rightJoin = new(id);
 
-        string actual = (new Joins<JoinLeftTable>(rightJoin)).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = (new Joins(rightJoin)).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -30,7 +30,7 @@ public class RightJoinTests
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         RightJoin<JoinRightTable> rightJoin = new(id);
 
-        string actual = rightJoin.AsJoins<JoinLeftTable>().ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = rightJoin.AsJoins().ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -41,7 +41,7 @@ public class RightJoinTests
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = Joins<JoinLeftTable>.RightJoin<JoinRightTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = RightJoin<JoinRightTable>.Joins(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);
@@ -63,7 +63,7 @@ public class RightJoinTests
     {
         Predicates id = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
 
-        string actual = RightJoin<JoinRightTable>.Joins<JoinLeftTable>(id).ToSqlFragments(Dialect).ToSql(Dialect);
+        string actual = RightJoin<JoinRightTable>.Joins(id).ToSqlFragments(Dialect).ToSql(Dialect);
         string expected = " RIGHT JOIN [Right] ON ([Left].[RightId] = [Right].[Id])";
 
         Assert.Equal(expected, actual);

@@ -32,7 +32,7 @@ public class SubqueryBuilderTests
             Paging = new LimitOffset(25, 50)
         };
 
-        Subquery<Customer> subquery = customerGenerator.Subquery(subqueryBuilder);
+        Subquery subquery = customerGenerator.Subquery(subqueryBuilder);
 
         SqlQuery query = new(Dialect, CommandType.Text, subquery.Flatten(Dialect));
 
@@ -58,7 +58,7 @@ public class SubqueryBuilderTests
             Having = new GreaterThan(averageGradePoint, new Parameter(3.5m, "MinimumGpa"))
         };
 
-        Subquery<Grades> subquery = gradesGenerator.Subquery(subqueryBuilder);
+        Subquery subquery = gradesGenerator.Subquery(subqueryBuilder);
         SqlQuery query = new(Dialect, CommandType.Text, subquery.Flatten(Dialect));
 
         Assert.Equal(
