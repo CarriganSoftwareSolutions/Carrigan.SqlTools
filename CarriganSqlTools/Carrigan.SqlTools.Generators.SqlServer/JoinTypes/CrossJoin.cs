@@ -49,10 +49,9 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
     /// <param name="joinAsTableAlias">
-    /// An optional <see cref="TableAlias"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
+    /// An optional <see cref="TableAliasTag"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
     /// </param>
-    [ExternalOnly]
-    public CrossJoin(string? joinAsTableAlias) : this(IdentifierTypes.TableAlias.New(joinAsTableAlias))
+    public CrossJoin() : this((TableAliasTag?)null)
     {
     }
 
@@ -62,7 +61,18 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     /// <param name="joinAsTableAlias">
     /// An optional <see cref="TableAlias"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
     /// </param>
-    public CrossJoin(TableAlias? joinAsTableAlias = null) : this(TableAliasTag.New(joinAsTableAlias))
+    [ExternalOnly]
+    public CrossJoin(string joinAsTableAlias) : this(TableAlias.New(joinAsTableAlias))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
+    /// </summary>
+    /// <param name="joinAsTableAlias">
+    /// An optional <see cref="TableAlias"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
+    /// </param>
+    public CrossJoin(TableAlias? joinAsTableAlias) : this(TableAliasTag.New(joinAsTableAlias))
     {
     }
 
@@ -72,15 +82,18 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     /// <param name="joinAsTableAlias">
     /// An optional <see cref="TableAliasTag"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
     /// </param>
-    internal CrossJoin(TableAliasTag? joinAsTableAlias = null)
+    internal CrossJoin(TableAliasTag? joinAsTableAlias)
         : base(SqlToolsReflectorCache<rightT>.Table, SelectTagGenerator.GetAll<rightT>(), joinAsTableAlias)
     {
     }
     #endregion
 
-    public static Joins Joins(string? joinAsTableAlias) =>
+    public static Joins Joins() =>
+        new(new CrossJoin<rightT>((TableAliasTag?)null));
+
+    public static Joins Joins(string joinAsTableAlias) =>
         new(new CrossJoin<rightT>(TableAlias.New(joinAsTableAlias)));
 
-    public static Joins Joins(TableAlias? joinAsTableAlias = null) =>
+    public static Joins Joins(TableAlias? joinAsTableAlias) =>
         new(new CrossJoin<rightT>(joinAsTableAlias));
 }

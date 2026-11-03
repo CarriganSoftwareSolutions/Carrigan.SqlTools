@@ -54,13 +54,12 @@ public class RightJoin<rightT> : RightJoin where rightT : class
     /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
     /// </param>
     /// <param name="joinAsTableAlias">
-    /// An optional <see cref="TableAlias"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
+    /// An optional <see cref="TableAliasTag"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
     /// </param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    [ExternalOnly]
-    public RightJoin(Predicates predicates, string? joinAsTableAlias) : this(predicates, IdentifierTypes.TableAlias.New(joinAsTableAlias))
+    public RightJoin(Predicates predicates) : this(predicates, (TableAliasTag?)null)
     {
     }
 
@@ -76,7 +75,24 @@ public class RightJoin<rightT> : RightJoin where rightT : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public RightJoin(Predicates predicates, TableAlias? joinAsTableAlias = null) : this(predicates, TableAliasTag.New(joinAsTableAlias))
+    [ExternalOnly]
+    public RightJoin(Predicates predicates, string joinAsTableAlias) : this(predicates, TableAlias.New(joinAsTableAlias))
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
+    /// </summary>
+    /// <param name="predicates">
+    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
+    /// </param>
+    /// <param name="joinAsTableAlias">
+    /// An optional <see cref="TableAlias"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
+    /// </exception>
+    public RightJoin(Predicates predicates, TableAlias? joinAsTableAlias) : this(predicates, TableAliasTag.New(joinAsTableAlias))
     {
     }
 
@@ -92,15 +108,18 @@ public class RightJoin<rightT> : RightJoin where rightT : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    internal RightJoin(Predicates predicates, TableAliasTag? joinAsTableAlias = null)
+    internal RightJoin(Predicates predicates, TableAliasTag? joinAsTableAlias)
         : base(SqlToolsReflectorCache<rightT>.Table, SelectTagGenerator.GetAll<rightT>(), predicates, joinAsTableAlias)
     {
     }
     #endregion
 
-    public static Joins Joins(Predicates predicates, string? joinAsTableAlias) =>
-        new (new RightJoin<rightT>(predicates, TableAlias.New(joinAsTableAlias)) );
+    public static Joins Joins(Predicates predicates) =>
+        new(new RightJoin<rightT>(predicates, (TableAliasTag?)null));
 
-    public static Joins Joins(Predicates predicates, TableAlias? joinAsTableAlias = null) =>
-        new(new RightJoin<rightT>(predicates, TableAliasTag.New(joinAsTableAlias)));
+    public static Joins Joins(Predicates predicates, string joinAsTableAlias) =>
+        new(new RightJoin<rightT>(predicates, TableAlias.New(joinAsTableAlias)));
+
+    public static Joins Joins(Predicates predicates, TableAlias? joinAsTableAlias) =>
+        new(new RightJoin<rightT>(predicates, joinAsTableAlias));
 }
