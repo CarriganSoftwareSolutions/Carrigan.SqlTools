@@ -172,7 +172,7 @@ public class Joins : ISqlFragment, IEmpty
             // Ensure each table involved in the join comes from either an earlier table or the table being joined.
             TableTagBase[] newInvalids =
             [
-                .. join.JoinsOn.Where(tableTag => validTables.DoesNotContain(tableTag))
+                .. join.JoinsOn.Where(tableExpression => validTables.DoesNotContain(tableExpression))
             ];
 
             if (newInvalids.Length == 0)

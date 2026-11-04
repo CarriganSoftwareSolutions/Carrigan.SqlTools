@@ -22,7 +22,7 @@ public class TableAlias : TextWrapper
     /// Initializes a new instance of the <see cref="TableAlias"/> class.
     /// </summary>
     /// <param name="name">The alias name string value.</param>
-    public TableAlias(string? name) : base(name)
+    public TableAlias(string? name) : base(name, StringComparison.OrdinalIgnoreCase)
     {
     }
 

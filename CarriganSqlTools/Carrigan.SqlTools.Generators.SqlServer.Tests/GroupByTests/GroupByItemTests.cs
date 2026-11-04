@@ -304,7 +304,7 @@ public class GroupByItemTests
     private static GroupBy CreateTestGroupBy(string? schemaName, string tableName, string propertyName)
     {
         PropertyInfo propertyInfo = typeof(Address).GetProperty(propertyName)!;
-        ColumnInfo columnInfo = new(schemaName is null ? null : new SchemaName(schemaName), new TableName(tableName), propertyInfo, []);
+        ColumnInfo columnInfo = new(SchemaName.New(schemaName), new TableName(tableName), propertyInfo, []);
         return new GroupBy(new Column(columnInfo));
     }
 }

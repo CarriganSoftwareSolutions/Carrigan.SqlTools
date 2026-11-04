@@ -20,7 +20,7 @@ public class ProcedureName : TextWrapper
     /// </summary>
     /// <param name="name">The stored procedure name string value.</param>
     public ProcedureName(string? name)
-        : base(name)
+        : base(name, StringComparison.OrdinalIgnoreCase)
     {
     }
 

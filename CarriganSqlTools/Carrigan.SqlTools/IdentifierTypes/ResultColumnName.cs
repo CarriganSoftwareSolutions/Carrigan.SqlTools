@@ -22,7 +22,7 @@ public class ResultColumnName : TextWrapper
     /// </summary>
     /// <param name="name">The result column name string value.</param>
     public ResultColumnName(string? name)
-        : base(name)
+        : base(name, StringComparison.OrdinalIgnoreCase)
     {
     }
 

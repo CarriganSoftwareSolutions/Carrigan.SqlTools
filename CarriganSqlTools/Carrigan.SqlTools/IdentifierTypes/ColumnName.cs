@@ -23,7 +23,7 @@ public class ColumnName : TextWrapper
     /// Initializes a new instance of the <see cref="ColumnName"/> class.
     /// </summary>
     /// <param name="name">The column name string value.</param>
-    public ColumnName(string? name) : base(name)
+    public ColumnName(string? name) : base(name, StringComparison.OrdinalIgnoreCase)
     {
     }
 

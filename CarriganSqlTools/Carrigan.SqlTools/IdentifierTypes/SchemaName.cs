@@ -21,7 +21,7 @@ public class SchemaName : TextWrapper
     /// </summary>
     /// <param name="name">The schema name string value.</param>
     public SchemaName(string? name)
-        : base(name)
+        : base(name, StringComparison.OrdinalIgnoreCase)
     {
     }
 

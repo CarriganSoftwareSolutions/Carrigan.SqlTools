@@ -22,7 +22,7 @@ public class ColumnAlias : TextWrapper
     /// Initializes a new instance of the <see cref="ColumnAlias"/> class.
     /// </summary>
     /// <param name="name">The alias name string value.</param>
-    public ColumnAlias(string? name) : base(name)
+    public ColumnAlias(string? name) : base(name, StringComparison.OrdinalIgnoreCase)
     {
     }
 

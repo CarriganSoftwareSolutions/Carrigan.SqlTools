@@ -22,7 +22,7 @@ public class TableName : TextWrapper
     /// </summary>
     /// <param name="name">The table name string value.</param>
     public TableName(string? name)
-        : base(name)
+        : base(name, StringComparison.OrdinalIgnoreCase)
     {
     }
 
