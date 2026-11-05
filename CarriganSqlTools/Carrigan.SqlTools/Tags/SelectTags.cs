@@ -1,5 +1,7 @@
 using Carrigan.Core.Enums;
+using Carrigan.Core.Exceptions;
 using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
@@ -159,4 +161,31 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <returns>A new collection containing <paramref name="selectTag"/>.</returns>
     public static implicit operator SelectTags(SelectTag selectTag) =>
         new(selectTag);
+
+
+    public SelectTag GetByExpression(SqlExpression sqlExpression) =>
+        _selectTags
+            .Where(select => select.SqlExpression == sqlExpression)
+            .Single();
+
+    [ExternalOnly]
+    public SelectTag? GetByColumnAlias(string columnAlias) =>
+        GetByColumnAlias(new ColumnAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(columnAlias)));
+
+    public SelectTag? GetByColumnAlias(ColumnAlias columnAlias) =>
+        GetByColumnAlias(new ColumnAliasTag(columnAlias ?? throw new ArgumentNullException(nameof(columnAlias))));
+
+    protected SelectTag? GetByColumnAlias(ColumnAliasTag columnAliasTag) =>
+        _selectTags
+            .Where(select => select.AliasTag == columnAliasTag)
+            .SingleOrDefault();
+
+    [ExternalOnly]
+    public SelectTag? GetByResultColumn(string resultColumnName) =>
+        GetByResultColumn(new ResultColumnName(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(resultColumnName)));
+
+    public SelectTag? GetByResultColumn(ResultColumnName resultColumnName) =>
+        _selectTags
+            .Where(select => select.ResultColumnName == (resultColumnName ?? throw new ArgumentNullException(nameof(resultColumnName))))
+            .SingleOrDefault();
 }
