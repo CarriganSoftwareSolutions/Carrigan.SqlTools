@@ -26,7 +26,7 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// </summary>
     /// <param name="selectTags">The select tags to include in this instance.</param>
     public SelectTags(params IEnumerable<SelectTag> selectTags) =>
-        _selectTags = selectTags.Materialize(NullOptionsEnum.ArgumentNullException);
+        _selectTags = selectTags.Materialize(NullOptionsEnum.ArgumentException);
 
     /// <summary>
     /// Projects the result columns in this collection as columns qualified by the supplied table alias.
@@ -163,29 +163,44 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
         new(selectTag);
 
 
-    public SelectTag GetByExpression(SqlExpression sqlExpression) =>
+    public SelectTag GetByExpression(IEnumerable<SqlExpression> sqlExpressions) =>
         _selectTags
-            .Where(select => select.SqlExpression == sqlExpression)
+            .Materialize(NullOptionsEnum.ArgumentException)
+            .Where(select => sqlExpressions.Contains(select.SqlExpression))
             .Single();
 
     [ExternalOnly]
-    public SelectTag? GetByColumnAlias(string columnAlias) =>
-        GetByColumnAlias(new ColumnAlias(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(columnAlias)));
+    public IEnumerable<SelectTag> GetByColumnAlias(IEnumerable<string> columnAliases) =>
+        GetByColumnAlias
+        (
+            columnAliases
+                .Materialize(NullOrWhiteSpaceOptionsEnum.ArgumentException)
+                .Select(columnAlias => new ColumnAlias(columnAlias))
+        );
 
-    public SelectTag? GetByColumnAlias(ColumnAlias columnAlias) =>
-        GetByColumnAlias(new ColumnAliasTag(columnAlias ?? throw new ArgumentNullException(nameof(columnAlias))));
+    public IEnumerable<SelectTag> GetByColumnAlias(IEnumerable<ColumnAlias> columnAliases) =>
+        GetByColumnAlias
+        (
+            columnAliases
+                .Materialize(NullOrWhiteSpaceOptionsEnum.ArgumentException)
+                .Select(columnAlias => new ColumnAliasTag(columnAlias))
+        );
 
-    protected SelectTag? GetByColumnAlias(ColumnAliasTag columnAliasTag) =>
+    protected IEnumerable<SelectTag> GetByColumnAlias(IEnumerable<ColumnAliasTag> columnAliasTags) =>
         _selectTags
-            .Where(select => select.AliasTag == columnAliasTag)
-            .SingleOrDefault();
+            .Where(select => select.AliasTag.IsNotNullOrWhiteSpace())
+            .Where(select => columnAliasTags.Contains(select.AliasTag));
 
     [ExternalOnly]
-    public SelectTag? GetByResultColumn(string resultColumnName) =>
-        GetByResultColumn(new ResultColumnName(ArgumentNullOrWhiteSpaceException.ThrowIfNullOrWhiteSpace(resultColumnName)));
+    public IEnumerable<SelectTag> GetByResultColumn(IEnumerable<string> resultColumnNames) =>
+        GetByResultColumn
+        (
+            resultColumnNames
+                .Materialize(NullOrWhiteSpaceOptionsEnum.ArgumentException)
+                .Select(resultColumnName => new ResultColumnName(resultColumnName))
+        );
 
-    public SelectTag? GetByResultColumn(ResultColumnName resultColumnName) =>
+    public IEnumerable<SelectTag> GetByResultColumn(IEnumerable<ResultColumnName> resultColumnName) =>
         _selectTags
-            .Where(select => select.ResultColumnName == (resultColumnName ?? throw new ArgumentNullException(nameof(resultColumnName))))
-            .SingleOrDefault();
+            .Where(select => resultColumnName.Contains(select.ResultColumnName));
 }

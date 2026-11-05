@@ -1,6 +1,7 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.QueryBuilders;
 using Carrigan.SqlTools.Tags;
 using System.Text;
 

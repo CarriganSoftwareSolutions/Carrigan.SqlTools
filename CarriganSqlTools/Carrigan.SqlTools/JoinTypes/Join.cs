@@ -42,10 +42,13 @@ namespace Carrigan.SqlTools.JoinTypes;
 /// </example>
 public class Join : ITableExpression
 {
-    /// <summary>Wraps this join in a non-generic join sequence.</summary>
-    public Joins AsJoins() => new(this);
-
     #region properties
+
+    /// <summary>
+    /// Gets an enumeration of all <see cref="Tags.SelectTags"/> objects that represent the  joined table.
+    /// </summary>
+    public SelectTags SelectTags { get; }
+
     /// <summary>
     /// Optional readonly subquery for the right-hand side.
     /// </summary>
@@ -80,10 +83,6 @@ public class Join : ITableExpression
     /// </summary>
     private readonly Predicates Predicates;
 
-    /// <summary>
-    /// Gets an enumeration of all <see cref="SelectTags"/> objects that represent the  joined table.
-    /// </summary>
-    public SelectTags SelectTags { get; }
 
     /// <summary>
     /// Gets an enumeration of all <see cref="TableTag"/> objects involved in the
@@ -97,6 +96,9 @@ public class Join : ITableExpression
         Predicates
             .AllParticipatingTables
             .Distinct();
+
+    /// <summary>Wraps this join in a non-generic join sequence.</summary>
+    public Joins AsJoins() => new(this);
     #endregion
 
     #region constructors from subquery

@@ -22,6 +22,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <summary>
     /// The optional alias applied to this select item.
     /// </summary>
+    //TODO: rename to ColumnAliasTag
     internal readonly ColumnAliasTag? AliasTag;
 
     /// <summary>
