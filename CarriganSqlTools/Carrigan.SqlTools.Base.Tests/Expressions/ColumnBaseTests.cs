@@ -122,8 +122,8 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            ColumnTag actual = columnBase.ColumnTag;
-            ColumnTag expected = ExpectedPropertyColumnTag[propertyName];
+            ColumnNameTag actual = columnBase.ColumnTag;
+            ColumnNameTag expected = ExpectedPropertyColumnTag[propertyName];
             Assert.Equal(expected, actual);
         }
         RunSubMethod(Test, propertyName);

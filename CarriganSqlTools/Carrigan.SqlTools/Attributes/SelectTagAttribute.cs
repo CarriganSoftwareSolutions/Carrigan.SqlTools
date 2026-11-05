@@ -13,7 +13,7 @@ public abstract class SelectTagAttribute : Attribute
     /// <summary>
     /// Gets or initializes the fully qualified source column selected by this attribute.
     /// </summary>
-    internal ColumnTag? ColumnTag { get; init; }
+    internal ColumnNameTag? ColumnTag { get; init; }
 
     /// <summary>
     /// Gets or initializes the alias applied by this attribute.

@@ -101,7 +101,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     {
         get
         {
-            ColumnTag? columnTag = (SqlExpression as Column)?.ColumnTag;
+            ColumnNameTag? columnTag = (SqlExpression as Column)?.ColumnTag;
             return new(AliasTag?.ToString() ?? columnTag?.ColumnName.ToString() ?? SqlExpression.ToString());
         }
     }
@@ -110,7 +110,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     internal SelectTag FromTableAlias(TableAlias tableAlias)
     {
         ArgumentNullException.ThrowIfNull(tableAlias, nameof(tableAlias));
-        return new(new Column(new ColumnTag(tableAlias, ResultColumnName)));
+        return new(new Column(new ColumnNameTag(tableAlias, ResultColumnName)));
     }
 
     /// <summary>

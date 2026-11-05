@@ -22,12 +22,12 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
         if (left is null || right is null) return false;
 
         // Use each property's native equality (IEquatable<T> or reference equality)
-        return EqualityComparer<ColumnTag>.Default.Equals(left.ColumnTag, right.ColumnTag)
+        return EqualityComparer<ColumnNameTag>.Default.Equals(left.ColumnTag, right.ColumnTag)
             && EqualityComparer<ColumnName>.Default.Equals(left.ColumnName, right.ColumnName)
             && EqualityComparer<PropertyInfo>.Default.Equals(left.PropertyInfo, right.PropertyInfo)
             && EqualityComparer<PropertyName>.Default.Equals(left.PropertyName, right.PropertyName)
             && EqualityComparer<ParameterTag>.Default.Equals(left.ParameterTag, right.ParameterTag)
-            && EqualityComparer<ColumnTag>.Default.Equals(left.SelectColumnTag, right.SelectColumnTag)
+            && EqualityComparer<ColumnNameTag>.Default.Equals(left.SelectColumnTag, right.SelectColumnTag)
             && EqualityComparer<ColumnAliasTag>.Default.Equals(left.SelectAliasTag, right.SelectAliasTag)
             && EqualityComparer<SelectTag>.Default.Equals(left.SelectTag, right.SelectTag)
             && EqualityComparer<ColumnAlias>.Default.Equals(left.AliasName, right.AliasName)
@@ -43,12 +43,12 @@ public class ColumnInfoAllPropertiesComparer : IEqualityComparer<ColumnInfo>
 
         // Include ALL properties in the hash. HashCode handles nulls and custom comparer.
         HashCode hashCode = new ();
-        hashCode.Add(obj.ColumnTag, EqualityComparer<ColumnTag>.Default);
+        hashCode.Add(obj.ColumnTag, EqualityComparer<ColumnNameTag>.Default);
         hashCode.Add(obj.ColumnName, EqualityComparer<ColumnName>.Default);
         hashCode.Add(obj.PropertyInfo, EqualityComparer<PropertyInfo>.Default);
         hashCode.Add(obj.PropertyName, EqualityComparer<PropertyName>.Default);
         hashCode.Add(obj.ParameterTag, EqualityComparer<ParameterTag>.Default);
-        hashCode.Add(obj.SelectColumnTag, EqualityComparer<ColumnTag>.Default);
+        hashCode.Add(obj.SelectColumnTag, EqualityComparer<ColumnNameTag>.Default);
         hashCode.Add(obj.SelectAliasTag, EqualityComparer<ColumnAliasTag?>.Default);
         hashCode.Add(obj.SelectTag, EqualityComparer<SelectTag>.Default);
         hashCode.Add(obj.IsKeyPart);

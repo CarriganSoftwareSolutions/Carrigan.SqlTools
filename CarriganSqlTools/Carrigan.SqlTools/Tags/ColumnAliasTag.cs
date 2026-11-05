@@ -15,7 +15,7 @@ namespace Carrigan.SqlTools.Tags;
 /// Equality and hashing are based on the underlying <see cref="ColumnAlias"/> value.
 /// </remarks>
 //TODO: ColumnAliasTag
-public class ColumnAliasTag : IEquatable<ColumnAliasTag>, IEqualityOperators<ColumnAliasTag, ColumnAliasTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
+public class ColumnAliasTag : ColumnTag, IEquatable<ColumnAliasTag>, IEqualityOperators<ColumnAliasTag, ColumnAliasTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
     private readonly ColumnAlias _aliasName;
 
@@ -105,29 +105,11 @@ public class ColumnAliasTag : IEquatable<ColumnAliasTag>, IEqualityOperators<Col
         !(left == right);
 
     /// <summary>
-    /// Flattens this fragment into the sequence of fragments used to render SQL text.
-    /// </summary>
-    /// <param name="dialect">The SQL dialect used when flattening this fragment.</param>
-    /// <returns>A flattened sequence of SQL fragments that render this tag.</returns>
-    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect)
-    {
-        yield return this;
-    }
-
-    /// <summary>
-    /// Gets the SQL parameters contained by this fragment.
-    /// </summary>
-    /// <param name="dialect">The SQL dialect used when inspecting this fragment.</param>
-    /// <returns>An empty sequence because alias fragments do not contain SQL parameters.</returns>
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
-        [];
-
-    /// <summary>
     /// Renders the alias as a dialect-quoted SQL identifier.
     /// </summary>
     /// <param name="dialect">The SQL dialect used to quote the alias identifier.</param>
     /// <returns>The quoted alias identifier.</returns>
-    public string ToSql(ISqlDialects dialect) =>
+    public override string ToSql(ISqlDialects dialect) =>
         dialect.QuoteIdentifier(_aliasName.ToString());
 
     /// <summary>
@@ -136,17 +118,8 @@ public class ColumnAliasTag : IEquatable<ColumnAliasTag>, IEqualityOperators<Col
     /// <returns>
     /// <c>true</c> if the alias name is null, empty, or whitespace; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsWhiteSpace() =>
+    public override bool IsWhiteSpace() =>
         _aliasName.IsWhiteSpace();
-
-    /// <summary>
-    /// Indicates whether the alias name is not null, not empty, and contains at least one non-whitespace character.
-    /// </summary>
-    /// <returns>
-    /// <c>true</c> if the alias name is not null, not empty, and contains non-whitespace characters; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsNotWhiteSpace() =>
-        _aliasName.IsNotWhiteSpace();
 
     /// <summary>
     /// Indicates whether the alias name is null or empty.
@@ -154,15 +127,6 @@ public class ColumnAliasTag : IEquatable<ColumnAliasTag>, IEqualityOperators<Col
     /// <returns>
     /// <c>true</c> if the alias name is null or empty; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsEmpty() =>
+    public override bool IsEmpty() =>
         _aliasName.IsEmpty();
-
-    /// <summary>
-    /// Indicates whether the alias name is not null and not empty.
-    /// </summary>
-    /// <returns>
-    /// <c>true</c> if the alias name is not null and not empty; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsNotEmpty() =>
-        _aliasName.IsNotEmpty();
 }

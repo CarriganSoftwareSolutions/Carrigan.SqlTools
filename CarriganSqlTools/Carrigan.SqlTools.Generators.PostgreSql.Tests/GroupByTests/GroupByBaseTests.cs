@@ -31,7 +31,7 @@ public class GroupByBaseTests
         IEnumerable<ISqlFragment> fragments = item.Flatten(Dialect);
 
         ISqlFragment fragment = Assert.Single(fragments);
-        Assert.IsType<ColumnTag>(fragment);
+        Assert.IsType<ColumnNameTag>(fragment);
         Assert.NotSame(item, fragment);
         Assert.Equal(item.ToSql(Dialect), fragment.ToSql(Dialect));
     }
@@ -52,7 +52,7 @@ public class GroupByBaseTests
 
         Assert.Equal(5, fragments.Length);
         Assert.IsType<SqlFragmentText>(fragments[0]);
-        Assert.IsType<ColumnTag>(fragments[1]);
+        Assert.IsType<ColumnNameTag>(fragments[1]);
         Assert.IsType<SqlFragmentText>(fragments[2]);
         Assert.IsType<SqlFragmentParameter>(fragments[3]);
         Assert.IsType<SqlFragmentText>(fragments[4]);

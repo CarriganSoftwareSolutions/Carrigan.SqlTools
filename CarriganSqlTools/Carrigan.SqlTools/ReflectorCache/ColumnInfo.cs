@@ -30,10 +30,10 @@ namespace Carrigan.SqlTools.ReflectorCache;
 public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo, ColumnInfo, bool>
 {
     /// <summary>
-    /// The fully qualified <see cref="Tags.ColumnTag"/> that represents
+    /// The fully qualified <see cref="Tags.ColumnNameTag"/> that represents
     /// the SQL identifier for this column, including schema and table context.
     /// </summary>
-    internal readonly ColumnTag ColumnTag;
+    internal readonly ColumnNameTag ColumnTag;
 
     /// <summary>
     /// The <see cref="IdentifierTypes.ColumnName"/> derived from the property.
@@ -97,7 +97,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
     /// The source column selected for this property in SELECT clauses.
     /// This may differ from <see cref="ColumnTag"/> when a <see cref="SelectTagAttribute"/> maps a projection property to another model.
     /// </summary>
-    internal readonly ColumnTag SelectColumnTag;
+    internal readonly ColumnNameTag SelectColumnTag;
 
     /// <summary>
     /// The alias used when this property is selected.

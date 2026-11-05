@@ -46,7 +46,7 @@ public class SelectTagsFromTableAliasTests
 
     private static SelectTags NewSelectTags(string? aliasName = null)
     {
-        Column column = new(new ColumnTag(new TableTag(null, "SourceTable"), new ColumnName("SourceColumn")));
+        Column column = new(new ColumnNameTag(new TableTag(null, "SourceTable"), new ColumnName("SourceColumn")));
         return aliasName is null
             ? new SelectTag(column)
             : new SelectTag(column, aliasName);
