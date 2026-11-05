@@ -43,7 +43,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.9-alpha.202610212318" PrivateAssets="all" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.9-alpha.202611051613" PrivateAssets="all" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.403" PrivateAssets="All" />
   </ItemGroup>
 

@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.9-alpha.202610212318" />
+    <PackageReference Include="Carrigan.Core" Version="0.1.9-alpha.202611051612" />
     <PackageReference Include="coverlet.MTP" Version="10.1.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
     <PackageReference Include="Respawn" Version="7.0.0" />
