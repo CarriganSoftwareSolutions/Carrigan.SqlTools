@@ -58,7 +58,7 @@ public class Subquery : ISelectable, ISqlFragment
     /// together to form the complete SQL text of the subquery when it is consumed  by a predicate
     /// or included in a larger query.
     /// </param>
-    public Subquery(SelectTags selectTags, IEnumerable<ISqlFragment> sqlFragments)
+    internal Subquery(SelectTags selectTags, IEnumerable<ISqlFragment> sqlFragments)
     {
         ArgumentNullException.ThrowIfNull(sqlFragments);
         ArgumentNullException.ThrowIfNull(selectTags);
