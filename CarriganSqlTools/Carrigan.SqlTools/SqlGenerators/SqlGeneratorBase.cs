@@ -89,7 +89,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             GetColumnInfo(SupportedTypes)
                 .Where(static column => SqlIdentifierPattern.Fails(column.ColumnName.ToString()))
                 .Select(static column => new Tuple<PropertyInfo, ColumnName>(column.PropertyInfo, column.ColumnName))
-                .Materialize(NullOptionsEnum.NullReferenceException);
+                .Materialize(NullOptionsEnum.Exception);
 
         if (invalidColumns.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidColumns));
@@ -102,7 +102,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
                         ? new Tuple<PropertyInfo, ColumnAlias>(column.PropertyInfo, column.AliasName)
                         : null)
                 .OfType<Tuple<PropertyInfo, ColumnAlias>>()
-                .Materialize(NullOptionsEnum.NullReferenceException);
+                .Materialize(NullOptionsEnum.Exception);
 
         if (invalidAliases.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidAliases));
@@ -111,7 +111,7 @@ public abstract partial class SqlGeneratorBase<T> : SqlToolsReflectorCache<T> wh
             GetColumnInfo(SupportedTypes)
                 .Where(static column => SqlIdentifierPattern.Fails(column.ParameterTag.ToString()))
                 .Select(static column => new Tuple<PropertyInfo, ParameterTag>(column.PropertyInfo, column.ParameterTag))
-                .Materialize(NullOptionsEnum.NullReferenceException);
+                .Materialize(NullOptionsEnum.Exception);
 
         if (invalidParameters.Any())
             exceptions.Add(new InvalidSqlIdentifierException(invalidParameters));

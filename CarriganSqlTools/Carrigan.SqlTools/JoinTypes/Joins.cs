@@ -151,7 +151,7 @@ public class Joins : ISqlFragment, IEmpty
     {
         ArgumentNullException.ThrowIfNull(joins);
 
-        Joints = joins.Materialize(Core.Enums.NullOptionsEnum.ArgumentNullException);
+        Joints = joins.Materialize(Core.Enums.NullOptionsEnum.ArgumentException);
     }
     #endregion
 
@@ -316,7 +316,6 @@ public class Joins : ISqlFragment, IEmpty
     /// Creates and returns a new <see cref="Joins"/> instance that contains all joins from the current instance
     /// plus the additional joins provided.
     /// </summary>
-    /// <typeparam name="rightT"></typeparam>
     /// <param name="newJoins">The additional join operations to include.</param>
     /// <returns>A new <see cref="Joins"/> instance containing the additional joins.</returns>
     public Joins Concat(Joins newJoins) =>

@@ -67,7 +67,7 @@ public class OrderBys
     {
         ArgumentNullException.ThrowIfNull(orderByItems, nameof(orderByItems));
 
-        _orderByItems = orderByItems.Materialize(NullOptionsEnum.ArgumentNullException);
+        _orderByItems = orderByItems.Materialize(NullOptionsEnum.ArgumentException);
     }
 
     /// <summary>

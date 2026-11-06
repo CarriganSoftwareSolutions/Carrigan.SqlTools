@@ -47,7 +47,7 @@ internal class ColumnInfoCache<typeT>
     {
         ArgumentNullException.ThrowIfNull(data);
 
-        IEnumerable<Tuple<PropertyInfo, ColumnInfo>> materialized = data.Materialize(NullOptionsEnum.NullReferenceException);
+        IEnumerable<Tuple<PropertyInfo, ColumnInfo>> materialized = data.Materialize(NullOptionsEnum.Exception);
 
         Dictionary<PropertyName, ColumnInfo> cache = [];
         foreach (Tuple<PropertyInfo, ColumnInfo> tuple in materialized)
@@ -101,7 +101,7 @@ internal class ColumnInfoCache<typeT>
     {
         ArgumentNullException.ThrowIfNull(propertyNameKeys, nameof(propertyNameKeys));
 
-        IEnumerable<PropertyName> keys = propertyNameKeys.Materialize(NullOptionsEnum.ArgumentNullException);
+        IEnumerable<PropertyName> keys = propertyNameKeys.Materialize(NullOptionsEnum.ArgumentException);
         IEnumerable<PropertyName> invalids = keys.Where(propertyName => _cache.ContainsKey(propertyName) is false);
 
         if (invalids.Any())
@@ -135,7 +135,7 @@ internal class ColumnInfoCache<typeT>
     {
         ArgumentNullException.ThrowIfNull(propertyNames, nameof(propertyNames));
 
-        IEnumerable<PropertyName> keys = propertyNames.Materialize(NullOptionsEnum.ArgumentNullException);
+        IEnumerable<PropertyName> keys = propertyNames.Materialize(NullOptionsEnum.ArgumentException);
         IEnumerable<PropertyName> invalidPropertyNames =
             keys.Where
             (

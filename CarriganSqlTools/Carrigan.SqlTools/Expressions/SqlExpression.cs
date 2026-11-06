@@ -35,7 +35,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     {
         ArgumentNullException.ThrowIfNull(childExpressions, nameof(childExpressions));
 
-        ChildNodes = childExpressions.Materialize(NullOptionsEnum.ArgumentNullException);
+        ChildNodes = childExpressions.Materialize(NullOptionsEnum.ArgumentException);
     }
 
     /// <summary>

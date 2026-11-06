@@ -60,7 +60,7 @@ public abstract class ColumnCollectionBase<T>
             SqlToolsReflectorCache<T>
                 .GetColumnsFromProperties(SupportedTypes, propertyNames)
                 .DistinctBy(static columnInfo => columnInfo.PropertyName)
-                .Materialize(NullOptionsEnum.ArgumentNullException);
+                .Materialize(NullOptionsEnum.ArgumentException);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnCollectionBase{T}"/> class.
@@ -106,7 +106,7 @@ public abstract class ColumnCollectionBase<T>
         ColumnInfo =
             ColumnInfo
                 .Append(resolvedColumnInfo)
-                .Materialize(NullOptionsEnum.NullReferenceException);
+                .Materialize(NullOptionsEnum.Exception);
     }
 
     /// <summary>
@@ -157,7 +157,7 @@ public abstract class ColumnCollectionBase<T>
             returnValue
                 .ColumnInfo
                 .Append(resolvedColumnInfo)
-                .Materialize(NullOptionsEnum.NullReferenceException);
+                .Materialize(NullOptionsEnum.Exception);
 
         return returnValue;
     }
@@ -200,7 +200,7 @@ public abstract class ColumnCollectionBase<T>
                 .ColumnInfo
                 .Concat(additionalColumnInfo)
                 .DistinctBy(static columnInfo => columnInfo.PropertyName)
-                .Materialize(NullOptionsEnum.ArgumentNullException);
+                .Materialize(NullOptionsEnum.ArgumentException);
 
         return returnValue;
     }

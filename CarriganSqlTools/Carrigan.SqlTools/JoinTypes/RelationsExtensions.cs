@@ -57,7 +57,7 @@ internal static class RelationsExtensions
     /// An enumeration of all <see cref="TableTag"/> instances involved in the join sequence.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    /// Thrown when the derived type returns <c>null</c> for <see cref="Joints"/> or contains <c>null</c> join entries.
+    /// Thrown when the derived type returns <c>null</c> for <see cref="Joins"/> or contains <c>null</c> join entries.
     /// </exception>
     public static IEnumerable<TableTagBase> TableTags(this IEnumerable<Join> joins) =>
         joins.Select(static join => join.JoinAs);

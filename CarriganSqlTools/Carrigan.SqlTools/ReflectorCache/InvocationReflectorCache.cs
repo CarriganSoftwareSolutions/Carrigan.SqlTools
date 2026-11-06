@@ -72,7 +72,7 @@ internal static class InvocationReflectorCache<T>
                 .WriteablePublicInstanceProperties
                 .Where(static property => property.IsDefined(typeof(NotMappedAttribute), inherit: true) is false)
                 .Select(static property => new Tuple<ResultColumnName, PropertyInfo>(GetResultColumnName(property), property))
-                .Materialize(NullOptionsEnum.NullReferenceException);
+                .Materialize(NullOptionsEnum.Exception);
 
         IEnumerable<IGrouping<ResultColumnName, Tuple<ResultColumnName, PropertyInfo>>> duplicates =
             mappings
