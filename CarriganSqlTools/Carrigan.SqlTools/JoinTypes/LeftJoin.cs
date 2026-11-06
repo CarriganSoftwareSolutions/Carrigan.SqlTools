@@ -97,7 +97,7 @@ public class LeftJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal LeftJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
+    internal LeftJoin(TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
         : base(JoinFragment.LeftJoin, tableTag, selectTags, predicates, tableAlias)
     {
 

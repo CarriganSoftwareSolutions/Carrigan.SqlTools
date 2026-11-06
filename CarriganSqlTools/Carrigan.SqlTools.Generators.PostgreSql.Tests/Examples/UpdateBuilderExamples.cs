@@ -39,7 +39,7 @@ public class UpdateBuilderExamples
         {
             Values = entity,
             UpdateColumns = columnCollection,
-            From = [TableTag.Get<Customer>()],
+            From = [TableNameTag.Get<Customer>()],
             Where = new And(customerIdsEquals, customerEmailEquals)
         };
 

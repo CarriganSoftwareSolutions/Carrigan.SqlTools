@@ -97,7 +97,7 @@ public class InnerJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal InnerJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
+    internal InnerJoin(TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
         : base(JoinFragment.InnerJoin, tableTag, selectTags, predicates, tableAlias)
     {
 

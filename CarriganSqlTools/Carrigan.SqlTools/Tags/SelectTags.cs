@@ -79,9 +79,9 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
             .SelectMany(selectTag => selectTag.NonAggregateColumnExpressions);
 
     /// <summary>
-    /// Gets all distinct <see cref="TableTagBase"/> values referenced by the contained select tags.
+    /// Gets all distinct <see cref="TableTag"/> values referenced by the contained select tags.
     /// </summary>
-    internal IEnumerable<TableTagBase> GetTableTags() =>
+    internal IEnumerable<TableTag> GetTableTags() =>
         _selectTags
             .SelectMany(static select => select.TableTags)
             .Distinct();

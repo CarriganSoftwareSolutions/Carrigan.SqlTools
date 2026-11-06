@@ -89,9 +89,9 @@ public class OrderBys
     }
 
     /// <summary>
-    /// Enumerates all <see cref="TableTagBase"/> objects referenced in the <c>ORDER BY</c> clause.
+    /// Enumerates all <see cref="TableTag"/> objects referenced in the <c>ORDER BY</c> clause.
     /// </summary>
-    internal IEnumerable<TableTagBase> TableTags =>
+    internal IEnumerable<TableTag> TableTags =>
         _orderByItems.SelectMany(static item => item.TableTags);
 
     /// <summary>

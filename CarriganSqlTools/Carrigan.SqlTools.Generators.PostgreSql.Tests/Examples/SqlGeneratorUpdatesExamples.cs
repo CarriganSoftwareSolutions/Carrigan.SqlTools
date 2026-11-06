@@ -126,7 +126,7 @@ public class SqlGeneratorUpdatesExamples
         (
             entity,
             columnCollection,
-            [TableTag.Get<Customer>()],
+            [TableNameTag.Get<Customer>()],
             null,
             new And(customerIdsEquals, customerEmailEquals)
         );

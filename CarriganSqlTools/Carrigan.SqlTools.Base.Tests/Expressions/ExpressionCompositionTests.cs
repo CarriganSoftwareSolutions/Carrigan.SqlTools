@@ -12,10 +12,10 @@ public class ExpressionCompositionTests
     private sealed class TestSqlExpression : SqlExpression
     {
         private readonly string _text;
-        private readonly TableTag _tableTag;
+        private readonly TableNameTag _tableTag;
         private readonly bool _isAggregate;
 
-        public TestSqlExpression(string text, TableTag tableTag, bool isAggregate = false)
+        public TestSqlExpression(string text, TableNameTag tableTag, bool isAggregate = false)
             : base([])
         {
             _text = text;
@@ -23,7 +23,7 @@ public class ExpressionCompositionTests
             _isAggregate = isAggregate;
         }
 
-        public override IEnumerable<TableTag> LeafTables =>
+        public override IEnumerable<TableNameTag> LeafTables =>
             [_tableTag];
 
         protected override bool EqualsCore(SqlExpression other) =>
@@ -47,7 +47,7 @@ public class ExpressionCompositionTests
     [Fact]
     public void PredicateWrapper_EqualityIsTransparent()
     {
-        TableTag tableTag = new("dbo", "Flags");
+        TableNameTag tableTag = new("dbo", "Flags");
         SqlExpression expression = new TestSqlExpression("IsEnabled", tableTag);
         SqlExpression equivalentExpression = new TestSqlExpression("IsEnabled", new("dbo", "Flags"));
         SqlExpression differentExpression = new TestSqlExpression("IsDisabled", tableTag);

@@ -19,7 +19,7 @@ public class OrderBy : ISqlFragment, IEquatable<OrderBy>
     /// <summary>
     /// Gets the <see cref="IEnumerable{TableTagBase}"/> associated with this item.
     /// </summary>
-    internal IEnumerable<TableTagBase> TableTags =>
+    internal IEnumerable<TableTag> TableTags =>
         SqlExpression.AllParticipatingTables;
 
     /// <summary>

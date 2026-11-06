@@ -51,7 +51,7 @@ public interface ISqlDialects
     /// <param name="columnName">The column name to render.</param>
     /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
     /// <returns>A string containing the rendered column name, optionally qualified by table and schema as specified.</returns>
-    string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true);
+    string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true);
 
 
     /// <summary>

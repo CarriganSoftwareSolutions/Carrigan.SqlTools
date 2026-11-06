@@ -49,9 +49,9 @@ public class JoinBaseTests
         Predicates predicate = new Equal(new Column<JoinLeftTable>("RightId"), new Column<JoinRightTable>("Id"));
         Join<JoinRightTable> join = new(predicate);
 
-        TableTagBase[] actual = [.. join.JoinsOn];
+        TableTag[] actual = [.. join.JoinsOn];
 
-        Assert.Contains(new TableTag(null, "Left"), actual);
-        Assert.Contains(new TableTag(null, "Right"), actual);
+        Assert.Contains(new TableNameTag(null, "Left"), actual);
+        Assert.Contains(new TableNameTag(null, "Right"), actual);
     }
 }

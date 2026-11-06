@@ -78,7 +78,7 @@ public class SqlServerDialect : ISqlDialects
     /// <param name="tableTag">The tableTag value.</param>
     /// <param name="columnName">The SQL column name to apply.</param>
     /// <returns>A string representing the fully qualified column name, formatted according to the specified parameters.</returns>
-    public string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true) =>
+    public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
                 ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName.ToString())}"
                 : QuoteIdentifier(columnName.ToString());

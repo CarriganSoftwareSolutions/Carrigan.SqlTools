@@ -30,7 +30,7 @@ public class UpdateBuilderTests
         {
             Values = values,
             UpdateColumns = new ColumnCollection<JoinLeftTable>(nameof(JoinLeftTable.Col1), nameof(JoinLeftTable.Col2)),
-            From = [TableTag.Get<JoinRightTable>()],
+            From = [TableNameTag.Get<JoinRightTable>()],
             Where = new And(usingJoin, where)
         };
 
@@ -64,7 +64,7 @@ public class UpdateBuilderTests
         {
             Values = values,
             UpdateColumns = new ColumnCollection<JoinLeftTable>(nameof(JoinLeftTable.Col1), nameof(JoinLeftTable.Col2)),
-            From = [TableTag.Get<JoinRightTable>()],
+            From = [TableNameTag.Get<JoinRightTable>()],
             Joins = joins,
             Where = new And(usingJoin, where)
         };

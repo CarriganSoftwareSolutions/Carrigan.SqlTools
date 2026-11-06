@@ -85,7 +85,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <summary>
     /// Gets the table tags that participate in this select expression.
     /// </summary>
-    internal IEnumerable<TableTagBase> TableTags =>
+    internal IEnumerable<TableTag> TableTags =>
         SqlExpression.AllParticipatingTables;
 
     /// <summary>

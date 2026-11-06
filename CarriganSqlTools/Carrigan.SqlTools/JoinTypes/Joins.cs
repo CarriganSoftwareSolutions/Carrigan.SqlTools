@@ -157,12 +157,12 @@ public class Joins : ISqlFragment, IEmpty
 
 
 
-    public IEnumerable<Join> Validate(TableTagBase joinOntoRoot)
+    public IEnumerable<Join> Validate(TableTag joinOntoRoot)
     {
 
         List<Join> joints = [];
-        HashSet<TableTagBase> invalids = [];
-        HashSet<TableTagBase> validTables = [joinOntoRoot];
+        HashSet<TableTag> invalids = [];
+        HashSet<TableTag> validTables = [joinOntoRoot];
 
         // Validate each join to ensure it is joined in the proper order for column participation.
         foreach (Join join in Joints)
@@ -170,7 +170,7 @@ public class Joins : ISqlFragment, IEmpty
             validTables.Add(join.JoinAs);
 
             // Ensure each table involved in the join comes from either an earlier table or the table being joined.
-            TableTagBase[] newInvalids =
+            TableTag[] newInvalids =
             [
                 .. join.JoinsOn.Where(tableExpression => validTables.DoesNotContain(tableExpression))
             ];

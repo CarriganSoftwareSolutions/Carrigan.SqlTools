@@ -59,7 +59,7 @@ internal sealed class NeutralDialect : ISqlDialects
     /// <summary>
     /// Renders a column and optional table qualification without database-specific quoting.
     /// </summary>
-    public string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true)
+    public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true)
     {
         ArgumentNullException.ThrowIfNull(tableTag);
         ArgumentNullException.ThrowIfNull(columnName);

@@ -47,10 +47,10 @@ public class SqlToolsReflectorCache<T>
     internal static readonly TableName TableName;
 
     /// <summary>
-    /// Gets the <see cref="TableTag"/> that represents
+    /// Gets the <see cref="TableNameTag"/> that represents
     /// the fully qualified table identifier for <typeparamref name="T"/>.
     /// </summary>
-    internal static TableTag Table =>
+    internal static TableNameTag Table =>
         new(SchemaName, TableName);
 
     /// <summary>

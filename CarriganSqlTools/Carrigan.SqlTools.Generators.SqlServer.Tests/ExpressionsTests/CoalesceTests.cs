@@ -83,9 +83,9 @@ public class CoalesceTests : SqlExpressionsBaseTests
         Column<Customer> customerId = new(nameof(Customer.Id));
         Add nestedExpression = new(customerId, new Parameter(1, "Offset"));
         Coalesce coalesce = new(nestedExpression, new Parameter(0, "Fallback"));
-        TableTagBase expected = customerId.ColumnTag.TableTag;
+        TableTag expected = customerId.ColumnTag.TableTag;
 
-        TableTagBase actual = Assert.Single(coalesce.AllParticipatingTables);
+        TableTag actual = Assert.Single(coalesce.AllParticipatingTables);
 
         Assert.Equal(expected, actual);
     }

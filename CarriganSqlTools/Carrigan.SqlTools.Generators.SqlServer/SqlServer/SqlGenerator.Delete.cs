@@ -118,7 +118,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Members not visible outside their defining assembly are ignored.
     /// </remarks>
     /// <exception cref="InvalidTableException">
-    /// Thrown when a <see cref="TableTag"/> referenced by <paramref name="predicates"/> is not present
+    /// Thrown when a <see cref="TableNameTag"/> referenced by <paramref name="predicates"/> is not present
     /// in the <paramref name="joins"/> set nor equal to the primary table.
     /// </exception>
     /// <example>

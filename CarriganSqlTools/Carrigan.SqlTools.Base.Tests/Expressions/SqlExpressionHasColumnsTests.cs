@@ -47,12 +47,12 @@ public class SqlExpressionHasColumnsTests
         Assert.False(new WrapperExpression(new Parameter(1)).HasColumns());
     private sealed class ParticipatingTableExpression : SqlExpression
     {
-        private readonly TableTag _tableTag;
+        private readonly TableNameTag _tableTag;
 
         internal ParticipatingTableExpression(string tableName, params SqlExpression[] children) : base(children) =>
-            _tableTag = new TableTag(null, tableName);
+            _tableTag = new TableNameTag(null, tableName);
 
-        public override IEnumerable<TableTag> LeafTables => [_tableTag];
+        public override IEnumerable<TableNameTag> LeafTables => [_tableTag];
 
         public override IEnumerable<ISqlFragment> ToSqlFragments(ISqlDialects dialect) => [];
     }

@@ -11,7 +11,7 @@ public class ColumnTagConstructorTests
     private static readonly ColumnName ColumnName = new("TestColumn");
 
     private static ColumnNameTag NewColumnTag() =>
-        new(new TableTag(SchemaName, TableName), ColumnName);
+        new(new TableNameTag(SchemaName, TableName), ColumnName);
 
     [Fact]
     public void Constructor_ColumnTag_SetsColumnTag()
@@ -40,7 +40,7 @@ public class ColumnTagConstructorTests
 
         Column column = new(columnTag);
 
-        TableTagBase actual = Assert.Single(column.LeafTables);
+        TableTag actual = Assert.Single(column.LeafTables);
         Assert.Same(columnTag.TableTag, actual);
     }
 }

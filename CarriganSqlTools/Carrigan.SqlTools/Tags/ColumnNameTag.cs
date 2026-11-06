@@ -110,16 +110,16 @@ public class ColumnNameTag : ColumnTag, IEquatable<ColumnNameTag>, IEqualityOper
     internal readonly ColumnName ColumnName;
 
     /// <summary>
-    /// The <see cref="Tags.TableTagBase"/> representing the table containing the column.
+    /// The <see cref="Tags.TableTag"/> representing the table containing the column.
     /// </summary>
-    internal readonly TableTagBase TableTag;
+    internal readonly TableTag TableTag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnNameTag"/> class.
     /// </summary>
-    /// <param name="tableTag">The <see cref="Tags.TableTagBase"/> representing the table containing the column.</param>
+    /// <param name="tableTag">The <see cref="Tags.TableTag"/> representing the table containing the column.</param>
     /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
-    internal ColumnNameTag(TableTagBase tableTag, ColumnName columnName)
+    internal ColumnNameTag(TableTag tableTag, ColumnName columnName)
     {
         ColumnName = columnName;
         TableTag = tableTag;
@@ -136,7 +136,7 @@ public class ColumnNameTag : ColumnTag, IEquatable<ColumnNameTag>, IEqualityOper
     internal ColumnNameTag(ColumnName columnName)
     {
         ColumnName = columnName;
-        TableTag = new TableTag(SchemaName.New(null), new TableName(null));
+        TableTag = new TableNameTag(SchemaName.New(null), new TableName(null));
     }
 
     /// <summary>

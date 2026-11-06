@@ -57,13 +57,13 @@ public class Join : ITableExpression
     private readonly Subquery? Subquery;
 
     /// <summary>
-    /// Gets the <see cref="TableTagBase"/> associated with the right-hand (joined) table
+    /// Gets the <see cref="Tags.TableTag"/> associated with the right-hand (joined) table
     /// </summary>
-    public TableTagBase JoinAs =>
-        (TableTagBase?) TableAliasTag ?? TableTag ?? throw new InvalidOperationException("This join lacks a table reference.");
+    public TableTag JoinAs =>
+        (TableTag?) TableAliasTag ?? TableTag ?? throw new InvalidOperationException("This join lacks a table reference.");
 
     /// <summary>
-    /// Gets the <see cref="TableTagBase"/> associated with the right-hand (joined) table
+    /// Gets the <see cref="Tags.TableTag"/> associated with the right-hand (joined) table
     /// in the SQL <c>JOIN</c> clause.
     /// </summary>
     public TableAliasTag? TableAliasTag { get; }
@@ -71,7 +71,7 @@ public class Join : ITableExpression
     /// <summary>
     /// Optional readonly table tag for the right-hand side of the join operation.
     /// </summary>
-    public readonly TableTag? TableTag;
+    public readonly TableNameTag? TableTag;
 
     /// <summary>
     /// Optional readonly join type fragment for the join operation.
@@ -92,7 +92,7 @@ public class Join : ITableExpression
     /// Each <see cref="TableTag"/> represents a table referenced within the join's <c>ON</c> clause.
     /// When this join type does not use predicates, this returns an empty sequence.
     /// </remarks>
-    internal IEnumerable<TableTagBase> JoinsOn =>
+    internal IEnumerable<TableTag> JoinsOn =>
         Predicates
             .AllParticipatingTables
             .Distinct();
@@ -204,7 +204,7 @@ public class Join : ITableExpression
     /// <param name="joinASTableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal Join(JoinFragment joinType, TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAlias? joinASTableAlias)
+    internal Join(JoinFragment joinType, TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAlias? joinASTableAlias)
         : this(joinType, tableTag, selectTags, predicates, TableAliasTag.New(joinASTableAlias))
     {
     }
@@ -227,7 +227,7 @@ public class Join : ITableExpression
     /// <param name="joinAsTableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal Join(JoinFragment joinType, TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? joinAsTableAlias)
+    internal Join(JoinFragment joinType, TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? joinAsTableAlias)
     {
         ArgumentNullException.ThrowIfNull(joinType, nameof(joinType));
         ArgumentNullException.ThrowIfNull(selectTags, nameof(selectTags));

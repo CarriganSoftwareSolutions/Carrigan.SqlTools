@@ -117,7 +117,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Tables are not expressions, and are not actually in the tree.
     /// This is why they are treated as Leafs
     /// </remarks>
-    public virtual IEnumerable<TableTagBase> LeafTables => [];
+    public virtual IEnumerable<TableTag> LeafTables => [];
 
     /// <summary>
     /// Gets every table participating in this expression tree, including tables represented by the current node and all descendants.
@@ -126,7 +126,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Root + Descendants
     /// Duplicate table tags are removed while preserving the order in which the tables are first encountered.
     /// </remarks>
-    public IEnumerable<TableTagBase> AllParticipatingTables =>
+    public IEnumerable<TableTag> AllParticipatingTables =>
         EnumerateSelfAndDescendants()
             .SelectMany(static expression => expression.LeafTables)
             .Distinct();
@@ -135,7 +135,7 @@ public abstract class SqlExpression : IEquatable<SqlExpression>, IEqualityOperat
     /// Gets all table tags represented by this expression and its descendants.
     /// </summary>
     [Obsolete("This is likely not doing what we need it to do anymore.")]
-    public IEnumerable<TableTagBase> DescendantLeafTables =>
+    public IEnumerable<TableTag> DescendantLeafTables =>
         AllParticipatingTables;
     #endregion
 

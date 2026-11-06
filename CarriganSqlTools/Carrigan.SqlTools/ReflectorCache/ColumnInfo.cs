@@ -167,7 +167,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
         SqlTypeAttribute? sqlTypeAttribute = propertyInfo.GetCustomAttribute<SqlTypeAttribute>();
 
         ColumnName = new(columnName);
-        ColumnTag = new(new TableTag(schemaName, tableName), ColumnName);
+        ColumnTag = new(new TableNameTag(schemaName, tableName), ColumnName);
 
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);

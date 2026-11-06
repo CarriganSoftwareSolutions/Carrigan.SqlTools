@@ -68,7 +68,7 @@ public class PostgreSqlDialect : ISqlDialects
     /// <param name="tableTag">The tableTag value.</param>
     /// <param name="columnName">The SQL column name to apply.</param>
     /// <param name="includeTable">The includeTable value.</param>
-    public string RenderColumn(TableTagBase tableTag, ColumnName columnName, bool includeTable = true) =>
+    public string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true) =>
         includeTable && tableTag.ToString().IsNotNullOrEmpty()
             ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName.ToString())}"
             : QuoteIdentifier(columnName.ToString());

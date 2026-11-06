@@ -293,7 +293,7 @@ public class JoinsTest
             new InnerJoin<JoinLastTable>(LastOnRightPredicate),
             new InnerJoin<ColumnIdentifiers>(stupidPredicate)
         );
-        Assert.Throws<InvalidTableException>(() => joins.Validate(new TableTag(null, "Left")));
+        Assert.Throws<InvalidTableException>(() => joins.Validate(new TableNameTag(null, "Left")));
     }
 
     [Fact]
@@ -304,7 +304,7 @@ public class JoinsTest
             new InnerJoin<JoinRightTable>(RightOnLeftPredicate),
             new InnerJoin<JoinLastTable>(LastOnRightPredicate)
         );
-        TableTag expected = new(null, "Left");
+        TableNameTag expected = new(null, "Left");
         Assert.Equal(2, relation.Validate(expected).Count());
     }
 
@@ -371,7 +371,7 @@ public class JoinsTest
     {
         Joins relation = new();
 
-        Assert.Throws<InvalidTableException>(() => relation.Append(new LeftJoin<JoinLastTable>(LastOnRightPredicate)).Validate(new TableTag(null, "Left")));
+        Assert.Throws<InvalidTableException>(() => relation.Append(new LeftJoin<JoinLastTable>(LastOnRightPredicate)).Validate(new TableNameTag(null, "Left")));
     }
 
     [Fact]
@@ -420,7 +420,7 @@ public class JoinsTest
     {
         Joins relation = new();
 
-        Assert.Throws<InvalidTableException>(() => relation.Concat([new LeftJoin<JoinLastTable>(LastOnRightPredicate)]).Validate(new TableTag(null, "Left")));
+        Assert.Throws<InvalidTableException>(() => relation.Concat([new LeftJoin<JoinLastTable>(LastOnRightPredicate)]).Validate(new TableNameTag(null, "Left")));
     }
 
     [Fact]

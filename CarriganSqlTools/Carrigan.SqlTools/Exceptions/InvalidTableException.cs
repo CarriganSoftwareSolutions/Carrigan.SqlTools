@@ -35,9 +35,9 @@ public class InvalidTableException : Exception
     /// Thrown when one or more tables referenced in a query are not included
     /// in the generated SQL statement.
     /// </summary>
-    /// <param name="tableTags">The <see cref="TableTagBase"/> instances representing the invalid tables.</param>
+    /// <param name="tableTags">The <see cref="TableTag"/> instances representing the invalid tables.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableTags"/> is <c>null</c>.</exception>
-    internal InvalidTableException(params IEnumerable<TableTagBase?> tableTags)
+    internal InvalidTableException(params IEnumerable<TableTag?> tableTags)
         : base(CreateMessage(tableTags))
     {
     }
@@ -45,10 +45,10 @@ public class InvalidTableException : Exception
     /// <summary>
     /// Builds an error message listing tables that were not included in the query.
     /// </summary>
-    /// <param name="tableTags">The <see cref="TableTagBase"/> instances representing the invalid tables.</param>
+    /// <param name="tableTags">The <see cref="TableTag"/> instances representing the invalid tables.</param>
     /// <returns>A formatted error message describing the missing or invalid tables.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="tableTags"/> is <c>null</c>.</exception>
-    private static string CreateMessage(params IEnumerable<TableTagBase?> tableTags)
+    private static string CreateMessage(params IEnumerable<TableTag?> tableTags)
     {
         ArgumentNullException.ThrowIfNull(tableTags, nameof(tableTags));
 

@@ -110,7 +110,7 @@ public sealed record UpdateBuilder<T, joinsT> : QueryBuilders.UpdateBuilderBase<
     /// <remarks>
     /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the UPDATE FROM clause.
     /// </remarks>
-    public IEnumerable<TableTag>? From { get; set; }
+    public IEnumerable<TableNameTag>? From { get; set; }
 
     /// <summary>
     /// Builds a SQL query from the current builder state.
@@ -150,7 +150,7 @@ public sealed record UpdateBuilder<T> : QueryBuilders.UpdateBuilderBase<T, T>, I
     /// <summary>
     /// Gets or sets the tables to include in the FROM clause.
     /// </summary>
-    public IEnumerable<TableTag>? From { get; set; }
+    public IEnumerable<TableNameTag>? From { get; set; }
 
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
     /// <summary>

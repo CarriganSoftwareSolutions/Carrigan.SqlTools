@@ -97,7 +97,7 @@ public class RightJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal RightJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
+    internal RightJoin(TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
         : base(JoinFragment.RightJoin, tableTag, selectTags, predicates, tableAlias)
     {
 

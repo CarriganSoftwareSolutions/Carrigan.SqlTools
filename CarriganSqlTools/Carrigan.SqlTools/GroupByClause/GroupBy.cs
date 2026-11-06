@@ -19,7 +19,7 @@ public class GroupBy : IEquatable<GroupBy>, IEqualityOperators<GroupBy, GroupBy,
     /// <summary>
     /// Gets every table participating in this grouping expression.
     /// </summary>
-    internal IEnumerable<TableTagBase> TableTags =>
+    internal IEnumerable<TableTag> TableTags =>
         SqlExpression.AllParticipatingTables;
 
     /// <summary>

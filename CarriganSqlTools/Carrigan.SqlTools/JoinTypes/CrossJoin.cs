@@ -89,7 +89,7 @@ public class CrossJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal CrossJoin(TableTag tableTag, SelectTags selectTags, TableAliasTag? tableAlias)
+    internal CrossJoin(TableNameTag tableTag, SelectTags selectTags, TableAliasTag? tableAlias)
         : base(JoinFragment.CrossJoin, tableTag, selectTags, new EmptyPredicate(), tableAlias)
     {
 

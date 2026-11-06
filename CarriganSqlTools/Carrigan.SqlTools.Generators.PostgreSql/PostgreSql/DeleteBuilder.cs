@@ -137,7 +137,7 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
     /// <summary>
     /// Gets or sets the tables to include in the USING clause.
     /// </summary>
-    public IEnumerable<TableTag>? Usings { get; set; }
+    public IEnumerable<TableNameTag>? Usings { get; set; }
 
     /// <summary>
     /// Returns a copy of the current query with the specified USING tables.
@@ -147,7 +147,7 @@ public sealed record DeleteBuilder<T, joinsT> : QueryBuilders.DeleteBuilderBase<
     /// <remarks>
     /// For PostgreSQL, <typeparamref name="joinsT" /> should represent one of the source tables in the DELETE USING clause.
     /// </remarks>
-    public DeleteBuilder<T, joinsT> WithUsings(IEnumerable<TableTag>? usings) =>
+    public DeleteBuilder<T, joinsT> WithUsings(IEnumerable<TableNameTag>? usings) =>
         this with { Usings = usings };
 
     /// <summary>
@@ -191,7 +191,7 @@ public sealed record DeleteBuilder<T> : QueryBuilders.DeleteBuilderBase<T, T>, I
     /// <summary>
     /// Gets or sets the tables to include in the USING clause.
     /// </summary>
-    public IEnumerable<TableTag>? Usings { get; set; }
+    public IEnumerable<TableNameTag>? Usings { get; set; }
 
 #pragma warning disable CS0809 // Obsolete member overrides non-obsolete member
     /// <summary>

@@ -27,14 +27,14 @@ public abstract class ColumnTestsBase<modelT> where modelT : class
     (
         ExpectedPropertyColumnName.
             Keys.
-            Select(key => new KeyValuePair<string, ColumnNameTag>(key, new ColumnNameTag(new TableTag(SchemaName, TableName), ExpectedPropertyColumnName[key])))
+            Select(key => new KeyValuePair<string, ColumnNameTag>(key, new ColumnNameTag(new TableNameTag(SchemaName, TableName), ExpectedPropertyColumnName[key])))
     );
 
     internal abstract Dictionary<string, ColumnName> ExpectedPropertyColumnName { get; }
 
     protected virtual IEnumerable<string> NotMappedProperties => [];
 
-    protected TableTag ExpectedTableTag =>
+    protected TableNameTag ExpectedTableTag =>
         new(SchemaName, TableName);
 
     protected TableName ExpectedTableName =>

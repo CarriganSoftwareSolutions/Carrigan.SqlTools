@@ -1,16 +1,13 @@
-using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
 using System.Numerics;
-using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
-public class TableAliasTag : TableTagBase, IEquatable<TableAliasTag>, IEqualityOperators<TableAliasTag, TableAliasTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
+public class TableAliasTag : TableTag, IEquatable<TableAliasTag>, IEqualityOperators<TableAliasTag, TableAliasTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
     /// <summary>
     /// 
