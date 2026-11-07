@@ -12,6 +12,7 @@ using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
+//ignore spelling: joins
 
 namespace Carrigan.SqlTools.JoinTypes;
 
