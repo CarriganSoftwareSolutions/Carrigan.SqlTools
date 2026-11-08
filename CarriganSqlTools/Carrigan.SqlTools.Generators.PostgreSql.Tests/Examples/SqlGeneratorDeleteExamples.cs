@@ -101,7 +101,7 @@ public class SqlGeneratorDeleteExamples
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
 
-        SqlQuery query = orderGenerator.Delete<Customer>([TableNameTag.Get<Customer>()], null, predicate);
+        SqlQuery query = orderGenerator.Delete<Customer>([TableTag.Get<Customer>()], null, predicate);
 
         string expectedQueryText =
             """
@@ -123,7 +123,7 @@ public class SqlGeneratorDeleteExamples
 
         SqlQuery query = orderGenerator.Delete<Customer>
         (
-            [TableNameTag.Get<Customer>()],
+            [TableTag.Get<Customer>()],
             null,
             new And(predicate, customerEmail)
         );

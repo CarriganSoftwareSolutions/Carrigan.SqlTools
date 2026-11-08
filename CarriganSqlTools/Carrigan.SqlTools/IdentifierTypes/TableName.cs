@@ -26,6 +26,11 @@ public class TableName : TextWrapper
     {
     }
 
+    public TableName(TableAlias tableAlias) : base(tableAlias.ToString() , StringComparison.OrdinalIgnoreCase)
+    {
+
+    }
+
     /// <summary>
     /// Creates a new <see cref="TableName"/> instance if the specified name is not null or empty;
     /// otherwise returns <c>null</c>.

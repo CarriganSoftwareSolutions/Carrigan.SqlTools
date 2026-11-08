@@ -30,10 +30,10 @@ namespace Carrigan.SqlTools.ReflectorCache;
 public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo, ColumnInfo, bool>
 {
     /// <summary>
-    /// The fully qualified <see cref="Tags.ColumnNameTag"/> that represents
+    /// The fully qualified <see cref="Tags.ColumnTag"/> that represents
     /// the SQL identifier for this column, including schema and table context.
     /// </summary>
-    internal readonly ColumnNameTag ColumnTag;
+    internal readonly ColumnTag ColumnTag;
 
     /// <summary>
     /// The <see cref="IdentifierTypes.ColumnName"/> derived from the property.
@@ -88,21 +88,23 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
     internal readonly ParameterTag ParameterTag;
 
     /// <summary>
-    /// The <see cref="IdentifierTypes.ColumnAlias"/> defined for this property,
+    /// The <see cref="ColumnAlias"/> defined for this property,
     /// if specified via an <see cref="AliasAttribute"/>.
     /// </summary>
     internal readonly ColumnAlias? AliasName;
 
     /// <summary>
+    /// The alias used when this property is selected.
+    /// </summary>
+    internal readonly ColumnAlias? SelectColumnAlias;
+
+    //TODO: Do we really need both ColumnAliases?
+
+    /// <summary>
     /// The source column selected for this property in SELECT clauses.
     /// This may differ from <see cref="ColumnTag"/> when a <see cref="SelectTagAttribute"/> maps a projection property to another model.
     /// </summary>
-    internal readonly ColumnNameTag SelectColumnTag;
-
-    /// <summary>
-    /// The alias used when this property is selected.
-    /// </summary>
-    internal readonly ColumnAliasTag? SelectAliasTag;
+    internal readonly ColumnTag SelectColumnTag;
 
     /// <summary>
     /// The <see cref="Tags.SelectTag"/> used to represent this column
@@ -167,7 +169,7 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
         SqlTypeAttribute? sqlTypeAttribute = propertyInfo.GetCustomAttribute<SqlTypeAttribute>();
 
         ColumnName = new(columnName);
-        ColumnTag = new(new TableNameTag(schemaName, tableName), ColumnName);
+        ColumnTag = new(new TableTag(schemaName, tableName), ColumnName);
 
         PropertyInfo = propertyInfo;
         PropertyName = new(propertyInfo.Name);
@@ -183,20 +185,20 @@ public class ColumnInfo : IEquatable<ColumnInfo>, IEqualityOperators<ColumnInfo,
         if (selectTagAttribute is null)
         {
             SelectColumnTag = ColumnTag;
-            SelectAliasTag = ColumnAliasTag.New(aliasName);
-            SelectTag = new SelectTag(new Expressions.Column(this), SelectAliasTag);
+            SelectColumnAlias = aliasName;
+            SelectTag = new SelectTag(new Expressions.Column(this), SelectColumnAlias);
         }
         else
         {
             SelectColumnTag = selectTagAttribute.ColumnTag ?? ColumnTag;
-            SelectAliasTag = selectTagAttribute.AliasTag;
+            SelectColumnAlias = selectTagAttribute.ColumnAlias;
 
-            if (SelectAliasTag is null && selectTagAttribute.UseDecoratedPropertyNameAsDefaultAlias)
-                SelectAliasTag = ColumnAliasTag.New(aliasName ?? new ColumnAlias(columnName));
+            if (SelectColumnAlias is null && selectTagAttribute.UseDecoratedPropertyNameAsDefaultAlias)
+                SelectColumnAlias = aliasName ?? new ColumnAlias(columnName);
 
             SelectTag = selectTagAttribute.SelectTag is null
-                ? new SelectTag(new Expressions.Column(this), SelectAliasTag)
-                : new SelectTag(selectTagAttribute.SelectTag.SqlExpression, SelectAliasTag);
+                ? new SelectTag(new Expressions.Column(this), SelectColumnAlias)
+                : new SelectTag(selectTagAttribute.SelectTag.SqlExpression, SelectColumnAlias);
         }
 
         IsKeyPart = keys.Contains(propertyInfo);

@@ -27,6 +27,10 @@ public class ColumnName : TextWrapper
     {
     }
 
+    public ColumnName(ColumnAlias columnAlias) : base(columnAlias.ToString(), StringComparison.OrdinalIgnoreCase)
+    {
+    }
+
     /// <summary>
     /// Creates a new <see cref="ColumnName"/> instance if the specified name is not null or empty;
     /// otherwise returns <c>null</c>.

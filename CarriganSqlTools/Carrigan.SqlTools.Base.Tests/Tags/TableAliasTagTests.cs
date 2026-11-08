@@ -11,7 +11,7 @@ public class TableAliasTagTests
     {
         SqlTools.IdentifierTypes.TableAlias aliasTag = new("DerivedTable");
 
-        TableAliasTag tableAliasTag = new(aliasTag);
+        TableTag tableAliasTag = new(aliasTag);
 
         Assert.Same(aliasTag, tableAliasTag.TableAlias);
         Assert.Equal("DerivedTable", tableAliasTag.ToSql(NeutralDialect.Instance));

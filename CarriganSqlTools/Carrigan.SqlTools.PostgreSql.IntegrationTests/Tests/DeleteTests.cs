@@ -438,7 +438,7 @@ public class DeleteTests : IClassFixture<DeleteFixture>
         OrderedItemDataSet.ValidateById(orderedItems, 35, 6);
         OrderedItemDataSet.ValidateById(orderedItems, 36, 9);
 
-        SqlQuery deleteQuery = OrderedItemSqlGenerator.Delete<Order>([TableNameTag.Get<Order>()], joinCustomer, and);
+        SqlQuery deleteQuery = OrderedItemSqlGenerator.Delete<Order>([TableTag.Get<Order>()], joinCustomer, and);
         await CommandsAsync.ExecuteNonQueryAsync(deleteQuery, null, connection);
 
         orderedItems = await CommandsAsync.ExecuteReaderAsync<OrderedItem>(selectAllQuery, null, connection);

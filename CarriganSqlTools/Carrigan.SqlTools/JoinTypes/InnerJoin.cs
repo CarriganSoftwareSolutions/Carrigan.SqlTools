@@ -71,12 +71,7 @@ public class InnerJoin : Join
     /// Thrown when <paramref name="predicates"/> or <paramref name="tableAlias"/> is <c>null</c>.
     /// </exception>
     public InnerJoin(Predicates predicates, Subquery subQuery, TableAlias tableAlias)
-        : this(predicates, subQuery, new TableAliasTag(tableAlias ?? throw new ArgumentNullException(nameof(tableAlias))))
-    {
-    }
-
-    internal InnerJoin(Predicates predicates, Subquery subQuery, TableAliasTag tableAlias)
-        : base(JoinFragment.InnerJoin, predicates, subQuery, tableAlias)
+        : base(JoinFragment.InnerJoin, predicates, subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
     {
     }
     #endregion
@@ -97,7 +92,7 @@ public class InnerJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal InnerJoin(TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
+    internal InnerJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAlias? tableAlias)
         : base(JoinFragment.InnerJoin, tableTag, selectTags, predicates, tableAlias)
     {
 

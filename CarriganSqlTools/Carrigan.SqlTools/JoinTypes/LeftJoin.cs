@@ -71,12 +71,7 @@ public class LeftJoin : Join
     /// Thrown when <paramref name="predicates"/> or <paramref name="tableAlias"/> is <c>null</c>.
     /// </exception>
     public LeftJoin(Predicates predicates, Subquery subQuery, TableAlias tableAlias)
-        : this(predicates, subQuery, new TableAliasTag(tableAlias ?? throw new ArgumentNullException(nameof(tableAlias))))
-    {
-    }
-
-    internal LeftJoin(Predicates predicates, Subquery subQuery, TableAliasTag tableAlias)
-        : base(JoinFragment.LeftJoin, predicates, subQuery, tableAlias)
+        : base(predicates, subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
     {
     }
     #endregion
@@ -97,7 +92,7 @@ public class LeftJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal LeftJoin(TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
+    internal LeftJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAlias? tableAlias)
         : base(JoinFragment.LeftJoin, tableTag, selectTags, predicates, tableAlias)
     {
 

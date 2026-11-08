@@ -56,7 +56,7 @@ public class Join<rightT> : Join where rightT : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public Join(Predicates predicates) : this(predicates, (TableAliasTag?)null)
+    public Join(Predicates predicates) : this(predicates, (TableAlias?)null)
     {
     }
 
@@ -89,31 +89,15 @@ public class Join<rightT> : Join where rightT : class
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="predicates"/> is <c>null</c>.
     /// </exception>
-    public Join(Predicates predicates, TableAlias? joinAsTableAlias) : this(predicates, TableAliasTag.New(joinAsTableAlias))
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
-    /// </summary>
-    /// <param name="predicates">
-    /// The predicate(s) that define the <c>ON</c> clause of the SQL <c>JOIN</c>.
-    /// </param>
-    /// <param name="joinAsTableAlias">
-    /// An optional <see cref="TableAliasTag"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="predicates"/> is <c>null</c>.
-    /// </exception>
-    internal Join(Predicates predicates, TableAliasTag? joinAsTableAlias)
-        : base(JoinFragment.Join, SqlToolsReflectorCache<rightT>.Table, SelectTagGenerator.GetAll<rightT>(), predicates, joinAsTableAlias)
+    public Join(Predicates predicates, TableAlias? joinAsTableAlias) :
+        base(JoinFragment.Join, SqlToolsReflectorCache<rightT>.Table, SelectTagGenerator.GetAll<rightT>(), predicates, joinAsTableAlias)
     {
     }
     #endregion
     #region static creators
 
     public static Joins Joins(Predicates predicates) =>
-        new(new Join<rightT>(predicates, (TableAliasTag?)null));
+        new(new Join<rightT>(predicates, (TableAlias?)null));
 
     public static Joins Joins(Predicates predicates, string joinAsTableAlias) =>
         new(new Join<rightT>(predicates, TableAlias.New(joinAsTableAlias)));

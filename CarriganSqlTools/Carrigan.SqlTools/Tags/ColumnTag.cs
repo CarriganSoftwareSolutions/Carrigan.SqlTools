@@ -1,29 +1,162 @@
-﻿using Carrigan.Core.Extensions;
+using Carrigan.Core.Extensions;
 using Carrigan.Core.Interfaces;
-using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
-using Carrigan.SqlTools.ReflectorCache;
 using System.Numerics;
-using System.Reflection;
 
 namespace Carrigan.SqlTools.Tags;
 
-public abstract class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, ColumnTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
+/// <summary>
+/// Represents a fully qualified SQL column identifier (a “tag”) rendered as
+/// <c>[Schema].[Table].[Column]</c> or <c>[Table].[Column]</c>.
+/// </summary>
+/// <remarks>
+/// Equality and hashing are based on the schema, table-name, and column-name components using
+/// case-insensitive identifier semantics. An empty schema is treated the same as no schema.
+/// </remarks>
+/// <example>
+/// <para>
+/// Using Identifier Attribute
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.Attributes;
+/// using Carrigan.SqlTools.SqlGenerators;
+///
+/// [Identifier("Email", "schema")]
+/// public class EmailModel
+/// {
+///     [PrimaryKey]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Identifier("Email")]
+///     public string? EmailAddress { get; set; }
+/// }
+///
+/// SqlGenerator<EmailModel> emailGenerator = new();
+///
+/// EmailModel email = new()
+/// {
+///     Id = 10,
+///     CustomerId = 313,
+///     EmailAddress = "Exterminate@GenericTinCanLand.gov"
+/// };
+/// SqlQuery query = emailGenerator.UpdateById(email);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// --PostgreSql
+/// UPDATE "schema"."Email" 
+/// SET "CustomerId" = $1, 
+///     "Email" = $2 
+/// WHERE "Id" = $3;
+/// 
+/// --SqlServer
+/// UPDATE [schema].[Email] 
+/// SET [CustomerId] = @CustomerId_1, 
+///     [Email] = @Email_2 
+/// WHERE [Id] = @Id_3;
+/// ]]></code>
+/// </example>
+/// <example>
+/// <para>
+/// Using Column Attribute
+/// </para>
+/// <code language="csharp"><![CDATA[
+/// using Carrigan.SqlTools.SqlGenerators;
+/// using System.ComponentModel.DataAnnotations;
+/// using System.ComponentModel.DataAnnotations.Schema;
+///
+/// [Table("Phone", Schema = "schema")]
+/// public class PhoneModel
+/// {
+///     [Key]
+///     public int Id { get; set; }
+///     public int CustomerId { get; set; }
+///     [Column("Phone")]
+///     public string? PhoneNumber { get; set; }
+/// }
+///
+/// SqlGenerator<PhoneModel> phoneGenerator = new();
+///
+/// PhoneModel phone = new()
+/// {
+///     Id = 2718,
+///     CustomerId = 3141,
+///     PhoneNumber = "07700 900461"
+/// };
+/// SqlQuery query = phoneGenerator.UpdateById(phone);
+/// ]]></code>
+/// <para>Resulting SQL:</para>
+/// <code><![CDATA[
+/// --PostgreSql
+/// UPDATE "schema"."Phone"
+/// SET "CustomerId" = $1, 
+///     "Phone" = $2 
+/// WHERE "Id" = $3;
+/// 
+/// --SqlServer
+/// "UPDATE [schema].[Phone] 
+/// SET [CustomerId] = @CustomerId_1, 
+///     [Phone] = @Phone_2
+/// WHERE [Id] = @Id_3;
+/// ]]></code>
+/// </example>
+public class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<ColumnTag, ColumnTag, bool>, ISqlFragment, IWhiteSpace, IEmpty
 {
+    /// <summary>
+    /// The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.
+    /// </summary>
+    internal readonly ColumnName ColumnName;
 
     /// <summary>
-    /// Returns the schema-qualified column name represented by this tag.
+    /// The <see cref="Tags.TableTag"/> representing the table containing the column.
     /// </summary>
-    /// <returns>The column name, optionally qualified by its schema.</returns>
-    public override abstract string ToString();
+    internal readonly TableTag? TableTag;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnTag"/> class.
+    /// </summary>
+    /// <param name="tableTag">The <see cref="Tags.TableTag"/> representing the table containing the column.</param>
+    /// <param name="columnName">The <see cref="IdentifierTypes.ColumnName"/> representing the column’s name.</param>
+    internal ColumnTag(TableTag tableTag, ColumnName columnName)
+    {
+        ColumnName = columnName;
+        TableTag = tableTag;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnTag"/> class.
+    /// </summary>
+    /// <param name="columnTag">The <see cref="ColumnTag"/> to copy.</param>
+    /// <param name="tableAlias">The optional <see cref="TableAlias"/> to apply.</param>
+    /// <param name="columnAlias">The optional <see cref="ColumnAlias"/> to apply.</param>
+    internal ColumnTag(ColumnTag columnTag, TableAlias? tableAlias, ColumnAlias? columnAlias)
+    {
+        TableTag = TableTag.New(columnTag.TableTag, tableAlias);
+        ColumnName = columnAlias is null ? columnTag.ColumnName : new(columnAlias);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnTag"/> class.
+    /// </summary>
+    /// <param name="tableAlias">The optional <see cref="TableAlias"/> to apply.</param>
+    /// <param name="columnAlias">The optional <see cref="ColumnAlias"/> to apply.</param>
+    internal ColumnTag(TableAlias? tableAlias, ColumnAlias columnAlias)
+    {
+        TableTag = TableTag.New(null, tableAlias);
+        ColumnName = new(columnAlias);
+    }
+
+    /// <summary>
+    /// Returns the qualified column name represented by this tag.
+    /// </summary>
+    public override string ToString() =>
+        TableTag.IsNotNullOrEmpty() ? $"{TableTag}.{ColumnName}" : ColumnName.ToString();
 
     /// <summary>
     /// Determines whether this instance identifies the same column as another <see cref="ColumnTag"/>.
     /// </summary>
-    /// <param name="other">The other column tag to compare.</param>
-    /// <returns><c>true</c> when the effective schema and column name are equal; otherwise, <c>false</c>.</returns>
     public bool Equals(ColumnTag? other)
     {
         if (ReferenceEquals(this, other))
@@ -32,17 +165,15 @@ public abstract class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<Colu
         else if (other is null)
             return false;
 
-        else if (GetType() != other.GetType())
+        else if (TableTag != other.TableTag)
             return false;
-        else if (this is ColumnNameTag thisColumnTag && other is ColumnNameTag otherColumnTag)
-            return ColumnNameTag.Equals(thisColumnTag, otherColumnTag);
 
-        else if (this is ColumnAliasTag thisColumnAliasTag && other is ColumnAliasTag otherColumnAliasTag)
-            return ColumnAliasTag.Equals(thisColumnAliasTag, otherColumnAliasTag);
+        else if (ColumnName != other.ColumnName)
+            return false;
+
         else
-            return false;
+            return true;
     }
-
     /// <summary>
     /// 
     /// </summary>
@@ -52,10 +183,15 @@ public abstract class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<Colu
         Equals(obj as ColumnTag);
 
     /// <summary>
-    /// 
+    /// Returns a hash code for this column tag.
     /// </summary>
-    /// <returns></returns>
-    public abstract override int GetHashCode();
+    public override int GetHashCode()
+    {
+        HashCode hashCode = new();
+        hashCode.Add(TableTag);
+        hashCode.Add(ColumnName);
+        return hashCode.ToHashCode();
+    }
 
     /// <summary>
     /// Determines whether two column tags identify the same column.
@@ -72,32 +208,52 @@ public abstract class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<Colu
     }
 
     /// <summary>
-    /// Determines whether two column tags identify different tables.
+    /// Determines whether two column tags identify different columns.
     /// </summary>
     public static bool operator !=(ColumnTag? left, ColumnTag? right) =>
         !(left == right);
 
     /// <summary>
-    /// 
-    /// </summary>
-    public abstract bool IsWhiteSpace();
-
-    /// <summary>
-    /// 
+    /// Indicates whether the column name is not empty and does not consist only of whitespace characters.
     /// </summary>
     public bool IsNotWhiteSpace() =>
         IsWhiteSpace() == false;
-
-    /// <summary>
-    /// Indicates whether the rendered column tag is empty.
-    /// </summary>
-    public abstract bool IsEmpty();
 
     /// <summary>
     /// Indicates whether the rendered column tag is not empty.
     /// </summary>
     public bool IsNotEmpty() =>
         IsEmpty() == false;
+
+
+    /// <summary>
+    /// Indicates whether the column name is empty or consists only of whitespace characters.
+    /// </summary>
+    public bool IsWhiteSpace() =>
+        ColumnName.IsWhiteSpace();
+
+    /// <summary>
+    /// Indicates whether the column name is empty.
+    /// </summary>
+    public bool IsEmpty() =>
+        ColumnName.IsEmpty();
+
+    /// <summary>
+    /// Renders the column tag as a SQL identifier, including the table tag if specified.
+    /// </summary>
+    /// <param name="dialect">a sql dialect</param>
+    /// <returns>the rendered SQL identifier</returns>
+    public string ToSql(ISqlDialects dialect) =>
+        ToSql(dialect, true);
+
+    /// <summary>
+    /// Renders the column tag as a SQL identifier, optionally including the table tag.
+    /// </summary>
+    /// <param name="dialect">a sql dialect</param>
+    /// <param name="useTableTag">a value indicating whether to include the table tag</param>
+    /// <returns>the rendered SQL identifier</returns>
+    public string ToSql(ISqlDialects dialect, bool useTableTag) =>
+        dialect.RenderColumn(TableTag, ColumnName, useTableTag);
 
     /// <summary>
     /// Flattens this fragment into the sequence of fragments used to render SQL text.
@@ -113,11 +269,4 @@ public abstract class ColumnTag : IEquatable<ColumnTag>, IEqualityOperators<Colu
     /// <returns>An empty sequence because column-name fragments do not contain SQL parameters.</returns>
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>
         [];
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="dialect"></param>
-    /// <returns></returns>
-    public abstract string ToSql(ISqlDialects dialect);
 }

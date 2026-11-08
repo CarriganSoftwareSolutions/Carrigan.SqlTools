@@ -21,12 +21,36 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// </summary>
     internal readonly IEnumerable<SelectTag> _selectTags;
 
+    internal readonly TableAlias? _tableAlias;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTags"/> class.
     /// </summary>
     /// <param name="selectTags">The select tags to include in this instance.</param>
     public SelectTags(params IEnumerable<SelectTag> selectTags) =>
         _selectTags = selectTags.Materialize(NullOptionsEnum.ArgumentException);
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTags"/> class.
+    /// </summary>
+    /// <param name="tableAlias">
+    /// The table alias used to qualify the projected result columns.
+    /// </param>
+    /// <param name="selectTags">The select tags to include in this instance.</param>
+    public SelectTags(string tableAlias, params IEnumerable<SelectTag> selectTags) : this(TableAlias.New(tableAlias), selectTags)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectTags"/> class.
+    /// </summary>
+    /// <param name="tableAlias">
+    /// The table alias used to qualify the projected result columns.
+    /// </param>
+    /// <param name="selectTags">The select tags to include in this instance.</param>
+    public SelectTags(TableAlias? tableAlias, params IEnumerable<SelectTag> selectTags) : this(selectTags) =>
+        _tableAlias = tableAlias;
+
 
     /// <summary>
     /// Projects the result columns in this collection as columns qualified by the supplied table alias.
@@ -39,7 +63,7 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     internal SelectTags FromTableAlias(TableAlias? tableAlias) =>
         tableAlias is null
             ? this
-            : new(_selectTags.Select(selectTag => selectTag.FromTableAlias(tableAlias)));
+            : new(_selectTags.Select(selectTag => selectTag.SelectThis(tableAlias)));
 
     /// <summary>
     /// Indicates whether this instance contains any select tags.
@@ -177,16 +201,7 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
                 .Materialize(NullOrWhiteSpaceOptionsEnum.ArgumentException)
                 .Select(columnAlias => new ColumnAlias(columnAlias))
         );
-
-    public IEnumerable<SelectTag> GetByColumnAlias(IEnumerable<ColumnAlias> columnAliases) =>
-        GetByColumnAlias
-        (
-            columnAliases
-                .Materialize(NullOrWhiteSpaceOptionsEnum.ArgumentException)
-                .Select(columnAlias => new ColumnAliasTag(columnAlias))
-        );
-
-    protected IEnumerable<SelectTag> GetByColumnAlias(IEnumerable<ColumnAliasTag> columnAliasTags) =>
+    protected IEnumerable<SelectTag> GetByColumnAlias(IEnumerable<ColumnAlias> columnAliasTags) =>
         _selectTags
             .Where(select => select.AliasTag.IsNotNullOrWhiteSpace())
             .Where(select => columnAliasTags.Contains(select.AliasTag));

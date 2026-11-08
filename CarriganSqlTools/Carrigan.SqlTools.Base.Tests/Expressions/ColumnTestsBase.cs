@@ -22,19 +22,19 @@ public abstract class ColumnTestsBase<modelT> where modelT : class
     protected KeyValuePair<string, ColumnName> NewKvp(string propertyName) =>
         new(propertyName, new ColumnName(propertyName));
 
-    internal Dictionary<string, ColumnNameTag> ExpectedPropertyColumnTag =>
+    internal Dictionary<string, ColumnTag> ExpectedPropertyColumnTag =>
     new
     (
         ExpectedPropertyColumnName.
             Keys.
-            Select(key => new KeyValuePair<string, ColumnNameTag>(key, new ColumnNameTag(new TableNameTag(SchemaName, TableName), ExpectedPropertyColumnName[key])))
+            Select((Func<string, KeyValuePair<string, ColumnTag>>)(key => new KeyValuePair<string, ColumnTag>(key, new ColumnTag(new SqlTools.Tags.TableTag(SchemaName, TableName), ExpectedPropertyColumnName[key]))))
     );
 
     internal abstract Dictionary<string, ColumnName> ExpectedPropertyColumnName { get; }
 
     protected virtual IEnumerable<string> NotMappedProperties => [];
 
-    protected TableNameTag ExpectedTableTag =>
+    protected TableTag ExpectedTableTag =>
         new(SchemaName, TableName);
 
     protected TableName ExpectedTableName =>

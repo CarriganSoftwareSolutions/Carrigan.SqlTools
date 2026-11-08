@@ -52,8 +52,8 @@ public sealed class SumAttribute<T> : SelectTagAttribute<T>
     internal SumAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
-        AliasTag = ColumnAliasTag.New(aliasName);
-        SelectTag = new SelectTag(new Sum(SelectTag!.SqlExpression, distinct), AliasTag);
+        ColumnAlias = aliasName;
+        SelectTag = new SelectTag(new Sum(SelectTag!.SqlExpression, distinct), ColumnAlias);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }
 }

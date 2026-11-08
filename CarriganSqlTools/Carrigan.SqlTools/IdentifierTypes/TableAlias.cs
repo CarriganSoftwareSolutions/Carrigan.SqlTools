@@ -1,5 +1,7 @@
 using Carrigan.Core.DataTypes;
 using Carrigan.Core.Extensions;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.Fragments;
 
 namespace Carrigan.SqlTools.IdentifierTypes;
 
@@ -16,7 +18,7 @@ namespace Carrigan.SqlTools.IdentifierTypes;
 /// by the SQL generator.
 /// </para>
 /// </remarks>
-public class TableAlias : TextWrapper
+public class TableAlias : TextWrapper, ISqlFragment
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TableAlias"/> class.
@@ -37,4 +39,9 @@ public class TableAlias : TextWrapper
     /// </returns>
     public static TableAlias? New(string? name) =>
         name.IsNullOrEmpty() ? null : new(name);
+
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => throw new NotImplementedException();
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) => throw new NotImplementedException();
+    public string ToSql(ISqlDialects dialect) =>
+        dialect.RenderTableAlias(this);
 }

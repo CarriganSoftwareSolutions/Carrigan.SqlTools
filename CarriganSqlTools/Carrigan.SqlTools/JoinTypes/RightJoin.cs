@@ -71,12 +71,7 @@ public class RightJoin : Join
     /// Thrown when <paramref name="predicates"/> or <paramref name="tableAlias"/> is <c>null</c>.
     /// </exception>
     public RightJoin(Predicates predicates, Subquery subQuery, TableAlias tableAlias)
-        : this(predicates, subQuery, new TableAliasTag(tableAlias ?? throw new ArgumentNullException(nameof(tableAlias))))
-    {
-    }
-
-    internal RightJoin(Predicates predicates, Subquery subQuery, TableAliasTag tableAlias)
-        : base(JoinFragment.RightJoin, predicates, subQuery, tableAlias)
+        : base(predicates, subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
     {
     }
     #endregion
@@ -97,7 +92,7 @@ public class RightJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal RightJoin(TableNameTag tableTag, SelectTags selectTags, Predicates predicates, TableAliasTag? tableAlias)
+    internal RightJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAlias? tableAlias)
         : base(JoinFragment.RightJoin, tableTag, selectTags, predicates, tableAlias)
     {
 

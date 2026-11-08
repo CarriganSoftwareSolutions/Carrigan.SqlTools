@@ -44,7 +44,7 @@ public class CrossJoinTest
     public void TableTag()
     {
         CrossJoin<JoinRightTable> join = new();
-        TableNameTag expected = new(null, "Right");
+        TableTag expected = new(null, "Right");
 
         Assert.Equal(expected, join.TableTag);
     }

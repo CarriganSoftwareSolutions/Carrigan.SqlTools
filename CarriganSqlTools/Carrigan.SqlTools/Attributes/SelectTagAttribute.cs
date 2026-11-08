@@ -13,12 +13,12 @@ public abstract class SelectTagAttribute : Attribute
     /// <summary>
     /// Gets or initializes the fully qualified source column selected by this attribute.
     /// </summary>
-    internal ColumnNameTag? ColumnTag { get; init; }
+    internal ColumnTag? ColumnTag { get; init; }
 
     /// <summary>
     /// Gets or initializes the alias applied by this attribute.
     /// </summary>
-    internal ColumnAliasTag? AliasTag { get; init; }
+    internal ColumnAlias? ColumnAlias { get; init; }
 
     /// <summary>
     /// Gets or initializes the reflected SELECT projection metadata created by the concrete attribute.
@@ -77,12 +77,12 @@ public class SelectTagAttribute<T> : SelectTagAttribute
     internal SelectTagAttribute(PropertyName propertyName, ColumnAlias? aliasName = null)
     {
         ColumnInfo columnInfo = SqlToolsReflectorCache<T>.GetSelectColumnInfo(propertyName);
-        ColumnAliasTag? aliasTag = aliasName is null
-            ? columnInfo.SelectAliasTag
-            : ColumnAliasTag.New(aliasName);
+        ColumnAlias? aliasTag = aliasName is null
+            ? columnInfo.SelectColumnAlias
+            : aliasName;
 
         ColumnTag = columnInfo.SelectColumnTag;
-        AliasTag = aliasTag;
+        ColumnAlias = aliasTag;
         SelectTag = new SelectTag(new Expressions.Column(columnInfo), aliasTag);
     }
 }

@@ -23,14 +23,17 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// The optional alias applied to this select item.
     /// </summary>
     //TODO: rename to ColumnAliasTag
-    internal readonly ColumnAliasTag? AliasTag;
+    internal readonly ColumnAlias? AliasTag;
+
+    //internal readonly ColumnTag ColumnTag;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression and optional alias name.
+    /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression.
     /// </summary>
-    /// <param name="sqlExpression">The SQL expression to project.</param>
-    /// <param name="aliasName">An optional alias to use for this projection.</param>
-    public SelectTag(SqlExpression sqlExpression, ColumnAlias aliasName) : this(sqlExpression, ColumnAliasTag.New(aliasName))
+    /// <param name="column">
+    /// The <see cref="Column"/> to project in the SELECT list.
+    /// </param>
+    public SelectTag(Column column) : this ((SqlExpression) column)
     {
     }
 
@@ -52,9 +55,10 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="sqlExpression"/> is <c>null</c>.
     /// </exception>
-    public SelectTag(SqlExpression sqlExpression, ColumnAliasTag? aliasTag = null)
+    internal SelectTag(SqlExpression sqlExpression, ColumnAlias? aliasTag = null)
     {
         ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
+        ArgumentNullException.ThrowIfNull(aliasTag, nameof(aliasTag));
 
         SqlExpression = sqlExpression;
         AliasTag = aliasTag;
@@ -102,16 +106,28 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     {
         get
         {
-            ColumnNameTag? columnTag = (SqlExpression as Column)?.ColumnTag;
+            ColumnTag? columnTag = (SqlExpression as Column)?.ColumnTag;
             return new(AliasTag?.ToString() ?? columnTag?.ColumnName.ToString() ?? SqlExpression.ToString());
         }
     }
 
-
-    internal SelectTag FromTableAlias(TableAlias tableAlias)
+    //Note: This method projects a ColumnTag to reference when selecting from the table that results from the parent SelectTags class.
+    //Therefore do not put the sql expression into this select, because in the final render, the select tag from this method references
+    //the original select tag (this) object.
+    internal SelectTag SelectThis(TableAlias? tableAlias = null)
     {
-        ArgumentNullException.ThrowIfNull(tableAlias, nameof(tableAlias));
-        return new(new Column(new ColumnNameTag(tableAlias, ResultColumnName)));
+        if (SqlExpression is Column column)
+        {
+            return new(new Column(new ColumnTag(column.ColumnTag, tableAlias, AliasTag)));
+        }
+        else if (AliasTag is null)
+        {
+            throw new NullReferenceException("SqlExpressions need a column name or column alias when reference inside a SubQuery");
+        }
+        else
+        {
+            return new(new Column(new ColumnTag(tableAlias, AliasTag)));
+        }
     }
 
     /// <summary>
@@ -192,7 +208,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
         if (other is null)
             return false;
 
-        return SqlExpression.Equals(other.SqlExpression) && EqualityComparer<ColumnAliasTag?>.Default.Equals(AliasTag, other.AliasTag);
+        return SqlExpression.Equals(other.SqlExpression) && EqualityComparer<ColumnAlias?>.Default.Equals(AliasTag, other.AliasTag);
     }
 
     /// <summary>

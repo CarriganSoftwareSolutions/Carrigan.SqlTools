@@ -66,12 +66,7 @@ public class CrossJoin : Join
     /// Thrown when <paramref name="tableAlias"/> is <c>null</c>.
     /// </exception>
     public CrossJoin(Subquery subQuery, TableAlias tableAlias)
-        : this(subQuery, new TableAliasTag(tableAlias ?? throw new ArgumentNullException(nameof(tableAlias))))
-    {
-    }
-
-    internal CrossJoin(Subquery subQuery, TableAliasTag tableAlias)
-        : base(JoinFragment.CrossJoin, new EmptyPredicate(), subQuery, tableAlias)
+        : base(JoinFragment.CrossJoin, new EmptyPredicate(), subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
     {
     }
     #endregion
@@ -89,7 +84,7 @@ public class CrossJoin : Join
     /// <param name="tableAlias">
     /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
     /// </param>
-    internal CrossJoin(TableNameTag tableTag, SelectTags selectTags, TableAliasTag? tableAlias)
+    internal CrossJoin(TableTag tableTag, SelectTags selectTags, TableAlias? tableAlias)
         : base(JoinFragment.CrossJoin, tableTag, selectTags, new EmptyPredicate(), tableAlias)
     {
 

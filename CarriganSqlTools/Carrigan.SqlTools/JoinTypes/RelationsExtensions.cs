@@ -46,7 +46,7 @@ internal static class RelationsExtensions
 
 
     /// <summary>
-    /// Enumerates all <see cref="TableNameTag"/> objects included in the current join sequence,
+    /// Enumerates all <see cref="TableTag"/> objects included in the current join sequence,
     /// including the base (left-most) table.
     /// </summary>
     /// <remarks>
@@ -54,7 +54,7 @@ internal static class RelationsExtensions
     /// any join operation within this <see cref="Joins"/> instance.
     /// </remarks>
     /// <returns>
-    /// An enumeration of all <see cref="TableNameTag"/> instances involved in the join sequence.
+    /// An enumeration of all <see cref="TableTag"/> instances involved in the join sequence.
     /// </returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the derived type returns <c>null</c> for <see cref="Joins"/> or contains <c>null</c> join entries.

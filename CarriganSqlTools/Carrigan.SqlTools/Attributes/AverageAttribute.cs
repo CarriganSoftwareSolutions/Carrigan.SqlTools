@@ -52,8 +52,8 @@ public sealed class AverageAttribute<T> : SelectTagAttribute<T>
     internal AverageAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
-        AliasTag = ColumnAliasTag.New(aliasName);
-        SelectTag = new SelectTag(new Average(SelectTag!.SqlExpression, distinct), AliasTag);
+        ColumnAlias = aliasName;
+        SelectTag = new SelectTag(new Average(SelectTag!.SqlExpression, distinct), ColumnAlias);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }
 }

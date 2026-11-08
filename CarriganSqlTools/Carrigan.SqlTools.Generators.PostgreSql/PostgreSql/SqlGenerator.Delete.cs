@@ -182,12 +182,12 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ///  AND ("Customer"."Email" = $1))
     /// ]]></code>
     /// </example>
-    public SqlQuery Delete<joinsT>(IEnumerable<TableNameTag>? usings, Joins? joins, Predicates? predicates) where joinsT : class =>
+    public SqlQuery Delete<joinsT>(IEnumerable<TableTag>? usings, Joins? joins, Predicates? predicates) where joinsT : class =>
         DeleteWithJoins<joinsT>(usings, joins, predicates);
 
-    private SqlQuery DeleteWithJoins<joinsT>(IEnumerable<TableNameTag>? usings, Joins? joins, Predicates? predicates) where joinsT : class
+    private SqlQuery DeleteWithJoins<joinsT>(IEnumerable<TableTag>? usings, Joins? joins, Predicates? predicates) where joinsT : class
     {
-        TableNameTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
+        TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
 
         if (usings.IsNotNullOrEmpty() && usings.Contains(Table))
         {
@@ -211,7 +211,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <exception cref="InvalidTableException">
     /// Thrown when a supplied table is not valid for the requested SQL operation.
     /// </exception>
-    public SqlQuery Delete(IEnumerable<TableNameTag>? usings, Predicates? predicates)
+    public SqlQuery Delete(IEnumerable<TableTag>? usings, Predicates? predicates)
     {
         if (usings.IsNotNullOrEmpty() && usings.Contains(Table))
         {

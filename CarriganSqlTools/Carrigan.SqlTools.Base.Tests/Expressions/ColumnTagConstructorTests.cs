@@ -10,13 +10,13 @@ public class ColumnTagConstructorTests
     private static readonly TableName TableName = new("TestTable");
     private static readonly ColumnName ColumnName = new("TestColumn");
 
-    private static ColumnNameTag NewColumnTag() =>
-        new(new TableNameTag(SchemaName, TableName), ColumnName);
+    private static ColumnTag NewColumnTag() =>
+        new(new TableTag(SchemaName, TableName), ColumnName);
 
     [Fact]
     public void Constructor_ColumnTag_SetsColumnTag()
     {
-        ColumnNameTag columnTag = NewColumnTag();
+        ColumnTag columnTag = NewColumnTag();
 
         Column column = new(columnTag);
 
@@ -26,7 +26,7 @@ public class ColumnTagConstructorTests
     [Fact]
     public void Constructor_ColumnTag_SetsColumnParameterTagFromColumnName()
     {
-        ColumnNameTag columnTag = NewColumnTag();
+        ColumnTag columnTag = NewColumnTag();
 
         Column column = new(columnTag);
 
@@ -36,7 +36,7 @@ public class ColumnTagConstructorTests
     [Fact]
     public void Constructor_ColumnTag_SetsLeafTableFromColumnTag()
     {
-        ColumnNameTag columnTag = NewColumnTag();
+        ColumnTag columnTag = NewColumnTag();
 
         Column column = new(columnTag);
 

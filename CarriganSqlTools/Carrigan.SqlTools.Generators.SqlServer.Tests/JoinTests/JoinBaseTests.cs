@@ -51,7 +51,7 @@ public class JoinBaseTests
 
         TableTag[] actual = [.. join.JoinsOn];
 
-        Assert.Contains(new TableNameTag(null, "Left"), actual);
-        Assert.Contains(new TableNameTag(null, "Right"), actual);
+        Assert.Contains(new TableTag(null, "Left"), actual);
+        Assert.Contains(new TableTag(null, "Right"), actual);
     }
 }

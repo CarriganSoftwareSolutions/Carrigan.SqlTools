@@ -48,7 +48,7 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     /// <summary>
     /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
     /// </summary>
-    public CrossJoin() : this((TableAliasTag?)null)
+    public CrossJoin() : this((TableAlias?)null)
     {
     }
 
@@ -69,24 +69,14 @@ public class CrossJoin<rightT> : CrossJoin where rightT : class
     /// <param name="joinAsTableAlias">
     /// An optional <see cref="TableAlias"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
     /// </param>
-    public CrossJoin(TableAlias? joinAsTableAlias) : this(TableAliasTag.New(joinAsTableAlias))
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Join{rightT}"/> class.
-    /// </summary>
-    /// <param name="joinAsTableAlias">
-    /// An optional <see cref="TableAliasTag"/> to use for the right-hand table in the join. If not provided, the no table alias will be used.
-    /// </param>
-    internal CrossJoin(TableAliasTag? joinAsTableAlias)
+    public CrossJoin(TableAlias? joinAsTableAlias)
         : base(SqlToolsReflectorCache<rightT>.Table, SelectTagGenerator.GetAll<rightT>(), joinAsTableAlias)
     {
     }
     #endregion
 
     public static Joins Joins() =>
-        new(new CrossJoin<rightT>((TableAliasTag?)null));
+        new(new CrossJoin<rightT>((TableAlias?)null));
 
     public static Joins Joins(string joinAsTableAlias) =>
         new(new CrossJoin<rightT>(TableAlias.New(joinAsTableAlias)));

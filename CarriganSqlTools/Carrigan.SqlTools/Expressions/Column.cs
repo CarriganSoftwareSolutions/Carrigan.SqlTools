@@ -25,7 +25,7 @@ public class Column : SqlExpression
     /// <summary>
     /// Gets the unique tag representing the column in SQL expressions and fragments.
     /// </summary>
-    public ColumnNameTag ColumnTag { get; }
+    public ColumnTag ColumnTag { get; }
 
     /// <summary>
     /// Gets the unique tag representing the parameterized value of the column in SQL expressions and fragments.
@@ -62,7 +62,7 @@ public class Column : SqlExpression
     /// <param name="columnTag">
     /// The unique tag representing the column in SQL expressions and fragments.
     /// </param>
-    protected internal Column(ColumnNameTag columnTag) : base([])
+    protected internal Column(ColumnTag columnTag) : base([])
     {
         ColumnTag = columnTag;
         ColumnParameterTag = new ParameterTag(columnTag.ColumnName.ToString());

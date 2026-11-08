@@ -15,7 +15,7 @@ public class TableTagTests
     [InlineData("", "Pizza", "[Pizza]")]
     public void ToSql(string? schemaName, string tableName, string expected)
     {
-        TableNameTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(schemaName, tableName);
 
         Assert.Equal(expected, tableTag.ToSql(Dialect));
     }
@@ -28,7 +28,7 @@ public class TableTagTests
     [InlineData(null, " ", " ")]
     public void ToString_Value(string? schemaName, string tableName, string expected)
     {
-        TableNameTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(schemaName, tableName);
 
         Assert.Equal(expected, tableTag.ToString());
         Assert.Equal(expected, $"{tableTag}");
@@ -37,7 +37,7 @@ public class TableTagTests
     [Fact]
     public void Equals_SameReference()
     {
-        TableNameTag tableTag = new("Schema", "Table");
+        TableTag tableTag = new("Schema", "Table");
 
         Assert.True(tableTag.Equals(tableTag));
 #pragma warning disable CS1718 // Comparison made to same variable
@@ -49,8 +49,8 @@ public class TableTagTests
     [Fact]
     public void Equals_EquivalentInstances()
     {
-        TableNameTag left = new("Schema", "Table");
-        TableNameTag right = new("Schema", "Table");
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "Table");
 
         Assert.True(left.Equals(right));
         Assert.True(right.Equals(left));
@@ -61,9 +61,9 @@ public class TableTagTests
     [Fact]
     public void Equals_Transitive()
     {
-        TableNameTag first = new("Schema", "Table");
-        TableNameTag second = new("Schema", "Table");
-        TableNameTag third = new("Schema", "Table");
+        TableTag first = new("Schema", "Table");
+        TableTag second = new("Schema", "Table");
+        TableTag third = new("Schema", "Table");
 
         Assert.True(first.Equals(second));
         Assert.True(second.Equals(third));
@@ -73,8 +73,8 @@ public class TableTagTests
     [Fact]
     public void Equals_NullAndEmptySchema()
     {
-        TableNameTag noSchema = new((SchemaName?)null, new TableName("Table"));
-        TableNameTag emptySchema = new(new SchemaName(string.Empty), new TableName("Table"));
+        TableTag noSchema = new((SchemaName?)null, new TableName("Table"));
+        TableTag emptySchema = new(new SchemaName(string.Empty), new TableName("Table"));
 
         Assert.True(noSchema.Equals(emptySchema));
         Assert.True(emptySchema.Equals(noSchema));
@@ -86,8 +86,8 @@ public class TableTagTests
     [Fact]
     public void Equals_DifferentSchema()
     {
-        TableNameTag left = new("SchemaOne", "Table");
-        TableNameTag right = new("SchemaTwo", "Table");
+        TableTag left = new("SchemaOne", "Table");
+        TableTag right = new("SchemaTwo", "Table");
 
         Assert.False(left.Equals(right));
         Assert.False(right.Equals(left));
@@ -97,8 +97,8 @@ public class TableTagTests
     [Fact]
     public void Equals_DifferentTable()
     {
-        TableNameTag left = new("Schema", "TableOne");
-        TableNameTag right = new("Schema", "TableTwo");
+        TableTag left = new("Schema", "TableOne");
+        TableTag right = new("Schema", "TableTwo");
 
         Assert.False(left.Equals(right));
         Assert.False(right.Equals(left));
@@ -108,8 +108,8 @@ public class TableTagTests
     [Fact]
     public void Equals_SchemaPresenceMatters()
     {
-        TableNameTag left = new(null, "Table");
-        TableNameTag right = new("Schema", "Table");
+        TableTag left = new(null, "Table");
+        TableTag right = new("Schema", "Table");
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
@@ -118,8 +118,8 @@ public class TableTagTests
     [Fact]
     public void Equals_SchemaIsCaseSensitive()
     {
-        TableNameTag left = new("Schema", "Table");
-        TableNameTag right = new("schema", "Table");
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("schema", "Table");
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
@@ -128,8 +128,8 @@ public class TableTagTests
     [Fact]
     public void Equals_TableIsCaseSensitive()
     {
-        TableNameTag left = new("Schema", "Table");
-        TableNameTag right = new("Schema", "table");
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "table");
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
@@ -138,8 +138,8 @@ public class TableTagTests
     [Fact]
     public void Equals_PreservesWhitespace()
     {
-        TableNameTag left = new("Schema", "Table");
-        TableNameTag right = new("Schema", " Table ");
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", " Table ");
 
         Assert.False(left.Equals(right));
         Assert.NotEqual(left, right);
@@ -148,8 +148,8 @@ public class TableTagTests
     [Fact]
     public void Equals_UsesStructuralIdentity_NotFormattedText()
     {
-        TableNameTag left = new("A.B", "C");
-        TableNameTag right = new("A", "B.C");
+        TableTag left = new("A.B", "C");
+        TableTag right = new("A", "B.C");
 
         Assert.Equal(left.ToString(), right.ToString());
         Assert.False(left.Equals(right));
@@ -160,8 +160,8 @@ public class TableTagTests
     [Fact]
     public void Equals_Null()
     {
-        TableNameTag tableTag = new("Schema", "Table");
-        TableNameTag? other = null;
+        TableTag tableTag = new("Schema", "Table");
+        TableTag? other = null;
 
         Assert.False(tableTag.Equals(other));
         Assert.False(tableTag.Equals((object?)null));
@@ -170,8 +170,8 @@ public class TableTagTests
     [Fact]
     public void Equals_ObjectEquivalent()
     {
-        TableNameTag tableTag = new("Schema", "Table");
-        object other = new TableNameTag("Schema", "Table");
+        TableTag tableTag = new("Schema", "Table");
+        object other = new TableTag("Schema", "Table");
 
         Assert.True(tableTag.Equals(other));
     }
@@ -179,7 +179,7 @@ public class TableTagTests
     [Fact]
     public void Equals_ObjectWrongType()
     {
-        TableNameTag tableTag = new("Schema", "Table");
+        TableTag tableTag = new("Schema", "Table");
         object other = new TableName("Table");
 
         Assert.False(tableTag.Equals(other));
@@ -188,8 +188,8 @@ public class TableTagTests
     [Fact]
     public void EqualOperator_EquivalentInstances()
     {
-        TableNameTag left = new("Schema", "Table");
-        TableNameTag right = new("Schema", "Table");
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "Table");
 
         Assert.True(left == right);
         Assert.True(right == left);
@@ -200,8 +200,8 @@ public class TableTagTests
     [Fact]
     public void EqualOperator_DifferentInstances()
     {
-        TableNameTag left = new("SchemaOne", "Table");
-        TableNameTag right = new("SchemaTwo", "Table");
+        TableTag left = new("SchemaOne", "Table");
+        TableTag right = new("SchemaTwo", "Table");
 
         Assert.False(left == right);
         Assert.False(right == left);
@@ -212,8 +212,8 @@ public class TableTagTests
     [Fact]
     public void EqualOperator_Null()
     {
-        TableNameTag tableTag = new("Schema", "Table");
-        TableNameTag? nullTableTag = null;
+        TableTag tableTag = new("Schema", "Table");
+        TableTag? nullTableTag = null;
         bool flag;
         Assert.False(tableTag == nullTableTag);
         Assert.False(nullTableTag == tableTag);
@@ -228,8 +228,8 @@ public class TableTagTests
     [Fact]
     public void GetHashCode_EquivalentInstances()
     {
-        TableNameTag left = new("Schema", "Table");
-        TableNameTag right = new("Schema", "Table");
+        TableTag left = new("Schema", "Table");
+        TableTag right = new("Schema", "Table");
 
         Assert.Equal(left, right);
         Assert.Equal(left.GetHashCode(), right.GetHashCode());
@@ -238,9 +238,9 @@ public class TableTagTests
     [Fact]
     public void DictionaryKey_EquivalentInstance()
     {
-        TableNameTag storedKey = new("Schema", "Table");
-        TableNameTag lookupKey = new("Schema", "Table");
-        Dictionary<TableNameTag, decimal> dictionary = [];
+        TableTag storedKey = new("Schema", "Table");
+        TableTag lookupKey = new("Schema", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.True(dictionary.ContainsKey(lookupKey));
@@ -250,9 +250,9 @@ public class TableTagTests
     [Fact]
     public void DictionaryKey_NullAndEmptySchema()
     {
-        TableNameTag storedKey = new((SchemaName?)null, new TableName("Table"));
-        TableNameTag lookupKey = new(new SchemaName(string.Empty), new TableName("Table"));
-        Dictionary<TableNameTag, decimal> dictionary = [];
+        TableTag storedKey = new((SchemaName?)null, new TableName("Table"));
+        TableTag lookupKey = new(new SchemaName(string.Empty), new TableName("Table"));
+        Dictionary<TableTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.True(dictionary.ContainsKey(lookupKey));
@@ -262,9 +262,9 @@ public class TableTagTests
     [Fact]
     public void DictionaryKey_DifferentSchema()
     {
-        TableNameTag storedKey = new("SchemaOne", "Table");
-        TableNameTag lookupKey = new("SchemaTwo", "Table");
-        Dictionary<TableNameTag, decimal> dictionary = [];
+        TableTag storedKey = new("SchemaOne", "Table");
+        TableTag lookupKey = new("SchemaTwo", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.False(dictionary.ContainsKey(lookupKey));
@@ -273,9 +273,9 @@ public class TableTagTests
     [Fact]
     public void DictionaryKey_DifferentTable()
     {
-        TableNameTag storedKey = new("Schema", "TableOne");
-        TableNameTag lookupKey = new("Schema", "TableTwo");
-        Dictionary<TableNameTag, decimal> dictionary = [];
+        TableTag storedKey = new("Schema", "TableOne");
+        TableTag lookupKey = new("Schema", "TableTwo");
+        Dictionary<TableTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.False(dictionary.ContainsKey(lookupKey));
@@ -284,9 +284,9 @@ public class TableTagTests
     [Fact]
     public void DictionaryKey_EquivalentAssignmentReplacesValue()
     {
-        TableNameTag firstKey = new("Schema", "Table");
-        TableNameTag secondKey = new("Schema", "Table");
-        Dictionary<TableNameTag, decimal> dictionary = [];
+        TableTag firstKey = new("Schema", "Table");
+        TableTag secondKey = new("Schema", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
         dictionary[firstKey] = 3.14159m;
         dictionary[secondKey] = 2.71828m;
 
@@ -298,9 +298,9 @@ public class TableTagTests
     [Fact]
     public void DictionaryKey_IsCaseSensitive()
     {
-        TableNameTag storedKey = new("Schema", "Table");
-        TableNameTag lookupKey = new("schema", "Table");
-        Dictionary<TableNameTag, decimal> dictionary = [];
+        TableTag storedKey = new("Schema", "Table");
+        TableTag lookupKey = new("schema", "Table");
+        Dictionary<TableTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
         Assert.False(dictionary.ContainsKey(lookupKey));
@@ -309,9 +309,9 @@ public class TableTagTests
     [Fact]
     public void HashSet_EquivalentInstance()
     {
-        TableNameTag storedValue = new("Schema", "Table");
-        TableNameTag lookupValue = new("Schema", "Table");
-        HashSet<TableNameTag> set = [storedValue];
+        TableTag storedValue = new("Schema", "Table");
+        TableTag lookupValue = new("Schema", "Table");
+        HashSet<TableTag> set = [storedValue];
 
         Assert.Contains(lookupValue, set);
     }
@@ -323,7 +323,7 @@ public class TableTagTests
     [InlineData("Schema", "", false, false)]
     public void EmptyAndWhiteSpaceContracts(string? schemaName, string tableName, bool expectedEmpty, bool expectedWhiteSpace)
     {
-        TableNameTag tableTag = new(schemaName, tableName);
+        TableTag tableTag = new(schemaName, tableName);
 
         Assert.Equal(expectedEmpty, tableTag.IsEmpty());
         Assert.Equal(!expectedEmpty, tableTag.IsNotEmpty());
@@ -334,9 +334,9 @@ public class TableTagTests
     [Fact]
     public void Get_ShouldReturnExpectedTableTag_ForEntityWithSchema()
     {
-        TableNameTag expected = new("myschema", "EntityWithSchema");
+        TableTag expected = new("myschema", "EntityWithSchema");
 #pragma warning disable CA2263 // Prefer generic overload when type is known
-        TableNameTag actual = TableNameTag.Get(typeof(EntityWithSchema));
+        TableTag actual = TableTag.Get(typeof(EntityWithSchema));
 #pragma warning restore CA2263 // Prefer generic overload when type is known
 
         Assert.Equal(expected, actual);
@@ -346,8 +346,8 @@ public class TableTagTests
     [Fact]
     public void GetGeneric_ShouldReturnExpectedTableTag_ForEntityWithSchema()
     {
-        TableNameTag expected = new("myschema", "EntityWithSchema");
-        TableNameTag actual = TableNameTag.Get<EntityWithSchema>();
+        TableTag expected = new("myschema", "EntityWithSchema");
+        TableTag actual = TableTag.Get<EntityWithSchema>();
 
         Assert.Equal(expected, actual);
     }

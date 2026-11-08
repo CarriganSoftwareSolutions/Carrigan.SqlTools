@@ -88,7 +88,7 @@ public class FromReadMeMoreComplexExamples
 
         DeleteBuilder<Order> deleteBuilder = new()
         {
-            Usings = [TableNameTag.Get<Customer>()],
+            Usings = [TableTag.Get<Customer>()],
             Where = new And(predicate, customerEmail)
         };
 
@@ -150,7 +150,7 @@ public class FromReadMeMoreComplexExamples
         {
             Values = entity,
             UpdateColumns = columnCollection,
-            From = [TableNameTag.Get<Customer>()],
+            From = [TableTag.Get<Customer>()],
             Where = new And(predicate, customerEmailEquals)
         };
 

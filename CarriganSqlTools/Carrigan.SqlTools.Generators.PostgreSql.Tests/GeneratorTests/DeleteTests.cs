@@ -15,7 +15,7 @@ public class DeleteTests
     [Fact]
     public void Delete_WithUsingOnly()
     {
-        SqlQuery query = generator.Delete([TableNameTag.Get<JoinRightTable>()], null);
+        SqlQuery query = generator.Delete([TableTag.Get<JoinRightTable>()], null);
 
         Assert.Equal("DELETE FROM \"Left\" USING \"Right\"", query.QueryText);
         Assert.Empty(query.Parameters);
@@ -24,7 +24,7 @@ public class DeleteTests
     [Fact]
     public void Delete_WithTargetUsing_Exception()
     {
-        Assert.Throws<InvalidTableException>(() => generator.Delete([TableNameTag.Get<JoinLeftTable>()], null));
+        Assert.Throws<InvalidTableException>(() => generator.Delete([TableTag.Get<JoinLeftTable>()], null));
     }
 
     [Fact]
@@ -42,6 +42,6 @@ public class DeleteTests
         Predicates joinPredicate = new ColumnEqualsColumn<JoinRightTable, JoinLastTable>(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
         Joins joins = new InnerJoin<JoinLastTable>(joinPredicate);
 
-        Assert.Throws<InvalidTableException>(() => generator.Delete<JoinRightTable>([TableNameTag.Get<JoinLastTable>()], joins, null));
+        Assert.Throws<InvalidTableException>(() => generator.Delete<JoinRightTable>([TableTag.Get<JoinLastTable>()], joins, null));
     }
 }

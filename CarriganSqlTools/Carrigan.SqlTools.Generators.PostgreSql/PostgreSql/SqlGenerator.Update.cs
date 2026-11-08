@@ -252,12 +252,12 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// Optional <see cref="PredicatesLogic.Predicates"/> describing the <c>WHERE</c> clause that
     /// determines which rows to update.
     /// </param>
-    public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableNameTag>? from, Joins? joins, Predicates? predicates) where joinsT : class =>
+    public SqlQuery Update<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Joins? joins, Predicates? predicates) where joinsT : class =>
         UpdateWithJoins<joinsT>(entity, columns, from, joins, predicates);
 
-    private SqlQuery UpdateWithJoins<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableNameTag>? from, Joins? joins, Predicates? predicates) where joinsT : class
+    private SqlQuery UpdateWithJoins<joinsT>(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Joins? joins, Predicates? predicates) where joinsT : class
     {
-        TableNameTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
+        TableTag joinsOn = SqlToolsReflectorCache<joinsT>.Table;
 
         if (from.IsNotNullOrEmpty() && from.Contains(Table))
         {
@@ -279,7 +279,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="from">The PostgreSQL <c>FROM</c> sources available to the predicate.</param>
     /// <param name="predicates">The predicates used to build the SQL <c>WHERE</c> clause.</param>
     /// <returns>A <see cref="SqlQuery"/> representing the generated PostgreSQL <c>UPDATE</c> statement.</returns>
-    public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableNameTag>? from, Predicates? predicates)
+    public SqlQuery Update(T entity, ColumnCollectionBase<T>? columns, IEnumerable<TableTag>? from, Predicates? predicates)
     {
         if (from.IsNotNullOrEmpty() && from.Contains(Table))
         {

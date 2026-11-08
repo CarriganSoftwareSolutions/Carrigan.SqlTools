@@ -27,7 +27,7 @@ public class SelectTagsFromTableAliasTests
 
         SelectTag selectTag = Assert.Single(actual);
         Column column = Assert.IsType<Column>(selectTag.SqlExpression);
-        TableAliasTag tableAliasTag = Assert.IsType<TableAliasTag>(column.ColumnTag.TableTag);
+        TableTag tableAliasTag = Assert.IsType<TableTag>(column.ColumnTag.TableTag);
         Assert.Same(tableAlias, tableAliasTag.TableAlias);
         Assert.Equal("ProjectedName", column.ColumnTag.ColumnName.ToString());
         Assert.Equal("DerivedTable.ProjectedName", selectTag.ToSql(NeutralDialect.Instance));
@@ -46,7 +46,7 @@ public class SelectTagsFromTableAliasTests
 
     private static SelectTags NewSelectTags(string? aliasName = null)
     {
-        Column column = new(new ColumnNameTag(new TableNameTag(null, "SourceTable"), new ColumnName("SourceColumn")));
+        Column column = new(new ColumnTag(new TableTag(null, "SourceTable"), new ColumnName("SourceColumn")));
         return aliasName is null
             ? new SelectTag(column)
             : new SelectTag(column, aliasName);

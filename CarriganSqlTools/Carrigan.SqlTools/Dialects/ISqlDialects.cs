@@ -1,3 +1,4 @@
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Paging;
@@ -26,33 +27,53 @@ public interface ISqlDialects
     /// </summary>
     /// <param name="procedure">The procedure tag to render. Cannot be null or empty.</param>
     /// <returns>A string containing the rendered representation of the specified procedure.</returns>
-    string RenderProcedureTag(ProcedureTag procedure);
-
-    /// <summary>
-    /// Generates a string representation of the specified database table, optionally within a given schema.
-    /// </summary>
-    /// <param name="schemaName">The optional schema name that qualifies the table. May be null to omit the schema.</param>
-    /// <param name="tableName">The name of the table to render. Cannot be null or empty.</param>
-    /// <returns>A string containing the rendered representation of the specified table.</returns>
-    string RenderTable(SchemaName? schemaName, TableName tableName);
+    public string RenderProcedureTag(ProcedureTag procedure) =>
+        procedure.SchemaName.IsNotNullOrEmpty()
+            ? $"{QuoteIdentifier(procedure.SchemaName.ToString())}.{QuoteIdentifier(procedure.ProcedureName.ToString())}"
+            : QuoteIdentifier(procedure.ProcedureName.ToString());
 
     /// <summary>
     /// Generates a string representation of the specified database table alias
     /// </summary>
-    /// <param name="aliasTag">The alias tag for the table. May be null to omit the alias.</param>
+    /// <param name="tableAlias">The alias tag for the table. May be null to omit the alias.</param>
     /// <returns>A string containing the rendered representation of the specified table alias.</returns>
-    string RenderTableAlias(ColumnAliasTag? aliasTag);
+    string RenderTableAlias(TableAlias? tableAlias) =>
+        tableAlias.IsNotNullOrEmpty()
+                ? QuoteIdentifier(tableAlias.ToString())
+                : string.Empty;
 
     /// <summary>
-    /// Renders a fully qualified column name for use in SQL statements.
+    /// Generates a string representation of the specified database column alias
     /// </summary>
-    /// <remarks>If <paramref name="includeTable"/> is false, only the column name is rendered.</remarks>
-    /// <param name="tableTag">The table tag that qualifies the column.</param>
-    /// <param name="columnName">The column name to render.</param>
-    /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
-    /// <returns>A string containing the rendered column name, optionally qualified by table and schema as specified.</returns>
-    string RenderColumn(TableTag tableTag, ColumnName columnName, bool includeTable = true);
+    /// <param name="columnAlias">The alias tag for the column. May be null to omit the alias.</param>
+    /// <returns>A string containing the rendered representation of the specified column alias.</returns>
+    public string RenderColumnAlias(ColumnAlias? columnAlias) =>
+        columnAlias.IsNotNullOrEmpty()
+                ? QuoteIdentifier(columnAlias.ToString())
+                : string.Empty;
 
+    /// <summary>
+    /// Renders the fully qualified name of a database column, optionally including the table name and schema.
+    /// </summary>
+    /// <param name="includeTable">true to include the table name in the rendered output; otherwise, false.</param>
+    /// <param name="tableTag">The tableTag value.</param>
+    /// <param name="columnName">The SQL column name to apply.</param>
+    /// <returns>A string representing the fully qualified column name, formatted according to the specified parameters.</returns>
+    public string RenderColumn(TableTag? tableTag, ColumnName columnName, bool includeTable = true) =>
+        includeTable && (tableTag?.ToString()).IsNotNullOrEmpty()
+                ? $"{tableTag.ToSql(this)}.{QuoteIdentifier(columnName.ToString())}"
+                : QuoteIdentifier(columnName.ToString());
+
+    /// <summary>
+    /// Generates a string representation of the specified database table, optionally qualified by schema.
+    /// </summary>
+    /// <param name="schemaName">The name of the schema to which the table belongs, or null to omit the schema from the rendered output.</param>
+    /// <param name="tableName">The name of the table to render. Cannot be null or empty.</param>
+    /// <returns>A string containing the rendered representation of the specified table.</returns>
+    public string RenderTable(SchemaName? schemaName, TableName tableName) =>
+        schemaName.IsNotNullOrEmpty()
+            ? $"{QuoteIdentifier(schemaName!.ToString())}.{QuoteIdentifier(tableName.ToString())}"
+            : QuoteIdentifier(tableName.ToString());
 
     /// <summary>
     /// Generates the SQL fragments required to perform an INSERT statement with a RETURNING clause for the specified

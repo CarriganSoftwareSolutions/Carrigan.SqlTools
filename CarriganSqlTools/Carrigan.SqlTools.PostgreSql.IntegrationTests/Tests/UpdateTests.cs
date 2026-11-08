@@ -233,7 +233,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         UpdateBuilder<Customer> updateBuilder = new()
         {
             Values = values,
-            From = [TableNameTag.Get<Order>()],
+            From = [TableTag.Get<Order>()],
             UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.FirstName)),
             Where = new And
             (
@@ -279,7 +279,7 @@ public sealed class UpdateTests : IClassFixture<UpdatesFixture>
         UpdateBuilder<Customer, Order> updateBuilder = new()
         {
             Values = values,
-            From = [TableNameTag.Get<Order>()],
+            From = [TableTag.Get<Order>()],
             UpdateColumns = new ColumnCollection<Customer>(nameof(Customer.FirstName)),
             Where = new And (columnEqualsColumn, addressId),
             Joins = joinAddress

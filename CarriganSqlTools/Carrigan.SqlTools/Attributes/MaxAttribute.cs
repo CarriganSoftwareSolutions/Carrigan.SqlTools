@@ -52,8 +52,8 @@ public sealed class MaxAttribute<T> : SelectTagAttribute<T>
     internal MaxAttribute(PropertyName propertyName, bool distinct, ColumnAlias? aliasName = null)
         : base(propertyName, aliasName)
     {
-        AliasTag = ColumnAliasTag.New(aliasName);
-        SelectTag = new SelectTag(new Max(SelectTag!.SqlExpression, distinct), AliasTag);
+        ColumnAlias = aliasName;
+        SelectTag = new SelectTag(new Max(SelectTag!.SqlExpression, distinct), ColumnAlias);
         UseDecoratedPropertyNameAsDefaultAlias = true;
     }
 }

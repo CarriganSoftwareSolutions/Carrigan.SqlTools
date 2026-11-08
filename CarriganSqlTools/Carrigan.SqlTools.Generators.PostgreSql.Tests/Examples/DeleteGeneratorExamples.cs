@@ -63,7 +63,7 @@ public class DeleteGeneratorExamples
 
         DeleteBuilder<Order> deleteBuilder = new()
         {
-            Usings = [TableNameTag.Get<Customer>()],
+            Usings = [TableTag.Get<Customer>()],
             Where = predicate
         };
 
@@ -89,7 +89,7 @@ public class DeleteGeneratorExamples
 
         DeleteBuilder<Order> deleteBuilder = new()
         {
-            Usings = [TableNameTag.Get<Customer>()],
+            Usings = [TableTag.Get<Customer>()],
             Where = new And(predicate, customerEmail)
         };
 
@@ -123,7 +123,7 @@ public class DeleteGeneratorExamples
 
         DeleteBuilder<Customer, Order> deleteBuilder = new()
         {
-            Usings = [TableNameTag.Get<Order>()],
+            Usings = [TableTag.Get<Order>()],
             Joins = joins,
             Where = new And(customerIdEquals, paymentMethodZipCode)
         };

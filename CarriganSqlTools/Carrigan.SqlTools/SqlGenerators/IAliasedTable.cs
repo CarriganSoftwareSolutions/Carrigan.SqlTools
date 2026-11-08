@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.Tags;
+﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Tags;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,5 @@ namespace Carrigan.SqlTools.SqlGenerators;
 
 public interface IAliasedTable
 {
-    public TableAliasTag? TableAliasTag { get; }
+    public TableAlias? TableAlias { get; }
 }

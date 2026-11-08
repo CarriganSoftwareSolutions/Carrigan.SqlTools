@@ -47,10 +47,10 @@ public class SqlToolsReflectorCache<T>
     internal static readonly TableName TableName;
 
     /// <summary>
-    /// Gets the <see cref="TableNameTag"/> that represents
+    /// Gets the <see cref="TableTag"/> that represents
     /// the fully qualified table identifier for <typeparamref name="T"/>.
     /// </summary>
-    internal static TableNameTag Table =>
+    internal static TableTag Table =>
         new(SchemaName, TableName);
 
     /// <summary>
@@ -149,7 +149,7 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<selectTagT> CreateAllSelectTags<selectTagT>
     (
         HashSet<Type> supportedTypes,
-        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory
+        Func<SqlExpression, ColumnAlias?, selectTagT> selectTagFactory
     )
         where selectTagT : SelectTag =>
             GetColumnInfo(supportedTypes)
@@ -358,7 +358,7 @@ public class SqlToolsReflectorCache<T>
     (
         PropertyName propertyName,
         HashSet<Type> supportedTypes,
-        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory,
+        Func<SqlExpression, ColumnAlias?, selectTagT> selectTagFactory,
         ColumnAlias? aliasName = null
     )
         where selectTagT : SelectTag
@@ -382,7 +382,7 @@ public class SqlToolsReflectorCache<T>
     internal static IEnumerable<selectTagT> CreateSelectTags<selectTagT>
     (
         HashSet<Type> supportedTypes,
-        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory,
+        Func<SqlExpression, ColumnAlias?, selectTagT> selectTagFactory,
         params IEnumerable<PropertyName> propertyNames
     )
         where selectTagT : SelectTag
@@ -413,23 +413,20 @@ public class SqlToolsReflectorCache<T>
     private static selectTagT CreateSelectTag<selectTagT>
     (
         ColumnInfo columnInfo,
-        ColumnAlias? aliasName,
-        Func<SqlExpression, ColumnAliasTag?, selectTagT> selectTagFactory
+        ColumnAlias? columnAlias,
+        Func<SqlExpression, ColumnAlias?, selectTagT> selectTagFactory
     )
         where selectTagT : SelectTag
     {
         ArgumentNullException.ThrowIfNull(columnInfo, nameof(columnInfo));
         ArgumentNullException.ThrowIfNull(selectTagFactory, nameof(selectTagFactory));
 
-        if (aliasName.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(aliasName.ToString()))
-            throw new InvalidSqlIdentifierException(aliasName);
+        if (columnAlias.IsNotNullOrEmpty() && SqlIdentifierPattern.Fails(columnAlias.ToString()))
+            throw new InvalidSqlIdentifierException(columnAlias);
 
         SqlExpression sqlExpression = columnInfo.SelectTag.SqlExpression;
-        ColumnAliasTag? aliasTag = aliasName is null
-            ? columnInfo.SelectAliasTag
-            : ColumnAliasTag.New(aliasName);
 
-        return selectTagFactory(sqlExpression, aliasTag);
+        return selectTagFactory(sqlExpression, columnAlias ?? columnInfo.SelectColumnAlias);
     }
 
 }

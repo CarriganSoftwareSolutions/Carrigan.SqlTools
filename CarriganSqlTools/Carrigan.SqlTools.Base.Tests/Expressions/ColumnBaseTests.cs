@@ -122,8 +122,8 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            ColumnNameTag actual = columnBase.ColumnTag;
-            ColumnNameTag expected = ExpectedPropertyColumnTag[propertyName];
+            ColumnTag actual = columnBase.ColumnTag;
+            ColumnTag expected = ExpectedPropertyColumnTag[propertyName];
             Assert.Equal(expected, actual);
         }
         RunSubMethod(Test, propertyName);
@@ -155,7 +155,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            TableName actual = ((TableNameTag)columnBase.ColumnTag.TableTag).TableName;
+            TableName actual = ((TableTag)columnBase.ColumnTag.TableTag).TableName;
             TableName expected = ExpectedTableName;
             Assert.Equal(expected, actual);
         }
@@ -166,7 +166,7 @@ public abstract class ColumnBaseTests<modelT> : ColumnTestsBase<modelT> where mo
     {
         void Test(Column columnBase)
         {
-            SchemaName? actual = ((TableNameTag)columnBase.ColumnTag.TableTag).SchemaName;
+            SchemaName? actual = ((TableTag)columnBase.ColumnTag.TableTag).SchemaName;
             SchemaName? expected = ExpectedSchemaName;
             if (expected is null)
                 Assert.Null(actual);

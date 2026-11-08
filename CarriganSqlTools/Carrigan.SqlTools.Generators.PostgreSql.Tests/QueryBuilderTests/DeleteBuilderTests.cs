@@ -22,7 +22,7 @@ public class DeleteBuilderTests
 
         DeleteBuilder<JoinLeftTable> deleteBuilder = new()
         {
-            Usings = [TableNameTag.Get<JoinRightTable>()],
+            Usings = [TableTag.Get<JoinRightTable>()],
             Where = new And(usingPredicate, where)
         };
 
@@ -48,7 +48,7 @@ public class DeleteBuilderTests
 
         DeleteBuilder<JoinLeftTable, JoinRightTable> deleteBuilder = new()
         {
-            Usings = [TableNameTag.Get<JoinRightTable>()],
+            Usings = [TableTag.Get<JoinRightTable>()],
             Joins = joins,
             Where = new And(usingPredicate, where)
         };
