@@ -37,5 +37,5 @@ public class AliasName : ColumnAlias
     /// otherwise, <c>null</c>.
     /// </returns>
     public static new AliasName? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNullOrWhiteSpace() ? null : new(name);
 }

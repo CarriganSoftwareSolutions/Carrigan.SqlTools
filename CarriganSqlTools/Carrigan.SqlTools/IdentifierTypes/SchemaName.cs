@@ -35,5 +35,5 @@ public class SchemaName : TextWrapper
     /// otherwise, <c>null</c>.
     /// </returns>
     public static SchemaName? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNotNullOrWhiteSpace() ? null : new(name);
 }

@@ -38,7 +38,7 @@ public class TableAlias : TextWrapper, ISqlFragment
     /// otherwise, <c>null</c>.
     /// </returns>
     public static TableAlias? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNotNullOrWhiteSpace() ? null : new(name);
 
     public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => throw new NotImplementedException();
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) => throw new NotImplementedException();

@@ -41,5 +41,5 @@ public class ColumnName : TextWrapper
     /// otherwise, <c>null</c>.
     /// </returns>
     public static ColumnName? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNotNullOrWhiteSpace() ? null : new(name);
 }

@@ -38,7 +38,7 @@ public class ColumnAlias : TextWrapper, ISqlFragment
     /// otherwise, <c>null</c>.
     /// </returns>
     public static ColumnAlias? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNotNullOrWhiteSpace() ? null : new(name);
 
     public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => 
         [this];

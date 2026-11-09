@@ -41,5 +41,5 @@ public class TableName : TextWrapper
     /// otherwise, <c>null</c>.
     /// </returns>
     public static TableName? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNotNullOrWhiteSpace() ? null : new(name);
 }

@@ -36,5 +36,5 @@ public class PropertyName : TextWrapper
     /// otherwise, <c>null</c>.
     /// </returns>
     public static PropertyName? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNotNullOrWhiteSpace() ? null : new(name);
 }
