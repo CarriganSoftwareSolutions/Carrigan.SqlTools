@@ -208,7 +208,7 @@ public class ColumnTagsTests
     [Fact]
     public void ToString_UnqualifiedColumn_ReturnsColumnName()
     {
-        ColumnTag columnTag = new(new ColumnName("Column"));
+        ColumnTag columnTag = new((TableAlias?)null, new ColumnAlias("Column"));
 
         Assert.Equal("Column", columnTag.ToString());
     }

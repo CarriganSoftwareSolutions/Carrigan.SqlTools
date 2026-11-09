@@ -1,4 +1,4 @@
-﻿using Carrigan.SqlTools.Base.Tests.TestEntities;
+using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
@@ -8,6 +8,14 @@ namespace Carrigan.SqlTools.Generators.SqlServer.Tests.Tags;
 public class TableTagTests
 {
     private static readonly SqlServerDialect Dialect = new();
+
+    [Fact]
+    public void TableAliasToSql_RendersAliasWithoutSchema()
+    {
+        TableAlias alias = new("Derived");
+
+        Assert.Equal("[Derived]", alias.ToSql(Dialect));
+    }
 
     [Theory]
     [InlineData("Franks", "Pizza", "[Franks].[Pizza]")]
@@ -116,23 +124,25 @@ public class TableTagTests
     }
 
     [Fact]
-    public void Equals_SchemaIsCaseSensitive()
+    public void Equals_SchemaIsCaseInsensitive()
     {
         TableTag left = new("Schema", "Table");
         TableTag right = new("schema", "Table");
 
-        Assert.False(left.Equals(right));
-        Assert.NotEqual(left, right);
+        Assert.True(left.Equals(right));
+        Assert.Equal(left, right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
     [Fact]
-    public void Equals_TableIsCaseSensitive()
+    public void Equals_TableIsCaseInsensitive()
     {
         TableTag left = new("Schema", "Table");
         TableTag right = new("Schema", "table");
 
-        Assert.False(left.Equals(right));
-        Assert.NotEqual(left, right);
+        Assert.True(left.Equals(right));
+        Assert.Equal(left, right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
     [Fact]
@@ -296,14 +306,15 @@ public class TableTagTests
     }
 
     [Fact]
-    public void DictionaryKey_IsCaseSensitive()
+    public void DictionaryKey_IsCaseInsensitive()
     {
         TableTag storedKey = new("Schema", "Table");
         TableTag lookupKey = new("schema", "Table");
         Dictionary<TableTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
-        Assert.False(dictionary.ContainsKey(lookupKey));
+        Assert.True(dictionary.ContainsKey(lookupKey));
+        Assert.Equal(3.14159m, dictionary[lookupKey]);
     }
 
     [Fact]

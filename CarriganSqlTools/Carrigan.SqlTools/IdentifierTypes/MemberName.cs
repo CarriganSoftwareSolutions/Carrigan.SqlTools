@@ -35,5 +35,5 @@ internal sealed class MemberName : TextWrapper
     /// otherwise, <c>null</c>.
     /// </returns>
     internal static MemberName? New(string? name) =>
-        name.IsNullOrEmpty() ? null : new(name);
+        name.IsNotNullOrWhiteSpace() ? null : new(name);
 }
