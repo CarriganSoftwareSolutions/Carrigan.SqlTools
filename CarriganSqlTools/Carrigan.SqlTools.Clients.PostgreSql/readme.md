@@ -6,6 +6,12 @@ PostgreSQL client support for Carrigan.SqlTools.
 
 This package provides the PostgreSQL-specific client layer for Carrigan.SqlTools. It is intended for applications and libraries that need to execute Carrigan.SqlTools-generated SQL against PostgreSQL databases.
 
+## Framework Compatibility and Support
+
+This package targets **.NET 10** and **.NET 11**. **.NET 9 binaries are not provided** for this PostgreSQL package.
+
+Microsoft ended support for **.NET 9** on **November 10, 2026**. Carrigan Software Solutions LLC officially supports only .NET versions currently supported by Microsoft. Binaries for unsupported frameworks, where provided, are offered **as-is** for compatibility with existing applications. Framework-specific testing, fixes, security updates, and technical support for unsupported targets are **not guaranteed**. Obsolete targets may be removed in future releases; upgrading to a supported .NET version is recommended.
+
 ## Installation
 
 ```bash

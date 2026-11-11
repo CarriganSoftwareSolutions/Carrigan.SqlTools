@@ -13,6 +13,12 @@ This library may be used to model or generate SQL through dialect packages. Revi
 
 Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.
 
+## Framework Compatibility and Support
+
+This package targets **.NET 9**, **.NET 10**, and **.NET 11**. The .NET 9 binary remains available for compatibility, but is **not officially supported**.
+
+Microsoft ended support for **.NET 9** on **November 10, 2026**. Carrigan Software Solutions LLC officially supports only .NET versions currently supported by Microsoft. Binaries for unsupported frameworks, where provided, are offered **as-is** for compatibility with existing applications. Framework-specific testing, fixes, security updates, and technical support for unsupported targets are **not guaranteed**. Obsolete targets may be removed in future releases; upgrading to a supported .NET version is recommended.
+
 ---
 
 ## Installation

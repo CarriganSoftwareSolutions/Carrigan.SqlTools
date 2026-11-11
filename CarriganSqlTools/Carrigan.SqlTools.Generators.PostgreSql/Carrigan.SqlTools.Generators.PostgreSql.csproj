@@ -2,7 +2,7 @@
   <PropertyGroup>
     <PackageId>Carrigan.SqlTools.Generators.PostgreSql</PackageId>
     <RootNamespace>Carrigan.SqlTools</RootNamespace>
-    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -43,8 +43,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.8" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="All" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.9" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
