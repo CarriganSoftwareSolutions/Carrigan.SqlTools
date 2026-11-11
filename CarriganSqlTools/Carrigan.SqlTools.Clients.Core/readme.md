@@ -8,6 +8,14 @@ This package contains the common base types, abstractions, and shared client-sid
 
 Most users should install one of the database-specific client packages instead of referencing this package directly.
 
+## Framework Compatibility and Support
+
+This package targets `net9.0`, `net10.0`, and `net11.0`.
+
+**Official support is limited to .NET versions currently supported by Microsoft.** Microsoft ended support for .NET 9 on November 10, 2026. Where `net9.0` binaries remain available, they are provided **as-is and without official support**. Framework-specific testing, bug fixes, security updates, and technical support are not guaranteed for obsolete frameworks. We recommend .NET 10 or .NET 11 for new applications. Support for obsolete targets may be removed in future releases.
+
+---
+
 ## Intended usage
 
 Use this package directly only when you are:
