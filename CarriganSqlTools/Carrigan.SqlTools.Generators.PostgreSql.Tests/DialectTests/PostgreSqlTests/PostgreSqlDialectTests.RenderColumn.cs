@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
@@ -16,6 +17,24 @@ public partial class PostgreSqlDialectTests
     public void RenderColumn_DoNotIncludeTable_ReturnsQuotedColumn()
     {
         string actual = Dialect.RenderColumn(new TableTag(null, "Customer"), new ColumnName("Name"), false);
+        Assert.Equal("\"Name\"", actual);
+    }
+
+    [Fact]
+    public void RenderColumn_WithSchema_ReturnsSchemaQualifiedColumn()
+    {
+        TableTag tableTag = new("sales", "Customer");
+
+        string actual = Dialect.RenderColumn(tableTag, new ColumnName("Name"));
+
+        Assert.Equal("\"sales\".\"Customer\".\"Name\"", actual);
+    }
+
+    [Fact]
+    public void RenderColumn_NullTable_ReturnsQuotedColumn()
+    {
+        string actual = Dialect.RenderColumn(null, new ColumnName("Name"));
+
         Assert.Equal("\"Name\"", actual);
     }
 }

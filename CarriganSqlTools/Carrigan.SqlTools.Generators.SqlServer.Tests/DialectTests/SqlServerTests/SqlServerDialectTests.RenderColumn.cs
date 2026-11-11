@@ -1,4 +1,5 @@
-﻿using Carrigan.SqlTools.IdentifierTypes;
+using Carrigan.SqlTools.Dialects;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.DialectTests.SqlServerTests;
@@ -21,6 +22,14 @@ public partial class SqlServerDialectTests
         TableTag tableTag = new("dbo", "Customer");
 
         string actual = Dialect.RenderColumn(tableTag, new ColumnName("Name"), false);
+
+        Assert.Equal("[Name]", actual);
+    }
+
+    [Fact]
+    public void RenderColumn_NullTable_ReturnsColumnNameOnly()
+    {
+        string actual = Dialect.RenderColumn(null, new ColumnName("Name"));
 
         Assert.Equal("[Name]", actual);
     }
