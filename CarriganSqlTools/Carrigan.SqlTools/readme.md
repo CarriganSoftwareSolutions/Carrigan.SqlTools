@@ -1,4 +1,4 @@
-﻿<a id="carrigan.sqltools"></a>
+<a id="carrigan.sqltools"></a>
 
 # Carrigan.SqlTools
 <!--Ignore Spelling: encryptors-->
@@ -12,6 +12,14 @@ This package may be installed directly when you are building shared Carrigan.Sql
 This library may be used to model or generate SQL through dialect packages. Review generated SQL before use in production systems. Always test against non-production databases first.
 
 Use caution with schema, migration, and data-modifying operations. The authors are not responsible for data loss, downtime, or unintended database changes.
+
+---
+
+## Framework Compatibility and Support
+
+This package targets `net9.0`, `net10.0`, and `net11.0`.
+
+**Official support is limited to .NET versions currently supported by Microsoft.** Microsoft ended support for .NET 9 on November 10, 2026. Where `net9.0` binaries remain available, they are provided **as-is and without official support**. Framework-specific testing, bug fixes, security updates, and technical support are not guaranteed for obsolete frameworks. We recommend .NET 10 or .NET 11 for new applications. Support for obsolete targets may be removed in future releases.
 
 ---
 

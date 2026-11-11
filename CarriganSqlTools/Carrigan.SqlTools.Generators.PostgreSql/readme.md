@@ -21,6 +21,8 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 ---
 
 ## Table of Contents
+
+- [Framework Compatibility and Support](#framework-compatibility-and-support)
 - [Features](#features)
 - [Installation](#installation)
 - [Getting Started Examples](#getting-started-examples)
@@ -54,6 +56,14 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Arrays](#arrays)
 - [ExampleEncryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 - [License](#license)
+
+---
+
+## Framework Compatibility and Support
+
+This package targets `net10.0` and `net11.0`. **It does not provide a .NET 9 target**; PostgreSQL SQL generation in this release requires .NET 10 or later.
+
+**Official support is limited to .NET versions currently supported by Microsoft.** Microsoft ended support for .NET 9 on November 10, 2026. Where `net9.0` binaries remain available, they are provided **as-is and without official support**. Framework-specific testing, bug fixes, security updates, and technical support are not guaranteed for obsolete frameworks. We recommend .NET 10 or .NET 11 for new applications. Support for obsolete targets may be removed in future releases.
 
 ---
 
