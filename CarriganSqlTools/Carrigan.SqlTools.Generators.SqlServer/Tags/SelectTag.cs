@@ -19,7 +19,7 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="aliasName">
     /// An optional alias to use for this projection.
     /// </param>
-    public SelectTag(PropertyName propertyName, AliasName? aliasName = null)
+    public SelectTag(PropertyName propertyName, ColumnAlias? aliasName = null)
         : this(SelectTagGenerator.Get<modelT>(propertyName, aliasName))
     {
     }
