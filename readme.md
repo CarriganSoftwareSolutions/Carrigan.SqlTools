@@ -15,6 +15,7 @@ Each convenience package references the matching generator and client packages s
 
 ## Table of Contents
 
+- [.NET compatibility and support](#net-compatibility-and-support)
 - [Features](#features)
 - [Installation](#installation)
 - [Documentation](#documentation)
@@ -22,6 +23,22 @@ Each convenience package references the matching generator and client packages s
 - [Dialect Differences](#dialect-differences)
 - [Safety Notes](#safety-notes)
 - [License](#license)
+
+---
+
+## .NET compatibility and support
+
+| Package family | Target frameworks | Officially supported targets |
+|---|---|---|
+| Shared SQLTools and client core | `net9.0`, `net10.0`, `net11.0` | .NET 10 and .NET 11 |
+| SQL Server packages | `net9.0`, `net10.0`, `net11.0` | .NET 10 and .NET 11 |
+| PostgreSQL packages | `net10.0`, `net11.0` | .NET 10 and .NET 11 |
+
+**Microsoft ended support for .NET 9 on November 10, 2026.** We continue to provide .NET 9 binaries for the shared and SQL Server libraries to maintain compatibility with existing applications. PostgreSQL packages require .NET 10 or later and do not include .NET 9 targets.
+
+Carrigan Software Solutions LLC officially supports only .NET versions currently supported by Microsoft. Binaries for unsupported .NET versions are provided **as-is and without official support**. Framework-specific testing, bug fixes, security updates, and technical support are not guaranteed. Targets for obsolete frameworks may be removed from future releases. For production use, upgrade to a supported .NET version.
+
+Roslyn analyzer projects target `netstandard2.0` for compiler-host compatibility; this is separate from the .NET runtime framework support policy above.
 
 ---
 
