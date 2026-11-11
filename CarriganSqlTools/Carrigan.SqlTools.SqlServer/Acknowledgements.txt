@@ -69,6 +69,13 @@ and upstream project repositories.
   Notices:
   https://github.com/dotnet/sdk/blob/main/THIRD-PARTY-NOTICES.TXT
 
+- System.Security.Cryptography.Pkcs
+    © Microsoft Corporation  
+    Licensed under the MIT License  
+    https://github.com/dotnet/runtime/tree/main
+    https://github.com/dotnet/runtime/blob/main/LICENSE.TXT  
+    https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT
+
 SQL Server is a trademark of Microsoft Corporation. This project is not affiliated with or endorsed by Microsoft.
 
 Unless otherwise expressly stated in a given package or distribution, references
