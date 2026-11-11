@@ -113,14 +113,14 @@ public class ColumnInfoTests
         if (expectedAliasName is null)
         {
             Assert.Null(columnInfo.AliasName);
-            Assert.Null(columnInfo.SelectTag.AliasTag);
+            Assert.Null(columnInfo.SelectTag.ColumnAlias);
         }
         else
         {
             Assert.NotNull(columnInfo.AliasName);
-            Assert.NotNull(columnInfo.SelectTag.AliasTag);
+            Assert.NotNull(columnInfo.SelectTag.ColumnAlias);
             Assert.Equal(expectedAliasName, columnInfo.AliasName.ToString());
-            Assert.Equal(expectedAliasName, columnInfo.SelectTag.AliasTag.ToString());
+            Assert.Equal(expectedAliasName, columnInfo.SelectTag.ColumnAlias.ToString());
         }
 
         Assert.Equal(expectedSelectTag, columnInfo.SelectTag.ToSql(Dialect));

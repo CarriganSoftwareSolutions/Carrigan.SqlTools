@@ -203,8 +203,8 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
         );
     protected IEnumerable<SelectTag> GetByColumnAlias(IEnumerable<ColumnAlias> columnAliasTags) =>
         _selectTags
-            .Where(select => select.AliasTag.IsNotNullOrWhiteSpace())
-            .Where(select => columnAliasTags.Contains(select.AliasTag));
+            .Where(select => select.ColumnAlias.IsNotNullOrWhiteSpace())
+            .Where(select => columnAliasTags.Contains(select.ColumnAlias));
 
     [ExternalOnly]
     public IEnumerable<SelectTag> GetByResultColumn(IEnumerable<string> resultColumnNames) =>

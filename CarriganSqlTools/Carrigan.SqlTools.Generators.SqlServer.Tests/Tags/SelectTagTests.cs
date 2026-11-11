@@ -12,7 +12,7 @@ public class SelectTagTests
 {
     private static readonly SqlServerDialect Dialect = new();
     private static SelectTag<SomeTable> New(string columnName, string? aliasName) =>
-        new (new PropertyName(columnName), ColumnAlias.New(aliasName));
+        new (new PropertyName(columnName), AliasName.New(aliasName));
 
     private static readonly SelectTag a = New("SomeColumn", null);
     private static readonly SelectTag b = New("OtherColumn", null);
@@ -27,7 +27,7 @@ public class SelectTagTests
         SelectTag selectTag  = New(columnName, aliasName);
         Assert.Equal(expectedColumn, selectTag.WithNoAlias().ToSql(Dialect));
         if (expectedAlias is null)
-            Assert.Null(selectTag.AliasTag);
+            Assert.Null(selectTag.ColumnAlias);
 
         Assert.Equal(expectedSelect, selectTag.ToSql(Dialect));
     }

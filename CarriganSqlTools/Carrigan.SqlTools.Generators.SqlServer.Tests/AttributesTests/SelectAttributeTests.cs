@@ -94,7 +94,7 @@ public sealed class SelectTagAttributeTests
         Assert.Equal("SelectSource", attribute.ColumnTag.TableTag.ToString());
         Assert.Equal("[SelectSource].[Name]", attribute.ColumnTag.ToSql(Dialect));
         Assert.Equal("SelectSource.Name", attribute.ColumnTag.ToString());
-        Assert.NotNull(selectTag.AliasTag);
+        Assert.NotNull(selectTag.ColumnAlias);
         Assert.Equal("[SelectSource].[Name] AS [SourceName]", selectTag.ToSql(Dialect));
         Assert.Equal("SelectSource.Name AS SourceName", selectTag.ToString());
     }
@@ -117,7 +117,7 @@ public sealed class SelectTagAttributeTests
 
         Assert.Equal("TableIdentifier", attribute.ColumnTag.TableTag.ToString());
         Assert.Equal("TableIdentifier.ColumnIdentifier", attribute.ColumnTag.ToString());
-        Assert.NotNull(selectTag.AliasTag);
+        Assert.NotNull(selectTag.ColumnAlias);
         Assert.Equal("TableIdentifier.ColumnIdentifier AS SourceName", selectTag.ToString());
     }
 

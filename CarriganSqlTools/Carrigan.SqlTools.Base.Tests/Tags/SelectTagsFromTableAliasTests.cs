@@ -31,7 +31,7 @@ public class SelectTagsFromTableAliasTests
         Assert.Equal(tableAlias.ToString(), tableAliasTag.TableName.ToString());
         Assert.Null(tableAliasTag.SchemaName);
         Assert.Equal("ProjectedName", column.ColumnTag.ColumnName.ToString());
-        Assert.Null(selectTag.AliasTag);
+        Assert.Null(selectTag.ColumnAlias);
         Assert.Equal("DerivedTable.ProjectedName", selectTag.ToSql(NeutralDialect.Instance));
     }
 
@@ -70,7 +70,7 @@ public class SelectTagsFromTableAliasTests
 
         Column column = Assert.IsType<Column>(projected.SqlExpression);
         Assert.Equal("Derived.Computed", column.ColumnTag.ToString());
-        Assert.Null(projected.AliasTag);
+        Assert.Null(projected.ColumnAlias);
     }
 
     private static SelectTags NewSelectTags(string? aliasName = null)

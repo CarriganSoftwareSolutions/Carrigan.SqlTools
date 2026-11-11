@@ -23,7 +23,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// The optional alias applied to this select item.
     /// </summary>
     //TODO: rename to ColumnAliasTag
-    internal readonly ColumnAlias? AliasTag;
+    internal readonly ColumnAlias? ColumnAlias;
 
     //internal readonly ColumnTag ColumnTag;
 
@@ -61,7 +61,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
         ArgumentNullException.ThrowIfNull(aliasTag, nameof(aliasTag));
 
         SqlExpression = sqlExpression;
-        AliasTag = aliasTag;
+        ColumnAlias = aliasTag;
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
         get
         {
             ColumnTag? columnTag = (SqlExpression as Column)?.ColumnTag;
-            return new(AliasTag?.ToString() ?? columnTag?.ColumnName.ToString() ?? SqlExpression.ToString());
+            return new(ColumnAlias?.ToString() ?? columnTag?.ColumnName.ToString() ?? SqlExpression.ToString());
         }
     }
 
@@ -118,15 +118,15 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     {
         if (SqlExpression is Column column)
         {
-            return new(new Column(new ColumnTag(column.ColumnTag, tableAlias, AliasTag)));
+            return new(new Column(new ColumnTag(column.ColumnTag, tableAlias, ColumnAlias)));
         }
-        else if (AliasTag is null)
+        else if (ColumnAlias is null)
         {
             throw new NullReferenceException("SqlExpressions need a column name or column alias when reference inside a SubQuery");
         }
         else
         {
-            return new(new Column(new ColumnTag(tableAlias, AliasTag)));
+            return new(new Column(new ColumnTag(tableAlias, ColumnAlias)));
         }
     }
 
@@ -167,10 +167,10 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
         {
             yield return sqlFragment;
         }
-        if (AliasTag is not null)
+        if (ColumnAlias is not null)
         {
             yield return new SqlFragmentText(" AS ");
-            yield return AliasTag;
+            yield return ColumnAlias;
         }
     }
 
@@ -208,7 +208,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
         if (other is null)
             return false;
 
-        return SqlExpression.Equals(other.SqlExpression) && EqualityComparer<ColumnAlias?>.Default.Equals(AliasTag, other.AliasTag);
+        return SqlExpression.Equals(other.SqlExpression) && EqualityComparer<ColumnAlias?>.Default.Equals(ColumnAlias, other.ColumnAlias);
     }
 
     /// <summary>
@@ -221,7 +221,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// Returns a hash code based on the projected expression and alias.
     /// </summary>
     public override int GetHashCode() =>
-        HashCode.Combine(SqlExpression, AliasTag);
+        HashCode.Combine(SqlExpression, ColumnAlias);
 
     /// <summary>
     /// Determines whether two select items project equivalent expressions with equivalent aliases.
@@ -260,5 +260,5 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// Creates a new <see cref="SelectTag"/> instance with the same column as the current instance but without any alias.
     /// </summary>
     public SelectTag WithNoAlias() =>
-        AliasTag is null ? this : new SelectTag(SqlExpression);
+        ColumnAlias is null ? this : new SelectTag(SqlExpression);
 }

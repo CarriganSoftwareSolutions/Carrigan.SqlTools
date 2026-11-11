@@ -134,7 +134,7 @@ public class SqlToolsReflectorCacheTests
         Assert.Equal(new PropertyName("Id"), column.PropertyName);
         Assert.Equal("Id", column.PropertyInfo.Name);
         Assert.Equal(new ColumnTag(new TableTag(null, new TableName("ColumnIdentifiers")), new ColumnName("Id")), column.SelectColumnTag);
-        Assert.Null(column.SelectTag.AliasTag);
+        Assert.Null(column.SelectTag.ColumnAlias);
         Assert.True(column.IsKeyPart);
         Assert.False(column.IsEncrypted);
         Assert.False(column.IsKeyVersionProperty);
