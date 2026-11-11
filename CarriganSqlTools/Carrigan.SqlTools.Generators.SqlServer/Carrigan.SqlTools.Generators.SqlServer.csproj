@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>Carrigan.SqlTools.Generators.SqlServer</PackageId>
     <RootNamespace>Carrigan.SqlTools</RootNamespace>
-    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net10.0;net11.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -44,8 +44,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.9-alpha.202611051613" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.403" PrivateAssets="All" />
+    <PackageReference Include="Carrigan.Core.Analyzers" Version="0.1.9" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

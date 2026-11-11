@@ -11,6 +11,17 @@ The project is organized around a shared core plus dialect-specific generator an
 
 Each convenience package references the matching generator and client packages so a single NuGet install gives you SQL generation plus execution helpers for that dialect.
 
+## Framework Compatibility and Support
+
+| Package family | .NET 9 | .NET 10 | .NET 11 |
+| --- | --- | --- | --- |
+| Shared SQLTools and SQL Server packages | Binaries available (unsupported) | Supported | Supported |
+| PostgreSQL packages | Not targeted | Supported | Supported |
+
+Microsoft ended support for **.NET 9** on **November 10, 2026**. Carrigan Software Solutions LLC officially supports only .NET versions currently supported by Microsoft. Binaries for unsupported frameworks, where provided, are offered **as-is** for compatibility with existing applications. Framework-specific testing, fixes, security updates, and technical support for unsupported targets are **not guaranteed**. Obsolete targets may be removed in future releases; upgrading to a supported .NET version is recommended.
+
+The Roslyn analyzers continue to target `netstandard2.0` for compiler-host compatibility.
+
 ---
 
 ## Table of Contents

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Carrigan.SqlTools.Clients.Core</PackageId>
-    <TargetFrameworks>net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net10.0;net11.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -30,8 +30,8 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Carrigan.Core" Version="0.1.9-alpha.202611051612" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.403">
+    <PackageReference Include="Carrigan.Core" Version="0.1.9" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
