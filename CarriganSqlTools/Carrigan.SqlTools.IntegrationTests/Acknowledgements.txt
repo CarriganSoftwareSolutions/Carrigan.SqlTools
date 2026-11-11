@@ -44,6 +44,13 @@ and upstream project repositories.
     https://github.com/jbogard/Respawn/blob/main/
     https://github.com/jbogard/Respawn/blob/master/LICENSE
 
+- System.Security.Cryptography.Pkcs
+    © Microsoft Corporation  
+    Licensed under the MIT License  
+    https://github.com/dotnet/runtime/tree/main
+    https://github.com/dotnet/runtime/blob/main/LICENSE.TXT  
+    https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT
+
 - xUnit  
     © James Newkirk, Brad Wilson, and xUnit contributors  
     Licensed under the Apache License, Version 2.0  

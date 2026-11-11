@@ -31,6 +31,13 @@ and upstream project repositories.
     https://github.com/microsoft/vstest/blob/main/
     https://github.com/microsoft/vstest/blob/main/LICENSE
     https://github.com/microsoft/vstest/blob/main/THIRD-PARTY-NOTICES.txt
+
+- System.Security.Cryptography.Pkcs
+    © Microsoft Corporation  
+    Licensed under the MIT License  
+    https://github.com/dotnet/runtime/tree/main
+    https://github.com/dotnet/runtime/blob/main/LICENSE.TXT  
+    https://github.com/dotnet/runtime/blob/main/THIRD-PARTY-NOTICES.TXT
     
 - xUnit  
     © James Newkirk, Brad Wilson, and xUnit contributors  

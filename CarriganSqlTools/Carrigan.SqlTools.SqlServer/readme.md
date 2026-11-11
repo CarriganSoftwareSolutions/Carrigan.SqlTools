@@ -16,6 +16,16 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 
 ---
 
+## Framework Compatibility and Support
+
+These libraries provide binaries for .NET 9, .NET 10, and .NET 11. **Official support is limited to .NET versions that Microsoft currently supports.**
+
+Microsoft ended support for .NET 9 on November 10, 2026. We continue to provide `net9.0` binaries for compatibility with existing applications, but binaries targeting unsupported .NET versions are provided **as-is and without official support**. Framework-specific testing, bug fixes, security updates, and technical support are not guaranteed for those targets.
+
+Support for obsolete targets may be discontinued in a future release. We recommend using a Microsoft-supported .NET version for new projects and production applications.
+
+---
+
 ## Features  
 
 - **ADO.NET execution wrapper**  
