@@ -19,6 +19,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 ---
 
 ## Table of Contents
+- [.NET compatibility and support](#net-compatibility-and-support)
 - [Features](#features)
 - [Installation](#installation)
 - [Getting Started Examples](#getting-started-examples)
@@ -54,6 +55,14 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Arrays](#arrays)
 - [ExampleEncryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 - [License](#license)
+
+---
+
+## .NET compatibility and support
+
+**Target frameworks:** `net10.0` and `net11.0`. This PostgreSQL package requires **.NET 10 or later** and does not provide .NET 9 binaries.
+
+Carrigan Software Solutions LLC officially supports only .NET versions currently supported by Microsoft. Microsoft ended support for .NET 9 on November 10, 2026. Any binaries targeting obsolete .NET versions that remain available in other Carrigan packages are provided **as-is and without official support**; framework-specific testing, bug fixes, security updates, and technical support are not guaranteed. Framework targets may change in future releases.
 
 ---
 

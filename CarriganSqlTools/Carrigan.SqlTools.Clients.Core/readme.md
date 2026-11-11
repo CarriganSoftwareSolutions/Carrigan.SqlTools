@@ -31,6 +31,14 @@ dotnet add package Carrigan.SqlTools.Clients.PostgreSql
 
 Those packages should bring this package in automatically as a dependency.
 
+## .NET compatibility and support
+
+**Target frameworks:** `net9.0`, `net10.0`, and `net11.0`.
+
+**Microsoft ended support for .NET 9 on November 10, 2026.** We continue to provide .NET 9 binaries for compatibility with existing applications. However, Carrigan Software Solutions LLC officially supports only .NET versions currently supported by Microsoft. Binaries targeting unsupported .NET versions are provided **as-is and without official support**; framework-specific testing, bug fixes, security updates, and technical support are not guaranteed. Framework targets may be removed in future releases. For production use, upgrade to a supported .NET version.
+
+---
+
 ## Package role
 
 `Carrigan.SqlTools.Clients.Core` provides shared functionality for the client layer of Carrigan.SqlTools, while database-specific behavior belongs in the dialect client packages.

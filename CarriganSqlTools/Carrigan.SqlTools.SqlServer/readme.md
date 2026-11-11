@@ -19,6 +19,7 @@ Use caution with schema, migration, and data-modifying operations. The authors a
 ---
 
 ## Table of Contents
+- [.NET compatibility and support](#net-compatibility-and-support)
 - [Features](#features)
 - [Installation](#installation)
 - [Getting Started Examples](#getting-started-examples)
@@ -52,6 +53,14 @@ Use caution with schema, migration, and data-modifying operations. The authors a
   - [Allowed Override Types With Warnings](#allowed-override-types-with-warnings)
 - [ExampleEncryptor (AesGcm-based) and IDecrypters](#exampleencryptor-aesgcm-based-and-idecrypters)
 - [License](#license)
+
+---
+
+## .NET compatibility and support
+
+**Target frameworks:** `net9.0`, `net10.0`, and `net11.0`.
+
+**Microsoft ended support for .NET 9 on November 10, 2026.** We continue to provide .NET 9 binaries for compatibility with existing applications. However, Carrigan Software Solutions LLC officially supports only .NET versions currently supported by Microsoft. Binaries targeting unsupported .NET versions are provided **as-is and without official support**; framework-specific testing, bug fixes, security updates, and technical support are not guaranteed. Framework targets may be removed in future releases. For production use, upgrade to a supported .NET version.
 
 ---
 
