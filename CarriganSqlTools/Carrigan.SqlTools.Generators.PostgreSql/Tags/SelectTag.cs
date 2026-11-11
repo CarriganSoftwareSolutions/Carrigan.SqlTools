@@ -16,11 +16,11 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="propertyName">
     /// The property/column name to project, strongly typed to the model class <typeparamref name="modelT"/>.
     /// </param>
-    /// <param name="aliasName">
+    /// <param name="columnAlias">
     /// An optional alias to use for this projection.
     /// </param>
-    public SelectTag(PropertyName propertyName, AliasName? aliasName = null)
-        : this(SelectTagGenerator.Get<modelT>(propertyName, aliasName))
+    public SelectTag(PropertyName propertyName, ColumnAlias? columnAlias = null)
+        : this(SelectTagGenerator.Get<modelT>(propertyName, columnAlias))
     {
     }
 
@@ -30,10 +30,10 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="propertyName">
     /// The property/column name to project, strongly typed to the model class <typeparamref name="modelT"/>.
     /// </param>
-    /// <param name="aliasName">
+    /// <param name="columnAlias">
     /// An alias to use for this projection.
     /// </param>
-    public SelectTag(string propertyName, string aliasName) : this(new PropertyName(propertyName), AliasName.New(aliasName))
+    public SelectTag(string propertyName, string columnAlias) : this(new PropertyName(propertyName), ColumnAlias.New(columnAlias))
     {
     }
     /// <summary>
@@ -42,10 +42,10 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="propertyName">
     /// The property/column name to project, strongly typed to the model class <typeparamref name="modelT"/>.
     /// </param>
-    /// <param name="aliasName">
+    /// <param name="columnAlias">
     /// An optional alias to use for this projection.
     /// </param>
-    public SelectTag(string propertyName, AliasName? aliasName = null) : this(new PropertyName(propertyName), aliasName)
+    public SelectTag(string propertyName, ColumnAlias? columnAlias = null) : this(new PropertyName(propertyName), columnAlias)
     {
     }
     /// <summary>
@@ -54,10 +54,10 @@ public sealed class SelectTag<modelT> : SelectTag where modelT : class
     /// <param name="propertyName">
     /// The property/column name to project, strongly typed to the model class <typeparamref name="modelT"/>.
     /// </param>
-    /// <param name="aliasName">
+    /// <param name="columnAlias">
     /// An alias to use for this projection.
     /// </param>
-    public SelectTag(PropertyName propertyName, string aliasName) : this(propertyName, AliasName.New(aliasName))
+    public SelectTag(PropertyName propertyName, string columnAlias) : this(propertyName, ColumnAlias.New(columnAlias))
     {
     }
 
