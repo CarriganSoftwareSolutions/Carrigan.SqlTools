@@ -22,8 +22,6 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// </summary>
     internal readonly IEnumerable<SelectTag> _selectTags;
 
-    internal readonly TableAlias? _tableAlias;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTags"/> class.
     /// </summary>
@@ -32,38 +30,16 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
         _selectTags = selectTags.Materialize(NullOptionsEnum.ArgumentException);
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTags"/> class.
-    /// </summary>
-    /// <param name="tableAlias">
-    /// The table alias used to qualify the projected result columns.
-    /// </param>
-    /// <param name="selectTags">The select tags to include in this instance.</param>
-    public SelectTags(string tableAlias, params IEnumerable<SelectTag> selectTags) : this(TableAlias.New(tableAlias), selectTags)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SelectTags"/> class.
-    /// </summary>
-    /// <param name="tableAlias">
-    /// The table alias used to qualify the projected result columns.
-    /// </param>
-    /// <param name="selectTags">The select tags to include in this instance.</param>
-    public SelectTags(TableAlias? tableAlias, params IEnumerable<SelectTag> selectTags) : this(selectTags) =>
-        _tableAlias = tableAlias;
-
-
-    /// <summary>
     /// Projects the result columns in this collection as columns qualified by the supplied table alias.
     /// </summary>
     /// <returns>
     /// This instance when it <see cref="TableAlias"/> is <see langword="null"/>; otherwise, a new collection
     /// containing non-aliased select tags whose column expressions reference the result column names through the table alias.
     /// </returns>
-    internal SelectTags ResultReferences() =>
-        _tableAlias is null
+    internal SelectTags ResultReferences(TableAlias? tableAlias = null) =>
+        tableAlias is null
             ? this
-            : new(_selectTags.Select(selectTag => selectTag.SelectThis(_tableAlias)));
+            : new(_selectTags.Select(selectTag => selectTag.SelectThis(tableAlias)));
 
     /// <summary>
     /// Indicates whether this instance contains any select tags.

@@ -160,7 +160,7 @@ public class Join : ITableExpression
         JoinType = joinType;
         Predicates = predicates;
         TableAlias = joinAsTableAlias;
-        SelectTags = Subquery.SelectTags.ResultReferences();
+        SelectTags = Subquery.SelectTags.ResultReferences(joinAsTableAlias);
     }
     #endregion
 

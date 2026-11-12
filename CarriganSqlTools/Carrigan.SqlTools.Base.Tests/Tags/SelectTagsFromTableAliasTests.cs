@@ -12,7 +12,7 @@ public class SelectTagsFromTableAliasTests
     {
         SelectTags selectTags = NewSelectTags();
 
-        SelectTags actual = selectTags.ResultReferences();
+        SelectTags actual = selectTags.ResultReferences(null);
 
         Assert.Same(selectTags, actual);
     }
@@ -21,9 +21,9 @@ public class SelectTagsFromTableAliasTests
     public void FromTableAlias_ProjectsResultColumnThroughAlias()
     {
         SelectTags selectTags = NewSelectTags("ProjectedName");
-        TableAlias tableAlias = new ("DerivedTable");
+        TableAlias tableAlias = new("DerivedTable");
 
-        SelectTags actual = selectTags.ResultReferences();
+        SelectTags actual = selectTags.ResultReferences(tableAlias);
 
         SelectTag selectTag = Assert.Single(actual);
         Column column = Assert.IsType<Column>(selectTag.SqlExpression);
@@ -40,7 +40,7 @@ public class SelectTagsFromTableAliasTests
     {
         SelectTags selectTags = NewSelectTags();
 
-        SelectTag actual = Assert.Single(selectTags.ResultReferences());
+        SelectTag actual = Assert.Single(selectTags.ResultReferences(new TableAlias("DerivedTable")));
 
         Column column = Assert.IsType<Column>(actual.SqlExpression);
         Assert.Equal("SourceColumn", column.ColumnTag.ColumnName.ToString());
@@ -54,7 +54,7 @@ public class SelectTagsFromTableAliasTests
         Column secondColumn = new(new ColumnTag(new TableTag(null, "Source"), new ColumnName("Second")));
         SelectTags original = new(new SelectTag(firstColumn, "Renamed"), new SelectTag(secondColumn, "Other"));
 
-        SelectTags projected = original.ResultReferences();
+        SelectTags projected = original.ResultReferences(new TableAlias("Derived"));
 
         Assert.Equal(["Derived.Renamed", "Derived.Other"], projected.Select(static tag => tag.ToString()));
         Assert.Equal(["Source.First AS Renamed", "Source.Second AS Other"], original.Select(static tag => tag.ToString()));
@@ -66,7 +66,7 @@ public class SelectTagsFromTableAliasTests
         SelectTag expression = new(new Parameter(1, "Value"), "Computed");
         SelectTags original = new(expression);
 
-        SelectTag projected = Assert.Single(original.ResultReferences());
+        SelectTag projected = Assert.Single(original.ResultReferences(new TableAlias("Derived")));
 
         Column column = Assert.IsType<Column>(projected.SqlExpression);
         Assert.Equal("Derived.Computed", column.ColumnTag.ToString());
