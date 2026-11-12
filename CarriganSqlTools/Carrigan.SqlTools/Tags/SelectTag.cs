@@ -22,10 +22,7 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     /// <summary>
     /// The optional alias applied to this select item.
     /// </summary>
-    //TODO: rename to ColumnAliasTag
     internal readonly ColumnAlias? ColumnAlias;
-
-    //internal readonly ColumnTag ColumnTag;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectTag"/> class using the provided SQL expression.
