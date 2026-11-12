@@ -22,4 +22,15 @@ public static class SelectTagsBaseExtensions
     /// </returns>
     public static SelectTags AsSelectTags(this IEnumerable<SelectTag> selectTags) =>
         new(selectTags);
+    /// <summary>
+    /// Creates a SelectTags collection from an IEnumerable of SelectTag objects.
+    /// </summary>
+    /// <param name="selectTags">
+    /// The IEnumerable of SelectTag objects to convert into a SelectTags collection.
+    /// </param>
+    /// <returns>
+    /// A new SelectTags collection containing the provided SelectTag objects.
+    /// </returns>
+    public static SelectTags ToSelectTags(this IEnumerable<SelectTag> selectTags) =>
+        new(selectTags);
 }

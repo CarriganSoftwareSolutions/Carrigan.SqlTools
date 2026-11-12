@@ -7,6 +7,7 @@ using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.Fragments;
 using Carrigan.SqlTools.IdentifierTypes;
 using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace Carrigan.SqlTools.Tags;
 
@@ -55,15 +56,14 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <summary>
     /// Projects the result columns in this collection as columns qualified by the supplied table alias.
     /// </summary>
-    /// <param name="tableAlias">The table alias used to qualify the projected result columns.</param>
     /// <returns>
-    /// This instance when <paramref name="tableAlias"/> is <see langword="null"/>; otherwise, a new collection
+    /// This instance when it <see cref="TableAlias"/> is <see langword="null"/>; otherwise, a new collection
     /// containing non-aliased select tags whose column expressions reference the result column names through the table alias.
     /// </returns>
-    internal SelectTags FromTableAlias(TableAlias? tableAlias) =>
-        tableAlias is null
+    internal SelectTags ResultReferences() =>
+        _tableAlias is null
             ? this
-            : new(_selectTags.Select(selectTag => selectTag.SelectThis(tableAlias)));
+            : new(_selectTags.Select(selectTag => selectTag.SelectThis(_tableAlias)));
 
     /// <summary>
     /// Indicates whether this instance contains any select tags.
@@ -83,6 +83,7 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <returns>
     /// <c>true</c> if any select tag contains column expressions; otherwise, <c>false</c>.
     /// </returns>
+    //TODo: now that columns can be references a table alias / coloumn alias, we need to make sure this doesn't break the logic to determine if a a column is valid when looking at aggregatres
     public bool HasColumns() =>
         _selectTags.Any(select => select.HasColumns());
 
@@ -185,6 +186,30 @@ public class SelectTags : ISqlFragment, IEnumerable<SelectTag>
     /// <returns>A new collection containing <paramref name="selectTag"/>.</returns>
     public static implicit operator SelectTags(SelectTag selectTag) =>
         new(selectTag);
+
+    /// <summary>
+    /// Creates a SELECT tag collection containing multiple projection tags.
+    /// </summary>
+    /// <param name="selectTags">The SELECT projection tag to place in the collection.</param>
+    /// <returns>A new collection containing <paramref name="selectTags"/>.</returns>
+    public static implicit operator SelectTags(SelectTag[] selectTags) =>
+        new(selectTags);
+
+    /// <summary>
+    /// Creates a SELECT tag collection containing multiple projection tags.
+    /// </summary>
+    /// <param name="selectTags">The SELECT projection tag to place in the collection.</param>
+    /// <returns>A new collection containing <paramref name="selectTags"/>.</returns>
+    public static implicit operator SelectTags(List<SelectTag> selectTags) =>
+        new(selectTags);
+
+    /// <summary>
+    /// Creates a SELECT tag collection containing multiple projection tags.
+    /// </summary>
+    /// <param name="selectTags">The SELECT projection tag to place in the collection.</param>
+    /// <returns>A new collection containing <paramref name="selectTags"/>.</returns>
+    public static implicit operator SelectTags(Collection<SelectTag> selectTags) =>
+        new(selectTags);
 
 
     public SelectTag GetByExpression(IEnumerable<SqlExpression> sqlExpressions) =>
