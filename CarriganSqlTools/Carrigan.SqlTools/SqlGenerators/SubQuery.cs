@@ -1,5 +1,6 @@
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Fragments;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.QueryBuilders;
 using Carrigan.SqlTools.Tags;
@@ -48,6 +49,8 @@ public class Subquery : ISelectable, ISqlFragment
 
     public SelectTags SelectTags { get; }
 
+    public readonly TableAlias? TableAlias;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Subquery"/> class with the specified SQL fragments and dialect.
     /// </summary>
@@ -59,19 +62,45 @@ public class Subquery : ISelectable, ISqlFragment
     /// together to form the complete SQL text of the subquery when it is consumed  by a predicate
     /// or included in a larger query.
     /// </param>
-    internal Subquery(SelectTags selectTags, IEnumerable<ISqlFragment> sqlFragments)
+    internal Subquery(SelectTags selectTags, IEnumerable<ISqlFragment> sqlFragments) : this(selectTags, null, sqlFragments)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Subquery"/> class with the specified SQL fragments and dialect.
+    /// </summary>
+    /// <param name="selectTags">
+    /// The selected columns or expressions for the subquery.
+    /// </param>
+    /// <param name="tableAlias">
+    /// The optional table alias to qualify the columns in the subquery. If provided, this alias will be used to reference
+    /// </param>
+    /// <param name="sqlFragments">
+    /// The sequence of SQL fragments that make up the subquery. These fragments will be rendered
+    /// together to form the complete SQL text of the subquery when it is consumed  by a predicate
+    /// or included in a larger query.
+    /// </param>
+    internal Subquery(SelectTags selectTags, TableAlias? tableAlias, IEnumerable<ISqlFragment> sqlFragments) 
     {
         ArgumentNullException.ThrowIfNull(sqlFragments);
         ArgumentNullException.ThrowIfNull(selectTags);
-
+        TableAlias = tableAlias;
         SelectTags = selectTags;
 
         IEnumerable<ISqlFragment> GetFragments()
         {
-            yield return new SqlFragmentText("(");
+            yield return ISqlFragment.OpenParentheses;
             foreach (ISqlFragment fragment in sqlFragments)
                 yield return fragment;
-            yield return new SqlFragmentText(")");
+            yield return ISqlFragment.CloseParentheses;
+
+            if (TableAlias is not null)
+            {
+                yield return ISqlFragment.Space;
+                yield return ISqlFragment.As;
+                yield return ISqlFragment.Space;
+                yield return TableAlias;
+            }
         }
 
         SqlFragments = Array.AsReadOnly(GetFragments().ToArray());

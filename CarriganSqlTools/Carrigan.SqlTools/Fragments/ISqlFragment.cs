@@ -40,6 +40,8 @@ public interface ISqlFragment
     /// </summary>
     internal static readonly ISqlFragment CloseParentheses = new SqlFragmentText(")");
 
+    internal static readonly ISqlFragment As = new SqlFragmentText("AS");
+
     /// <summary>
     /// Converts this fragment into its SQL representation.
     /// </summary>

@@ -72,7 +72,7 @@ public class Column : SqlExpression
     /// Gets the table tag represented by this column leaf expression.
     /// </summary>
     public override IEnumerable<TableTag> LeafTables =>
-        [ColumnTag.TableTag];
+        ColumnTag?.TableTag is null ? [] : [ColumnTag.TableTag];
 
     /// <summary>
     /// Resolves reflected column metadata for a model property after applying dialect type filtering.
