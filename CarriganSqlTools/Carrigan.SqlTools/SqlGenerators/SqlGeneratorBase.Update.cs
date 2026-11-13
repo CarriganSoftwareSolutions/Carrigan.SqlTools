@@ -68,16 +68,21 @@ public abstract partial class SqlGeneratorBase<T>
                         GetSqlParameter(column, entity)
                     )
                 )
-                .JoinFragments(new SqlFragmentText(" AND "));
+                .JoinFragments(ISqlFragment.SpaceAndSpace);
 
         IEnumerable<ISqlFragment> GetFragments()
         {
-            yield return new SqlFragmentText("UPDATE ");
+            yield return ISqlFragment.Update;
+            yield return ISqlFragment.Space;
             yield return Table;
-            yield return new SqlFragmentText(" SET ");
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.Set;
+            yield return ISqlFragment.Space;
             foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, false))
                 yield return fragment;
-            yield return new SqlFragmentText(" WHERE ");
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.Where;
+            yield return ISqlFragment.Space;
             foreach (ISqlFragment fragment in GetWhereFragments())
                 yield return fragment;
             yield return ISqlFragment.Semicolon;
@@ -203,24 +208,31 @@ public abstract partial class SqlGeneratorBase<T>
 
         IEnumerable<ISqlFragment> GetFragments()
         {
-            yield return new SqlFragmentText("UPDATE ");
+            yield return ISqlFragment.Update;
+            yield return ISqlFragment.Space;
             yield return Table;
 
-            yield return new SqlFragmentText(" SET ");
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.Set;
+            yield return ISqlFragment.Space;
 
             foreach (ISqlFragment fragment in GetSetFragments(entity, updateTheseColumns, useFullyQualifiedSets))
                 yield return fragment;
 
+            if(from.IsNotNullOrEmpty() || joins.IsNotNullOrEmpty())
+            {
+                yield return ISqlFragment.Space;
+                yield return ISqlFragment.From;
+                yield return ISqlFragment.Space;
+            }
 
             if (from.IsNotNullOrEmpty())
             {
-                yield return new SqlFragmentText(" FROM ");
                 foreach (ISqlFragment fragment in from.JoinFragments(", "))
                     yield return fragment;
             }
             else if (joins.IsNotNullOrEmpty())
             {
-                yield return new SqlFragmentText(" FROM ");
                 yield return Table;
             }
 
@@ -232,7 +244,9 @@ public abstract partial class SqlGeneratorBase<T>
 
             if (predicates is not null)
             {
-                yield return new SqlFragmentText(" WHERE ");
+                yield return ISqlFragment.Space;
+                yield return ISqlFragment.Where;
+                yield return ISqlFragment.Space;
                 foreach (ISqlFragment fragment in predicates.ToSqlFragments(Dialect))
                     yield return fragment;
             }

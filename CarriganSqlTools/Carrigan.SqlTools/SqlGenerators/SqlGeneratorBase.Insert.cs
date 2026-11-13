@@ -27,14 +27,17 @@ public abstract partial class SqlGeneratorBase<T>
     /// An <see cref="IEnumerable{SqlFragment}"/> representing the <c>VALUES</c> list for one row,
     /// for example <c>(@Column1, @Column2)</c> or <c>(@Column1_0, @Column2_0)</c>.
     /// </returns>
-    private IEnumerable<ISqlFragment> GetInsertValueFragments(IEnumerable<ColumnInfo> columns, T entity) =>
-    [
-        new SqlFragmentText("("),
-        ..columns
-            .Select(column => GetSqlParameter(column, entity))
-            .JoinFragments(new SqlFragmentText(", ")),
-        new SqlFragmentText(")")
-    ];
+    private IEnumerable<ISqlFragment> GetInsertValueFragments(IEnumerable<ColumnInfo> columns, T entity)
+    {
+        yield return ISqlFragment.OpenParentheses;
+        foreach(ISqlFragment fragment in columns
+                                            .Select(column => GetSqlParameter(column, entity))
+                                            .JoinFragments(ISqlFragment.CommaSpace))
+        {
+            yield return fragment;
+        }
+        yield return ISqlFragment.CloseParentheses;
+    }
 
     /// <summary>
     /// Builds the <c>VALUES</c> clause for a single SQL <c>INSERT</c> row,
@@ -144,19 +147,22 @@ public abstract partial class SqlGeneratorBase<T>
             IEnumerable<ISqlFragment> insertColumnFragments =
                 insertTheseColumns
                     .Select(columnInfo => new SqlFragmentText(columnInfo.ColumnTag.ToSql(Dialect, false)))
-                    .JoinFragments(new SqlFragmentText(", "));
+                    .JoinFragments(ISqlFragment.CommaSpace);
 
-            yield return new SqlFragmentText("INSERT INTO ");
+            yield return ISqlFragment.InsertInto;
+            yield return ISqlFragment.Space;
             yield return Table;
-            yield return new SqlFragmentText(" (");
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.OpenParentheses;
             foreach (ISqlFragment fragment in insertColumnFragments)
                 yield return fragment;
-            yield return new SqlFragmentText(")");
+            yield return ISqlFragment.CloseParentheses;
         }
 
         IEnumerable<ISqlFragment> GetValuesFragments()
         {
-            yield return new SqlFragmentText("VALUES ");
+            yield return ISqlFragment.Values;
+            yield return ISqlFragment.Space;
             if (entities.Count() > 1)
                 foreach (ISqlFragment fragment in GetEnumeratedInsertValueFragments(insertTheseColumns, entities))
                     yield return fragment;

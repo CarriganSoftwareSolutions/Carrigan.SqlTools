@@ -305,7 +305,9 @@ public class Join : ITableExpression
         if (Subquery is not null)
         {
             yield return Subquery;
-            yield return new SqlFragmentText(" AS ");
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.As;
+            yield return ISqlFragment.Space;
             yield return TableAlias ?? throw new NullReferenceException("Joining on a SubQuery requires a Table Alias");
         }
         else if (TableTag is not null)
@@ -313,7 +315,9 @@ public class Join : ITableExpression
             yield return TableTag;
             if(TableAlias is not null)
             {
-                yield return new SqlFragmentText(" AS ");
+                yield return ISqlFragment.Space;
+                yield return ISqlFragment.As;
+                yield return ISqlFragment.Space;
                 yield return TableAlias;
             }
         }
@@ -321,7 +325,9 @@ public class Join : ITableExpression
             throw new NullReferenceException();
         if (JoinType.HasPredicates)
         {
-            yield return new SqlFragmentText(" ON ");
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.On;
+            yield return ISqlFragment.Space;
             foreach (ISqlFragment fragment in Predicates.ToSqlFragments(dialect))
                 yield return fragment;
         }

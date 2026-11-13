@@ -165,25 +165,33 @@ public abstract partial class SqlGeneratorBase<T>
 
         IEnumerable<ISqlFragment> GetFragments()
         {
+
+            yield return ISqlFragment.Select;
+            yield return ISqlFragment.Space;
             if (distinct ?? false)
-                yield return new SqlFragmentText($"SELECT DISTINCT ");
-            else
-                yield return new SqlFragmentText($"SELECT ");
+            {
+                yield return ISqlFragment.Distinct;
+                yield return ISqlFragment.Space;
+            }
 
             if (selects is not null && selects.Any())
-                yield return selects;
+                foreach (ISqlFragment fragment in selects.Flatten(Dialect))
+                    yield return fragment;
             else if (HasAliasedColumns(SupportedTypes))
-                yield return GetAllSelectTags();
+                foreach (ISqlFragment fragment in GetAllSelectTags().Flatten(Dialect))
+                    yield return fragment;
             else
             {
                 yield return Table;
-                yield return new SqlFragmentText(".*");
+                yield return ISqlFragment.DotStar;
             }
-            yield return new SqlFragmentText(" FROM ");
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.From;
+            yield return ISqlFragment.Space;
             if (subQuery is not null)
             {
-                yield return subQuery;
-                yield return new SqlFragmentText(" AS ");
+                foreach(ISqlFragment fragment in subQuery.Flatten(Dialect))
+                    yield return fragment;
             }
 
             yield return Table;
@@ -196,7 +204,9 @@ public abstract partial class SqlGeneratorBase<T>
 
             if (where is not null)
             {
-                yield return new SqlFragmentText($" WHERE ");
+                yield return ISqlFragment.Space;
+                yield return ISqlFragment.Where;
+                yield return ISqlFragment.Space;
 
                 foreach (ISqlFragment fragment in where.ToSqlFragments(Dialect))
                     yield return fragment;
@@ -211,7 +221,9 @@ public abstract partial class SqlGeneratorBase<T>
 
             if (having is not null)
             {
-                yield return new SqlFragmentText($" HAVING ");
+                yield return ISqlFragment.Space;
+                yield return ISqlFragment.Having;
+                yield return ISqlFragment.Space;
 
                 foreach (ISqlFragment fragment in having.ToSqlFragments(Dialect))
                     yield return fragment;

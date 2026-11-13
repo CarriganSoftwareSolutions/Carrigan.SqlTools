@@ -128,27 +128,25 @@ public abstract partial class SqlGeneratorBase<T>
 
         IEnumerable<ISqlFragment> GetFragments()
         {
-            yield return new SqlFragmentText("DELETE");
+            yield return ISqlFragment.Delete;
+            yield return ISqlFragment.Space;
 
-            if (usings.IsNullOrEmpty() && joins.IsNullOrEmpty())
+            if (usings.IsNullOrEmpty())
             {
-                yield return new SqlFragmentText(" FROM ");
                 yield return Table;
+                yield return ISqlFragment.Space;
             }
-            else if (usings.IsNotNullOrEmpty())
-            {
-                yield return new SqlFragmentText(" FROM ");
-                yield return Table;
-                yield return new SqlFragmentText(" USING ");
-                foreach (ISqlFragment fragment in usings.JoinFragments(", "))
-                    yield return fragment;
-            }
-            else
+            yield return ISqlFragment.From;
+            yield return ISqlFragment.Space;
+            yield return Table;
+
+            if (usings.IsNotNullOrEmpty())
             {
                 yield return ISqlFragment.Space;
-                yield return Table;
-                yield return new SqlFragmentText(" FROM ");
-                yield return Table;
+                yield return ISqlFragment.Using;
+                yield return ISqlFragment.Space;
+                foreach (ISqlFragment fragment in usings.JoinFragments(ISqlFragment.CommaSpace))
+                    yield return fragment;
             }
 
             if (joins?.IsNotNullOrEmpty() ?? false)
@@ -157,7 +155,9 @@ public abstract partial class SqlGeneratorBase<T>
 
             if (predicates is not null)
             {
-                yield return new SqlFragmentText(" WHERE ");
+                yield return ISqlFragment.Space;
+                yield return ISqlFragment.Where;
+                yield return ISqlFragment.Space;
                 foreach (ISqlFragment sqlFragment in predicates.ToSqlFragments(Dialect))
                     yield return sqlFragment;
             }

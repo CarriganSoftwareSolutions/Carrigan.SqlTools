@@ -40,7 +40,21 @@ public interface ISqlFragment
     /// </summary>
     internal static readonly ISqlFragment CloseParentheses = new SqlFragmentText(")");
 
+    internal static readonly ISqlFragment Select = new SqlFragmentText("SELECT");
+    internal static readonly ISqlFragment Update = new SqlFragmentText("UPDATE");
+    internal static readonly ISqlFragment Delete = new SqlFragmentText("DELETE");
+    internal static readonly ISqlFragment InsertInto = new SqlFragmentText("INSERT INTO");
+    internal static readonly ISqlFragment Distinct = new SqlFragmentText("DISTINCT");
+    internal static readonly ISqlFragment DotStar = new SqlFragmentText(".*");
+    internal static readonly ISqlFragment From = new SqlFragmentText("FROM");
+    internal static readonly ISqlFragment Using = new SqlFragmentText("USING");
     internal static readonly ISqlFragment As = new SqlFragmentText("AS");
+    internal static readonly ISqlFragment On = new SqlFragmentText("ON");
+    internal static readonly ISqlFragment Set = new SqlFragmentText("SET");
+    internal static readonly ISqlFragment Where = new SqlFragmentText("WHERE");
+    internal static readonly ISqlFragment Having = new SqlFragmentText("HAVING");
+    internal static readonly ISqlFragment Values = new SqlFragmentText("VALUES");
+    internal static readonly ISqlFragment SpaceAndSpace = new SqlFragmentText(" AND ");
 
     /// <summary>
     /// Converts this fragment into its SQL representation.
