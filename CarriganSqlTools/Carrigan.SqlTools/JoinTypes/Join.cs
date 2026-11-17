@@ -195,7 +195,7 @@ public class Join : ITableExpression
         JoinType = joinType;
         Predicates = predicates;
         TableAlias = joinAsTableAlias;
-        SelectTags = selectTags;
+        SelectTags = selectTags.ResultReferences(joinAsTableAlias);
     }
     #endregion
 
