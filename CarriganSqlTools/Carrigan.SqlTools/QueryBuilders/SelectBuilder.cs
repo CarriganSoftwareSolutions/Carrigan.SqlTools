@@ -1,4 +1,5 @@
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -13,8 +14,7 @@ namespace Carrigan.SqlTools.QueryBuilders;
 /// <summary>
 /// Represents the options used to build a SELECT query for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type used as the primary query source.</typeparam>
-public abstract record SelectBuilderBase<T> where T : class
+public record SelectBuilder
 {
     /// <summary>
     /// Gets or sets whether the SELECT query should use DISTINCT.
@@ -25,6 +25,11 @@ public abstract record SelectBuilderBase<T> where T : class
     /// Gets or sets the selected columns or expressions for the query.
     /// </summary>
     public SelectTags? Selects { get; set; }
+
+    /// <summary>
+    /// Gets or sets the FROM clause for the query.
+    /// </summary>
+    public From? From { get; set; }
 
     /// <summary>
     /// Gets or sets the subquery to use as the query source instead of the default table.
@@ -65,14 +70,14 @@ public abstract record SelectBuilderBase<T> where T : class
     /// Returns a copy of the current query with DISTINCT enabled.
     /// </summary>
     /// <returns>A new query instance with <see cref="Distinct"/> set to <see langword="true"/>.</returns>
-    public SelectBuilderBase<T> AsDistinct() =>
+    public SelectBuilder AsDistinct() =>
         this with { Distinct = true };
 
     /// <summary>
     /// Returns a copy of the current query with DISTINCT disabled.
     /// </summary>
     /// <returns>A new query instance with <see cref="Distinct"/> set to <see langword="false"/>.</returns>
-    public SelectBuilderBase<T> NotDistinct() =>
+    public SelectBuilder NotDistinct() =>
         this with { Distinct = false };
 
     /// <summary>
@@ -80,7 +85,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="distinct">Whether the query should use DISTINCT, or <see langword="null"/> to use the default behavior.</param>
     /// <returns>A new query instance with the specified DISTINCT setting.</returns>
-    public SelectBuilderBase<T> WithDistinct(bool? distinct) =>
+    public SelectBuilder WithDistinct(bool? distinct) =>
         this with { Distinct = distinct };
 
     /// <summary>
@@ -88,15 +93,23 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="selectTags">The select tags to include in the query.</param>
     /// <returns>A new query instance with the specified select tags.</returns>
-    public SelectBuilderBase<T> WithSelectTags(SelectTags? selectTags) =>
+    public SelectBuilder WithSelectTags(SelectTags? selectTags) =>
         this with { Selects = selectTags };
+
+    /// <summary>
+    /// Returns a copy of the current query with the specified FROM clause.
+    /// </summary>
+    /// <param name="from">The FROM clause to apply to the query.</param>
+    /// <returns>A new query instance with the specified FROM clause.</returns>
+    public SelectBuilder WithFrom(From? from) =>
+        this with { From = from };
 
     /// <summary>
     /// Returns a copy of the current query with the specified subquery source.
     /// </summary>
     /// <param name="subQuery">The subquery to use as the query source.</param>
     /// <returns>A new query instance with the specified subquery source.</returns>
-    public SelectBuilderBase<T> WithSubquery(Subquery? subQuery) =>
+    public SelectBuilder WithSubquery(Subquery? subQuery) =>
         this with { Subquery = subQuery };
 
     /// <summary>
@@ -104,7 +117,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="joins">The joins to include in the query.</param>
     /// <returns>A new query instance with the specified joins.</returns>
-    public SelectBuilderBase<T> WithJoins(Joins? joins) =>
+    public SelectBuilder WithJoins(Joins? joins) =>
         this with { Joins = joins };
 
     /// <summary>
@@ -112,7 +125,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="where">The WHERE predicates to apply to the query.</param>
     /// <returns>A new query instance with the specified WHERE predicates.</returns>
-    public SelectBuilderBase<T> WithWhere(Predicates? where) =>
+    public SelectBuilder WithWhere(Predicates? where) =>
         this with { Where = where };
 
     /// <summary>
@@ -126,7 +139,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// A new query instance with the specified GROUP BY clause. If <paramref name="groupsBy"/> is <see langword="null"/>,
     /// the returned query will not include a GROUP BY clause. Otherwise, the returned query will include the specified GROUP BY clause.
     /// </returns>
-    public SelectBuilderBase<T> WithGroupBy(GroupBys? groupsBy) =>
+    public SelectBuilder WithGroupBy(GroupBys? groupsBy) =>
         this with { GroupBys = groupsBy };
 
     /// <summary>
@@ -134,7 +147,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="having">The HAVING predicates to apply to the query.</param>
     /// <returns>A new query instance with the specified HAVING predicates.</returns>
-    public SelectBuilderBase<T> WithHaving(Predicates? having) =>
+    public SelectBuilder WithHaving(Predicates? having) =>
         this with { Having = having };
 
     /// <summary>
@@ -142,7 +155,7 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="orderBy">The ORDER BY clause to apply to the query.</param>
     /// <returns>A new query instance with the specified ORDER BY clause.</returns>
-    public SelectBuilderBase<T> WithOrderBy(OrderBys? orderBy) =>
+    public SelectBuilder WithOrderBy(OrderBys? orderBy) =>
         this with { OrderBys = orderBy };
 
     /// <summary>
@@ -150,6 +163,6 @@ public abstract record SelectBuilderBase<T> where T : class
     /// </summary>
     /// <param name="paging">The paging options to apply to the query.</param>
     /// <returns>A new query instance with the specified paging options.</returns>
-    public SelectBuilderBase<T> WithPaging(PagingBase? paging) =>
+    public SelectBuilder WithPaging(PagingBase? paging) =>
         this with { Paging = paging };
 }

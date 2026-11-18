@@ -1,16 +1,20 @@
 
 using Carrigan.Core.Interfaces;
 using Carrigan.SqlTools.Expressions;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.QueryBuilders;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.SqlServer;
 
 /// <summary>
 /// Builds SELECT query options for the specified model type.
 /// </summary>
-/// <typeparam name="T">The model type whose C# properties represent SQL columns or parameters.</typeparam>
+/// <typeparam name="modelT">The model type whose C# properties represent SQL columns or parameters.</typeparam>
 /// <example>
 /// <para>Select with join example:</para>
 /// <para>
@@ -100,18 +104,39 @@ namespace Carrigan.SqlTools.SqlServer;
 /// ORDER BY [Order].[OrderDate] ASC
 /// ]]></code>
 /// </example>
-public sealed record SelectBuilder<T> : QueryBuilders.SelectBuilderBase<T>, IQueryBuilder where T : class
+public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where modelT : class
 {
     /// <summary>
     /// Generates SQL for the builder state.
     /// </summary>
-    private readonly SqlGenerator<T> SqlGenerator;
+    private readonly SqlGenerator<modelT> SqlGenerator;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectBuilder{T}"/> class.
+    /// </summary>
+    /// <param name="tableAlias"></param>
+    /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
+    public SelectBuilder(TableAlias? tableAlias, IEncryption? encryption = null)
+    {
+        base.From = new(SqlToolsReflectorCache<modelT>.Table, SelectTagGenerator.GetAll<modelT>(), tableAlias);
+        SqlGenerator = new(encryption);
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectBuilder{T}"/> class.
     /// </summary>
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
-    public SelectBuilder(IEncryption? encryption = null) =>
+    public SelectBuilder(IEncryption? encryption = null)
+    {
+        base.From = new(SqlToolsReflectorCache<modelT>.Table, SelectTagGenerator.GetAll<modelT>());
         SqlGenerator = new(encryption);
+    }
+
+    /// <summary>
+    /// Gets or sets the FROM clause for the query.
+    /// </summary>
+    public new From? From =>
+        base.From;
 
     /// <summary>
     /// Builds a SQL query from the current builder state.
