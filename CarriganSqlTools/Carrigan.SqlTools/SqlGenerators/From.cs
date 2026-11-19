@@ -9,18 +9,21 @@ public class From : ISelectable, ISqlFragment
 {
     public readonly ISqlFragment FromFragment;
     public readonly TableAlias? TableAlias;
+    public readonly TableTag? RootTable;
     public SelectTags SelectTags { get; }
     internal From(TableTag tableTag, SelectTags selectTags, TableAlias? tableAlias = null)
     {
         FromFragment = tableTag;
         SelectTags = selectTags.ResultReferences(tableAlias);
         TableAlias = tableAlias;
+        RootTable = TableTag.New(tableTag, tableAlias);
     }
-    public From(Subquery subquery, TableAlias? tableAlias = null)
+    public From(Subquery subquery, TableAlias tableAlias)
     {
         FromFragment = subquery;
         SelectTags = subquery.SelectTags.ResultReferences(tableAlias);
         TableAlias = tableAlias;
+        RootTable = TableTag.New(null, tableAlias);
     }
 
     public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) =>

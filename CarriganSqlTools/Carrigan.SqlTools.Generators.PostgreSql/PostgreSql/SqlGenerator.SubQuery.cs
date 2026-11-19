@@ -26,7 +26,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         Predicates? having,
         OrderBys? orderBy, PagingBase? paging
 ) =>
-        BaseSubquery(distinct, selects, joins, predicates, groupBys, having, orderBy, paging);
+        BaseSubquery(distinct, selects, null, joins, predicates, groupBys, having, orderBy, paging);
 
     /// <summary>
     /// Gets the SQL fragment that starts a subquery expression.

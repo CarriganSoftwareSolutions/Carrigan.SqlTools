@@ -46,6 +46,7 @@ public interface ISqlFragment
     internal static readonly ISqlFragment InsertInto = new SqlFragmentText("INSERT INTO");
     internal static readonly ISqlFragment Distinct = new SqlFragmentText("DISTINCT");
     internal static readonly ISqlFragment DotStar = new SqlFragmentText(".*");
+    internal static readonly ISqlFragment Star = new SqlFragmentText("*");
     internal static readonly ISqlFragment From = new SqlFragmentText("FROM");
     internal static readonly ISqlFragment Using = new SqlFragmentText("USING");
     internal static readonly ISqlFragment As = new SqlFragmentText("AS");
