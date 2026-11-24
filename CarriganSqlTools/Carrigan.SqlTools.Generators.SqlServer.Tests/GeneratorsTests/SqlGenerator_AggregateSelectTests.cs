@@ -46,7 +46,7 @@ public class SqlGenerator_AggregateSelectTests
     {
         SelectTags selects = new(new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount"));
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null);
 
         Assert.Equal("SELECT COUNT([Customer].[Id]) AS [TotalCount] FROM [Customer]", query.QueryText);
     }
@@ -56,7 +56,7 @@ public class SqlGenerator_AggregateSelectTests
     {
         SelectTags selects = new(new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id)), true), "TotalCount"));
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null);
 
         Assert.Equal("SELECT COUNT(DISTINCT [Customer].[Id]) AS [TotalCount] FROM [Customer]", query.QueryText);
     }
@@ -66,7 +66,7 @@ public class SqlGenerator_AggregateSelectTests
     {
         SelectTags selects = new(new SelectTag(new Count(), "TotalCount"));
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null);
 
         Assert.Equal("SELECT COUNT(*) AS [TotalCount] FROM [Customer]", query.QueryText);
     }
@@ -167,7 +167,7 @@ public class SqlGenerator_AggregateSelectTests
             new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount")
         );
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, null, groupBys, null, null, null);
 
         Assert.Equal("SELECT [Customer].[Name], COUNT([Customer].[Id]) AS [TotalCount] FROM [Customer] GROUP BY [Customer].[Name]", query.QueryText);
     }
@@ -189,7 +189,7 @@ public class SqlGenerator_AggregateSelectTests
             )
         );
 
-        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+        SqlQuery query = gradesGenerator.InternalSelect(null, selects, null, null, null, groupBys, null, null, null);
 
         Assert.Equal("SELECT ([Grades].[AcademicYear] + SUM([Grades].[CreditHours])) AS [Value] FROM [Grades] GROUP BY [Grades].[AcademicYear]", query.QueryText);
     }
@@ -213,7 +213,7 @@ public class SqlGenerator_AggregateSelectTests
             )
         );
 
-        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+        SqlQuery query = gradesGenerator.InternalSelect(null, selects, null, null, null, groupBys, null, null, null);
 
         Assert.Equal("SELECT (([Grades].[AcademicYear] + [Grades].[SemesterNumber]) + SUM([Grades].[CreditHours])) AS [Value] FROM [Grades] GROUP BY ([Grades].[AcademicYear] + [Grades].[SemesterNumber])", query.QueryText);
     }
@@ -224,7 +224,7 @@ public class SqlGenerator_AggregateSelectTests
         GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
         SelectTags selects = new(SelectTagGenerator.Get<Customer>(nameof(Customer.Name)));
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, null, groupBys, null, null, null);
 
         Assert.Equal("SELECT [Customer].[Name] FROM [Customer] GROUP BY [Customer].[Name]", query.QueryText);
     }
@@ -235,7 +235,7 @@ public class SqlGenerator_AggregateSelectTests
         GroupBys groupBys = new GroupBys<Customer>(nameof(Customer.Name));
         SelectTags selects = new(SelectTagGenerator.Get<Customer>(nameof(Customer.Email)));
 
-        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null));
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, selects, null, null, null, groupBys, null, null, null));
     }
 
     [Fact]
@@ -244,7 +244,7 @@ public class SqlGenerator_AggregateSelectTests
         SelectTags selects = new(SelectTagGenerator.Get<Customer>(nameof(Customer.Name)));
         Predicates having = new GreaterThan(new Count(), new Parameter(1, "MinimumCount"));
 
-        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, having, null, null));
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, selects, null, null, null, null, having, null, null));
     }
 
     [Fact]
@@ -263,7 +263,7 @@ public class SqlGenerator_AggregateSelectTests
             )
         );
 
-        Assert.Throws<MixedAggregateSelectException>(() => gradesGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+        Assert.Throws<MixedAggregateSelectException>(() => gradesGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null));
     }
 
     [Fact]
@@ -275,7 +275,7 @@ public class SqlGenerator_AggregateSelectTests
             new SelectTag(new Count(new Column<Customer>(nameof(Customer.Id))), "TotalCount")
         );
 
-        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null));
     }
 
 
@@ -295,7 +295,7 @@ public class SqlGenerator_AggregateSelectTests
 
         Predicates having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"));
 
-        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
+        SqlQuery query = gradesGenerator.InternalSelect(null, selects, null, null, null, groupBys, having, null, null);
         Assert.Equal("SELECT [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber], AVG([Grades].[GradePoint]) AS [SemesterGPA] FROM [Grades] GROUP BY [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber] HAVING (AVG([Grades].[GradePoint]) > @HonorRollGpa_1)", query.QueryText);
     }
 
@@ -315,7 +315,7 @@ public class SqlGenerator_AggregateSelectTests
         );
         Predicates having = new GreaterThan(groupedExpression, new Parameter(2026, "MinimumPeriod"));
 
-        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
+        SqlQuery query = gradesGenerator.InternalSelect(null, selects, null, null, null, groupBys, having, null, null);
 
         Assert.Equal("SELECT ([Grades].[AcademicYear] + [Grades].[SemesterNumber]) AS [AcademicPeriod], COUNT(*) AS [TotalCount] FROM [Grades] GROUP BY ([Grades].[AcademicYear] + [Grades].[SemesterNumber]) HAVING (([Grades].[AcademicYear] + [Grades].[SemesterNumber]) > @MinimumPeriod_1)", query.QueryText);
     }
@@ -331,7 +331,7 @@ public class SqlGenerator_AggregateSelectTests
         );
         Predicates having = new GreaterThan(new Column<Grades>(nameof(Grades.SemesterNumber)), new Parameter(1, "MinimumSemester"));
 
-        Assert.Throws<UngroupedColumnInHavingClauseException>(() => gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null));
+        Assert.Throws<UngroupedColumnInHavingClauseException>(() => gradesGenerator.InternalSelect(null, selects, null, null, null, groupBys, having, null, null));
     }
 
     [Fact]
@@ -350,7 +350,7 @@ public class SqlGenerator_AggregateSelectTests
         );
         SelectTags selects = new(new SelectTag(new Sum(new Column<Grades>(nameof(Grades.CreditHours))), "TotalCredits"));
 
-        Assert.Throws<AggregateExpressionInGroupByClauseException>(() => gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null));
+        Assert.Throws<AggregateExpressionInGroupByClauseException>(() => gradesGenerator.InternalSelect(null, selects, null, null, null, groupBys, null, null, null));
     }
 
     [Fact]
@@ -386,7 +386,7 @@ public class SqlGenerator_AggregateSelectTests
             new Parameter(3.5m, "MinimumGpa")
         );
 
-        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, where, groupBys, having, null, null);
+        SqlQuery query = gradesGenerator.InternalSelect(null, selects, null, null, where, groupBys, having, null, null);
 
         Assert.Equal("SELECT [Grades].[StudentId], AVG([Grades].[GradePoint]) AS [AverageGradePoint] FROM [Grades] WHERE ([Grades].[AcademicYear] > @MinimumYear_1) GROUP BY [Grades].[StudentId] HAVING (AVG([Grades].[GradePoint]) > @MinimumGpa_2)", query.QueryText);
         Assert.Equal(2, query.Parameters.Count());
@@ -399,7 +399,7 @@ public class SqlGenerator_AggregateSelectTests
         SelectTags selects = new(new SelectTag(count, "TotalCount"));
         Predicates having = new GreaterThan(count, new Parameter(1, "MinimumCount"));
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, having, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, null, null, having, null, null);
 
         Assert.Equal("SELECT COUNT(*) AS [TotalCount] FROM [Customer] HAVING (COUNT(*) > @MinimumCount_1)", query.QueryText);
     }
@@ -421,7 +421,7 @@ public class SqlGenerator_AggregateSelectTests
 
         Predicates having = new GreaterThan(semesterGpa, new Parameter(3.5, "HonorRollGpa"));
 
-        SqlQuery query = gradesGenerator.InternalSelect(null, null, selects, null, null, groupBys, having, null, null);
+        SqlQuery query = gradesGenerator.InternalSelect(null, selects, null, null, null, groupBys, having, null, null);
         Assert.Equal("SELECT [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber], AVG([Grades].[GradePoint]) AS [SemesterGPA], @Parameter_1 AS [ParamterValue] FROM [Grades] GROUP BY [Grades].[StudentId], [Grades].[AcademicYear], [Grades].[SemesterNumber] HAVING (AVG([Grades].[GradePoint]) > @HonorRollGpa_2)", query.QueryText);
     }
 
@@ -434,7 +434,7 @@ public class SqlGenerator_AggregateSelectTests
             new SelectTag(new Parameter(1), "ParameterValue")
         );
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null);
 
         Assert.Equal("SELECT COUNT(*) AS [TotalCount], @Parameter_1 AS [ParameterValue] FROM [Customer]", query.QueryText);
     }
@@ -448,7 +448,7 @@ public class SqlGenerator_AggregateSelectTests
             new SelectTag(new Count(), "TotalCount")
         );
 
-        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null));
     }
 
     [Fact]
@@ -460,7 +460,7 @@ public class SqlGenerator_AggregateSelectTests
             new SelectTag(new Count(), "TotalCount")
         );
 
-        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, null, selects, null, null, null, null, null, null));
+        Assert.Throws<MixedAggregateSelectException>(() => customerGenerator.InternalSelect(null, selects, null, null, null, null, null, null, null));
     }
 
 }

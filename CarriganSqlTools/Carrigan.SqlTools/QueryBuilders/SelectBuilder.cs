@@ -1,3 +1,4 @@
+using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.GroupByClause;
 using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.JoinTypes;
@@ -6,6 +7,9 @@ using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
+using System.Data;
+using System.Net.NetworkInformation;
+using System.Reflection.Emit;
 
 namespace Carrigan.SqlTools.QueryBuilders;
 
@@ -165,4 +169,12 @@ public record SelectBuilder
     /// <returns>A new query instance with the specified paging options.</returns>
     public SelectBuilder WithPaging(PagingBase? paging) =>
         this with { Paging = paging };
+
+
+    /// <summary>
+    /// Builds a SQL query from the current builder state.
+    /// </summary>
+    /// <returns>A <see cref="SqlQuery"/> generated from the current builder state.</returns>
+    public SqlQuery AsSqlQuery(ISqlDialects dialect) =>
+        SelectGenerator.Generate(dialect, Distinct, Selects, From, Joins, Where, GroupBys, Having, OrderBys, Paging);
 }

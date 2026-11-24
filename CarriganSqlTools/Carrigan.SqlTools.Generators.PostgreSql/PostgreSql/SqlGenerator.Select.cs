@@ -77,15 +77,14 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
         InternalSelect
         (
             selectBuilder.Distinct,
-            selectBuilder.Subquery,
             selectBuilder.Selects,
+            selectBuilder.From,
             selectBuilder.Joins,
             selectBuilder.Where,
             selectBuilder.GroupBys,
             selectBuilder.Having,
-            selectBuilder.OrderBys,
-            selectBuilder.Paging
-        );
+            selectBuilder.OrderBys, selectBuilder.Paging
+);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
@@ -94,9 +93,11 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <c>ORDER BY</c>, and PostgreSQL paging clauses such as <c>LIMIT</c> and <c>OFFSET</c>.
     /// </summary>
     /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
-    /// <param name="subQuery">The subquery used as the query source.</param>
     /// <param name="selects">
     /// Optional projected columns and result aliases. If omitted or empty, all columns from the table represented by <typeparamref name="T"/> are selected.
+    /// </param>
+    /// <param name="from">
+    /// The FROM clause.
     /// </param>
     /// <param name="joins">
     /// Optional joins to include in the query. Omit to select only from the base table.
@@ -210,117 +211,22 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     /// <param name="paging">The paging fragment to include in the query.</param>
-    [Obsolete("Use the overload with selectBuilder argument.")]
-    public SqlQuery Select
-    (
-        bool? distinct,
-        Subquery? subQuery,
-        SelectTags? selects,
-        Joins? joins,
-        Predicates? predicates,
-        GroupBys? groupBys,
-        Predicates? having,
-        OrderBys? orderBys,
-        PagingBase? paging
-    ) =>
-        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
 
-    /// <summary>
-    /// Generates a <c>SELECT</c> query from the supplied legacy clause arguments.
-    /// </summary>
-    /// <param name="distinct">Whether to generate <c>SELECT DISTINCT</c>.</param>
-    /// <param name="subQuery">An optional subquery used as the source.</param>
-    /// <param name="selects">The expressions to project.</param>
-    /// <param name="joins">The joins to include.</param>
-    /// <param name="predicates">The <c>WHERE</c> predicates.</param>
-    /// <param name="groupBys">The <c>GROUP BY</c> expressions.</param>
-    /// <param name="orderBys">The <c>ORDER BY</c> expressions.</param>
-    /// <param name="paging">The paging clause.</param>
-    /// <returns>The generated SQL query and its parameters.</returns>
-    [Obsolete("Use the overload with selectBuilder argument.")]
-    public SqlQuery Select
-    (
-        bool? distinct,
-        Subquery? subQuery,
-        SelectTags? selects,
-        Joins? joins,
-        Predicates? predicates,
-        GroupBys? groupBys,
-        OrderBys? orderBys, 
-        PagingBase? paging
-    ) =>
-        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, null, orderBys, paging);
+    //TODOL: add in new SelectMethod with each ergument
 
-    /// <summary>
-    /// Generates a <c>SELECT</c> query from the supplied legacy clause arguments without grouping.
-    /// </summary>
-    /// <param name="distinct">Whether to generate <c>SELECT DISTINCT</c>.</param>
-    /// <param name="subQuery">An optional subquery used as the source.</param>
-    /// <param name="selects">The expressions to project.</param>
-    /// <param name="joins">The joins to include.</param>
-    /// <param name="predicates">The <c>WHERE</c> predicates.</param>
-    /// <param name="orderBys">The <c>ORDER BY</c> expressions.</param>
-    /// <param name="paging">The paging clause.</param>
-    /// <returns>The generated SQL query and its parameters.</returns>
-    [Obsolete("Use the overload with selectBuilder argument.")]
-    public SqlQuery Select
-    (
-        bool? distinct,
-        Subquery? subQuery,
-        SelectTags? selects,
-        Joins? joins,
-        Predicates? predicates,
-        OrderBys? orderBys,
-        PagingBase? paging
-    ) =>
-        base.BaseSelect(distinct, subQuery, selects, joins, predicates, null, null, orderBys, paging);
-
-    /// <summary>
-    /// Generates a <c>SELECT</c> query from the supplied legacy clause arguments without grouping or having.
-    /// </summary>
-    /// <param name="distinct">
-    /// Whether to generate <c>SELECT DISTINCT</c>.
-    /// </param>
-    /// <param name="subQuery">
-    /// An optional subquery used as the source.
-    /// </param>
-    /// <param name="selects">
-    /// The expressions to project.
-    /// </param>
-    /// <param name="joins">
-    /// The joins to include.
-    /// </param>
-    /// <param name="predicates">
-    /// The <c>WHERE</c> predicates.
-    /// </param>
-    /// <param name="groupBys">
-    /// The <c>GROUP BY</c> expressions.
-    /// </param>
-    /// <param name="having">
-    /// The <c>HAVING</c> predicates.
-    /// </param>
-    /// <param name="orderBys">
-    /// The <c>ORDER BY</c> expressions.
-    /// </param>
-    /// <param name="paging">
-    /// The paging clause.
-    /// </param>
-    /// <returns>
-    /// The generated SQL query and its parameters.
-    /// </returns>
     internal SqlQuery InternalSelect
     (
         bool? distinct,
-        Subquery? subQuery,
         SelectTags? selects,
+        From? from,
         Joins? joins,
         Predicates? predicates,
         GroupBys? groupBys,
         Predicates? having,
-        OrderBys? orderBys, 
+        OrderBys? orderBys,
         PagingBase? paging
 ) =>
-        base.BaseSelect(distinct, subQuery, selects, joins, predicates, groupBys, having, orderBys, paging);
+        base.BaseSelect(distinct, selects, from, joins, predicates, groupBys, having, orderBys, paging);
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key

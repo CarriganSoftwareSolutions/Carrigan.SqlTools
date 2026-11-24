@@ -234,7 +234,7 @@ public class JoinSubqueryTests
 
         Joins joins = Join.Joins(RightOnLeftPredicate(), RightSubquery(), "Right");
 
-        SqlQuery query = LeftGenerator.InternalSelect(null, null, selectTags, joins, null, null, null, null, null);
+        SqlQuery query = LeftGenerator.InternalSelect(null, selectTags, null, joins, null, null, null, null, null);
 
         Assert.Equal("SELECT [Left].[Id], [Right].[Col1] AS [RightCol1] FROM [Left] JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

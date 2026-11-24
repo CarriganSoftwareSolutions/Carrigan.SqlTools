@@ -37,7 +37,7 @@ public class SqlGenerator_ExpressionClauseParameterTests
 
         SqlQuery query = CustomerGenerator.InternalSelect
         (
-            null, null, selects, null, where, groupBys, null, null, null
+            null, selects, null, null, where, groupBys, null, null, null
         );
 
         Assert.Equal

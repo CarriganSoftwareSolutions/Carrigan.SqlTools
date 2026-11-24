@@ -105,7 +105,7 @@ public sealed class CastTests : SqlExpressionsBaseTests
             new SelectTag(averageId, "AverageId")
         );
 
-        SqlQuery actual = generator.InternalSelect(null, null, selects, null, null, groupBys, null, null, null);
+        SqlQuery actual = generator.InternalSelect(null, selects, null, null, null, groupBys, null, null, null);
 
         Assert.Equal(expected, actual.QueryText);
     }

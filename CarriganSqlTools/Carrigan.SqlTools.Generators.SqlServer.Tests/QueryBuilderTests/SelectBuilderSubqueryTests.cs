@@ -24,7 +24,7 @@ public class SelectBuilderSubqueryTests
         SelectTags selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email));
         Predicates outerPredicate = new Equal(new Column<Customer>(nameof(Customer.Email)), new Parameter("hank@example.com", "Email"));
 
-        SqlQuery query = customerGenerator.InternalSelect(null, subquery, selects, null, outerPredicate, null, null, null, null);
+        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, outerPredicate, null, null, null, null);
 
         Assert.Equal("SELECT [Customer].[Id], [Customer].[Email] FROM (SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)) AS [Customer] WHERE ([Customer].[Email] = @Email_2)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
