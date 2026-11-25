@@ -46,9 +46,6 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoin()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -56,7 +53,11 @@ public class SqlGeneratorSelectExamples
         InnerJoin<Order> join = new(predicate);
         Joins joins = new(join);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = joins
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         string expectedQueryText =
             """
@@ -69,9 +70,6 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoinsAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -82,7 +80,12 @@ public class SqlGeneratorSelectExamples
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, null, null, orderByOrderDate, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = joins,
+            OrderBys = orderByOrderDate
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         string expectedQueryText =
             """
@@ -95,9 +98,6 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoinsWhereAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -113,7 +113,13 @@ public class SqlGeneratorSelectExamples
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(null, null, null, joins, greaterThan, null, orderByOrderDate, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = joins,
+            Where = greaterThan,
+            OrderBys = orderByOrderDate
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         string expectedQueryText =
             """

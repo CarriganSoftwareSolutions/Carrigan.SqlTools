@@ -37,16 +37,17 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoin()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
         ColumnEqualsColumn<Customer, Order> predicate = new(nameof(Customer.Id), nameof(Order.CustomerId));
         InnerJoin<Order> join = new (predicate);
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, null, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -54,9 +55,6 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoinsAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -66,7 +64,12 @@ public class SqlGeneratorSelectExamples
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, null, null, orderByOrderDate, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join,
+            OrderBys = orderByOrderDate
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -74,9 +77,6 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithJoinsWhereAndOrderBy()
     {
         //Note: ColumnEqualsColumn<Customer, Order> validates the names of the properties, and throws an error if the property isn't valid
@@ -91,7 +91,13 @@ public class SqlGeneratorSelectExamples
 
         OrderBy<Order> orderByOrderDate = new(nameof(Order.OrderDate));
 
-        SqlQuery query = customerGenerator.Select(null, null, null, join, greaterThan, null, orderByOrderDate, null);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Joins = join,
+            Where = greaterThan,
+            OrderBys = orderByOrderDate
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] INNER JOIN [Order] ON ([Customer].[Id] = [Order].[CustomerId]) WHERE ([Order].[Total] > @Total_1) ORDER BY [Order].[OrderDate] ASC", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -100,13 +106,14 @@ public class SqlGeneratorSelectExamples
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithOffsetNext()
     {
         OffsetFetchNext offsetNext = new(50, 25);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, null, offsetNext);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Paging = offsetNext
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] ORDER BY [Customer].[Id] ASC OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

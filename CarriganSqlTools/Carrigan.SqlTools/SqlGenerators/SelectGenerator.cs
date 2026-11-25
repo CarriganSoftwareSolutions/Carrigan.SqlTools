@@ -138,7 +138,7 @@ static internal class SelectGenerator
     /// <param name="orderBy">The optional ORDER BY clause.</param>
     /// <returns>The SQL fragments that render the SELECT statement.</returns>
     /// <param name="paging">The optional paging clause.</param>
-    static internal SqlQuery Generate
+    static internal IEnumerable<ISqlFragment> GenerateAsFragments
     (
         ISqlDialects dialect,
         bool? distinct,
@@ -221,8 +221,22 @@ static internal class SelectGenerator
 
         if (invalidTags.Any())
             throw new InvalidTableException(invalidTags);
-        return new(dialect, CommandType.Text, GetSelectFragments(dialect, distinct, selects, from, joins, where, groupBys, having, orderBy, paging));
+        return GetSelectFragments(dialect, distinct, selects, from, joins, where, groupBys, having, orderBy, paging);
     }
+
+    static internal SqlQuery Generate
+    (
+        ISqlDialects dialect,
+        bool? distinct,
+        SelectTags? selects,
+        From? from,
+        Joins? joins,
+        Predicates? where,
+        GroupBys? groupBys,
+        Predicates? having,
+        OrderBys? orderBy, PagingBase? paging
+    ) =>
+         new(dialect, CommandType.Text, GenerateAsFragments(dialect, distinct, selects, from, joins, where, groupBys, having, orderBy, paging));
 
     /// <summary>
     /// Validates that predicates intended for a <c>WHERE</c> clause do not contain aggregate expressions.

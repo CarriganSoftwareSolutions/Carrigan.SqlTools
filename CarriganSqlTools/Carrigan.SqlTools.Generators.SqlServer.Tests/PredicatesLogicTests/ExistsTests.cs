@@ -1,10 +1,10 @@
 ﻿using Carrigan.SqlTools.Base.Tests.Helpers;
 using Carrigan.SqlTools.Base.Tests.PredicateLogicTests;
 using Carrigan.SqlTools.Base.Tests.TestEntities;
-using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.SqlGenerators;
+using Carrigan.SqlTools.Tags;
 using Carrigan.SqlTools.SqlServer;
 
 namespace Carrigan.SqlTools.Generators.SqlServer.Tests.PredicatesLogicTests;
@@ -23,15 +23,15 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatAreNotEqual =>
     [
-        new Exists(new Subquery([], new SqlServerDialect())),
-        new Exists(new Subquery([], new SqlServerDialect())),
+        new Exists(new Subquery(new SelectTags(), [])),
+        new Exists(new Subquery(new SelectTags(), [])),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatAreEqual
     {
         get
         {
-            Subquery subquery = new([], new SqlServerDialect());
+            Subquery subquery = new(new SelectTags(), []);
 
             return
             [
@@ -46,7 +46,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoAggregates =>
     [
-        new Exists(new Subquery([], new SqlServerDialect())),
+        new Exists(new Subquery(new SelectTags(), [])),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveColumns =>
@@ -54,7 +54,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoColumns =>
     [
-        new Exists(new Subquery([], new SqlServerDialect())),
+        new Exists(new Subquery(new SelectTags(), [])),
     ];
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveParameters =>
@@ -62,7 +62,7 @@ public class ExistsTests : PredicateLogicBaseTests
 
     public override IEnumerable<SqlExpression> ExpressionsThatHaveNoParameters =>
     [
-        new Exists(new Subquery([], new SqlServerDialect())),
+        new Exists(new Subquery(new SelectTags(), [])),
     ];
 
     [Fact]

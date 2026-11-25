@@ -24,7 +24,9 @@ public abstract partial class SqlGeneratorBase<T>
         Joins? joins,
         Predicates? where,
         GroupBys? groupBys,
-        Predicates? having, OrderBys? orderBy, PagingBase? paging
+        Predicates? having,
+        OrderBys? orderBy, 
+        PagingBase? paging
     ) =>
         new
         (

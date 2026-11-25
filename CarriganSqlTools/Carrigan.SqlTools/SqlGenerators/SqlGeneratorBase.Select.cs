@@ -153,7 +153,7 @@ public abstract partial class SqlGeneratorBase<T>
             ];
             orderBy = orderBy.Concat(orderByKeyItems);
         }
-        return SelectGenerator.Generate(Dialect, distinct, selects, from, joins, where, groupBys, having, orderBy, paging);
+        return SelectGenerator.GenerateAsFragments(Dialect, distinct, selects, from, joins, where, groupBys, having, orderBy, paging);
     }
 
     /// <summary>

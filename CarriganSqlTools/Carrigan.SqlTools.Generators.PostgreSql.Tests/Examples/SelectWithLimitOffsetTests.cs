@@ -12,13 +12,14 @@ public class SelectLimitOffsetTests
     private readonly SqlGenerator<Customer> customerGenerator = new();
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffset()
     {
         LimitOffset limitOffset = new(25, 50);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, null, limitOffset);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Paging = limitOffset
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Id\" ASC LIMIT 25 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -26,14 +27,16 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithOrderBy()
     {
         LimitOffset limitOffset = new(25, 50);
         OrderBy<Customer> orderBy = new(nameof(Customer.Name));
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, orderBy, limitOffset);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            OrderBys = orderBy,
+            Paging = limitOffset
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Name\" ASC, \"Customer\".\"Id\" ASC LIMIT 25 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -41,14 +44,16 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithDescendingOrderBy()
     {
         LimitOffset limitOffset = new(25, 50);
         OrderBy<Customer> orderBy = new(nameof(Customer.Name), SortDirectionEnum.Descending);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, orderBy, limitOffset);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            OrderBys = orderBy,
+            Paging = limitOffset
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Name\" DESC, \"Customer\".\"Id\" ASC LIMIT 25 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -56,13 +61,14 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithFirstPage()
     {
         LimitOffset limitOffset = new(25, 0);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, null, limitOffset);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Paging = limitOffset
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Id\" ASC LIMIT 25", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -70,13 +76,14 @@ public class SelectLimitOffsetTests
     }
 
     [Fact]
-#pragma warning disable CA1041 // Provide ObsoleteAttribute message
-    [Obsolete]
-#pragma warning restore CA1041 // Provide ObsoleteAttribute message
     public void SelectWithLimitOffsetWithSingleRowLimit()
     {
         LimitOffset limitOffset = new(1, 50);
-        SqlQuery query = customerGenerator.Select(null, null, null, null, null, null, null, limitOffset);
+        SelectBuilder<Customer> selectBuilder = new()
+        {
+            Paging = limitOffset
+        };
+        SqlQuery query = customerGenerator.Select(selectBuilder);
 
         Assert.Equal("SELECT \"Customer\".* FROM \"Customer\" ORDER BY \"Customer\".\"Id\" ASC LIMIT 1 OFFSET 50", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
