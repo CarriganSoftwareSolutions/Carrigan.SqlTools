@@ -1,10 +1,13 @@
+using Carrigan.SqlTools.Attributes;
 using Carrigan.SqlTools.Exceptions;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
@@ -97,7 +100,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="selects">
     /// Optional projected columns (and result aliases). If omitted or empty, <c>[T].*</c> is selected.
     /// </param>
-    /// <param name="from">The FROM clause for the query.</param>
+    /// <param name="tableAlias"></param>
     /// <param name="joins">
     /// Optional joins to include in the query. Omit to select only from the base table.
     /// </param>
@@ -210,7 +213,34 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// OFFSET 50 ROWS FETCH NEXT 25 ROWS ONLY
     /// ]]></code>
     /// </example>
-    //TODOL: add in new SelectMethod with each ergument
+    [ExternalOnly]
+    public SqlQuery Select
+    (
+        bool? distinct,
+        SelectTags? selects,
+        string tableAlias,
+        Joins? joins,
+        Predicates? predicates,
+        GroupBys? groupBys,
+        Predicates? having,
+        OrderBys? orderBys,
+        PagingBase? paging
+    ) =>
+        Select(distinct, selects, new TableAlias(tableAlias), joins, predicates, groupBys, having, orderBys, paging);
+
+    public SqlQuery Select
+    (
+        bool? distinct,
+        SelectTags? selects,
+        TableAlias tableAlias,
+        Joins? joins,
+        Predicates? predicates,
+        GroupBys? groupBys,
+        Predicates? having,
+        OrderBys? orderBys,
+        PagingBase? paging
+    ) =>
+        base.BaseSelect(distinct, selects, new From<T>(tableAlias), joins, predicates, groupBys, having, orderBys, paging);
 
 
     internal SqlQuery InternalSelect

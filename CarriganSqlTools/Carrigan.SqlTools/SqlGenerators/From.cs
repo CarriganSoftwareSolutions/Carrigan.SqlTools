@@ -11,7 +11,8 @@ public class From : ISelectable, ISqlFragment
     public readonly TableAlias? TableAlias;
     public readonly TableTag? RootTable;
     public SelectTags SelectTags { get; }
-    internal From(TableTag tableTag, SelectTags selectTags, TableAlias? tableAlias = null)
+
+    protected From(TableTag tableTag, SelectTags selectTags, TableAlias? tableAlias = null)
     {
         FromFragment = tableTag;
         SelectTags = selectTags.ResultReferences(tableAlias);

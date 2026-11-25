@@ -23,52 +23,52 @@ public record SelectBuilder
     /// <summary>
     /// Gets or sets whether the SELECT query should use DISTINCT.
     /// </summary>
-    public bool? Distinct { get; set; }
+    public bool? Distinct { get; init; }
 
     /// <summary>
     /// Gets or sets the selected columns or expressions for the query.
     /// </summary>
-    public SelectTags? Selects { get; set; }
+    public SelectTags? Selects { get; init; }
 
     /// <summary>
     /// Gets or sets the FROM clause for the query.
     /// </summary>
-    public From? From { get; set; }
+    public From? From { get; init; }
 
     /// <summary>
     /// Gets or sets the subquery to use as the query source instead of the default table.
     /// </summary>
-    public Subquery? Subquery { get; set; }
+    public Subquery? Subquery { get; init; }
 
     /// <summary>
     /// Gets or sets the joins to include in the query.
     /// </summary>
-    public Joins? Joins { get; set; }
+    public Joins? Joins { get; init; }
 
     /// <summary>
     /// Gets or sets the WHERE predicates for the query.
     /// </summary>
-    public Predicates? Where { get; set; }
+    public Predicates? Where { get; init; }
 
     /// <summary>
     /// Gets or sets the GROUP BY clause for the query.
     /// </summary>
-    public GroupBys? GroupBys { get; set; }
+    public GroupBys? GroupBys { get; init; }
 
     /// <summary>
     /// Gets or sets the <c>HAVING</c> predicates for the query.
     /// </summary>
-    public Predicates? Having { get; set; }
+    public Predicates? Having { get; init; }
 
     /// <summary>
     /// Gets or sets the ORDER BY clause for the query.
     /// </summary>
-    public OrderBys? OrderBys { get; set; }
+    public OrderBys? OrderBys { get; init; }
 
     /// <summary>
     /// Gets or sets the paging options for the query.
     /// </summary>
-    public PagingBase? Paging { get; set; }
+    public PagingBase? Paging { get; init; }
 
     /// <summary>
     /// Returns a copy of the current query with DISTINCT enabled.
@@ -175,6 +175,7 @@ public record SelectBuilder
     /// Builds a SQL query from the current builder state.
     /// </summary>
     /// <returns>A <see cref="SqlQuery"/> generated from the current builder state.</returns>
+    //TODO: hould dialect be passed in here or should it be passed in to the constructor instead?
     public SqlQuery AsSqlQuery(ISqlDialects dialect) =>
         SelectGenerator.Generate(dialect, Distinct, Selects, From, Joins, Where, GroupBys, Having, OrderBys, Paging);
 }

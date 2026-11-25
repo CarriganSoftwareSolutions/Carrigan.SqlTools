@@ -111,6 +111,8 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
     /// </summary>
     private readonly SqlGenerator<modelT> SqlGenerator;
 
+    public TableAlias? FromTableAlias { get; init; } 
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectBuilder{T}"/> class.
     /// </summary>
@@ -118,7 +120,7 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public SelectBuilder(TableAlias? tableAlias, IEncryption? encryption = null)
     {
-        base.From = new(SqlToolsReflectorCache<modelT>.Table, SelectTagGenerator.GetAll<modelT>(), tableAlias);
+        base.From = new From<modelT>(tableAlias);
         SqlGenerator = new(encryption);
     }
 
@@ -128,7 +130,7 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public SelectBuilder(IEncryption? encryption = null)
     {
-        base.From = new(SqlToolsReflectorCache<modelT>.Table, SelectTagGenerator.GetAll<modelT>());
+        base.From = new From<modelT>();
         SqlGenerator = new(encryption);
     }
 
@@ -136,7 +138,7 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
     /// Gets or sets the FROM clause for the query.
     /// </summary>
     public new From? From =>
-        base.From;
+        new From<modelT>(FromTableAlias);
 
     /// <summary>
     /// Builds a SQL query from the current builder state.
