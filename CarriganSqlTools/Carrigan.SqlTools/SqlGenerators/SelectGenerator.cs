@@ -61,21 +61,20 @@ static internal class SelectGenerator
             foreach (ISqlFragment fragment in selects.Flatten(dialect))
                 yield return fragment;
         else
-        {
-            yield return ISqlFragment.Space;
             yield return ISqlFragment.Star;
-            yield return ISqlFragment.Space;
-        }
 
         if (from is not null)
         {
+            yield return ISqlFragment.Space;
+            yield return ISqlFragment.From;
+            yield return ISqlFragment.Space;
             foreach (ISqlFragment fragment in from.ToSqlFragments(dialect))
                 yield return fragment;
-            yield return ISqlFragment.Space;
         }
 
         if (joins?.IsNotNullOrEmpty() ?? false)
         {
+            yield return ISqlFragment.Space;
             foreach (ISqlFragment fragment in joins.Flatten(dialect))
                 yield return fragment;
         }
