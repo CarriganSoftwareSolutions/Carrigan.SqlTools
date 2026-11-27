@@ -59,7 +59,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     public SqlQuery SelectAll(OrderBys? orderBy = null) =>
-        base.BaseSelectAll(orderBy);
+        base.BaseSelectAll(new From<T>(), orderBy);
 
     /// <summary>
     /// Builds a SELECT SQL query for the supplied model data.

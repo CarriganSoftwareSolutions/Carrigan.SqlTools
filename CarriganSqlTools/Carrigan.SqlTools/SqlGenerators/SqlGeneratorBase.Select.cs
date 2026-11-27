@@ -24,6 +24,9 @@ public abstract partial class SqlGeneratorBase<T>
     /// Generates a SQL <c>SELECT *</c> statement that returns all rows
     /// from the table represented by <typeparamref name="T"/>.
     /// </summary>
+    /// <param name="from">
+    /// The source table for the query.
+    /// </param>
     /// <param name="orderBy">
     /// Optional ordering to include in the <c>ORDER BY</c> clause.
     /// If omitted, the rows are returned without an explicit order.
@@ -39,8 +42,8 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown if any table referenced by <paramref name="orderBy"/> does not participate
     /// in the query (i.e., is not the base table and not included by joins).
     /// </exception>
-    protected virtual SqlQuery BaseSelectAll(OrderBys? orderBy = null) =>
-        BaseSelect(null, null, null, null, null, null, null, orderBy, null);
+    protected virtual SqlQuery BaseSelectAll(From from,OrderBys? orderBy = null) =>
+        BaseSelect(null, null, from, null, null, null, null, orderBy, null);
 
     /// <summary>
     /// Builds an <see cref="SqlQuery"/> containing a parameterized SQL
