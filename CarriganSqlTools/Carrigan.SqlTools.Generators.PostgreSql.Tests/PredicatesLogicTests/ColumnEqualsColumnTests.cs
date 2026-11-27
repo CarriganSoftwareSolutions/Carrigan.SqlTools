@@ -88,7 +88,7 @@ public class ColumnEqualsColumnTests : PredicateLogicBaseTests
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
         Assert.Throws<InvalidTableException>(() =>
         {
-            SqlQuery query = leftGenerator.InternalSelect(null, null, null, null, columnEqualsColumn, null, null, null, null);
+            SqlQuery query = leftGenerator.Select(new SelectBuilder<JoinLeftTable> { Where = columnEqualsColumn });
         });
     }
 
@@ -97,7 +97,7 @@ public class ColumnEqualsColumnTests : PredicateLogicBaseTests
     {
         ColumnEqualsColumn<JoinLeftTable, JoinRightTable> columnEqualsColumn = new(nameof(JoinLeftTable.RightId), nameof(JoinRightTable.Id));
         Joins relations = new (new Join<JoinRightTable>(columnEqualsColumn));
-        SqlQuery query = leftGenerator.InternalSelect(null, null, null, relations, null, null, null, null, null);
+        SqlQuery query = leftGenerator.Select(new SelectBuilder<JoinLeftTable> { Joins = relations });
 
         Assert.Equal("SELECT \"Left\".* FROM \"Left\" JOIN \"Right\" ON (\"Left\".\"RightId\" = \"Right\".\"Id\")", query.QueryText);
         SqlQueryTestHelper.AssertParameterCount(query, 0);
@@ -108,7 +108,7 @@ public class ColumnEqualsColumnTests : PredicateLogicBaseTests
     {
         ColumnEqualsColumn<JoinRightTable, JoinLastTable> columnEqualsColumn = new(nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
         Joins relations = new (new Join<JoinLastTable>(columnEqualsColumn));
-        SqlQuery query = rightGenerator.InternalSelect(null, null, null, relations, null, null, null, null, null);
+        SqlQuery query = rightGenerator.Select(new SelectBuilder<JoinRightTable> { Joins = relations });
 
         Assert.Equal("SELECT \"Right\".* FROM \"Right\" JOIN \"Last\" ON (\"Right\".\"LastId\" = \"Last\".\"Id\")", query.QueryText);
         SqlQueryTestHelper.AssertParameterCount(query, 0);

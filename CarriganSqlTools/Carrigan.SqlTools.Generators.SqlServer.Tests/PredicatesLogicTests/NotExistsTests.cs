@@ -78,7 +78,7 @@ public class NotExistsTests : PredicateLogicBaseTests
         Subquery subQuery = orderGenerator.InternalSubquery(null, null, null, subQueryPredicate, null, null, null, null);
         NotExists notExists = new(subQuery);
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, null, null, notExists, null, null, null, null);
+        SqlQuery query = customerGenerator.Select(new SelectBuilder<Customer> { Where = notExists });
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE (NOT EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[Total] > @Total_1)))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -103,7 +103,7 @@ public class NotExistsTests : PredicateLogicBaseTests
         );
         And and = new(notExists, outerPredicate);
 
-        SqlQuery query = customerGenerator.InternalSelect(null, null, null, null, and, null, null, null, null);
+        SqlQuery query = customerGenerator.Select(new SelectBuilder<Customer> { Where = and });
 
         Assert.Equal("SELECT [Customer].* FROM [Customer] WHERE ((NOT EXISTS (SELECT [Order].* FROM [Order] WHERE ([Order].[CustomerId] = @CustomerId_1))) AND ([Customer].[Name] = @Name_2))", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);

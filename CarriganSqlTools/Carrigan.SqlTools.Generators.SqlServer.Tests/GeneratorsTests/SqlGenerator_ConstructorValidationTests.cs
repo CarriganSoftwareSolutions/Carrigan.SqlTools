@@ -179,7 +179,7 @@ public class SqlGenerator_ConstructorValidationTests
         SelectTags selects = 
             SelectTagGenerator.Get<AmbiguousLeft>(nameof(AmbiguousLeft.Id))
                 .Append<AmbiguousRight>(nameof(AmbiguousRight.Id));
-        Assert.Throws<AmbiguousResultColumnException> (() => _ = sqlGenerator.InternalSelect(null, selects, null, joins, null, null, null, null, null));
+        Assert.Throws<AmbiguousResultColumnException> (() => _ = sqlGenerator.Select(new SelectBuilder<AmbiguousLeft> { Selects = selects, Joins = joins }));
     }
 
     [Fact]

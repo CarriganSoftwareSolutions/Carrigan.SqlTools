@@ -35,10 +35,12 @@ public class SqlGenerator_ExpressionClauseParameterTests
             )
         );
 
-        SqlQuery query = CustomerGenerator.InternalSelect
-        (
-            null, selects, null, null, where, groupBys, null, null, null
-        );
+        SqlQuery query = CustomerGenerator.Select(new SelectBuilder<Customer>
+        {
+            Selects = selects,
+            Where = where,
+            GroupBys = groupBys
+        });
 
         Assert.Equal
         (
@@ -81,10 +83,11 @@ public class SqlGenerator_ExpressionClauseParameterTests
             )
         );
 
-        SqlQuery query = CustomerGenerator.InternalSelect
-        (
-            null, null, null, null, where, null, null, orderBys, null
-        );
+        SqlQuery query = CustomerGenerator.Select(new SelectBuilder<Customer>
+        {
+            Where = where,
+            OrderBys = orderBys
+        });
 
         Assert.Equal
         (
