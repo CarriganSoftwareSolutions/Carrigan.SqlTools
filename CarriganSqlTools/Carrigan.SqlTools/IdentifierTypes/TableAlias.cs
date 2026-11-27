@@ -40,8 +40,8 @@ public class TableAlias : TextWrapper, ISqlFragment
     public static TableAlias? New(string? name) =>
         name.IsNullOrWhiteSpace() ? null : new(name);
 
-    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => throw new NotImplementedException();
-    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) => throw new NotImplementedException();
+    public IEnumerable<ISqlFragment> Flatten(ISqlDialects dialect) => [this];
+    public IEnumerable<SqlFragmentParameter> GetSqlFragmentParameters(ISqlDialects dialect) => [];
     public string ToSql(ISqlDialects dialect) =>
         dialect.RenderTableAlias(this);
 }
