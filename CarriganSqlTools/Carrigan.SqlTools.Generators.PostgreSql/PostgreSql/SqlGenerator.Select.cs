@@ -282,5 +282,5 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     public SqlQuery SelectById(params IEnumerable<T> entities) =>
-        base.BaseSelectById(entities);
+        base.BaseSelectById(new From<T>(), entities);
 }

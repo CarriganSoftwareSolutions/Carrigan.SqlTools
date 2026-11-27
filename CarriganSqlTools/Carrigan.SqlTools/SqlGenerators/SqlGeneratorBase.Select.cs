@@ -163,6 +163,7 @@ public abstract partial class SqlGeneratorBase<T>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key
     /// properties of the specified entities.
     /// </summary>
+    /// <param name="from">The FROM clause for the SELECT statement.</param>
     /// <param name="entities">
     /// One or more data model instances used only as ID holders; their key property values
     /// are combined into a predicate that selects matching rows.
@@ -186,12 +187,12 @@ public abstract partial class SqlGeneratorBase<T>
     /// Thrown when <typeparamref name="T"/> has no key annotations (neither the SQL generator’s
     /// <c>PrimaryKey</c> nor <c>Key</c> attributes) and a “By Id” operation is invoked.
     /// </exception>
-    protected virtual SqlQuery BaseSelectById(params IEnumerable<T> entities)
+    protected virtual SqlQuery BaseSelectById(From from, params IEnumerable<T> entities)
     {
         ArgumentNullException.ThrowIfNull(entities);
         if (HasKeyProperty is false)
             throw new NoPrimaryKeyPropertyException<T>();
         else
-            return BaseSelect(null, null, null, null, new Or(entities.Select(entity => new And(GetByKeyPredicates(entity)))), null, null, null, null);
+            return BaseSelect(null, null, from, null, new Or(entities.Select(entity => new And(GetByKeyPredicates(entity)))), null, null, null, null);
     }
 }
