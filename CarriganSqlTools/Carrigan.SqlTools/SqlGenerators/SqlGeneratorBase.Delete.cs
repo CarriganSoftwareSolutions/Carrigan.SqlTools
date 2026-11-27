@@ -170,7 +170,14 @@ public abstract partial class SqlGeneratorBase<T>
         {
             TableTag rootTableTag = SqlToolsReflectorCache<T>.Table;
 
-            IEnumerable<TableTag> selectableTableTags = ((joins?.Validate(rootTableTag)?.TableTags() ?? []).Prepend(rootTableTag)).Distinct();
+            TableTag joinRootTableTag = usings?.LastOrDefault() ?? rootTableTag;
+
+            IEnumerable<TableTag> selectableTableTags =
+            [
+                rootTableTag,
+                .. usings ?? [],
+                .. joins?.Validate(joinRootTableTag).TableTags() ?? []
+            ];
             IEnumerable<TableTag> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
             IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectableTableTags);
             if (invalidTags.Any())

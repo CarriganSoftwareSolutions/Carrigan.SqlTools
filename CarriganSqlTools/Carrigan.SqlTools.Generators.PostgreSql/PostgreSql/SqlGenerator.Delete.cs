@@ -194,9 +194,10 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
             throw new InvalidTableException(Table);
         }
 
-        if (joins.IsNotNullOrEmpty() && (usings?.DoesNotContain(joinsOn) ?? true))
+        if (joins.IsNotNullOrEmpty())
         {
-            throw new InvalidTableException(joinsOn);
+            if (usings is null || usings.DoesNotContain(joinsOn))
+                throw new InvalidTableException(joinsOn);
         }
 
         return base.BaseDelete(usings, joins, predicates);
