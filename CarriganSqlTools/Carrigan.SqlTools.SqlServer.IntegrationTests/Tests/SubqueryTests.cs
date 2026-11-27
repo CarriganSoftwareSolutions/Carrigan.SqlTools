@@ -29,7 +29,7 @@ public sealed class SubqueryTests : IClassFixture<SubqueryFixture>
     {
         SubqueryBuilder<Customer> subqueryBuilder = new() { };
         Subquery subquery = CustomerSqlGenerator.Subquery(subqueryBuilder);
-        SelectBuilder<Customer> select = new() { Subquery = subquery };
+        SelectBuilder<Customer> select = new() { From = new(subquery, new(nameof(Customer))) };
 
         SqlQuery query = CustomerSqlGenerator.Select(select);
 

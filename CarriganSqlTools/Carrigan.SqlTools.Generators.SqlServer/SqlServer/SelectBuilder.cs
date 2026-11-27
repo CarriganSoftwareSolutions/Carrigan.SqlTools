@@ -5,7 +5,6 @@ using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.PredicatesLogic;
 using Carrigan.SqlTools.QueryBuilders;
-using Carrigan.SqlTools.ReflectorCache;
 using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
@@ -111,8 +110,6 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
     /// </summary>
     private readonly SqlGenerator<modelT> SqlGenerator;
 
-    public TableAlias? FromTableAlias { get; init; } 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectBuilder{T}"/> class.
     /// </summary>
@@ -120,7 +117,6 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public SelectBuilder(TableAlias? tableAlias, IEncryption? encryption = null)
     {
-        FromTableAlias = tableAlias;
         base.From = new From<modelT>(tableAlias);
         SqlGenerator = new(encryption);
     }
@@ -134,12 +130,6 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
         base.From = new From<modelT>();
         SqlGenerator = new(encryption);
     }
-
-    /// <summary>
-    /// Gets or sets the FROM clause for the query.
-    /// </summary>
-    public new From? From =>
-        new From<modelT>(FromTableAlias);
 
     /// <summary>
     /// Builds a SQL query from the current builder state.

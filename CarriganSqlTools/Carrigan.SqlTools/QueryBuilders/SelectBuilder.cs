@@ -36,11 +36,6 @@ public record SelectBuilder
     public From? From { get; init; }
 
     /// <summary>
-    /// Gets or sets the subquery to use as the query source instead of the default table.
-    /// </summary>
-    public Subquery? Subquery { get; init; }
-
-    /// <summary>
     /// Gets or sets the joins to include in the query.
     /// </summary>
     public Joins? Joins { get; init; }
@@ -107,14 +102,6 @@ public record SelectBuilder
     /// <returns>A new query instance with the specified FROM clause.</returns>
     public SelectBuilder WithFrom(From? from) =>
         this with { From = from };
-
-    /// <summary>
-    /// Returns a copy of the current query with the specified subquery source.
-    /// </summary>
-    /// <param name="subQuery">The subquery to use as the query source.</param>
-    /// <returns>A new query instance with the specified subquery source.</returns>
-    public SelectBuilder WithSubquery(Subquery? subQuery) =>
-        this with { Subquery = subQuery };
 
     /// <summary>
     /// Returns a copy of the current query with the specified joins.

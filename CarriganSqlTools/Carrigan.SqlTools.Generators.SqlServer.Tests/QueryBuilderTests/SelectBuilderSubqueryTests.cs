@@ -24,7 +24,12 @@ public class SelectBuilderSubqueryTests
         SelectTags selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email));
         Predicates outerPredicate = new Equal(new Column<Customer>(nameof(Customer.Email)), new Parameter("hank@example.com", "Email"));
 
-        SqlQuery query = customerGenerator.InternalSelect(null, selects, null, null, outerPredicate, null, null, null, null);
+        SqlQuery query = customerGenerator.Select(new SelectBuilder<Customer>
+        {
+            From = new(subquery, new(nameof(Customer))),
+            Selects = selects,
+            Where = outerPredicate
+        });
 
         Assert.Equal("SELECT [Customer].[Id], [Customer].[Email] FROM (SELECT [Customer].* FROM [Customer] WHERE ([Customer].[Name] = @Name_1)) AS [Customer] WHERE ([Customer].[Email] = @Email_2)", query.QueryText);
         Assert.Equal(CommandType.Text, query.CommandType);
@@ -42,7 +47,7 @@ public class SelectBuilderSubqueryTests
 
         SelectBuilder<Customer> selectBuilder = new()
         {
-            Subquery = subquery,
+            From = new(subquery, new(nameof(Customer))),
             Selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email)),
             Where = outerPredicate
         };
@@ -74,7 +79,7 @@ public class SelectBuilderSubqueryTests
         SelectBuilder<Customer> selectBuilder = new()
         {
             Distinct = true,
-            Subquery = subquery,
+            From = new(subquery, new(nameof(Customer))),
             Selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
             OrderBys = new OrderBys(new OrderBy<Customer>(nameof(Customer.Name))),
             Paging = new DefinePage(1, 10)
@@ -99,7 +104,7 @@ public class SelectBuilderSubqueryTests
 
         SelectBuilder<Customer> selectBuilder = new()
         {
-            Subquery = subquery,
+            From = new(subquery, new(nameof(Customer))),
             Selects = selects,
             Joins = joins,
             Where = where

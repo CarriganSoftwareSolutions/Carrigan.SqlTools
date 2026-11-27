@@ -234,7 +234,7 @@ public class JoinSubqueryTests
 
         Joins joins = Join.Joins(RightOnLeftPredicate(), RightSubquery(), "Right");
 
-        SqlQuery query = LeftGenerator.InternalSelect(null, selectTags, null, joins, null, null, null, null, null);
+        SqlQuery query = LeftGenerator.Select(new SelectBuilder<JoinLeftTable> { Selects = selectTags, Joins = joins });
 
         Assert.Equal("SELECT [Left].[Id], [Right].[Col1] AS [RightCol1] FROM [Left] JOIN (SELECT [Right].* FROM [Right]) AS [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -248,7 +248,7 @@ public class JoinSubqueryTests
         Predicates outerPredicate = new Equal(new Column<JoinRightTable>(nameof(JoinRightTable.Col2)), new Parameter("Closed", "RightCol2"));
         Joins joins = Join.Joins(RightOnLeftPredicate(), RightSubquery(subQueryPredicate), "Right");
 
-        SqlQuery query = LeftGenerator.InternalSelect(null, null, null, joins, outerPredicate, null, null, null, null);
+        SqlQuery query = LeftGenerator.Select(new SelectBuilder<JoinLeftTable> { Joins = joins, Where = outerPredicate });
 
         Assert.Equal("SELECT [Left].* FROM [Left] JOIN (SELECT [Right].* FROM [Right] WHERE ([Right].[Col1] = @RightCol1_1)) AS [Right] ON ([Left].[RightId] = [Right].[Id]) WHERE ([Right].[Col2] = @RightCol2_2)", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
@@ -263,7 +263,7 @@ public class JoinSubqueryTests
         Joins subQueryJoins = Join<JoinLastTable>.Joins(LastOnRightPredicate());
         Joins joins = Join.Joins(RightOnLeftPredicate(), RightSubquery(null, subQueryJoins), "Right");
 
-        SqlQuery query = LeftGenerator.InternalSelect(null, null, null, joins, null, null, null, null, null);
+        SqlQuery query = LeftGenerator.Select(new SelectBuilder<JoinLeftTable> { Joins = joins });
 
         Assert.Equal("SELECT [Left].* FROM [Left] JOIN (SELECT [Right].* FROM [Right] JOIN [Last] ON ([Right].[LastId] = [Last].[Id])) AS [Right] ON ([Left].[RightId] = [Right].[Id])", query.QueryText);
         Assert.Equal(System.Data.CommandType.Text, query.CommandType);
