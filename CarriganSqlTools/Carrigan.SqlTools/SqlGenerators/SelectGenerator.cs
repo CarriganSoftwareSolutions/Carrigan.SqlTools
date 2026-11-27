@@ -60,6 +60,11 @@ static internal class SelectGenerator
         if (selects is not null && selects.Any())
             foreach (ISqlFragment fragment in selects.Flatten(dialect))
                 yield return fragment;
+        else if (from?.RootTable is TableTag rootTable)
+        {
+            yield return rootTable;
+            yield return ISqlFragment.DotStar;
+        }
         else
             yield return ISqlFragment.Star;
 
@@ -74,7 +79,6 @@ static internal class SelectGenerator
 
         if (joins?.IsNotNullOrEmpty() ?? false)
         {
-            yield return ISqlFragment.Space;
             foreach (ISqlFragment fragment in joins.Flatten(dialect))
                 yield return fragment;
         }
