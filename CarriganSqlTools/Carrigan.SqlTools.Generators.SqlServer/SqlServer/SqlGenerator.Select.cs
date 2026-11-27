@@ -77,7 +77,7 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// ]]></code>
     /// </example>
     public SqlQuery Select(SelectBuilder<T> selectQuery) =>
-        InternalSelect
+        base.BaseSelect
         (
             selectQuery.Distinct,
             selectQuery.Selects,
@@ -242,20 +242,6 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     ) =>
         base.BaseSelect(distinct, selects, new From<T>(tableAlias), joins, predicates, groupBys, having, orderBys, paging);
 
-
-    internal SqlQuery InternalSelect
-    (
-        bool? distinct,
-        SelectTags? selects,
-        From? from,
-        Joins? joins,
-        Predicates? predicates,
-        GroupBys? groupBys,
-        Predicates? having,
-        OrderBys? orderBys,
-        PagingBase? paging
-    ) =>
-        base.BaseSelect(distinct, selects, from, joins, predicates, groupBys, having, orderBys, paging);
 
     /// <summary>
     /// Generates a SQL <c>SELECT *</c> statement that returns rows matching the key
