@@ -120,6 +120,7 @@ public sealed record SelectBuilder<modelT> : SelectBuilder, IQueryBuilder where 
     /// <param name="encryption">The optional encryption service used for encrypted model properties.</param>
     public SelectBuilder(TableAlias? tableAlias, IEncryption? encryption = null)
     {
+        FromTableAlias = tableAlias;
         base.From = new From<modelT>(tableAlias);
         SqlGenerator = new(encryption);
     }
