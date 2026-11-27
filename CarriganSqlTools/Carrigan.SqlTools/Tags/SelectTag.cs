@@ -55,7 +55,6 @@ public class SelectTag : IEquatable<SelectTag>, IEqualityOperators<SelectTag, Se
     internal SelectTag(SqlExpression sqlExpression, ColumnAlias? aliasTag = null)
     {
         ArgumentNullException.ThrowIfNull(sqlExpression, nameof(sqlExpression));
-        ArgumentNullException.ThrowIfNull(aliasTag, nameof(aliasTag));
 
         SqlExpression = sqlExpression;
         ColumnAlias = aliasTag;
