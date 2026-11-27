@@ -131,11 +131,12 @@ public abstract partial class SqlGeneratorBase<T>
             yield return ISqlFragment.Delete;
             yield return ISqlFragment.Space;
 
-            if (usings.IsNullOrEmpty())
+            if (usings.IsNullOrEmpty() && joins.IsNotNullOrEmpty())
             {
                 yield return Table;
                 yield return ISqlFragment.Space;
             }
+
             yield return ISqlFragment.From;
             yield return ISqlFragment.Space;
             yield return Table;
