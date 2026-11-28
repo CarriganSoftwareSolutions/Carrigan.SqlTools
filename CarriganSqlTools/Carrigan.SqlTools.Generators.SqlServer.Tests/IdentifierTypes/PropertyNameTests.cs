@@ -25,26 +25,14 @@ public class PropertyNameTests
         Assert.NotNull(nameWrapper);
     }
 
-    [Fact]
-    public void New_Null()
-    {
-        PropertyName? nameWrapper = PropertyName.New(nul);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_Empty()
-    {
-        PropertyName? nameWrapper = PropertyName.New(empty);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_White()
-    {
-        PropertyName? nameWrapper = PropertyName.New(white);
-        Assert.NotNull(nameWrapper);
-    }
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void New_NullOrWhiteSpace(string? name) =>
+        Assert.Null(PropertyName.New(name));
 
 
     [Fact]
@@ -289,11 +277,14 @@ public class PropertyNameTests
         PropertyName? nameWrapper3 = null;
         PropertyName? nameWrapper4 = PropertyName.New(nul);
         PropertyName? nameWrapper5 = PropertyName.New(empty);
+        PropertyName? nameWrapper6 = PropertyName.New(white);
+
         Assert.True(nameWrapper1.IsNullOrEmpty());
         Assert.True(nameWrapper2.IsNullOrEmpty());
         Assert.True(nameWrapper3.IsNullOrEmpty());
         Assert.True(nameWrapper4.IsNullOrEmpty());
         Assert.True(nameWrapper5.IsNullOrEmpty());
+        Assert.True(nameWrapper6.IsNullOrEmpty());
     }
 
     [Fact]
@@ -311,11 +302,9 @@ public class PropertyNameTests
         PropertyName nameWrapper1 = new(eStr);
         PropertyName nameWrapper2 = new(white);
         PropertyName? nameWrapper3 = PropertyName.New(eStr);
-        PropertyName? nameWrapper4 = PropertyName.New(white);
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
-        Assert.False(nameWrapper4.IsNullOrEmpty());
     }
 
     [Fact]
@@ -336,12 +325,15 @@ public class PropertyNameTests
         PropertyName? nameWrapper4 = PropertyName.New(null);
         PropertyName? nameWrapper5 = PropertyName.New(nul);
         PropertyName? nameWrapper6 = PropertyName.New(empty);
+        PropertyName? nameWrapper7 = PropertyName.New(white);
+
         Assert.False(nameWrapper1.IsNotNullOrEmpty());
         Assert.False(nameWrapper2.IsNotNullOrEmpty());
         Assert.False(nameWrapper3.IsNotNullOrEmpty());
         Assert.False(nameWrapper4.IsNotNullOrEmpty());
         Assert.False(nameWrapper5.IsNotNullOrEmpty());
         Assert.False(nameWrapper6.IsNotNullOrEmpty());
+        Assert.False(nameWrapper7.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -359,11 +351,9 @@ public class PropertyNameTests
         PropertyName nameWrapper1 = new(eStr);
         PropertyName nameWrapper2 = new(white);
         PropertyName? nameWrapper3 = PropertyName.New(eStr);
-        PropertyName? nameWrapper4 = PropertyName.New(white);
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
-        Assert.True(nameWrapper4.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -497,12 +487,15 @@ public class PropertyNameTests
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
 
-    [Fact]
-    public void New_White_PreservesValue()
+    [Theory]
+    [InlineData("Identifier")]
+    [InlineData(" Identifier ")]
+    public void New_PreservesValue(string name)
     {
-        PropertyName? nameWrapper = PropertyName.New(white);
+        PropertyName? nameWrapper = PropertyName.New(name);
+
         Assert.NotNull(nameWrapper);
-        Assert.Equal(white, nameWrapper!.ToString());
+        Assert.Equal(name, nameWrapper.ToString());
     }
 
 

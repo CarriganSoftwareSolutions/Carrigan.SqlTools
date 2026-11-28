@@ -93,6 +93,23 @@ public class ProcedureTagTests
         Assert.Equal(noSchema.GetHashCode(), emptySchema.GetHashCode());
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void Equals_NullOrWhiteSpaceSchema(string? schema)
+    {
+        ProcedureTag expected = new((string?)null, "Procedure");
+        ProcedureTag actual = new(schema, "Procedure");
+
+        Assert.Null(actual.SchemaName);
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+        Assert.Equal(expected.ToSql(Dialect), actual.ToSql(Dialect));
+    }
+
     [Fact]
     public void Equals_DifferentSchema()
     {
@@ -125,24 +142,21 @@ public class ProcedureTagTests
         Assert.NotEqual(left, right);
     }
 
-    [Fact]
-    public void Equals_SchemaIsCaseSensitive()
+    [Theory]
+    [InlineData("schema", "Procedure")]
+    [InlineData("Schema", "procedure")]
+    [InlineData("schema", "procedure")]
+    [InlineData("SCHEMA", "PROCEDURE")]
+    public void Equals_IsCaseInsensitive(string schema, string procedure)
     {
         ProcedureTag left = new("Schema", "Procedure");
-        ProcedureTag right = new("schema", "Procedure");
+        ProcedureTag right = new(schema, procedure);
 
-        Assert.False(left.Equals(right));
-        Assert.NotEqual(left, right);
-    }
-
-    [Fact]
-    public void Equals_ProcedureIsCaseSensitive()
-    {
-        ProcedureTag left = new("Schema", "Procedure");
-        ProcedureTag right = new("Schema", "procedure");
-
-        Assert.False(left.Equals(right));
-        Assert.NotEqual(left, right);
+        Assert.Equal(left, right);
+        Assert.Equal(right, left);
+        Assert.True(left == right);
+        Assert.False(left != right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
     [Fact]
@@ -304,15 +318,19 @@ public class ProcedureTagTests
         Assert.Equal(2.71828m, dictionary[secondKey]);
     }
 
-    [Fact]
-    public void DictionaryKey_IsCaseSensitive()
+    [Theory]
+    [InlineData("schema", "Procedure")]
+    [InlineData("Schema", "procedure")]
+    [InlineData("schema", "procedure")]
+    [InlineData("SCHEMA", "PROCEDURE")]
+    public void DictionaryKey_IsCaseInsensitive(string schema, string procedure)
     {
         ProcedureTag storedKey = new("Schema", "Procedure");
-        ProcedureTag lookupKey = new("schema", "Procedure");
+        ProcedureTag lookupKey = new(schema, procedure);
         Dictionary<ProcedureTag, decimal> dictionary = [];
         dictionary[storedKey] = 3.14159m;
 
-        Assert.False(dictionary.ContainsKey(lookupKey));
+        Assert.True(dictionary.ContainsKey(lookupKey));
     }
 
     [Fact]

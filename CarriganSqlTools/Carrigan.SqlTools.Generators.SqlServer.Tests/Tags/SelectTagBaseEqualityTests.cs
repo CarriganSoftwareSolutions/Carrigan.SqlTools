@@ -81,6 +81,22 @@ public class SelectTagBaseEqualityTests
         Assert.NotEqual(left, right);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void Equals_NullOrWhiteSpaceAlias(string? alias)
+    {
+        SelectTag expected = New("SomeColumn");
+        SelectTag actual = New("SomeColumn", alias);
+
+        Assert.Null(actual.ColumnAlias);
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+    }
+
     [Fact]
     public void Equals_AliasIsCaseInsensitive()
     {

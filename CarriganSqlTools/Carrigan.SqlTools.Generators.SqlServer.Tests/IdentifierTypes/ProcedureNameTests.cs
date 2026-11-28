@@ -25,26 +25,14 @@ public class ProcedureNameTests
         Assert.NotNull(nameWrapper);
     }
 
-    [Fact]
-    public void New_Null()
-    {
-        ProcedureName? nameWrapper = ProcedureName.New(nul);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_Empty()
-    {
-        ProcedureName? nameWrapper = ProcedureName.New(empty);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_White()
-    {
-        ProcedureName? nameWrapper = ProcedureName.New(white);
-        Assert.NotNull(nameWrapper);
-    }
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void New_NullOrWhiteSpace(string? name) =>
+        Assert.Null(ProcedureName.New(name));
 
 
     [Fact]
@@ -289,11 +277,14 @@ public class ProcedureNameTests
         ProcedureName? nameWrapper3 = null;
         ProcedureName? nameWrapper4 = ProcedureName.New(nul);
         ProcedureName? nameWrapper5 = ProcedureName.New(empty);
+        ProcedureName? nameWrapper6 = ProcedureName.New(white);
+
         Assert.True(nameWrapper1.IsNullOrEmpty());
         Assert.True(nameWrapper2.IsNullOrEmpty());
         Assert.True(nameWrapper3.IsNullOrEmpty());
         Assert.True(nameWrapper4.IsNullOrEmpty());
         Assert.True(nameWrapper5.IsNullOrEmpty());
+        Assert.True(nameWrapper6.IsNullOrEmpty());
     }
 
     [Fact]
@@ -311,11 +302,9 @@ public class ProcedureNameTests
         ProcedureName nameWrapper1 = new(eStr);
         ProcedureName nameWrapper2 = new(white);
         ProcedureName? nameWrapper3 = ProcedureName.New(eStr);
-        ProcedureName? nameWrapper4 = ProcedureName.New(white);
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
-        Assert.False(nameWrapper4.IsNullOrEmpty());
     }
 
     [Fact]
@@ -336,12 +325,15 @@ public class ProcedureNameTests
         ProcedureName? nameWrapper4 = ProcedureName.New(null);
         ProcedureName? nameWrapper5 = ProcedureName.New(nul);
         ProcedureName? nameWrapper6 = ProcedureName.New(empty);
+        ProcedureName? nameWrapper7 = ProcedureName.New(white);
+
         Assert.False(nameWrapper1.IsNotNullOrEmpty());
         Assert.False(nameWrapper2.IsNotNullOrEmpty());
         Assert.False(nameWrapper3.IsNotNullOrEmpty());
         Assert.False(nameWrapper4.IsNotNullOrEmpty());
         Assert.False(nameWrapper5.IsNotNullOrEmpty());
         Assert.False(nameWrapper6.IsNotNullOrEmpty());
+        Assert.False(nameWrapper7.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -359,11 +351,9 @@ public class ProcedureNameTests
         ProcedureName nameWrapper1 = new(eStr);
         ProcedureName nameWrapper2 = new(white);
         ProcedureName? nameWrapper3 = ProcedureName.New(eStr);
-        ProcedureName? nameWrapper4 = ProcedureName.New(white);
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
-        Assert.True(nameWrapper4.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -496,12 +486,15 @@ public class ProcedureNameTests
         Assert.True(nameWrapper1.Equals((TextWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
-    [Fact]
-    public void New_White_PreservesValue()
+    [Theory]
+    [InlineData("Identifier")]
+    [InlineData(" Identifier ")]
+    public void New_PreservesValue(string name)
     {
-        ProcedureName? nameWrapper = ProcedureName.New(white);
+        ProcedureName? nameWrapper = ProcedureName.New(name);
+
         Assert.NotNull(nameWrapper);
-        Assert.Equal(white, nameWrapper!.ToString());
+        Assert.Equal(name, nameWrapper.ToString());
     }
 
     [Fact]

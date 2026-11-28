@@ -25,26 +25,14 @@ public class ColumnNameTests
         Assert.NotNull(nameWrapper);
     }
 
-    [Fact]
-    public void New_Null()
-    {
-        ColumnName? nameWrapper = ColumnName.New(nul);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_Empty()
-    {
-        ColumnName? nameWrapper = ColumnName.New(empty);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_White()
-    {
-        ColumnName? nameWrapper = ColumnName.New(white);
-        Assert.NotNull(nameWrapper);
-    }
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void New_NullOrWhiteSpace(string? name) =>
+        Assert.Null(ColumnName.New(name));
 
 
     [Fact]
@@ -289,11 +277,14 @@ public class ColumnNameTests
         ColumnName? nameWrapper3 = null;
         ColumnName? nameWrapper4 = ColumnName.New(nul);
         ColumnName? nameWrapper5 = ColumnName.New(empty);
+        ColumnName? nameWrapper6 = ColumnName.New(white);
+
         Assert.True(nameWrapper1.IsNullOrEmpty());
         Assert.True(nameWrapper2.IsNullOrEmpty());
         Assert.True(nameWrapper3.IsNullOrEmpty());
         Assert.True(nameWrapper4.IsNullOrEmpty());
         Assert.True(nameWrapper5.IsNullOrEmpty());
+        Assert.True(nameWrapper6.IsNullOrEmpty());
     }
 
     [Fact]
@@ -311,11 +302,9 @@ public class ColumnNameTests
         ColumnName nameWrapper1 = new(eStr);
         ColumnName nameWrapper2 = new(white);
         ColumnName? nameWrapper3 = ColumnName.New(eStr);
-        ColumnName? nameWrapper4 = ColumnName.New(white);
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
-        Assert.False(nameWrapper4.IsNullOrEmpty());
     }
 
     [Fact]
@@ -336,12 +325,15 @@ public class ColumnNameTests
         ColumnName? nameWrapper4 = ColumnName.New(null);
         ColumnName? nameWrapper5 = ColumnName.New(nul);
         ColumnName? nameWrapper6 = ColumnName.New(empty);
+        ColumnName? nameWrapper7 = ColumnName.New(white);
+
         Assert.False(nameWrapper1.IsNotNullOrEmpty());
         Assert.False(nameWrapper2.IsNotNullOrEmpty());
         Assert.False(nameWrapper3.IsNotNullOrEmpty());
         Assert.False(nameWrapper4.IsNotNullOrEmpty());
         Assert.False(nameWrapper5.IsNotNullOrEmpty());
         Assert.False(nameWrapper6.IsNotNullOrEmpty());
+        Assert.False(nameWrapper7.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -359,11 +351,9 @@ public class ColumnNameTests
         ColumnName nameWrapper1 = new(eStr);
         ColumnName nameWrapper2 = new(white);
         ColumnName? nameWrapper3 = ColumnName.New(eStr);
-        ColumnName? nameWrapper4 = ColumnName.New(white);
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
-        Assert.True(nameWrapper4.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -496,12 +486,15 @@ public class ColumnNameTests
         Assert.True(nameWrapper1.Equals((TextWrapper)nameWrapper2));
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
-    [Fact]
-    public void New_White_PreservesValue()
+    [Theory]
+    [InlineData("Identifier")]
+    [InlineData(" Identifier ")]
+    public void New_PreservesValue(string name)
     {
-        ColumnName? nameWrapper = ColumnName.New(white);
+        ColumnName? nameWrapper = ColumnName.New(name);
+
         Assert.NotNull(nameWrapper);
-        Assert.Equal(white, nameWrapper!.ToString());
+        Assert.Equal(name, nameWrapper.ToString());
     }
 
 

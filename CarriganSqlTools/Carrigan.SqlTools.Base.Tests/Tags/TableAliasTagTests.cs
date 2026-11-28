@@ -10,8 +10,11 @@ public class TableAliasTests
     [InlineData(null, true)]
     [InlineData("", true)]
     [InlineData(" ", true)]
+    [InlineData("\t", true)]
+    [InlineData("\r\n", true)]
     [InlineData("DerivedTable", false)]
-    public void New_NullOrEmpty_ReturnsExpectedValue(string? name, bool isNull)
+    [InlineData(" DerivedTable ", false)]
+    public void New_NullOrWhiteSpace_ReturnsExpectedValue(string? name, bool isNull)
     {
         TableAlias? alias = TableAlias.New(name);
 

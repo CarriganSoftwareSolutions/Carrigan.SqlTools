@@ -27,29 +27,24 @@ public class ColumnAliasTests
     public void Constructor_Null_CreatesEmptyAlias() =>
         Assert.Equal(string.Empty, new ColumnAlias(null).ToString());
 
-    [Fact]
-    public void New_Null()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void New_NullOrWhiteSpace(string? name) =>
+        Assert.Null(ColumnAlias.New(name));
+
+    [Theory]
+    [InlineData("Alias")]
+    [InlineData(" Alias ")]
+    public void New_PreservesValue(string name)
     {
-        ColumnAlias? aliasTag = ColumnAlias.New(null);
+        ColumnAlias? alias = ColumnAlias.New(name);
 
-        Assert.Null(aliasTag);
-    }
-
-    [Fact]
-    public void New_Empty()
-    {
-        ColumnAlias? aliasTag = ColumnAlias.New(string.Empty);
-
-        Assert.Null(aliasTag);
-    }
-
-    [Fact]
-    public void New_Whitespace()
-    {
-        ColumnAlias? aliasTag = ColumnAlias.New(" ");
-
-        Assert.NotNull(aliasTag);
-        Assert.Equal(" ", aliasTag.ToString());
+        Assert.NotNull(alias);
+        Assert.Equal(name, alias.ToString());
     }
 
     [Theory]

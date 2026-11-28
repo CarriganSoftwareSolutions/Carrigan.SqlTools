@@ -25,26 +25,14 @@ public class SchemaNameTests
         Assert.NotNull(nameWrapper);
     }
 
-    [Fact]
-    public void New_Null()
-    {
-        SchemaName? nameWrapper = SchemaName.New(nul);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_Empty()
-    {
-        SchemaName? nameWrapper = SchemaName.New(empty);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_White()
-    {
-        SchemaName? nameWrapper = SchemaName.New(white);
-        Assert.NotNull(nameWrapper);
-    }
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void New_NullOrWhiteSpace(string? name) =>
+        Assert.Null(SchemaName.New(name));
 
 
     [Fact]
@@ -289,11 +277,14 @@ public class SchemaNameTests
         SchemaName? nameWrapper3 = null;
         SchemaName? nameWrapper4 = SchemaName.New(nul);
         SchemaName? nameWrapper5 = SchemaName.New(empty);
+        SchemaName? nameWrapper6 = SchemaName.New(white);
+
         Assert.True(nameWrapper1.IsNullOrEmpty());
         Assert.True(nameWrapper2.IsNullOrEmpty());
         Assert.True(nameWrapper3.IsNullOrEmpty());
         Assert.True(nameWrapper4.IsNullOrEmpty());
         Assert.True(nameWrapper5.IsNullOrEmpty());
+        Assert.True(nameWrapper6.IsNullOrEmpty());
     }
 
     [Fact]
@@ -311,11 +302,9 @@ public class SchemaNameTests
         SchemaName nameWrapper1 = new(eStr);
         SchemaName nameWrapper2 = new(white);
         SchemaName? nameWrapper3 = SchemaName.New(eStr);
-        SchemaName? nameWrapper4 = SchemaName.New(white);
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
-        Assert.False(nameWrapper4.IsNullOrEmpty());
     }
 
     [Fact]
@@ -336,12 +325,15 @@ public class SchemaNameTests
         SchemaName? nameWrapper4 = SchemaName.New(null);
         SchemaName? nameWrapper5 = SchemaName.New(nul);
         SchemaName? nameWrapper6 = SchemaName.New(empty);
+        SchemaName? nameWrapper7 = SchemaName.New(white);
+
         Assert.False(nameWrapper1.IsNotNullOrEmpty());
         Assert.False(nameWrapper2.IsNotNullOrEmpty());
         Assert.False(nameWrapper3.IsNotNullOrEmpty());
         Assert.False(nameWrapper4.IsNotNullOrEmpty());
         Assert.False(nameWrapper5.IsNotNullOrEmpty());
         Assert.False(nameWrapper6.IsNotNullOrEmpty());
+        Assert.False(nameWrapper7.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -359,11 +351,9 @@ public class SchemaNameTests
         SchemaName nameWrapper1 = new(eStr);
         SchemaName nameWrapper2 = new(white);
         SchemaName? nameWrapper3 = SchemaName.New(eStr);
-        SchemaName? nameWrapper4 = SchemaName.New(white);
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
-        Assert.True(nameWrapper4.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -497,12 +487,15 @@ public class SchemaNameTests
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
 
-    [Fact]
-    public void New_White_PreservesValue()
+    [Theory]
+    [InlineData("Identifier")]
+    [InlineData(" Identifier ")]
+    public void New_PreservesValue(string name)
     {
-        SchemaName? nameWrapper = SchemaName.New(white);
+        SchemaName? nameWrapper = SchemaName.New(name);
+
         Assert.NotNull(nameWrapper);
-        Assert.Equal(white, nameWrapper!.ToString());
+        Assert.Equal(name, nameWrapper.ToString());
     }
 
 

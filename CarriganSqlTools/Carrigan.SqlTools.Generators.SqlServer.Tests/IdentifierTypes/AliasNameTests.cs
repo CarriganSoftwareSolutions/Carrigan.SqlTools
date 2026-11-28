@@ -25,26 +25,14 @@ public class AliasNameTests
         Assert.NotNull(nameWrapper);
     }
 
-    [Fact]
-    public void New_Null()
-    {
-        ColumnAlias? nameWrapper = ColumnAlias.New(nul);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_Empty()
-    {
-        ColumnAlias? nameWrapper = ColumnAlias.New(empty);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_White()
-    {
-        ColumnAlias? nameWrapper = ColumnAlias.New(white);
-        Assert.NotNull(nameWrapper);
-    }
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void New_NullOrWhiteSpace(string? name) =>
+        Assert.Null(ColumnAlias.New(name));
 
 
     [Fact]
@@ -281,20 +269,6 @@ public class AliasNameTests
         Assert.True(nameWrapper1.IsEmpty());
         Assert.True(nameWrapper2.IsEmpty());
     }
-    [Fact]
-    public void IsNullOrEmpty_True()
-    {
-        ColumnAlias? nameWrapper1 = new(empty);
-        ColumnAlias nameWrapper2 = new(nul);
-        ColumnAlias? nameWrapper3 = null;
-        ColumnAlias? nameWrapper4 = ColumnAlias.New(nul);
-        ColumnAlias? nameWrapper5 = ColumnAlias.New(empty);
-        Assert.True(nameWrapper1.IsNullOrEmpty());
-        Assert.True(nameWrapper2.IsNullOrEmpty());
-        Assert.True(nameWrapper3.IsNullOrEmpty());
-        Assert.True(nameWrapper4.IsNullOrEmpty());
-        Assert.True(nameWrapper5.IsNullOrEmpty());
-    }
 
     [Fact]
     public void IsEmpty_False()
@@ -306,16 +280,33 @@ public class AliasNameTests
     }
 
     [Fact]
+    public void IsNullOrEmpty_True()
+    {
+        ColumnAlias? nameWrapper1 = new(empty);
+        ColumnAlias nameWrapper2 = new(nul);
+        ColumnAlias? nameWrapper3 = null;
+        ColumnAlias? nameWrapper4 = ColumnAlias.New(nul);
+        ColumnAlias? nameWrapper5 = ColumnAlias.New(empty);
+        ColumnAlias? nameWrapper6 = ColumnAlias.New(white);
+
+        Assert.True(nameWrapper1.IsNullOrEmpty());
+        Assert.True(nameWrapper2.IsNullOrEmpty());
+        Assert.True(nameWrapper3.IsNullOrEmpty());
+        Assert.True(nameWrapper4.IsNullOrEmpty());
+        Assert.True(nameWrapper5.IsNullOrEmpty());
+        Assert.True(nameWrapper6.IsNullOrEmpty());
+    }
+
+    [Fact]
     public void IsNullOrEmpty_False()
     {
         ColumnAlias nameWrapper1 = new(eStr);
         ColumnAlias nameWrapper2 = new(white);
         ColumnAlias? nameWrapper3 = ColumnAlias.New(eStr);
-        ColumnAlias? nameWrapper4 = ColumnAlias.New(white);
+
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
-        Assert.False(nameWrapper4.IsNullOrEmpty());
     }
 
     [Fact]
@@ -325,23 +316,6 @@ public class AliasNameTests
         ColumnAlias nameWrapper2 = new(nul);
         Assert.False(nameWrapper1.IsNotEmpty());
         Assert.False(nameWrapper2.IsNotEmpty());
-    }
-
-    [Fact]
-    public void IsNotNullOrEmpty_False()
-    {
-        ColumnAlias nameWrapper1 = new(empty);
-        ColumnAlias nameWrapper2 = new(nul);
-        ColumnAlias? nameWrapper3 = null;
-        ColumnAlias? nameWrapper4 = ColumnAlias.New(null);
-        ColumnAlias? nameWrapper5 = ColumnAlias.New(nul);
-        ColumnAlias? nameWrapper6 = ColumnAlias.New(empty);
-        Assert.False(nameWrapper1.IsNotNullOrEmpty());
-        Assert.False(nameWrapper2.IsNotNullOrEmpty());
-        Assert.False(nameWrapper3.IsNotNullOrEmpty());
-        Assert.False(nameWrapper4.IsNotNullOrEmpty());
-        Assert.False(nameWrapper5.IsNotNullOrEmpty());
-        Assert.False(nameWrapper6.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -359,11 +333,30 @@ public class AliasNameTests
         ColumnAlias nameWrapper1 = new(eStr);
         ColumnAlias nameWrapper2 = new(white);
         ColumnAlias? nameWrapper3 = ColumnAlias.New(eStr);
-        ColumnAlias? nameWrapper4 = ColumnAlias.New(white);
+
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
-        Assert.True(nameWrapper4.IsNotNullOrEmpty());
+    }
+
+    [Fact]
+    public void IsNotNullOrEmpty_False()
+    {
+        ColumnAlias nameWrapper1 = new(empty);
+        ColumnAlias nameWrapper2 = new(nul);
+        ColumnAlias? nameWrapper3 = null;
+        ColumnAlias? nameWrapper4 = ColumnAlias.New(null);
+        ColumnAlias? nameWrapper5 = ColumnAlias.New(nul);
+        ColumnAlias? nameWrapper6 = ColumnAlias.New(empty);
+        ColumnAlias? nameWrapper7 = ColumnAlias.New(white);
+
+        Assert.False(nameWrapper1.IsNotNullOrEmpty());
+        Assert.False(nameWrapper2.IsNotNullOrEmpty());
+        Assert.False(nameWrapper3.IsNotNullOrEmpty());
+        Assert.False(nameWrapper4.IsNotNullOrEmpty());
+        Assert.False(nameWrapper5.IsNotNullOrEmpty());
+        Assert.False(nameWrapper6.IsNotNullOrEmpty());
+        Assert.False(nameWrapper7.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -497,12 +490,15 @@ public class AliasNameTests
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
 
-    [Fact]
-    public void New_White_PreservesValue()
+    [Theory]
+    [InlineData("Identifier")]
+    [InlineData(" Identifier ")]
+    public void New_PreservesValue(string name)
     {
-        ColumnAlias? nameWrapper = ColumnAlias.New(white);
+        ColumnAlias? nameWrapper = ColumnAlias.New(name);
+
         Assert.NotNull(nameWrapper);
-        Assert.Equal(white, nameWrapper!.ToString());
+        Assert.Equal(name, nameWrapper.ToString());
     }
 
 

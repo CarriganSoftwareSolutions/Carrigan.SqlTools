@@ -25,26 +25,14 @@ public class MemberNameTests
         Assert.NotNull(nameWrapper);
     }
 
-    [Fact]
-    public void New_Null()
-    {
-        MemberName? nameWrapper = MemberName.New(nul);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_Empty()
-    {
-        MemberName? nameWrapper = MemberName.New(empty);
-        Assert.Null(nameWrapper);
-    }
-
-    [Fact]
-    public void New_White()
-    {
-        MemberName? nameWrapper = MemberName.New(white);
-        Assert.NotNull(nameWrapper);
-    }
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void New_NullOrWhiteSpace(string? name) =>
+        Assert.Null(MemberName.New(name));
 
 
     [Fact]
@@ -289,11 +277,14 @@ public class MemberNameTests
         MemberName? nameWrapper3 = null;
         MemberName? nameWrapper4 = MemberName.New(nul);
         MemberName? nameWrapper5 = MemberName.New(empty);
+        MemberName? nameWrapper6 = MemberName.New(white);
+
         Assert.True(nameWrapper1.IsNullOrEmpty());
         Assert.True(nameWrapper2.IsNullOrEmpty());
         Assert.True(nameWrapper3.IsNullOrEmpty());
         Assert.True(nameWrapper4.IsNullOrEmpty());
         Assert.True(nameWrapper5.IsNullOrEmpty());
+        Assert.True(nameWrapper6.IsNullOrEmpty());
     }
 
     [Fact]
@@ -311,11 +302,9 @@ public class MemberNameTests
         MemberName nameWrapper1 = new(eStr);
         MemberName nameWrapper2 = new(white);
         MemberName? nameWrapper3 = MemberName.New(eStr);
-        MemberName? nameWrapper4 = MemberName.New(white);
         Assert.False(nameWrapper1.IsNullOrEmpty());
         Assert.False(nameWrapper2.IsNullOrEmpty());
         Assert.False(nameWrapper3.IsNullOrEmpty());
-        Assert.False(nameWrapper4.IsNullOrEmpty());
     }
 
     [Fact]
@@ -336,12 +325,15 @@ public class MemberNameTests
         MemberName? nameWrapper4 = MemberName.New(null);
         MemberName? nameWrapper5 = MemberName.New(nul);
         MemberName? nameWrapper6 = MemberName.New(empty);
+        MemberName? nameWrapper7 = MemberName.New(white);
+
         Assert.False(nameWrapper1.IsNotNullOrEmpty());
         Assert.False(nameWrapper2.IsNotNullOrEmpty());
         Assert.False(nameWrapper3.IsNotNullOrEmpty());
         Assert.False(nameWrapper4.IsNotNullOrEmpty());
         Assert.False(nameWrapper5.IsNotNullOrEmpty());
         Assert.False(nameWrapper6.IsNotNullOrEmpty());
+        Assert.False(nameWrapper7.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -359,11 +351,9 @@ public class MemberNameTests
         MemberName nameWrapper1 = new(eStr);
         MemberName nameWrapper2 = new(white);
         MemberName? nameWrapper3 = MemberName.New(eStr);
-        MemberName? nameWrapper4 = MemberName.New(white);
         Assert.True(nameWrapper1.IsNotNullOrEmpty());
         Assert.True(nameWrapper2.IsNotNullOrEmpty());
         Assert.True(nameWrapper3.IsNotNullOrEmpty());
-        Assert.True(nameWrapper4.IsNotNullOrEmpty());
     }
 
     [Fact]
@@ -497,12 +487,15 @@ public class MemberNameTests
         Assert.True(nameWrapper1.Equals(nameWrapper2));
     }
 
-    [Fact]
-    public void New_White_PreservesValue()
+    [Theory]
+    [InlineData("Identifier")]
+    [InlineData(" Identifier ")]
+    public void New_PreservesValue(string name)
     {
-        MemberName? nameWrapper = MemberName.New(white);
+        MemberName? nameWrapper = MemberName.New(name);
+
         Assert.NotNull(nameWrapper);
-        Assert.Equal(white, nameWrapper!.ToString());
+        Assert.Equal(name, nameWrapper.ToString());
     }
 
 

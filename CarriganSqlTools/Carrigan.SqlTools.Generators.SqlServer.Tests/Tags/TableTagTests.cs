@@ -91,6 +91,23 @@ public class TableTagTests
         Assert.Equal(noSchema.GetHashCode(), emptySchema.GetHashCode());
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("\t")]
+    [InlineData("\r\n")]
+    public void Equals_NullOrWhiteSpaceSchema(string? schema)
+    {
+        TableTag expected = new((string?)null, "Table");
+        TableTag actual = new(schema, "Table");
+
+        Assert.Null(actual.SchemaName);
+        Assert.Equal(expected, actual);
+        Assert.Equal(expected.GetHashCode(), actual.GetHashCode());
+        Assert.Equal(expected.ToSql(Dialect), actual.ToSql(Dialect));
+    }
+
     [Fact]
     public void Equals_DifferentSchema()
     {
