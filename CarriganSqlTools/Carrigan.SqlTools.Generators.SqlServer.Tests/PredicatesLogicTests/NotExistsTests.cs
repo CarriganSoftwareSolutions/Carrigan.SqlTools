@@ -75,7 +75,7 @@ public class NotExistsTests : PredicateLogicBaseTests
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery subQuery = orderGenerator.InternalSubquery(null, null, null, subQueryPredicate, null, null, null, null);
+        Subquery subQuery = orderGenerator.Subquery(null, null, new From<Order>(), null, subQueryPredicate, null, null, null, null);
         NotExists notExists = new(subQuery);
 
         SqlQuery query = customerGenerator.Select(new SelectBuilder<Customer> { Where = notExists });
@@ -94,7 +94,7 @@ public class NotExistsTests : PredicateLogicBaseTests
             new Column<Order>(nameof(Order.CustomerId)),
             new Parameter(42, "CustomerId")
         );
-        Subquery subQuery = orderGenerator.InternalSubquery(null, null, null, subQueryPredicate, null, null, null, null);
+        Subquery subQuery = orderGenerator.Subquery(null, null, new From<Order>(), null, subQueryPredicate, null, null, null, null);
         NotExists notExists = new(subQuery);
         Predicates outerPredicate = new Equal
         (

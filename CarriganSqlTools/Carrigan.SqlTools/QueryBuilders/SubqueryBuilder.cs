@@ -3,6 +3,7 @@ using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PredicatesLogic;
+using Carrigan.SqlTools.SqlGenerators;
 using Carrigan.SqlTools.Tags;
 
 namespace Carrigan.SqlTools.QueryBuilders;
@@ -23,6 +24,11 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// Gets or sets the selected columns or expressions for the subquery.
     /// </summary>
     public SelectTags? Selects { get; set; }
+
+    /// <summary>
+    /// Gets or sets the FROM source for the subquery.
+    /// </summary>
+    public From? From { get; init; }
 
     /// <summary>
     /// Gets or sets the joins to include in the subquery.
@@ -83,6 +89,14 @@ public abstract record SubqueryBuilderBase<T> where T : class
     /// <returns>A new subquery instance with the specified select tags.</returns>
     public SubqueryBuilderBase<T> WithSelectTags(SelectTags? selectTags) =>
         this with { Selects = selectTags };
+
+    /// <summary>
+    /// Returns a copy of the current subquery with the specified FROM source.
+    /// </summary>
+    /// <param name="from">The source table or derived table, or null for a source-free SELECT.</param>
+    /// <returns>A new subquery instance with the specified FROM source.</returns>
+    public SubqueryBuilderBase<T> WithFrom(From? from) =>
+        this with { From = from };
 
     /// <summary>
     /// Returns a copy of the current subquery with the specified joins.

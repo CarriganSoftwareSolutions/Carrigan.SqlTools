@@ -19,7 +19,7 @@ namespace Carrigan.SqlTools.PredicatesLogic;
 ///     new Column<Order>(nameof(Order.Total)),
 ///     new Parameter(100.00m, "Total")
 /// );
-/// Subquery subQuery = orderGenerator.Subquery(null, null, null, orderTotalGreaterThan, null, null);
+/// Subquery subQuery = orderGenerator.Subquery(null, null, new From<Order>(), null, orderTotalGreaterThan, null, null, null, null);
 /// Exists exists = new(subQuery);
 /// 
 /// SelectBuilder<Customer> selectBuilder = new()

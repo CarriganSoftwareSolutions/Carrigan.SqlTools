@@ -20,7 +20,7 @@ public class SelectBuilderSubqueryTests
     public void Select_WithSubquerySource_RendersSubqueryAsFromSource()
     {
         Predicates subqueryPredicate = new Equal(new Column<Customer>(nameof(Customer.Name)), new Parameter("Hank", "Name"));
-        Subquery subquery = customerGenerator.InternalSubquery(null, null, null, subqueryPredicate, null, null, null, null);
+        Subquery subquery = customerGenerator.Subquery(null, null, new From<Customer>(), null, subqueryPredicate, null, null, null, null);
         SelectTags selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Email));
         Predicates outerPredicate = new Equal(new Column<Customer>(nameof(Customer.Email)), new Parameter("hank@example.com", "Email"));
 
@@ -43,7 +43,7 @@ public class SelectBuilderSubqueryTests
     {
         Predicates subqueryPredicate = new Equal(new Column<Customer>(nameof(Customer.Name)), new Parameter("Hank", "Name"));
         Predicates outerPredicate = new Equal(new Column<Customer>(nameof(Customer.Email)), new Parameter("hank@example.com", "Email"));
-        Subquery subquery = customerGenerator.InternalSubquery(null, null, null, subqueryPredicate, null, null, null, null);
+        Subquery subquery = customerGenerator.Subquery(null, null, new From<Customer>(), null, subqueryPredicate, null, null, null, null);
 
         SelectBuilder<Customer> selectBuilder = new()
         {
@@ -64,10 +64,11 @@ public class SelectBuilderSubqueryTests
     [Fact]
     public void SelectBuilder_WithDistinctSubqueryOrderByAndPaging_RendersExpectedSql()
     {
-        Subquery subquery = customerGenerator.InternalSubquery
+        Subquery subquery = customerGenerator.Subquery
         (
             true,
             SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id), nameof(Customer.Name)),
+            new From<Customer>(),
             null,
             null,
             null,
@@ -96,7 +97,7 @@ public class SelectBuilderSubqueryTests
     public void SelectBuilder_WithSubquerySourceAndJoin_RendersJoinedSql()
     {
         Predicates subqueryPredicate = new Equal(new Column<Customer>(nameof(Customer.Name)), new Parameter("Hank", "Name"));
-        Subquery subquery = customerGenerator.InternalSubquery(null, null, null, subqueryPredicate, null, null, null, null);
+        Subquery subquery = customerGenerator.Subquery(null, null, new From<Customer>(), null, subqueryPredicate, null, null, null, null);
         ColumnEqualsColumn<Customer, Order> customerIdEqualsOrderCustomerId = new(nameof(Customer.Id), nameof(Order.CustomerId));
         Joins joins = new(new InnerJoin<Order>(customerIdEqualsOrderCustomerId));
         SelectTags selects = new SelectTags(SelectTagGenerator.Get<Customer>(nameof(Customer.Id), "CustomerId")).Append<Order>(nameof(Order.Total));

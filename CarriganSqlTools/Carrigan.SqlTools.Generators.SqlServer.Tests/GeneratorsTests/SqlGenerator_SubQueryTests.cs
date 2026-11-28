@@ -24,7 +24,7 @@ public class SqlGenerator_SubqueryTests
     {
         SqlGenerator<EntityWithTableAttribute> generator = new();
 
-        Subquery subQuery = generator.InternalSubquery(null, null, null, null, null, null, null, null);
+        Subquery subQuery = generator.Subquery(null, null, new From<EntityWithTableAttribute>(), null, null, null, null, null, null);
 
         Assert.Equal("(SELECT [Test].* FROM [Test])", subQuery.ToSql(Dialect));
     }
@@ -41,7 +41,7 @@ public class SqlGenerator_SubqueryTests
         OrderBy<Customer> orderBy = new(nameof(Customer.Name));
         DefinePage paging = new(2, 25);
 
-        Subquery subQuery = customerGenerator.InternalSubquery(true, selects, null, null, null, null, orderBy, paging);
+        Subquery subQuery = customerGenerator.Subquery(true, selects, new From<Customer>(), null, null, null, null, orderBy, paging);
 
         Assert.Equal(
             "(SELECT DISTINCT [Customer].[Id], [Customer].[Name] FROM [Customer] ORDER BY [Customer].[Name] ASC, [Customer].[Id] ASC OFFSET 25 ROWS FETCH NEXT 25 ROWS ONLY)",
@@ -57,7 +57,7 @@ public class SqlGenerator_SubqueryTests
             new Parameter(42, "CustomerId")
         );
 
-        Subquery subQuery = customerGenerator.InternalSubquery(null, null, null, predicate, null, null, null, null);
+        Subquery subQuery = customerGenerator.Subquery(null, null, new From<Customer>(), null, predicate, null, null, null, null);
 
         IEnumerable<SqlFragmentParameter> parameters = [.. subQuery.GetSqlFragmentParameters(Dialect)];
 
@@ -74,7 +74,7 @@ public class SqlGenerator_SubqueryTests
             new Parameter(42, "CustomerId")
         );
 
-        Subquery subQuery = customerGenerator.InternalSubquery(null, null, null, predicate, null, null, null, null);
+        Subquery subQuery = customerGenerator.Subquery(null, null, new From<Customer>(), null, predicate, null, null, null, null);
 
         IEnumerable<ISqlFragment> fragments =
         [
@@ -102,7 +102,7 @@ public class SqlGenerator_SubqueryTests
         SelectTags selects = new (SelectTagGenerator.Get<Order>(nameof(Order.Id)));
 
         Assert.Throws<InvalidTableException>(() =>
-            customerGenerator.InternalSubquery(null, selects, null, null, null, null, null, null));
+            customerGenerator.Subquery(null, selects, new From<Customer>(), null, null, null, null, null, null));
     }
     [Fact]
     public void SubqueryBase_MaterializesSourceFragments()

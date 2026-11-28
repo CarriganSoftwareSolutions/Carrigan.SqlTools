@@ -14,52 +14,31 @@ namespace Carrigan.SqlTools.PostgreSql;
 public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
 {
     /// <summary>
-    /// Gets the SQL fragment that starts a subquery expression.
+    /// Builds a subquery with the specified SELECT options.
     /// </summary>
-    internal Subquery InternalSubquery
-    (
-        bool? distinct,
-        SelectTags? selects,
-        Joins? joins,
-        Predicates? predicates,
-        GroupBys? groupBys,
-        Predicates? having,
-        OrderBys? orderBy, PagingBase? paging
-) =>
-        BaseSubquery(distinct, selects, null, joins, predicates, groupBys, having, orderBy, paging);
-
-    /// <summary>
-    /// Gets the SQL fragment that starts a subquery expression.
-    /// </summary>
-    [Obsolete("Use the overloaded method with the subqueryBuilder argument.")]
+    /// <param name="distinct">The SELECT DISTINCT behavior to apply.</param>
+    /// <param name="selects">The optional SELECT projection list.</param>
+    /// <param name="from">The source table or derived table, or null for a source-free SELECT.</param>
+    /// <param name="joins">The optional joins to append after the FROM source.</param>
+    /// <param name="predicates">The optional WHERE predicates.</param>
+    /// <param name="groupBys">The optional GROUP BY clause.</param>
+    /// <param name="having">The optional HAVING predicates.</param>
+    /// <param name="orderBy">The optional ORDER BY clause.</param>
+    /// <param name="paging">The optional paging clause.</param>
+    /// <returns>A subquery that can be used as a SQL fragment.</returns>
     public Subquery Subquery
     (
         bool? distinct,
         SelectTags? selects,
+        From? from,
         Joins? joins,
         Predicates? predicates,
         GroupBys? groupBys,
         Predicates? having,
-        OrderBys? orderBy, PagingBase? paging
-) =>
-        InternalSubquery(distinct, selects, joins, predicates, groupBys, having, orderBy, paging);
-
-    /// <summary>
-    /// Gets the SQL fragment that starts a subquery expression.
-    /// </summary>
-    [Obsolete("Use the overloaded method with the subqueryBuilder argument.")]
-    public Subquery Subquery
-    (
-        bool? distinct,
-        SelectTags? selects,
-        Joins? joins,
-        Predicates? predicates,
-        GroupBys? groupBys,
-        OrderBys? orderBy, 
+        OrderBys? orderBy,
         PagingBase? paging
-) =>
-        InternalSubquery(distinct, selects, joins, predicates, groupBys, null, orderBy, paging);
-
+    ) =>
+        BaseSubquery(distinct, selects, from, joins, predicates, groupBys, having, orderBy, paging);
 
     /// <summary>
     /// Builds a subquery from the supplied subquery builder.
@@ -67,5 +46,16 @@ public partial class SqlGenerator<T> : SqlGeneratorBase<T> where T : class
     /// <param name="subqueryBuilder">The subquery builder to materialize.</param>
     /// <returns>A subquery that can be used as a SQL fragment.</returns>
     public Subquery Subquery(SubqueryBuilder<T> subqueryBuilder) =>
-        InternalSubquery(subqueryBuilder.Distinct, subqueryBuilder.Selects, subqueryBuilder.Joins, subqueryBuilder.Where, subqueryBuilder.GroupBys, subqueryBuilder.Having, subqueryBuilder.OrderBys, subqueryBuilder.Paging);
+        Subquery
+        (
+            subqueryBuilder.Distinct,
+            subqueryBuilder.Selects,
+            subqueryBuilder.From,
+            subqueryBuilder.Joins,
+            subqueryBuilder.Where,
+            subqueryBuilder.GroupBys,
+            subqueryBuilder.Having,
+            subqueryBuilder.OrderBys,
+            subqueryBuilder.Paging
+        );
 }

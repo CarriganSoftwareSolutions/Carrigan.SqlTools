@@ -24,7 +24,7 @@ public class JoinSubqueryTests
         new (nameof(JoinRightTable.LastId), nameof(JoinLastTable.Id));
 
     private static Subquery RightSubquery(Predicates? predicates = null, Joins? joins = null) =>
-        RightGenerator.InternalSubquery(null, null, joins, predicates, null, null, null, null);
+        RightGenerator.Subquery(null, null, new From<JoinRightTable>(), joins, predicates, null, null, null, null);
 
     [Fact]
     public void Join_WithSubquery_RendersSubqueryAndAlias()

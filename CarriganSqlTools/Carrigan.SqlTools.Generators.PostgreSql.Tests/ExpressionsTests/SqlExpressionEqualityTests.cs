@@ -343,7 +343,7 @@ public class SqlExpressionEqualityTests
     private static Subquery CreateSubquery(SqlGenerator<Order> generator)
     {
         Predicates predicate = new GreaterThan(new Column<Order>(nameof(Order.Total)), new Parameter(100.00m, "Total"));
-        return generator.InternalSubquery(null, null, null, predicate, null, null, null, null);
+        return generator.Subquery(null, null, new From<Order>(), null, predicate, null, null, null, null);
     }
 
     private sealed class BooleanEqualityEntity

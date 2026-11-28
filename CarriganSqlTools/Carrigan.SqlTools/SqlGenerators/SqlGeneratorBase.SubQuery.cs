@@ -1,5 +1,5 @@
+using Carrigan.Core.Extensions;
 using Carrigan.SqlTools.GroupByClause;
-using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.JoinTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
@@ -20,17 +20,17 @@ public abstract partial class SqlGeneratorBase<T>
     (
         bool? distinct,
         SelectTags? selects,
-        TableAlias? fromTableAlias,
+        From? from,
         Joins? joins,
         Predicates? where,
         GroupBys? groupBys,
         Predicates? having,
-        OrderBys? orderBy, 
+        OrderBys? orderBy,
         PagingBase? paging
     ) =>
         new
         (
-            selects ?? new SelectTags(GetColumnInfo(SupportedTypes).Select(columnInfo => columnInfo.SelectTag)),
-            BaseSelectFragments(distinct, selects, null, joins, where, groupBys, having, orderBy, paging)
+            selects.IsNotNullOrEmpty() ? selects : from?.SelectTags ?? new SelectTags(),
+            BaseSelectFragments(distinct, selects, from, joins, where, groupBys, having, orderBy, paging)
         );
 }

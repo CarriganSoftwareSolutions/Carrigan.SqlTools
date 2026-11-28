@@ -73,7 +73,7 @@ public class ExistsTests : PredicateLogicBaseTests
             new Column<Order>(nameof(Order.Total)),
             new Parameter(100.00m, "Total")
         );
-        Subquery subQuery = orderGenerator.InternalSubquery(null, null, null, subQueryPredicate, null, null, null, null);
+        Subquery subQuery = orderGenerator.Subquery(null, null, new From<Order>(), null, subQueryPredicate, null, null, null, null);
         Exists exists = new(subQuery);
 
         SqlQuery query = customerGenerator.Select(new SelectBuilder<Customer> { Where = exists });
@@ -92,7 +92,7 @@ public class ExistsTests : PredicateLogicBaseTests
             new Column<Order>(nameof(Order.CustomerId)),
             new Parameter(42, "CustomerId")
         );
-        Subquery subQuery = orderGenerator.InternalSubquery(null, null, null, subQueryPredicate, null, null, null, null);
+        Subquery subQuery = orderGenerator.Subquery(null, null, new From<Order>(), null, subQueryPredicate, null, null, null, null);
         Exists exists = new(subQuery);
         Predicates outerPredicate = new Equal
         (

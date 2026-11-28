@@ -4,6 +4,7 @@ using Carrigan.SqlTools.Base.Tests.TestEntities;
 using Carrigan.SqlTools.Dialects;
 using Carrigan.SqlTools.Expressions;
 using Carrigan.SqlTools.GroupByClause;
+using Carrigan.SqlTools.IdentifierTypes;
 using Carrigan.SqlTools.OrderByClause;
 using Carrigan.SqlTools.Paging;
 using Carrigan.SqlTools.PostgreSql;
@@ -82,6 +83,32 @@ public class SubqueryBuilderTests
         Assert.Null(original.Having);
         Assert.Same((object)groupBys, updated.GroupBys);
         Assert.Same(having, updated.Having);
+    }
+
+    [Fact]
+    public void Subquery_WithDerivedFrom_UsesSourceProjection()
+    {
+        SelectTags selects = SelectTagGenerator.GetMany<Customer>(nameof(Customer.Id));
+        Subquery innerSubquery = customerGenerator.Subquery(null, selects, new From<Customer>(), null, null, null, null, null, null);
+        From from = new(innerSubquery, new TableAlias("Source"));
+        Subquery subquery = customerGenerator.Subquery(null, null, from, null, null, null, null, null, null);
+
+        Assert.Equal("(SELECT \"Source\".* FROM (SELECT \"Customer\".\"Id\" FROM \"Customer\") AS \"Source\")", subquery.ToSql(Dialect));
+        Assert.Equal("\"Source\".\"Id\"", subquery.SelectTags.ToSql(Dialect));
+    }
+
+    [Fact]
+    public void SubqueryBuilder_WithAliasedFrom_RendersExpectedSql()
+    {
+        SubqueryBuilder<Customer> original = new();
+        From from = new From<Customer>(new TableAlias("Source"));
+        SubqueryBuilderBase<Customer> updated = original.WithFrom(from);
+        Subquery subquery = customerGenerator.Subquery(new SubqueryBuilder<Customer> { From = updated.From });
+
+        Assert.IsType<From<Customer>>(original.From);
+        Assert.NotSame(from, original.From);
+        Assert.Same(from, updated.From);
+        Assert.Equal("(SELECT \"Source\".* FROM \"Customer\" AS \"Source\")", subquery.ToSql(Dialect));
     }
 
 }
