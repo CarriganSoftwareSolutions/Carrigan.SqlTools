@@ -71,7 +71,7 @@ public class LeftJoin : Join
     /// Thrown when <paramref name="predicates"/> or <paramref name="tableAlias"/> is <c>null</c>.
     /// </exception>
     public LeftJoin(Predicates predicates, Subquery subQuery, TableAlias tableAlias)
-        : base(predicates, subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
+        : base(JoinFragment.LeftJoin, predicates, subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
     {
     }
     #endregion

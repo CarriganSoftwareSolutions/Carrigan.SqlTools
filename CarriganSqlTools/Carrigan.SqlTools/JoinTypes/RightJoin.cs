@@ -71,27 +71,27 @@ public class RightJoin : Join
     /// Thrown when <paramref name="predicates"/> or <paramref name="tableAlias"/> is <c>null</c>.
     /// </exception>
     public RightJoin(Predicates predicates, Subquery subQuery, TableAlias tableAlias)
-        : base(predicates, subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
+        : base(JoinFragment.RightJoin, predicates, subQuery, tableAlias ?? throw new ArgumentNullException(nameof(tableAlias)))
     {
     }
     #endregion
 
-    #region constructors from TableTag, SelectTag
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Join"/> class with the specified join type, select tags, predicates, table tag, and optional table alias.
-    /// </summary>
-    /// <param name="tableTag">
-    /// The tag associated with the table being joined.
-    /// </param>
-    /// <param name="selectTags">
-    /// The select tags for the joined table or subquery.
-    /// </param>
-    /// <param name="predicates">
-    /// The predicate(s) used to define the <c>ON</c> condition for the <c>JOIN</c> clause.
-    /// </param>
-    /// <param name="tableAlias">
-    /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
-    /// </param>
+        #region constructors from TableTag, SelectTag
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Join"/> class with the specified join type, select tags, predicates, table tag, and optional table alias.
+        /// </summary>
+        /// <param name="tableTag">
+        /// The tag associated with the table being joined.
+        /// </param>
+        /// <param name="selectTags">
+        /// The select tags for the joined table or subquery.
+        /// </param>
+        /// <param name="predicates">
+        /// The predicate(s) used to define the <c>ON</c> condition for the <c>JOIN</c> clause.
+        /// </param>
+        /// <param name="tableAlias">
+        /// The alias to use for the joined table or subquery in the SQL <c>JOIN</c> clause.
+        /// </param>
     internal RightJoin(TableTag tableTag, SelectTags selectTags, Predicates predicates, TableAlias? tableAlias)
         : base(JoinFragment.RightJoin, tableTag, selectTags, predicates, tableAlias)
     {
