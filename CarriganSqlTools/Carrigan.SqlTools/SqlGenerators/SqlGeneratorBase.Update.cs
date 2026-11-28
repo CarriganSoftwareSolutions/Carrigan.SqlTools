@@ -196,7 +196,15 @@ public abstract partial class SqlGeneratorBase<T>
 
         TableTag rootTableTag = SqlToolsReflectorCache<T>.Table;
 
-        IEnumerable<TableTag> selectableTableTags = ((joins?.Validate(rootTableTag)?.TableTags() ?? []).Prepend(rootTableTag)).Distinct();
+        TableTag joinRootTableTag = from?.LastOrDefault() ?? rootTableTag;
+
+        IEnumerable<TableTag> selectableTableTags =
+        [
+            rootTableTag,
+            .. from ?? [],
+            .. joins?.Validate(joinRootTableTag).TableTags() ?? []
+        ];
+
         IEnumerable<TableTag> predicateTableTags = [.. predicates?.AllParticipatingTables?.Distinct() ?? []];
         IEnumerable<TableTag> invalidTags = predicateTableTags.Except(selectableTableTags);
         bool useFullyQualifiedSets = Dialect.DoesUpdateSupportsFullyQualifiedSets() && joins.IsNotNullOrEmpty();
